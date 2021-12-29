@@ -3,7 +3,6 @@
  */
 import { GitlabJobDef } from "@catladder/pipeline";
 import { getNodeCache } from "@catladder/pipeline/dist/build/node";
-const PIPELINE_IMAGE_TAG = "foo";
 
 export const createGitlabBaseInclude = () => {
   const jobs: {
@@ -21,7 +20,8 @@ export const createGitlabBaseInclude = () => {
   };
   return {
     image:
-      "git.panter.ch:5001/catladder/gitlab-ci/pipeline:" + PIPELINE_IMAGE_TAG,
+      "git.panter.ch:5001/catladder/gitlab-ci/pipeline:" +
+      process.env.CI_COMMIT_SHA,
     stages: ["setup", "deploy", "verify", "actions"],
     ...jobs,
   };

@@ -1,0 +1,64 @@
+#!/bin/bash
+
+# ensure nginx config
+echo "ensureNginxDockerfile in $APP_DIR"
+
+if [ ! -f $APP_DIR/nginx.conf ]; then
+    echo "Creating nginx.conf"
+
+    cat >$APP_DIR/nginx.conf <<NGINX
+    
+server {
+    listen       8080;
+    server_name  localhost;
+    error_page 404 =200 /index.html;
+
+    charset utf-8;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    location /__health {
+        access_log off;
+        types { } default_type "text/html; charset=utf-8";
+        return 200 "ok\n";
+    }
+}
+
+
+NGINX
+
+fi
+# ensure docker ignore
+if [ ! -f $APP_DIR/.dockerignore ]; then
+
+    cat >.dockerignore <<EOF
+**/node_modules
+**/__snapshots__/**
+.git
+
+EOF
+
+fi
+
+if [ ! -f $APP_DIR/Dockerfile ]; then
+    echo "Creating Dockerfile"
+
+    cat >$APP_DIR/Dockerfile <<EOF
+
+$DOCKERFILE_ADDITIONS
+
+FROM nginx:stable
+WORKDIR /app
+
+COPY $APP_DIR/nginx.conf /etc/nginx/conf.d/default.conf
+COPY $APP_DIR/dist/ /usr/share/nginx/html/
+
+$DOCKERFILE_ADDITIONS_END
+
+EXPOSE 8080
+
+EOF
+fi

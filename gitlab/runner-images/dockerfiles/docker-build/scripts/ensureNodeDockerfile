@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# the default dockerfile includes node alpine
+
+# the dockerignore ignores node_modules as these have to be rebuilt anyway
+# as well as __snapshots__ are used for unitests (if any)
+
+if [ ! -f $APP_DIR/.dockerignore ]; then
+
+    cat >$APP_DIR/.dockerignore <<EOF
+**/node_modules
+**/__snapshots__/**
+.git
+
+EOF
+
+fi
+
+if [ -f $APP_DIR/.nvmrc ]; then
+    NODE_VERSION="$(cat $APP_DIR/.nvmrc | sed '/^$/d' | sed 's/[a-z-]//g')"
+elif [ -f .nvmrc ]; then
+    NODE_VERSION="$(cat .nvmrc | sed '/^$/d' | sed 's/[a-z-]//g')"
+else
+    NODE_VERSION=14
+fi
+
+if [ -f "$APP_DIR/yarn.lock" ]; then
+    # is not a monorepo, copy
+    YARN_INSTALL="COPY --chown=node:node $APP_DIR/package.json $APP_DIR/yarn.lock ./"
+else
+    # maybe a monorepo
+    YARN_INSTALL="COPY --chown=node:node $APP_DIR/package.json yarn.lock ./"
+fi
+
+if [ ! -f $APP_DIR/Dockerfile ]; then
+    echo "Creating Dockerfile"
+
+    cat >$APP_DIR/Dockerfile <<EOF
+FROM node:$NODE_VERSION-alpine
+WORKDIR /app
+
+$DOCKERFILE_ADDITIONS
+
+RUN apk add --no-cache git curl
+$YARN_INSTALL
+RUN chown -R node:node .
+USER node
+
+RUN yarn --frozen-lockfile --production=true --ignore-scripts
+
+COPY --chown=node:node $APP_DIR .
+
+RUN yarn --frozen-lockfile --production=true
+
+$DOCKERFILE_ADDITIONS_END
+
+EOF
+fi

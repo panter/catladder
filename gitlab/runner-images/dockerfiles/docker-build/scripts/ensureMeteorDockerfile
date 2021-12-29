@@ -1,0 +1,58 @@
+#!/bin/bash
+
+if [ ! -f .dockerignore ]; then
+    cat >.dockerignore <<EOF
+**/node_modules
+!bundle/**/node_modules
+.git
+
+EOF
+fi
+
+if [ ! -f Dockerfile ]; then
+    echo "Creating Dockerfile"
+    if [[ ! -z "$METEOR_OVERRIDE_NODE_VERSION" ]]; then
+        NODE_VERSION=$METEOR_OVERRIDE_NODE_VERSION
+    else
+        NODE_VERSION_FULL=$(cat bundle/.node_version.txt)
+        NODE_VERSION=${NODE_VERSION_FULL/v/} # remove v
+    fi
+    INSTALL_SCRIPTS=""
+    if [ -f package.json ] && [ -f yarn.lock ]; then
+        read -d '' INSTALL_SCRIPTS <<EOF
+
+COPY --chown=node:node package.json yarn.lock ./
+RUN chown -R node:node .
+USER node
+RUN yarn --frozen-lockfile --production=true --ignore-scripts
+COPY --chown=node:node . .
+RUN yarn --frozen-lockfile --production=true
+EOF
+    fi
+
+    cat >Dockerfile <<EOF
+FROM node:$NODE_VERSION
+
+
+$DOCKERFILE_ADDITIONS
+
+# we copy also source code and scripts for commands
+# This is technically not required for meteor, but useful if we have additional scripts 
+WORKDIR /src
+$INSTALL_SCRIPTS
+
+
+# copy the bundle
+COPY --chown=node:node bundle /src/bundle
+USER node
+# now install meteor deps
+RUN cd /src/bundle/programs/server && npm install
+
+$DOCKERFILE_ADDITIONS_END
+
+WORKDIR /src/bundle
+
+CMD ["node", "main.js"]
+EOF
+
+fi
