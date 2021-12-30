@@ -1,3 +1,4 @@
+import { PIPELINE_IMAGE_TAG } from "./constants";
 import { createJobs } from "./createJos";
 import { Config, ENV_TYPES, PipelineTrigger } from "./types/config";
 import { GitlabJobDef } from "./types/gitlab-types";
@@ -40,7 +41,7 @@ export const createChildPipeline = async (
 
   const childPipeline = {
     image:
-      "git.panter.ch:5001/catladder/gitlab-ci/pipeline:$PIPELINE_IMAGE_TAG",
+      "git.panter.ch:5001/catladder/gitlab-ci/pipeline:" + PIPELINE_IMAGE_TAG,
     workflow: {
       rules,
     },

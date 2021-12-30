@@ -1,3 +1,4 @@
+# this file is used by most jobs
 
 FROM node:14
 
@@ -68,3 +69,9 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | b
 # install also additional used released (should theoretically speed up ci-builds)
 RUN curl https://install.meteor.com/ | sh &&  \
     meteor update --release 2.2 --allow-superuser
+
+
+# pre-add current pipeline package 
+
+RUN mkdir /packages
+COPY ./pipeline /packages/pipeline

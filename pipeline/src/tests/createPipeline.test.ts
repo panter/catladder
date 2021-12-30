@@ -24,9 +24,7 @@ describe("createChildPipeline", () => {
         "mainBranch",
         config
       );
-      expect(image).toEqual(
-        "git.panter.ch:5001/catladder/gitlab-ci/pipeline:$PIPELINE_IMAGE_TAG"
-      );
+      expect(image).toEqual("git.panter.ch:5001/catladder/gitlab-ci/pipeline:");
 
       expect(Object.keys(jobs)).toEqual([
         "my-app audit",

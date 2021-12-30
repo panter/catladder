@@ -2,7 +2,9 @@
   "name": "@catladder/pipeline",
   "version": "0.0.9",
   "scripts": {
-    "build": "yarn tsc",
+    "build": "yarn build:tsc && yarn build:inline-variables",
+    "build:tsc": "yarn tsc",
+    "build:inline-variables": "yarn babel --config-file ./babel-inline.json dist --out-dir dist",
     "prepack": "yarn build",
     "test": "jest"
   },
@@ -13,10 +15,12 @@
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.6.1",
     "@types/yargs": "^17.0.5",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "jest": "^27.4.5",
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "@babel/cli": "^7.16.0",
     "@gitbeaker/node": "^32.1.2",
     "@types/jest": "^27.0.3",
     "lodash": "^4.17.21",

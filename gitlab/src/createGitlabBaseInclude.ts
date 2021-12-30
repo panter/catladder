@@ -21,7 +21,7 @@ export const createGitlabBaseInclude = () => {
   return {
     image:
       "git.panter.ch:5001/catladder/gitlab-ci/pipeline:" +
-      process.env.CI_COMMIT_SHA,
+      process.env.PIPELINE_IMAGE_TAG,
     stages: ["setup", "deploy", "verify", "actions"],
     ...jobs,
   };

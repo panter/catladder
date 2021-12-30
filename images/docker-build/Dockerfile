@@ -9,3 +9,4 @@ COPY ./scripts/* /scripts/
 RUN chmod +x /scripts/*
 
 ENV PATH="/scripts:${PATH}"
+
