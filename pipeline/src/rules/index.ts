@@ -1,7 +1,7 @@
 import { GitlabRule } from "../types";
 
 const NEVER_ON_RELEASE_COMMIT: GitlabRule = {
-  if: "$CI_COMMIT_MESSAGE =~ /^chore(release).*/",
+  if: "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
   when: "never",
 };
 export const RULES_ALWAYS: GitlabRule[] = [
