@@ -4,6 +4,7 @@ export type Environment = {
   hostname: string;
   fullName: string;
   shortName: string;
+  slug: string;
   url: string;
   variables: Record<string, string>;
   envType: EnvType;

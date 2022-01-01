@@ -46,7 +46,6 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
       // TODO: unify with docker build stage
       IMAGE_TAG: "$CI_COMMIT_SHA",
       HELM_GITLAB_CHART_VERSION: "3.2.0", // TODO, we could actually just ship the chart directly here
-      RELEASE_NAME: `${context.fullConfig.customerName}-${context.fullConfig.appName}-$CI_ENVIRONMENT_SLUG`,
     },
 
     dependencies: [],
