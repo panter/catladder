@@ -68,6 +68,15 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
 
       job: {
         ...base,
+        rules: [
+          context.environment.envType === "prod"
+            ? {
+                when: "manual",
+              }
+            : {
+                when: "on_success",
+              },
+        ],
         stage: "deploy",
         dependencies: [],
         script: [
