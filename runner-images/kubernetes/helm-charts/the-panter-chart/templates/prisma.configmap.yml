@@ -1,0 +1,16 @@
+{{- if .Values.prisma.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-prisma-configmap
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+data:
+  PRISMA_CONFIG: |
+    port: 4466
+    databases:
+      default:
+        connector: mongo
+        uri: {{ template "MONGO_URL" . }}
+{{- end -}}

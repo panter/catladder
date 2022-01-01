@@ -1,0 +1,24 @@
+{{- if (.Values.maintenance) }}
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+  name: {{ template "fullname" . }}-maintenance
+  labels:
+    app: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+    name: {{ template "fullname" . }}-maintenance-service
+  selector:
+    app: {{ template "fullname" . }}-maintenance
+    release: {{ .Release.Name }}
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+{{- end }}

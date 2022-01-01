@@ -1,0 +1,20 @@
+
+{{ $context := . }}
+{{- range $key, $volume := .Values.application.volumes }}
+     
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" $context }}-{{$volume.name}}
+  labels:
+    app: {{ $context.Release.Name }}
+  namespace: {{ $context.Release.Namespace }}
+spec:  
+  resources: 
+    requests:
+      storage: {{ default "10Gi" $volume.size }}
+  accessModes:
+    - ReadWriteOnce
+---
+{{- end }}
+

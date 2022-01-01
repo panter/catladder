@@ -55,6 +55,13 @@ export type GitlabJobDef = {
   dependencies?: string[];
   environment?: GitlabEnvironment;
   allow_failure?: boolean;
+  trigger?: {
+    strategy: "depend";
+    include: Array<{
+      artifact: string;
+      job: string;
+    }>;
+  };
 };
 
 export type GitlabVariables = Record<string, string | undefined>;

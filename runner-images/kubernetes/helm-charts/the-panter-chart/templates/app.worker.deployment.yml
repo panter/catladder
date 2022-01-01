@@ -1,0 +1,110 @@
+{{- if .Values.application.worker.enabled -}}
+
+{{ $context := . }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  name: {{ template "fullname" $context }}-worker
+  labels:
+    app: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: {{ template "fullname" $context }}-worker
+      release: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" $context }}-worker
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations: 
+        {{- if  and  .Values.global.ENV_SHORT (eq .Values.global.ENV_SHORT "review")}}
+          - key: "stage"
+            operator: "Equal"
+            value: "review"
+            effect: "NoSchedule"
+        {{- end }}
+        {{- if .Values.application.worker.useExclusivePool }}
+          - key: "ch-panter-sla"
+            operator: "Equal"
+            value: "1"
+            effect: "NoSchedule"
+        {{- end }}
+      containers:
+      - name: {{ template "fullname" $context }}-worker
+        image: "{{ template "appImage" .}}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command:  ["/bin/sh", "-c"]
+        args: 
+          - |
+            . /scripts/additionalEnv
+            trap "touch /tmp/pod/main-terminated" EXIT
+            {{join " " (default .Values.application.command .Values.application.worker.command)}}
+        
+        {{include "env" $context | nindent 8}}
+          - name: BACKGROUND_JOBS_ENABLED
+            value: "true"
+          - name: IS_WORKER
+            value: "true"
+       
+        livenessProbe:
+          httpGet:
+{{ toYaml .Values.application.livenessProbe.httpGet | indent 12 }}
+          initialDelaySeconds: 10
+          timeoutSeconds: 10
+          periodSeconds:  30
+          failureThreshold: 100 # dont kill worker pod too early when cpu intensive stuff is done
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+{{ toYaml .Values.application.worker.resources | indent 10 }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts: 
+          
+          - name: scripts
+            mountPath: /scripts
+        {{- range $key, $volume := .Values.application.volumes }}
+          - mountPath: {{$volume.mountPath}}
+            name: {{ template "fullname" $context }}-{{$volume.name}}
+        {{- end }}
+      {{if .Values.cloudsql.enabled}}
+      - {{- include "cloudSqlContainer" $context | nindent 8 }}
+      {{- end }} 
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ template "fullname" . }}-scripts
+            defaultMode: 0755
+        - name: tmp-pod
+          emptyDir: {}
+      {{- range $key, $volume := .Values.application.volumes }}
+        - name: {{ template "fullname" $context }}-{{$volume.name}}
+          persistentVolumeClaim:
+            claimName: {{ template "fullname" $context }}-{{$volume.name}}
+      {{- end }}
+      {{if .Values.cloudsql.enabled}}
+        - {{- include "cloudSqlCredentialsVolume" $context | nindent 10 }}
+      {{- end }} 
+{{- end -}}

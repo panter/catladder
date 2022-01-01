@@ -1,27 +1,59 @@
 /**
  *
  */
-import { GitlabJobDef } from "@catladder/pipeline";
-import { getNodeCache } from "@catladder/pipeline/dist/build/node";
+import {
+  GitlabJobDef,
+  RULES_ALWAYS,
+  getRunnerImage,
+} from "@catladder/pipeline";
 
+type GitlabJobDefWithTrigger = Omit<GitlabJobDef, "script"> & {
+  trigger: {
+    strategy: "depend";
+    include: Array<{
+      artifact: string;
+      job: string;
+    }>;
+  };
+};
 export const createGitlabBaseInclude = () => {
   const jobs: {
-    [name: string]: GitlabJobDef;
+    [name: string]: GitlabJobDef | GitlabJobDefWithTrigger;
   } = {
     "create-pipeline": {
       interruptible: true,
+      rules: RULES_ALWAYS,
       stage: "setup",
-      cache: getNodeCache(),
+      //cache: getNodeCache(),
       script: [
-        "yarn --frozen-lockfile", // in case that it has a package.json (needed when using ts file for catladder),
-        "gitlabWriteChildPipeline",
+        // in case someone uses ts files and imports Config from catladder, we have to provide the package
+        // installing it normally would also install other npm packages, which we want to avoid in this job here to speed it up
+        // so we cheat and just copy the folder into node_modules
+        "mkdir -p node_modules/@catladder",
+        "cp -r /packages/pipeline/ node_modules/@catladder/pipeline",
+        "catladder-gitlab", // global command
       ],
+      artifacts: {
+        paths: ["__pipeline.yml"],
+      },
+    },
+    deploy: {
+      stage: "deploy",
+      needs: ["create-pipeline"],
+      rules: RULES_ALWAYS,
+      trigger: {
+        strategy: "depend",
+        include: [
+          {
+            artifact: "__pipeline.yml",
+            job: "create-pipeline",
+          },
+        ],
+      },
     },
   };
   return {
-    image:
-      "git.panter.ch:5001/catladder/gitlab-ci/pipeline:" +
-      process.env.PIPELINE_IMAGE_TAG,
+    image: getRunnerImage("base-pipeline"),
     stages: ["setup", "deploy", "verify", "actions"],
     ...jobs,
   };

@@ -1,0 +1,151 @@
+# Default values for manulstack helm chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  componentName: web
+  ENV_SHORT: dev
+  BUILD_ID:
+image:
+  repository:
+  name:
+  pullPolicy: Always
+  pullSecret: gitlab-registry
+
+service:
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 8080
+  additionalPorts: []
+
+env:
+  public:
+    NODE_ENV: production
+    TZ: Europe/Zurich
+  secret: {}
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx-node
+    kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/affinity: cookie
+    ingress.kubernetes.io/affinity-mode: persistent
+    ingress.kubernetes.io/session-cookie-hash: sha1
+    ingress.kubernetes.io/session-cookie-name: route
+    ingress.kubernetes.io/session-cookie-path: /
+  tls: []
+
+jobDefaults:
+  resources:
+    limits:
+      cpu: 500m
+    requests:
+      cpu: 500m
+      memory: 350Mi
+
+application:
+  replicas: 1
+  hostCanonical: customer-project-environment.cluster.panter.cloud
+  command:
+  # these requests are usually overridden by the gitlab include and values
+  resources:
+    limits:
+      cpu: "1"
+      memory: 600Mi
+    requests:
+      cpu: 50m
+      memory: 150Mi
+  leaderElector:
+    enabled: false
+  worker:
+    enabled: false
+    useExclusivePool: false
+    service:
+      enabled: false
+      type: ClusterIP
+      externalPort: 80
+      internalPort: 8080
+      additionalPorts: []
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1000Mi
+      requests:
+        cpu: 100m
+        memory: 350Mi
+  startupProbe:
+    httpGet:
+      path: /__health
+      port: 8080
+      httpHeaders:
+        - name: X-PAN-HEALTHCHECK
+          value: startup
+    failureThreshold: 60
+    timeoutSeconds: 3
+    periodSeconds: 5
+  livenessProbe:
+    httpGet:
+      path: /__health
+      port: 8080
+      httpHeaders:
+        - name: X-PAN-HEALTHCHECK
+          value: liveness
+    periodSeconds: 5
+    timeoutSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /__health
+      port: 8080
+      httpHeaders:
+        - name: X-PAN-HEALTHCHECK
+          value: readiness
+    failureThreshold: 3
+    timeoutSeconds: 3
+    periodSeconds: 5
+    successThreshold: 1
+
+gitlab:
+  visualReviewEnabled: false
+  app:
+  env:
+  projectPath:
+  mergeRequestId:
+  projectId:
+
+## features
+
+mongodb:
+  enabled: false
+  dbName: app
+  backup:
+    enabled: true
+    schedule: "0 0 * * *"
+
+cloudsql:
+  enabled: false
+  projectId: skynet-164509
+  region: europe-west6
+
+mongodb-replicaset:
+  replicas: 3
+  persistentVolume:
+    size: 20Gi
+  metrics:
+    enabled: true
+  extraLabels:
+    role: mongo # needed for backup cronjob
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+mailhog:
+  enabled: false
+  useOauth: true
+
+prisma:
+  enabled: false # this id deprecated and only for prisma 1
+

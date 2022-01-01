@@ -1,0 +1,23 @@
+{{- if .Values.prisma.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ template "fullname" . }}-prisma
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  name: {{ template "fullname" . }}-prisma
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 4466
+      targetPort: 4466
+      protocol: TCP
+  selector:
+    app: {{ template "fullname" . }}-prisma
+    release: {{ .Release.Name }}
+  sessionAffinity: None
+  type: NodePort
+{{- end -}}

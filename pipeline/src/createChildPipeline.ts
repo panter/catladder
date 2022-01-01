@@ -1,5 +1,6 @@
-import { PIPELINE_IMAGE_TAG } from "./constants";
 import { createJobs } from "./createJos";
+import { RULES_ALWAYS } from "./rules";
+import { getRunnerImage } from "./runner";
 import { Config, ENV_TYPES, PipelineTrigger } from "./types/config";
 import { GitlabJobDef } from "./types/gitlab-types";
 
@@ -24,26 +25,10 @@ export const createChildPipeline = async (
     {}
   );
 
-  const rules = [
-    // same as rules "always", but with `changes` to only trigger changed branches
-    { if: "$CI_COMMIT_TAG" },
-    {
-      if: "$CI_COMMIT_MESSAGE =~ /^chore(release).*/",
-      when: "never",
-    },
-    { if: "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/" },
-    {
-      if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
-    },
-
-    { if: "$CI_MERGE_REQUEST_ID" },
-  ];
-
   const childPipeline = {
-    image:
-      "git.panter.ch:5001/catladder/gitlab-ci/pipeline:" + PIPELINE_IMAGE_TAG,
+    image: getRunnerImage("jobs"), // default image
     workflow: {
-      rules,
+      rules: RULES_ALWAYS,
     },
     stages: ["setup", "test", "build", "deploy", "verify", "actions"],
     ...jobs,

@@ -1,15 +1,17 @@
 {
   "name": "@catladder/pipeline",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "scripts": {
-    "build": "yarn build:tsc && yarn build:inline-variables",
-    "build:tsc": "yarn tsc",
-    "build:inline-variables": "yarn babel --config-file ./babel-inline.json dist --out-dir dist",
+    "build": "yarn build:inline-variables",
+    "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json src --out-dir dist",
     "prepack": "yarn build",
     "test": "jest"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/index.ts",
+  "types": "dist/index.ts",
+  "bin": {
+    "catladder-gitlab": "./bin/catladder-gitlab.ts"
+  },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.5",
     "@types/lodash": "^4.14.172",
@@ -26,6 +28,7 @@
     "lodash": "^4.17.21",
     "slugify": "^1.6.3",
     "ts-jest": "^27.1.2",
+    "ts-node": "^10.4.0",
     "yaml": "^1.10.2",
     "yargs": "^17.2.1"
   }

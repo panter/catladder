@@ -1,0 +1,75 @@
+
+{{ $jobs := .Values.cronjobs }}
+{{ if $jobs }}
+{{ $context := . }}
+{{ range $key, $job := $jobs -}}
+
+{{- $name := (kindIs "map" $jobs) | ternary $key $job.name -}}
+
+apiVersion: batch/v1beta1
+kind: CronJob
+
+metadata:
+  name: {{ include "fullname" $context | trunc 24}}-{{ $name | trunc 20 }}-cronjob
+  namespace: {{ $context.Release.Namespace }}
+  labels:
+    app: {{ $context.Release.Name }}
+    app.kubernetes.io/managed-by: {{$context.Release.Service | quote }}
+    app.kubernetes.io/instance: {{$context.Release.Name | quote }}
+    helm.sh/chart: "{{$context.Chart.Name}}-{{$context.Chart.Version}}"
+ 
+spec:
+  schedule: {{ $job.schedule | quote}}
+  # concerning concurreny we also set it to allow as default like in kubernetes i
+  # see https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#concurrency-policy
+  concurrencyPolicy: "{{- default "Allow" $job.concurrencyPolicy -}}"  
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          {{- if $context.Values.image.pullSecret }}
+          imagePullSecrets:
+            - name: {{ $context.Values.image.pullSecret }}
+          {{- end }}
+          restartPolicy: Never
+          containers:
+          - name: {{ $name }}-cronjob
+            {{include "env" $context | nindent 12}}
+            {{if $job.image -}}
+            image: "{{ $job.image }}"
+            {{else}}
+            image: "{{ template "appImage" $context}}"
+            {{end}}
+            imagePullPolicy: {{ $context.Values.image.pullPolicy }}
+            # see https://github.com/kubernetes/kubernetes/issues/25908#issuecomment-308569672
+            command:  ["/bin/sh", "-c"]
+            args: 
+              - |
+                . /scripts/additionalEnv
+                trap "touch /tmp/pod/main-terminated" EXIT
+                {{$job.command}}
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+            - mountPath: /tmp/pod
+              name: tmp-pod
+            resources:
+{{ toYaml $context.Values.jobDefaults.resources | indent 14 }}
+            
+
+          {{if $context.Values.cloudsql.enabled}}
+          - {{- include "cloudSqlContainer" $context | nindent 12 }}
+          {{- end }} 
+          volumes:
+            - name: scripts
+              configMap:
+                name: {{ template "fullname" $context }}-scripts
+                defaultMode: 0755
+            - name: tmp-pod
+              emptyDir: {}
+          {{if $context.Values.cloudsql.enabled}}
+            - {{- include "cloudSqlCredentialsVolume" $context | nindent 14 }}
+          {{- end }} 
+---
+{{- end }}
+{{- end }}

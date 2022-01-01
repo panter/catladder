@@ -5,6 +5,6 @@ import { stringify } from "yaml";
 const baseInclude = createGitlabBaseInclude();
 
 mkdirSync("./dist/includes", { recursive: true });
-writeFileSync("./dist/includes/main.yml", stringify(baseInclude), {
+writeFileSync("./dist/includes/gitlab-ci.yml", stringify(baseInclude), {
   encoding: "utf-8",
 });

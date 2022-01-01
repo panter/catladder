@@ -1,4 +1,4 @@
-import { PIPELINE_IMAGE_TAG } from "../constants";
+import { getRunnerImage } from "../runner";
 import { GitlabJobDef, Context } from "../types";
 
 export const createDockerBuildJob = (
@@ -7,9 +7,7 @@ export const createDockerBuildJob = (
 ): GitlabJobDef => {
   const base: Omit<GitlabJobDef, "script"> = {
     stage: "build",
-    image:
-      "git.panter.ch:5001/catladder/gitlab-ci/docker-build:" +
-      PIPELINE_IMAGE_TAG,
+    image: getRunnerImage("docker-build"),
     interruptible: true,
     services: [
       {

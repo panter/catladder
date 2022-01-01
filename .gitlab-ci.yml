@@ -1,6 +1,18 @@
 image: node:14
 variables:
-  INLINE_VERSION_TAG: $CI_COMMIT_SHA # this gets inlined into files
+  INLINE_DOCKER_REGISTRY: $CI_REGISTRY_IMAGE
+  DOCKER_HOST: tcp://0.0.0.0:2375
+  DOCKER_TLS_CERTDIR: ""
+  INLINE_PIPELINE_IMAGE_TAG: "$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA" # we need to add the commit sha because the docker policy currently does not download images if already in cache with the same tag
+workflow:
+  rules:
+    [
+      { if: "$CI_COMMIT_TAG" },
+      { if: "$CI_COMMIT_MESSAGE =~ /^chore(release).*/", when: "never" },
+      { if: "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/" },
+      { if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH" },
+      { if: "$CI_MERGE_REQUEST_ID" },
+    ]
 
 build-packages:
   cache:
@@ -23,37 +35,53 @@ build-packages:
   services:
     - name: docker:20-dind
       command: ["--tls=false"]
+
+  stage: build
   variables:
     DOCKER_DRIVER: overlay2
-    IMAGE_NAME: $CI_REGISTRY_IMAGE/$COMPONENT_NAME
-    CACHE_IMAGE: $CI_REGISTRY_IMAGE/$COMPONENT_NAME/cache:cache
-
-.docker-build-app-base:
-  extends: .docker-build-base
+    IMAGE_NAME: $CI_REGISTRY_IMAGE/$NAME
+    CACHE_IMAGE: $CI_REGISTRY_IMAGE/$NAME/cache:cache
+    BUILD_CONTEXT: ./runner-images/$NAME
+    DOCKER_FILE: ./runner-images/$NAME/Dockerfile
   script:
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
     - docker pull $CACHE_IMAGE || true
-    - docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$INLINE_VERSION_TAG $DOCKER_DIR
-    - docker push $IMAGE_NAME:$INLINE_VERSION_TAG
-    - docker tag $IMAGE_NAME:$INLINE_VERSION_TAG $CACHE_IMAGE
+    - docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG -f $DOCKER_FILE $BUILD_CONTEXT
+    - docker push $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG
+    - docker tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG $CACHE_IMAGE
     - docker push $CACHE_IMAGE
 
-build-runner-image-pipeline:
+docker-build-base-pipeline:
   needs: ["build-packages"]
-  stage: build
-  image: docker:20
   variables:
-    COMPONENT_NAME: gitlab-pipeline
-    DOCKER_DIR: "./images/dockerfiles/pipeline"
+    NAME: "base-pipeline"
+    BUILD_CONTEXT: .
   extends:
-    - .docker-build-app-base
+    - .docker-build-base
+
+docker-build-kubernetes:
+  variables:
+    NAME: kubernetes
+  extends:
+    - .docker-build-base
+
+docker-build-jobs:
+  variables:
+    NAME: jobs
+  extends:
+    - .docker-build-base
 
 docker-build-docker-in-docker:
-  needs: ["build-packages"]
-  stage: build
-  image: docker:20
   variables:
-    COMPONENT_NAME: gitlab-docker-build
-    DOCKER_DIR: "./images/dockerfiles/docker-build"
+    NAME: docker-build
   extends:
-    - .docker-build-app-base
+    - .docker-build-base
+
+publish-includes:
+  needs: ["build-packages"]
+  variables:
+    VERSION_TAG: $CI_COMMIT_REF_SLUG
+  stage: deploy
+  script:
+    - 'echo "version: $VERSION_TAG"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file gitlab/dist/includes/gitlab-ci.yml "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/ci-includes/$VERSION_TAG/gitlab-ci.yml"'

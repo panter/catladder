@@ -1,0 +1,118 @@
+
+{{- if .Values.application -}}
+{{ $context := . }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" $context }}-app
+  annotations:
+    {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
+    {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
+  labels:
+    app: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.application.replicas }}
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: {{ template "fullname" $context }}-app
+      release: {{ .Release.Name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
+        {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
+      labels:
+        app: {{ template "fullname" $context }}-app
+        release: {{ .Release.Name }}
+    spec:
+      {{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      tolerations: 
+        {{- if  and  .Values.global.ENV_SHORT (eq .Values.global.ENV_SHORT "review")}}
+          - key: "stage"
+            operator: "Equal"
+            value: "review"
+            effect: "NoSchedule"
+        {{- end }}
+    
+      containers:
+      - name: {{ template "fullname" $context }}-app
+        image: "{{ template "appImage" .}}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{ if .Values.application.command }}
+        
+        command:  ["/bin/sh", "-c"]
+        args: 
+          - |
+            . /scripts/additionalEnv
+            trap "touch /tmp/pod/main-terminated" EXIT
+            {{(kindIs "slice" .Values.application.command) | ternary (join " " .Values.application.command) .Values.application.command}}
+     
+        {{- end }}
+        {{include "env" $context | nindent 8}}
+        startupProbe:
+{{ toYaml .Values.application.startupProbe | indent 10 }}       
+        livenessProbe:
+{{ toYaml .Values.application.livenessProbe | indent 10 }}
+        readinessProbe:
+{{ toYaml .Values.application.readinessProbe | indent 10 }}
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources:
+{{ toYaml .Values.application.resources | indent 10 }}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts: 
+          - name: scripts
+            mountPath: /scripts
+        {{- range $key, $volume := .Values.application.volumes }}
+          - mountPath: {{$volume.mountPath}}
+            name: {{ template "fullname" $context }}-{{$volume.name}}
+        {{- end }}
+      {{if .Values.application.leaderElector.enabled}}
+      - name: leader-elector
+        image: "k8s.gcr.io/leader-elector:0.5"
+        args:
+        - --election={{ template "fullname" $context }}-election
+        - --http=0.0.0.0:4040
+        - --election-namespace={{ .Release.Namespace }}
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4040
+      {{end}}
+      {{if .Values.cloudsql.enabled}}
+      - {{- include "cloudSqlContainer" $context | nindent 8 }}
+      {{- end }} 
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ template "fullname" . }}-scripts
+            defaultMode: 0755
+        - name: tmp-pod
+          emptyDir: {}
+      {{- range $key, $volume := .Values.application.volumes }}
+        - name: {{ template "fullname" $context }}-{{$volume.name}}
+          persistentVolumeClaim:
+            claimName: {{ template "fullname" $context }}-{{$volume.name}}
+      {{- end }}
+      {{if .Values.cloudsql.enabled}}
+        - {{- include "cloudSqlCredentialsVolume" $context | nindent 10 }}
+      {{- end }} 
+{{- end }}
+

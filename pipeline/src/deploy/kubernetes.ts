@@ -1,6 +1,7 @@
 import { GitlabJobs, GitlabJobDef } from "../types/gitlab-types";
 import { Context } from "../types/context";
 import { isOfType } from "./types";
+import { getRunnerImage } from "../runner";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -31,6 +32,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     },
   };
   const base: Omit<GitlabJobDef, "stage"> = {
+    image: getRunnerImage("kubernetes"),
     variables: {
       ...context.environment.variables,
 
@@ -39,7 +41,6 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
       HELM_EXPERIMENTAL_OCI: "1",
       IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
       KUBE_VALUES: JSON.stringify(kubeValues),
-      HELM_GITLAB_CHART_PATH: "catladder/helm-charts",
       HELM_GITLAB_CHART_NAME: "the-panter-chart",
       COMPONENT_NAME: context.componentName,
       // TODO: unify with docker build stage
@@ -49,6 +50,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     },
 
     dependencies: [],
+    // TODO: inline
     script: [
       "kubernetesEnsureNamespace",
       "kubernetesCreateSecret",

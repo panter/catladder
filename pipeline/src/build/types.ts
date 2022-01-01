@@ -4,18 +4,18 @@ export type BuildConfigBase = {
 
 export type BuildConfigNode = {
   type: "node";
-  buildCommand?: string | string[];
+  buildCommand?: string | string[] | null;
 } & BuildConfigBase;
 
 export type BuildConfigNodeStatic = {
   type: "node-static";
-  buildCommand?: string | string[];
+  buildCommand?: string | string[] | null;
   startCommand?: never;
 };
 
 export type BuildConfigStorybook = {
   type: "storybook";
-  buildCommand?: string | string[];
+  buildCommand?: string | string[] | null;
   startCommand?: never;
 };
 export type BuildConfig =
