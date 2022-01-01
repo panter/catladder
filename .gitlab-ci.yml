@@ -84,4 +84,4 @@ publish-includes:
   stage: deploy
   script:
     - 'echo "version: $VERSION_TAG"'
-    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file gitlab/dist/includes/gitlab-ci.yml "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/ci-includes/$VERSION_TAG/gitlab-ci.yml"'
+    - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ci-includes/dist/includes/gitlab-ci.yml "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/ci-includes/$VERSION_TAG/gitlab-ci.yml"'
