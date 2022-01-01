@@ -5,6 +5,7 @@ import {
   GitlabJobDef,
   RULES_ALWAYS,
   getRunnerImage,
+  RULES_RELEASE,
 } from "@catladder/pipeline";
 
 type GitlabJobDefWithTrigger = Omit<GitlabJobDef, "script"> & {
@@ -50,6 +51,12 @@ export const createGitlabBaseInclude = () => {
           },
         ],
       },
+    },
+    release: {
+      stage: "actions",
+      image: getRunnerImage("semantic-release"),
+      script: ["semantic-release"],
+      rules: RULES_RELEASE,
     },
   };
   return {
