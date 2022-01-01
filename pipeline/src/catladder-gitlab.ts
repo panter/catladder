@@ -1,6 +1,7 @@
 import { existsSync, writeFileSync } from "fs";
 import { parse } from "yaml";
 import { createChildPipeline } from ".";
+import { PIPELINE_IMAGE_TAG } from "./constants";
 import { PipelineTrigger } from "./types";
 
 const {
@@ -28,6 +29,8 @@ const readConfig = () => {
     }
   }
 };
+
+console.info(`catladder version ${PIPELINE_IMAGE_TAG}`);
 
 const trigger: PipelineTrigger | null =
   isMergeRequest || isHotfixBranch
