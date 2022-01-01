@@ -36,6 +36,10 @@ const getNextCache = (context: Context): GitlabJobCache[] => [
   },
 ];
 const createNodeTestJobs = (context: Context): GitlabJobs => {
+  // don't run tests after release
+  if (context.trigger === "taggedRelease") {
+    return [];
+  }
   const base: Omit<GitlabJobDef, "script"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,

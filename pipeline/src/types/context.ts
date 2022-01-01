@@ -1,3 +1,4 @@
+import { PipelineTrigger } from ".";
 import { ComponentConfig, Config, EnvType } from "./config";
 
 export type Environment = {
@@ -20,4 +21,5 @@ export type Context = {
   fullConfig: Config;
   environment: Environment;
   commit: CommitInfo;
+  trigger: PipelineTrigger;
 };

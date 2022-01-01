@@ -19,7 +19,7 @@ export const createChildPipeline = async (
     (acc, componentName) => {
       return {
         ...acc,
-        ...createJobs(envs, config, componentName),
+        ...createJobs(envs, config, componentName, trigger),
       };
     },
     {}

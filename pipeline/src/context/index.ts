@@ -4,7 +4,7 @@ import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
 import { DeployConfig } from "../deploy/types";
-import { Config, isKnowEnvType } from "../types/config";
+import { Config, isKnowEnvType, PipelineTrigger } from "../types/config";
 import { CommitInfo, Context, Environment } from "../types/context";
 
 const getEnvironment = (
@@ -105,7 +105,8 @@ const getEnvironment = (
 export const createContext = (
   componentName: string,
   config: Config,
-  env: string
+  env: string,
+  trigger: PipelineTrigger
 ): Context => {
   if (!/^[a-z0-9-]+$/.test(componentName)) {
     throw new Error(
@@ -145,5 +146,6 @@ export const createContext = (
     componentName,
     environment: getEnvironment(config, componentName, env, commit),
     commit: commit,
+    trigger,
   };
 };
