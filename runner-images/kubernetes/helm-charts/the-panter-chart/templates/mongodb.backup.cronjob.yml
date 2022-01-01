@@ -1,0 +1,26 @@
+{{- if and (.Values.mongodb.enabled) (.Values.mongodb.backup.enabled) }}
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: {{ template "fullname" . }}-mongodb-backup
+  labels:
+    app: {{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  
+spec:
+  schedule: {{.Values.mongodb.backup.schedule }}
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mongosnap
+            image: gcr.io/skynet-164509/mongosnap:latest
+            args:
+            - node
+            - stuff.js
+            - "{{ .Release.Namespace }}"
+            - "{{ .Release.Name }}"
+          restartPolicy: Never
+{{- end }}

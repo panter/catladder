@@ -1,0 +1,35 @@
+{{- if .Values.application -}}
+{{- if .Values.application.worker.enabled -}}
+{{- if .Values.application.worker.service.enabled -}}
+{{- $context := . }}
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ template "fullname" . }}-worker
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  name: {{ template "fullname" . }}-worker
+  namespace: {{ .Release.Namespace }}
+spec:
+  type: {{ .Values.application.worker.service.type }}
+  ports:
+    - port: {{ .Values.application.worker.service.externalPort }}
+      targetPort: {{ .Values.application.worker.service.internalPort }}
+      protocol: TCP
+      name: {{ template "fullname" . }}-worker-service
+    {{- range $ports := .Values.application.worker.service.additionalPorts }}
+    - port: {{ required ".Values.application.worker.service.additionalPorts.port is required" $ports.port }}
+      targetPort: {{ $ports.targetPort | default $ports.port }}
+      protocol: {{ $ports.protocol | default "TCP" }}
+      name: {{ template "fullname" $context }}-{{ required ".Values.application.worker.service.additionalPorts.nameSuffix is required" $ports.nameSuffix }}-service
+    {{- end }}
+  selector:
+    app: {{ template "fullname" . }}-worker
+    release: {{ .Release.Name }}
+  sessionAffinity: None
+  type: NodePort
+{{- end -}}
+{{- end -}}
+{{- end -}}

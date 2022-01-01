@@ -1,0 +1,39 @@
+{{- if .Values.prisma.enabled -}}
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: {{ template "fullname" . }}-prisma-deploy
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+    app.kubernetes.io/instance: {{.Release.Name | quote }}
+    helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{.Release.Name}}"
+      labels:
+        app.kubernetes.io/managed-by: {{.Release.Service | quote }}
+        app.kubernetes.io/instance: {{.Release.Name | quote }}
+        helm.sh/chart: "{{.Chart.Name}}-{{.Chart.Version}}"
+    spec:
+      {{- if .Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecret }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        image: "{{ template "appImage" .}}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["/bin/sh","-c"]
+        args: ["cd /src; MONGO_URL={{template "MONGO_URL" . }} PRISMA_ENDPOINT={{template "PRISMA_ENDPOINT" . }} npx prisma1 deploy --force"]
+{{- end -}}

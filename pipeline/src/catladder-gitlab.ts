@@ -1,8 +1,7 @@
-// this should be run on gitlab
 import { existsSync, writeFileSync } from "fs";
 import { parse } from "yaml";
-import { PipelineTrigger } from "../types/config";
-import { createChildPipeline } from "../createChildPipeline";
+import { createChildPipeline } from ".";
+import { PipelineTrigger } from "./types";
 
 const {
   CI_MERGE_REQUEST_ID,
@@ -40,11 +39,22 @@ const trigger: PipelineTrigger | null =
     : null;
 if (trigger) {
   const config = readConfig();
-  createChildPipeline(trigger, config).then((childPipeline) => {
-    writeFileSync(`__pipeline.yml`, JSON.stringify(childPipeline, null, 2), {
+  createChildPipeline(trigger, config).then((mainPipeline) => {
+    writeFileSync(`__pipeline.yml`, JSON.stringify(mainPipeline, null, 2), {
       encoding: "utf-8",
     });
   });
 } else {
-  throw new Error("no matching trigger");
+  throw new Error(
+    "no matching trigger: " +
+      JSON.stringify(
+        {
+          isMergeRequest,
+          isDefaultBranch,
+          isTaggedRelease,
+        },
+        null,
+        2
+      )
+  );
 }

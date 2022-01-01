@@ -1,0 +1,35 @@
+{{- if .Values.mailhog.enabled -}}
+#{{ $host := (default "mailhog.{{ template 'host' . }}" .Values.mailhog.host ) | quote }}
+{{ $host := default (printf "mailhog.%s" (include "host" .)) .Values.mailhog.host  }}
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.mailhog.fullnameOverride  }} # unfortunatly due to history reasons we override the release name
+  labels:
+    app: {{ template "name" . }}
+  annotations:
+    kubernetes.io/ingress.class: nginx-node
+    kubernetes.io/tls-acme: "true"
+spec:
+  rules:
+  - host: {{ $host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Values.mailhog.fullnameOverride  }} # unfortunatly due to history reasons we override the release name
+            port:
+              number: 8025
+  tls:
+  - hosts:
+    - {{ $host }}
+    secretName: {{ $host | trunc 59 }}-tls
+
+{{- end -}}
+
+
+

@@ -1,0 +1,50 @@
+#!/bin/bash
+
+echo "Deploy to kubernetes"
+echo "Release: $RELEASE_NAME"
+echo "URL (canonical): $HOST_CANONICAL"
+# use helmArgs defined in variables
+helmArgsEvaluated=$(echo $helmArgs | envsubst)
+
+# this bash-brainfuck simply splits $helmArgs by newline to an array...
+readarray -t helmArgsArray <<<"$helmArgsEvaluated"
+
+#Log the time until selfdestruct in case of review environment
+if [[ ${ENV_SHORT} == "review" ]]; then echo "NOTE - This deployment will stop itself after 2 weeks"; fi
+
+echo "all values"
+echo "$KUBE_VALUES"
+echo $KUBE_VALUES >__all_values.yml
+
+echo "doing helm upgrade"
+helm upgrade --install "$RELEASE_NAME" /helm-charts/$HELM_GITLAB_CHART_NAME \
+    --wait \
+    --timeout 15m0s \
+    --cleanup-on-fail \
+    --set global.componentName="$KUBE_APP_NAME" \
+    --set global.ENV_SHORT="$ENV_SHORT" \
+    --set global.CI_COMMIT_REF_SLUG="$CI_COMMIT_REF_SLUG" \
+    --set global.BUILD_ID="$BUILD_ID" \
+    --set image.repository="$CI_REGISTRY_IMAGE" \
+    --set image.pullSecret="$IMAGE_PULL_SECRET" \
+    --set image.name="$COMPONENT_NAME" \
+    --set image.tag="$IMAGE_TAG" \
+    --set image.pullPolicy=IfNotPresent \
+    --set application.hostCanonical="$HOST_CANONICAL" \
+    --set mongodb.enabled=$MONGODB_ENABLED \
+    --set mongodb.backup.enabled=$MONGODB_BACKUP_ENABLED \
+    --set mongodb-replicaset.replicas=$MONGODB_REPLICAS \
+    --set mongodb-replicaset.fullnameOverride=$KUBE_APP_NAME-mongodb-replicaset \
+    --set mongodb-replicaset.persistentVolume.storageClass="$MONGODB_STORAGE_CLASS" \
+    --set mailhog.fullnameOverride=$KUBE_APP_NAME-mailhog \
+    --set gitlab.visualReviewEnabled="$GITLAB_VISUAL_REVIEW_ENABLED" \
+    --set gitlab.app="$CI_PROJECT_PATH_SLUG" \
+    --set gitlab.projectPath="$CI_PROJECT_PATH" \
+    --set gitlab.mergeRequestId="$CI_MERGE_REQUEST_IID" \
+    --set gitlab.projectId="$CI_PROJECT_ID" \
+    --set gitlab.env="$CI_ENVIRONMENT_SLUG" \
+    --set namespace="$KUBE_NAMESPACE" \
+    --namespace="$KUBE_NAMESPACE" \
+    ${helmArgsArray[@]} \
+    --values __all_values.yml
+echo "Deployment successful 😻"

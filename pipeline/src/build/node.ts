@@ -3,6 +3,7 @@ import {
   GitlabJobCache,
   GitlabJobs,
   Retry,
+  GitlabJob,
 } from "../types/gitlab-types";
 import { Context } from "../types/context";
 import { createDockerBuildJob } from "./docker";
@@ -92,33 +93,36 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
   ];
 
   const yarnInstall = getYarnInstall(context);
-
+  const appBuildJob: GitlabJob | null =
+    buildConfig.buildCommand !== null
+      ? {
+          name: "app-build",
+          job: {
+            needs: [],
+            cache: [...getNodeCache(), ...getNextCache(context)],
+            variables: context.environment.variables,
+            retry: baseRetry,
+            interruptible: true,
+            stage: "build",
+            script: [
+              ...buildInfo,
+              ...yarnInstall,
+              ...(Array.isArray(buildConfig.buildCommand)
+                ? buildConfig.buildCommand
+                : [buildConfig.buildCommand]),
+            ],
+            artifacts: {
+              paths: [
+                context.componentConfig.dir + "/__build_info.json",
+                context.componentConfig.dir + "/dist",
+                context.componentConfig.dir + "/.next",
+              ],
+            },
+          },
+        }
+      : null;
   return [
-    {
-      name: "app-build",
-      job: {
-        needs: [],
-        cache: [...getNodeCache(), ...getNextCache(context)],
-        variables: context.environment.variables,
-        retry: baseRetry,
-        interruptible: true,
-        stage: "build",
-        script: [
-          ...buildInfo,
-          ...yarnInstall,
-          ...(Array.isArray(buildConfig.buildCommand)
-            ? buildConfig.buildCommand
-            : [buildConfig.buildCommand]),
-        ],
-        artifacts: {
-          paths: [
-            context.componentConfig.dir + "/__build_info.json",
-            context.componentConfig.dir + "/dist",
-            context.componentConfig.dir + "/.next",
-          ],
-        },
-      },
-    },
+    ...(appBuildJob ? [appBuildJob] : []),
     {
       name: "docker-build",
 
@@ -131,7 +135,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
               : "ensureNodeDockerfile",
           ], // TOOD: inline
         }),
-        needs: ["app-build"],
+        needs: appBuildJob ? ["app-build"] : [],
       },
     },
   ];

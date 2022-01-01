@@ -1,0 +1,14 @@
+apiVersion: v2
+description: a chart to rule them all
+name: the-panter-chart
+version: 1.0.0 # should not matter
+
+dependencies:
+  - name: mongodb-replicaset
+    version: 3.9.0
+    condition: mongodb.enabled
+    repository: https://kubernetes-charts.storage.googleapis.com
+  - name: mailhog
+    version: 5.0.1
+    condition: mailhog.enabled
+    repository: https://codecentric.github.io/helm-charts

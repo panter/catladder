@@ -1,0 +1,77 @@
+
+{{ $jobs := .Values.jobs }}
+{{ if $jobs }}
+{{ $context := . }}
+{{ range $key, $job := $jobs -}}
+
+{{- $name := (kindIs "map" $jobs) | ternary $key $job.name -}}
+{{- $defaultIndex := (kindIs "map" $jobs) | ternary 0 $key -}}
+
+apiVersion: batch/v1
+kind: Job
+
+metadata:
+  name: {{ include "fullname" $context | trunc 24 }}-{{ $name | trunc 24 }}-job
+  namespace: {{ $context.Release.Namespace }}
+  labels:
+    app: {{ $context.Release.Name }}
+    app.kubernetes.io/managed-by: {{$context.Release.Service | quote }}
+    app.kubernetes.io/instance: {{$context.Release.Name | quote }}
+    helm.sh/chart: "{{$context.Chart.Name}}-{{$context.Chart.Version}}"
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": "{{- default "post-install,post-upgrade" $job.hook -}}"
+    "helm.sh/hook-weight": "{{- default $defaultIndex $job.hookWeight -}}"
+    "helm.sh/hook-delete-policy": "{{- default "hook-succeeded,before-hook-creation" $job.hookDeletePolicy -}}"
+spec:
+  template:
+    spec:
+      {{- if $context.Values.image.pullSecret }}
+      imagePullSecrets:
+        - name: {{ $context.Values.image.pullSecret }}
+      {{- end }}
+      restartPolicy: Never
+      
+      containers:
+      - name: {{ $name }}-job
+        {{include "env" $context | nindent 8}}
+        {{if $job.image -}}
+        image: "{{ $job.image }}"
+        {{else}}
+        image: "{{ template "appImage" $context}}"
+        {{end}}
+        imagePullPolicy: {{ $context.Values.image.pullPolicy }}
+        # see https://github.com/kubernetes/kubernetes/issues/25908#issuecomment-308569672
+        command:  ["/bin/sh", "-c"]
+        args: 
+          - |
+            . /scripts/additionalEnv
+            trap "touch /tmp/pod/main-terminated" EXIT
+            {{$job.command}}
+        volumeMounts:
+        - name: scripts
+          mountPath: /scripts
+        - mountPath: /tmp/pod
+          name: tmp-pod
+        resources:
+{{ toYaml $context.Values.jobDefaults.resources | indent 10 }}
+
+      {{if $context.Values.cloudsql.enabled}}
+      - {{- include "cloudSqlContainer" $context | nindent 8 }}
+      {{- end }} 
+      volumes:
+        - name: scripts
+          configMap:
+            name: {{ template "fullname" $context }}-scripts
+            defaultMode: 0755
+        - name: tmp-pod
+          emptyDir: {}
+      {{if $context.Values.cloudsql.enabled}}
+        - {{- include "cloudSqlCredentialsVolume" $context | nindent 10 }}
+      {{- end }} 
+
+    
+---
+{{- end }}
+{{- end }}

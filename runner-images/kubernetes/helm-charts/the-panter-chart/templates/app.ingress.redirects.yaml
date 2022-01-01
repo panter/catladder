@@ -1,0 +1,91 @@
+{{- if .Values.application -}}
+{{ $app := .Values.application }}
+{{ $serviceName := include "fullname" . }}
+{{ $servicePort := .Values.service.externalPort }}
+
+{{ $hasCanonicalHost := ne $app.hostCanonical (default $app.hostCanonical $app.host) }}
+
+{{if $hasCanonicalHost -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ template "fullname" . }}-{{ $app.hostCanonical }}-redirect
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  annotations:
+  {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+    ingress.kubernetes.io/configuration-snippet: |
+      return 301 $scheme://{{ template "host" . }}$request_uri;
+spec:
+  rules:
+    - host: {{ $app.hostCanonical}}
+      http: 
+        paths:
+          - path: /
+            pathType: ImplementationSpecific          
+            backend:
+              service:
+                name: {{ template "fullname" . }}-app
+                port:
+                  number: {{ $servicePort }}
+  tls:
+    - secretName: {{ $app.hostCanonical | trunc 59}}-tls
+      hosts: 
+        - {{ $app.hostCanonical }}
+---
+{{- end }}
+
+{{ if $app.redirects }}
+{{ $context := . }}
+{{ range $index, $redirect := $app.redirects -}}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  {{- if $redirect.path }}
+  name: {{ template "fullname" $context }}-{{ $redirect.host }}-{{ $index }}-redirect
+  {{- else }}
+  name: {{ template "fullname" $context }}-{{ $redirect.host }}-redirect
+  {{- end }}
+  labels:
+    app: {{ template "name" $context }}
+    chart: {{$context.Chart.Name }}-{{$context.Chart.Version | replace "+" "_" }}
+    release: {{$context.Release.Name }}
+    heritage: {{$context.Release.Service }}
+  annotations:
+  {{- range $key, $value := $context.Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+  {{- end }}
+  {{- if $redirect.rule}}
+    ingress.kubernetes.io/configuration-snippet: |
+      {{ $redirect.rule }}
+  {{ else }}
+    ingress.kubernetes.io/configuration-snippet: |
+      return 301 $scheme://{{ template "host" $context }}$request_uri;
+  {{- end }}
+      
+spec:
+  rules:
+    - host: {{ $redirect.host}}
+      http: 
+        paths:
+          - path: {{ $redirect.path | default "/" }}
+            pathType: ImplementationSpecific          
+            backend:
+              service:
+                name: {{ template "fullname" $context }}-app
+                port:
+                  number: {{ $servicePort }}
+  tls:
+    - secretName: {{ $redirect.host | trunc 59 }}-tls
+      hosts: 
+        - {{ $redirect.host }}
+---
+{{- end }}
+{{- end }}
+{{- end }}
