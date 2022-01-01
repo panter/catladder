@@ -8,14 +8,6 @@
 
 echo "doing semantic release"
 
-yarn global add --silent semantic-release \
-  @semantic-release/commit-analyzer \
-  @semantic-release/release-notes-generator \
-  https://github.com/panter/git.git#b4037626cc583d3e9f7995ea0604b23730d0a22e \
-  @semantic-release/changelog \
-  @semantic-release/gitlab \
-  @semantic-release/exec
-
 if [ ! -e .releaserc ]; then
   cat >.releaserc <<EOF
 {
@@ -67,3 +59,4 @@ if [ ! -e .releaserc ]; then
 }
 EOF
 fi
+semantic-release

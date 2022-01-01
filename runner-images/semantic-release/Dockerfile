@@ -8,9 +8,10 @@ RUN yarn global add \
     semantic-release \
     @semantic-release/commit-analyzer \
     @semantic-release/release-notes-generator \
-    @semantic-release/git \
+    https://github.com/panter/git.git#b4037626cc583d3e9f7995ea0604b23730d0a22e \
     @semantic-release/changelog \
-    @semantic-release/gitlab;
+    @semantic-release/gitlab \
+    @semantic-release/exec;
 
 
 RUN mkdir p /scripts
