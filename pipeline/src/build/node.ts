@@ -9,6 +9,7 @@ import { Context } from "../types/context";
 import { createDockerBuildJob } from "./docker";
 import { isOfType } from "./types";
 
+const APP_BUILD_JOB_NAME = "🔨 app";
 const baseRetry: Retry = {
   max: 2,
   when: ["runner_system_failure", "stuck_or_timeout_failure"],
@@ -48,7 +49,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
   const yarnInstall = getYarnInstall(context);
   return [
     {
-      name: "audit",
+      name: "🛡 audit",
       perEnv: false,
       job: {
         ...base,
@@ -57,7 +58,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       },
     },
     {
-      name: "lint",
+      name: "👮 lint",
       perEnv: false,
       job: {
         ...base,
@@ -65,7 +66,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       },
     },
     {
-      name: "test",
+      name: "🧪 test",
       perEnv: false,
       job: {
         ...base,
@@ -96,7 +97,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
   const appBuildJob: GitlabJob | null =
     buildConfig.buildCommand !== null
       ? {
-          name: "app-build",
+          name: APP_BUILD_JOB_NAME,
           job: {
             needs: [],
             cache: [...getNodeCache(), ...getNextCache(context)],
@@ -124,7 +125,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
   return [
     ...(appBuildJob ? [appBuildJob] : []),
     {
-      name: "docker-build",
+      name: "🔨 docker",
 
       job: {
         ...createDockerBuildJob(context, {
@@ -135,7 +136,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
               : "ensureNodeDockerfile",
           ], // TOOD: inline
         }),
-        needs: appBuildJob ? ["app-build"] : [],
+        needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
       },
     },
   ];

@@ -2,7 +2,7 @@ import { GitlabJobs, GitlabJobDef } from "../types/gitlab-types";
 import { Context } from "../types/context";
 import { isOfType } from "./types";
 import { getRunnerImage } from "../runner";
-
+const DEPLOY_JOB_NAME = "🚀 kubernetes";
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
@@ -64,7 +64,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
       : undefined;
   return [
     {
-      name: "deploy-to-kubernetes",
+      name: DEPLOY_JOB_NAME,
 
       job: {
         ...base,
@@ -77,16 +77,16 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
         ],
         environment: {
           ...environment,
-          on_stop: "kubernetes-stop",
+          on_stop: "stop kubernetes",
           auto_stop_in: autoStop,
         },
       },
     },
     {
-      name: "kubernetes-stop",
+      name: "stop kubernetes",
       job: {
         ...base,
-        needs: ["deploy-to-kubernetes"],
+        needs: [DEPLOY_JOB_NAME],
         rules: [
           {
             if: "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/", // automatic on hotfix branches
