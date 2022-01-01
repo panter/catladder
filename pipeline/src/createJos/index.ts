@@ -1,7 +1,7 @@
 import { BUILD_TYPES } from "../build";
 import { createContext } from "../context";
 import { DEPLOY_TYPES } from "../deploy";
-import { Config } from "../types/config";
+import { Config, PipelineTrigger } from "../types/config";
 import { Context } from "../types/context";
 import { GitlabJobDef, GitlabJobs } from "../types/gitlab-types";
 
@@ -48,10 +48,11 @@ const replaceReferences = (
 export const createJobs = (
   envs: string[],
   config: Config,
-  componentName: string
+  componentName: string,
+  trigger: PipelineTrigger
 ): Record<string, GitlabJobDef> => {
   return envs.reduce((acc, env) => {
-    const context = createContext(componentName, config, env);
+    const context = createContext(componentName, config, env, trigger);
     const jobs = createRawJobs(context);
     return {
       ...acc,

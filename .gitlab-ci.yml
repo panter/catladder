@@ -4,6 +4,13 @@ variables:
   DOCKER_HOST: tcp://0.0.0.0:2375
   DOCKER_TLS_CERTDIR: ""
   INLINE_PIPELINE_IMAGE_TAG: "$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA" # we need to add the commit sha because the docker policy currently does not download images if already in cache with the same tag
+
+stages:
+  - test
+  - build
+  - deploy
+  - release
+
 workflow:
   rules:
     [
@@ -14,7 +21,7 @@ workflow:
       { if: "$CI_MERGE_REQUEST_ID" },
     ]
 
-build-packages:
+🔨 packages:
   cache:
     - key: node-modules
       policy: pull-push
@@ -51,37 +58,59 @@ build-packages:
     - docker tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG $CACHE_IMAGE
     - docker push $CACHE_IMAGE
 
-docker-build-base-pipeline:
-  needs: ["build-packages"]
+🔨 runner base-pipeline:
+  needs: ["🔨 packages"]
   variables:
     NAME: "base-pipeline"
     BUILD_CONTEXT: .
   extends:
     - .docker-build-base
 
-docker-build-kubernetes:
+🔨 runner kubernetes:
   variables:
     NAME: kubernetes
   extends:
     - .docker-build-base
 
-docker-build-jobs:
+🔨 runner jobs:
   variables:
     NAME: jobs
   extends:
     - .docker-build-base
 
-docker-build-docker-in-docker:
+🔨 runner docker-in-docker:
   variables:
     NAME: docker-build
   extends:
     - .docker-build-base
+🔨 runner semantic-release:
+  variables:
+    NAME: semantic-release
+  extends:
+    - .docker-build-base
 
-publish-includes:
-  needs: ["build-packages"]
+🚀 includes:
+  needs: ["🔨 packages"]
   variables:
     VERSION_TAG: $CI_COMMIT_REF_SLUG
   stage: deploy
   script:
     - 'echo "version: $VERSION_TAG"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ci-includes/dist/includes/gitlab-ci.yml "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/ci-includes/$VERSION_TAG/gitlab-ci.yml"'
+
+create release:
+  stage: release
+  image: $INLINE_DOCKER_REGISTRY/semantic-release:INLINE_PIPELINE_IMAGE_TAG
+  script:
+    - semanticRelease
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "parent_pipeline" # do not allow creating releases in a monorepo. this will handled in the parent pipeline insead
+      when: never
+    - if: $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/ # not after semantic release commit
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $AUTO_RELEASE == "true"
+      when: on_success
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
+      when: manual
