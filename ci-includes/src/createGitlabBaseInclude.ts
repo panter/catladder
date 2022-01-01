@@ -52,7 +52,7 @@ export const createGitlabBaseInclude = () => {
         ],
       },
     },
-    release: {
+    ["create release"]: {
       stage: "actions",
       image: getRunnerImage("semantic-release"),
       script: ["semanticRelease"],
