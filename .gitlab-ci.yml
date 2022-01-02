@@ -107,8 +107,8 @@ workflow:
     - VERSION=$([ "$CI_COMMIT_TAG" ] && echo "$CI_COMMIT_TAG" || echo "v0.0.0-$VERSION_TAG")
     - echo "publish version $VERSION"
     - cd cli
-    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.yarnrc
-    - cat .yarnrc
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc
+    - cat .npmrc
     - yarn publish --new-version $VERSION --verbose
 
 create release:
