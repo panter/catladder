@@ -104,6 +104,7 @@ workflow:
     VERSION_TAG: $CI_COMMIT_REF_SLUG
   stage: deploy
   script:
+    - cd cli
     - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc
     - yarn publish --new-version $VERSION_TAG
 
