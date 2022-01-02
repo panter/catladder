@@ -109,7 +109,7 @@ workflow:
     - cd cli
     - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.yarnrc
     - cat .yarnrc
-    - yarn publish --new-version $VERSION
+    - yarn publish --new-version $VERSION --verbose
 
 create release:
   stage: release
