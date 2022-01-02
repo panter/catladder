@@ -109,7 +109,7 @@ workflow:
     - cd cli
     - echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN-">.npmrc
     - cat .npmrc
-    - yarn publish --new-version $VERSION --access public
+    - yarn publish --new-version $VERSION --access public --tag canary
 
 create release:
   stage: release
