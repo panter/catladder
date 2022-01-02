@@ -98,6 +98,15 @@ workflow:
     - 'echo "version: $VERSION_TAG"'
     - 'curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ci-includes/dist/includes/gitlab-ci.yml "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/ci-includes/$VERSION_TAG/gitlab-ci.yml"'
 
+🚀 cli:
+  needs: ["🔨 packages"]
+  variables:
+    VERSION_TAG: $CI_COMMIT_REF_SLUG
+  stage: deploy
+  script:
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">.npmrc
+    - yarn publish --new-version $VERSION_TAG
+
 create release:
   stage: release
   image: $INLINE_DOCKER_REGISTRY/semantic-release:INLINE_PIPELINE_IMAGE_TAG
