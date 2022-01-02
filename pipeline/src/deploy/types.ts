@@ -1,4 +1,6 @@
-export type DeployConfigBase = {};
+export type DeployConfigBase = {
+  type: never;
+};
 export type DeployConfigKubernetes = {
   type: "kubernetes";
   additionalHelmArgs?: string[];

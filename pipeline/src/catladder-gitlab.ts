@@ -23,6 +23,7 @@ const readConfig = () => {
   );
   if (found) {
     if (found === "ts" || found === "js") {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       return require(fullPath(found)).default;
     } else {
       return parse(fullPath(found));

@@ -1,0 +1,27 @@
+import Vorpal from "vorpal";
+import { getCurrentConnectedClusterName } from "../../../../utils/cluster";
+import { getProjectNamespace } from "../../../../utils/projects";
+import { getGoogleAuthUserNumber } from "../../utils/getGoogleAuthUserNumber";
+import { openGoogleCloudKubernetesDashboard } from "../shared";
+import { envAutocompletion } from "./utils/autocompletions";
+import ensureCluster from "./utils/ensureCluster";
+
+export default (vorpal: Vorpal) =>
+  vorpal
+    .command(
+      "project-open-dashboard <env>",
+      "open kubernetes dashboard on google"
+    )
+    .autocomplete(envAutocompletion)
+    .action(async function ({ env }) {
+      await ensureCluster.call(this);
+      const clustername = await getCurrentConnectedClusterName();
+      const namespace = await getProjectNamespace(env);
+      const authGoogleNumber = await getGoogleAuthUserNumber.call(this, vorpal);
+
+      openGoogleCloudKubernetesDashboard(
+        authGoogleNumber,
+        clustername,
+        namespace
+      );
+    });
