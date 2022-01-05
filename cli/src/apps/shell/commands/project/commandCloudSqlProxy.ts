@@ -1,0 +1,64 @@
+import { spawn } from "child-process-promise";
+import { writeFile } from "fs-extra";
+import { withFile } from "tmp-promise";
+import Vorpal from "vorpal";
+import {
+  GOOGLE_CLOUD_SQL_PASS_PATH,
+  GOOGLE_PROJECT,
+} from "../../../../config/constants";
+import {
+  getEnvComponentChoices,
+  getProjectConfig,
+} from "../../../../config/getProjectConfig";
+import { readPass } from "../../../../utils/passwordstore";
+import { getAllEnvVars, getProjectValues } from "../../../../utils/projects";
+
+export default (vorpal: Vorpal) =>
+  vorpal
+    .command("project-cloud-sql-proxy <appEnv>", "proxy to cloud sql db")
+    .autocomplete(getEnvComponentChoices())
+    .action(async function ({ appEnv }) {
+      const [componentName, env] = appEnv.split("-");
+
+      const config = getProjectConfig();
+      // skynet-164509:europe-west6:pvl-cyclomania-review=tcp:5432
+
+      const { localPort } = await this.prompt({
+        type: "number",
+        name: "localPort",
+        default: "54320",
+        message: "Local port: ",
+      });
+
+      const POSTGRESQL_PASSWORD = (await getAllEnvVars(env, componentName))
+        ?.POSTGRESQL_PASSWORD;
+
+      const values = await getProjectValues(env, componentName);
+      this.log("");
+      this.log(`postgres-PW: ${POSTGRESQL_PASSWORD}`);
+      this.log("");
+
+      const projectId = values?.cloudsql?.projectId || GOOGLE_PROJECT;
+
+      const defaultInstanceId = `${config.customerName}-${config.appName}-${env}`;
+      const instanceId = values?.cloudsql?.instanceId || defaultInstanceId;
+
+      const defaultRegion = "europe-west6"; // currently hardcoded
+      const region = values?.cloudsql?.region || defaultRegion;
+
+      const instanceName = `${projectId}:${region}:${instanceId}=tcp:${localPort}`;
+
+      const cloudsqlCredentials = await readPass(GOOGLE_CLOUD_SQL_PASS_PATH);
+      await withFile(async ({ path: tmpFilePath }) => {
+        await writeFile(tmpFilePath, cloudsqlCredentials);
+
+        await spawn(
+          "cloud_sql_proxy",
+          ["-instances", instanceName, "-credential_file", tmpFilePath],
+          {
+            stdio: "inherit",
+            shell: true,
+          }
+        );
+      });
+    });

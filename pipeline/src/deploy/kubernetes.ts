@@ -2,6 +2,7 @@ import { GitlabJobs, GitlabJobDef } from "../types/gitlab-types";
 import { Context } from "../types/context";
 import { isOfType } from "./types";
 import { getRunnerImage } from "../runner";
+import { DOCKER_BUILD_JOB_NAME } from "../build/docker";
 const DEPLOY_JOB_NAME = "🚀 kubernetes";
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -65,6 +66,10 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   return [
     {
       name: DEPLOY_JOB_NAME,
+      envMode: "stagePerEnv", // makes it easier to run manual tasks er env
+
+      // we don't want to deploy when there is a broken test
+      needsStages: ["test"], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
 
       job: {
         ...base,
@@ -79,6 +84,12 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
         ],
         stage: "deploy",
         dependencies: [],
+        needs: [
+          {
+            job: DOCKER_BUILD_JOB_NAME,
+            artifacts: false,
+          },
+        ],
         script: [
           "kubernetesEnsureNamespace",
           "kubernetesCreateSecret",
@@ -93,6 +104,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     },
     {
       name: "stop kubernetes",
+      envMode: "stagePerEnv", // makes it easier to run manual tasks er env
       job: {
         ...base,
         needs: [DEPLOY_JOB_NAME],
@@ -111,7 +123,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
           ...base.variables,
           GIT_STRATEGY: "none",
         },
-        stage: "actions",
+        stage: "stop",
         dependencies: [],
         script: ["kubernetesDelete"],
         environment: {

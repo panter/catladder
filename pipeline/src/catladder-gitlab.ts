@@ -1,7 +1,7 @@
-import { existsSync, writeFileSync } from "fs";
-import { parse } from "yaml";
-import { createChildPipeline } from ".";
+import { writeFileSync } from "fs";
+import { readConfigSync } from "./config";
 import { PIPELINE_IMAGE_TAG } from "./constants";
+import { createChildPipeline } from "./pipeline";
 import { PipelineTrigger } from "./types";
 
 const {
@@ -16,20 +16,6 @@ const isHotfixBranch = false; // TODO:  $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x
 const isMergeRequest = Boolean(CI_MERGE_REQUEST_ID);
 const isTaggedRelease = Boolean(CI_COMMIT_TAG);
 
-const fullPath = (ext: string) => process.cwd() + "/catladder." + ext;
-const readConfig = () => {
-  const found = ["ts", "js", "yml", "yaml"].find((extension) =>
-    existsSync(fullPath(extension))
-  );
-  if (found) {
-    if (found === "ts" || found === "js") {
-      return require(fullPath(found)).default;
-    } else {
-      return parse(fullPath(found));
-    }
-  }
-};
-
 console.info(`catladder version ${PIPELINE_IMAGE_TAG}`);
 
 const trigger: PipelineTrigger | null =
@@ -41,7 +27,10 @@ const trigger: PipelineTrigger | null =
     ? "taggedRelease"
     : null;
 if (trigger) {
-  const config = readConfig();
+  const config = readConfigSync();
+  if (!config) {
+    throw new Error("no catladder config found");
+  }
   createChildPipeline(trigger, config).then((mainPipeline) => {
     writeFileSync(`__pipeline.yml`, JSON.stringify(mainPipeline, null, 2), {
       encoding: "utf-8",

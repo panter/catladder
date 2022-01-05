@@ -1,6 +1,7 @@
 import { getRunnerImage } from "../runner";
 import { GitlabJobDef, Context } from "../types";
 
+export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
 export const createDockerBuildJob = (
   context: Context,
   { script }: Pick<GitlabJobDef, "script">

@@ -1,5 +1,4 @@
-import { PipelineTrigger } from ".";
-import { ComponentConfig, Config, EnvType } from "./config";
+import { PipelineTrigger, ComponentConfig, Config, EnvType } from "./config";
 
 export type Environment = {
   hostname: string;
@@ -14,12 +13,12 @@ export type Environment = {
 export type CommitInfo = {
   refName: string;
   refSlug: string;
+  trigger: PipelineTrigger;
 };
 export type Context = {
   componentConfig: ComponentConfig;
   componentName: string;
   fullConfig: Config;
   environment: Environment;
-  commit: CommitInfo;
-  trigger: PipelineTrigger;
+  commitInfo?: CommitInfo;
 };

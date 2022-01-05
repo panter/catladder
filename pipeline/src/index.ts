@@ -1,6 +1,7 @@
 export * from "./build/node";
-
-export { createChildPipeline } from "./createChildPipeline";
+export * from "./pipeline/";
 export * from "./types";
 export * from "./rules";
-export { getRunnerImage } from "./runner";
+export * from "./runner";
+export * from "./config";
+export * from "./context";

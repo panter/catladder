@@ -1,11 +1,3 @@
-export type GitlabStage =
-  | "setup"
-  | "test"
-  | "build"
-  | "deploy"
-  | "verify"
-  | "actions";
-
 export type Artifacts = {
   paths: string[];
 };
@@ -40,11 +32,11 @@ export type GitlabEnvironment = {
   auto_stop_in?: string;
 };
 export type GitlabJobDef = {
-  stage: GitlabStage;
+  stage: string;
   before_script?: string[];
   script: (string | undefined)[];
   interruptible?: boolean;
-  needs?: string[];
+  needs?: Array<string | { job: string; artifacts: boolean }>;
   rules?: GitlabRule[];
   cache?: GitlabJobCache | GitlabJobCache[];
   artifacts?: Artifacts;
@@ -64,17 +56,36 @@ export type GitlabJobDef = {
   };
 };
 
+export const GITLAB_BASE_STAGES = [
+  "setup",
+  "test",
+  "build",
+  "deploy",
+  "verify",
+  "stop",
+] as const;
+export type GitlabBaseStage = typeof GITLAB_BASE_STAGES[number];
 export type GitlabVariables = Record<string, string | undefined>;
 
 export type GitlabJob = {
+  /**
+   * the name of the job (without any env or app prefix and suffix)
+   */
   name: string;
-  perEnv?: boolean;
+  /**
+   * envMode sets the behavior of the job regarding multiple envs:
+   * - none: the job does not run per env, but once for all envs
+   * - jobPerEnv: the job runs once per env
+   * - stagePerEnv: the job runs once per env and is organized in its own stage. This mproves usability in gitlab, but works the same as `jobPerEnv`
+   */
+  envMode: "jobPerEnv" | "stagePerEnv" | "none";
   job: GitlabJobDef;
+  needsStages?: GitlabBaseStage[];
 };
 export type GitlabJobs = GitlabJob[];
 
 export type GitlabPipeline = {
   variables: GitlabVariables;
-  stages: GitlabStage[];
+  stages: string[];
   jobs: GitlabJobs;
 };
