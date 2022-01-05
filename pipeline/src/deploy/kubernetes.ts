@@ -1,6 +1,6 @@
-import { GitlabJobs, GitlabJobDef } from "../types/gitlab-types";
+import { GitlabJobs } from "../types/gitlab-types";
 import { Context } from "../types/context";
-import { isOfType } from "./types";
+import { isOfDeployType } from "./types";
 import { getRunnerImage } from "../runner";
 import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "./base";
 import { merge } from "lodash";
@@ -10,7 +10,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   if (deployConfig === false) {
     return [];
   }
-  if (!isOfType(deployConfig, "kubernetes")) {
+  if (!isOfDeployType(deployConfig, "kubernetes")) {
     // should not happen
     throw new Error("deploy config is not kubernetes");
   }
@@ -27,12 +27,12 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   };
 
   const kubernetesEnvironment = {
-    namespace: context.environment.variables.KUBE_NAMESPACE,
+    namespace: context.environment.envVars.KUBE_NAMESPACE,
   };
-  const shared: Omit<GitlabJobDef, "stage" | "script"> = {
+  const shared = {
     image: getRunnerImage("kubernetes"),
     variables: {
-      ...context.environment.variables,
+      ...context.environment.envVars,
 
       MONGODB_ENABLED: "false", // TODO: remove the whole mongodb stuff and put it into values
       // TODO: refactor and unify with other stages

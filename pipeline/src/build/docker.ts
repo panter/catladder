@@ -1,6 +1,13 @@
 import { getRunnerImage } from "../runner";
 import { GitlabJobDef, Context } from "../types";
 
+const DOCKER_RUNNER_BUILD_VARIABLES = {
+  KUBERNETES_CPU_REQUEST: "0.5",
+  KUBERNETES_CPU_LIMIT: "1",
+  KUBERNETES_MEMORY_REQUEST: "1Gi",
+  KUBERNETES_MEMORY_LIMIT: "2Gi",
+};
+
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
 export const createDockerBuildJob = (
   context: Context,
@@ -17,6 +24,7 @@ export const createDockerBuildJob = (
       },
     ],
     variables: {
+      ...DOCKER_RUNNER_BUILD_VARIABLES,
       APP_DIR: context.componentConfig.dir,
       DOCKER_HOST: "tcp://0.0.0.0:2375",
       DOCKER_TLS_CERTDIR: "",
