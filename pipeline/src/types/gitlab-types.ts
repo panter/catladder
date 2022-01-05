@@ -80,7 +80,10 @@ export type GitlabJob = {
    */
   envMode: "jobPerEnv" | "stagePerEnv" | "none";
   job: GitlabJobDef;
-  needsStages?: GitlabBaseStage[];
+  needsStages?: {
+    stage: GitlabBaseStage;
+    artifacts?: boolean;
+  }[];
 };
 export type GitlabJobs = GitlabJob[];
 

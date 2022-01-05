@@ -17,6 +17,11 @@ export type DeployConfigKubernetes = {
   } & Record<string, any>;
 } & DeployConfigBase;
 
+type CustomDeployConfig = {
+  type: "custom";
+  script: string[];
+};
+
 export type DeployConfig = DeployConfigKubernetes;
 
 export const isOfType = <T extends DeployConfig["type"]>(
