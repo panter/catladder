@@ -4,14 +4,14 @@ import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
 import { DeployConfig } from "../deploy/types";
-import { Config, isKnowEnvType, PipelineTrigger } from "../types/config";
+import { Config, isKnowEnvType } from "../types/config";
 import { CommitInfo, Context, Environment } from "../types/context";
 
-const getEnvironment = (
+export const getEnvironment = (
   config: Config,
   componentName: string,
   env: string,
-  commitInfo: CommitInfo
+  commitInfo?: CommitInfo
 ): Environment => {
   const componentConfig = config.components[componentName];
   if (!componentConfig) {
@@ -19,13 +19,19 @@ const getEnvironment = (
   }
 
   const defaultConfig = componentConfig;
+
   const envConfig = componentConfig.env?.[env] ?? {};
+  if (envConfig === false) {
+    throw new Error("env is disabled: " + env);
+  }
 
   const mergedConfig = merge({}, defaultConfig, envConfig);
 
   const publicEnvVars = mergedConfig.vars?.public ?? {};
-  const secretEnvVarsRaw = mergedConfig.vars?.secret ?? {}; // TODO, map to gl secrets?
-  const secretEnvVars = {}; // TODO
+  const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
+  const secretEnvVars = Object.fromEntries(
+    secretEnvVarKeys.map((key) => [key, `$CL_${key}`])
+  );
   const referencedRaw = mergedConfig.vars?.fromComponents ?? {};
 
   const referenced = Object.entries(referencedRaw).reduce(
@@ -44,24 +50,23 @@ const getEnvironment = (
   );
   // env type: if its set manually, use that, otherwise use the known env types
 
-  const envType =
-    componentConfig.env?.[env]?.type ?? (isKnowEnvType(env) ? env : null);
+  const envType = envConfig?.type ?? (isKnowEnvType(env) ? env : null);
   if (!envType) {
     throw new Error(
       "Missing type in environment " + env + " in component " + componentName
     );
   }
   const environmentName =
-    envType === "review"
+    envType === "review" && commitInfo
       ? `${env}/${componentName}/${commitInfo.refName}`
       : `${env}/${componentName}`;
 
   const environmentSlug =
-    envType === "review"
+    envType === "review" && commitInfo
       ? `${env}-${componentName}-${commitInfo.refSlug}`
       : `${env}-${componentName}`;
   const KUBE_APP_NAME =
-    envType === "review"
+    envType === "review" && commitInfo
       ? `${componentName}-${commitInfo.refSlug}`
       : componentName;
 
@@ -70,9 +75,9 @@ const getEnvironment = (
 
   const APP_SLUG = slugify(KUBE_APP_NAME);
 
-  const HOST_CANONICAL = `${config.appName}-${APP_SLUG}.${config.customerName}.panter.cloud`;
+  const HOST_CANONICAL = `${config.appName}-${APP_SLUG}.${env}.${config.customerName}.panter.cloud`;
 
-  const hostname = mergedConfig.hostname ?? HOST_CANONICAL;
+  const hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
   const url = `https://${hostname}`;
 
   const predefinedVariables = {
@@ -103,10 +108,10 @@ const getEnvironment = (
 };
 
 export const createContext = (
-  componentName: string,
   config: Config,
+  componentName: string,
   env: string,
-  trigger: PipelineTrigger
+  commitInfo?: CommitInfo
 ): Context => {
   if (!/^[a-z0-9-]+$/.test(componentName)) {
     throw new Error(
@@ -120,6 +125,7 @@ export const createContext = (
   // envs can override the config
   const envConfig = rawConfig.env?.[env] ?? {};
   const componentConfigWithoutDefaults = merge({}, rawConfig, envConfig);
+
   // fill in defaults of build and deploy
   const defaults: {
     build: Partial<BuildConfig>;
@@ -136,16 +142,12 @@ export const createContext = (
         deploy: {},
       };
   const componentConfig = merge({}, defaults, componentConfigWithoutDefaults);
-  const commit = {
-    refName: process.env.CI_COMMIT_REF_NAME ?? "unknown",
-    refSlug: process.env.CI_COMMIT_REF_SLUG ?? "unknown",
-  };
+
   return {
     fullConfig: config,
     componentConfig,
     componentName,
-    environment: getEnvironment(config, componentName, env, commit),
-    commit: commit,
-    trigger,
+    environment: getEnvironment(config, componentName, env, commitInfo),
+    commitInfo,
   };
 };

@@ -1,5 +1,5 @@
 import { Config } from "../types";
-import { createChildPipeline } from "../";
+import { createChildPipeline } from "./createChildPipeline";
 
 describe("createChildPipeline", () => {
   describe("node-app to kuberntes", () => {

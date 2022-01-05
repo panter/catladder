@@ -6,7 +6,7 @@ import {
   GitlabJob,
 } from "../types/gitlab-types";
 import { Context } from "../types/context";
-import { createDockerBuildJob } from "./docker";
+import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "./docker";
 import { isOfType } from "./types";
 
 const APP_BUILD_JOB_NAME = "🔨 app";
@@ -37,7 +37,7 @@ const getNextCache = (context: Context): GitlabJobCache[] => [
 ];
 const createNodeTestJobs = (context: Context): GitlabJobs => {
   // don't run tests after release
-  if (context.trigger === "taggedRelease") {
+  if (context.commitInfo?.trigger === "taggedRelease") {
     return [];
   }
   const base: Omit<GitlabJobDef, "script"> = {
@@ -54,7 +54,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
   return [
     {
       name: "🛡 audit",
-      perEnv: false,
+      envMode: "none",
       job: {
         ...base,
         script: [...yarnInstall, "yarn audit"],
@@ -63,7 +63,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
     },
     {
       name: "👮 lint",
-      perEnv: false,
+      envMode: "none",
       job: {
         ...base,
         script: [...yarnInstall, "yarn lint"],
@@ -71,7 +71,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
     },
     {
       name: "🧪 test",
-      perEnv: false,
+      envMode: "none",
       job: {
         ...base,
         script: [...yarnInstall, "yarn test"],
@@ -102,6 +102,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
     buildConfig.buildCommand !== null
       ? {
           name: APP_BUILD_JOB_NAME,
+          envMode: "jobPerEnv",
           job: {
             needs: [],
             cache: [...getNodeCache(), ...getNextCache(context)],
@@ -129,8 +130,8 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
   return [
     ...(appBuildJob ? [appBuildJob] : []),
     {
-      name: "🔨 docker",
-
+      name: DOCKER_BUILD_JOB_NAME,
+      envMode: "jobPerEnv",
       job: {
         ...createDockerBuildJob(context, {
           script: [

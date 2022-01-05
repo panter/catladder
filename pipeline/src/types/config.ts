@@ -3,6 +3,10 @@ import { DeployConfig } from "../deploy/types";
 
 export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
 
+/**
+ * all env types with their trigger.
+ * Each env type has a default env with the same name which is always included
+ */
 export const ENV_TYPES = {
   dev: {
     trigger: "mainBranch",
@@ -10,13 +14,26 @@ export const ENV_TYPES = {
   review: {
     trigger: "mr",
   },
-  prod: {
-    trigger: "taggedRelease",
-  },
   stage: {
     trigger: "taggedRelease",
   },
+  prod: {
+    trigger: "taggedRelease",
+  },
 } as const;
+
+/**
+ *
+ * @param trigger a trigger
+ * @returns array of env types for that trigger. this is also the list of default envs
+ */
+export const getEnvTypesByTrigger = (trigger: PipelineTrigger) =>
+  Object.entries(ENV_TYPES)
+    .filter(([, e]) => e.trigger === trigger)
+    .map(([e]) => e as EnvType);
+
+export const DEFAULT_ENVS = Object.keys(ENV_TYPES);
+export const DEFAULT_ENV_TYPES = DEFAULT_ENVS as EnvType[];
 export type EnvType = keyof typeof ENV_TYPES;
 
 export const isKnowEnvType = (env: string): env is EnvType => {
@@ -28,7 +45,7 @@ export type DefaultEnvConfig = {
   build: BuildConfig;
   vars?: {
     public?: Record<string, any>;
-    secret?: Record<string, string>;
+    secret?: string[];
     fromComponents?: {
       [otherApp: string]: Record<string, string>;
     };
@@ -40,11 +57,11 @@ type EnvConfig<E extends EnvType = EnvType> = {
 } & Partial<DefaultEnvConfig>;
 
 export type Env = {
-  dev?: EnvConfig<"dev">;
-  stage?: EnvConfig<"stage">;
-  review?: EnvConfig<"review">;
-  prod?: EnvConfig<"prod">;
-} & Record<string, EnvConfig>;
+  dev?: EnvConfig<"dev"> | false;
+  stage?: EnvConfig<"stage"> | false;
+  review?: EnvConfig<"review"> | false;
+  prod?: EnvConfig<"prod"> | false;
+} & Record<string, EnvConfig | false>;
 
 export type ComponentConfig = {
   env?: Env;

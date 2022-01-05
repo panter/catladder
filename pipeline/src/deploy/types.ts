@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type DeployConfigBase = {};
 export type DeployConfigKubernetes = {
   type: "kubernetes";
