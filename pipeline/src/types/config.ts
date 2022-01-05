@@ -9,16 +9,16 @@ export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
  */
 export const ENV_TYPES = {
   dev: {
-    trigger: "mainBranch",
+    triggers: ["mainBranch", "taggedRelease"], // we also trigger dev on tagged release, so that the versions match
   },
   review: {
-    trigger: "mr",
+    triggers: ["mr"],
   },
   stage: {
-    trigger: "taggedRelease",
+    triggers: ["taggedRelease"],
   },
   prod: {
-    trigger: "taggedRelease",
+    triggers: ["taggedRelease"],
   },
 } as const;
 
@@ -29,7 +29,9 @@ export const ENV_TYPES = {
  */
 export const getEnvTypesByTrigger = (trigger: PipelineTrigger) =>
   Object.entries(ENV_TYPES)
-    .filter(([, e]) => e.trigger === trigger)
+    .filter(([, e]) =>
+      (e.triggers as readonly PipelineTrigger[]).includes(trigger)
+    )
     .map(([e]) => e as EnvType);
 
 export const DEFAULT_ENVS = Object.keys(ENV_TYPES);
