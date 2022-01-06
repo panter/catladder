@@ -13,13 +13,13 @@ import ensureCluster from "./utils/ensureCluster";
 export default (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-open-grafana <env>",
+      "project-open-grafana <envComponent>",
       "open Grafana dashboard for your namespace"
     )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
       const url = `http://localhost:${GRAFANA_PROXY_LOCAL_PORT}/grafana/d/at-cost-analysis-namespace2/namespace-utilization-metrics?var-namespace=${namespace}`;
       await startPortForward(
         "deployment/kubecost-cost-analyzer",

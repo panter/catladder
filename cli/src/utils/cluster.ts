@@ -9,8 +9,21 @@ export const getCurrentConnectedClusterName = async () => {
   return findKey(clusters, { fullName: currentContext });
 };
 
-export const getClusterByName = (name: string) => {
-  return clusters[name];
+export const getClusterByFullName = (fullName: string) => {
+  const found = Object.entries(getAllClusters()).find(
+    ([, config]) => config.fullName === fullName
+  );
+  if (found) {
+    return { name: found[0], cluster: found[1] };
+  } else {
+    return null;
+  }
+};
+
+export const getClusterByName = (name: string) => getAllClusters()[name];
+
+export const getAllClusters = () => {
+  return clusters;
 };
 
 export const getAllClusterNames = () => Object.keys(clusters);

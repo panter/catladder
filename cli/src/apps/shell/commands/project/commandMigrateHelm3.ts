@@ -37,7 +37,7 @@ export default (vorpal: Vorpal) =>
           // ignore
         }
 
-        const releaseName = await getEnvironmentByChoice(envComponent).variables
+        const releaseName = await getEnvironmentByChoice(envComponent).envVars
           .RELEASE_NAME; // TODO: maybe its own function would be better
         this.log(`helm release name: ${releaseName}`);
         this.log("");

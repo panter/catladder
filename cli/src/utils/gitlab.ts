@@ -39,14 +39,18 @@ export const getGitlabToken = async (vorpal: CommandInstance) => {
   return getPreference(TOKEN_KEY);
 };
 
-export const doGitlabRequest = async (
+export const doGitlabRequest = async <T = any>(
   vorpal: CommandInstance,
   path: string,
-  data?: any
-) => {
+  data: any = undefined,
+  update?: boolean
+): Promise<T> => {
   const rootToken = await getGitlabToken(vorpal);
+
+  const method = data ? (update ? "PUT" : "POST") : "GET";
+
   const result = await fetch(`https://git.panter.ch/api/v4/${path}`, {
-    method: data ? "POST" : "GET",
+    method,
     headers: {
       "Content-Type": "application/json",
       "Private-Token": rootToken,
@@ -94,4 +98,52 @@ export const getAllVariables = async (
 ): Promise<Array<GitlabVariable>> => {
   const { id } = await getProjectInfo(vorpal);
   return await doGitlabRequest(this, `projects/${id}/variables`);
+};
+
+const createVariable = async (
+  vorpal: CommandInstance,
+  projectId: string,
+  key: string,
+  value: string
+) => {
+  return await doGitlabRequest(this, `projects/${projectId}/variables`, {
+    key,
+    value,
+  });
+};
+
+const updateVariable = async (
+  vorpal: CommandInstance,
+  projectId: string,
+  key: string,
+  value: string
+) => {
+  return await doGitlabRequest(
+    this,
+    `projects/${projectId}/variables/${key}`,
+    {
+      value,
+    },
+    true
+  );
+};
+export const upsertAllVariables = async (
+  vorpal: CommandInstance,
+  variables: Record<string, string>,
+  env: string,
+  componentName: string
+): Promise<void> => {
+  const { id } = await getProjectInfo(vorpal);
+
+  console.log("upsertAllVariables", variables);
+
+  for (const [key, value] of Object.entries(variables ?? {})) {
+    const fullKey = "CL_" + env + "_" + componentName + "_" + key;
+
+    try {
+      await updateVariable(vorpal, id, fullKey, value);
+    } catch (e) {
+      await createVariable(vorpal, id, fullKey, value);
+    }
+  }
 };

@@ -2,7 +2,7 @@ import Vorpal from "vorpal";
 import { logError } from "../../../../utils/log";
 import {
   getProjectNamespace,
-  getProjectPodNames
+  getProjectPodNames,
 } from "../../../../utils/projects";
 import { getShell } from "../../../../utils/shell";
 
@@ -12,14 +12,14 @@ import ensureCluster from "./utils/ensureCluster";
 export default (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-get-shell <env>",
+      "project-get-shell <envComponent>",
       "get a shell to a pod in the environment"
     )
     .autocomplete(envAutocompletion)
-    .action(async function({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
-      const podNames = await getProjectPodNames(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
+      const podNames = await getProjectPodNames(envComponent);
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;
@@ -28,7 +28,7 @@ export default (vorpal: Vorpal) =>
         type: "list",
         name: "podName",
         choices: podNames,
-        message: "Which pod? 🤔"
+        message: "Which pod? 🤔",
       });
 
       return getShell(namespace, podName);

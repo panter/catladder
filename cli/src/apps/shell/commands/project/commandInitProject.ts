@@ -38,6 +38,9 @@ const DEFAULT_FILES_TO_CREATE: FileToCreate[] = [
       readFile(path.resolve(__dirname, "../includes/envrc"), "utf8"),
   },
 ];
+/*
+
+TODO: reimplement as PRESETS ? 
 const PLATFORMS: { [platformName: string]: PlatformDefinition } = {
   nextJS: {
     variables: {},
@@ -180,10 +183,15 @@ const PLATFORMS: { [platformName: string]: PlatformDefinition } = {
     values: {},
   },
 };
+
+*/
+
+const PLATFORMS: any = {};
 export default (vorpal: Vorpal) =>
   vorpal
     .command("project-init", "Inits a new project")
     .action(async function () {
+      throw new Error("needs reimplementation");
       const hasGitlabFile = await hasGitlabCiFile();
       if (hasGitlabFile) {
         this.log("there is already a gitlab-ci.yml file. Skipping");

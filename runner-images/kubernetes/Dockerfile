@@ -2,7 +2,7 @@
 FROM alpine:3.15
 
 # add bash
-RUN apk add --no-cache bash curl
+RUN apk add --no-cache bash curl gettext
 
 # kubernetes & helm
 ENV KUBERNETES_VERSION 1.19.14

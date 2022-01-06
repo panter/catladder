@@ -6,8 +6,12 @@ export type Environment = {
   shortName: string;
   slug: string;
   url: string;
-  variables: Record<string, string>;
+  /**
+   * env vars contain all build-time env vars. secrets have to be resolved (they are stored in gitlab)
+   */
+  envVars: Record<string, string>;
   envType: EnvType;
+  secretEnvVarKeys: string[];
 };
 
 export type CommitInfo = {

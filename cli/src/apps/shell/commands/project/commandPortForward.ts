@@ -10,12 +10,12 @@ import ensureCluster from "./utils/ensureCluster";
 
 export default (vorpal: Vorpal) =>
   vorpal
-    .command("project-port-forward <env>", "start port-forwarding")
+    .command("project-port-forward <envComponent>", "start port-forwarding")
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
-      const podNames = await getProjectPodNames(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
+      const podNames = await getProjectPodNames(envComponent);
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;

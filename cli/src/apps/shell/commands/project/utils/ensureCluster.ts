@@ -1,31 +1,33 @@
+import { isOfDeployType } from "@catladder/pipeline";
+import { getPipelineContextByChoice } from "../../../../../config/getProjectConfig";
 import {
   connectToCluster,
   getCurrentConnectedClusterName,
 } from "../../../../../utils/cluster";
-import { getLocalProjectVariables } from "../../../../../utils/projects/index";
-export default async function () {
-  const { CLUSTER_NAME } = await getLocalProjectVariables();
-  if (!CLUSTER_NAME) {
-    throw new Error("no CLUSTER_NAME configured in current project");
+export default async function (envComponent: string) {
+  const context = getPipelineContextByChoice(envComponent);
+  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+    throw new Error("can't ensure cluster for non-kubernetes deployments");
   }
+  const cluster = context.componentConfig.deploy.cluster || "production";
   const connectedClusterName = await getCurrentConnectedClusterName();
 
-  if (CLUSTER_NAME !== connectedClusterName) {
+  if (cluster !== connectedClusterName) {
     this.log(
       `you are currently connected to cluster '${connectedClusterName}'`
     );
-    this.log(`but the project requires cluster '${CLUSTER_NAME}'`);
+    this.log(`but the project requires cluster '${cluster}'`);
     const { shouldContinue } = await this.prompt({
       type: "confirm",
       name: "shouldContinue",
       default: true,
-      message: `Do you want to connect to '${CLUSTER_NAME}'?`,
+      message: `Do you want to connect to '${cluster}'?`,
     });
     if (!shouldContinue) {
       this.log("abort");
     } else {
-      await connectToCluster(CLUSTER_NAME);
-      this.log(`connected to cluster '${CLUSTER_NAME}'`);
+      await connectToCluster(cluster);
+      this.log(`connected to cluster '${cluster}'`);
     }
   }
 }

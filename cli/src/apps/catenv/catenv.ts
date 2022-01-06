@@ -1,36 +1,46 @@
-import { getAllEnvVars } from "../../utils/projects";
-import {
-  getCurrentSubApp,
-  getSubAppsInMonoRepo,
-} from "../shell/commands/project/utils/monorepo";
+import { ComponentConfig } from "@catladder/pipeline";
+import { getEnvVars, getProjectConfig } from "../../config/getProjectConfig";
+import { getGitRoot } from "../../utils/projects";
+import { join } from "path";
+const getCurrentComponentName = async (
+  components: Record<string, ComponentConfig>
+) => {
+  const gitRoot = await getGitRoot();
+  const currentDir = process.cwd();
+  return Object.keys(components).find((c) =>
+    currentDir.startsWith(join(gitRoot, components[c].dir))
+  );
+};
 
 const sanitizeEnvVarName = (name: string) => name.replace(/[\s\-.]+/g, "_");
 export default async () => {
-  const subapps = await getSubAppsInMonoRepo();
-  const currentSubApp = await getCurrentSubApp();
+  const { components } = getProjectConfig();
+
+  const currentComponent = await getCurrentComponentName(components);
   let variables = {};
-  if (currentSubApp) {
-    variables = await getAllEnvVars("dev-local", currentSubApp.componentName);
-  } else if (subapps.length > 0) {
+  if (currentComponent) {
+    variables = await getEnvVars(null, "dev-local:" + currentComponent);
+  } else {
     // when in a monorep and not in a subapp, merge all env vars.
     // this is not 100% correct, but better than not exporting any vars at all
     // so we also add prefixed variants
-    variables = await subapps.reduce(async (acc, subapp) => {
-      const subappvars = await getAllEnvVars("dev-local", subapp.componentName);
-      return {
-        ...(await acc),
-        ...subappvars,
-        // also add prefixed variants in case
-        ...Object.fromEntries(
-          Object.entries(subappvars).map(([key, value]) => [
-            `${sanitizeEnvVarName(subapp.componentName.toUpperCase())}_${key}`,
-            value,
-          ])
-        ),
-      };
-    }, {});
-  } else {
-    variables = await getAllEnvVars("dev-local");
+    variables = await Object.keys(components).reduce(
+      async (acc, componentName) => {
+        const subappvars = await getEnvVars(null, "dev-local:" + componentName);
+        return {
+          ...(await acc),
+          ...subappvars,
+          // also add prefixed variants in case
+          ...Object.fromEntries(
+            Object.entries(subappvars).map(([key, value]) => [
+              `${sanitizeEnvVarName(componentName.toUpperCase())}_${key}`,
+              value,
+            ])
+          ),
+        };
+      },
+      {}
+    );
   }
 
   console.log(

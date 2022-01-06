@@ -17,13 +17,13 @@ import ensureCluster from "./utils/ensureCluster";
 export default (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-open-grafana-pod <env>",
+      "project-open-grafana-pod <envComponent>",
       "open Grafana dashboard for a specific pod"
     )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const podNames = await getProjectPodNames(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const podNames = await getProjectPodNames(envComponent);
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;
@@ -34,7 +34,7 @@ export default (vorpal: Vorpal) =>
         choices: podNames,
         message: "Which pod? 🤔",
       });
-      const namespace = await getProjectNamespace(env);
+      const namespace = await getProjectNamespace(envComponent);
       const url = `http://localhost:${GRAFANA_PROXY_LOCAL_PORT}/grafana/d/at-cost-analysis-pod/pod-cost-and-utilization-metrics?var-namespace=${namespace}&var-pod=${podName}`;
       await startPortForward(
         "deployment/kubecost-cost-analyzer",

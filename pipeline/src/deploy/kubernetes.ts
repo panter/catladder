@@ -15,16 +15,43 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     throw new Error("deploy config is not kubernetes");
   }
 
+  const allEnvVars = context.environment.envVars;
+  /**
+   * separate by secrets and public.
+   * we evalulate the actual values later, but want to store the secrets in kubernetes secrets
+   */
+  const env = Object.entries(allEnvVars).reduce<{
+    secret: Record<string, string>;
+    public: Record<string, string>;
+  }>(
+    (acc, [key, value]) => {
+      if (value?.startsWith("$CL_")) {
+        acc.secret = {
+          ...acc.secret,
+          [key]: value,
+        };
+        return acc;
+      }
+      acc.public = {
+        ...acc.public,
+        [key]: value,
+      };
+      return acc;
+    },
+    {
+      secret: {},
+      public: {},
+    }
+  );
+
   const defaultKubeValues = {
     application: {
       hostname: context.environment.hostname,
       command: context.componentConfig.build.startCommand,
     },
+    env: env,
   };
-  const kubeValues = {
-    ...defaultKubeValues,
-    ...deployConfig.values,
-  };
+  const kubeValues = merge({}, defaultKubeValues, deployConfig.values);
 
   const kubernetesEnvironment = {
     namespace: context.environment.envVars.KUBE_NAMESPACE,

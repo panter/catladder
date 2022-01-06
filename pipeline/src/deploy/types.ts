@@ -2,6 +2,7 @@
 export type DeployConfigBase = {};
 export type DeployConfigKubernetes = {
   type: "kubernetes";
+  cluster?: string;
   additionalHelmArgs?: string[];
   values?: {
     application?: {
@@ -24,9 +25,9 @@ type CustomDeployConfig = {
 
 export type DeployConfig = DeployConfigKubernetes;
 
-export const isOfType = <T extends DeployConfig["type"]>(
-  t: DeployConfig,
+export const isOfDeployType = <T extends DeployConfig["type"]>(
+  t: DeployConfig | false,
   type: T
 ): t is Extract<DeployConfig, { type: T }> => {
-  return t.type === type;
+  return t && t.type === type;
 };

@@ -1,12 +1,14 @@
+import { isOfDeployType } from "@catladder/pipeline";
 import open from "open";
 import Vorpal from "vorpal";
-import { getClusterByName } from "../../../../utils/cluster";
-import { doGitlabRequest, getProjectInfo } from "../../../../utils/gitlab";
-import { readPass, syncBitwarden } from "../../../../utils/passwordstore/";
+import { getAllPipelineContexts } from "../../../../config/getProjectConfig";
 import {
-  getLocalProjectVariables,
-  getProjectNamespace,
-} from "../../../../utils/projects";
+  getClusterByFullName,
+  getClusterByName,
+} from "../../../../utils/cluster";
+import { doGitlabRequest, getProjectInfo } from "../../../../utils/gitlab";
+import { readPass } from "../../../../utils/passwordstore/";
+import { getProjectNamespace } from "../../../../utils/projects";
 
 export default (vorpal: Vorpal) =>
   vorpal
@@ -18,67 +20,111 @@ export default (vorpal: Vorpal) =>
       const { id: projectId, web_url: projectWebUrl } = await getProjectInfo(
         this
       );
-      await syncBitwarden();
-      const clusters = await doGitlabRequest(
+      const existingGitlabClusters = await doGitlabRequest<{ name: string }[]>(
         this,
         `projects/${projectId}/clusters`
       );
 
-      if (clusters.length === 0) {
+      const existingClusters = existingGitlabClusters.map(
+        (c: { name: string }) => {
+          const found = getClusterByFullName(c.name);
+
+          return {
+            name: found ? found.name : null,
+            fullName: c.name,
+          };
+        }
+      );
+
+      if (existingClusters.length === 0) {
         this.log("");
         this.log("there is no cluster on the current project?");
       } else {
         this.log("there are already these clusters on the gitlab: ");
         this.log("");
-        clusters.forEach((cluster: any) => this.log(` - ${cluster.name}`));
-      }
-
-      this.log("");
-      this.log("your project specifies the following cluster:");
-      this.log("");
-      const { CLUSTER_NAME } = await getLocalProjectVariables();
-      const configuredCluster = await getClusterByName(CLUSTER_NAME);
-      if (!configuredCluster) {
-        throw new Error(
-          `there exist no cluster with the name '${CLUSTER_NAME}'`
+        existingClusters.forEach((cluster) =>
+          this.log(` - ${cluster.name || "unknown"} (${cluster.fullName})`)
         );
       }
-      this.log(`${CLUSTER_NAME} (${configuredCluster.fullName})`);
-      this.log("");
-      const { shouldContinue } = await this.prompt({
-        type: "confirm",
-        name: "shouldContinue",
-        message: "Should I add the this cluster ? 🤔  ",
-      });
-      this.log("");
-      if (shouldContinue) {
-        const { api_url, passCredentials } = configuredCluster;
-        if (!api_url) {
-          throw new Error("no api_url on this cluster!");
-        }
-        if (!passCredentials) {
-          throw new Error("no passCredentials on this cluster!");
-        }
-        const token = await readPass(passCredentials.token);
-        const ca_cert = await readPass(passCredentials.ca_cert);
 
-        const postResult = await doGitlabRequest(
-          this,
-          `projects/${projectId}/clusters/user`,
-          {
-            name: configuredCluster.fullName,
-            managed: false,
-            platform_kubernetes_attributes: {
-              api_url,
-              ca_cert,
-              token,
-              namespace: await getProjectNamespace("prod"),
-            },
+      this.log("");
+      this.log("your project specifies the following clusters:");
+      this.log("");
+      const allContext = getAllPipelineContexts();
+      const allDeployments = allContext.map((c) => c.componentConfig.deploy);
+
+      const configuredClusterNames = allDeployments.reduce<string[]>(
+        (acc, c) => {
+          if (
+            isOfDeployType(c, "kubernetes") &&
+            !acc.includes(c.cluster || "production")
+          ) {
+            return [...acc, c.cluster || "production"];
           }
-        );
-        const { message } = postResult;
-        if (message) {
-          this.log(`Message from gitlab: ${message}`);
+          return acc;
+        },
+        []
+      );
+      const configuredClusters = configuredClusterNames.map((c) => ({
+        name: c,
+        config: getClusterByName(c),
+      }));
+      configuredClusters.forEach((cluster) =>
+        this.log(` - ${cluster.name || "unknown"} (${cluster.config.fullName})`)
+      );
+      this.log("");
+
+      const missingClusters = configuredClusters.filter(
+        (c) => !existingClusters.some((exist) => exist.name === c.name)
+      );
+
+      this.log("");
+      this.log("These clusters are not configured yet on gitlab:");
+      this.log("");
+
+      missingClusters.forEach((cluster) =>
+        this.log(` - ${cluster.name || "unknown"} (${cluster.config.fullName})`)
+      );
+      this.log("");
+
+      for (const cluster of missingClusters) {
+        this.log(`${cluster} (${cluster.config.fullName})`);
+        this.log("");
+        const { shouldContinue } = await this.prompt({
+          type: "confirm",
+          name: "shouldContinue",
+          message: "Should I add the this cluster ? 🤔  ",
+        });
+        this.log("");
+        if (shouldContinue) {
+          const { api_url, passCredentials } = cluster.config;
+          if (!api_url) {
+            throw new Error("no api_url on this cluster!");
+          }
+          if (!passCredentials) {
+            throw new Error("no passCredentials on this cluster!");
+          }
+          const token = await readPass(passCredentials.token);
+          const ca_cert = await readPass(passCredentials.ca_cert);
+
+          const postResult = await doGitlabRequest(
+            this,
+            `projects/${projectId}/clusters/user`,
+            {
+              name: cluster.config.fullName,
+              managed: false,
+              platform_kubernetes_attributes: {
+                api_url,
+                ca_cert,
+                token,
+                namespace: await getProjectNamespace("prod"),
+              },
+            }
+          );
+          const { message } = postResult;
+          if (message) {
+            this.log(`Message from gitlab: ${message}`);
+          }
         }
       }
 

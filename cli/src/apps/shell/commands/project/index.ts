@@ -22,7 +22,7 @@ import commandPauseProject from "./commandPauseProject";
 import commandOpenGrafana from "./commandOpenGrafana";
 import commandPortForward from "./commandPortForward";
 import commandTriggerCronjob from "./commandTriggerCronjob";
-import commandVariables from "./commandVariables";
+
 import commandOpenGrafanaPod from "./commandOpenGrafanaPod";
 
 export default (vorpal: Vorpal) => {
@@ -30,7 +30,6 @@ export default (vorpal: Vorpal) => {
   commandInitGitlab(vorpal);
   commandEnvVars(vorpal);
 
-  commandVariables(vorpal);
   commandNamespace(vorpal);
   commandListPods(vorpal);
   commandPauseProject(vorpal);
