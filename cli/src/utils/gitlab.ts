@@ -97,7 +97,7 @@ export const getAllVariables = async (
   vorpal: CommandInstance
 ): Promise<Array<GitlabVariable>> => {
   const { id } = await getProjectInfo(vorpal);
-  return await doGitlabRequest(this, `projects/${id}/variables`);
+  return await doGitlabRequest(vorpal, `projects/${id}/variables`);
 };
 
 const createVariable = async (
@@ -106,7 +106,7 @@ const createVariable = async (
   key: string,
   value: string
 ) => {
-  return await doGitlabRequest(this, `projects/${projectId}/variables`, {
+  return await doGitlabRequest(vorpal, `projects/${projectId}/variables`, {
     key,
     value,
   });
@@ -119,7 +119,7 @@ const updateVariable = async (
   value: string
 ) => {
   return await doGitlabRequest(
-    this,
+    vorpal,
     `projects/${projectId}/variables/${key}`,
     {
       value,
