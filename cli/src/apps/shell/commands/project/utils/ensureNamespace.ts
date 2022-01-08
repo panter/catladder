@@ -1,10 +1,9 @@
 import { V1Namespace, V1ObjectMeta } from "@kubernetes/client-node";
 import k8sApi from "../../../../../k8sApi";
-import { Env } from "../../../../../types/types";
 import { getProjectNamespace } from "../../../../../utils/projects/index";
 
-export default async function (env: Env) {
-  const namespace = await getProjectNamespace(env);
+export default async function (envComponent: string) {
+  const namespace = await getProjectNamespace(envComponent);
   try {
     await k8sApi.readNamespace(namespace);
   } catch (e) {

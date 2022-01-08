@@ -7,8 +7,14 @@ import {
 } from "../types/gitlab-types";
 import { Context } from "../types/context";
 import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "./docker";
-import { isOfType } from "./types";
+import { isOfBuildType } from "./types";
 
+const NODE_RUNNER_BUILD_VARIABLES = {
+  KUBERNETES_CPU_REQUEST: "0.5",
+  KUBERNETES_CPU_LIMIT: "1",
+  KUBERNETES_MEMORY_REQUEST: "1Gi",
+  KUBERNETES_MEMORY_LIMIT: "2Gi",
+};
 const APP_BUILD_JOB_NAME = "🔨 app";
 const baseRetry: Retry = {
   max: 2,
@@ -43,6 +49,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
   const base: Omit<GitlabJobDef, "script"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,
+      ...NODE_RUNNER_BUILD_VARIABLES,
     },
     cache: getNodeCache(),
     stage: "test",
@@ -84,9 +91,9 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
   const buildConfig = context.componentConfig.build;
 
   if (
-    !isOfType(buildConfig, "node") &&
-    !isOfType(buildConfig, "node-static") &&
-    !isOfType(buildConfig, "storybook")
+    !isOfBuildType(buildConfig, "node") &&
+    !isOfBuildType(buildConfig, "node-static") &&
+    !isOfBuildType(buildConfig, "storybook")
   ) {
     // should not happen
     throw new Error("deploy config is not node or node-static or storybook");
@@ -106,7 +113,10 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
           job: {
             needs: [],
             cache: [...getNodeCache(), ...getNextCache(context)],
-            variables: context.environment.variables,
+            variables: {
+              ...NODE_RUNNER_BUILD_VARIABLES,
+              ...context.environment.envVars,
+            },
             retry: baseRetry,
             interruptible: true,
             stage: "build",

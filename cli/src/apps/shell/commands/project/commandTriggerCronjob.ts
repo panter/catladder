@@ -51,11 +51,11 @@ export default (vorpal: Vorpal) => {
       await triggerCronjob.call(this, namespace);
     });
   vorpal
-    .command("project-trigger-cronjob <env>", "trigger cronjob")
+    .command("project-trigger-cronjob <envComponent>", "trigger cronjob")
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
       await triggerCronjob.call(this, namespace);
     });
 };

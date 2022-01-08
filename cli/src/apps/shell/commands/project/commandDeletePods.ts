@@ -1,4 +1,3 @@
-import { V1DeleteOptions } from "@kubernetes/client-node";
 import Vorpal from "vorpal";
 import k8sApi from "../../../../k8sApi";
 
@@ -12,12 +11,12 @@ import ensureCluster from "./utils/ensureCluster";
 
 export default (vorpal: Vorpal) =>
   vorpal
-    .command("project-delete-pods <env>", "delete / restart pods")
+    .command("project-delete-pods <envComponent>", "delete / restart pods")
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
-      const podNames = await getProjectPodNames(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
+      const podNames = await getProjectPodNames(envComponent);
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;

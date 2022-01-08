@@ -147,40 +147,13 @@ convert value to json-string if its an object
 
 envFrom:
   - configMapRef:
-      name: {{ template "fullname" . }}-app-env
+      name: {{ template "fullname" $ }}-app-env
 env: 
-  {{- range $componentName, $envVars := .Values.env.fromComponents }}
-  {{- range $key, $keyInConfigMap := $envVars}}
-  - name: {{ $key }}
-    valueFrom:
-      configMapKeyRef:
-        name: {{ $componentName}}-app-env
-        key: {{$keyInConfigMap}}
-        optional: true
-  {{- end }}
-  {{- end }}
-  
-  # in mrs, we need to add additional review suffix
-  # we mark this as "optional", so it falls back to the other keys.
-  # this is the case for non-monorepo multi apps
-  {{ if (eq .Values.global.ENV_SHORT "review")}}
-  {{- range $componentName, $envVars := .Values.env.fromComponents }}
-  {{- range $key, $keyInConfigMap := $envVars}}
-  - name: {{ $key }}
-    valueFrom:
-      configMapKeyRef:
-        name: {{ $componentName}}-{{ $context.Values.global.CI_COMMIT_REF_SLUG }}-app-env
-        key: {{$keyInConfigMap}}
-        optional: true
-  {{- end }}
-  {{- end }}
-  {{- end }}
-
   {{- range $key, $val := .Values.env.secret }}
   - name: {{ $key }}
     valueFrom:
       secretKeyRef:
-        name: {{ $val }}
+        name: {{ template "fullname" $ }}-app-secrets
         key: {{ $key }}
   {{- end }}
 

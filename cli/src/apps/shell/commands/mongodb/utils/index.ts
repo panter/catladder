@@ -1,5 +1,4 @@
 import { exec, spawn } from "child-process-promise";
-import { Env } from "../../../../../types/types";
 import {
   getProjectNamespace,
   getProjectPodNames,
@@ -8,8 +7,8 @@ import {
 const filterMongoDbs = (podNames: string[]) =>
   podNames.filter((name) => name.includes("mongodb-replicaset"));
 
-export const getProjectMongodbAllPods = async (env: Env) =>
-  filterMongoDbs(await getProjectPodNames(env));
+export const getProjectMongodbAllPods = async (envComponent: string) =>
+  filterMongoDbs(await getProjectPodNames(envComponent));
 
 export const getMongodbShell = async (namespace: string, podName: string) => {
   const command = `kubectl exec -it ${podName} --namespace ${namespace} mongo`;
@@ -55,12 +54,12 @@ export const podIsMaster = async (namespace: string, podName: string) => {
 
 const spaces = (n: number) => " ".repeat(n);
 
-export const getMongoDbPodsWithReplInfo = async (env: Env) => {
-  const namespace = await getProjectNamespace(env);
+export const getMongoDbPodsWithReplInfo = async (envComponent: string) => {
+  const namespace = await getProjectNamespace(envComponent);
   return (
     await Promise.all(
       (
-        await getProjectMongodbAllPods(env)
+        await getProjectMongodbAllPods(envComponent)
       ).map(async (podName) => ({
         podName,
         componentName: podName.replace(/-mongodb-replicaset-[0-9]+/, ""),
@@ -70,8 +69,10 @@ export const getMongoDbPodsWithReplInfo = async (env: Env) => {
   ).sort((podA, podB) => (podA.isMaster ? (podB.isMaster ? 0 : -1) : 1));
 };
 
-export const getProjectMongodbAllPodsSortedWithLabel = async (env: Env) => {
-  const pods = await getMongoDbPodsWithReplInfo(env);
+export const getProjectMongodbAllPodsSortedWithLabel = async (
+  envComponent: string
+) => {
+  const pods = await getMongoDbPodsWithReplInfo(envComponent);
   const maxComponentNameLength = Math.max(
     ...pods.map((c) => c.componentName.length)
   );

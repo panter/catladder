@@ -37,12 +37,12 @@ const removeFinalizerAndDelete = async (
 export default (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-mongo-destroy-member <env>",
+      "project-mongo-destroy-member <envComponent>",
       "DESTROY a member of a replicaset in order to reinitialize it"
     )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
       this.log(
         "this command tries to delete a (secondary) member of the replicaset, it's persistent volume claim (pvc) and the volume"
       );
@@ -74,10 +74,10 @@ export default (vorpal: Vorpal) =>
         throw new Error("abort");
       }
 
-      const namespace = await getProjectNamespace(env);
-      const mongodbPods = await getMongoDbPodsWithReplInfo(env);
+      const namespace = await getProjectNamespace(envComponent);
+      const mongodbPods = await getMongoDbPodsWithReplInfo(envComponent);
 
-      const pvcs = await getProjectPvcs(env);
+      const pvcs = await getProjectPvcs(envComponent);
       const secondaries = mongodbPods.filter((pod) => !pod.isMaster);
 
       if (secondaries.length === 0) {

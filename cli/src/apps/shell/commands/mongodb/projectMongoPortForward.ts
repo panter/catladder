@@ -8,12 +8,17 @@ import { getProjectMongodbAllPodsSortedWithLabel } from "./utils";
 
 export default (vorpal: Vorpal) =>
   vorpal
-    .command("project-mongo-port-forward <env>", "port foward to a mongodb")
+    .command(
+      "project-mongo-port-forward <envComponent>",
+      "port foward to a mongodb"
+    )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
-      const podNames = await getProjectMongodbAllPodsSortedWithLabel(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
+      const podNames = await getProjectMongodbAllPodsSortedWithLabel(
+        envComponent
+      );
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;

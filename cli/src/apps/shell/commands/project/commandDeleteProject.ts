@@ -1,18 +1,17 @@
 import Vorpal from "vorpal";
-import { exec, spawn } from "child-process-promise";
-import { Env } from "../../../../types/types";
+import { exec } from "child-process-promise";
 import { getProjectNamespace } from "../../../../utils/projects";
 import { envAutocompletion } from "./utils/autocompletions";
 
 export default (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-delete <env>",
+      "project-delete <envComponent>",
       "deletes a environment of a project (it deletes the namespace)"
     )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      const namespace = await getProjectNamespace(env as Env);
+    .action(async function ({ envComponent }) {
+      const namespace = await getProjectNamespace(envComponent);
       const { shouldContinue } = await this.prompt({
         type: "confirm",
         name: "shouldContinue",

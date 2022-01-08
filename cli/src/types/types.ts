@@ -1,5 +1,3 @@
-export type Env = "dev-local" | "prod" | "dev" | "stage" | "review";
-
 export type KubernetesSecretName = string;
 export interface ISecrets {
   [key: string]: KubernetesSecretName;

@@ -84,6 +84,9 @@ const replaceReferences = (
     ),
   };
 };
+function notNil<TValue>(value: TValue | null | undefined): value is TValue {
+  return value !== null && value !== undefined;
+}
 
 // this can be removed once https://gitlab.com/gitlab-org/gitlab/-/issues/220758 is resolved
 const addStageNeeds = (jobs: GitlabJobs): GitlabJobs => {
@@ -94,8 +97,18 @@ const addStageNeeds = (jobs: GitlabJobs): GitlabJobs => {
     }
 
     const neededJobs = jobs
-      .filter((j) => job.needsStages?.some((s) => j.job.stage === s))
-      .map((j) => j.name);
+      .map((j) => {
+        const neededStage = job.needsStages?.find(
+          (s) => j.job.stage === s.stage
+        );
+        if (neededStage) {
+          return {
+            job: j.name,
+            artifacts: neededStage.artifacts ?? false,
+          };
+        }
+      })
+      .filter(notNil);
     return {
       ...job,
       job: {

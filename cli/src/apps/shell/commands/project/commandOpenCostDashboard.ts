@@ -13,11 +13,14 @@ import { envAutocompletion } from "./utils/autocompletions";
 import ensureCluster from "./utils/ensureCluster";
 export default (vorpal: Vorpal) =>
   vorpal
-    .command("project-check-costs <env>", "Shows you how much you're spending")
+    .command(
+      "project-check-costs <envComponent>",
+      "Shows you how much you're spending"
+    )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
       const url = `http://localhost:${GRAFANA_PROXY_LOCAL_PORT}/namespace.html?name=${namespace}`;
       await startPortForward(
         "deployment/kubecost-cost-analyzer",

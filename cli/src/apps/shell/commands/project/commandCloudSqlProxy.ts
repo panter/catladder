@@ -1,3 +1,4 @@
+import { isOfDeployType } from "@catladder/pipeline";
 import { spawn } from "child-process-promise";
 import { writeFile } from "fs-extra";
 import { withFile } from "tmp-promise";
@@ -8,17 +9,19 @@ import {
 } from "../../../../config/constants";
 import {
   getEnvComponentChoices,
+  getEnvVars,
+  getPipelineContextByChoice,
   getProjectConfig,
+  parseChoice,
 } from "../../../../config/getProjectConfig";
 import { readPass } from "../../../../utils/passwordstore";
-import { getAllEnvVars, getProjectValues } from "../../../../utils/projects";
 
 export default (vorpal: Vorpal) =>
   vorpal
-    .command("project-cloud-sql-proxy <appEnv>", "proxy to cloud sql db")
+    .command("project-cloud-sql-proxy <envComponent>", "proxy to cloud sql db")
     .autocomplete(getEnvComponentChoices())
-    .action(async function ({ appEnv }) {
-      const [componentName, env] = appEnv.split("-");
+    .action(async function ({ envComponent }) {
+      const { env } = parseChoice(envComponent);
 
       const config = getProjectConfig();
       // skynet-164509:europe-west6:pvl-cyclomania-review=tcp:5432
@@ -30,13 +33,17 @@ export default (vorpal: Vorpal) =>
         message: "Local port: ",
       });
 
-      const POSTGRESQL_PASSWORD = (await getAllEnvVars(env, componentName))
+      const POSTGRESQL_PASSWORD = (await getEnvVars(this, envComponent))
         ?.POSTGRESQL_PASSWORD;
 
-      const values = await getProjectValues(env, componentName);
-      this.log("");
+      const context = await getPipelineContextByChoice(envComponent);
+      if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+        throw new Error("currently only supported for kubernetes deployment");
+      }
       this.log(`postgres-PW: ${POSTGRESQL_PASSWORD}`);
       this.log("");
+
+      const values = context.componentConfig.deploy.values;
 
       const projectId = values?.cloudsql?.projectId || GOOGLE_PROJECT;
 

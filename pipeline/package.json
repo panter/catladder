@@ -4,6 +4,7 @@
   "scripts": {
     "build:tsc": "yarn tsc",
     "build": "yarn tsc && yarn build:inline-variables",
+    "build:watch": "yarn tsc -w",
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
     "test": "jest",
     "lint": "eslint \"src/**/*.ts\"",
@@ -19,14 +20,14 @@
     "babel-plugin-transform-inline-environment-variables": "^0.4.3"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.172",
-    "@types/node": "^16.6.1",
     "@babel/cli": "^7.16.0",
     "@gitbeaker/node": "^32.1.2",
+    "@types/lodash": "^4.14.172",
+    "@types/node": "^16.6.1",
     "lodash": "^4.17.21",
     "slugify": "^1.6.3",
     "ts-node": "^10.4.0",
-    "yaml": "^1.10.2",
-    "typescript": "^4.5.4"
+    "typescript": "^4.5.4",
+    "yaml": "^1.10.2"
   }
 }

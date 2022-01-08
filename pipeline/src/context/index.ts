@@ -30,21 +30,24 @@ export const getEnvironment = (
   const publicEnvVars = mergedConfig.vars?.public ?? {};
   const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
   const secretEnvVars = Object.fromEntries(
-    secretEnvVarKeys.map((key) => [key, `$CL_${key}`])
+    secretEnvVarKeys.map((key) => [key, `$CL_${env}_${componentName}_${key}`])
   );
   const referencedRaw = mergedConfig.vars?.fromComponents ?? {};
 
   const referenced = Object.entries(referencedRaw).reduce(
     (acc, [otherApp, mapping]) => {
       // TODO: prevent infinit looop
-      const { variables } = getEnvironment(config, otherApp, env, commitInfo);
+      const { envVars } = getEnvironment(config, otherApp, env, commitInfo);
 
-      return Object.fromEntries(
-        Object.entries(mapping).map(([ourKey, otherKey]) => [
-          ourKey,
-          variables[otherKey],
-        ])
-      );
+      return {
+        ...acc,
+        ...Object.fromEntries(
+          Object.entries(mapping).map(([ourKey, otherKey]) => [
+            ourKey,
+            envVars[otherKey],
+          ])
+        ),
+      };
     },
     {}
   );
@@ -89,7 +92,7 @@ export const getEnvironment = (
     ENV_SHORT: env,
     APP_DIR: componentConfig.dir,
   };
-  const variables = {
+  const envVars = {
     ...predefinedVariables,
     ...publicEnvVars,
     ...secretEnvVars,
@@ -103,7 +106,8 @@ export const getEnvironment = (
     slug: environmentSlug,
     shortName: env,
     url: url,
-    variables,
+    envVars,
+    secretEnvVarKeys,
   };
 };
 

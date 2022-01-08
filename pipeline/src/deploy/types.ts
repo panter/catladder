@@ -2,6 +2,7 @@
 export type DeployConfigBase = {};
 export type DeployConfigKubernetes = {
   type: "kubernetes";
+  cluster?: string;
   additionalHelmArgs?: string[];
   values?: {
     application?: {
@@ -17,11 +18,16 @@ export type DeployConfigKubernetes = {
   } & Record<string, any>;
 } & DeployConfigBase;
 
+type CustomDeployConfig = {
+  type: "custom";
+  script: string[];
+};
+
 export type DeployConfig = DeployConfigKubernetes;
 
-export const isOfType = <T extends DeployConfig["type"]>(
-  t: DeployConfig,
+export const isOfDeployType = <T extends DeployConfig["type"]>(
+  t: DeployConfig | false,
   type: T
 ): t is Extract<DeployConfig, { type: T }> => {
-  return t.type === type;
+  return t && t.type === type;
 };

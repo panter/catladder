@@ -26,10 +26,10 @@ fi
 
 if [ -f "$APP_DIR/yarn.lock" ]; then
     # is not a monorepo, copy
-    YARN_INSTALL="COPY --chown=node:node $APP_DIR/package.json $APP_DIR/yarn.lock ./"
+    COPY_YARN_FILES="COPY --chown=node:node $APP_DIR/package.json $APP_DIR/yarn.lock ./"
 else
     # maybe a monorepo
-    YARN_INSTALL="COPY --chown=node:node $APP_DIR/package.json yarn.lock ./"
+    COPY_YARN_FILES="COPY --chown=node:node $APP_DIR/package.json yarn.lock ./"
 fi
 
 if [ ! -f $APP_DIR/Dockerfile ]; then
@@ -42,7 +42,7 @@ WORKDIR /app
 $DOCKERFILE_ADDITIONS
 
 RUN apk add --no-cache git curl
-$YARN_INSTALL
+$COPY_YARN_FILES
 RUN chown -R node:node .
 USER node
 

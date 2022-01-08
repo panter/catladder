@@ -23,7 +23,7 @@ export type BuildConfig =
   | BuildConfigNodeStatic
   | BuildConfigStorybook;
 
-export const isOfType = <T extends BuildConfig["type"]>(
+export const isOfBuildType = <T extends BuildConfig["type"]>(
   t: BuildConfig,
   type: T
 ): t is Extract<BuildConfig, { type: T }> => {

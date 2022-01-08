@@ -7,6 +7,7 @@ import {
 import {
   getEnvVars,
   getProjectConfig,
+  parseChoice,
 } from "../../../../config/getProjectConfig";
 import { readPass } from "../../../../utils/passwordstore";
 import { envAutocompletion } from "./utils/autocompletions";
@@ -19,7 +20,7 @@ export default (vorpal: Vorpal) =>
     )
     .autocomplete(envAutocompletion)
     .action(async function copyDB({ envComponent }) {
-      const [env, componentName] = envComponent.split("-");
+      const { env, componentName } = parseChoice(envComponent);
       const { customerName, appName } = getProjectConfig();
 
       const { shouldContinue } = await this.prompt({

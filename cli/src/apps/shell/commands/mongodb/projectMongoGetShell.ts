@@ -5,20 +5,22 @@ import { envAutocompletion } from "../project/utils/autocompletions";
 import ensureCluster from "../project/utils/ensureCluster";
 import {
   getMongodbShell,
-  getProjectMongodbAllPodsSortedWithLabel
+  getProjectMongodbAllPodsSortedWithLabel,
 } from "./utils";
 
 export default (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-mongo-get-shell <env>",
+      "project-mongo-get-shell <envComponent>",
       "get a shell to a mongodb in the environment"
     )
     .autocomplete(envAutocompletion)
-    .action(async function({ env }) {
-      await ensureCluster.call(this);
-      const namespace = await getProjectNamespace(env);
-      const podNames = await getProjectMongodbAllPodsSortedWithLabel(env);
+    .action(async function ({ envComponent }) {
+      await ensureCluster.call(this, envComponent);
+      const namespace = await getProjectNamespace(envComponent);
+      const podNames = await getProjectMongodbAllPodsSortedWithLabel(
+        envComponent
+      );
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;
@@ -32,7 +34,7 @@ export default (vorpal: Vorpal) =>
             type: "list",
             name: "podName",
             choices: podNames,
-            message: "Which pod? 🤔"
+            message: "Which pod? 🤔",
           })
         ).podName;
       }

@@ -1,15 +1,17 @@
 import Vorpal from "vorpal";
 import { exec } from "child-process-promise";
-import { Env } from "../../../../types/types";
 import { getProjectNamespace } from "../../../../utils/projects";
 import { envAutocompletion } from "./utils/autocompletions";
 
 export default (vorpal: Vorpal) =>
   vorpal
-    .command("project-pause <env>", "halts all running pods (scales to 0)")
+    .command(
+      "project-pause <envComponent>",
+      "halts all running pods (scales to 0)"
+    )
     .autocomplete(envAutocompletion)
-    .action(async function ({ env }) {
-      const namespace = await getProjectNamespace(env as Env);
+    .action(async function ({ envComponent }) {
+      const namespace = await getProjectNamespace(envComponent);
       const { shouldContinue } = await this.prompt({
         type: "confirm",
         name: "shouldContinue",

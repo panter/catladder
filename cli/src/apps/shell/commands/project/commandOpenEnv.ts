@@ -10,7 +10,7 @@ export default (vorpal: Vorpal) =>
     .command("project-open-env <envComponent>", "open the live environment")
     .autocomplete(envAutocompletion)
     .action(async function ({ envComponent }) {
-      await ensureCluster.call(this);
+      await ensureCluster.call(this, envComponent);
       const environment = getEnvironmentByChoice(envComponent);
       const url = environment.url;
 
