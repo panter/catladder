@@ -57,19 +57,21 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     namespace: context.environment.envVars.KUBE_NAMESPACE,
   };
   const shared = {
-    image: getRunnerImage("kubernetes"),
-    variables: {
-      ...context.environment.envVars,
+    job: {
+      image: getRunnerImage("kubernetes"),
+      variables: {
+        ...context.environment.envVars,
 
-      MONGODB_ENABLED: "false", // TODO: remove the whole mongodb stuff and put it into values
-      // TODO: refactor and unify with other stages
-      HELM_EXPERIMENTAL_OCI: "1",
-      IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
-      KUBE_VALUES: JSON.stringify(kubeValues),
-      HELM_GITLAB_CHART_NAME: "the-panter-chart",
-      COMPONENT_NAME: context.componentName,
-      // TODO: unify with docker build stage
-      IMAGE_TAG: "$CI_COMMIT_SHA",
+        MONGODB_ENABLED: "false", // TODO: remove the whole mongodb stuff and put it into values
+        // TODO: refactor and unify with other stages
+        HELM_EXPERIMENTAL_OCI: "1",
+        IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
+        KUBE_VALUES: JSON.stringify(kubeValues),
+        HELM_GITLAB_CHART_NAME: "the-panter-chart",
+        COMPONENT_NAME: context.componentName,
+        // TODO: unify with docker build stage
+        IMAGE_TAG: "$CI_COMMIT_SHA",
+      },
     },
   };
 
