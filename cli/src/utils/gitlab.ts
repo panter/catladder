@@ -1,4 +1,5 @@
 import { exec } from "child-process-promise";
+import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
 import { CommandInstance } from "vorpal";
@@ -62,6 +63,8 @@ export const doGitlabRequest = async <T = any>(
     return result.json();
   }
 
+  console.trace(data);
+
   throw new Error(
     `Could not send request to gitlab api: ${result.status} "${
       result.statusText
@@ -93,12 +96,13 @@ type GitlabVariable = {
   masked: boolean;
   environment_scope: string;
 };
-export const getAllVariables = async (
-  vorpal: CommandInstance
-): Promise<Array<GitlabVariable>> => {
-  const { id } = await getProjectInfo(vorpal);
-  return await doGitlabRequest(vorpal, `projects/${id}/variables`);
-};
+export const getAllVariables = memoizee(
+  async (vorpal: CommandInstance): Promise<Array<GitlabVariable>> => {
+    const { id } = await getProjectInfo(vorpal);
+    return await doGitlabRequest(vorpal, `projects/${id}/variables`);
+  },
+  { promise: true }
+);
 
 const createVariable = async (
   vorpal: CommandInstance,
@@ -135,8 +139,6 @@ export const upsertAllVariables = async (
 ): Promise<void> => {
   const { id } = await getProjectInfo(vorpal);
 
-  console.log("upsertAllVariables", variables);
-
   for (const [key, value] of Object.entries(variables ?? {})) {
     const fullKey = "CL_" + env + "_" + componentName + "_" + key;
 
@@ -144,6 +146,8 @@ export const upsertAllVariables = async (
       await updateVariable(vorpal, id, fullKey, value);
     } catch (e) {
       await createVariable(vorpal, id, fullKey, value);
+    } finally {
+      getAllVariables.clear();
     }
   }
 };

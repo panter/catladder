@@ -1,13 +1,12 @@
 {
   "name": "catladder",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "author": "Marco Wettstein <maw@panter.ch>",
   "license": "MIT",
-  "private": "true",
   "scripts": {
-    "build": "yarn workspaces run build",
-    "lint": "yarn workspaces run lint",
-    "dev": "yarn workspaces run build:watch"
+    "build": "yarn workspaces foreach -vt run build",
+    "lint": "yarn workspaces foreach run lint",
+    "dev": "yarn build && yarn workspaces foreach -vi --parallel run build:watch"
   },
   "workspaces": [
     "pipeline",
@@ -15,10 +14,15 @@
     "cli"
   ],
   "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.8.0",
+    "@typescript-eslint/parser": "^5.8.0",
     "eslint": "^8.6.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "@types/jest": "^27.0.3",
+    "jest": "^27.4.5",
+    "prettier": "^2.5.1",
     "ts-jest": "^27.1.2",
-    "jest": "^27.4.5"
-  }
+    "typescript": "^4.5.4"
+  },
+  "packageManager": "yarn@3.1.1"
 }

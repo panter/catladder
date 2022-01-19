@@ -20,6 +20,9 @@ export const ENV_TYPES = {
   prod: {
     triggers: ["taggedRelease"],
   },
+  local: {
+    triggers: [],
+  },
 } as const;
 
 /**
@@ -42,23 +45,31 @@ export const isKnowEnvType = (env: string): env is EnvType => {
   return env in ENV_TYPES;
 };
 
+export type EnvVars = {
+  public?: Record<string, any>;
+  secret?: string[];
+  fromComponents?: {
+    [otherApp: string]: Record<string, string>;
+  };
+};
+
 export type DefaultEnvConfig = {
   deploy: DeployConfig | false;
   build: BuildConfig;
-  vars?: {
-    public?: Record<string, any>;
-    secret?: string[];
-    fromComponents?: {
-      [otherApp: string]: Record<string, string>;
-    };
-  };
+  vars?: EnvVars;
 };
-type EnvConfig<E extends EnvType = EnvType> = {
+
+export type DevLocalEnvConfig = {
+  vars?: EnvVars;
+  port?: number;
+};
+export type EnvConfig<E extends EnvType = EnvType> = {
   type?: E;
   hostname?: string;
 } & Partial<DefaultEnvConfig>;
 
 export type Env = {
+  local?: DevLocalEnvConfig;
   dev?: EnvConfig<"dev"> | false;
   stage?: EnvConfig<"stage"> | false;
   review?: EnvConfig<"review"> | false;

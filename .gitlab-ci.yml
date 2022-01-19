@@ -7,8 +7,9 @@ variables:
 
   KUBERNETES_CPU_REQUEST: "0.5"
   KUBERNETES_CPU_LIMIT: "1"
-  KUBERNETES_MEMORY_REQUEST: "200Mi"
-  KUBERNETES_MEMORY_LIMIT: "500Mi"
+  KUBERNETES_MEMORY_REQUEST: "350Mi"
+  KUBERNETES_MEMORY_LIMIT: "700Mi"
+  YARN_CACHE_FOLDER: $CI_PROJECT_DIR/.yarn/cache
 stages:
   - test
   - build
@@ -25,17 +26,25 @@ workflow:
       { if: "$CI_MERGE_REQUEST_ID" },
     ]
 
-🔨 packages:
+.yarn-cache:
   cache:
-    - key: node-modules
+    - key: yarn
       policy: pull-push
       paths:
+        - .yarn/cache
         - node_modules
         - "**/node_modules/"
+
+🔨 packages:
   stage: "build"
+  extends:
+    - .yarn-cache
   script:
-    - yarn install
-    - yarn workspaces run build
+    - node -v
+    - yarn -v
+    - yarn install --immutable
+
+    - yarn build
   artifacts:
     paths:
       - "*/dist"
@@ -114,7 +123,8 @@ workflow:
     - echo "publish version $VERSION"
     - cd $DIR
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-    - yarn publish --new-version $VERSION --tag canary --verbose --no-git-tag-version --access public
+    - npm version $VERSION
+    - npm publish --tag canary --no-git-tag-version --access public
     - echo "yarn add @catladder/$DIR@$VERSION" > npm-version.txt
 
 🚀 cli:

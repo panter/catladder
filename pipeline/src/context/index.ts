@@ -4,7 +4,7 @@ import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
 import { DeployConfig } from "../deploy/types";
-import { Config, isKnowEnvType } from "../types/config";
+import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
 import { CommitInfo, Context, Environment } from "../types/context";
 
 export const getEnvironment = (
@@ -53,6 +53,10 @@ export const getEnvironment = (
   );
   // env type: if its set manually, use that, otherwise use the known env types
 
+  const basePredefinedVariables = {
+    ENV_SHORT: env,
+    APP_DIR: componentConfig.dir,
+  };
   const envType = envConfig?.type ?? (isKnowEnvType(env) ? env : null);
   if (!envType) {
     throw new Error(
@@ -68,30 +72,45 @@ export const getEnvironment = (
     envType === "review" && commitInfo
       ? `${env}-${componentName}-${commitInfo.refSlug}`
       : `${env}-${componentName}`;
-  const KUBE_APP_NAME =
-    envType === "review" && commitInfo
-      ? `${componentName}-${commitInfo.refSlug}`
-      : componentName;
 
-  const KUBE_NAMESPACE = `${config.customerName}-${config.appName}-${env}`;
-  const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
+  let predefinedVariables: Record<string, string>;
+  let hostname: string;
+  let url: string;
+  if (envType === "local") {
+    const devLocalConfig: DevLocalEnvConfig = mergedConfig;
+    const port = devLocalConfig.port ?? 3000;
+    hostname = "localhost:" + port;
+    url = "http://" + hostname;
+    predefinedVariables = {
+      ROOT_URL: url,
+      PORT: port.toString(),
+    };
+  } else {
+    const KUBE_APP_NAME =
+      envType === "review" && commitInfo
+        ? `${componentName}-${commitInfo.refSlug}`
+        : componentName;
 
-  const APP_SLUG = slugify(KUBE_APP_NAME);
+    const KUBE_NAMESPACE = `${config.customerName}-${config.appName}-${env}`;
+    const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
 
-  const HOST_CANONICAL = `${config.appName}-${APP_SLUG}.${env}.${config.customerName}.panter.cloud`;
+    const APP_SLUG = slugify(KUBE_APP_NAME);
 
-  const hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
-  const url = `https://${hostname}`;
+    const HOST_CANONICAL = `${config.appName}-${APP_SLUG}.${env}.${config.customerName}.panter.cloud`;
 
-  const predefinedVariables = {
-    HOST_CANONICAL,
-    ROOT_URL: url,
-    KUBE_NAMESPACE,
-    KUBE_APP_NAME,
-    RELEASE_NAME,
-    ENV_SHORT: env,
-    APP_DIR: componentConfig.dir,
-  };
+    hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
+    const url = `https://${hostname}`;
+
+    predefinedVariables = {
+      ...basePredefinedVariables,
+      HOST_CANONICAL,
+      ROOT_URL: url,
+      KUBE_NAMESPACE,
+      KUBE_APP_NAME,
+      RELEASE_NAME,
+    };
+  }
+
   const envVars = {
     ...predefinedVariables,
     ...publicEnvVars,
@@ -105,7 +124,7 @@ export const getEnvironment = (
     fullName: environmentName,
     slug: environmentSlug,
     shortName: env,
-    url: url,
+    url: predefinedVariables.ROOT_URL,
     envVars,
     secretEnvVarKeys,
   };
