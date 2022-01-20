@@ -1,6 +1,6 @@
 import { BuildConfig } from "../build/types";
 import { DeployConfig } from "../deploy/types";
-
+import { PartialDeep } from "type-fest";
 export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
 
 /**
@@ -66,7 +66,7 @@ export type DevLocalEnvConfig = {
 export type EnvConfig<E extends EnvType = EnvType> = {
   type?: E;
   hostname?: string;
-} & Partial<DefaultEnvConfig>;
+} & PartialDeep<DefaultEnvConfig>;
 
 export type Env = {
   local?: DevLocalEnvConfig;
