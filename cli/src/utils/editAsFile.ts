@@ -4,8 +4,18 @@ import yaml from "js-yaml";
 import { readFile, writeFile } from "fs-extra";
 import getEditor from "./getEditor";
 
-export const editAsFile = async <T>(inObject: T): Promise<T> => {
-  const asString = yaml.safeDump(inObject);
+export const editAsFile = async <T>(
+  inObject: T,
+  preamble?: string
+): Promise<T> => {
+  const fullPreamble = preamble
+    ? `#
+# ${preamble.split("\n").join("\n# ")}
+#
+
+`
+    : "\n";
+  const asString = fullPreamble + yaml.safeDump(inObject, { noRefs: true });
   let newContent;
 
   await withFile(

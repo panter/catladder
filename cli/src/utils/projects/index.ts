@@ -1,4 +1,5 @@
 import { exec } from "child-process-promise";
+
 import { join } from "path";
 import { getProjectConfig, parseChoice } from "../../config/getProjectConfig";
 import k8sApi from "../../k8sApi";
@@ -26,7 +27,7 @@ export const hasGitlabCiFile = async () => {
 
 export const getProjectNamespace = async (envComponent: string) => {
   const { env } = parseChoice(envComponent);
-  const config = getProjectConfig();
+  const config = await getProjectConfig();
   return `${config.customerName}-${config.appName}-${env}`;
 };
 

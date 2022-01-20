@@ -4,22 +4,29 @@ import { parse } from "yaml";
 import { Config } from "../types";
 
 // allows us to load ts files
-register({
-  transpileOnly: true,
-});
 
-const fullPath = (ext: string) => process.cwd() + "/catladder." + ext;
+const fullPath = (directory: string, ext: string) =>
+  directory + "/catladder." + ext;
 
-export const readConfigSync = (): Config | null => {
+export const readConfigSync = (
+  directory: string = process.cwd()
+): Config | null => {
+  register({
+    cwd: directory,
+    transpileOnly: true,
+  });
+
   const found = ["ts", "js", "yml", "yaml"].find((extension) =>
-    existsSync(fullPath(extension))
+    existsSync(fullPath(directory, extension))
   );
   if (found) {
     if (found === "ts" || found === "js") {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      return require(fullPath(found)).default;
+      return require(fullPath(directory, found)).default;
     } else {
-      return parse(readFileSync(fullPath(found), { encoding: "utf-8" }));
+      return parse(
+        readFileSync(fullPath(directory, found), { encoding: "utf-8" })
+      );
     }
   }
   return null;

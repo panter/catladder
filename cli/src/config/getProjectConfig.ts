@@ -7,28 +7,26 @@ import {
 
 import { CommandInstance } from "vorpal";
 import { getAllVariables } from "../utils/gitlab";
-
+import memoizee from "memoizee";
+import { getGitRoot } from "../utils/projects";
 // currently cant change
-const projectConfig = readConfigSync();
 
-export const getProjectConfig = () => {
-  return projectConfig;
-};
+export const getProjectConfig = memoizee(
+  async () => {
+    try {
+      const gitRoot = await getGitRoot();
+      return readConfigSync(gitRoot);
+    } catch (e) {
+      // ignore
+    }
+  },
+  { promise: true }
+);
 
-export const getProjectComponents = () => {
-  const config = getProjectConfig();
+export const getProjectComponents = async () => {
+  const config = await getProjectConfig();
+  if (!config) return [];
   return Object.keys(config.components);
-};
-
-export const getEnvComponentChoices = () => {
-  const config = getProjectConfig();
-  return Object.keys(config.components).reduce<string[]>(
-    (acc, componentName) => [
-      ...acc,
-      ...getAllEnvs(config, componentName).map((e) => e + ":" + componentName),
-    ],
-    []
-  );
 };
 
 export const parseChoice = (envComponent: string) => {
@@ -36,38 +34,51 @@ export const parseChoice = (envComponent: string) => {
   return { env, componentName };
 };
 
-export const getPipelineContextByChoice = (envComponent: string) => {
-  const { env, componentName } = parseChoice(envComponent);
-  const config = getProjectConfig();
+export const getPipelineContextByChoice = async (
+  env: string,
+  componentName: string
+) => {
+  const config = await getProjectConfig();
   return createContext(config, componentName, env);
 };
-
-export const getAllPipelineContexts = () => {
-  const envComponents = getEnvComponentChoices();
-  return envComponents.map(getPipelineContextByChoice);
+export const getAllComponentsWithAllEnvs = async () => {
+  const config = await getProjectConfig();
+  if (!config) {
+    return [];
+  }
+  return Promise.all(
+    Object.keys(config.components).flatMap((componentName) =>
+      getAllEnvs(config, componentName).map((env) => ({ env, componentName }))
+    )
+  );
 };
 
-export const getEnvironmentByChoice = (envComponent: string) => {
-  const { env, componentName } = parseChoice(envComponent);
-  const config = getProjectConfig();
+export const getAllPipelineContexts = async () => {
+  return Promise.all(
+    (await getAllComponentsWithAllEnvs()).map(({ env, componentName }) =>
+      getPipelineContextByChoice(env, componentName)
+    )
+  );
+};
+
+export const getEnvironment = async (env: string, componentName: string) => {
+  const config = await getProjectConfig();
   return _getEnvironment(config, componentName, env);
 };
 
 const resolveSecrets = async (
   vorpal: CommandInstance,
-  allEnvVars: Record<string, string>,
-  secretEnvVarKeys: string[]
+  allEnvVars: Record<string, string>
 ) => {
   const allVariablesInGitlab = await getAllVariables(vorpal);
-  console.log("resolveSecrets", { allVariablesInGitlab, allEnvVars });
+
   return Object.fromEntries(
     Object.entries(allEnvVars).map(([key, value]) => {
-      const isSecret = secretEnvVarKeys.includes(key);
-      console.log({ key, value, isSecret, allVariablesInGitlab });
+      const isSecret = value?.startsWith("$CL_");
       if (isSecret) {
         // secrets have CL_XXXX structure
         const found = allVariablesInGitlab.find((v) => "$" + v.key === value);
-        console.log({ found });
+
         if (found) {
           return [key, found.value];
         } else {
@@ -81,12 +92,9 @@ const resolveSecrets = async (
 
 export const getEnvVars = async (
   vorpal: CommandInstance,
-  envComponent: string
+  env: string,
+  componentName: string
 ) => {
-  const envionment = getEnvironmentByChoice(envComponent);
-  return resolveSecrets(
-    vorpal,
-    envionment.envVars,
-    envionment.secretEnvVarKeys
-  );
+  const envionment = await getEnvironment(env, componentName);
+  return resolveSecrets(vorpal, envionment.envVars);
 };

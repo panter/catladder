@@ -14,7 +14,6 @@ const getConfiguredAndDefaultEnvs = (
   const configuredEnvs = config.components[componentName].env ?? {};
   // the default envs have the same name as the env types
   // these can be disabled with settimg them to `false`
-
   // this is the list of all not disabled envs. These are always returned
   const enabledDefaultEnvs = envTypes.filter(
     (e) => configuredEnvs[e] !== false
@@ -24,7 +23,11 @@ const getConfiguredAndDefaultEnvs = (
     config.components[componentName].env ?? {}
   )
     .filter(
-      ([, config]) => config && config.type && envTypes.includes(config.type)
+      ([, config]) =>
+        config &&
+        "type" in config &&
+        config.type &&
+        envTypes.includes(config.type)
     )
     .map(([envName]) => envName);
 
