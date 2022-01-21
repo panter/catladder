@@ -17,7 +17,7 @@ import { writeConfig } from "../../config/writeConfig";
 import { detectBuildConfig, OldGitlabCiFile } from "./oldGitlabCi";
 const LEGACY_ENVS = ["dev-local", "dev", "review", "stage", "prod"];
 
-const arrayToRecord = (arr: { name: string }[]): Record<string, unknown> => {
+const arrayToRecord = (arr: { name: string }[]): Record<string, any> => {
   if (!arr) return undefined;
   return Object.fromEntries(arr.map(({ name, ...rest }) => [name, rest]));
 };
