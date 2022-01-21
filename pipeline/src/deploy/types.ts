@@ -23,7 +23,7 @@ export type DeployConfigKubernetes = {
       }>
     >;
     application?: AllowUnknownProps<{
-      redirects: AllowUnknownProps<{ host: string }>[];
+      redirects?: AllowUnknownProps<{ host: string }>[];
       replicas?: number;
       resources?: {
         limits?: {
