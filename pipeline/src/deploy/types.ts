@@ -9,6 +9,9 @@ export type DeployConfigKubernetes = {
   values?: AllowUnknownProps<{
     cloudsql?: {
       enabled: boolean;
+      instanceId?: string;
+      projectId?: string;
+      region?: string;
     };
     jobs?: Record<string, AllowUnknownProps<{ command: string }>>;
     cronjobs?: Record<
