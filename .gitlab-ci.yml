@@ -120,7 +120,8 @@ workflow:
     - echo "publish version $VERSION"
     - cd $DIR
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-    - npm version $VERSION
+    - yarn workspaces foreach version $VERSION --deferred
+    - yarn version apply -R --all
     - npm publish --tag canary --no-git-tag-version --access public
     - echo "yarn add @catladder/$DIR@$VERSION" > npm-version.txt
 
