@@ -64,7 +64,8 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       envMode: "none",
       job: {
         ...base,
-        script: [...yarnInstall, "yarn audit"],
+        cache: undefined, // audit does not need yarn install and no cache
+        script: ["yarn audit"],
         allow_failure: true,
       },
     },
