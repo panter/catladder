@@ -16,7 +16,7 @@ export const editAsFile = async <T>(
 `
     : "\n";
   const asString = fullPreamble + yaml.safeDump(inObject, { noRefs: true });
-  let newContent;
+  let newContent: T;
 
   await withFile(
     async ({ path: tmpFilePath }) => {

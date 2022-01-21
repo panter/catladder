@@ -89,7 +89,7 @@ const resolveSecrets = async (
 
   return Object.fromEntries(
     Object.entries(allEnvVars).map(([key, value]) => {
-      const isSecret = value?.startsWith("$CL_");
+      const isSecret = value?.startsWith?.("$CL_");
       if (isSecret) {
         // secrets have CL_XXXX structure
         const found = allVariablesInGitlab.find((v) => "$" + v.key === value);
@@ -111,5 +111,6 @@ export const getEnvVars = async (
   componentName: string
 ) => {
   const envionment = await getEnvironment(env, componentName);
+
   return resolveSecrets(vorpal, envionment.envVars);
 };

@@ -13,6 +13,24 @@ import { upsertAllVariables } from "../../../../utils/gitlab";
 import { delay } from "../../../../utils/promise";
 import { allEnvsAndAllComponents } from "./utils/autocompletions";
 
+/* for convenience, parse json objects. that makes it easier to edit secrets that are object */
+const resolveJson = (v: Record<string, Record<string, string>>) =>
+  Object.fromEntries(
+    Object.entries(v).map(([c, secrets]) => {
+      return [
+        c,
+        Object.fromEntries(
+          Object.entries(secrets).map(([key, value]) => {
+            try {
+              return [key, JSON.parse(value)];
+            } catch (e) {
+              return [key, value];
+            }
+          })
+        ),
+      ];
+    })
+  );
 const getEnvVarsToEdit = async (env: string, componentName: string) => {
   const { secretEnvVarKeys } = await getEnvironment(env, componentName);
 
@@ -26,7 +44,7 @@ const doItFor = async (
   env: string,
   components: string[]
 ) => {
-  let valuesToEdit = Object.fromEntries(
+  let valuesToEdit: Record<string, Record<string, string>> = Object.fromEntries(
     await Promise.all(
       components.map(async (componentName) => [
         componentName,
@@ -37,7 +55,7 @@ const doItFor = async (
   let hasErrors = true;
   while (hasErrors) {
     valuesToEdit = await editAsFile(
-      valuesToEdit,
+      resolveJson(valuesToEdit),
       stripIndents`
         Please fill in all secrets for: ${components.join(", ")}
 
@@ -86,6 +104,8 @@ const doItFor = async (
       }
     }
   }
+
+  console.log(JSON.stringify(valuesToEdit, null, 2));
 
   for (const componentName of components) {
     await upsertAllVariables(

@@ -1,11 +1,8 @@
 import { exec, spawn } from "child-process-promise";
 import commandExists from "command-exists-promise";
 import dayjs from "dayjs";
-
 import { readFile, writeFile } from "fs-extra";
-import yaml from "js-yaml";
 import { withFile } from "tmp-promise";
-import formatEnvVars from "../formatEnvVars";
 import getEditor from "../getEditor";
 import { getPreference, hasPreference, setPreference } from "../preferences";
 
@@ -78,9 +75,7 @@ const execBitwardenCommand = async (command: string): Promise<any> => {
       await loginBitwarden();
       return execBitwardenCommand(command);
     } else {
-      console.error(e);
-
-      console.log("wooops", e.message);
+      throw e;
     }
   }
 };
@@ -169,24 +164,27 @@ const share = async (itemId: string) =>
     ])}`
   );
 
+export const trashItem = async (path: string) => {
+  const item = await getItem(path);
+
+  const result = await execBitwardenCommand(`delete item ${item.id}`);
+
+  return result;
+};
 export const editPass = async (path: string) => {
   const item = await getItem(path);
 
-  await withFile(async ({ path: tmpFilePath }) => {
-    await writeFile(tmpFilePath, item.notes);
-    await (await getEditor()).open(tmpFilePath);
-    const newContent = (await readFile(tmpFilePath)).toString("utf-8");
+  await withFile(
+    async ({ path: tmpFilePath }) => {
+      await writeFile(tmpFilePath, item.notes);
+      await (await getEditor()).open(tmpFilePath);
+      const newContent = (await readFile(tmpFilePath)).toString("utf-8");
 
-    await update("item", item.id, {
-      ...item,
-      notes: newContent,
-    });
-  }, { postfix: ".yml" });
-};
-
-export const readPassEnvVars = async (path: string) => {
-  // make sure that you have pulled pass beforehand
-  const yamlstring = await readPass(path);
-  // if a value is an object, we convert it to strings
-  return formatEnvVars(yaml.load(yamlstring));
+      await update("item", item.id, {
+        ...item,
+        notes: newContent,
+      });
+    },
+    { postfix: ".yml" }
+  );
 };

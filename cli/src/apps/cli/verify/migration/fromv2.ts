@@ -14,8 +14,15 @@ import {
 import { readYaml } from "../../../../utils/files";
 import { getGitRoot } from "../../../../utils/projects";
 import { writeConfig } from "../../config/writeConfig";
+import { migrateSecrets } from "./migrateSecrets";
 import { detectBuildConfig, OldGitlabCiFile } from "./oldGitlabCi";
-const LEGACY_ENVS = ["dev-local", "dev", "review", "stage", "prod"];
+export const LEGACY_ENVS = [
+  "dev-local",
+  "dev",
+  "review",
+  "stage",
+  "prod",
+] as const;
 
 const arrayToRecord = (arr: { name: string }[]): Record<string, any> => {
   if (!arr) return undefined;
@@ -123,16 +130,21 @@ export const migrateV2 = async (vorpal: Vorpal) => {
             },
           },
         };
+        this.log("migrate secrets");
+        for (const env of LEGACY_ENVS) {
+          await migrateSecrets(this, gitlabCi, env);
+        }
+
         const comment =
           "Old migrated config:\n\n" +
           (await readFile(await getGitlabCiFilePath(), {
             encoding: "utf-8",
           }));
-        vorpal.log("write config");
+        this.log("write config");
         await writeConfig(this, config, {
           endComment: comment,
         });
-        vorpal.log("write gitlab-ci.yml");
+        this.log("write gitlab-ci.yml");
         await writeFile(
           await getGitlabCiFilePath(),
           "include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/main/gitlab-ci.yml",

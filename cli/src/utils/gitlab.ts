@@ -1,4 +1,5 @@
 import { exec } from "child-process-promise";
+import { isObject, result } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
@@ -99,7 +100,19 @@ type GitlabVariable = {
 export const getAllVariables = memoizee(
   async (vorpal: CommandInstance): Promise<Array<GitlabVariable>> => {
     const { id } = await getProjectInfo(vorpal);
-    return await doGitlabRequest(vorpal, `projects/${id}/variables`);
+    let all: Array<GitlabVariable> = [];
+    let result: Array<GitlabVariable>;
+    let page = 1;
+    do {
+      result = await doGitlabRequest(
+        vorpal,
+        // 100 is max page size
+        `projects/${id}/variables?per_page=100&page=${page}`
+      );
+      page++;
+      all = [...all, ...result];
+    } while (result?.length > 0);
+    return all;
   },
   { promise: true }
 );
@@ -133,7 +146,7 @@ const updateVariable = async (
 };
 export const upsertAllVariables = async (
   vorpal: CommandInstance,
-  variables: Record<string, string>,
+  variables: Record<string, any>,
   env: string,
   componentName: string
 ): Promise<void> => {
@@ -141,11 +154,11 @@ export const upsertAllVariables = async (
 
   for (const [key, value] of Object.entries(variables ?? {})) {
     const fullKey = "CL_" + env + "_" + componentName + "_" + key;
-
+    const valueSanitized = isObject(value) ? JSON.stringify(value) : `${value}`;
     try {
-      await updateVariable(vorpal, id, fullKey, value);
+      await updateVariable(vorpal, id, fullKey, valueSanitized);
     } catch (e) {
-      await createVariable(vorpal, id, fullKey, value);
+      await createVariable(vorpal, id, fullKey, valueSanitized);
     } finally {
       getAllVariables.clear();
     }
