@@ -113,6 +113,8 @@ workflow:
     expose_as: "ci-includes" # cant use variables here
 
 .npm-publish-base:
+  extends:
+    - .yarn-cache
   needs: ["🔨 packages"]
   stage: deploy
   script:
