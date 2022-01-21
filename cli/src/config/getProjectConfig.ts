@@ -9,6 +9,7 @@ import { CommandInstance } from "vorpal";
 import { getAllVariables } from "../utils/gitlab";
 import memoizee from "memoizee";
 import { getGitRoot } from "../utils/projects";
+import { readYaml } from "../utils/files";
 // currently cant change
 
 export const getProjectConfig = memoizee(
@@ -18,10 +19,24 @@ export const getProjectConfig = memoizee(
       return readConfigSync(gitRoot);
     } catch (e) {
       // ignore
+      return null;
     }
   },
   { promise: true }
 );
+
+export const getGitlabCiFilePath = async () => {
+  const gitRoot = await getGitRoot();
+  return gitRoot + "/.gitlab-ci.yml";
+};
+export const getGitlabCi = async () => {
+  try {
+    return readYaml(await getGitlabCiFilePath());
+  } catch (e) {
+    // ignore
+    return null;
+  }
+};
 
 export const getProjectComponents = async () => {
   const config = await getProjectConfig();

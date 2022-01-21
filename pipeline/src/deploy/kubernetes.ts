@@ -68,6 +68,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
         IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
         KUBE_VALUES: JSON.stringify(kubeValues),
         HELM_GITLAB_CHART_NAME: "the-panter-chart",
+        HELM_ARGS: deployConfig.additionalHelmArgs,
         COMPONENT_NAME: context.componentName,
         // TODO: unify with docker build stage
         IMAGE_TAG: "$CI_COMMIT_SHA",

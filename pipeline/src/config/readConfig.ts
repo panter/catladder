@@ -14,6 +14,9 @@ export const readConfigSync = (
   register({
     cwd: directory,
     transpileOnly: true,
+    compilerOptions: {
+      module: "commonjs",
+    },
   });
 
   const found = ["ts", "js", "yml", "yaml"].find((extension) =>

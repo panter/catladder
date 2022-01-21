@@ -5,7 +5,7 @@ import { getProjectConfig, parseChoice } from "../../config/getProjectConfig";
 import k8sApi from "../../k8sApi";
 import { readFileOrError } from "../files";
 
-export const getGitRoot = async () => {
+export const getGitRoot = async (): Promise<string> => {
   return (await exec("git rev-parse --show-toplevel")).stdout?.trim();
 };
 

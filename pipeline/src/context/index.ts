@@ -113,9 +113,9 @@ export const getEnvironment = (
 
   const envVars = {
     ...predefinedVariables,
-    ...publicEnvVars,
     ...secretEnvVars,
     ...referenced,
+    ...publicEnvVars,
   };
 
   return {

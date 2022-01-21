@@ -3,8 +3,9 @@
 echo "Deploy to kubernetes"
 echo "Release: $RELEASE_NAME"
 echo "URL (canonical): $HOST_CANONICAL"
-# use helmArgs defined in variables
-helmArgsEvaluated=$(echo $helmArgs | envsubst)
+
+# additional helm args if any (rarely used)
+helmArgsEvaluated=$(echo $HELM_ARGS | envsubst)
 
 # this bash-brainfuck simply splits $helmArgs by newline to an array...
 readarray -t helmArgsArray <<<"$helmArgsEvaluated"

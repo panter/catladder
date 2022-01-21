@@ -9,12 +9,13 @@ import project from "./commands/project";
 import theStuffThatReallyMatters from "./commands/theStuffThatReallyMatters";
 
 import { getProjectConfig } from "../../config/getProjectConfig";
+import { verify } from "./verify";
 
 export default async () => {
-  const projectConfig = await getProjectConfig();
-  const welcomeMessage = `catladder 2022 😻 version ${packageInfos.version}`;
-
   const vorpal = new Vorpal();
+  verify(vorpal);
+  const welcomeMessage = `catladder 2022 😻 version ${packageInfos.version}`;
+  const projectConfig = await getProjectConfig();
 
   vorpal
     .delimiter("catladder $") // emoji messes with cursor :-( https://github.com/dthree/vorpal/issues/332
@@ -26,6 +27,7 @@ export default async () => {
   if (projectConfig) {
     vorpal.log("project: " + projectConfig.appName);
     vorpal.log("customer: " + projectConfig.customerName);
+    vorpal.log("");
   }
 
   general(vorpal);

@@ -14,5 +14,9 @@ export const readFileOrError = async (filePath: string) => {
 };
 
 export const readYaml = async (filename: string) => {
-  return yaml.load(await readFile(filename));
+  try {
+    return yaml.load(await readFile(filename));
+  } catch (e) {
+    return null;
+  }
 };
