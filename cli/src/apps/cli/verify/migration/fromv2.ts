@@ -63,21 +63,51 @@ export const migrateV2 = async (vorpal: Vorpal) => {
   const gitlabCi: OldGitlabCiFile = await getGitlabCi();
   const gitRoot = await getGitRoot();
 
-  const { CUSTOMER_NAME, APP_NAME, COMPONENT_NAME, APP_DIR, CLUSTER_NAME } =
-    gitlabCi.variables;
+  const {
+    CUSTOMER_NAME,
+    APP_NAME,
+    COMPONENT_NAME,
+    APP_DIR,
+    CLUSTER_NAME,
+    STAGING_ENABLED,
+  } = gitlabCi.variables;
 
   vorpal
     .command("migrate")
 
     .action(async function () {
+      this.log("");
       this.log("⚠️ this project uses legacy catladder (v2)");
-      this.log("migrate project?");
+      this.log("");
+      this.log(
+        "😼 I can migrate the project for you. This contains the following steps:"
+      );
+      this.log("");
+      this.log(
+        " - migrate the config from values-*.yml to catladder config file"
+      );
+      this.log(
+        " - migrate the secrets from bitwarden to gitlab (this will trash the entries in bitwarden)"
+      );
+      this.log("");
+      this.log(
+        "☝ make sure that you checked in your current state in case something goes wrong."
+      );
+      this.log(
+        "☝ secrets in bitwarden are deleted, but can be restored within 30 days."
+      );
+      this.log("");
       const { shouldContinue } = await this.prompt({
         default: true,
-        message: "Migrate? 🤔",
+        message: "Migrate project now? 🤔",
         name: "shouldContinue",
         type: "confirm",
       });
+      vorpal.log("");
+      vorpal.log("");
+      vorpal.log("💪😼 ok, let's go...");
+      vorpal.log("");
+      vorpal.log("");
 
       if (shouldContinue) {
         const { env, ...baseValues } =
@@ -104,6 +134,12 @@ export const migrateV2 = async (vorpal: Vorpal) => {
               },
               env: await LEGACY_ENVS.reduce<Promise<Env>>(
                 async (acc, envName) => {
+                  if (envName === "stage" && !STAGING_ENABLED) {
+                    return {
+                      ...(await acc),
+                      [envName]: false,
+                    };
+                  }
                   const newEnvName =
                     envName === "dev-local" ? "local" : envName;
 
@@ -130,17 +166,15 @@ export const migrateV2 = async (vorpal: Vorpal) => {
             },
           },
         };
-        this.log("migrate secrets");
-        for (const env of LEGACY_ENVS) {
-          await migrateSecrets(this, gitlabCi, env);
-        }
 
         const comment =
           "Old migrated config:\n\n" +
           (await readFile(await getGitlabCiFilePath(), {
             encoding: "utf-8",
           }));
-        this.log("write config");
+
+        this.log("-------------------");
+        this.log("migrate config");
         await writeConfig(this, config, {
           endComment: comment,
         });
@@ -150,6 +184,18 @@ export const migrateV2 = async (vorpal: Vorpal) => {
           "include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/main/gitlab-ci.yml",
           { encoding: "utf-8" }
         );
+
+        this.log("-------------------");
+        this.log("migrate secrets");
+        for (const env of LEGACY_ENVS) {
+          await migrateSecrets(this, gitlabCi, env);
+        }
+
+        this.log("-------------------");
+
+        this.log("done!");
+
+        this.log("-------------------");
       }
     });
 

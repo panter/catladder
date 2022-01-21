@@ -21,8 +21,10 @@ export const writeConfig = async (
     choices: [TS, "yaml"],
     message: "In which format do you want the config? 🤔",
   });
+  vorpal.log("");
   if (configType === TS) {
-    const content = format(`
+    const content = format(
+      `
       import type { Config } from "@catladder/pipeline";
       
       const config: Config = ${JSON.stringify(config)};
@@ -32,7 +34,11 @@ export const writeConfig = async (
      
       ${options?.endComment ? `/*${options.endComment}*/` : ""}
       
-      `);
+      `,
+      {
+        parser: "babel",
+      }
+    );
 
     await writeFile(gitRoot + "/catladder.ts", content, {
       encoding: "utf-8",

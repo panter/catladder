@@ -7,6 +7,7 @@ export type OldGitlabCiFile = {
     COMPONENT_NAME?: string;
     APP_DIR?: string;
     CLUSTER_NAME?: string;
+    STAGING_ENABLED?: string;
   };
   include: {
     project: string;
