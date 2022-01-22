@@ -10,7 +10,7 @@ import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "./docker";
 import { isOfBuildType } from "./types";
 
 const NODE_RUNNER_BUILD_VARIABLES = {
-  KUBERNETES_CPU_REQUEST: "0.5",
+  KUBERNETES_CPU_REQUEST: "1",
   KUBERNETES_CPU_LIMIT: "2",
   KUBERNETES_MEMORY_REQUEST: "1.5Gi",
   KUBERNETES_MEMORY_LIMIT: "2Gi",
@@ -46,10 +46,12 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
   if (context.commitInfo?.trigger === "taggedRelease") {
     return [];
   }
+
   const base: Omit<GitlabJobDef, "script"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,
       ...NODE_RUNNER_BUILD_VARIABLES,
+      ...(context.componentConfig.build.extraVars ?? {}),
     },
     cache: getNodeCache(),
     stage: "test",
@@ -117,6 +119,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
             variables: {
               ...NODE_RUNNER_BUILD_VARIABLES,
               ...context.environment.envVars,
+              ...(context.componentConfig.build.extraVars ?? {}),
             },
             retry: baseRetry,
             interruptible: true,

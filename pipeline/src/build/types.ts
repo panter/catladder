@@ -1,5 +1,6 @@
 export type BuildConfigBase = {
   startCommand?: string;
+  extraVars?: Record<string, string>;
 };
 
 export type BuildConfigNode = {
@@ -7,13 +8,13 @@ export type BuildConfigNode = {
   buildCommand?: string | string[] | null;
 } & BuildConfigBase;
 
-export type BuildConfigNodeStatic = {
+export type BuildConfigNodeStatic = BuildConfigBase & {
   type: "node-static";
   buildCommand?: string | string[] | null;
   startCommand?: never;
 };
 
-export type BuildConfigStorybook = {
+export type BuildConfigStorybook = BuildConfigBase & {
   type: "storybook";
   buildCommand?: string | string[] | null;
   startCommand?: never;
