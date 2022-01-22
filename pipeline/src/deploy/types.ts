@@ -13,6 +13,9 @@ export type DeployConfigKubernetes = {
       projectId?: string;
       region?: string;
     };
+    mailhog?: {
+      enabled: boolean;
+    };
     jobs?: Record<string, AllowUnknownProps<{ command: string }>>;
     cronjobs?: Record<
       string,
