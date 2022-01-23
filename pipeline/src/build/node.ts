@@ -26,10 +26,10 @@ const getYarnInstall = (context: Context) => [
   "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
   "yarn install --frozen-lockfile",
 ];
-export const getNodeCache = (): GitlabJobCache[] => [
+export const getNodeCache = (policy = "pull-push"): GitlabJobCache[] => [
   {
     key: "node-modules",
-    policy: "pull-push",
+    policy: policy,
     paths: [".yarn", "node_modules", "**/node_modules/"],
   },
 ];
@@ -53,7 +53,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       ...NODE_RUNNER_BUILD_VARIABLES,
       ...(context.componentConfig.build.extraVars ?? {}),
     },
-    cache: getNodeCache(),
+
     stage: "test",
     interruptible: true,
     needs: [],
@@ -76,6 +76,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       envMode: "none",
       job: {
         ...base,
+        cache: getNodeCache("pull"),
         script: [...yarnInstall, "yarn lint"],
       },
     },
@@ -84,6 +85,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       envMode: "none",
       job: {
         ...base,
+        cache: getNodeCache("pull"),
         script: [...yarnInstall, "yarn test"],
       },
     },
@@ -115,7 +117,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
           envMode: "jobPerEnv",
           job: {
             needs: [],
-            cache: [...getNodeCache(), ...getNextCache(context)],
+            cache: [...getNodeCache("pull-push"), ...getNextCache(context)],
             variables: {
               ...NODE_RUNNER_BUILD_VARIABLES,
               ...context.environment.envVars,
