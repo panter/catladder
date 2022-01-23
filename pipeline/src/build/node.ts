@@ -28,7 +28,7 @@ const getYarnInstall = (context: Context) => [
 ];
 export const getNodeCache = (): GitlabJobCache[] => [
   {
-    key: "yarn",
+    key: "node-modules",
     policy: "pull-push",
     paths: [".yarn", "node_modules", "**/node_modules/"],
   },
