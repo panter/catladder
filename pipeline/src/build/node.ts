@@ -26,7 +26,7 @@ const getYarnInstall = (context: Context) => [
   "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
   `echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc`,
   `echo 'yarn-offline-mirror-pruning true' >> .yarnrc`,
-  "yarn install --frozen-lockfile -no-progress",
+  "yarn install --frozen-lockfile",
 ];
 export const getNodeCache = (): GitlabJobCache[] => [
   {
