@@ -20,6 +20,7 @@ import {
   getGitlabCiFilePath,
 } from "../../../../config/getProjectConfig";
 import { readYaml } from "../../../../utils/files";
+import { syncBitwarden } from "../../../../utils/passwordstore";
 import { getGitRoot } from "../../../../utils/projects";
 import { writeConfig } from "../../config/writeConfig";
 import { migrateSecrets } from "./migrateSecrets";
@@ -192,7 +193,7 @@ export const migrateV2 = async (vorpal: Vorpal) => {
           }, Promise.resolve({}));
         } else {
           components = {
-            [COMPONENT_NAME]: await createComponent(".", gitlabCi),
+            [COMPONENT_NAME]: await createComponent(APP_DIR, gitlabCi),
           };
         }
         // we only have one component
@@ -222,8 +223,10 @@ export const migrateV2 = async (vorpal: Vorpal) => {
 
         this.log("-------------------");
         this.log("migrate secrets");
+        await syncBitwarden();
         for (const env of LEGACY_ENVS) {
-          await migrateSecrets(this, gitlabCi, env);
+          if (env === "stage" && !STAGING_ENABLED) return;
+          await migrateSecrets(this, config, env);
         }
 
         this.log("-------------------");
