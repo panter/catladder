@@ -24,15 +24,13 @@ const baseRetry: Retry = {
 const getYarnInstall = (context: Context) => [
   `cd ${context.componentConfig.dir}`,
   "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
-  `echo 'yarn-offline-mirror ".yarn-cache/"' >> .yarnrc`,
-  `echo 'yarn-offline-mirror-pruning true' >> .yarnrc`,
   "yarn install --frozen-lockfile",
 ];
 export const getNodeCache = (): GitlabJobCache[] => [
   {
     key: "yarn",
     policy: "pull-push",
-    paths: [".yarn-cache"],
+    paths: [".yarn", "node_modules", "**/node_modules/"],
   },
 ];
 
