@@ -3,20 +3,25 @@ export type BuildConfigBase = {
   extraVars?: Record<string, string>;
 };
 
+export type BuildConfigNodeBase = {
+  buildCommand?: string | string[] | null;
+  docker?: {
+    additionsBegin?: string[];
+    additionsEnd?: string[];
+  };
+};
+
 export type BuildConfigNode = {
   type: "node";
-  buildCommand?: string | string[] | null;
-} & BuildConfigBase;
+} & BuildConfigNodeBase;
 
-export type BuildConfigNodeStatic = BuildConfigBase & {
+export type BuildConfigNodeStatic = BuildConfigNodeBase & {
   type: "node-static";
-  buildCommand?: string | string[] | null;
   startCommand?: never;
 };
 
-export type BuildConfigStorybook = BuildConfigBase & {
+export type BuildConfigStorybook = BuildConfigNodeBase & {
   type: "storybook";
-  buildCommand?: string | string[] | null;
   startCommand?: never;
 };
 export type BuildConfig =

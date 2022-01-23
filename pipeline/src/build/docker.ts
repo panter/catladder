@@ -25,6 +25,10 @@ export const createDockerBuildJob = (
     ],
     variables: {
       ...DOCKER_RUNNER_BUILD_VARIABLES,
+      DOCKERFILE_ADDITIONS:
+        context.componentConfig.build.docker?.additionsBegin?.join("\n"),
+      DOCKERFILE_ADDITIONS_END:
+        context.componentConfig.build.docker?.additionsEnd?.join("\n"),
       APP_DIR: context.componentConfig.dir,
       DOCKER_HOST: "tcp://0.0.0.0:2375",
       DOCKER_TLS_CERTDIR: "",
