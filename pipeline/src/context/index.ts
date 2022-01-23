@@ -42,12 +42,12 @@ export const getEnvironment = (
   }
   const environmentName =
     envType === "review" && commitInfo
-      ? `${env}/${componentName}/${commitInfo.refName}`
+      ? `${env}/${commitInfo.refName}/${componentName}`
       : `${env}/${componentName}`;
 
   const environmentSlug =
     envType === "review" && commitInfo
-      ? `${env}-${componentName}-${commitInfo.refSlug}`
+      ? `${env}-${commitInfo.refSlug}-${componentName}`
       : `${env}-${componentName}`;
 
   let predefinedVariables: Record<string, string>;
