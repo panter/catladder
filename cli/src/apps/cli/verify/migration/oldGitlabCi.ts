@@ -18,11 +18,13 @@ export type OldGitlabCiFile = {
 
 export const detectBuildConfig = (
   gitlabCi: OldGitlabCiFile
-): BuildConfig["type"] => {
+): BuildConfig["type"] | "monorepo" => {
   const firstInclude = gitlabCi.include[0];
   if (!firstInclude || gitlabCi.include[0]?.project !== "catladder/gitlab-ci") {
     throw new Error("unsupported gitlab-ci file");
   }
+
+  if (firstInclude.file === "monorepo.yml") return "monorepo";
 
   if (firstInclude.file === "node-kubernetes.yml") {
     return "node";

@@ -1,11 +1,19 @@
 import {
   BuildConfig,
+  ComponentConfig,
   Config,
   DeployConfigKubernetes,
   Env,
 } from "@catladder/pipeline";
-import { readFile, writeFile } from "fs-extra";
+import {
+  existsSync,
+  lstatSync,
+  readdirSync,
+  readFile,
+  writeFile,
+} from "fs-extra";
 import { isEmpty } from "lodash";
+import { join } from "path";
 import Vorpal from "vorpal";
 import {
   getGitlabCi,
@@ -42,6 +50,16 @@ const transformVars = (rawVars: {
     public: rawVars.public,
     secret: rawVars.secret ? Object.keys(rawVars.secret) : undefined,
   };
+};
+
+const getLegacyMonorepoSubCiFiles = (dir: string) => {
+  return readdirSync(dir)
+    .filter((file) => lstatSync(file).isDirectory())
+    .map((dir) => ({
+      dir,
+      ci: join(dir, ".gitlab-ci.yml"),
+    }))
+    .filter(({ ci }) => existsSync(ci));
 };
 
 const transformValues = (
@@ -110,61 +128,78 @@ export const migrateV2 = async (vorpal: Vorpal) => {
       vorpal.log("");
 
       if (shouldContinue) {
-        const { env, ...baseValues } =
-          (await readYaml(gitRoot + "/values.yml")) ?? {};
+        const createComponent = async (
+          dir: string,
+          ciFile: OldGitlabCiFile
+        ): Promise<ComponentConfig> => {
+          const { env, ...baseValues } =
+            (await readYaml(dir + "/values.yml")) ?? {};
 
-        const startCommand = baseValues?.application?.command?.join(" ");
+          const startCommand = baseValues?.application?.command?.join(" ");
+          return {
+            vars: env ? transformVars(env) : undefined,
+            dir: dir,
+            build: {
+              type: detectBuildConfig(ciFile),
+              startCommand: startCommand,
+            } as BuildConfig,
+            deploy: {
+              type: "kubernetes",
+              values: transformValues(baseValues),
+              cluster: CLUSTER_NAME,
+            },
+            env: await LEGACY_ENVS.reduce<Promise<Env>>(
+              async (acc, envName) => {
+                if (envName === "stage" && !STAGING_ENABLED) {
+                  return {
+                    ...(await acc),
+                    [envName]: false,
+                  };
+                }
+                const newEnvName = envName === "dev-local" ? "local" : envName;
 
+                const envValues =
+                  (await readYaml(dir + `/values-${envName}.yml`)) ?? {};
+                const { env, ...rest } = envValues;
+                const hostname = rest?.application?.hostname;
+                const values = transformValues(rest);
+                return {
+                  ...(await acc),
+                  [newEnvName]: {
+                    hostname: hostname,
+                    vars: env ? transformVars(env) : undefined,
+                    deploy: values
+                      ? {
+                          values: values,
+                        }
+                      : undefined,
+                  },
+                };
+              },
+              Promise.resolve({})
+            ),
+          };
+        };
+        let components: Record<string, ComponentConfig>;
+        if (detectBuildConfig(gitlabCi) === "monorepo") {
+          components = await getLegacyMonorepoSubCiFiles(gitRoot).reduce<
+            Promise<Record<string, ComponentConfig>>
+          >(async (acc, el) => {
+            return {
+              ...(await acc),
+              [el.dir]: await createComponent(el.dir, await readYaml(el.ci)),
+            };
+          }, Promise.resolve({}));
+        } else {
+          components = {
+            [COMPONENT_NAME]: await createComponent(".", gitlabCi),
+          };
+        }
         // we only have one component
         const config: Config = {
           customerName: CUSTOMER_NAME,
           appName: APP_NAME,
-          components: {
-            [COMPONENT_NAME]: {
-              vars: env ? transformVars(env) : undefined,
-              dir: APP_DIR ?? ".",
-              build: {
-                type: detectBuildConfig(gitlabCi),
-                startCommand: startCommand,
-              } as BuildConfig,
-              deploy: {
-                type: "kubernetes",
-                values: transformValues(baseValues),
-                cluster: CLUSTER_NAME,
-              },
-              env: await LEGACY_ENVS.reduce<Promise<Env>>(
-                async (acc, envName) => {
-                  if (envName === "stage" && !STAGING_ENABLED) {
-                    return {
-                      ...(await acc),
-                      [envName]: false,
-                    };
-                  }
-                  const newEnvName =
-                    envName === "dev-local" ? "local" : envName;
-
-                  const envValues =
-                    (await readYaml(gitRoot + `/values-${envName}.yml`)) ?? {};
-                  const { env, ...rest } = envValues;
-                  const hostname = rest?.application?.hostname;
-                  const values = transformValues(rest);
-                  return {
-                    ...(await acc),
-                    [newEnvName]: {
-                      hostname: hostname,
-                      vars: env ? transformVars(env) : undefined,
-                      deploy: values
-                        ? {
-                            values: values,
-                          }
-                        : undefined,
-                    },
-                  };
-                },
-                Promise.resolve({})
-              ),
-            },
-          },
+          components,
         };
 
         const comment =

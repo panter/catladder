@@ -10,9 +10,9 @@ import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "./docker";
 import { isOfBuildType } from "./types";
 
 const NODE_RUNNER_BUILD_VARIABLES = {
-  KUBERNETES_CPU_REQUEST: "1",
+  KUBERNETES_CPU_REQUEST: "0.5",
   KUBERNETES_CPU_LIMIT: "2",
-  KUBERNETES_MEMORY_REQUEST: "1.5Gi",
+  KUBERNETES_MEMORY_REQUEST: "1Gi",
   KUBERNETES_MEMORY_LIMIT: "2Gi",
 };
 const APP_BUILD_JOB_NAME = "🔨 app";

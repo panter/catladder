@@ -1,5 +1,5 @@
 import { Config } from "@catladder/pipeline";
-import { spawn } from "child-process-promise";
+import { spawn, exec } from "child-process-promise";
 import { writeFile } from "fs-extra";
 import { safeDump } from "js-yaml";
 import { format } from "prettier";
@@ -44,9 +44,10 @@ export const writeConfig = async (
       encoding: "utf-8",
     });
     vorpal.log("adding type @catladder/pipeline....");
-    await spawn("yarn add @catladder/pipeline -D", {
+    await spawn("yarn add @catladder/pipeline -DW", {
       shell: true,
     });
+    await exec("git add " + gitRoot + "/catladder.ts");
   } else {
     const content = safeDump(config);
 
@@ -61,6 +62,7 @@ export const writeConfig = async (
         encoding: "utf-8",
       }
     );
+    await exec("git add " + gitRoot + "/catladder.ts");
   }
   vorpal.log("done!");
   vorpal.log("");
