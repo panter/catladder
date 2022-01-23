@@ -76,7 +76,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       envMode: "none",
       job: {
         ...base,
-        cache: getNodeCache("pull"),
+        cache: getNodeCache("pull-push"),
         script: [...yarnInstall, "yarn lint"],
       },
     },
@@ -85,7 +85,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
       envMode: "none",
       job: {
         ...base,
-        cache: getNodeCache("pull"),
+        cache: getNodeCache("pull-push"),
         script: [...yarnInstall, "yarn test"],
       },
     },
@@ -117,7 +117,10 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
           envMode: "jobPerEnv",
           job: {
             needs: [],
-            cache: [...getNodeCache("pull-push"), ...getNextCache(context)],
+            cache: [
+              ...getNodeCache("pull"), // we only pull in app build, to make it a bit faster by not pushing it. push is done by test and lint
+              ...getNextCache(context),
+            ],
             variables: {
               ...NODE_RUNNER_BUILD_VARIABLES,
               ...context.environment.envVars,
