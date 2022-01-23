@@ -11,7 +11,8 @@ export const getEnvironment = (
   config: Config,
   componentName: string,
   env: string,
-  commitInfo?: CommitInfo
+  commitInfo?: CommitInfo,
+  skipReferences = false // to prevent infinit loop
 ): Environment => {
   const componentConfig = config.components[componentName];
   if (!componentConfig) {
@@ -27,30 +28,6 @@ export const getEnvironment = (
 
   const mergedConfig = merge({}, defaultConfig, envConfig);
 
-  const publicEnvVars = mergedConfig.vars?.public ?? {};
-  const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
-  const secretEnvVars = Object.fromEntries(
-    secretEnvVarKeys.map((key) => [key, `$CL_${env}_${componentName}_${key}`])
-  );
-  const referencedRaw = mergedConfig.vars?.fromComponents ?? {};
-
-  const referenced = Object.entries(referencedRaw).reduce(
-    (acc, [otherApp, mapping]) => {
-      // TODO: prevent infinit looop
-      const { envVars } = getEnvironment(config, otherApp, env, commitInfo);
-
-      return {
-        ...acc,
-        ...Object.fromEntries(
-          Object.entries(mapping).map(([ourKey, otherKey]) => [
-            ourKey,
-            envVars[otherKey],
-          ])
-        ),
-      };
-    },
-    {}
-  );
   // env type: if its set manually, use that, otherwise use the known env types
 
   const basePredefinedVariables = {
@@ -110,6 +87,34 @@ export const getEnvironment = (
       RELEASE_NAME,
     };
   }
+  const publicEnvVars = mergedConfig.vars?.public ?? {};
+  const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
+  const secretEnvVars = Object.fromEntries(
+    secretEnvVarKeys.map((key) => [key, `$CL_${env}_${componentName}_${key}`])
+  );
+  const referencedRaw = mergedConfig.vars?.fromComponents ?? {};
+
+  const referenced = skipReferences
+    ? {}
+    : Object.entries(referencedRaw).reduce((acc, [otherApp, mapping]) => {
+        const { envVars } = getEnvironment(
+          config,
+          otherApp,
+          env,
+          commitInfo,
+          true // prevent infinit loop
+        );
+
+        return {
+          ...acc,
+          ...Object.fromEntries(
+            Object.entries(mapping).map(([ourKey, otherKey]) => [
+              ourKey,
+              envVars[otherKey],
+            ])
+          ),
+        };
+      }, {});
 
   const envVars = {
     ...predefinedVariables,
