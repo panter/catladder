@@ -3,7 +3,7 @@ export type BuildConfigBase = {
   extraVars?: Record<string, string>;
 };
 
-export type BuildConfigNodeBase = {
+export type BuildConfigNodeBase = BuildConfigBase & {
   buildCommand?: string | string[] | null;
   docker?: {
     additionsBegin?: string[];
