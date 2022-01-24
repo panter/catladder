@@ -105,8 +105,6 @@ const doItFor = async (
     }
   }
 
-  console.log(JSON.stringify(valuesToEdit, null, 2));
-
   for (const componentName of components) {
     await upsertAllVariables(
       this,

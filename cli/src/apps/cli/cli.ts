@@ -10,12 +10,12 @@ import theStuffThatReallyMatters from "./commands/theStuffThatReallyMatters";
 
 import { getProjectConfig } from "../../config/getProjectConfig";
 import { verify } from "./verify";
+import { showProjectBanner } from "./commands/project/utils/showProjectBanner";
 
 export default async () => {
   const vorpal = new Vorpal();
-  verify(vorpal);
+
   const welcomeMessage = `catladder 2022 😻 version ${packageInfos.version}`;
-  const projectConfig = await getProjectConfig();
 
   vorpal
     .delimiter("catladder $") // emoji messes with cursor :-( https://github.com/dthree/vorpal/issues/332
@@ -24,11 +24,10 @@ export default async () => {
     .log("")
     .log(welcomeMessage)
     .log("");
-  if (projectConfig) {
-    vorpal.log("project: " + projectConfig.appName);
-    vorpal.log("customer: " + projectConfig.customerName);
-    vorpal.log("");
-  }
+
+  await showProjectBanner(vorpal);
+
+  verify(vorpal);
 
   general(vorpal);
   project(vorpal);

@@ -7,36 +7,45 @@ import { CommandInstance } from "vorpal";
 import { getPreference, hasPreference, setPreference } from "./preferences";
 
 const TOKEN_KEY = "gitlab-personal-access-token";
+
+export const hasGitlabToken = async () => await hasPreference(TOKEN_KEY);
+export const setupGitlabToken = async (vorpal: CommandInstance) => {
+  vorpal.log("");
+  vorpal.log("☝ in order to access the api, we need a personal access token");
+  vorpal.log("Its best to create one specifically for catladder");
+  vorpal.log("");
+  vorpal.log("☝ we open up the settings page for you!");
+  vorpal.log("");
+  const { shouldContinue } = await vorpal.prompt({
+    default: true,
+    message: "Ok",
+    name: "shouldContinue",
+    type: "prompt",
+  });
+
+  open("https://git.panter.ch/-/profile/personal_access_tokens");
+
+  vorpal.log("Please type in gitlab's personal access token");
+
+  const { personalToken } = await vorpal.prompt({
+    type: "string",
+    name: "personalToken",
+    default: "",
+    message: "Your personal access token ",
+  });
+  if (personalToken) {
+    await setPreference(TOKEN_KEY, personalToken);
+  }
+};
 export const getGitlabToken = async (vorpal: CommandInstance) => {
-  if (!(await hasPreference(TOKEN_KEY))) {
-    vorpal.log("");
-    vorpal.log(
-      "☝ in order to access the api, we need a personal access token"
-    );
-    vorpal.log("Its best to create one specifically for catladder");
-    vorpal.log("");
-    vorpal.log("☝ we open up the settings page for you!");
-    vorpal.log("");
-    const { shouldContinue } = await vorpal.prompt({
-      default: true,
-      message: "Ok",
-      name: "shouldContinue",
-      type: "prompt",
-    });
-
-    open("https://git.panter.ch/-/profile/personal_access_tokens");
-
-    vorpal.log("Please type in gitlab's personal access token");
-
-    const { personalToken } = await vorpal.prompt({
-      type: "string",
-      name: "personalToken",
-      default: "",
-      message: "Your personal access token ",
-    });
-    if (personalToken) {
-      await setPreference(TOKEN_KEY, personalToken);
+  if (!(await hasGitlabToken())) {
+    if (!vorpal) {
+      console.error(
+        "⚠️ gitlab token missing, please run catladder to set it up"
+      );
+      process.exit(1);
     }
+    await setupGitlabToken(vorpal);
   }
   return getPreference(TOKEN_KEY);
 };

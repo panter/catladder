@@ -25,6 +25,8 @@ export const getProjectConfig = memoizee(
   { promise: true }
 );
 
+export const reloadConfig = () => getProjectConfig.clear();
+
 export const getGitlabCiFilePath = async () => {
   const gitRoot = await getGitRoot();
   return gitRoot + "/.gitlab-ci.yml";
