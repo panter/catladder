@@ -63,20 +63,24 @@ export const getEnvironment = (
       PORT: port.toString(),
     };
   } else {
+    const KUBE_NAMESPACE = `${config.customerName}-${config.appName}-${env}`;
+    const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
+
+    const componentSlug = slugify(componentName);
+    const envInUrl =
+      envType === "review" && commitInfo
+        ? `$${commitInfo.refSlug}.${env}`
+        : env;
+
+    const HOST_CANONICAL = `${config.appName}-${componentSlug}.${envInUrl}.${config.customerName}.panter.cloud`;
+
+    hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
+    const url = `https://${hostname}`;
+
     const KUBE_APP_NAME =
       envType === "review" && commitInfo
         ? `${componentName}-${commitInfo.refSlug}`
         : componentName;
-
-    const KUBE_NAMESPACE = `${config.customerName}-${config.appName}-${env}`;
-    const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
-
-    const APP_SLUG = slugify(KUBE_APP_NAME);
-
-    const HOST_CANONICAL = `${config.appName}-${APP_SLUG}.${env}.${config.customerName}.panter.cloud`;
-
-    hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
-    const url = `https://${hostname}`;
 
     predefinedVariables = {
       ...basePredefinedVariables,
