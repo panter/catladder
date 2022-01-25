@@ -5,7 +5,7 @@ import { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
 import { DeployConfig } from "../deploy/types";
 import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
-import { CommitInfo, Context, Environment } from "../types/context";
+import { CommitInfo, Context, Environment, YarnInfo } from "../types/context";
 
 export const getEnvironment = (
   config: Config,
@@ -139,7 +139,8 @@ export const createContext = (
   config: Config,
   componentName: string,
   env: string,
-  commitInfo?: CommitInfo
+  commitInfo?: CommitInfo,
+  yarnInfo?: YarnInfo
 ): Context => {
   if (!/^[a-z0-9-]+$/.test(componentName)) {
     throw new Error(
@@ -177,5 +178,6 @@ export const createContext = (
     componentName,
     environment: getEnvironment(config, componentName, env, commitInfo),
     commitInfo,
+    yarnInfo,
   };
 };

@@ -6,6 +6,7 @@ import { Config, PipelineTrigger } from "../types/config";
 import { Context, CommitInfo } from "../types/context";
 import { GitlabJob, GitlabJobDef, GitlabJobs } from "../types/gitlab-types";
 import { notNil } from "../utils";
+import { getYarnInfo } from "./yarnInfo";
 
 const createRawJobs = (context: Context): GitlabJobs => {
   if (context.componentConfig.deploy === false) {
@@ -116,20 +117,28 @@ const addStageNeeds = (jobs: GitlabJobs): GitlabJobs => {
     };
   });
 };
-export const createJobs = (
+export const createJobs = async (
   envs: string[],
   config: Config,
   componentName: string,
   trigger: PipelineTrigger
-): Record<string, GitlabJobDef> => {
+): Promise<Record<string, GitlabJobDef>> => {
   const commitInfo: CommitInfo = {
     refName: process.env.CI_COMMIT_REF_NAME ?? "unknown",
     refSlug: process.env.CI_COMMIT_REF_SLUG ?? "unknown",
     trigger,
   };
 
+  const yarnInfo = await getYarnInfo(config, componentName);
+
   return envs.reduce((acc, env) => {
-    const context = createContext(config, componentName, env, commitInfo);
+    const context = createContext(
+      config,
+      componentName,
+      env,
+      commitInfo,
+      yarnInfo
+    );
     const jobs = addStageNeeds(createRawJobs(context));
 
     return {
