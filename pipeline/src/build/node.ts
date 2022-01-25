@@ -5,10 +5,12 @@ import {
   Retry,
   GitlabJob,
 } from "../types/gitlab-types";
+
 import { Context } from "../types/context";
 import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "./docker";
 import { isOfBuildType } from "./types";
 import { ensureArray, notNil } from "../utils";
+import { join } from "path";
 
 const NODE_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -25,19 +27,38 @@ const baseRetry: Retry = {
 const getYarnInstall = (context: Context) => [
   `cd ${context.componentConfig.dir}`,
   "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
-  "yarn install --frozen-lockfile",
+  context.yarnInfo?.isClassic
+    ? "yarn install --frozen-lockfile"
+    : "yarn install --immutable",
 ];
-export const getNodeCache = (policy = "pull-push"): GitlabJobCache[] => [
-  {
-    key: "node-modules",
-    policy: policy,
-    paths: [".yarn", "node_modules", "**/node_modules/"],
-  },
-];
+export const getNodeCache = (context: Context): GitlabJobCache[] => {
+  const componentIsInWorkspace = context.yarnInfo?.componentIsInWorkspace;
+
+  return [
+    {
+      // if component is in a shared workspace, use workspace cache. use individual cache else
+      key: componentIsInWorkspace
+        ? "node-modules-workspace"
+        : context.componentName + "-node-modules",
+      policy: "pull-push",
+      paths: [
+        ".yarn",
+        ...(componentIsInWorkspace
+          ? [
+              "node_modules",
+              ...(context.yarnInfo?.workspaces.map((w) =>
+                join(w.location, "node_modules")
+              ) ?? []),
+            ]
+          : [join(context.componentConfig.dir, "node_modules")]),
+      ],
+    },
+  ];
+};
 
 const getNextCache = (context: Context): GitlabJobCache[] => [
   {
-    key: "next-cache",
+    key: context.componentName + "-next-cache",
     policy: "pull-push",
     paths: [context.componentConfig.dir + "/.next/cache/"],
   },
@@ -84,7 +105,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
           envMode: "none",
           job: {
             ...base,
-            cache: getNodeCache("pull-push"),
+            cache: getNodeCache(context),
             script: [
               ...yarnInstall,
               ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
@@ -99,7 +120,7 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
           envMode: "none",
           job: {
             ...base,
-            cache: getNodeCache("pull-push"),
+            cache: getNodeCache(context),
             script: [
               ...yarnInstall,
               ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),
@@ -135,10 +156,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
           envMode: "jobPerEnv",
           job: {
             needs: [],
-            cache: [
-              ...getNodeCache("pull"), // we only pull in app build, to make it a bit faster by not pushing it. push is done by test and lint
-              ...getNextCache(context),
-            ],
+            cache: [...getNodeCache(context), ...getNextCache(context)],
             variables: {
               ...NODE_RUNNER_BUILD_VARIABLES,
               ...context.environment.envVars,

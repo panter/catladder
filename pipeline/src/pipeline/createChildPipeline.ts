@@ -13,15 +13,15 @@ export const createChildPipeline = async (
 
   // 2. write the triggering pipeline
 
-  const jobs = components.reduce<Record<string, GitlabJobDef>>(
-    (acc, componentName) => {
+  const jobs = await components.reduce<Promise<Record<string, GitlabJobDef>>>(
+    async (acc, componentName) => {
       const envs = getAllEnvsByTrigger(config, componentName, trigger);
       return {
-        ...acc,
-        ...createJobs(envs, config, componentName, trigger),
+        ...(await acc),
+        ...(await createJobs(envs, config, componentName, trigger)),
       };
     },
-    {}
+    Promise.resolve({})
   );
 
   // while technically not required, we group different envs in its own stage

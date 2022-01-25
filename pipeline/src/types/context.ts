@@ -19,10 +19,18 @@ export type CommitInfo = {
   refSlug: string;
   trigger: PipelineTrigger;
 };
+
+export type YarnInfo = {
+  version: string;
+  workspaces: { location: string }[];
+  isClassic: boolean;
+  componentIsInWorkspace: boolean;
+};
 export type Context = {
   componentConfig: ComponentConfig;
   componentName: string;
   fullConfig: Config;
   environment: Environment;
   commitInfo?: CommitInfo;
+  yarnInfo?: YarnInfo;
 };
