@@ -68,9 +68,7 @@ export const getEnvironment = (
 
     const componentSlug = slugify(componentName);
     const envInUrl =
-      envType === "review" && commitInfo
-        ? `$${commitInfo.refSlug}.${env}`
-        : env;
+      envType === "review" && commitInfo ? `${commitInfo.refSlug}.${env}` : env;
 
     const HOST_CANONICAL = `${config.appName}-${componentSlug}.${envInUrl}.${config.customerName}.panter.cloud`;
 
