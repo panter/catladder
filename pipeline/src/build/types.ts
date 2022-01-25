@@ -1,15 +1,48 @@
 export type BuildConfigBase = {
   startCommand?: string;
   extraVars?: Record<string, string>;
-};
-
-export type BuildConfigNodeBase = BuildConfigBase & {
+  /**
+   * define the build command
+   */
   buildCommand?: string | string[] | null;
+
+  /**
+   * customize docker build
+   */
   docker?: {
     additionsBegin?: string[];
     additionsEnd?: string[];
   };
+
+  /**
+   * customize lint, set false to disable
+   */
+  lint?:
+    | false
+    | {
+        command?: string | string[];
+      };
+
+  /**
+   * customize test, set false to disable
+   */
+  test?:
+    | false
+    | {
+        command?: string | string[];
+      };
+
+  /**
+   * customize audit, set false to disable
+   */
+  audit?:
+    | false
+    | {
+        command?: string | string[];
+      };
 };
+
+export type BuildConfigNodeBase = BuildConfigBase;
 
 export type BuildConfigNode = {
   type: "node";

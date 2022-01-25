@@ -8,6 +8,7 @@ import {
 import { Context } from "../types/context";
 import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "./docker";
 import { isOfBuildType } from "./types";
+import { ensureArray, notNil } from "../utils";
 
 const NODE_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -47,11 +48,13 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
     return [];
   }
 
+  const buildConfig = context.componentConfig.build;
+
   const base: Omit<GitlabJobDef, "script"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,
       ...NODE_RUNNER_BUILD_VARIABLES,
-      ...(context.componentConfig.build.extraVars ?? {}),
+      ...(buildConfig.extraVars ?? {}),
     },
 
     stage: "test",
@@ -60,36 +63,51 @@ const createNodeTestJobs = (context: Context): GitlabJobs => {
     retry: baseRetry,
   };
   const yarnInstall = getYarnInstall(context);
-  return [
-    {
-      name: "🛡 audit",
-      envMode: "none",
-      job: {
-        ...base,
-        cache: undefined, // audit does not need yarn install and no cache
-        script: ["yarn audit"],
-        allow_failure: true,
-      },
-    },
-    {
-      name: "👮 lint",
-      envMode: "none",
-      job: {
-        ...base,
-        cache: getNodeCache("pull-push"),
-        script: [...yarnInstall, "yarn lint"],
-      },
-    },
-    {
-      name: "🧪 test",
-      envMode: "none",
-      job: {
-        ...base,
-        cache: getNodeCache("pull-push"),
-        script: [...yarnInstall, "yarn test"],
-      },
-    },
-  ];
+  const auditJob: GitlabJob | null =
+    buildConfig.audit !== false
+      ? {
+          name: "🛡 audit",
+          envMode: "none",
+          job: {
+            ...base,
+            cache: undefined, // audit does not need yarn install and no cache
+            script: ensureArray(buildConfig.audit?.command) ?? ["yarn audit"],
+            allow_failure: true,
+          },
+        }
+      : null;
+
+  const lintJob: GitlabJob | null =
+    buildConfig.lint !== false
+      ? {
+          name: "👮 lint",
+          envMode: "none",
+          job: {
+            ...base,
+            cache: getNodeCache("pull-push"),
+            script: [
+              ...yarnInstall,
+              ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
+            ],
+          },
+        }
+      : null;
+  const testJob: GitlabJob | null =
+    buildConfig.test !== false
+      ? {
+          name: "🧪 test",
+          envMode: "none",
+          job: {
+            ...base,
+            cache: getNodeCache("pull-push"),
+            script: [
+              ...yarnInstall,
+              ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),
+            ],
+          },
+        }
+      : null;
+  return [auditJob, lintJob, testJob].filter(notNil);
 };
 
 const createNodeBuildJobs = (context: Context): GitlabJobs => {
@@ -132,9 +150,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
             script: [
               ...buildInfo,
               ...yarnInstall,
-              ...(Array.isArray(buildConfig.buildCommand)
-                ? buildConfig.buildCommand
-                : [buildConfig.buildCommand]),
+              ...(ensureArray(buildConfig.buildCommand) ?? []),
             ],
             artifacts: {
               paths: [
@@ -143,6 +159,7 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
                 context.componentConfig.dir + "/.next",
               ],
             },
+            ...buildConfig,
           },
         }
       : null;

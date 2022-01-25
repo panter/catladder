@@ -5,6 +5,7 @@ import { DEPLOY_TYPES } from "../deploy";
 import { Config, PipelineTrigger } from "../types/config";
 import { Context, CommitInfo } from "../types/context";
 import { GitlabJob, GitlabJobDef, GitlabJobs } from "../types/gitlab-types";
+import { notNil } from "../utils";
 
 const createRawJobs = (context: Context): GitlabJobs => {
   if (context.componentConfig.deploy === false) {
@@ -84,9 +85,6 @@ const replaceReferences = (
     ),
   };
 };
-function notNil<TValue>(value: TValue | null | undefined): value is TValue {
-  return value !== null && value !== undefined;
-}
 
 // this can be removed once https://gitlab.com/gitlab-org/gitlab/-/issues/220758 is resolved
 const addStageNeeds = (jobs: GitlabJobs): GitlabJobs => {
