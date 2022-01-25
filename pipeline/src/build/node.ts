@@ -159,7 +159,6 @@ const createNodeBuildJobs = (context: Context): GitlabJobs => {
                 context.componentConfig.dir + "/.next",
               ],
             },
-            ...buildConfig,
           },
         }
       : null;
