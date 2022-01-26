@@ -13,6 +13,9 @@ export type DeployConfigKubernetes = {
       projectId?: string;
       region?: string;
     };
+    mongodb?: AllowUnknownProps<{
+      enabled: boolean;
+    }>;
     mailhog?: {
       enabled: boolean;
     };
@@ -49,9 +52,9 @@ type CustomDeployConfig = {
 
 export type DeployConfig = DeployConfigKubernetes;
 
-export const isOfDeployType = <T extends DeployConfig["type"]>(
+export const isOfDeployType = <T extends Array<DeployConfig["type"]>>(
   t: DeployConfig | false,
-  type: T
-): t is Extract<DeployConfig, { type: T }> => {
-  return t && t.type === type;
+  ...types: T
+): t is Extract<DeployConfig, { type: T[number] }> => {
+  return t && types.includes(t.type);
 };

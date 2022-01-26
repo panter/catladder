@@ -1,8 +1,10 @@
 import { Context } from "../types/context";
 import { GitlabJobs } from "../types/gitlab-types";
-import { createNodeJobs, createStorybookJobs } from "./node";
+import { createNodeJobs, createStorybookJobs, createMeteorJobs } from "./node";
+
 import { BuildConfig } from "./types";
 export * from "./types";
+export * from "./node";
 
 export type BuildTypes = {
   [type in BuildConfig["type"]]: {
@@ -29,6 +31,12 @@ export const BUILD_TYPES: BuildTypes = {
     jobs: createStorybookJobs,
     defaults: () => ({
       buildCommand: ["yarn storybook", "mv ./storybook-out /dist"],
+    }),
+  },
+  meteor: {
+    jobs: createMeteorJobs,
+    defaults: () => ({
+      startCommand: "node main.js",
     }),
   },
 };

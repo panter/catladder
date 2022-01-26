@@ -1,11 +1,12 @@
-import { GitlabJobs } from "../types/gitlab-types";
-import { Context } from "../types/context";
-import { isOfDeployType } from "./types";
-import { getRunnerImage } from "../runner";
-import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "./base";
+import { GitlabJobs } from "../../types/gitlab-types";
+import { Context } from "../../types/context";
+import { isOfDeployType } from "../types";
+import { getRunnerImage } from "../../runner";
+import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
 import { merge } from "lodash";
 import { dump } from "js-yaml";
-import { getSecretVarName } from "..";
+import { createMongodbBaseConfig } from "./mongodb";
+import { createCloudsqlBaseConfig } from "./cloudsql";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -46,7 +47,6 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     }
   );
 
-  const cloudsqlEnabled = deployConfig.values?.cloudsql?.enabled;
   const defaultKubeValues = {
     application: {
       hostname: context.environment.hostname,
@@ -54,16 +54,11 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     },
 
     env: env,
-    ...(cloudsqlEnabled
-      ? {
-          cloudsql: {
-            proxyCredentials: `$${getSecretVarName(
-              context.environment.shortName,
-              context.componentName,
-              "cloudsqlProxyCredentials"
-            )}`,
-          },
-        }
+    ...(deployConfig.values?.cloudsql?.enabled
+      ? createCloudsqlBaseConfig(context)
+      : {}),
+    ...(deployConfig.values?.mongodb?.enabled
+      ? createMongodbBaseConfig(context)
       : {}),
   };
 
@@ -77,9 +72,6 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
       image: getRunnerImage("kubernetes"),
       variables: {
         ...context.environment.envVars,
-
-        MONGODB_ENABLED: "false", // TODO: remove the whole mongodb stuff and put it into values
-        // TODO: refactor and unify with other stages
         HELM_EXPERIMENTAL_OCI: "1",
         IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
         KUBE_VALUES: dump(kubeValues, {
