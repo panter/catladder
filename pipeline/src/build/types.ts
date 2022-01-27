@@ -55,7 +55,6 @@ export type BuildConfigNodeStatic = BuildConfigNodeBase & {
 
 export type BuildConfigMeteor = BuildConfigNodeBase & {
   type: "meteor";
-  startCommand: "node main.js";
 };
 
 export type BuildConfigStorybook = BuildConfigNodeBase & {
