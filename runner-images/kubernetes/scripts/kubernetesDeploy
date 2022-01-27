@@ -14,7 +14,7 @@ readarray -t helmArgsArray <<<"$helmArgsEvaluated"
 if [[ ${ENV_SHORT} == "review" ]]; then echo "NOTE - This deployment will stop itself after 2 weeks"; fi
 
 echo "all values"
-echo "$KUBE_VALUES"
+
 echo "$KUBE_VALUES" | envsubst >__all_values.yml
 
 echo "doing helm upgrade"

@@ -4,7 +4,7 @@ import { isOfDeployType } from "./types";
 import { getRunnerImage } from "../runner";
 import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "./base";
 import { merge } from "lodash";
-import { stringify } from "yaml";
+import { dump } from "js-yaml";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -67,7 +67,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
         // TODO: refactor and unify with other stages
         HELM_EXPERIMENTAL_OCI: "1",
         IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
-        KUBE_VALUES: stringify(kubeValues),
+        KUBE_VALUES: dump(kubeValues, { lineWidth: -1 }),
         HELM_GITLAB_CHART_NAME: "the-panter-chart",
         HELM_ARGS: deployConfig.additionalHelmArgs,
         COMPONENT_NAME: context.componentName,

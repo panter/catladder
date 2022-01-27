@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "fs";
 import { register } from "ts-node";
-import { parse } from "yaml";
+import { load } from "js-yaml";
 import { Config } from "../types";
 
 // allows us to load ts files
@@ -27,7 +27,7 @@ export const readConfigSync = (
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       return require(fullPath(directory, found)).default;
     } else {
-      return parse(
+      return load(
         readFileSync(fullPath(directory, found), { encoding: "utf-8" })
       );
     }
