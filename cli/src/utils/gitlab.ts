@@ -1,5 +1,6 @@
 import { exec } from "child-process-promise";
-import { isObject, result } from "lodash";
+import { getSecretVarName } from "@catladder/pipeline";
+import { isObject } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
@@ -162,7 +163,7 @@ export const upsertAllVariables = async (
   const { id } = await getProjectInfo(vorpal);
 
   for (const [key, value] of Object.entries(variables ?? {})) {
-    const fullKey = "CL_" + env + "_" + componentName + "_" + key;
+    const fullKey = getSecretVarName(env, componentName, key);
     const valueSanitized = isObject(value) ? JSON.stringify(value) : `${value}`;
     try {
       await updateVariable(vorpal, id, fullKey, valueSanitized);

@@ -7,6 +7,12 @@ import { DeployConfig } from "../deploy/types";
 import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
 import { CommitInfo, Context, Environment, YarnInfo } from "../types/context";
 
+const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
+export const getSecretVarName = (
+  env: string,
+  componentName: string,
+  key: string
+) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
 export const getEnvironment = (
   config: Config,
   componentName: string,
@@ -92,7 +98,10 @@ export const getEnvironment = (
   const publicEnvVars = mergedConfig.vars?.public ?? {};
   const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
   const secretEnvVars = Object.fromEntries(
-    secretEnvVarKeys.map((key) => [key, `$CL_${env}_${componentName}_${key}`])
+    secretEnvVarKeys.map((key) => [
+      key,
+      `$${getSecretVarName(env, componentName, key)}`,
+    ])
   );
   const referencedRaw = mergedConfig.vars?.fromComponents ?? {};
 
