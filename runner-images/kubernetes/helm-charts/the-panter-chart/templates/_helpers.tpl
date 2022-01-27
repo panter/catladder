@@ -42,7 +42,7 @@ Create chart name and version as used by the chart label.
 get the right host
 */}}
 {{- define "host" -}}
-   {{- default .Values.application.hostCanonical .Values.application.host -}}
+   {{- default .Values.application.hostCanonical .Values.application.hostname -}}
 {{- end -}}
 
 {{- define "MAILHOG_SMTP_URL" -}}
