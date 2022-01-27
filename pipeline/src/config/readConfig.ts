@@ -29,7 +29,7 @@ export const readConfigSync = (
     } else {
       return load(
         readFileSync(fullPath(directory, found), { encoding: "utf-8" })
-      );
+      ) as Config;
     }
   }
   return null;
