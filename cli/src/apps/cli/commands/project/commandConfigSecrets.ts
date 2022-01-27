@@ -2,14 +2,17 @@
 import { stripIndents } from "common-tags";
 import { difference } from "lodash";
 import Vorpal, { CommandInstance } from "vorpal";
+import { GOOGLE_CLOUD_SQL_PASS_PATH } from "../../../../config/constants";
 import {
   getEnvironment,
   getEnvVars,
+  getPipelineContextByChoice,
   getProjectComponents,
   parseChoice,
 } from "../../../../config/getProjectConfig";
 import { editAsFile } from "../../../../utils/editAsFile";
 import { upsertAllVariables } from "../../../../utils/gitlab";
+import { hasBitwarden, readPass } from "../../../../utils/passwordstore";
 import { delay } from "../../../../utils/promise";
 import { allEnvsAndAllComponents } from "./utils/autocompletions";
 
@@ -112,6 +115,28 @@ const doItFor = async (
       env,
       componentName
     );
+
+    if (hasBitwarden()) {
+      // add cloud sql secret if needed.
+      // TODO: this is legacy, in the future we want to have one service account per app
+
+      const context = await getPipelineContextByChoice(env, componentName);
+      if (
+        context.componentConfig.deploy &&
+        context.componentConfig.deploy.values?.cloudsql?.enabled
+      ) {
+        await upsertAllVariables(
+          this,
+          {
+            cloudsqlProxyCredentials: await readPass(
+              GOOGLE_CLOUD_SQL_PASS_PATH
+            ),
+          },
+          env,
+          componentName
+        );
+      }
+    }
   }
 };
 

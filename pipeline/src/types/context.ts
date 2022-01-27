@@ -27,8 +27,8 @@ export type YarnInfo = {
   componentIsInWorkspace: boolean;
 };
 export type Context = {
-  componentConfig: ComponentConfig;
   componentName: string;
+  componentConfig: ComponentConfig;
   fullConfig: Config;
   environment: Environment;
   commitInfo?: CommitInfo;

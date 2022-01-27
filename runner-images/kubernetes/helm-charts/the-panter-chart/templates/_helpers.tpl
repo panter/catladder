@@ -104,7 +104,7 @@ securityContext:
   runAsUser: 2  # non-root user
   allowPrivilegeEscalation: false
 volumeMounts:
-  - name: cloudsql-instance-credentials
+  - name: cloudsql-proxy-credentials
     mountPath: /secrets/cloudsql
     readOnly: true
     
@@ -114,9 +114,9 @@ volumeMounts:
 {{- end -}}
 
 {{- define "cloudSqlCredentialsVolume" -}}
-name: cloudsql-instance-credentials
+name: cloudsql-proxy-credentials
 secret:
-  secretName: cloudsql-instance-credentials
+  secretName: {{ template "fullname" $ }}-cloudsql-proxy-credentials
 {{- end -}}
 {{/*
 Generate prisma-URL

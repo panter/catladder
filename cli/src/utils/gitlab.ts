@@ -74,8 +74,6 @@ export const doGitlabRequest = async <T = any>(
     return result.json();
   }
 
-  console.trace(data);
-
   throw new Error(
     `Could not send request to gitlab api: ${result.status} "${
       result.statusText

@@ -5,6 +5,7 @@ import { getRunnerImage } from "../runner";
 import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "./base";
 import { merge } from "lodash";
 import { dump } from "js-yaml";
+import { getSecretVarName } from "..";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -45,13 +46,27 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     }
   );
 
+  const cloudsqlEnabled = deployConfig.values?.cloudsql?.enabled;
   const defaultKubeValues = {
     application: {
       hostname: context.environment.hostname,
       command: context.componentConfig.build.startCommand,
     },
+
     env: env,
+    ...(cloudsqlEnabled
+      ? {
+          cloudsql: {
+            proxyCredentials: `$${getSecretVarName(
+              context.environment.shortName,
+              context.componentName,
+              "cloudsqlProxyCredentials"
+            )}`,
+          },
+        }
+      : {}),
   };
+
   const kubeValues = merge({}, defaultKubeValues, deployConfig.values);
 
   const kubernetesEnvironment = {
