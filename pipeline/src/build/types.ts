@@ -53,6 +53,11 @@ export type BuildConfigNodeStatic = BuildConfigNodeBase & {
   startCommand?: never;
 };
 
+export type BuildConfigMeteor = BuildConfigNodeBase & {
+  type: "meteor";
+  startCommand: "node main.js";
+};
+
 export type BuildConfigStorybook = BuildConfigNodeBase & {
   type: "storybook";
   startCommand?: never;
@@ -60,11 +65,12 @@ export type BuildConfigStorybook = BuildConfigNodeBase & {
 export type BuildConfig =
   | BuildConfigNode
   | BuildConfigNodeStatic
-  | BuildConfigStorybook;
+  | BuildConfigStorybook
+  | BuildConfigMeteor;
 
-export const isOfBuildType = <T extends BuildConfig["type"]>(
+export const isOfBuildType = <T extends Array<BuildConfig["type"]>>(
   t: BuildConfig,
-  type: T
-): t is Extract<BuildConfig, { type: T }> => {
-  return t.type === type;
+  ...types: T
+): t is Extract<BuildConfig, { type: T[number] }> => {
+  return types.includes(t.type);
 };

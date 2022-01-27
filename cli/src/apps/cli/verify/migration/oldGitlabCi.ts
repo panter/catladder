@@ -34,10 +34,10 @@ export const detectBuildConfig = (
     return "node-static";
   }
   if (firstInclude.file === "meteor-kubernetes.yml") {
-    throw new Error("meteor is not yet implemented");
+    return "meteor";
   }
 
   if (firstInclude.file === "rails-kubernetes.yml") {
-    throw new Error("meteor is not yet implemented");
+    throw new Error("rails is not yet implemented");
   }
 };

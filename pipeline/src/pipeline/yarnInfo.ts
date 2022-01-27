@@ -45,8 +45,6 @@ export const getYarnInfo = async (
     pathEqual(component.dir, w.location)
   );
 
-  console.log(componentName, componentIsInWorkspace);
-
   return {
     workspaces,
     version,
