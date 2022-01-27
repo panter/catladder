@@ -15,6 +15,7 @@ import {
 import { isEmpty } from "lodash";
 import { join } from "path";
 import Vorpal from "vorpal";
+import { string } from "yargs";
 import {
   getGitlabCi,
   getGitlabCiFilePath,
@@ -79,7 +80,7 @@ const transformValues = (
   };
 };
 export const migrateV2 = async (vorpal: Vorpal) => {
-  const gitlabCi: OldGitlabCiFile = await getGitlabCi();
+  const gitlabCi = await getGitlabCi<OldGitlabCiFile>();
   const gitRoot = await getGitRoot();
 
   const {

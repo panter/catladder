@@ -1,7 +1,7 @@
 import { Config } from "@catladder/pipeline";
 import { spawn, exec } from "child-process-promise";
 import { writeFile } from "fs-extra";
-import { safeDump } from "js-yaml";
+import { dump } from "js-yaml";
 import { format } from "prettier";
 import { CommandInstance } from "vorpal";
 import { getGitRoot } from "../../../utils/projects";
@@ -49,7 +49,7 @@ export const writeConfig = async (
     });
     await exec("git add " + gitRoot + "/catladder.ts");
   } else {
-    const content = safeDump(config);
+    const content = dump(config);
 
     await writeFile(
       gitRoot + "/catladder.yml",

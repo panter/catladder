@@ -1,5 +1,5 @@
 import { readFile, writeFile } from "fs-extra";
-import { safeDump } from "js-yaml";
+import { dump } from "js-yaml";
 import { mapKeys, snakeCase, toUpper } from "lodash";
 import path from "path";
 import Vorpal from "vorpal";
@@ -157,7 +157,7 @@ const PLATFORMS: { [platformName: string]: PlatformDefinition } = {
       {
         filename: "values-review.yml",
         content: async () =>
-          safeDump({
+          dump({
             jobs: {
               "db-prepare-seed": {
                 hook: "post-install",

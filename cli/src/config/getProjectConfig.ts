@@ -31,9 +31,9 @@ export const getGitlabCiFilePath = async () => {
   const gitRoot = await getGitRoot();
   return gitRoot + "/.gitlab-ci.yml";
 };
-export const getGitlabCi = async () => {
+export const getGitlabCi = async <T = Record<string, any>>() => {
   try {
-    return readYaml(await getGitlabCiFilePath());
+    return readYaml(await getGitlabCiFilePath()) as Promise<T>;
   } catch (e) {
     // ignore
     return null;
