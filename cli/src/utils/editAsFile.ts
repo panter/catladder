@@ -1,5 +1,5 @@
 import { withFile } from "tmp-promise";
-import yaml from "js-yaml";
+import { dump, load } from "js-yaml";
 
 import { readFile, writeFile } from "fs-extra";
 import getEditor from "./getEditor";
@@ -15,14 +15,14 @@ export const editAsFile = async <T>(
 
 `
     : "\n";
-  const asString = fullPreamble + yaml.safeDump(inObject, { noRefs: true });
+  const asString = fullPreamble + dump(inObject, { noRefs: true });
   let newContent: T;
 
   await withFile(
     async ({ path: tmpFilePath }) => {
       await writeFile(tmpFilePath, asString);
       await (await getEditor()).open(tmpFilePath);
-      newContent = yaml.load((await readFile(tmpFilePath)).toString("utf-8"));
+      newContent = load((await readFile(tmpFilePath)).toString("utf-8")) as T;
     },
     { postfix: ".yml" }
   );

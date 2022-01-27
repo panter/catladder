@@ -259,7 +259,7 @@ export default async (vorpal: Vorpal) =>
           variables: transformedVariables,
         };
 
-        const gitlabCiContent = safeDump(gitlabCiContentObj);
+        const gitlabCiContent = dump(gitlabCiContentObj);
         await writeFile(".gitlab-ci.yml", gitlabCiContent);
 
         allFilesToCreate.forEach(async ({ filename, content }) => {
@@ -268,7 +268,7 @@ export default async (vorpal: Vorpal) =>
           await writeFile(filename, theContent);
         });
 
-        await writeFile("values.yml", safeDump(values));
+        await writeFile("values.yml", dump(values));
 
         this.log("");
         this.log("gitlab-ci created! 💪😻");
