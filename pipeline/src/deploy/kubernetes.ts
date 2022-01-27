@@ -67,7 +67,11 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
         // TODO: refactor and unify with other stages
         HELM_EXPERIMENTAL_OCI: "1",
         IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
-        KUBE_VALUES: dump(kubeValues, { lineWidth: -1 }),
+        KUBE_VALUES: dump(kubeValues, {
+          lineWidth: -1,
+          quotingType: "'",
+          forceQuotes: true,
+        }),
         HELM_GITLAB_CHART_NAME: "the-panter-chart",
         HELM_ARGS: deployConfig.additionalHelmArgs,
         COMPONENT_NAME: context.componentName,
