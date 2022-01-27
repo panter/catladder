@@ -25,7 +25,7 @@ const getFullJobName = (
   env?: string | null
 ) => {
   if (env) {
-    return `${env} ${componentName} ${name}`;
+    return `${componentName} ${name} | ${env} `;
   }
   return `${componentName} ${name}`;
 };
