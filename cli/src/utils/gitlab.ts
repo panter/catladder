@@ -75,7 +75,7 @@ export const doGitlabRequest = async <T = any>(
   }
 
   throw new Error(
-    `Could not send request to gitlab api: ${result.status} "${
+    `Could not send request to gitlab api ${path}: ${result.status} "${
       result.statusText
     }".\nResponse: ${JSON.stringify(await result.json(), null, 2)}`
   );
