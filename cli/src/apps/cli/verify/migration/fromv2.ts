@@ -87,7 +87,7 @@ export const migrateV2 = async (vorpal: Vorpal) => {
     CUSTOMER_NAME,
     APP_NAME,
     COMPONENT_NAME,
-    APP_DIR,
+    APP_DIR = ".",
     CLUSTER_NAME,
     STAGING_ENABLED,
   } = gitlabCi.variables;
