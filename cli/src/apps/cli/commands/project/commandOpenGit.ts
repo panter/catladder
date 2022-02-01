@@ -1,5 +1,5 @@
-import { exec } from "child-process-promise";
 import Vorpal from "vorpal";
+import { $ } from "zx";
 
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -8,5 +8,5 @@ export default async (vorpal: Vorpal) =>
       "open the repo on gitlab / github in your browser"
     )
     .action(async () => {
-      await exec("npx git-open");
+      await $`npx git-open`;
     });

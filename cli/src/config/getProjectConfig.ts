@@ -72,9 +72,11 @@ export const getAllComponentsWithAllEnvs = async () => {
 
 export const getAllPipelineContexts = async () => {
   return Promise.all(
-    (await getAllComponentsWithAllEnvs()).map(({ env, componentName }) =>
-      getPipelineContextByChoice(env, componentName)
-    )
+    (await getAllComponentsWithAllEnvs())
+      .filter((c) => c.env !== "local")
+      .map(({ env, componentName }) =>
+        getPipelineContextByChoice(env, componentName)
+      )
   );
 };
 

@@ -7,6 +7,7 @@ import { merge } from "lodash";
 import { dump } from "js-yaml";
 import { createMongodbBaseConfig } from "./mongodb";
 import { createCloudsqlBaseConfig } from "./cloudsql";
+import { getSecretVarNameForContext } from "../..";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -91,11 +92,27 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
 
   const baseDeploymentJob = getBaseDeploymentJob(context);
   const baseStopJob = getBaseDeploymentStopJob(context);
-
+  const clusterName = `kube-${context.environment.fullName}`;
+  const connectContext = [
+    `kubectl config set-cluster "${clusterName}" --server="$${getSecretVarNameForContext(
+      context,
+      "KUBE_URL"
+    )}" --certificate-authority <(echo $${getSecretVarNameForContext(
+      context,
+      "KUBE_CA_PEM"
+    )} | base64 -d) --embed-certs=true`,
+    `kubectl config set-credentials "${clusterName}" --token="$${getSecretVarNameForContext(
+      context,
+      "KUBE_TOKEN"
+    )}"`,
+    `kubectl config set-context "${clusterName}" --cluster="${clusterName}" --user="${clusterName}" --namespace="${context.environment.envVars.KUBE_NAMESPACE}"`,
+    `kubectl config use-context "${clusterName}"`,
+  ];
   return [
     merge({}, baseDeploymentJob, shared, {
       job: {
         script: [
+          ...connectContext,
           "kubernetesEnsureNamespace",
           "kubernetesCreateSecret",
           "kubernetesDeploy",

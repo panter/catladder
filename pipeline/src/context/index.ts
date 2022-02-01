@@ -13,6 +13,9 @@ export const getSecretVarName = (
   componentName: string,
   key: string
 ) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
+
+export const getSecretVarNameForContext = (context: Context, key: string) =>
+  getSecretVarName(context.environment.shortName, context.componentName, key);
 export const getEnvironment = (
   config: Config,
   componentName: string,

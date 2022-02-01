@@ -1,11 +1,10 @@
-import { Context, getSecretVarName } from "../..";
+import { Context, getSecretVarNameForContext } from "../..";
 
 export const createCloudsqlBaseConfig = (context: Context) => {
   return {
     cloudsql: {
-      proxyCredentials: `$${getSecretVarName(
-        context.environment.shortName,
-        context.componentName,
+      proxyCredentials: `$${getSecretVarNameForContext(
+        context,
         "cloudsqlProxyCredentials"
       )}`,
     },

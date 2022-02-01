@@ -2,9 +2,17 @@
 export type DeployConfigBase = {};
 type AllowUnknownProps<T extends Record<string, unknown>> = T &
   Record<string, unknown>;
+
+export type DeployConfigKubernetesClusterGCloud = {
+  type: "gcloud";
+  name: string;
+  projectId: string;
+  region: string;
+};
+export type DeployConfigKubernetesCluster = DeployConfigKubernetesClusterGCloud; // currently only this
 export type DeployConfigKubernetes = {
   type: "kubernetes";
-  cluster?: string;
+  cluster?: DeployConfigKubernetesCluster;
   additionalHelmArgs?: string[];
   values?: AllowUnknownProps<{
     cloudsql?: {

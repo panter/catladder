@@ -3,10 +3,7 @@ import { spawn } from "child-process-promise";
 import { writeFile } from "fs-extra";
 import { withFile } from "tmp-promise";
 import Vorpal from "vorpal";
-import {
-  GOOGLE_CLOUD_SQL_PASS_PATH,
-  GOOGLE_PROJECT,
-} from "../../../../config/constants";
+import { GOOGLE_CLOUD_SQL_PASS_PATH } from "../../../../config/constants";
 import {
   getEnvVars,
   getPipelineContextByChoice,
@@ -45,7 +42,9 @@ export default async (vorpal: Vorpal) =>
 
       const values = context.componentConfig.deploy.values;
 
-      const projectId = values?.cloudsql?.projectId || GOOGLE_PROJECT;
+      const projectId =
+        values?.cloudsql?.projectId ||
+        context.componentConfig.deploy.cluster?.projectId;
 
       const defaultInstanceId = `${config.customerName}-${config.appName}-${env}`;
       const instanceId = values?.cloudsql?.instanceId || defaultInstanceId;

@@ -1,4 +1,7 @@
-import { isOfDeployType } from "@catladder/pipeline";
+import {
+  isOfDeployType,
+  getFullKubernetesClusterName,
+} from "@catladder/pipeline";
 import {
   getPipelineContextByChoice,
   parseChoice,
@@ -13,7 +16,9 @@ export default async function (envComponent: string) {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("can't ensure cluster for non-kubernetes deployments");
   }
-  const cluster = context.componentConfig.deploy.cluster || "production";
+  const cluster = getFullKubernetesClusterName(
+    context.componentConfig.deploy.cluster
+  );
   const connectedClusterName = await getCurrentConnectedClusterName();
 
   if (cluster !== connectedClusterName) {

@@ -87,7 +87,6 @@ export const migrateV2 = async (vorpal: Vorpal) => {
     APP_NAME,
     COMPONENT_NAME,
     APP_DIR = ".",
-    CLUSTER_NAME,
     STAGING_ENABLED,
   } = gitlabCi.variables;
 
@@ -147,7 +146,12 @@ export const migrateV2 = async (vorpal: Vorpal) => {
             deploy: {
               type: "kubernetes",
               values: transformValues(baseValues),
-              cluster: CLUSTER_NAME,
+              cluster: {
+                type: "gcloud",
+                name: "production",
+                projectId: "skynet-164509",
+                region: "europe-west1-d",
+              },
             },
             env: await LEGACY_ENVS.reduce<Promise<Env>>(
               async (acc, envName) => {
