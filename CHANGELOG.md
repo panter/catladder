@@ -1,3 +1,10 @@
+## [1.0.1](https://git.panter.ch/catladder/catladder/compare/v1.0.0...v1.0.1) (2022-02-01)
+
+
+### Bug Fixes
+
+* migration fails when APP_DIR is not set ([eb4b8c5](https://git.panter.ch/catladder/catladder/commit/eb4b8c5ecf285bcae77d46485ce0a588e9721d3c))
+
 # 1.0.0 (2022-01-28)
 
 
