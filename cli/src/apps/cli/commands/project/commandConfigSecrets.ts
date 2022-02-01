@@ -34,10 +34,14 @@ const resolveJson = (v: Record<string, Record<string, string>>) =>
       ];
     })
   );
-const getEnvVarsToEdit = async (env: string, componentName: string) => {
+const getEnvVarsToEdit = async (
+  instance: CommandInstance,
+  env: string,
+  componentName: string
+) => {
   const { secretEnvVarKeys } = await getEnvironment(env, componentName);
 
-  const allEnvVars = await getEnvVars(this, env, componentName);
+  const allEnvVars = await getEnvVars(instance, env, componentName);
   return Object.fromEntries(
     secretEnvVarKeys.map((key) => [key, allEnvVars[key]])
   );
@@ -51,7 +55,7 @@ const doItFor = async (
     await Promise.all(
       components.map(async (componentName) => [
         componentName,
-        await getEnvVarsToEdit(env, componentName),
+        await getEnvVarsToEdit(instance, env, componentName),
       ])
     )
   );
@@ -110,7 +114,7 @@ const doItFor = async (
 
   for (const componentName of components) {
     await upsertAllVariables(
-      this,
+      instance,
       valuesToEdit[componentName],
       env,
       componentName
@@ -126,7 +130,7 @@ const doItFor = async (
         context.componentConfig.deploy.values?.cloudsql?.enabled
       ) {
         await upsertAllVariables(
-          this,
+          instance,
           {
             cloudsqlProxyCredentials: await readPass(
               GOOGLE_CLOUD_SQL_PASS_PATH
