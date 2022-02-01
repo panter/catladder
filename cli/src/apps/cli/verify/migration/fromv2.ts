@@ -15,7 +15,6 @@ import {
 import { isEmpty } from "lodash";
 import { join } from "path";
 import Vorpal from "vorpal";
-import { string } from "yargs";
 import {
   getGitlabCi,
   getGitlabCiFilePath,

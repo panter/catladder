@@ -1,5 +1,4 @@
 import Vorpal from "vorpal";
-import { config } from "yargs";
 // tslint:disable-next-line:no-var-requires
 import packageInfos from "../../packageInfos";
 import { stopAllPortForwards } from "../../utils/portForward";
@@ -8,7 +7,6 @@ import mongodb from "./commands/mongodb";
 import project from "./commands/project";
 import theStuffThatReallyMatters from "./commands/theStuffThatReallyMatters";
 
-import { getProjectConfig } from "../../config/getProjectConfig";
 import { verify } from "./verify";
 import { showProjectBanner } from "./commands/project/utils/showProjectBanner";
 
