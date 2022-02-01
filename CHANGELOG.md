@@ -1,3 +1,10 @@
+## [1.0.3](https://git.panter.ch/catladder/catladder/compare/v1.0.2...v1.0.3) (2022-02-01)
+
+
+### Bug Fixes
+
+* accidental global this ([5ff1b14](https://git.panter.ch/catladder/catladder/commit/5ff1b14d060882a31a6ef74bb05a445a93232097))
+
 ## [1.0.2](https://git.panter.ch/catladder/catladder/compare/v1.0.1...v1.0.2) (2022-02-01)
 
 ## [1.0.1](https://git.panter.ch/catladder/catladder/compare/v1.0.0...v1.0.1) (2022-02-01)
