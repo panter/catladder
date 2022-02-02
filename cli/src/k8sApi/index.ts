@@ -7,7 +7,11 @@ import {
 
 const kc = new KubeConfig();
 
-kc.loadFromDefault();
+export const reload = () => {
+  kc.loadFromDefault();
+};
+
+reload();
 
 const k8sApi = kc.makeApiClient(CoreV1Api);
 

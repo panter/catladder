@@ -6,16 +6,12 @@ import {
   APP_BUILD_JOB_NAME,
   RUNNER_BUILD_RESOURCE_VARIABLES,
 } from "./constants";
+import { getBuildInfo } from "./getBuildInfo";
 
 export const createBuildJob = (
   context: Context,
   { script, ...def }: Partial<GitlabJobDef>
 ): GitlabJob => {
-  const buildInfo = [
-    ". getCommitInfo", // TODO: inline
-    `echo '{"id":"'$BUILD_ID'","commit":"'$BUILD_COMMIT'","tag":"'$BUILD_TAG'","time":"'$BUILD_TIME'"}' > ${context.componentConfig.dir}/__build_info.json`,
-  ];
-
   return {
     name: APP_BUILD_JOB_NAME,
     envMode: "jobPerEnv",
@@ -32,7 +28,7 @@ export const createBuildJob = (
         interruptible: true,
         stage: "build",
         script: [
-          ...buildInfo,
+          ...getBuildInfo(context),
           `cd ${context.componentConfig.dir}`,
           ...(ensureArray(script) ?? []),
         ],

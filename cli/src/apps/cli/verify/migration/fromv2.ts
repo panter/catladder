@@ -148,9 +148,10 @@ export const migrateV2 = async (vorpal: Vorpal) => {
               values: transformValues(baseValues),
               cluster: {
                 type: "gcloud",
-                name: "production",
-                projectId: "skynet-164509",
-                region: "europe-west1-d",
+                name: "ch-production",
+                projectId: "skynet-swiss",
+                region: "europe-west6-a",
+                domainCanonical: "panter.swiss",
               },
             },
             env: await LEGACY_ENVS.reduce<Promise<Env>>(

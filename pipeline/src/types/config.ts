@@ -46,16 +46,34 @@ export const isKnowEnvType = (env: string): env is EnvType => {
 };
 
 export type EnvVars = {
+  /**
+   * public env vars (means: they are checked in the repo)
+   */
   public?: Record<string, any>;
+  /**
+   * secret env vars. These vars can be managed with catladder/cli
+   */
   secret?: string[];
+  /**
+   * With fromComponents you can inject env vars from other components.
+   */
   fromComponents?: {
     [otherApp: string]: Record<string, string>;
   };
 };
 
 export type DefaultEnvConfig = {
+  /**
+   * how the app is deployed
+   */
   deploy: DeployConfig | false;
+  /**
+   * how the app is built and its runtime
+   */
   build: BuildConfig;
+  /**
+   * environment variables
+   */
   vars?: EnvVars;
 };
 
@@ -64,13 +82,22 @@ export type DevLocalEnvConfig = {
   port?: number;
 };
 export type EnvConfig<E extends EnvType = EnvType> = {
+  /**
+   * type of the env (stage, prod, review, dev)
+   */
   type?: E;
+  /**
+   * hostname that is used. If not set, a "canonical" url is created
+   */
   hostname?: string;
-  domainCanonical?: string;
 } & PartialDeep<DefaultEnvConfig>;
 
 export type Env = {
+  /**
+   * local is a special env that is only used in local development
+   */
   local?: DevLocalEnvConfig;
+
   dev?: EnvConfig<"dev"> | false;
   stage?: EnvConfig<"stage"> | false;
   review?: EnvConfig<"review"> | false;
@@ -78,13 +105,33 @@ export type Env = {
 } & Record<string, EnvConfig | false>;
 
 export type ComponentConfig = {
+  /**
+   * specify environment configurations
+   */
   env?: Env;
+  /**
+   * the directory of the component (e.g. where the package.json or similar is located). You can set "." if you only have one app.
+   */
   dir: string;
 } & DefaultEnvConfig;
 
 export type Config = {
+  /**
+   * name of the customer or group
+   */
   customerName: string;
+  /**
+   * name of the app / project
+   */
   appName: string;
+  /**
+   * if a env does not define a hostname, it will generate a canonical one (e.g. for review, dev and stage).
+   * This prop specifies the domain that is used for these urls.
+   *
+   */
   domainCanonical?: string;
+  /**
+   * components (sub apps)
+   */
   components: Record<string, ComponentConfig>;
 };

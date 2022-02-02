@@ -1,3 +1,4 @@
+import { exec } from "child-process-promise";
 import { isObject } from "lodash";
 import { BUILD_TYPES } from "../build";
 import { createContext } from "../context";
@@ -126,6 +127,10 @@ export const createJobs = async (
   const commitInfo: CommitInfo = {
     refName: process.env.CI_COMMIT_REF_NAME ?? "unknown",
     refSlug: process.env.CI_COMMIT_REF_SLUG ?? "unknown",
+    buildTime: new Date().toISOString(),
+    buildId: await exec("git describe --tags || git rev-parse HEAD").then((s) =>
+      s.stdout.trim()
+    ),
     trigger,
   };
 

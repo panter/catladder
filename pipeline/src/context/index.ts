@@ -2,7 +2,7 @@ import { merge } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
-import { DEPLOY_TYPES } from "../deploy";
+import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
 import { DeployConfig } from "../deploy/types";
 import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
 import { CommitInfo, Context, Environment, YarnInfo } from "../types/context";
@@ -72,7 +72,6 @@ export const getEnvironment = (
       PORT: port.toString(),
     };
   } else {
-    const KUBE_NAMESPACE = `${config.customerName}-${config.appName}-${env}`;
     const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
 
     const componentSlug = slugify(componentName);
@@ -89,10 +88,12 @@ export const getEnvironment = (
     hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
     const url = `https://${hostname}`;
 
+    // FIXME: move to kube specific jobs
     const KUBE_APP_NAME =
       envType === "review" && commitInfo
         ? `${componentName}-${commitInfo.refSlug}`
         : componentName;
+    const KUBE_NAMESPACE = getKubernetesNamespace(config, env);
 
     predefinedVariables = {
       ...basePredefinedVariables,

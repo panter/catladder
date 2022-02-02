@@ -43,9 +43,3 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | b
 RUN curl https://install.meteor.com/ | sh
 
 
-RUN mkdir p /scripts
-COPY ./scripts/* /scripts/
-RUN chmod +x /scripts/*
-
-ENV PATH="/scripts:${PATH}"
-

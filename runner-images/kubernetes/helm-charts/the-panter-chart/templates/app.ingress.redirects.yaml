@@ -19,7 +19,7 @@ metadata:
   {{- range $key, $value := .Values.ingress.annotations }}
     {{ $key }}: {{ $value | quote }}
   {{- end }}
-    ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       return 301 $scheme://{{ template "host" . }}$request_uri;
 spec:
   rules:

@@ -2,6 +2,8 @@
 FROM node:14-alpine
 
 
+# add git. We use it to add some additional infos about the commit
+RUN apk add git
 
 RUN mkdir /packages
 

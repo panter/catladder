@@ -27,13 +27,13 @@ env:
 ingress:
   enabled: true
   annotations:
-    kubernetes.io/ingress.class: nginx-node
+    kubernetes.io/ingress.class: nginx
     kubernetes.io/tls-acme: "true"
-    ingress.kubernetes.io/affinity: cookie
-    ingress.kubernetes.io/affinity-mode: persistent
-    ingress.kubernetes.io/session-cookie-hash: sha1
-    ingress.kubernetes.io/session-cookie-name: route
-    ingress.kubernetes.io/session-cookie-path: /
+    nginx.ingress.kubernetes.io/affinity: cookie
+    nginx.ingress.kubernetes.io/affinity-mode: persistent
+    nginx.ingress.kubernetes.io/session-cookie-hash: sha1
+    nginx.ingress.kubernetes.io/session-cookie-name: route
+    nginx.ingress.kubernetes.io/session-cookie-path: /
   tls: []
 
 jobDefaults:
@@ -46,7 +46,7 @@ jobDefaults:
 
 application:
   replicas: 1
-  hostCanonical: customer-project-environment.cluster.panter.cloud
+  hostCanonical:
   command:
   # these requests are usually overridden by the gitlab include and values
   resources:
