@@ -66,6 +66,7 @@ export type DevLocalEnvConfig = {
 export type EnvConfig<E extends EnvType = EnvType> = {
   type?: E;
   hostname?: string;
+  domainCanonical?: string;
 } & PartialDeep<DefaultEnvConfig>;
 
 export type Env = {
@@ -84,5 +85,6 @@ export type ComponentConfig = {
 export type Config = {
   customerName: string;
   appName: string;
+  domainCanonical?: string;
   components: Record<string, ComponentConfig>;
 };

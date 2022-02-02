@@ -79,7 +79,12 @@ export const getEnvironment = (
     const envInUrl =
       envType === "review" && commitInfo ? `${commitInfo.refSlug}.${env}` : env;
 
-    const HOST_CANONICAL = `${config.appName}-${componentSlug}.${envInUrl}.${config.customerName}.panter.cloud`;
+    const domainCanonical =
+      (mergedConfig?.deploy && mergedConfig.deploy.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
+      config.domainCanonical ||
+      "panter.cloud";
+
+    const HOST_CANONICAL = `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`;
 
     hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
     const url = `https://${hostname}`;

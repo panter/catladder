@@ -5,9 +5,22 @@ type AllowUnknownProps<T extends Record<string, unknown>> = T &
 
 export type DeployConfigKubernetesClusterGCloud = {
   type: "gcloud";
+  /**
+   * gcoud name of the cluster
+   */
   name: string;
+  /**
+   * google cloud project id
+   */
   projectId: string;
+  /**
+   * region
+   */
   region: string;
+  /**
+   * domain of the cluster, for canonical domains without custom hostnames (e.g. review and dev apps)
+   */
+  domainCanonical?: string;
 };
 export type DeployConfigKubernetesCluster = DeployConfigKubernetesClusterGCloud; // currently only this
 export type DeployConfigKubernetes = {

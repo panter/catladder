@@ -6,7 +6,7 @@ import Vorpal from "vorpal";
 import { $ } from "zx";
 import { getAllPipelineContexts } from "../../../../config/getProjectConfig";
 import { connectToCluster } from "../../../../utils/cluster";
-import { getProjectInfo, upsertAllVariables } from "../../../../utils/gitlab";
+import { upsertAllVariables } from "../../../../utils/gitlab";
 
 export default async (vorpal: Vorpal) =>
   vorpal
