@@ -83,6 +83,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
         HELM_ARGS: deployConfig.additionalHelmArgs,
         COMPONENT_NAME: context.componentName,
         // TODO: unify with docker build stage
+        IMAGE_NAME: context.environment.shortName + "/" + context.componentName,
         IMAGE_TAG: "$CI_COMMIT_SHA",
       },
     },

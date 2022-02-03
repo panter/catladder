@@ -35,9 +35,13 @@ export const createDockerBuildJob = (
       DOCKER_DIR: ".", // relative to componentdir
       IMAGE_TAG: "$CI_COMMIT_SHA",
       DOCKER_DRIVER: "overlay2",
-      IMAGE_NAME: "$CI_REGISTRY_IMAGE/" + context.componentName,
-      CACHE_IMAGE:
-        "$CI_REGISTRY_IMAGE/" + context.componentName + "/cache:cache",
+      IMAGE_NAME:
+        "$CI_REGISTRY_IMAGE/" +
+        context.environment.shortName +
+        "/" +
+        context.componentName,
+
+      CACHE_IMAGE: "$CI_REGISTRY_IMAGE/caches/" + context.componentName,
     },
   };
 
