@@ -1,3 +1,10 @@
+## [1.0.4](https://git.panter.ch/catladder/catladder/compare/v1.0.3...v1.0.4) (2022-02-03)
+
+
+### Bug Fixes
+
+* docker image tagging is wrong ([26283f4](https://git.panter.ch/catladder/catladder/commit/26283f46eadf072bd21f35c3916b8af949f4917d))
+
 ## [1.0.3](https://git.panter.ch/catladder/catladder/compare/v1.0.2...v1.0.3) (2022-02-01)
 
 
