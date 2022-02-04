@@ -19,6 +19,9 @@ export const createNodeBuildJobs = (context: Context): GitlabJobs => {
   const appBuildJob: GitlabJob | null =
     buildConfig.buildCommand !== null
       ? createBuildJob(context, {
+          variables: {
+            ...NODE_RUNNER_BUILD_VARIABLES,
+          },
           cache: [...getNodeCache(context), ...getNextCache(context)],
           script: [
             ...yarnInstall,
