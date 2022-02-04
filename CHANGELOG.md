@@ -1,3 +1,10 @@
+# [1.1.0](https://git.panter.ch/catladder/catladder/compare/v1.0.5...v1.1.0) (2022-02-04)
+
+
+### Features
+
+* increase memory limit for node ([d7efe3c](https://git.panter.ch/catladder/catladder/commit/d7efe3cb3c12985273d58784de2a0472f1e66de6))
+
 ## [1.0.5](https://git.panter.ch/catladder/catladder/compare/v1.0.4...v1.0.5) (2022-02-03)
 
 ## [1.0.4](https://git.panter.ch/catladder/catladder/compare/v1.0.3...v1.0.4) (2022-02-03)
