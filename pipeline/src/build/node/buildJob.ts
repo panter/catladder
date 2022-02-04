@@ -6,6 +6,7 @@ import { createBuildJob } from "../base/createBuildJob";
 import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache } from "./cache";
+import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getYarnInstall } from "./yarn";
 
 export const createNodeBuildJobs = (context: Context): GitlabJobs => {
