@@ -1,3 +1,10 @@
+## [1.1.1](https://git.panter.ch/catladder/catladder/compare/v1.1.0...v1.1.1) (2022-02-04)
+
+
+### Bug Fixes
+
+* NODE_RUNNER_BUILD_VARIABLES not applied to build job, only to non-build node jobs ([70129b1](https://git.panter.ch/catladder/catladder/commit/70129b104ea1eee38ab5237cd8710c2dd2eb5a11))
+
 # [1.1.0](https://git.panter.ch/catladder/catladder/compare/v1.0.5...v1.1.0) (2022-02-04)
 
 
