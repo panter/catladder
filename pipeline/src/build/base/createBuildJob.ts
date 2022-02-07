@@ -1,5 +1,5 @@
 import { merge } from "lodash";
-import { Context, GitlabJob, GitlabJobDef } from "../..";
+import { Context, getRunnerImage, GitlabJob, GitlabJobDef } from "../..";
 import { BASE_RETRY } from "../../defaults";
 import { ensureArray } from "../../utils";
 import {
@@ -17,6 +17,7 @@ export const createBuildJob = (
     envMode: "jobPerEnv",
     job: merge(
       {
+        image: getRunnerImage("jobs-default"),
         needs: [],
         cache: [],
         variables: {

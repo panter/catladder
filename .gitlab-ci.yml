@@ -46,14 +46,15 @@ workflow:
       - "*/dist"
 
 .docker-build-base:
-  image: docker:20
+  image: docker:20.10
   interruptible: true
   services:
-    - name: docker:20-dind
+    - name: docker:20.10-dind
       command: ["--tls=false"]
 
   stage: build
   variables:
+    DOCKER_BUILDKIT: "1"
     DOCKER_DRIVER: overlay2
     IMAGE_NAME: $CI_REGISTRY_IMAGE/$NAME
     CACHE_IMAGE: $CI_REGISTRY_IMAGE/$NAME/cache:cache
@@ -81,11 +82,29 @@ workflow:
   extends:
     - .docker-build-base
 
-🔨 runner jobs:
+.docker-build-jobs-base:
   variables:
-    NAME: jobs
+    BUILD_CONTEXT: ./runner-images
   extends:
     - .docker-build-base
+
+🔨 runner jobs-default:
+  variables:
+    NAME: jobs-default
+  extends:
+    - .docker-build-jobs-base
+
+🔨 runner jobs-meteor:
+  variables:
+    NAME: jobs-meteor
+  extends:
+    - .docker-build-jobs-base
+
+🔨 runner jobs-testing-chrome:
+  variables:
+    NAME: jobs-testing-chrome
+  extends:
+    - .docker-build-jobs-base
 
 🔨 runner docker-in-docker:
   variables:
