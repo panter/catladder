@@ -62,8 +62,7 @@ workflow:
     DOCKER_FILE: ./runner-images/$NAME/Dockerfile
   script:
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
-    - docker pull $CACHE_IMAGE || true
-    - docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG -f $DOCKER_FILE $BUILD_CONTEXT
+    - docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG -f $DOCKER_FILE $BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
     - docker push $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG
     - docker tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG $CACHE_IMAGE
     - docker push $CACHE_IMAGE
