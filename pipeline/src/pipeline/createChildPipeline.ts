@@ -40,6 +40,9 @@ export const createChildPipeline = async (
 
   const childPipeline = {
     image: getRunnerImage("jobs"), // default image
+    variables: {
+      FF_USE_FASTZIP: "true",
+    },
     workflow: {
       rules: RULES_ALWAYS,
     },
