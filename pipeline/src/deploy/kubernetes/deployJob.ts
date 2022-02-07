@@ -8,7 +8,6 @@ import { dump } from "js-yaml";
 import { createMongodbBaseConfig } from "./mongodb";
 import { createCloudsqlBaseConfig } from "./cloudsql";
 import { getSecretVarNameForContext } from "../..";
-import { getBuildInfo } from "../../build/base/getBuildInfo";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -82,7 +81,10 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
           forceQuotes: true,
         }),
         HELM_GITLAB_CHART_NAME: "the-panter-chart",
-        HELM_ARGS: deployConfig.additionalHelmArgs,
+        HELM_ARGS: [
+          ...(deployConfig.debug ? ["--debug"] : []),
+          ...(deployConfig.additionalHelmArgs ?? []),
+        ].join(" "),
         COMPONENT_NAME: context.componentName,
         BUILD_ID: context.commitInfo?.buildId,
         // TODO: unify with docker build stage
@@ -114,7 +116,6 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     merge({}, baseDeploymentJob, shared, {
       job: {
         script: [
-          ...getBuildInfo(context),
           ...connectContext,
           "kubernetesCreateSecret",
           "kubernetesDeploy",

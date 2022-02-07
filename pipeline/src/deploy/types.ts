@@ -29,6 +29,10 @@ export type DeployConfigKubernetes = {
    * cluster config to use.
    */
   cluster?: DeployConfigKubernetesCluster;
+  /**
+   * prints out debug info (helm --debug)
+   */
+  debug?: boolean;
   additionalHelmArgs?: string[];
   /**
    * values to configure the app
