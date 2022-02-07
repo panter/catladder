@@ -91,7 +91,7 @@ export const getEnvironment = (
     // FIXME: move to kube specific jobs
     const KUBE_APP_NAME =
       envType === "review" && commitInfo
-        ? `${componentName}-${commitInfo.refSlug}`
+        ? `${commitInfo.refSlug}-${componentName}`
         : componentName;
     const KUBE_NAMESPACE = getKubernetesNamespace(config, env);
 
