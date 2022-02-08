@@ -1,3 +1,10 @@
+## [1.4.3](https://git.panter.ch/catladder/catladder/compare/v1.4.2...v1.4.3) (2022-02-08)
+
+
+### Bug Fixes
+
+* custom host not wokring ([e5f17f8](https://git.panter.ch/catladder/catladder/commit/e5f17f8d565b000f8273add2e9448e2b5dd75ceb))
+
 ## [1.4.2](https://git.panter.ch/catladder/catladder/compare/v1.4.1...v1.4.2) (2022-02-08)
 
 
