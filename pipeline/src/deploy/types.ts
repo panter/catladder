@@ -18,7 +18,7 @@ export type DeployConfigKubernetesClusterGCloud = {
    */
   region: string;
   /**
-   * domain of the cluster, for canonical domains without custom hostnames (e.g. review and dev apps)
+   * domain of the cluster, for canonical domains without custom host (e.g. review and dev apps)
    */
   domainCanonical?: string;
 };

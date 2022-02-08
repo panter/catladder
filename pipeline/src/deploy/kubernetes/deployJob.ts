@@ -51,7 +51,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
 
   const defaultKubeValues = {
     application: {
-      hostname: context.environment.hostname,
+      host: context.environment.host,
       command: context.componentConfig.build.startCommand,
     },
 

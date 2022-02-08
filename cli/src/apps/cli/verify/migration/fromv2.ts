@@ -69,7 +69,7 @@ const transformValues = (
   if (isEmpty(valuesIn)) {
     return undefined;
   }
-  delete valuesIn?.application?.hostname;
+  delete valuesIn?.application?.host;
   delete valuesIn?.application?.command;
 
   return {
@@ -167,12 +167,12 @@ export const migrateV2 = async (vorpal: Vorpal) => {
                 const envValues =
                   (await readYaml(dir + `/values-${envName}.yml`)) ?? {};
                 const { env, ...rest } = envValues;
-                const hostname = rest?.application?.hostname;
+                const host = rest?.application?.host;
                 const values = transformValues(rest);
                 return {
                   ...(await acc),
                   [newEnvName]: {
-                    hostname: hostname,
+                    host: host,
                     vars: env ? transformVars(env) : undefined,
                     deploy: values
                       ? {

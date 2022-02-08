@@ -87,9 +87,9 @@ export type EnvConfig<E extends EnvType = EnvType> = {
    */
   type?: E;
   /**
-   * hostname that is used. If not set, a "canonical" url is created
+   * host that is used. If not set, a "canonical" url is created
    */
-  hostname?: string;
+  host?: string;
 } & PartialDeep<DefaultEnvConfig>;
 
 export type Env = {
@@ -125,7 +125,7 @@ export type Config = {
    */
   appName: string;
   /**
-   * if a env does not define a hostname, it will generate a canonical one (e.g. for review, dev and stage).
+   * if a env does not define a host, it will generate a canonical one (e.g. for review, dev and stage).
    * This prop specifies the domain that is used for these urls.
    *
    */

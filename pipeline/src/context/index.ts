@@ -61,13 +61,13 @@ export const getEnvironment = (
       : `${env}-${componentName}`;
 
   let predefinedVariables: Record<string, string>;
-  let hostname: string;
+  let host: string;
   let url: string;
   if (envType === "local") {
     const devLocalConfig: DevLocalEnvConfig = mergedConfig;
     const port = devLocalConfig.port ?? 3000;
-    hostname = "localhost:" + port;
-    url = "http://" + hostname;
+    host = "localhost:" + port;
+    url = "http://" + host;
     predefinedVariables = {
       ROOT_URL: url,
       PORT: port.toString(),
@@ -86,8 +86,8 @@ export const getEnvironment = (
 
     const HOST_CANONICAL = `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`;
 
-    hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
-    const url = `https://${hostname}`;
+    host = mergedConfig?.host ?? HOST_CANONICAL;
+    const url = `https://${host}`;
 
     // FIXME: move to kube specific jobs
     const KUBE_APP_NAME =
@@ -146,7 +146,7 @@ export const getEnvironment = (
 
   return {
     envType,
-    hostname,
+    host,
     fullName: environmentName,
     slug: environmentSlug,
     shortName: env,

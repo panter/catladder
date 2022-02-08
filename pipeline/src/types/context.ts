@@ -1,7 +1,7 @@
 import { PipelineTrigger, ComponentConfig, Config, EnvType } from "./config";
 
 export type Environment = {
-  hostname: string;
+  host: string;
   fullName: string;
   shortName: string;
   slug: string;
