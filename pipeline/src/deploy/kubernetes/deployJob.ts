@@ -128,7 +128,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     }),
     merge({}, baseStopJob, shared, {
       job: {
-        script: ["kubernetesDelete"],
+        script: [...connectContext, "kubernetesDelete"],
         environment: {
           kubernetes: kubernetesEnvironment,
         },
