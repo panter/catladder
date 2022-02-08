@@ -1,3 +1,10 @@
+## [1.4.1](https://git.panter.ch/catladder/catladder/compare/v1.4.0...v1.4.1) (2022-02-08)
+
+
+### Bug Fixes
+
+* secrets not merged properly ([6ed13de](https://git.panter.ch/catladder/catladder/commit/6ed13de0ea38b56ad1161d0df1087d2e9cddc53e))
+
 # [1.4.0](https://git.panter.ch/catladder/catladder/compare/v1.3.2...v1.4.0) (2022-02-08)
 
 
