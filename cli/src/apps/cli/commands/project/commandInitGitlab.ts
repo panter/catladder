@@ -1,14 +1,14 @@
-import { isOfDeployType } from "@catladder/pipeline";
-import open from "open";
-import Vorpal from "vorpal";
-import { getAllPipelineContexts } from "../../../../config/getProjectConfig";
 import {
-  getClusterByFullName,
-  getClusterByName,
-} from "../../../../utils/cluster";
-import { doGitlabRequest, getProjectInfo } from "../../../../utils/gitlab";
-import { readPass } from "../../../../utils/passwordstore";
-import { getProjectNamespace } from "../../../../utils/projects";
+  getFullKubernetesClusterName,
+  isOfDeployType,
+  getKubernetesNamespace,
+} from "@catladder/pipeline";
+import Vorpal from "vorpal";
+import { $ } from "zx";
+import { getAllPipelineContexts } from "../../../../config/getProjectConfig";
+import { connectToCluster } from "../../../../utils/cluster";
+import { upsertAllVariables } from "../../../../utils/gitlab";
+import ensureNamespace from "./utils/ensureNamespace";
 
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -17,78 +17,128 @@ export default async (vorpal: Vorpal) =>
       "Initializes the gitlab repo, e.g. connects the cluster to it"
     )
     .action(async function () {
-      const { id: projectId, web_url: projectWebUrl } = await getProjectInfo(
-        this
-      );
-      const existingGitlabClusters = await doGitlabRequest<{ name: string }[]>(
-        this,
-        `projects/${projectId}/clusters`
-      );
+      const allContext = await getAllPipelineContexts();
 
-      const existingClusters = existingGitlabClusters.map(
-        (c: { name: string }) => {
-          const found = getClusterByFullName(c.name);
+      for (const context of allContext) {
+        const deployConfig = context.componentConfig.deploy;
+        if (isOfDeployType(deployConfig, "kubernetes")) {
+          const fullName = getFullKubernetesClusterName(deployConfig.cluster);
+          this.log(
+            `connecting ${context.environment.shortName}:${context.componentName} ${fullName}`
+          );
 
-          return {
-            name: found ? found.name : null,
-            fullName: c.name,
+          await connectToCluster(fullName);
+
+          const namespace = getKubernetesNamespace(
+            context.fullConfig,
+            context.environment.shortName
+          );
+          await ensureNamespace(namespace);
+
+          //$.verbose = true;
+
+          // we name the service account and the role and the role binding with the same name
+          // we currently create one per component to better separate them
+          const serviceAccountName = `cl-${context.componentName}-deploy`;
+          const KUBE_URL =
+            await $`TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`.then(
+              (s) => s.stdout.trim()
+            );
+
+          // first upsert service acount in the ns
+          try {
+            await $`kubectl delete serviceaccount --namespace ${namespace} ${serviceAccountName}`;
+            await $`kubectl delete rolebinding --namespace ${namespace} ${serviceAccountName}`;
+            await $`kubectl delete role --namespace ${namespace} ${serviceAccountName}`;
+          } catch (e) {
+            // ignore
+          }
+
+          await $`kubectl create serviceaccount --namespace ${namespace} ${serviceAccountName}`;
+
+          // upsert role in the ns
+
+          await $`cat <<EOF | kubectl apply -f -
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: ${namespace}
+  name: ${serviceAccountName}
+rules:
+- apiGroups: ["", "extensions", "apps", "networking.k8s.io", "batch"]
+  resources: ["deployments", "replicasets", "pods", "secrets", "configmaps", "services", "ingresses", "serviceaccounts", "jobs", "cronjobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] # You can also use ["*"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: ${serviceAccountName}
+  namespace: ${namespace}
+subjects:
+  - kind: ServiceAccount
+    name: ${serviceAccountName}
+    namespace:  ${namespace}
+roleRef:
+  kind: Role
+  name: ${serviceAccountName}
+  apiGroup: rbac.authorization.k8s.io
+EOF
+            `;
+
+          // get token name
+          const tokenName =
+            await $`kubectl get serviceaccount --namespace ${namespace} ${serviceAccountName} -o jsonpath='{.secrets[0].name}'`;
+
+          const KUBE_CA_PEM =
+            await $`kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`.then(
+              (c) => c.stdout.trim()
+            );
+          const KUBE_TOKEN =
+            await $`kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`.then(
+              (c) => c.stdout.trim()
+            );
+
+          const vars = {
+            KUBE_TOKEN,
+            KUBE_CA_PEM,
+            KUBE_URL,
           };
-        }
-      );
 
-      if (existingClusters.length === 0) {
-        this.log("");
-        this.log("there is no cluster on the current project?");
-      } else {
-        this.log("there are already these clusters on the gitlab: ");
-        this.log("");
-        existingClusters.forEach((cluster) =>
-          this.log(` - ${cluster.name || "unknown"} (${cluster.fullName})`)
-        );
+          await upsertAllVariables(
+            this,
+            vars,
+            context.environment.shortName,
+            context.componentName
+          );
+        }
       }
 
-      this.log("");
-      this.log("your project specifies the following clusters:");
-      this.log("");
-      const allContext = await getAllPipelineContexts();
-      const allDeployments = allContext.map((c) => c.componentConfig.deploy);
-
-      const configuredClusterNames = allDeployments.reduce<string[]>(
-        (acc, c) => {
-          if (
-            isOfDeployType(c, "kubernetes") &&
-            !acc.includes(c.cluster || "production")
-          ) {
-            return [...acc, c.cluster || "production"];
-          }
-          return acc;
-        },
-        []
-      );
-      const configuredClusters = configuredClusterNames.map((c) => ({
-        name: c,
-        config: getClusterByName(c),
-      }));
-      configuredClusters.forEach((cluster) =>
-        this.log(` - ${cluster.name || "unknown"} (${cluster.config.fullName})`)
+      // there is a constraint, see https://git.panter.ch/catladder/catladder/-/issues/2#note_345677
+      // any two components have to use the same custer per env, so e.g. dev:api and dev:www cannot use two different namespaces
+      // in practise, that is often not an issue, but it might happen because the config allows it
+      /*
+      Object.entries(configuredClusters).forEach(([fullname, config]) =>
+        this.log(` - ${config.cluster.name || "unknown"} (${fullname})`)
       );
       this.log("");
 
-      const missingClusters = configuredClusters.filter(
-        (c) => !existingClusters.some((exist) => exist.name === c.name)
+      const missingClusters = Object.fromEntries(
+        Object.entries(configuredClusters).filter(
+          ([c]) => !existingClusters.some((exist) => exist === c)
+        )
       );
 
       this.log("");
       this.log("These clusters are not configured yet on gitlab:");
       this.log("");
 
-      missingClusters.forEach((cluster) =>
-        this.log(` - ${cluster.name || "unknown"} (${cluster.config.fullName})`)
+      Object.entries(missingClusters).forEach(([fullname, config]) =>
+        this.log(` - ${config.cluster.name || "unknown"} (${fullname})`)
       );
       this.log("");
 
-      for (const cluster of missingClusters) {
-        this.log(`${cluster} (${cluster.config.fullName})`);
+      for (const [fullname, config] of Object.entries(missingClusters)) {
+        this.log(`${config.name} (${fullname})`);
         this.log("");
         const { shouldContinue } = await this.prompt({
           type: "confirm",
@@ -97,22 +147,20 @@ export default async (vorpal: Vorpal) =>
         });
         this.log("");
         if (shouldContinue) {
-          const { api_url, passCredentials } = cluster.config;
-          if (!api_url) {
-            throw new Error("no api_url on this cluster!");
-          }
-          if (!passCredentials) {
-            throw new Error("no passCredentials on this cluster!");
-          }
-          const token = await readPass(passCredentials.token);
-          const ca_cert = await readPass(passCredentials.ca_cert);
-
+          await connectToCluster(fullname);
+          const { stdout: api_url } =
+            await $`kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`;
+          const { stdout: ca_cert } =
+            await $`kubectl get secret default-token-69xv4 -o jsonpath="{['data']['ca\.crt']}" | base64 --decode`;
+          const { stdout: token } =
+            await $`kubectl get secret default-token-69xv4 -o jsonpath="{['data']['token']}" | base64 --decode`;
           const postResult = await doGitlabRequest(
             this,
             `projects/${projectId}/clusters/user`,
             {
-              name: cluster.config.fullName,
+              name: fullname,
               managed: false,
+              environment_scope: "*",
               platform_kubernetes_attributes: {
                 api_url,
                 ca_cert,
@@ -200,4 +248,5 @@ export default async (vorpal: Vorpal) =>
       ].forEach((tip) => this.log(` - ${tip}`));
       this.log("\n");
       this.log("\n");
+      */
     });

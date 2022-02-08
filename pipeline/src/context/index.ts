@@ -2,7 +2,7 @@ import { merge } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
-import { DEPLOY_TYPES } from "../deploy";
+import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
 import { DeployConfig } from "../deploy/types";
 import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
 import { CommitInfo, Context, Environment, YarnInfo } from "../types/context";
@@ -13,6 +13,9 @@ export const getSecretVarName = (
   componentName: string,
   key: string
 ) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
+
+export const getSecretVarNameForContext = (context: Context, key: string) =>
+  getSecretVarName(context.environment.shortName, context.componentName, key);
 export const getEnvironment = (
   config: Config,
   componentName: string,
@@ -69,22 +72,28 @@ export const getEnvironment = (
       PORT: port.toString(),
     };
   } else {
-    const KUBE_NAMESPACE = `${config.customerName}-${config.appName}-${env}`;
     const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
 
     const componentSlug = slugify(componentName);
     const envInUrl =
       envType === "review" && commitInfo ? `${commitInfo.refSlug}.${env}` : env;
 
-    const HOST_CANONICAL = `${config.appName}-${componentSlug}.${envInUrl}.${config.customerName}.panter.cloud`;
+    const domainCanonical =
+      (mergedConfig?.deploy && mergedConfig.deploy.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
+      config.domainCanonical ||
+      "panter.cloud";
+
+    const HOST_CANONICAL = `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`;
 
     hostname = mergedConfig?.hostname ?? HOST_CANONICAL;
     const url = `https://${hostname}`;
 
+    // FIXME: move to kube specific jobs
     const KUBE_APP_NAME =
       envType === "review" && commitInfo
-        ? `${componentName}-${commitInfo.refSlug}`
+        ? `${commitInfo.refSlug}-${componentName}`
         : componentName;
+    const KUBE_NAMESPACE = getKubernetesNamespace(config, env);
 
     predefinedVariables = {
       ...basePredefinedVariables,

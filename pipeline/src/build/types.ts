@@ -1,5 +1,11 @@
 export type BuildConfigBase = {
+  /**
+   * command to run on the image to start the app (e.g. yarn start)
+   */
   startCommand?: string;
+  /**
+   * additional env vars for the buid jobs
+   */
   extraVars?: Record<string, string>;
   /**
    * define the build command

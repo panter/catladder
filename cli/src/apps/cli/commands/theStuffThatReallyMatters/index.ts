@@ -14,26 +14,7 @@ export default async (vorpal: Vorpal) => {
     this.log(text);
     this.log("");
   });
-  vorpal.command("pantobot", "the allknowing oracle").action(async function () {
-    const { message } = await this.prompt({
-      type: "string",
-      name: "message",
 
-      message: "Your question, unworthy?: ",
-    });
-    const result = await fetch(
-      `https://paas.panter.cloud/api/pantobot/${message}`,
-      {
-        headers: {
-          Accept: "text/plain",
-        },
-      }
-    );
-    const text = await result.text();
-    this.log("");
-    this.log(text);
-    this.log("");
-  });
   let starwarsPromise: any;
   vorpal
     .command("starwars", "Long time ago... in a galaxy far far away...")

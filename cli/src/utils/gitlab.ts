@@ -125,6 +125,9 @@ export const getAllVariables = memoizee(
   { promise: true }
 );
 
+const maskableRegex = new RegExp("^[a-zA-Z0-9_+=/@:.~-]{8,}$"); // SEE https://gitlab.com/gitlab-org/gitlab-foss/-/blob/master/spec/frontend/ci_variable_list/components/ci_variable_modal_spec.js#L20
+const isMaskable = (value: string): boolean => maskableRegex.test(value);
+
 const createVariable = async (
   vorpal: CommandInstance,
   projectId: string,
@@ -134,6 +137,7 @@ const createVariable = async (
   return await doGitlabRequest(vorpal, `projects/${projectId}/variables`, {
     key,
     value,
+    masked: isMaskable(value),
   });
 };
 
@@ -148,6 +152,7 @@ const updateVariable = async (
     `projects/${projectId}/variables/${key}`,
     {
       value,
+      masked: isMaskable(value),
     },
     true
   );

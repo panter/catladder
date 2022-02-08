@@ -1,9 +1,6 @@
 import { spawn } from "child-process-promise";
 import Vorpal from "vorpal";
-import {
-  GOOGLE_CLOUD_SQL_PASS_PATH,
-  GOOGLE_PROJECT,
-} from "../../../../config/constants";
+import { GOOGLE_CLOUD_SQL_PASS_PATH } from "../../../../config/constants";
 import {
   getEnvVars,
   getProjectConfig,
@@ -34,6 +31,8 @@ export default async (vorpal: Vorpal) =>
         return;
       }
 
+      // TODO: reimpleent with new config
+      throw new Error("needs reimplementation with new config");
       const GOOGLE_CLOUD_SQL_REGION = "europe-west6"; // currently hardcoded
       const { POSTGRESQL_PASSWORD } = await getEnvVars(
         this,
@@ -43,7 +42,7 @@ export default async (vorpal: Vorpal) =>
 
       const LOCAL_PORT = 54321;
 
-      const instanceName = `${GOOGLE_PROJECT}:${GOOGLE_CLOUD_SQL_REGION}:${customerName}-${appName}-${env}=tcp:${LOCAL_PORT}`;
+      const instanceName = `${"xxxxxx reimplement shoulld be project id"}:${GOOGLE_CLOUD_SQL_REGION}:${customerName}-${appName}-${env}=tcp:${LOCAL_PORT}`;
       const cloudsqlCredentials = await readPass(GOOGLE_CLOUD_SQL_PASS_PATH);
 
       const { POSTGRESQL_URL } = process.env;

@@ -25,6 +25,7 @@ export const createDockerBuildJob = (
     ],
     variables: {
       ...DOCKER_RUNNER_BUILD_VARIABLES,
+      DOCKER_BUILDKIT: "1", // see https://docs.docker.com/develop/develop-images/build_enhancements/
       DOCKERFILE_ADDITIONS:
         context.componentConfig.build.docker?.additionsBegin?.join("\n"),
       DOCKERFILE_ADDITIONS_END:
@@ -50,8 +51,8 @@ export const createDockerBuildJob = (
     script: [
       ...script,
       "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-      "docker pull $CACHE_IMAGE || true",
-      "docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$IMAGE_TAG -f $APP_DIR/Dockerfile .",
+
+      "docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
       "docker push $IMAGE_NAME:$IMAGE_TAG",
       "docker tag $IMAGE_NAME:$IMAGE_TAG $CACHE_IMAGE",
       "docker push $CACHE_IMAGE",

@@ -1,4 +1,5 @@
 import { join } from "path";
+import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type {
   GitlabJob,
@@ -40,6 +41,7 @@ export const createMeteorBuildJobs = (context: Context): GitlabJobs => {
     buildConfig.buildCommand !== null
       ? createBuildJob(context, {
           cache: [...getNodeCache(context), ...getMeteorCache(context)],
+          image: getRunnerImage("jobs-meteor"),
           script: [
             ...yarnInstall,
 

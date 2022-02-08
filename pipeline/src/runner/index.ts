@@ -1,7 +1,9 @@
 import { PIPELINE_IMAGE_TAG, DOCKER_REGISTRY } from "../constants";
 
 type RunnerImageName =
-  | "jobs"
+  | "jobs-default"
+  | "jobs-meteor"
+  | "jobs-testing-chrome"
   | "kubernetes"
   | "base-pipeline"
   | "docker-build"

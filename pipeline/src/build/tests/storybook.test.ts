@@ -14,6 +14,12 @@ describe("storybook build", () => {
           },
           deploy: {
             type: "kubernetes",
+            cluster: {
+              name: "production",
+              projectId: "bla",
+              region: "europe",
+              type: "gcloud",
+            },
           },
         },
       },
