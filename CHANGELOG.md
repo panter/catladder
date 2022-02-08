@@ -1,3 +1,10 @@
+## [1.3.2](https://git.panter.ch/catladder/catladder/compare/v1.3.1...v1.3.2) (2022-02-08)
+
+
+### Bug Fixes
+
+* crash when env var is number and not string ([7f26488](https://git.panter.ch/catladder/catladder/commit/7f26488ea8b195f1b3798698f0350e5cde5d16e2))
+
 ## [1.3.1](https://git.panter.ch/catladder/catladder/compare/v1.3.0...v1.3.1) (2022-02-08)
 
 
