@@ -1,4 +1,4 @@
-import { merge } from "lodash";
+import { merge, mergeWith } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
@@ -6,6 +6,7 @@ import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
 import { DeployConfig } from "../deploy/types";
 import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
 import { CommitInfo, Context, Environment, YarnInfo } from "../types/context";
+import { mergeWithMergingArrays } from "../utils";
 
 const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
 export const getSecretVarName = (
@@ -35,7 +36,7 @@ export const getEnvironment = (
     throw new Error("env is disabled: " + env);
   }
 
-  const mergedConfig = merge({}, defaultConfig, envConfig);
+  const mergedConfig = mergeWithMergingArrays(defaultConfig, envConfig);
 
   // env type: if its set manually, use that, otherwise use the known env types
 
@@ -173,7 +174,10 @@ export const createContext = (
   }
   // envs can override the config
   const envConfig = rawConfig.env?.[env] ?? {};
-  const componentConfigWithoutDefaults = merge({}, rawConfig, envConfig);
+  const componentConfigWithoutDefaults = mergeWithMergingArrays(
+    rawConfig,
+    envConfig
+  );
 
   // fill in defaults of build and deploy
   const defaults: {
@@ -190,7 +194,10 @@ export const createContext = (
         build: {},
         deploy: {},
       };
-  const componentConfig = merge({}, defaults, componentConfigWithoutDefaults);
+  const componentConfig = mergeWithMergingArrays(
+    defaults,
+    componentConfigWithoutDefaults
+  );
 
   return {
     fullConfig: config,

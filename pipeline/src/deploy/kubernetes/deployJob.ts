@@ -8,6 +8,7 @@ import { dump } from "js-yaml";
 import { createMongodbBaseConfig } from "./mongodb";
 import { createCloudsqlBaseConfig } from "./cloudsql";
 import { getSecretVarNameForContext } from "../..";
+import { mergeWithMergingArrays } from "../../utils";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -63,7 +64,10 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
       : {}),
   };
 
-  const kubeValues = merge({}, defaultKubeValues, deployConfig.values);
+  const kubeValues = mergeWithMergingArrays(
+    defaultKubeValues,
+    deployConfig.values
+  );
 
   const kubernetesEnvironment = {
     namespace: context.environment.envVars.KUBE_NAMESPACE,
