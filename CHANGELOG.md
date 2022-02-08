@@ -1,3 +1,15 @@
+# [1.4.0](https://git.panter.ch/catladder/catladder/compare/v1.3.2...v1.4.0) (2022-02-08)
+
+
+### Bug Fixes
+
+* typo ([f2cfa63](https://git.panter.ch/catladder/catladder/commit/f2cfa631f9b43dddded89fcddf31466e26718089))
+
+
+### Features
+
+* auto deploy when stage is enabled ([8a02ba3](https://git.panter.ch/catladder/catladder/commit/8a02ba3b7031df7e62160a29049e7d8abcf90861))
+
 ## [1.3.2](https://git.panter.ch/catladder/catladder/compare/v1.3.1...v1.3.2) (2022-02-08)
 
 
