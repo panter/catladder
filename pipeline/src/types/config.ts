@@ -134,4 +134,11 @@ export type Config = {
    * components (sub apps)
    */
   components: Record<string, ComponentConfig>;
+
+  /**
+   * additional meta data (only for organisational purposes)
+   */
+  meta?: {
+    labels?: Record<string, string>;
+  };
 };

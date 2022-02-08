@@ -29,11 +29,7 @@ export default async (vorpal: Vorpal) =>
 
           await connectToCluster(fullName);
 
-          const namespace = getKubernetesNamespace(
-            context.fullConfig,
-            context.environment.shortName
-          );
-          await ensureNamespace(namespace);
+          const namespace = await ensureNamespace(context);
 
           //$.verbose = true;
 

@@ -1,7 +1,14 @@
 import { getAllEnvsByTrigger } from ".";
+import { DeployConfigKubernetesCluster } from "..";
 import { Config } from "../types";
 
 describe("getAllEnvsByTrigger", () => {
+  const cluster: DeployConfigKubernetesCluster = {
+    type: "gcloud",
+    name: "mega-cluster",
+    projectId: "super-google-project",
+    region: "ch-blabla",
+  };
   const SIMPLE_CONFIG: Config = {
     appName: "my-app",
     customerName: "pan",
@@ -11,14 +18,14 @@ describe("getAllEnvsByTrigger", () => {
         build: {
           type: "node",
         },
-        deploy: { type: "kubernetes" },
+        deploy: { type: "kubernetes", cluster },
       },
       app2: {
         dir: "dir2",
         build: {
           type: "node",
         },
-        deploy: { type: "kubernetes" },
+        deploy: { type: "kubernetes", cluster },
         env: {
           dev2: {
             type: "dev",
@@ -39,7 +46,7 @@ describe("getAllEnvsByTrigger", () => {
         build: {
           type: "node",
         },
-        deploy: { type: "kubernetes" },
+        deploy: { type: "kubernetes", cluster },
         env: {
           dev: false,
           review: false,

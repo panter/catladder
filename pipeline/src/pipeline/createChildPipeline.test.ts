@@ -14,6 +14,12 @@ describe("createChildPipeline", () => {
           },
           deploy: {
             type: "kubernetes",
+            cluster: {
+              type: "gcloud",
+              name: "mega-cluster",
+              projectId: "super-google-project",
+              region: "ch-blabla",
+            },
           },
         },
       },
