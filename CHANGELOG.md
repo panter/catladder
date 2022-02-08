@@ -1,3 +1,10 @@
+# [1.3.0](https://git.panter.ch/catladder/catladder/compare/v1.2.0...v1.3.0) (2022-02-08)
+
+
+### Features
+
+* tag namespaces properly ([1a136b6](https://git.panter.ch/catladder/catladder/commit/1a136b6bcaca8dce1cea67f9a63b065cd321ba19))
+
 # [1.2.0](https://git.panter.ch/catladder/catladder/compare/v1.1.2...v1.2.0) (2022-02-08)
 
 
