@@ -1,20 +1,18 @@
 import { PipelineTrigger, ComponentConfig, Config, EnvType } from "./config";
 
-export type Environment =
-  | {
-      hostname: string;
-      fullName: string;
-      shortName: string;
-      slug: string;
-      url: string;
-      /**
-       * env vars contain all build-time env vars. secrets have to be resolved (they are stored in gitlab)
-       */
-      envVars: Record<string, string>;
-      envType: EnvType;
-      secretEnvVarKeys: string[];
-    }
-  | { envType: "prod"; autoDeploy: boolean };
+export type Environment = {
+  hostname: string;
+  fullName: string;
+  shortName: string;
+  slug: string;
+  url: string;
+  /**
+   * env vars contain all build-time env vars. secrets have to be resolved (they are stored in gitlab)
+   */
+  envVars: Record<string, string>;
+  envType: EnvType;
+  secretEnvVarKeys: string[];
+};
 
 export type CommitInfo = {
   refName: string;
