@@ -1,3 +1,10 @@
+## [1.4.4](https://git.panter.ch/catladder/catladder/compare/v1.4.3...v1.4.4) (2022-02-08)
+
+
+### Bug Fixes
+
+* using host instead of hostname ([d606e3c](https://git.panter.ch/catladder/catladder/commit/d606e3c97ce4d9c178b3a8b7d50e0bb51c46fc81))
+
 ## [1.4.3](https://git.panter.ch/catladder/catladder/compare/v1.4.2...v1.4.3) (2022-02-08)
 
 
