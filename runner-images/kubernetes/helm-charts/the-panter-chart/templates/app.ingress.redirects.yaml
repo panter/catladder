@@ -3,9 +3,9 @@
 {{ $serviceName := include "fullname" . }}
 {{ $servicePort := .Values.service.externalPort }}
 
-{{ $hasCanonicalHost := ne $app.hostCanonical (default $app.hostCanonical $app.host) }}
-
-{{if $hasCanonicalHost -}}
+{{ $hastCustomHost := ne $app.hostCanonical (default $app.hostCanonical $app.hostname) }}
+# if it has a custom host, add a redirect from canonical to custom host
+{{if $hastCustomHost -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
