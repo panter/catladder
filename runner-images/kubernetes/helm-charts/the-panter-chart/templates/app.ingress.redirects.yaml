@@ -62,10 +62,10 @@ metadata:
     {{ $key }}: {{ $value | quote }}
   {{- end }}
   {{- if $redirect.rule}}
-    ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       {{ $redirect.rule }}
   {{ else }}
-    ingress.kubernetes.io/configuration-snippet: |
+    nginx.ingress.kubernetes.io/configuration-snippet: |
       return 301 $scheme://{{ template "host" $context }}$request_uri;
   {{- end }}
       
