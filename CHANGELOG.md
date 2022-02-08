@@ -1,3 +1,10 @@
+## [1.4.2](https://git.panter.ch/catladder/catladder/compare/v1.4.1...v1.4.2) (2022-02-08)
+
+
+### Bug Fixes
+
+* redirects not working ([9c0053b](https://git.panter.ch/catladder/catladder/commit/9c0053bb17e666eb54ca43d7c3b7680f2493b560))
+
 ## [1.4.1](https://git.panter.ch/catladder/catladder/compare/v1.4.0...v1.4.1) (2022-02-08)
 
 
