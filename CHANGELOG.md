@@ -1,3 +1,21 @@
+# [1.2.0](https://git.panter.ch/catladder/catladder/compare/v1.1.2...v1.2.0) (2022-02-08)
+
+
+### Bug Fixes
+
+* remove non existing pantobot api ([cb1bc1d](https://git.panter.ch/catladder/catladder/commit/cb1bc1d979f1e96bb353776b285ede0cdbbc22e0))
+
+
+### Features
+
+* debug helm deploy ([3548765](https://git.panter.ch/catladder/catladder/commit/354876553d2e6ef42c4efe8c1155dd44b40458c4))
+* FF_USE_FASTZIP ([097f47f](https://git.panter.ch/catladder/catladder/commit/097f47fbf5e4fa5a591ba9f33b46c99a06728e10))
+* new canonical domain handling ([7af0546](https://git.panter.ch/catladder/catladder/commit/7af05465dd8079d62f1d6d14cbcecf198de91123))
+* new cluster management ([1ee4332](https://git.panter.ch/catladder/catladder/commit/1ee4332aeafaa4463269d8c8e1d0796ed9bf16ab))
+* new multi kube support ([9e149f5](https://git.panter.ch/catladder/catladder/commit/9e149f546237500189251551ad01bb4e162edea5))
+* review apps have now different name ([3175f5e](https://git.panter.ch/catladder/catladder/commit/3175f5e02280b92400fbc813923b29709465359c))
+* use build kit for docker build ([d6ed7ea](https://git.panter.ch/catladder/catladder/commit/d6ed7ead2b4731b9ac0a36eb495be9fc456cf03f))
+
 ## [1.1.2](https://git.panter.ch/catladder/catladder/compare/v1.1.1...v1.1.2) (2022-02-04)
 
 ## [1.1.1](https://git.panter.ch/catladder/catladder/compare/v1.1.0...v1.1.1) (2022-02-04)
