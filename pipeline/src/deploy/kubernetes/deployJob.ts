@@ -29,7 +29,7 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     public: Record<string, string>;
   }>(
     (acc, [key, value]) => {
-      if (value?.startsWith("$CL_")) {
+      if (String(value)?.startsWith("$CL_")) {
         acc.secret = {
           ...acc.secret,
           [key]: value,

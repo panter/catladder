@@ -93,7 +93,7 @@ const resolveSecrets = async (
 
   return Object.fromEntries(
     Object.entries(allEnvVars).map(([key, value]) => {
-      const isSecret = value?.startsWith?.("$CL_");
+      const isSecret = String(value)?.startsWith?.("$CL_");
       if (isSecret) {
         // secrets have CL_XXXX structure
         const found = allVariablesInGitlab.find((v) => "$" + v.key === value);
