@@ -1,3 +1,10 @@
+## [1.3.1](https://git.panter.ch/catladder/catladder/compare/v1.3.0...v1.3.1) (2022-02-08)
+
+
+### Bug Fixes
+
+* stop environment not working ([05b6684](https://git.panter.ch/catladder/catladder/commit/05b668481033d270ca6a2e1c34cf844499dc2e6b))
+
 # [1.3.0](https://git.panter.ch/catladder/catladder/compare/v1.2.0...v1.3.0) (2022-02-08)
 
 
