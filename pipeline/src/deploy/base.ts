@@ -24,7 +24,13 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
       : context.environment.envType === "dev"
       ? "3 weeks"
       : undefined;
-
+  // automatically run deploy job, unless its prod and stage is active
+  const autoDeploy =
+    context.environment.envType !== "prod"
+      ? true // is not stage, auto deploy
+      : context.componentConfig.env?.stage === false
+      ? true // is prod, but no staging, auto deploy
+      : false; // manually deploy
   return {
     name: DEPLOY_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
@@ -41,12 +47,12 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     ], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
     job: {
       rules: [
-        context.environment.envType === "prod"
+        autoDeploy
           ? {
-              when: "manual",
+              when: "on_success",
             }
           : {
-              when: "on_success",
+              when: "manual",
             },
       ],
       stage: "deploy",
