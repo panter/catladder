@@ -85,7 +85,6 @@ export const getEnvironment = (
       "panter.cloud";
 
     const HOST_CANONICAL = `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`;
-
     host = mergedConfig?.host ?? HOST_CANONICAL;
     const url = `https://${host}`;
 
