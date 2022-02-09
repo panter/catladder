@@ -16,13 +16,18 @@ export type OldGitlabCiFile = {
   }[];
 };
 
+export const isOldInclude = (gitlabCi: OldGitlabCiFile) => {
+  return gitlabCi.include[0]?.project === "catladder/gitlab-ci";
+};
+
 export const detectBuildConfig = (
   gitlabCi: OldGitlabCiFile
 ): BuildConfig["type"] | "monorepo" => {
-  const firstInclude = gitlabCi.include[0];
-  if (!firstInclude || gitlabCi.include[0]?.project !== "catladder/gitlab-ci") {
+  if (!isOldInclude(gitlabCi)) {
     throw new Error("unsupported gitlab-ci file");
   }
+
+  const firstInclude = gitlabCi.include[0];
 
   if (firstInclude.file === "monorepo.yml") return "monorepo";
 
