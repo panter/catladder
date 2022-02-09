@@ -24,7 +24,11 @@ import { syncBitwarden } from "../../../../utils/passwordstore";
 import { getGitRoot } from "../../../../utils/projects";
 import { writeConfig } from "../../config/writeConfig";
 import { migrateSecrets } from "./migrateSecrets";
-import { detectBuildConfig, OldGitlabCiFile } from "./oldGitlabCi";
+import {
+  detectBuildConfig,
+  isOldInclude,
+  OldGitlabCiFile,
+} from "./oldGitlabCi";
 export const LEGACY_ENVS = [
   "dev-local",
   "dev",
@@ -78,6 +82,11 @@ const transformValues = (
     cronjobs: arrayToRecord(valuesIn?.cronjobs),
   };
 };
+
+export const isV2 = async () => {
+  const gitlabCi = await getGitlabCi<OldGitlabCiFile>();
+  return isOldInclude(gitlabCi);
+};
 export const migrateV2 = async (vorpal: Vorpal) => {
   const gitlabCi = await getGitlabCi<OldGitlabCiFile>();
   const gitRoot = await getGitRoot();
@@ -121,13 +130,14 @@ export const migrateV2 = async (vorpal: Vorpal) => {
         name: "shouldContinue",
         type: "confirm",
       });
-      vorpal.log("");
-      vorpal.log("");
-      vorpal.log("💪😼 ok, let's go...");
-      vorpal.log("");
-      vorpal.log("");
 
       if (shouldContinue) {
+        vorpal.log("");
+        vorpal.log("");
+        vorpal.log("💪😼 ok, let's go...");
+        vorpal.log("");
+        vorpal.log("");
+
         const createComponent = async (
           dir: string,
           ciFile: OldGitlabCiFile
@@ -239,6 +249,10 @@ export const migrateV2 = async (vorpal: Vorpal) => {
         this.log("done!");
 
         this.log("-------------------");
+      } else {
+        this.log(
+          "☝ if you want to use catladder in legacy mode, install @panter/catladder globally and invoke catladder-legacy"
+        );
       }
     });
 

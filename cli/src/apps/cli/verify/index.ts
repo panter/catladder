@@ -4,7 +4,7 @@ import {
   getProjectConfig,
 } from "../../../config/getProjectConfig";
 import { hasGitlabToken, setupGitlabToken } from "../../../utils/gitlab";
-import { migrateV2 } from "./migration/fromv2";
+import { isV2, migrateV2 } from "./migration/fromv2";
 
 export const verify = async (vorpal: Vorpal) => {
   // check if has all settings
@@ -20,11 +20,7 @@ export const verify = async (vorpal: Vorpal) => {
   try {
     const gitlabCi = getGitlabCi();
 
-    if (!gitlabCi) {
-      vorpal.log("not initialized");
-    }
-
-    if (!projectConfig) {
+    if (gitlabCi && !projectConfig && (await isV2())) {
       vorpal.log("no project config, needs migration");
       await migrateV2(vorpal);
     }
