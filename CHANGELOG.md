@@ -1,3 +1,10 @@
+# [1.5.0](https://git.panter.ch/catladder/catladder/compare/v1.4.5...v1.5.0) (2022-02-09)
+
+
+### Features
+
+* migration improvements ([fd71509](https://git.panter.ch/catladder/catladder/commit/fd7150999e5c7bf0493e7112c9d95002c923ad54))
+
 ## [1.4.5](https://git.panter.ch/catladder/catladder/compare/v1.4.4...v1.4.5) (2022-02-09)
 
 
