@@ -43,6 +43,6 @@ export const detectBuildConfig = (
   }
 
   if (firstInclude.file === "rails-kubernetes.yml") {
-    throw new Error("rails is not yet implemented");
+    return "rails";
   }
 };
