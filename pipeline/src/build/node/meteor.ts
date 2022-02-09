@@ -7,7 +7,7 @@ import { CatladderJob } from "../../types/jobs";
 
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJob } from "../docker";
+import { createDockerBuildJobDefault } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
@@ -61,7 +61,7 @@ export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
       : null;
   return [
     ...(appBuildJob ? [appBuildJob] : []),
-    createDockerBuildJob(context, {
+    createDockerBuildJobDefault(context, {
       script: ["ensureMeteorDockerfile"],
       needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
     }),
