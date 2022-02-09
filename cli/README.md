@@ -4,11 +4,11 @@ panter cli tool for kubernetes
 
 ## Install
 
-`yarn global add @panter/catladder`
+`yarn global add @catladder/cli`
 
 or npm users
 
-`npm install -g @panter/catladder`
+`npm install -g @catladder/cli`
 
 ## Getting started
 You'll need
