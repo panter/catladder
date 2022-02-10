@@ -10,6 +10,8 @@ or npm users
 
 `npm install -g @catladder/cli`
 
+_Note: if you have `@panter/catladder` installed upgrade it to >=4.0.0 before installing `@catladder/cli`_
+
 ## Getting started
 You'll need
 - Google Cloud SDK ([see installation instructions](https://cloud.google.com/sdk/docs/install))
