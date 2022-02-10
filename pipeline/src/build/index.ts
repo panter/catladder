@@ -30,7 +30,7 @@ export const BUILD_TYPES: BuildTypes = {
   storybook: {
     jobs: createStorybookJobs,
     defaults: () => ({
-      buildCommand: ["yarn storybook", "mv ./storybook-out /dist"],
+      buildCommand: ["yarn build-storybook", "mv ./storybook-out /dist"],
     }),
   },
   meteor: {
