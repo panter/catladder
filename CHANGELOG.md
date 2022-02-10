@@ -1,3 +1,10 @@
+## [1.5.1](https://git.panter.ch/catladder/catladder/compare/v1.5.0...v1.5.1) (2022-02-10)
+
+
+### Bug Fixes
+
+* **storybook:** wrong default build command ([3893c69](https://git.panter.ch/catladder/catladder/commit/3893c69df6e2f40a6e3b22a395b45cf21dd43fd1))
+
 # [1.5.0](https://git.panter.ch/catladder/catladder/compare/v1.4.5...v1.5.0) (2022-02-09)
 
 
