@@ -1,3 +1,10 @@
+## [1.5.2](https://git.panter.ch/catladder/catladder/compare/v1.5.1...v1.5.2) (2022-02-10)
+
+
+### Bug Fixes
+
+* **cli:** open dashboard broken link ([6e645d7](https://git.panter.ch/catladder/catladder/commit/6e645d70eaaf958b0edde37e21212dac6f0580c7))
+
 ## [1.5.1](https://git.panter.ch/catladder/catladder/compare/v1.5.0...v1.5.1) (2022-02-10)
 
 
