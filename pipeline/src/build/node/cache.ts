@@ -10,7 +10,7 @@ export const getNodeCache = (context: Context): GitlabJobCache[] => {
       // if component is in a shared workspace, use workspace cache. use individual cache else
       key: componentIsInWorkspace
         ? "node-modules-workspace"
-        : context.componentName + "-node-modules",
+        : context.componentConfig.dir + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
       policy: "pull-push",
       paths: [
         ".yarn",
