@@ -1,3 +1,10 @@
+## [1.5.6](https://git.panter.ch/catladder/catladder/compare/v1.5.5...v1.5.6) (2022-02-11)
+
+
+### Bug Fixes
+
+* **cli:** migrate string command ([508a469](https://git.panter.ch/catladder/catladder/commit/508a469f4824ab2437fb7b6f7b80954a4cb83fea))
+
 ## [1.5.5](https://git.panter.ch/catladder/catladder/compare/v1.5.4...v1.5.5) (2022-02-11)
 
 
