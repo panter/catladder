@@ -45,7 +45,7 @@ export const writeConfig = async (
       encoding: "utf-8",
     });
     vorpal.log("adding type @catladder/pipeline....");
-    await spawn("yarn add @catladder/pipeline -DW", {
+    await spawn("yarn add --non-interactive @catladder/pipeline -DW", {
       shell: true,
     });
     await exec("git add " + file);
