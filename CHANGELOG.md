@@ -1,3 +1,10 @@
+## [1.5.4](https://git.panter.ch/catladder/catladder/compare/v1.5.3...v1.5.4) (2022-02-11)
+
+
+### Bug Fixes
+
+* **cli:** git stage the right file when choosing yaml config ([e5749c2](https://git.panter.ch/catladder/catladder/commit/e5749c2c52ff27d763d4c0335030a578359f1c43))
+
 ## [1.5.3](https://git.panter.ch/catladder/catladder/compare/v1.5.2...v1.5.3) (2022-02-10)
 
 ## [1.5.2](https://git.panter.ch/catladder/catladder/compare/v1.5.1...v1.5.2) (2022-02-10)
