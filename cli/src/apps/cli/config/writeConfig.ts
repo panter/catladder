@@ -23,6 +23,7 @@ export const writeConfig = async (
   });
   vorpal.log("");
   if (configType === TS) {
+    const file = gitRoot + "/catladder.ts";
     const content = format(
       `
       import type { Config } from "@catladder/pipeline";
@@ -40,19 +41,20 @@ export const writeConfig = async (
       }
     );
 
-    await writeFile(gitRoot + "/catladder.ts", content, {
+    await writeFile(file, content, {
       encoding: "utf-8",
     });
     vorpal.log("adding type @catladder/pipeline....");
     await spawn("yarn add @catladder/pipeline -DW", {
       shell: true,
     });
-    await exec("git add " + gitRoot + "/catladder.ts");
+    await exec("git add " + file);
   } else {
+    const file = gitRoot + "/catladder.yml";
     const content = dump(config);
 
     await writeFile(
-      gitRoot + "/catladder.yml",
+      file,
       content +
         "\n\n" +
         (options.endComment
@@ -62,7 +64,7 @@ export const writeConfig = async (
         encoding: "utf-8",
       }
     );
-    await exec("git add " + gitRoot + "/catladder.ts");
+    await exec("git add " + file);
   }
   vorpal.log("done!");
   vorpal.log("");
