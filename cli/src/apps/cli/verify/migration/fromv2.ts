@@ -247,6 +247,8 @@ export const migrateV2 = async (vorpal: Vorpal) => {
         this.log("-------------------");
 
         this.log("done!");
+        this.log("");
+        this.log("You can remove the values*.yml files now.");
 
         this.log("-------------------");
       } else {
