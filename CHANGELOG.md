@@ -1,3 +1,11 @@
+## [1.5.5](https://git.panter.ch/catladder/catladder/compare/v1.5.4...v1.5.5) (2022-02-11)
+
+
+### Bug Fixes
+
+* **cli:** run yarn non-interactively to avoid hanging due to a prompt ([bd5ec09](https://git.panter.ch/catladder/catladder/commit/bd5ec090b80e1dd7fbf9568cf0928808f3b25557))
+* **cli:** upgrade js-yaml so undefined is not serialized to yaml ([0bec73d](https://git.panter.ch/catladder/catladder/commit/0bec73de0d1ffb7d007bb46146d83bcb9b7729cb))
+
 ## [1.5.4](https://git.panter.ch/catladder/catladder/compare/v1.5.3...v1.5.4) (2022-02-11)
 
 
