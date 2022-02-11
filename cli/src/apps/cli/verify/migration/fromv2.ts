@@ -145,7 +145,9 @@ export const migrateV2 = async (vorpal: Vorpal) => {
           const { env, ...baseValues } =
             (await readYaml(dir + "/values.yml")) ?? {};
 
-          const startCommand = baseValues?.application?.command?.join(" ");
+          const startCommand = Array.isArray(baseValues?.application?.command)
+            ? baseValues?.application?.command.join(" ")
+            : baseValues?.application?.command
           return {
             vars: env ? transformVars(env) : undefined,
             dir: dir,
