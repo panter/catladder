@@ -1,3 +1,10 @@
+# [1.7.0](https://git.panter.ch/catladder/catladder/compare/v1.6.0...v1.7.0) (2022-02-16)
+
+
+### Features
+
+* **cli:** enable to config secrets over all components and envs ([bd68540](https://git.panter.ch/catladder/catladder/commit/bd685403041176d548aa93781cb1836e13696a86))
+
 # [1.6.0](https://git.panter.ch/catladder/catladder/compare/v1.5.8...v1.6.0) (2022-02-16)
 
 
