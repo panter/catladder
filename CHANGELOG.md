@@ -1,3 +1,10 @@
+# [1.6.0](https://git.panter.ch/catladder/catladder/compare/v1.5.8...v1.6.0) (2022-02-16)
+
+
+### Features
+
+* add ENV_TYPE as predefined env var ([32d07a3](https://git.panter.ch/catladder/catladder/commit/32d07a3908f77cbe1821a29cde8e589ae3c9d407))
+
 ## [1.5.8](https://git.panter.ch/catladder/catladder/compare/v1.5.7...v1.5.8) (2022-02-16)
 
 
