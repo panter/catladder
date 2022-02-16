@@ -40,16 +40,19 @@ export const getEnvironment = (
 
   // env type: if its set manually, use that, otherwise use the known env types
 
-  const basePredefinedVariables = {
-    ENV_SHORT: env,
-    APP_DIR: componentConfig.dir,
-  };
   const envType = envConfig?.type ?? (isKnowEnvType(env) ? env : null);
   if (!envType) {
     throw new Error(
       "Missing type in environment " + env + " in component " + componentName
     );
   }
+
+  const basePredefinedVariables = {
+    ENV_SHORT: env,
+    APP_DIR: componentConfig.dir,
+    ENV_TYPE: envType,
+  };
+
   const environmentName =
     envType === "review" && commitInfo
       ? `${env}/${commitInfo.refName}/${componentName}`
