@@ -11,9 +11,7 @@ export const createMongodbBaseConfig = (context: Context) => {
     "mongodb-replicaset": {
       replicas: 1,
       persistentVolume: {
-        storageClass: ["prod", "stage"].includes(context.environment.envType)
-          ? "fast"
-          : "standard",
+        storageClass: "standard",
       },
     },
   };
