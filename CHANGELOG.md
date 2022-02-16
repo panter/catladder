@@ -1,3 +1,10 @@
+## [1.5.8](https://git.panter.ch/catladder/catladder/compare/v1.5.7...v1.5.8) (2022-02-16)
+
+
+### Bug Fixes
+
+* **mongodb:** default to "standard" storage as "fast" is not available on the new cluster ([ef6328c](https://git.panter.ch/catladder/catladder/commit/ef6328c42139fd4cab10df4c416cc78881158642))
+
 ## [1.5.7](https://git.panter.ch/catladder/catladder/compare/v1.5.6...v1.5.7) (2022-02-16)
 
 
