@@ -1,3 +1,10 @@
+## [1.5.7](https://git.panter.ch/catladder/catladder/compare/v1.5.6...v1.5.7) (2022-02-16)
+
+
+### Bug Fixes
+
+* **kubernetes:** can't manage statfulsets (required for mongodb) ([13e5bc5](https://git.panter.ch/catladder/catladder/commit/13e5bc50c483ad13ad692d9237dfb9176d2b5aa1))
+
 ## [1.5.6](https://git.panter.ch/catladder/catladder/compare/v1.5.5...v1.5.6) (2022-02-11)
 
 
