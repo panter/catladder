@@ -41,6 +41,7 @@ export const getEnvironment = (
   // env type: if its set manually, use that, otherwise use the known env types
 
   const envType = envConfig?.type ?? (isKnowEnvType(env) ? env : null);
+
   if (!envType) {
     throw new Error(
       "Missing type in environment " + env + " in component " + componentName
