@@ -62,7 +62,7 @@ metadata:
   name: ${serviceAccountName}
 rules:
 - apiGroups: ["", "extensions", "apps", "networking.k8s.io", "batch"]
-  resources: ["deployments", "replicasets", "pods", "secrets", "configmaps", "services", "ingresses", "serviceaccounts", "jobs", "cronjobs"]
+  resources: ["deployments", "replicasets", "statefulsets", "pods", "secrets", "configmaps", "services", "ingresses", "serviceaccounts", "jobs", "cronjobs"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] # You can also use ["*"]
 ---
 kind: RoleBinding
