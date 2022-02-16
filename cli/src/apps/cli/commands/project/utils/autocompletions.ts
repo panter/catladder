@@ -1,6 +1,6 @@
 import { getAllEnvs, getAllEnvsInAllComponents } from "@catladder/pipeline";
 import {
-  getAllComponentsWithAllEnvs,
+  getAllComponentsWithAllEnvsFlat,
   getProjectConfig,
 } from "../../../../../config/getProjectConfig";
 
@@ -13,7 +13,7 @@ export const allEnvs = async () => {
 };
 
 export const envAndComponents = async () => {
-  const allEnvAndcomponents = await getAllComponentsWithAllEnvs();
+  const allEnvAndcomponents = await getAllComponentsWithAllEnvsFlat();
 
   return allEnvAndcomponents.reduce<string[]>(
     (acc, { env, componentName }) => [...acc, env + ":" + componentName],

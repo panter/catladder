@@ -58,21 +58,37 @@ export const getPipelineContextByChoice = async (
   const config = await getProjectConfig();
   return createContext(config, componentName, env);
 };
-export const getAllComponentsWithAllEnvs = async () => {
+export const getAllComponentsWithAllEnvsFlat = async (): Promise<
+  Array<{ env: string; componentName: string }>
+> => {
   const config = await getProjectConfig();
   if (!config) {
     return [];
   }
-  return Promise.all(
-    Object.keys(config.components).flatMap((componentName) =>
-      getAllEnvs(config, componentName).map((env) => ({ env, componentName }))
-    )
+  return Object.keys(config.components).flatMap((componentName) =>
+    getAllEnvs(config, componentName).map((env) => ({ env, componentName }))
+  );
+};
+
+export const getAllComponentsWithAllEnvsHierarchical = async (): Promise<{
+  [componentName: string]: string[];
+}> => {
+  const config = await getProjectConfig();
+  if (!config) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.keys(config.components).map((componentName) => [
+      componentName,
+      getAllEnvs(config, componentName),
+    ])
   );
 };
 
 export const getAllPipelineContexts = async () => {
   return Promise.all(
-    (await getAllComponentsWithAllEnvs())
+    (await getAllComponentsWithAllEnvsFlat())
       .filter((c) => c.env !== "local")
       .map(({ env, componentName }) =>
         getPipelineContextByChoice(env, componentName)
