@@ -1,14 +1,18 @@
 import {
   getFullKubernetesClusterName,
   isOfDeployType,
-  getKubernetesNamespace,
 } from "@catladder/pipeline";
 import Vorpal from "vorpal";
 import { $ } from "zx";
 import { getAllPipelineContexts } from "../../../../config/getProjectConfig";
 import { connectToCluster } from "../../../../utils/cluster";
-import { upsertAllVariables } from "../../../../utils/gitlab";
+import {
+  doGitlabRequest,
+  getProjectInfo,
+  upsertAllVariables,
+} from "../../../../utils/gitlab";
 import ensureNamespace from "./utils/ensureNamespace";
+import open from "open";
 
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -109,69 +113,9 @@ EOF
         }
       }
 
-      // there is a constraint, see https://git.panter.ch/catladder/catladder/-/issues/2#note_345677
-      // any two components have to use the same custer per env, so e.g. dev:api and dev:www cannot use two different namespaces
-      // in practise, that is often not an issue, but it might happen because the config allows it
-      /*
-      Object.entries(configuredClusters).forEach(([fullname, config]) =>
-        this.log(` - ${config.cluster.name || "unknown"} (${fullname})`)
+      const { id: projectId, web_url: projectWebUrl } = await getProjectInfo(
+        this
       );
-      this.log("");
-
-      const missingClusters = Object.fromEntries(
-        Object.entries(configuredClusters).filter(
-          ([c]) => !existingClusters.some((exist) => exist === c)
-        )
-      );
-
-      this.log("");
-      this.log("These clusters are not configured yet on gitlab:");
-      this.log("");
-
-      Object.entries(missingClusters).forEach(([fullname, config]) =>
-        this.log(` - ${config.cluster.name || "unknown"} (${fullname})`)
-      );
-      this.log("");
-
-      for (const [fullname, config] of Object.entries(missingClusters)) {
-        this.log(`${config.name} (${fullname})`);
-        this.log("");
-        const { shouldContinue } = await this.prompt({
-          type: "confirm",
-          name: "shouldContinue",
-          message: "Should I add the this cluster ? 🤔  ",
-        });
-        this.log("");
-        if (shouldContinue) {
-          await connectToCluster(fullname);
-          const { stdout: api_url } =
-            await $`kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`;
-          const { stdout: ca_cert } =
-            await $`kubectl get secret default-token-69xv4 -o jsonpath="{['data']['ca\.crt']}" | base64 --decode`;
-          const { stdout: token } =
-            await $`kubectl get secret default-token-69xv4 -o jsonpath="{['data']['token']}" | base64 --decode`;
-          const postResult = await doGitlabRequest(
-            this,
-            `projects/${projectId}/clusters/user`,
-            {
-              name: fullname,
-              managed: false,
-              environment_scope: "*",
-              platform_kubernetes_attributes: {
-                api_url,
-                ca_cert,
-                token,
-                namespace: await getProjectNamespace("prod"),
-              },
-            }
-          );
-          const { message } = postResult;
-          if (message) {
-            this.log(`Message from gitlab: ${message}`);
-          }
-        }
-      }
-
       const variables = await doGitlabRequest(
         this,
         `projects/${projectId}/variables`
@@ -244,5 +188,4 @@ EOF
       ].forEach((tip) => this.log(` - ${tip}`));
       this.log("\n");
       this.log("\n");
-      */
     });
