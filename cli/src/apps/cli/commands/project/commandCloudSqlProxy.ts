@@ -37,7 +37,12 @@ export default async (vorpal: Vorpal) =>
       if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
         throw new Error("currently only supported for kubernetes deployment");
       }
+      this.log("");
       this.log(`postgres-PW: ${POSTGRESQL_PASSWORD}`);
+      this.log("");
+      this.log(
+        `POSTGRESQL_URL=postgresql://postgres:${POSTGRESQL_PASSWORD}@localhost:${localPort}/${context.environment.envVars.KUBE_APP_NAME}?schema=public`
+      );
       this.log("");
 
       const values = context.componentConfig.deploy.values;
