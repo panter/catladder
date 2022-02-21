@@ -1,3 +1,10 @@
+# [1.8.0](https://git.panter.ch/catladder/catladder/compare/v1.7.0...v1.8.0) (2022-02-21)
+
+
+### Features
+
+* **cli cloudsql:** show postgres connection string for convencience ([e5908da](https://git.panter.ch/catladder/catladder/commit/e5908daa737c1906b92c4dfa2c9be2fa6573cb87))
+
 # [1.7.0](https://git.panter.ch/catladder/catladder/compare/v1.6.0...v1.7.0) (2022-02-16)
 
 
