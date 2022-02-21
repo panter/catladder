@@ -1,3 +1,10 @@
+# [1.9.0](https://git.panter.ch/catladder/catladder/compare/v1.8.0...v1.9.0) (2022-02-21)
+
+
+### Features
+
+* readd full gitlab init stuff ([9715c26](https://git.panter.ch/catladder/catladder/commit/9715c26251e2b82f406773b0dc733521ceaf0d8f))
+
 # [1.8.0](https://git.panter.ch/catladder/catladder/compare/v1.7.0...v1.8.0) (2022-02-21)
 
 
