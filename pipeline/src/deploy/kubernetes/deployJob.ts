@@ -9,6 +9,8 @@ import { createMongodbBaseConfig } from "./mongodb";
 import { createCloudsqlBaseConfig } from "./cloudsql";
 import { getSecretVarNameForContext } from "../..";
 import { mergeWithMergingArrays } from "../../utils";
+import { DeployConfigKubernetesValues } from "..";
+import { PartialDeep } from "type-fest";
 
 export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   const deployConfig = context.componentConfig.deploy;
@@ -49,12 +51,28 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     }
   );
 
-  const defaultKubeValues = {
-    application: {
-      host: context.environment.host,
-      command: context.componentConfig.build.startCommand,
+  const defaultAppConfig: DeployConfigKubernetesValues["application"] = {
+    host: context.environment.host,
+    command: context.componentConfig.build.startCommand,
+    livenessProbe: {
+      httpGet: {
+        path: deployConfig.values?.application?.healthRoute ?? "__health",
+      },
     },
+    readinessProbe: {
+      httpGet: {
+        path: deployConfig.values?.application?.healthRoute ?? "__health",
+      },
+    },
+    startupProbe: {
+      httpGet: {
+        path: deployConfig.values?.application?.healthRoute ?? "__health",
+      },
+    },
+  };
 
+  const defaultKubeValues = {
+    application: defaultAppConfig,
     env: env,
     ...(deployConfig.values?.cloudsql?.enabled
       ? createCloudsqlBaseConfig(context)
