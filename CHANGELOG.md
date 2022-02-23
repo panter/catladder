@@ -1,3 +1,10 @@
+## [1.9.1](https://git.panter.ch/catladder/catladder/compare/v1.9.0...v1.9.1) (2022-02-23)
+
+
+### Bug Fixes
+
+* increaes default memory requests for build jobs ([65d2082](https://git.panter.ch/catladder/catladder/commit/65d2082d38e20c252f48af1a874f74f222f2fcbd))
+
 # [1.9.0](https://git.panter.ch/catladder/catladder/compare/v1.8.0...v1.9.0) (2022-02-21)
 
 
