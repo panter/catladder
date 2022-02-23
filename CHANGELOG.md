@@ -1,3 +1,10 @@
+# [1.10.0](https://git.panter.ch/catladder/catladder/compare/v1.9.1...v1.10.0) (2022-02-23)
+
+
+### Features
+
+* make it easier to cusstomize health route ([63a8742](https://git.panter.ch/catladder/catladder/commit/63a87423f7b2dc4007336cd6f6843d30728b9420))
+
 ## [1.9.1](https://git.panter.ch/catladder/catladder/compare/v1.9.0...v1.9.1) (2022-02-23)
 
 
