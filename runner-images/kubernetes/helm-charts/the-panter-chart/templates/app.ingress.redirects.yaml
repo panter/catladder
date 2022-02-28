@@ -34,7 +34,7 @@ spec:
                 port:
                   number: {{ $servicePort }}
   tls:
-    - secretName: {{ $app.hostCanonical | trunc 59}}-tls
+    - secretName: {{ $app.hostCanonical | trunc 59 | trimSuffix "." }}-tls
       hosts: 
         - {{ $app.hostCanonical }}
 ---
@@ -82,7 +82,7 @@ spec:
                 port:
                   number: {{ $servicePort }}
   tls:
-    - secretName: {{ $redirect.host | trunc 59 }}-tls
+    - secretName: {{ $redirect.host | trunc 59 | trimSuffix "." }}-tls
       hosts: 
         - {{ $redirect.host }}
 ---
