@@ -22,6 +22,9 @@ export const createNodeBuildJobs = (context: Context): GitlabJobs => {
       ? createBuildJob(context, {
           variables: {
             ...NODE_RUNNER_BUILD_VARIABLES,
+            // TODO:duplicate with `createBuildJob`, but problem is that it will override variables here
+            ...context.environment.envVars,
+            ...(context.componentConfig.build.extraVars ?? {}),
           },
           cache: [...getNodeCache(context), ...getNextCache(context)],
           script: [
