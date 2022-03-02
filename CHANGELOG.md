@@ -1,3 +1,10 @@
+## [1.10.2](https://git.panter.ch/catladder/catladder/compare/v1.10.1...v1.10.2) (2022-03-02)
+
+
+### Bug Fixes
+
+* node build job variables overrides extraVars ([9012168](https://git.panter.ch/catladder/catladder/commit/90121680f3e04dc8476d9580abee1d468fbf3fb5))
+
 ## [1.10.1](https://git.panter.ch/catladder/catladder/compare/v1.10.0...v1.10.1) (2022-03-02)
 
 
