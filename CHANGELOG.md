@@ -1,3 +1,10 @@
+## [1.10.1](https://git.panter.ch/catladder/catladder/compare/v1.10.0...v1.10.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* **kubernetes:** deploy crash if hostname contains a dot precicily at 59 position ([3d69f32](https://git.panter.ch/catladder/catladder/commit/3d69f32cc3de37833ee910d2cbbd6e031ca768d7))
+
 # [1.10.0](https://git.panter.ch/catladder/catladder/compare/v1.9.1...v1.10.0) (2022-02-23)
 
 
