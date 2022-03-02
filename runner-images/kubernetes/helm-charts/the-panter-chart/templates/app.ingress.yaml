@@ -39,7 +39,7 @@ spec:
                   number: {{ $servicePort }}
   {{- end }}
   tls:
-    - secretName: {{ include "host" . | trunc 59 }}-tls
+    - secretName: {{ include "host" . | trunc 59 | trimSuffix "." }}-tls
       hosts:
       {{- range $hosts }}
         - {{ . }}

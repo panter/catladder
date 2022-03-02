@@ -27,7 +27,7 @@ spec:
   tls:
   - hosts:
     - {{ $host }}
-    secretName: {{ $host | trunc 59 }}-tls
+    secretName: {{ $host | trunc 59 | trimSuffix "." }}-tls
 
 {{- end -}}
 
