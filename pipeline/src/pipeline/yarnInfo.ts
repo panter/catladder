@@ -27,7 +27,12 @@ const getWorkspaces = memoizee(
               ?.data ?? "{}"
           )
         )
-      : JSON.parse(`[${await execOrFail("yarn workspaces list --json", "")}]`);
+      : JSON.parse(
+          `[${(await execOrFail("yarn workspaces list --json", ""))
+            .trim()
+            .split("\n")
+            .join(",")}]`
+        );
   },
   { promise: true }
 );
