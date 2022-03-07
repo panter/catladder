@@ -1,3 +1,16 @@
+# [1.11.0](https://git.panter.ch/catladder/catladder/compare/v1.10.2...v1.11.0) (2022-03-07)
+
+
+### Bug Fixes
+
+* increase defaults once more ([5b031be](https://git.panter.ch/catladder/catladder/commit/5b031be5711fcb547d3a945fe9e0abb311a69784))
+* yarninfo not working correctly in yarn 2 ([bae3747](https://git.panter.ch/catladder/catladder/commit/bae37475da2bb3fe1720eb6c0b17fe878ad9f725))
+
+
+### Features
+
+* support yarnrc and npmrc files ([bdbef31](https://git.panter.ch/catladder/catladder/commit/bdbef31fe26d9c99f126f58ac13bc2bfc80cd056))
+
 ## [1.10.2](https://git.panter.ch/catladder/catladder/compare/v1.10.1...v1.10.2) (2022-03-02)
 
 
