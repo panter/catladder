@@ -27,6 +27,10 @@ export type YarnInfo = {
   workspaces: { location: string }[];
   isClassic: boolean;
   componentIsInWorkspace: boolean;
+  /**
+   * files relevant for the package manager
+   */
+  files: string[];
 };
 export type Context = {
   componentName: string;

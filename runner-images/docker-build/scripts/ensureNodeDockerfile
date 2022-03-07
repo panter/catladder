@@ -24,14 +24,6 @@ else
     NODE_VERSION=14
 fi
 
-if [ -f "$APP_DIR/yarn.lock" ]; then
-    # is not a monorepo, copy
-    COPY_YARN_FILES="COPY --chown=node:node $APP_DIR/package.json $APP_DIR/yarn.lock ./"
-else
-    # maybe a monorepo
-    COPY_YARN_FILES="COPY --chown=node:node $APP_DIR/package.json yarn.lock ./"
-fi
-
 if [ ! -f $APP_DIR/Dockerfile ]; then
     echo "Creating Dockerfile"
 
@@ -42,7 +34,7 @@ WORKDIR /app
 $DOCKERFILE_ADDITIONS
 
 RUN apk add --no-cache git curl
-$COPY_YARN_FILES
+COPY --chown=node:node $YARN_FILES ./
 RUN chown -R node:node .
 USER node
 

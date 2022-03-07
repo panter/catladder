@@ -2,6 +2,8 @@ import { exec } from "child-process-promise";
 import { Config, YarnInfo } from "../types";
 import { pathEqual } from "path-equal";
 import memoizee from "memoizee";
+import { join } from "path";
+import { existsSync } from "fs";
 
 const execOrFail = async (cmd: string, onFail: string): Promise<string> => {
   try {
@@ -49,11 +51,23 @@ export const getYarnInfo = async (
   const componentIsInWorkspace = workspaces.some((w) =>
     pathEqual(component.dir, w.location)
   );
+  const packageJson = join(component.dir, "package.json");
+  const lockFile = componentIsInWorkspace
+    ? "yarn.lock"
+    : join(component.dir, "yarn.lock");
+  const RC_FILES = [".yarnrc", ".npmrc"];
+  const possibleRcFiles = componentIsInWorkspace
+    ? RC_FILES
+    : RC_FILES.map((f) => join(component.dir, f));
+  const files = [packageJson, lockFile, ...possibleRcFiles].filter((f) =>
+    existsSync(f)
+  );
 
   return {
     workspaces,
     version,
     isClassic,
     componentIsInWorkspace,
+    files,
   };
 };

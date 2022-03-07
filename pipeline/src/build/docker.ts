@@ -36,6 +36,7 @@ export const createDockerBuildJob = (
       DOCKER_DIR: ".", // relative to componentdir
       IMAGE_TAG: "$CI_COMMIT_SHA",
       DOCKER_DRIVER: "overlay2",
+      YARN_FILES: context.yarnInfo?.files?.join(" ") ?? "",
       IMAGE_NAME:
         "$CI_REGISTRY_IMAGE/" +
         context.environment.shortName +
