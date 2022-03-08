@@ -29,20 +29,23 @@ if [ ! -f $APP_DIR/Dockerfile ]; then
 
     cat >$APP_DIR/Dockerfile <<EOF
 FROM node:$NODE_VERSION-alpine
-WORKDIR /app
+
+
 
 $DOCKERFILE_ADDITIONS
 
 RUN apk add --no-cache git curl
-COPY --chown=node:node $YARN_FILES ./
-RUN chown -R node:node .
 USER node
 
-RUN yarn --frozen-lockfile --production=true --ignore-scripts
+$DOCKER_COPY_WORKSPACE_FILES
+
+WORKDIR /app/$APP_DIR
+
+RUN $YARN_INSTALL_WITHOUT_SCRIPTS
 
 COPY --chown=node:node $APP_DIR .
 
-RUN yarn --frozen-lockfile --production=true
+RUN $YARN_INSTALL 
 
 $DOCKERFILE_ADDITIONS_END
 

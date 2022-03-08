@@ -10,24 +10,26 @@ import { getBuildInfo } from "./getBuildInfo";
 
 export const createBuildJob = (
   context: Context,
-  { script, ...def }: Partial<GitlabJobDef>
+  { script, variables, ...def }: Partial<GitlabJobDef>
 ): GitlabJob => {
   return {
     name: APP_BUILD_JOB_NAME,
     envMode: "jobPerEnv",
     job: merge(
       {
+        stage: "build",
         image: getRunnerImage("jobs-default"),
         needs: [],
         cache: [],
         variables: {
           ...RUNNER_BUILD_RESOURCE_VARIABLES,
+          ...(variables ?? {}),
           ...context.environment.envVars,
           ...(context.componentConfig.build.extraVars ?? {}),
         },
         retry: BASE_RETRY,
         interruptible: true,
-        stage: "build",
+
         script: [
           ...getBuildInfo(context),
           `cd ${context.componentConfig.dir}`,

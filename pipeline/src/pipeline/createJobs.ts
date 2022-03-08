@@ -7,7 +7,7 @@ import { Config, PipelineTrigger } from "../types/config";
 import { Context, CommitInfo } from "../types/context";
 import { GitlabJob, GitlabJobDef, GitlabJobs } from "../types/gitlab-types";
 import { notNil } from "../utils";
-import { getYarnInfo } from "./yarnInfo";
+import { getPackageManagerInfo } from "./packageManager";
 
 const createRawJobs = (context: Context): GitlabJobs => {
   if (context.componentConfig.deploy === false) {
@@ -134,7 +134,7 @@ export const createJobs = async (
     trigger,
   };
 
-  const yarnInfo = await getYarnInfo(config, componentName);
+  const packageManagerInfo = await getPackageManagerInfo(config, componentName);
 
   return envs.reduce((acc, env) => {
     const context = createContext(
@@ -142,7 +142,7 @@ export const createJobs = async (
       componentName,
       env,
       commitInfo,
-      yarnInfo
+      packageManagerInfo
     );
     const jobs = addStageNeeds(createRawJobs(context));
 
