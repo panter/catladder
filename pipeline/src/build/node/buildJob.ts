@@ -4,6 +4,8 @@ import { ensureArray } from "../../utils";
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
 import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "../docker";
+
+import { join } from "path";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
@@ -33,9 +35,12 @@ export const createNodeBuildJobs = (context: Context): GitlabJobs => {
           ],
           artifacts: {
             paths: [
-              context.componentConfig.dir + "/__build_info.json",
-              context.componentConfig.dir + "/dist",
-              context.componentConfig.dir + "/.next",
+              join(context.componentConfig.dir, "__build_info.json"),
+              join(context.componentConfig.dir, "dist"),
+              join(context.componentConfig.dir, ".next"),
+              ...(buildConfig.artifactsPaths?.map((path) =>
+                join(context.componentConfig.dir, path)
+              ) ?? []),
             ],
           },
         })
