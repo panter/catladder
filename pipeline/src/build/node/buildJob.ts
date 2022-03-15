@@ -2,7 +2,7 @@ import { Context } from "../../types/context";
 import { ensureArray } from "../../utils";
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJob } from "../docker";
+import { createDockerBuildJobDefault } from "../docker";
 import { join } from "path";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
@@ -43,7 +43,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
       : null;
   return [
     ...(appBuildJob ? [appBuildJob] : []),
-    createDockerBuildJob(context, {
+    createDockerBuildJobDefault(context, {
       script: [
         buildConfig.type === "node-static" || buildConfig.type === "storybook"
           ? "ensureNginxDockerfile"
