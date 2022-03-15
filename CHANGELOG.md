@@ -1,3 +1,17 @@
+# [1.12.0](https://git.panter.ch/catladder/catladder/compare/v1.11.0...v1.12.0) (2022-03-15)
+
+
+### Bug Fixes
+
+* **cli:** migration does not work properly when component name is not defined ([390edd9](https://git.panter.ch/catladder/catladder/commit/390edd9dd6ff33995477c7ed067e54bcf00e4bde))
+
+
+### Features
+
+* artifactsPaths ([111ada3](https://git.panter.ch/catladder/catladder/commit/111ada30ed95ee282f1b8c9afb58e4cad9def5fb))
+* **cli:** give hint that value yaml files are no longer needed ([ffca782](https://git.panter.ch/catladder/catladder/commit/ffca782816b62db3f25b302232dc2ac818ad87b2))
+* improved yarn workspaces support ([c92fbc8](https://git.panter.ch/catladder/catladder/commit/c92fbc83f28ca799391cb32dcd4c5d69647c8ae5))
+
 # [1.11.0](https://git.panter.ch/catladder/catladder/compare/v1.10.2...v1.11.0) (2022-03-07)
 
 
