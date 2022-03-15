@@ -1,4 +1,5 @@
-import { GitlabJob, Context, GitlabJobDef } from "../types";
+import { Context } from "../types";
+import { CatladderJob } from "../types/jobs";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
 export const STOP_JOB_NAME = "🛑 Stop ⚠️";
@@ -9,9 +10,7 @@ const DEPLOY_RUNNER_VARIABLES = {
   KUBERNETES_MEMORY_REQUEST: "200Mi",
   KUBERNETES_MEMORY_LIMIT: "500Mi",
 };
-type JobWithoutScript = Omit<GitlabJob, "job"> & {
-  job: Omit<GitlabJobDef, "script">;
-};
+type JobWithoutScript = Omit<CatladderJob, "script">;
 export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
   const environment = {
     name: context.environment.fullName,
@@ -45,26 +44,24 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
         artifacts: false,
       },
     ], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
-    job: {
-      rules: [
-        autoDeploy
-          ? {
-              when: "on_success",
-            }
-          : {
-              when: "manual",
-            },
-      ],
-      stage: "deploy",
-      dependencies: [],
-      variables: {
-        ...DEPLOY_RUNNER_VARIABLES,
-      },
-      environment: {
-        ...environment,
-        on_stop: STOP_JOB_NAME,
-        auto_stop_in: autoStop,
-      },
+
+    rules: [
+      autoDeploy
+        ? {
+            when: "on_success",
+          }
+        : {
+            when: "manual",
+          },
+    ],
+    stage: "deploy",
+    variables: {
+      ...DEPLOY_RUNNER_VARIABLES,
+    },
+    environment: {
+      ...environment,
+      on_stop: STOP_JOB_NAME,
+      auto_stop_in: autoStop,
     },
   };
 };
@@ -79,29 +76,27 @@ export const getBaseDeploymentStopJob = (
   return {
     name: STOP_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
-    job: {
-      needs: [DEPLOY_JOB_NAME],
-      rules: [
-        {
-          if: "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/", // automatic on hotfix branches
-          when: "on_success",
-          allow_failure: true,
-        },
-        {
-          when: "manual",
-          allow_failure: true,
-        },
-      ],
-      variables: {
-        ...DEPLOY_RUNNER_VARIABLES,
-        GIT_STRATEGY: "none",
+
+    needs: [DEPLOY_JOB_NAME],
+    rules: [
+      {
+        if: "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/", // automatic on hotfix branches
+        when: "on_success",
+        allow_failure: true,
       },
-      stage: "stop",
-      dependencies: [],
-      environment: {
-        ...environment,
-        action: "stop",
+      {
+        when: "manual",
+        allow_failure: true,
       },
+    ],
+    variables: {
+      ...DEPLOY_RUNNER_VARIABLES,
+      GIT_STRATEGY: "none",
+    },
+    stage: "stop",
+    environment: {
+      ...environment,
+      action: "stop",
     },
   };
 };

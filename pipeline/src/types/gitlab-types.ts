@@ -56,39 +56,19 @@ export type GitlabJobDef = {
   };
 };
 
-export const GITLAB_BASE_STAGES = [
-  "setup",
-  "test",
-  "build",
-  "deploy",
-  "verify",
-  "stop",
-] as const;
-export type GitlabBaseStage = typeof GITLAB_BASE_STAGES[number];
 export type GitlabVariables = Record<string, string | undefined>;
 
-export type GitlabJob = {
-  /**
-   * the name of the job (without any env or app prefix and suffix)
-   */
-  name: string;
-  /**
-   * envMode sets the behavior of the job regarding multiple envs:
-   * - none: the job does not run per env, but once for all envs
-   * - jobPerEnv: the job runs once per env
-   * - stagePerEnv: the job runs once per env and is organized in its own stage. This mproves usability in gitlab, but works the same as `jobPerEnv`
-   */
-  envMode: "jobPerEnv" | "stagePerEnv" | "none";
-  job: GitlabJobDef;
-  needsStages?: {
-    stage: GitlabBaseStage;
-    artifacts?: boolean;
-  }[];
-};
-export type GitlabJobs = GitlabJob[];
-
+/**
+ * this is not precicily the type of a gitlab-pipeline
+ * the jobs nee to be merge into the object.
+ * Problem is, that this type cannot be represented properly with typescript, see https://github.com/microsoft/TypeScript/issues/17867
+ */
 export type GitlabPipeline = {
+  image: string;
   variables: GitlabVariables;
+  workflow?: {
+    rules: GitlabRule[];
+  };
   stages: string[];
-  jobs: GitlabJobs;
+  jobs: Record<string, GitlabJobDef>;
 };

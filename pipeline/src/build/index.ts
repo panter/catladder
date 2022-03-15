@@ -1,5 +1,6 @@
 import { Context } from "../types/context";
-import { GitlabJobs } from "../types/gitlab-types";
+
+import { CatladderJob } from "../types/jobs";
 import { createNodeJobs, createStorybookJobs, createMeteorJobs } from "./node";
 
 import { BuildConfig } from "./types";
@@ -8,7 +9,7 @@ export * from "./node";
 
 export type BuildTypes = {
   [type in BuildConfig["type"]]: {
-    jobs: (context: Context) => GitlabJobs;
+    jobs: (context: Context) => CatladderJob[];
     defaults: () => Partial<Extract<BuildConfig, { type: type }>>;
   };
 };

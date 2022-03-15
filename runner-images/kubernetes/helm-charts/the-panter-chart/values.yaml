@@ -39,7 +39,7 @@ ingress:
 jobDefaults:
   resources:
     limits:
-      cpu: 500m
+      cpu: 1000m
     requests:
       cpu: 500m
       memory: 350Mi
@@ -51,7 +51,7 @@ application:
   # these requests are usually overridden by the gitlab include and values
   resources:
     limits:
-      cpu: "1"
+      cpu: 1000m
       memory: 600Mi
     requests:
       cpu: 50m
@@ -69,10 +69,10 @@ application:
       additionalPorts: []
     resources:
       limits:
-        cpu: 500m
+        cpu: 1000m
         memory: 1000Mi
       requests:
-        cpu: 100m
+        cpu: 50m
         memory: 350Mi
   startupProbe:
     httpGet:

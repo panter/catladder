@@ -1,5 +1,4 @@
 import { Context } from "../../types/context";
-import { GitlabJob, GitlabJobs } from "../../types/gitlab-types";
 import { ensureArray } from "../../utils";
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
@@ -9,8 +8,9 @@ import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getYarnInstall, getYarnInstallCommand } from "./yarn";
+import { CatladderJob } from "../../types/jobs";
 
-export const createNodeBuildJobs = (context: Context): GitlabJobs => {
+export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
 
   if (!isOfBuildType(buildConfig, "node", "node-static", "storybook")) {
@@ -18,7 +18,7 @@ export const createNodeBuildJobs = (context: Context): GitlabJobs => {
   }
 
   const yarnInstall = getYarnInstall(context);
-  const appBuildJob: GitlabJob | null =
+  const appBuildJob: CatladderJob | null =
     buildConfig.buildCommand !== null
       ? createBuildJob(context, {
           variables: {

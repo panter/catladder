@@ -1,18 +1,19 @@
-import { GitlabJobs } from "../../types/gitlab-types";
-import { Context } from "../../types/context";
-import { isOfDeployType } from "../types";
-import { getRunnerImage } from "../../runner";
-import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
-import { merge } from "lodash";
 import { dump } from "js-yaml";
-import { createMongodbBaseConfig } from "./mongodb";
-import { createCloudsqlBaseConfig } from "./cloudsql";
-import { getSecretVarNameForContext } from "../..";
-import { mergeWithMergingArrays } from "../../utils";
+import { merge } from "lodash";
 import { DeployConfigKubernetesValues } from "..";
-import { PartialDeep } from "type-fest";
+import { getSecretVarNameForContext } from "../..";
+import { getRunnerImage } from "../../runner";
+import { Context } from "../../types/context";
+import { CatladderJob } from "../../types/jobs";
+import { mergeWithMergingArrays } from "../../utils";
+import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
+import { isOfDeployType } from "../types";
+import { createCloudsqlBaseConfig } from "./cloudsql";
+import { createMongodbBaseConfig } from "./mongodb";
 
-export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
+export const createKubernetesDeployJobs = (
+  context: Context
+): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
     return [];
@@ -91,28 +92,26 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
     namespace: context.environment.envVars.KUBE_NAMESPACE,
   };
   const shared = {
-    job: {
-      image: getRunnerImage("kubernetes"),
-      variables: {
-        ...context.environment.envVars,
-        HELM_EXPERIMENTAL_OCI: "1",
-        IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
-        KUBE_VALUES: dump(kubeValues, {
-          lineWidth: -1,
-          quotingType: "'",
-          forceQuotes: true,
-        }),
-        HELM_GITLAB_CHART_NAME: "the-panter-chart",
-        HELM_ARGS: [
-          ...(deployConfig.debug ? ["--debug"] : []),
-          ...(deployConfig.additionalHelmArgs ?? []),
-        ].join(" "),
-        COMPONENT_NAME: context.componentName,
-        BUILD_ID: context.commitInfo?.buildId,
-        // TODO: unify with docker build stage
-        IMAGE_NAME: context.environment.shortName + "/" + context.componentName,
-        IMAGE_TAG: "$CI_COMMIT_SHA",
-      },
+    image: getRunnerImage("kubernetes"),
+    variables: {
+      ...context.environment.envVars,
+      HELM_EXPERIMENTAL_OCI: "1",
+      IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
+      KUBE_VALUES: dump(kubeValues, {
+        lineWidth: -1,
+        quotingType: "'",
+        forceQuotes: true,
+      }),
+      HELM_GITLAB_CHART_NAME: "the-panter-chart",
+      HELM_ARGS: [
+        ...(deployConfig.debug ? ["--debug"] : []),
+        ...(deployConfig.additionalHelmArgs ?? []),
+      ].join(" "),
+      COMPONENT_NAME: context.componentName,
+      BUILD_ID: context.commitInfo?.buildId,
+      // TODO: unify with docker build stage
+      IMAGE_NAME: context.environment.shortName + "/" + context.componentName,
+      IMAGE_TAG: "$CI_COMMIT_SHA",
     },
   };
 
@@ -136,24 +135,20 @@ export const createKubernetesDeployJobs = (context: Context): GitlabJobs => {
   ];
   return [
     merge({}, baseDeploymentJob, shared, {
-      job: {
-        script: [
-          ...connectContext,
-          "kubernetesCreateSecret",
-          "kubernetesDeploy",
-          "echo deployment successful 😻",
-        ],
-        environment: {
-          kubernetes: kubernetesEnvironment,
-        },
+      script: [
+        ...connectContext,
+        "kubernetesCreateSecret",
+        "kubernetesDeploy",
+        "echo deployment successful 😻",
+      ],
+      environment: {
+        kubernetes: kubernetesEnvironment,
       },
     }),
     merge({}, baseStopJob, shared, {
-      job: {
-        script: [...connectContext, "kubernetesDelete"],
-        environment: {
-          kubernetes: kubernetesEnvironment,
-        },
+      script: [...connectContext, "kubernetesDelete"],
+      environment: {
+        kubernetes: kubernetesEnvironment,
       },
     }),
   ];
