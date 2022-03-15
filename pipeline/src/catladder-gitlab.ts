@@ -1,4 +1,5 @@
 import { writeFileSync } from "fs";
+import { dump } from "js-yaml";
 import { readConfigSync } from "./config";
 import { PIPELINE_IMAGE_TAG } from "./constants";
 import { createChildPipeline } from "./pipeline";
@@ -33,7 +34,7 @@ if (trigger) {
     throw new Error("no catladder config found");
   }
   createChildPipeline(trigger, config).then((mainPipeline) => {
-    writeFileSync(`__pipeline.yml`, JSON.stringify(mainPipeline, null, 2), {
+    writeFileSync(`__pipeline.yml`, dump(mainPipeline), {
       encoding: "utf-8",
     });
   });
