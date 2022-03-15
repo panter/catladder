@@ -1,3 +1,10 @@
+# [1.14.0](https://git.panter.ch/catladder/catladder/compare/v1.13.0...v1.14.0) (2022-03-15)
+
+
+### Features
+
+* **cli:** improve project setup, the command is now named `projec-setup` ([289fd30](https://git.panter.ch/catladder/catladder/commit/289fd303b0fb7d2135986dc2de6cca9a69294e40))
+
 # [1.13.0](https://git.panter.ch/catladder/catladder/compare/v1.12.0...v1.13.0) (2022-03-15)
 
 
