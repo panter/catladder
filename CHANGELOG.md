@@ -1,3 +1,15 @@
+# [1.13.0](https://git.panter.ch/catladder/catladder/compare/v1.12.0...v1.13.0) (2022-03-15)
+
+
+### Bug Fixes
+
+* higher limit for cpu ([7a0c02c](https://git.panter.ch/catladder/catladder/commit/7a0c02cdfd8eb6efafb586e6f6c6912a4a24e6ec))
+
+
+### Features
+
+* yaml for gitlab pipeline instead of js ([64b628f](https://git.panter.ch/catladder/catladder/commit/64b628f854b772844e22b56471281b67436161a6))
+
 # [1.12.0](https://git.panter.ch/catladder/catladder/compare/v1.11.0...v1.12.0) (2022-03-15)
 
 
