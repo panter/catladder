@@ -94,7 +94,7 @@ export const migrateV2 = async (vorpal: Vorpal) => {
   const {
     CUSTOMER_NAME,
     APP_NAME,
-    COMPONENT_NAME,
+    COMPONENT_NAME = "web",
     APP_DIR = ".",
     STAGING_ENABLED,
   } = gitlabCi.variables;
@@ -147,7 +147,7 @@ export const migrateV2 = async (vorpal: Vorpal) => {
 
           const startCommand = Array.isArray(baseValues?.application?.command)
             ? baseValues?.application?.command.join(" ")
-            : baseValues?.application?.command
+            : baseValues?.application?.command;
           return {
             vars: env ? transformVars(env) : undefined,
             dir: dir,
