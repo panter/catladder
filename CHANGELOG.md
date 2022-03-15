@@ -1,3 +1,10 @@
+# [1.15.0](https://git.panter.ch/catladder/catladder/compare/v1.14.0...v1.15.0) (2022-03-15)
+
+
+### Features
+
+* **cli:** improve ux for setup ([53adcbb](https://git.panter.ch/catladder/catladder/commit/53adcbba69e47b201a0c646482fec89988e2a94e))
+
 # [1.14.0](https://git.panter.ch/catladder/catladder/compare/v1.13.0...v1.14.0) (2022-03-15)
 
 
