@@ -22,21 +22,28 @@ export type CommitInfo = {
   trigger: PipelineTrigger;
 };
 
-export type YarnInfo = {
+type Workspace = {
+  name: string;
+  location: string;
+  workspaceDependencies: string[];
+  mismatchedWorkspaceDependencies: string[];
+};
+export type YarnPackageManagerInfo = {
+  type: "yarn";
   version: string;
-  workspaces: { location: string }[];
+  workspaces: Workspace[];
+  currentWorkspace?: Workspace;
   isClassic: boolean;
   componentIsInWorkspace: boolean;
-  /**
-   * files relevant for the package manager
-   */
-  files: string[];
+  pathsToCopyInDocker: string[];
 };
+
+export type PackageManagerInfo = YarnPackageManagerInfo;
 export type Context = {
   componentName: string;
   componentConfig: ComponentConfig;
   fullConfig: Config;
   environment: Environment;
   commitInfo?: CommitInfo;
-  yarnInfo?: YarnInfo;
+  packageManagerInfo?: PackageManagerInfo;
 };

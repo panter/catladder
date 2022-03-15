@@ -2,8 +2,25 @@ import { join } from "path";
 import { Context } from "../../types/context";
 import { GitlabJobCache } from "../../types/gitlab-types";
 
-export const getNodeCache = (context: Context): GitlabJobCache[] => {
-  const componentIsInWorkspace = context.yarnInfo?.componentIsInWorkspace;
+export const getYarnCache = (
+  context: Context,
+  policy = "pull-push"
+): GitlabJobCache[] => {
+  return [
+    {
+      key: "yarn",
+      policy,
+      paths: [".yarn"],
+    },
+  ];
+};
+
+export const getNodeModulesCache = (
+  context: Context,
+  policy = "pull-push"
+): GitlabJobCache[] => {
+  const componentIsInWorkspace =
+    context.packageManagerInfo?.componentIsInWorkspace;
 
   return [
     {
@@ -11,19 +28,27 @@ export const getNodeCache = (context: Context): GitlabJobCache[] => {
       key: componentIsInWorkspace
         ? "node-modules-workspace"
         : context.componentConfig.dir + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
-      policy: "pull-push",
+      policy,
       paths: [
-        ".yarn",
         ...(componentIsInWorkspace
           ? [
               "node_modules",
-              ...(context.yarnInfo?.workspaces.map((w) =>
+              ...(context.packageManagerInfo?.workspaces.map((w) =>
                 join(w.location, "node_modules")
               ) ?? []),
             ]
           : [join(context.componentConfig.dir, "node_modules")]),
       ],
     },
+  ];
+};
+export const getNodeCache = (
+  context: Context,
+  policy = "pull-push"
+): GitlabJobCache[] => {
+  return [
+    ...getYarnCache(context, policy),
+    ...getNodeModulesCache(context, policy),
   ];
 };
 

@@ -9,7 +9,7 @@ import type {
 
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "../docker";
+import { createDockerBuildJob } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
@@ -63,15 +63,9 @@ export const createMeteorBuildJobs = (context: Context): GitlabJobs => {
       : null;
   return [
     ...(appBuildJob ? [appBuildJob] : []),
-    {
-      name: DOCKER_BUILD_JOB_NAME,
-      envMode: "jobPerEnv",
-      job: {
-        ...createDockerBuildJob(context, {
-          script: ["ensureMeteorDockerfile"],
-        }),
-        needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
-      },
-    },
+    createDockerBuildJob(context, {
+      script: ["ensureMeteorDockerfile"],
+      needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
+    }),
   ];
 };

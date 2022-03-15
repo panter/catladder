@@ -1,11 +1,15 @@
-import { merge, mergeWith } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
 import { DeployConfig } from "../deploy/types";
 import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
-import { CommitInfo, Context, Environment, YarnInfo } from "../types/context";
+import {
+  CommitInfo,
+  Context,
+  Environment,
+  PackageManagerInfo,
+} from "../types/context";
 import { mergeWithMergingArrays } from "../utils";
 
 const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
@@ -164,7 +168,7 @@ export const createContext = (
   componentName: string,
   env: string,
   commitInfo?: CommitInfo,
-  yarnInfo?: YarnInfo
+  packageManagerInfo?: PackageManagerInfo
 ): Context => {
   if (!/^[a-z0-9-]+$/.test(componentName)) {
     throw new Error(
@@ -208,6 +212,6 @@ export const createContext = (
     componentName,
     environment: getEnvironment(config, componentName, env, commitInfo),
     commitInfo,
-    yarnInfo,
+    packageManagerInfo,
   };
 };

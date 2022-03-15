@@ -3,11 +3,12 @@ import { GitlabJob, GitlabJobs } from "../../types/gitlab-types";
 import { ensureArray } from "../../utils";
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJob, DOCKER_BUILD_JOB_NAME } from "../docker";
+import { createDockerBuildJob } from "../docker";
+import { join } from "path";
 import { isOfBuildType } from "../types";
-import { getNextCache, getNodeCache } from "./cache";
+import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
-import { getYarnInstall } from "./yarn";
+import { getYarnInstall, getYarnInstallCommand } from "./yarn";
 
 export const createNodeBuildJobs = (context: Context): GitlabJobs => {
   const buildConfig = context.componentConfig.build;
@@ -22,9 +23,6 @@ export const createNodeBuildJobs = (context: Context): GitlabJobs => {
       ? createBuildJob(context, {
           variables: {
             ...NODE_RUNNER_BUILD_VARIABLES,
-            // TODO:duplicate with `createBuildJob`, but problem is that it will override variables here
-            ...context.environment.envVars,
-            ...(context.componentConfig.build.extraVars ?? {}),
           },
           cache: [...getNodeCache(context), ...getNextCache(context)],
           script: [
@@ -33,29 +31,41 @@ export const createNodeBuildJobs = (context: Context): GitlabJobs => {
           ],
           artifacts: {
             paths: [
-              context.componentConfig.dir + "/__build_info.json",
-              context.componentConfig.dir + "/dist",
-              context.componentConfig.dir + "/.next",
+              join(context.componentConfig.dir, "__build_info.json"),
+              join(context.componentConfig.dir, "dist"),
+              join(context.componentConfig.dir, ".next"),
+              ...(buildConfig.artifactsPaths?.map((path) =>
+                join(context.componentConfig.dir, path)
+              ) ?? []),
             ],
           },
         })
       : null;
   return [
     ...(appBuildJob ? [appBuildJob] : []),
-    {
-      name: DOCKER_BUILD_JOB_NAME,
-      envMode: "jobPerEnv",
-      job: {
-        ...createDockerBuildJob(context, {
-          script: [
-            buildConfig.type === "node-static" ||
-            buildConfig.type === "storybook"
-              ? "ensureNginxDockerfile"
-              : "ensureNodeDockerfile",
-          ],
+    createDockerBuildJob(context, {
+      script: [
+        buildConfig.type === "node-static" || buildConfig.type === "storybook"
+          ? "ensureNginxDockerfile"
+          : "ensureNodeDockerfile",
+      ],
+      cache: [...getYarnCache(context, "pull")],
+      variables: {
+        // only required for non static
+        YARN_INSTALL: getYarnInstallCommand(context, {
+          prodOnly: true,
         }),
-        needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
+        YARN_INSTALL_WITHOUT_SCRIPTS: getYarnInstallCommand(context, {
+          prodOnly: true,
+          noScripts: true,
+        }),
+        DOCKER_COPY_WORKSPACE_FILES:
+          context.packageManagerInfo?.pathsToCopyInDocker
+            .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
+            ?.join("\n"),
       },
-    },
+
+      needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
+    }),
   ];
 };
