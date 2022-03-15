@@ -13,32 +13,45 @@ import {
 } from "../../../../utils/gitlab";
 import ensureNamespace from "./utils/ensureNamespace";
 import open from "open";
+import { projectConfigSecrets } from "./commandConfigSecrets";
 
 export default async (vorpal: Vorpal) =>
   vorpal
     .command(
-      "project-init-gitlab",
-      "Initializes the gitlab repo, e.g. connects the cluster to it"
+      "project-setup",
+      "Initializes all environments and creates requires resources, service accounts, etc."
     )
     .action(async function () {
       const allContext = await getAllPipelineContexts();
 
       for (const context of allContext) {
+        this.log("");
+        this.log("=========================================");
+
+        this.log(
+          "setting up " +
+            context.environment.shortName +
+            ":" +
+            context.componentName +
+            "..."
+        );
+        this.log("");
         const deployConfig = context.componentConfig.deploy;
         if (isOfDeployType(deployConfig, "kubernetes")) {
           const fullName = getFullKubernetesClusterName(deployConfig.cluster);
-          this.log(
-            `connecting ${context.environment.shortName}:${context.componentName} ${fullName}`
-          );
+          this.log(`cluster: ${fullName}`);
 
           await connectToCluster(fullName);
-
+          this.log("");
+          this.log("ensuring namespace ...");
           const namespace = await ensureNamespace(context);
-
+          this.log("Namespace " + namespace + " created / updated!");
+          this.log("");
           //$.verbose = true;
 
           // we name the service account and the role and the role binding with the same name
           // we currently create one per component to better separate them
+          this.log("ensuring service accounts...");
           const serviceAccountName = `cl-${context.componentName}-deploy`;
           const KUBE_URL =
             await $`TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`.then(
@@ -104,13 +117,22 @@ EOF
             KUBE_URL,
           };
 
+          this.log("service accounts created / updated!");
+
+          this.log("");
+          this.log("pusing secrets to gitlab...");
+
           await upsertAllVariables(
             this,
             vars,
             context.environment.shortName,
             context.componentName
           );
+          this.log("done!");
         }
+
+        this.log("=========================================");
+        this.log("");
       }
 
       const { id: projectId, web_url: projectWebUrl } = await getProjectInfo(
@@ -177,12 +199,30 @@ EOF
           scopes: ["read_registry"],
         });
       }
+      this.log();
+      const { configSecrets } = await this.prompt({
+        default: true,
+        message:
+          "Before deployments work, you need to config secrets. Do it now?",
+        name: "configSecrets",
+        type: "confirm",
+      });
+      this.log();
+      if (configSecrets) {
+        await projectConfigSecrets(this);
+      } else {
+        this.log(
+          "👆 don't forget to config secret using `project-config-secrets`"
+        );
+      }
+      this.log();
       this.log("gitlab is ready! 🥂");
       this.log("\n");
       this.log("do not forget to make sure that:");
       [
         "you have __health route in place",
         "lint and test are defined",
+        "secrets are configured (call project-config-secret)",
         "eat your vegetables",
         "be awesome 🤩",
       ].forEach((tip) => this.log(` - ${tip}`));

@@ -172,6 +172,32 @@ const doItFor = async (
   }
 };
 
+export const projectConfigSecrets = async (
+  vorpal: CommandInstance,
+  envComponent?: string
+) => {
+  if (!envComponent) {
+    const allEnvAndcomponents = await getAllComponentsWithAllEnvsHierarchical();
+    await doItFor(vorpal, allEnvAndcomponents);
+  } else {
+    const { env, componentName } = parseChoice(envComponent);
+
+    // componentName can be null. in this case, iterate over all  components
+    if (!componentName) {
+      const components = await getProjectComponents();
+      await doItFor(
+        vorpal,
+        Object.fromEntries(components.map((c) => [c, [env]]))
+      );
+    }
+    if (componentName) {
+      await doItFor(vorpal, {
+        [componentName]: [env],
+      });
+    }
+  }
+};
+
 export default async (vorpal: Vorpal) => {
   vorpal
     .command(
@@ -180,26 +206,6 @@ export default async (vorpal: Vorpal) => {
     )
     .autocomplete(await allEnvsAndAllComponents())
     .action(async function ({ envComponent }) {
-      if (!envComponent) {
-        const allEnvAndcomponents =
-          await getAllComponentsWithAllEnvsHierarchical();
-        await doItFor(this, allEnvAndcomponents);
-      } else {
-        const { env, componentName } = parseChoice(envComponent);
-
-        // componentName can be null. in this case, iterate over all  components
-        if (!componentName) {
-          const components = await getProjectComponents();
-          await doItFor(
-            this,
-            Object.fromEntries(components.map((c) => [c, [env]]))
-          );
-        }
-        if (componentName) {
-          await doItFor(this, {
-            [componentName]: [env],
-          });
-        }
-      }
+      return await projectConfigSecrets(this, envComponent);
     });
 };
