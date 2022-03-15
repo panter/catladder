@@ -138,6 +138,8 @@ const doItFor = async (
       }
     }
   }
+  instance.log("upserting all variables, please wait...");
+  instance.log("");
   for (const [componentName, envs] of Object.entries(envAndComponents)) {
     for (const env of envs) {
       await upsertAllVariables(
@@ -168,8 +170,11 @@ const doItFor = async (
           );
         }
       }
+      instance.log("✅ " + env + ":" + componentName);
     }
   }
+  instance.log("done! 😻");
+  instance.log("");
 };
 
 export const projectConfigSecrets = async (

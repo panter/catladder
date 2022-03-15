@@ -26,7 +26,9 @@ export default async (vorpal: Vorpal) =>
 
       for (const context of allContext) {
         this.log("");
-        this.log("=========================================");
+        this.log(
+          "=================================================================================="
+        );
 
         this.log(
           "setting up " +
@@ -130,8 +132,15 @@ EOF
           );
           this.log("done!");
         }
+        this.log("");
+        this.log(
+          "✅ " +
+            context.environment.shortName +
+            ":" +
+            context.componentName +
+            " done!"
+        );
 
-        this.log("=========================================");
         this.log("");
       }
 
