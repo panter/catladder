@@ -33,11 +33,14 @@ if (trigger) {
   if (!config) {
     throw new Error("no catladder config found");
   }
-  createChildPipeline(trigger, config).then((mainPipeline) => {
-    writeFileSync(`__pipeline.yml`, dump(mainPipeline), {
-      encoding: "utf-8",
-    });
-  });
+  createChildPipeline("gitlab", trigger, config).then(
+    ({ jobs, ...mainPipeline }) => {
+      // need to spread out the jobs
+      writeFileSync(`__pipeline.yml`, dump({ ...jobs, ...mainPipeline }), {
+        encoding: "utf-8",
+      });
+    }
+  );
 } else {
   throw new Error(
     "no matching trigger: " +

@@ -1,5 +1,5 @@
-import { GitlabJobs } from "../types/gitlab-types";
 import { Context } from "../types/context";
+import { CatladderJob } from "../types/jobs";
 import { createKubernetesDeployJobs } from "./kubernetes";
 import { DeployConfig } from "./types";
 export * from "./kubernetes";
@@ -7,7 +7,7 @@ export * from "./types";
 export * from "./utils";
 export type DeployTypes = {
   [type in DeployConfig["type"]]: {
-    jobs: (context: Context) => GitlabJobs;
+    jobs: (context: Context) => CatladderJob[];
     defaults: () => Partial<Extract<DeployConfig, { type: type }>>;
   };
 };

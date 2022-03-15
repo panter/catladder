@@ -26,7 +26,8 @@ describe("storybook build", () => {
     };
 
     it("creates a pipeline for storybook that does not contain test stages", async () => {
-      const { image, stages, workflow, ...jobs } = await createChildPipeline(
+      const { jobs } = await createChildPipeline(
+        "gitlab",
         "mainBranch",
         config
       );
@@ -40,7 +41,8 @@ describe("storybook build", () => {
     });
 
     it("runs build and renames folder", async () => {
-      const { image, stages, workflow, ...jobs } = await createChildPipeline(
+      const { jobs } = await createChildPipeline(
+        "gitlab",
         "mainBranch",
         config
       );

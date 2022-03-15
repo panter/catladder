@@ -1,11 +1,9 @@
 import { join } from "path";
 import { getRunnerImage } from "../../runner";
+import { GitlabJobCache } from "../../types";
 import type { Context } from "../../types/context";
-import type {
-  GitlabJob,
-  GitlabJobCache,
-  GitlabJobs,
-} from "../../types/gitlab-types";
+
+import { CatladderJob } from "../../types/jobs";
 
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
@@ -29,7 +27,7 @@ const getMeteorCache = (context: Context): GitlabJobCache[] => [
     ],
   },
 ];
-export const createMeteorBuildJobs = (context: Context): GitlabJobs => {
+export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
 
   if (!isOfBuildType(buildConfig, "meteor")) {
@@ -37,7 +35,7 @@ export const createMeteorBuildJobs = (context: Context): GitlabJobs => {
   }
 
   const yarnInstall = getYarnInstall(context);
-  const appBuildJob: GitlabJob | null =
+  const appBuildJob: CatladderJob | null =
     buildConfig.buildCommand !== null
       ? createBuildJob(context, {
           cache: [...getNodeCache(context), ...getMeteorCache(context)],

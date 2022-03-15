@@ -26,7 +26,8 @@ describe("createChildPipeline", () => {
     };
 
     it("creates a pipeline for a single app on the main branch", async () => {
-      const { image, stages, workflow, ...jobs } = await createChildPipeline(
+      const { image, jobs } = await createChildPipeline(
+        "gitlab",
         "mainBranch",
         config
       );

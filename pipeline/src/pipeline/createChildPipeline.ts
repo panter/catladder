@@ -1,24 +1,25 @@
 import { getAllEnvsByTrigger, getAllEnvsInAllComponents } from "../config";
-import { createJobs } from "./createJobs";
 import { RULES_ALWAYS } from "../rules";
 import { getRunnerImage } from "../runner";
+import { GitlabPipeline, Pipeline, PipelineJob, PipelineType } from "../types";
 import { Config, PipelineTrigger } from "../types/config";
-import { GitlabJobDef } from "../types/gitlab-types";
+import { createJobs } from "./createJobs";
+
 const baseStages = ["setup", "test", "build", "deploy", "verify", "stop"];
-export const createChildPipeline = async (
+export const createChildPipeline = async <T extends PipelineType>(
+  type: T,
   trigger: PipelineTrigger,
   config: Config
-) => {
+): Promise<Pipeline<T>> => {
   const components = Object.keys(config.components);
 
   // 2. write the triggering pipeline
-
-  const jobs = await components.reduce<Promise<Record<string, GitlabJobDef>>>(
+  const jobs = await components.reduce<Promise<Record<string, PipelineJob<T>>>>(
     async (acc, componentName) => {
       const envs = getAllEnvsByTrigger(config, componentName, trigger);
       return {
         ...(await acc),
-        ...(await createJobs(envs, config, componentName, trigger)),
+        ...(await createJobs(type, envs, config, componentName, trigger)),
       };
     },
     Promise.resolve({})
@@ -37,18 +38,19 @@ export const createChildPipeline = async (
     ],
     []
   );
-
-  const childPipeline = {
-    image: getRunnerImage("jobs-default"), // default image
-    variables: {
-      FF_USE_FASTZIP: "true",
-    },
-    workflow: {
-      rules: RULES_ALWAYS,
-    },
-    stages,
-    ...jobs,
-  };
-
-  return childPipeline as typeof childPipeline & Record<string, GitlabJobDef>;
+  if (type === "gitlab") {
+    const pipeline: GitlabPipeline = {
+      image: getRunnerImage("jobs-default"), // default image
+      variables: {
+        FF_USE_FASTZIP: "true",
+      },
+      workflow: {
+        rules: RULES_ALWAYS,
+      },
+      stages,
+      jobs,
+    };
+    return pipeline as Pipeline<T>;
+  }
+  throw new Error(`${type} is not supported`);
 };
