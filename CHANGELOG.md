@@ -1,3 +1,10 @@
+# [1.16.0](https://git.panter.ch/catladder/catladder/compare/v1.15.1...v1.16.0) (2022-03-16)
+
+
+### Features
+
+* support yarn audit for yarn 2 ([fc41465](https://git.panter.ch/catladder/catladder/commit/fc41465c93695ce81b0742aefd0e358187aa3d29))
+
 ## [1.15.1](https://git.panter.ch/catladder/catladder/compare/v1.15.0...v1.15.1) (2022-03-16)
 
 # [1.15.0](https://git.panter.ch/catladder/catladder/compare/v1.14.0...v1.15.0) (2022-03-15)
