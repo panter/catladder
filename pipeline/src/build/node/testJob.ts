@@ -33,7 +33,11 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
           cache: undefined, // audit does not need yarn install and no cache
           script: [
             `cd ${context.componentConfig.dir}`,
-            ...(ensureArray(buildConfig.audit?.command) ?? ["yarn audit"]),
+            ...(ensureArray(buildConfig.audit?.command) ?? [
+              context.packageManagerInfo?.isClassic
+                ? "yarn audit"
+                : "yarn npm audit --environment production", // yarn 2
+            ]),
           ],
           allow_failure: true,
         }
