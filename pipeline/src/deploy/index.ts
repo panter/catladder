@@ -1,5 +1,6 @@
 import type { Context } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
+import { GCLOUD_RUN_DEPLOY_TYPE } from "./cloudRun";
 import { CUSTOM_DEPLOY_TYPE } from "./custom";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
 import type { DeployConfigGeneric, DeployConfigType } from "./types";
@@ -13,6 +14,7 @@ export type DeployTypeDefinition<T extends DeployConfigType> = {
   additionalSecretKeys: (config: DeployConfigGeneric<T>) => string[];
 };
 export * from "./cloudSql";
+export * from "./cloudRun";
 export type DeployTypes = {
   [T in DeployConfigType]: DeployTypeDefinition<T>;
 };
@@ -20,4 +22,5 @@ export type DeployTypes = {
 export const DEPLOY_TYPES: DeployTypes = {
   kubernetes: KUBERNETES_DEPLOY_TYPE,
   custom: CUSTOM_DEPLOY_TYPE,
+  "google-cloudrun": GCLOUD_RUN_DEPLOY_TYPE,
 };

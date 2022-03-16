@@ -2,8 +2,13 @@ import { isObject, merge } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
 import type { BuildConfig } from "../build/types";
-import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
+import {
+  GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+  DEPLOY_TYPES,
+  getKubernetesNamespace,
+} from "../deploy";
 import type { DeployConfig } from "../deploy/types";
+import { isOfDeployType } from "../deploy/types";
 import type { Config, DevLocalEnvConfig } from "../types/config";
 import { isKnowEnvType } from "../types/config";
 import type {
@@ -106,7 +111,15 @@ export const getEnvironment = async (
       config.domainCanonical ||
       "panter.cloud";
 
-    const HOST_CANONICAL = `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`;
+    const HOST_CANONICAL = isOfDeployType(mergedConfig.deploy, "kubernetes")
+      ? `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`
+      : isOfDeployType(mergedConfig.deploy, "google-cloudrun")
+      ? environmentSlug +
+        "-" +
+        process.env[
+          getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
+        ]
+      : "";
     host = mergedConfig?.host ?? HOST_CANONICAL;
     const url = `https://${host}`;
 

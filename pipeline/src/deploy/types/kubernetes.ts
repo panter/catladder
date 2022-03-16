@@ -1,22 +1,4 @@
-import type { RunnerImageName } from "../runner";
-
-// eslint-disable-next-line @typescript-eslint/ban-types
-export type DeployConfigBase = {
-  /**
-   * whether to deploy automatically or manual. If not defined, these rules apply:
-   * - prod: manual
-   * - all other envs: auto
-   */
-  when?: "manual" | "auto";
-
-  /**
-   * EXPERIMENTAL
-   * wait for other components to deploy first, before doing this deployment
-   */
-  waitFor?: string[];
-};
-type AllowUnknownProps<T extends Record<string, unknown>> = T &
-  Record<string, unknown>;
+import type { AllowUnknownProps, DeployConfigBase } from "./base";
 
 export type DeployConfigKubernetesClusterGCloud = {
   type: "gcloud";
@@ -297,27 +279,3 @@ export type DeployConfigKubernetes = {
    */
   values?: DeployConfigKubernetesValues;
 } & DeployConfigBase;
-
-export type DeployConfigCustom = {
-  type: "custom";
-  requiresDocker: boolean;
-  requiresYarnInstall?: boolean;
-  script: string[];
-  stopScript?: string[];
-  image?: RunnerImageName;
-} & DeployConfigBase;
-
-export type DeployConfig = DeployConfigKubernetes | DeployConfigCustom;
-
-export type DeployConfigType = DeployConfig["type"];
-export type DeployConfigGeneric<T extends DeployConfigType> = Extract<
-  DeployConfig,
-  { type: T }
->;
-
-export const isOfDeployType = <T extends Array<DeployConfigType>>(
-  t: DeployConfig | false,
-  ...types: T
-): t is Extract<DeployConfig, { type: T[number] }> => {
-  return t && types.includes(t.type);
-};

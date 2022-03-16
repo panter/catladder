@@ -1,6 +1,6 @@
-import { exec } from "child-process-promise";
 import { getSecretVarName } from "@catladder/pipeline";
-import { has, isObject, times } from "lodash";
+import { exec } from "child-process-promise";
+import { has, isObject } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
