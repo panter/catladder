@@ -1,3 +1,10 @@
+## [1.16.1](https://git.panter.ch/catladder/catladder/compare/v1.16.0...v1.16.1) (2022-03-21)
+
+
+### Bug Fixes
+
+* type error ([c0f1318](https://git.panter.ch/catladder/catladder/commit/c0f1318db79c0627af9b48f394f2d58d8d199826))
+
 # [1.16.0](https://git.panter.ch/catladder/catladder/compare/v1.15.1...v1.16.0) (2022-03-16)
 
 
