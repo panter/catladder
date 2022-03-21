@@ -51,7 +51,7 @@ export type BuildConfigBase = {
    * additional paths for artifacts,
    * by default "dist" and ".next" are allways included
    */
-  artifactsPaths?: [];
+  artifactsPaths?: string[];
 };
 
 export type BuildConfigNodeBase = BuildConfigBase;
