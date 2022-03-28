@@ -1,3 +1,10 @@
+## [1.16.2](https://git.panter.ch/catladder/catladder/compare/v1.16.1...v1.16.2) (2022-03-28)
+
+
+### Bug Fixes
+
+* exit shell scripts immediately if error occurs ([ae9c708](https://git.panter.ch/catladder/catladder/commit/ae9c708f104fe28658500c028a67c28847b895ff))
+
 ## [1.16.1](https://git.panter.ch/catladder/catladder/compare/v1.16.0...v1.16.1) (2022-03-21)
 
 
