@@ -1,3 +1,10 @@
+## [1.16.3](https://git.panter.ch/catladder/catladder/compare/v1.16.2...v1.16.3) (2022-03-30)
+
+
+### Bug Fixes
+
+* **cli:** switch clusters does not work ([632e3d3](https://git.panter.ch/catladder/catladder/commit/632e3d3514731ba22275415a06282481baa47c7e))
+
 ## [1.16.2](https://git.panter.ch/catladder/catladder/compare/v1.16.1...v1.16.2) (2022-03-28)
 
 
