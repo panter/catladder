@@ -1,7 +1,7 @@
 import { $ } from "zx";
 import { join } from "path";
 import { getProjectConfig, parseChoice } from "../../config/getProjectConfig";
-import k8sApi from "../../k8sApi";
+import { getk8sApi } from "../../k8sApi";
 import { readFileOrError } from "../files";
 
 export const getGitRoot = async (): Promise<string> => {
@@ -32,6 +32,7 @@ export const getProjectNamespace = async (envComponent: string) => {
 
 export const getProjectPods = async (envComponent: string) => {
   const namespace = await getProjectNamespace(envComponent);
+  const k8sApi = getk8sApi();
   const res = await k8sApi.listNamespacedPod(namespace);
 
   return res.body.items;
@@ -39,6 +40,7 @@ export const getProjectPods = async (envComponent: string) => {
 
 export const getProjectPvcs = async (envComponent: string) => {
   const namespace = await getProjectNamespace(envComponent);
+  const k8sApi = getk8sApi();
   const res = await k8sApi.listNamespacedPersistentVolumeClaim(namespace);
 
   return res.body.items;

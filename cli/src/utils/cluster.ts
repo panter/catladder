@@ -1,5 +1,4 @@
 import { $ } from "zx";
-import { reload } from "../k8sApi";
 
 export const getCurrentContext = async () =>
   (await $`kubectl config current-context`).stdout.trim();
@@ -10,5 +9,4 @@ export const getCurrentConnectedClusterName = async () => {
 
 export const connectToCluster = async (fullname: string) => {
   await $`kubectl config use-context ${fullname}`;
-  reload();
 };

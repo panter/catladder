@@ -1,7 +1,7 @@
 import { V1Job, V1ObjectMeta } from "@kubernetes/client-node";
 
 import Vorpal from "vorpal";
-import { k8sApiBatch, k8sApiBatchBeta } from "../../../../k8sApi";
+import { getk8sApiBatch, getk8sApiBatchBeta } from "../../../../k8sApi";
 import { logError } from "../../../../utils/log";
 import { namespaceAutoCompletion } from "../general/namespaceAutoCompletion";
 
@@ -12,7 +12,7 @@ import ensureCluster from "./utils/ensureCluster";
 async function triggerCronjob(namespace: string) {
   const {
     body: { items: jobs },
-  } = await k8sApiBatchBeta.listNamespacedCronJob(namespace);
+  } = await getk8sApiBatchBeta().listNamespacedCronJob(namespace);
 
   const jobNames = jobs.map((j) => j.metadata.name);
 
@@ -34,7 +34,7 @@ async function triggerCronjob(namespace: string) {
   job.metadata = metadata as V1ObjectMeta;
   job.spec = jobSpec;
   try {
-    const result = await k8sApiBatch.createNamespacedJob(namespace, job);
+    const result = await getk8sApiBatch().createNamespacedJob(namespace, job);
 
     this.log("");
     this.log(`yeah, you got a job, man. 😺 ${result.body.metadata.name}`);

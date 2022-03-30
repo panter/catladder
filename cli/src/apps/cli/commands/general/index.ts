@@ -1,10 +1,7 @@
 import memoizee from "memoizee";
 import Vorpal from "vorpal";
-import k8sApi from "../../../../k8sApi";
-import {
-  getCurrentConnectedClusterName,
-  getCurrentContext,
-} from "../../../../utils/cluster";
+import { getk8sApi } from "../../../../k8sApi";
+import { getCurrentContext } from "../../../../utils/cluster";
 import { logError } from "../../../../utils/log";
 import { syncBitwarden } from "../../../../utils/passwordstore";
 import {
@@ -12,13 +9,12 @@ import {
   stopPortForward,
 } from "../../../../utils/portForward";
 import { getShell } from "../../../../utils/shell";
-import { getGoogleAuthUserNumber } from "../../utils/getGoogleAuthUserNumber";
-import { openGoogleCloudLogs } from "../shared";
 import { namespaceAutoCompletion } from "./namespaceAutoCompletion";
 import portForward from "./portForward";
 
 const getAllNamespaces = memoizee(
   async () => {
+    const k8sApi = getk8sApi();
     const res = await k8sApi.listNamespace();
     return res.body.items;
   },
@@ -45,6 +41,7 @@ export default async (vorpal: Vorpal) => {
     .command("list-secrets <namespace>", "show secrets")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
+      const k8sApi = getk8sApi();
       const res = await k8sApi.listNamespacedSecret(namespace);
 
       this.log(res.body.items.map((n) => n.metadata.name).join("\n"));
@@ -59,6 +56,7 @@ export default async (vorpal: Vorpal) => {
     .command("list-pods <namespace>", "list all pods of namespace")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
+      const k8sApi = getk8sApi();
       const res = await k8sApi.listNamespacedPod(namespace);
       this.log(res.body.items.map((n) => n.metadata.name).join("\n"));
     });
@@ -74,6 +72,7 @@ export default async (vorpal: Vorpal) => {
     .command("get-shell <namespace>", "get a shell to a pod in the environment")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
+      const k8sApi = getk8sApi();
       const res = await k8sApi.listNamespacedPod(namespace);
       if (res.body.items.length === 0) {
         logError(this, "sorry, no pods found");

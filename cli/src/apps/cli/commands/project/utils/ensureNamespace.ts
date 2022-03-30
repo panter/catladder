@@ -1,6 +1,6 @@
 import { Context, getKubernetesNamespace } from "@catladder/pipeline";
 import { V1Namespace, V1ObjectMeta } from "@kubernetes/client-node";
-import k8sApi from "../../../../../k8sApi";
+import { getk8sApi } from "../../../../../k8sApi";
 
 export default async function (context: Context) {
   const namespace = getKubernetesNamespace(
@@ -31,6 +31,7 @@ export default async function (context: Context) {
   };
 
   namespaceBody.metadata = metadata;
+  const k8sApi = getk8sApi();
   try {
     await k8sApi.readNamespace(namespace);
 

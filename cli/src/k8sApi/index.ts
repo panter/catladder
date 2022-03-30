@@ -5,17 +5,29 @@ import {
   BatchV1beta1Api,
 } from "@kubernetes/client-node";
 
-const kc = new KubeConfig();
-
-export const reload = () => {
+const getKubeConfig = () => {
+  const kc = new KubeConfig();
   kc.loadFromDefault();
+  return kc;
+};
+/**
+ * get kubernetes client. avoid reusing the instance when context get changed
+ * @returns kuberenetes client
+ */
+export const getk8sApi = () => {
+  const kc = getKubeConfig();
+
+  return kc.makeApiClient(CoreV1Api);
 };
 
-reload();
+export const getk8sApiBatch = () => {
+  const kc = getKubeConfig();
 
-const k8sApi = kc.makeApiClient(CoreV1Api);
+  return kc.makeApiClient(BatchV1Api);
+};
 
-export const k8sApiBatch = kc.makeApiClient(BatchV1Api);
-export const k8sApiBatchBeta = kc.makeApiClient(BatchV1beta1Api);
+export const getk8sApiBatchBeta = () => {
+  const kc = getKubeConfig();
 
-export default k8sApi;
+  return kc.makeApiClient(BatchV1beta1Api);
+};

@@ -1,5 +1,5 @@
 import Vorpal from "vorpal";
-import k8sApi from "../../../../k8sApi";
+import { getk8sApi } from "../../../../k8sApi";
 
 import { logError } from "../../../../utils/log";
 import {
@@ -40,6 +40,7 @@ export default async (vorpal: Vorpal) =>
         message: "Continue ? 🤔  ",
       });
       this.log("");
+      const k8sApi = getk8sApi();
       if (shouldContinue) {
         for (const podName of selectedPodNames) {
           await k8sApi.deleteNamespacedPod(podName, namespace, "true");

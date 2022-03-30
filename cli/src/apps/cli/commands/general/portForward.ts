@@ -3,7 +3,7 @@ import { logError } from "../../../../utils/log";
 
 import { startPortForward } from "../../../../utils/portForward";
 
-import k8sApi from "../../../../k8sApi";
+import { getk8sApi } from "../../../../k8sApi";
 import { namespaceAutoCompletion } from "./namespaceAutoCompletion";
 
 export default async (vorpal: Vorpal) =>
@@ -11,6 +11,7 @@ export default async (vorpal: Vorpal) =>
     .command("port-forward <namespace>", "start port-forwarding")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
+      const k8sApi = getk8sApi();
       const res = await k8sApi.listNamespacedPod(namespace);
       if (res.body.items.length === 0) {
         logError(this, "sorry, no pods found");
