@@ -6,12 +6,14 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
   const { id: projectId, web_url: projectWebUrl } = await getProjectInfo(
     instance
   );
-  const variables = await doGitlabRequest(
-    instance,
-    `projects/${projectId}/variables`
-  );
+  try {
+    await doGitlabRequest(instance, `projects/${projectId}/variables/GL_TOKEN`);
+  } catch (e) {
+    if (e.message !== "not found") {
+      throw e;
+    }
+    // not found
 
-  if (!variables.find((v: any) => v.key === "GL_TOKEN")) {
     instance.log(
       "I need add a GL_TOKEN to the project, so that semantic release will work\n"
     );

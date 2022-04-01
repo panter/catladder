@@ -13,11 +13,12 @@ or npm users
 _Note: if you have `@panter/catladder` installed upgrade it to >=4.0.0 before installing `@catladder/cli`_
 
 ## Getting started
+
 You'll need
+
 - Google Cloud SDK ([see installation instructions](https://cloud.google.com/sdk/docs/install))
 - Kubectl ([see installation instructions](https://kubernetes.io/docs/tasks/tools/))
 - Cloud SQL Auth proxy ([see installation instructions](https://cloud.google.com/sql/docs/postgres/sql-proxy#install))
-- Bitwarden CLI ([see installation instructions](https://bitwarden.com/help/article/cli/))
 
 Afterwards you need to connect to your cluster, e.g. `gcloud container clusters get-credentials clustername --zone google-zone --project google-project-id`
 In most cases you'll find the details on the Google Cloud [cluster overview ](https://console.cloud.google.com/kubernetes/list?project=skynet-164509)

@@ -73,6 +73,9 @@ export const doGitlabRequest = async <T = any>(
   if (result.status >= 200 && result.status < 400) {
     return result.json();
   }
+  if (result.status === 404) {
+    throw new Error("not found");
+  }
 
   throw new Error(
     `Could not send request to gitlab api ${path}: ${result.status} "${

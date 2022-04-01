@@ -47,7 +47,15 @@ export const isKnowEnvType = (env: string): env is EnvType => {
 
 export type EnvVars = {
   /**
-   * public env vars (means: they are checked in the repo)
+   * public env vars (means: they are checked in the repo).
+   *
+   * You can reuse env vars in other vars using ${OTHER_VAR}.
+   * You an reuse other public env vars, or secret env vars
+   *
+   * EXAMPLE: A_VAR: "the other var is ${OTHER_VAR}"
+   *
+   * You can reuse vars from other components in the same project using ${componentName:variableName}
+   * EXAMPLE: A_VAR: "the other var is ${api:OTHER_VAR}"
    */
   public?: Record<string, any>;
   /**
@@ -55,6 +63,8 @@ export type EnvVars = {
    */
   secret?: string[];
   /**
+   * @deprecated, use ${componentName:variableName} instead
+   *
    * With fromComponents you can inject env vars from other components.
    */
   fromComponents?: {
