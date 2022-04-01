@@ -1,3 +1,4 @@
+import { isObject, merge } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
@@ -11,6 +12,10 @@ import {
   PackageManagerInfo,
 } from "../types/context";
 import { mergeWithMergingArrays } from "../utils";
+import {
+  resolveReferences,
+  translateLegacyFromComponents,
+} from "./resolveReferences";
 
 const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
 export const getSecretVarName = (
@@ -25,8 +30,7 @@ export const getEnvironment = (
   config: Config,
   componentName: string,
   env: string,
-  commitInfo?: CommitInfo,
-  skipReferences = false // to prevent infinit loop
+  commitInfo?: CommitInfo
 ): Environment => {
   const componentConfig = config.components[componentName];
   if (!componentConfig) {
@@ -112,7 +116,7 @@ export const getEnvironment = (
       RELEASE_NAME,
     };
   }
-  const publicEnvVars = mergedConfig.vars?.public ?? {};
+  const publicEnvVarsRaw = mergedConfig.vars?.public ?? {};
   const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
   const secretEnvVars = Object.fromEntries(
     secretEnvVarKeys.map((key) => [
@@ -120,37 +124,42 @@ export const getEnvironment = (
       `$${getSecretVarName(env, componentName, key)}`,
     ])
   );
-  const referencedRaw = mergedConfig.vars?.fromComponents ?? {};
 
-  const referenced = skipReferences
-    ? {}
-    : Object.entries(referencedRaw).reduce((acc, [otherApp, mapping]) => {
-        const { envVars } = getEnvironment(
-          config,
-          otherApp,
-          env,
-          commitInfo,
-          true // prevent infinit loop
-        );
+  // this is deprecated, we now support: $componentname:FOO
+  const legacyFromComponents = mergedConfig.vars?.fromComponents ?? {};
+  const publicEnvVarsRawWithLegasyFromComponents = merge(
+    {},
+    translateLegacyFromComponents(legacyFromComponents),
+    publicEnvVarsRaw
+  );
 
-        return {
-          ...acc,
-          ...Object.fromEntries(
-            Object.entries(mapping).map(([ourKey, otherKey]) => [
-              ourKey,
-              envVars[otherKey],
-            ])
-          ),
-        };
-      }, {});
+  const publicEnvVarsRawSanitized = Object.fromEntries(
+    Object.entries(publicEnvVarsRawWithLegasyFromComponents).map(
+      ([key, value]) => [
+        key,
+        isObject(value) ? JSON.stringify(value) : `${value}`,
+      ]
+    )
+  );
 
-  const envVars = {
+  const envVarsRaw = {
     ...predefinedVariables,
     ...secretEnvVars,
-    ...referenced,
-    ...publicEnvVars,
+    ...publicEnvVarsRawSanitized,
   };
 
+  const envVars = resolveReferences(
+    envVarsRaw,
+    (componentName, variableName) => {
+      const { envVars } = getEnvironment(
+        config,
+        componentName,
+        env,
+        commitInfo
+      );
+      return envVars[variableName];
+    }
+  );
   return {
     envType,
     host,

@@ -109,16 +109,15 @@ const resolveSecrets = async (
 
   return Object.fromEntries(
     Object.entries(allEnvVars).map(([key, value]) => {
-      const isSecret = String(value)?.startsWith?.("$CL_");
-      if (isSecret) {
-        // secrets have CL_XXXX structure
-        const found = allVariablesInGitlab.find((v) => "$" + v.key === value);
-
-        if (found) {
-          return [key, found.value];
-        } else {
-          return [key, ""];
+      const containsSecret = String(value)?.includes?.("$CL_");
+      if (containsSecret) {
+        for (const variable of allVariablesInGitlab) {
+          value = value.replace(
+            new RegExp("\\$" + variable.key, "g"),
+            variable.value
+          );
         }
+        return [key, value];
       }
       return [key, value];
     })
@@ -131,6 +130,7 @@ export const getEnvVars = async (
   componentName: string
 ) => {
   const envionment = await getEnvironment(env, componentName);
-
+  // in the pipeline the secrets alreadyy exists  and bash will expand them
+  // but here we need to manually load them
   return resolveSecrets(vorpal, envionment.envVars);
 };
