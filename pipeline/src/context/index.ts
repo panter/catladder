@@ -81,6 +81,7 @@ export const getEnvironment = (
     host = "localhost:" + port;
     url = "http://" + host;
     predefinedVariables = {
+      ENV_SHORT: "local",
       ROOT_URL: url,
       PORT: port.toString(),
     };
