@@ -1,3 +1,15 @@
+# [1.17.0](https://git.panter.ch/catladder/catladder/compare/v1.16.3...v1.17.0) (2022-04-01)
+
+
+### Bug Fixes
+
+* setup GL_TOKEN ([5a06e87](https://git.panter.ch/catladder/catladder/commit/5a06e87ad9febf0e0063368d96e480cfef01e3b3))
+
+
+### Features
+
+* improved variable handling ([07a720d](https://git.panter.ch/catladder/catladder/commit/07a720d07b5d63308739aae20f20400d141b4d7e))
+
 ## [1.16.3](https://git.panter.ch/catladder/catladder/compare/v1.16.2...v1.16.3) (2022-03-30)
 
 
