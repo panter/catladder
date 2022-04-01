@@ -1,3 +1,10 @@
+## [1.17.1](https://git.panter.ch/catladder/catladder/compare/v1.17.0...v1.17.1) (2022-04-01)
+
+
+### Bug Fixes
+
+* ENV_SHORT missing in local dev ([4a62fdf](https://git.panter.ch/catladder/catladder/commit/4a62fdfb4c47508bee042064d1e1ca0eb9732fcf))
+
 # [1.17.0](https://git.panter.ch/catladder/catladder/compare/v1.16.3...v1.17.0) (2022-04-01)
 
 
