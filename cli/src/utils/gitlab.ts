@@ -128,6 +128,14 @@ export const getAllVariables = memoizee(
   { promise: true }
 );
 
+export const getVariableValueByRawName = async (
+  vorpal: CommandInstance,
+  rawName: string
+) => {
+  const allVariables = await getAllVariables(vorpal);
+  return allVariables.find((v) => v.key === rawName)?.value;
+};
+
 const maskableRegex = new RegExp("^[a-zA-Z0-9_+=/@:.~-]{8,}$"); // SEE https://gitlab.com/gitlab-org/gitlab-foss/-/blob/master/spec/frontend/ci_variable_list/components/ci_variable_modal_spec.js#L20
 const isMaskable = (value: string): boolean => maskableRegex.test(value);
 

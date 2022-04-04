@@ -3,10 +3,11 @@ import {
   getAllEnvs,
   getEnvironment as _getEnvironment,
   createContext,
+  getSecretVarName,
 } from "@catladder/pipeline";
 
-import { CommandInstance } from "vorpal";
-import { getAllVariables } from "../utils/gitlab";
+import { Command, CommandInstance } from "vorpal";
+import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
 import memoizee from "memoizee";
 import { getGitRoot } from "../utils/projects";
 import { readYaml } from "../utils/files";
@@ -99,6 +100,16 @@ export const getAllPipelineContexts = async () => {
 export const getEnvironment = async (env: string, componentName: string) => {
   const config = await getProjectConfig();
   return _getEnvironment(config, componentName, env);
+};
+
+export const getGitlabVar = async (
+  vorpal: CommandInstance,
+  env: string,
+  componentName: string,
+  variableName: string
+) => {
+  const rawVariableName = getSecretVarName(env, componentName, variableName);
+  return await getVariableValueByRawName(vorpal, rawVariableName);
 };
 
 const resolveSecrets = async (

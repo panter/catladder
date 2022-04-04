@@ -3,14 +3,13 @@ import { spawn } from "child-process-promise";
 import { writeFile } from "fs-extra";
 import { withFile } from "tmp-promise";
 import Vorpal from "vorpal";
-import { GOOGLE_CLOUD_SQL_PASS_PATH } from "../../../../config/constants";
 import {
   getEnvVars,
+  getGitlabVar,
   getPipelineContextByChoice,
   getProjectConfig,
   parseChoice,
 } from "../../../../config/getProjectConfig";
-import { readPass } from "../../../../utils/passwordstore";
 import { envAndComponents } from "./utils/autocompletions";
 
 export default async (vorpal: Vorpal) =>
@@ -30,8 +29,8 @@ export default async (vorpal: Vorpal) =>
         message: "Local port: ",
       });
 
-      const POSTGRESQL_PASSWORD = (await getEnvVars(this, env, componentName))
-        ?.POSTGRESQL_PASSWORD;
+      const envVars = await getEnvVars(this, env, componentName);
+      const POSTGRESQL_PASSWORD = envVars?.POSTGRESQL_PASSWORD;
 
       const context = await getPipelineContextByChoice(env, componentName);
       if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
@@ -59,9 +58,23 @@ export default async (vorpal: Vorpal) =>
 
       const instanceName = `${projectId}:${region}:${instanceId}=tcp:${localPort}`;
 
-      const cloudsqlCredentials = await readPass(GOOGLE_CLOUD_SQL_PASS_PATH);
+      const cloudsqlProxyCredentials = await getGitlabVar(
+        this,
+        env,
+        componentName,
+        "cloudsqlProxyCredentials"
+      );
+
+      if (!cloudsqlProxyCredentials) {
+        // we store cloudsqlProxyCredentials on gitlab, but its currently get pushed via bitwarden due to legacy reasons
+        // this will be fixed with when https://git.panter.ch/catladder/catladder/-/merge_requests/32/ is merged
+        this.log(
+          "cloudsqlProxyCredentials env var missing in gitlab. Please contact gilde-ci-cd about that."
+        );
+        throw new Error("cloudsqlProxyCredentials missing in secrets");
+      }
       await withFile(async ({ path: tmpFilePath }) => {
-        await writeFile(tmpFilePath, cloudsqlCredentials);
+        await writeFile(tmpFilePath, cloudsqlProxyCredentials);
 
         await spawn(
           "cloud_sql_proxy",
