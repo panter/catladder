@@ -1,3 +1,10 @@
+## [1.17.2](https://git.panter.ch/catladder/catladder/compare/v1.17.1...v1.17.2) (2022-04-04)
+
+
+### Bug Fixes
+
+* **cli:** cloud sql proxy should not use bitwarden anymore ([c8fa517](https://git.panter.ch/catladder/catladder/commit/c8fa517e83c1948873ac4908baa6cc580e983610))
+
 ## [1.17.1](https://git.panter.ch/catladder/catladder/compare/v1.17.0...v1.17.1) (2022-04-01)
 
 
