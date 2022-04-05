@@ -177,6 +177,10 @@ env:
   - name: POSTGRESQL_DBNAME # alias
     value: "{{- template "DB_NAME" . -}}"
   {{- end -}}
+  {{- range $index, $varName := .Values.secretsAsFile }}  # expose mounted secrets as variable that contain the path of the secret
+  - name: "{{$varName}}"
+    value: "/secrets/{{ $varName }}"
+  {{- end -}}
 {{- end -}}
 
 
