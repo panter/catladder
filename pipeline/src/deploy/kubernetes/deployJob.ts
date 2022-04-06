@@ -10,6 +10,7 @@ import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
 import { isOfDeployType } from "../types";
 import { createCloudsqlBaseConfig } from "./cloudsql";
 import { createMongodbBaseConfig } from "./mongodb";
+import { processSecretsAsFiles } from "./processSecretsAsFiles";
 
 export const createKubernetesDeployJobs = (
   context: Context
@@ -84,9 +85,8 @@ export const createKubernetesDeployJobs = (
       : {}),
   };
 
-  const kubeValues = mergeWithMergingArrays(
-    defaultKubeValues,
-    deployConfig.values
+  const kubeValues = processSecretsAsFiles(
+    mergeWithMergingArrays(defaultKubeValues, deployConfig.values)
   );
 
   const kubernetesEnvironment = {
