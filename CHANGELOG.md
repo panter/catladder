@@ -1,3 +1,15 @@
+# [1.19.0](https://git.panter.ch/catladder/catladder/compare/v1.18.1...v1.19.0) (2022-04-06)
+
+
+### Bug Fixes
+
+* values.secretsAsFile not working properly ([73f39da](https://git.panter.ch/catladder/catladder/commit/73f39da533a5cc312a74e052619688ccb9bf4652))
+
+
+### Features
+
+* **cli:** watch config for changes ([80737ac](https://git.panter.ch/catladder/catladder/commit/80737acd517e779ad2176dd161636bd7708cbaaf))
+
 ## [1.18.1](https://git.panter.ch/catladder/catladder/compare/v1.18.0...v1.18.1) (2022-04-06)
 
 
