@@ -81,6 +81,10 @@ spec:
         volumeMounts: 
           - name: scripts
             mountPath: /scripts
+        {{if gt (len .Values.secretsAsFile) 0 }}
+          - name: secrets
+            mountPath: /secrets
+        {{end}}
         {{- range $key, $volume := .Values.application.volumes }}
           - mountPath: {{$volume.mountPath}}
             name: {{ template "fullname" $context }}-{{$volume.name}}
@@ -100,6 +104,16 @@ spec:
       - {{- include "cloudSqlContainer" $context | nindent 8 }}
       {{- end }} 
       volumes:
+      {{if gt (len .Values.secretsAsFile) 0 }}
+        - name: secrets
+          secret:
+            secretName: {{ template "fullname" $ }}-app-secrets
+            items:
+        {{- range $index, $varName := .Values.secretsAsFile }}
+            - key: {{$varName}}
+              path: {{$varName}}
+        {{end}}
+      {{end}}
         - name: scripts
           configMap:
             name: {{ template "fullname" . }}-scripts

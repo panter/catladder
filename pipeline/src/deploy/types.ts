@@ -112,6 +112,11 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
     readinessProbe?: KubernetesHealthDef;
     livenessProbe?: KubernetesHealthDef;
   }>;
+  /**
+   * Mount secrets as files in the filesystem.
+   * These secrets are still available as env vars, but will contain the path of the file instead
+   */
+  secretsAsFile?: string[];
 }>;
 
 export type DeployConfigKubernetes = {

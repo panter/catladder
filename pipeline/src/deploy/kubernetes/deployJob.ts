@@ -74,6 +74,7 @@ export const createKubernetesDeployJobs = (
 
   const defaultKubeValues = {
     application: defaultAppConfig,
+
     env: env,
     ...(deployConfig.values?.cloudsql?.enabled
       ? createCloudsqlBaseConfig(context)
