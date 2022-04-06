@@ -4,29 +4,41 @@ import {
   getEnvironment as _getEnvironment,
   createContext,
   getSecretVarName,
+  Config,
 } from "@catladder/pipeline";
 
-import { Command, CommandInstance } from "vorpal";
+import { CommandInstance } from "vorpal";
 import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
-import memoizee from "memoizee";
+
 import { getGitRoot } from "../utils/projects";
 import { readYaml } from "../utils/files";
-// currently cant change
+import { watch } from "fs";
 
-export const getProjectConfig = memoizee(
-  async () => {
-    try {
-      const gitRoot = await getGitRoot();
-      return readConfigSync(gitRoot);
-    } catch (e) {
-      // ignore
-      return null;
-    }
-  },
-  { promise: true }
-);
+let currentConfig: Config = null;
 
-export const reloadConfig = () => getProjectConfig.clear();
+// reload the config on change
+const reloadConfigAndObserve = async () => {
+  const gitRoot = await getGitRoot();
+  const result = readConfigSync(gitRoot);
+  if (!result) {
+    // can't do anything, there is no config
+    return;
+  }
+  const { config, path } = result;
+  const watcher = watch(path, () => {
+    watcher.close();
+    reloadConfigAndObserve();
+  });
+  currentConfig = config;
+};
+
+export const getProjectConfig = async () => {
+  if (!currentConfig) {
+    // initially
+    await reloadConfigAndObserve();
+  }
+  return currentConfig;
+};
 
 export const getGitlabCiFilePath = async () => {
   const gitRoot = await getGitRoot();
@@ -99,6 +111,7 @@ export const getAllPipelineContexts = async () => {
 
 export const getEnvironment = async (env: string, componentName: string) => {
   const config = await getProjectConfig();
+
   return _getEnvironment(config, componentName, env);
 };
 
