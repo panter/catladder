@@ -1,3 +1,10 @@
+## [1.18.1](https://git.panter.ch/catladder/catladder/compare/v1.18.0...v1.18.1) (2022-04-06)
+
+
+### Bug Fixes
+
+* try-catch legacy bitwarden t ([9c67745](https://git.panter.ch/catladder/catladder/commit/9c67745ea385309ccb91f37b722be49c52723c0e))
+
 # [1.18.0](https://git.panter.ch/catladder/catladder/compare/v1.17.2...v1.18.0) (2022-04-06)
 
 
