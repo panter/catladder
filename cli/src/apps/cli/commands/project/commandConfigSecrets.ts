@@ -152,22 +152,25 @@ const doItFor = async (
       if (hasBitwarden()) {
         // add cloud sql secret if needed.
         // TODO: this is legacy, in the future we want to have one service account per app
-
-        const context = await getPipelineContextByChoice(env, componentName);
-        if (
-          context.componentConfig.deploy &&
-          context.componentConfig.deploy.values?.cloudsql?.enabled
-        ) {
-          await upsertAllVariables(
-            instance,
-            {
-              cloudsqlProxyCredentials: await readPass(
-                GOOGLE_CLOUD_SQL_PASS_PATH
-              ),
-            },
-            env,
-            componentName
-          );
+        try {
+          const context = await getPipelineContextByChoice(env, componentName);
+          if (
+            context.componentConfig.deploy &&
+            context.componentConfig.deploy.values?.cloudsql?.enabled
+          ) {
+            await upsertAllVariables(
+              instance,
+              {
+                cloudsqlProxyCredentials: await readPass(
+                  GOOGLE_CLOUD_SQL_PASS_PATH
+                ),
+              },
+              env,
+              componentName
+            );
+          }
+        } catch (e) {
+          // ignore atm
         }
       }
       instance.log("✅ " + env + ":" + componentName);
