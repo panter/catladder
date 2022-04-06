@@ -8,9 +8,14 @@ import { Config } from "../types";
 const fullPath = (directory: string, ext: string) =>
   directory + "/catladder." + ext;
 
+function requireUncached(module: string) {
+  delete require.cache[require.resolve(module)];
+  return require(module);
+}
+
 export const readConfigSync = (
   directory: string = process.cwd()
-): Config | null => {
+): { config: Config; path: string; ext: string } | null => {
   register({
     cwd: directory,
     transpileOnly: true,
@@ -23,13 +28,20 @@ export const readConfigSync = (
     existsSync(fullPath(directory, extension))
   );
   if (found) {
+    const filePath = fullPath(directory, found);
     if (found === "ts" || found === "js") {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      return require(fullPath(directory, found)).default;
+      return {
+        path: filePath,
+        ext: found,
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        config: requireUncached(filePath).default,
+      };
     } else {
-      return load(
-        readFileSync(fullPath(directory, found), { encoding: "utf-8" })
-      ) as Config;
+      return {
+        path: filePath,
+        ext: found,
+        config: load(readFileSync(filePath, { encoding: "utf-8" })) as Config,
+      };
     }
   }
   return null;

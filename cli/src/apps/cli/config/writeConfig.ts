@@ -4,7 +4,6 @@ import { writeFile } from "fs-extra";
 import { dump } from "js-yaml";
 import { format } from "prettier";
 import { CommandInstance } from "vorpal";
-import { reloadConfig } from "../../../config/getProjectConfig";
 import { getGitRoot } from "../../../utils/projects";
 
 export const writeConfig = async (
@@ -67,7 +66,6 @@ export const writeConfig = async (
     );
     await exec("git add " + file);
   }
-  await reloadConfig();
   vorpal.log("done!");
   vorpal.log("");
 };

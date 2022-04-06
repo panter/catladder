@@ -24,10 +24,8 @@ import commandPortForward from "./commandPortForward";
 import commandTriggerCronjob from "./commandTriggerCronjob";
 
 import commandOpenGrafanaPod from "./commandOpenGrafanaPod";
-import commandReloadConfig from "./commandReloadConfig";
 
 export default async (vorpal: Vorpal) => {
-  commandReloadConfig(vorpal);
   commandSetup(vorpal);
 
   commandEnvVars(vorpal);

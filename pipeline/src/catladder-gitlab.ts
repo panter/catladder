@@ -29,7 +29,7 @@ const trigger: PipelineTrigger | null =
     ? "taggedRelease"
     : null;
 if (trigger) {
-  const config = readConfigSync();
+  const config = readConfigSync()?.config;
   if (!config) {
     throw new Error("no catladder config found");
   }
