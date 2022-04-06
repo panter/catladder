@@ -1,3 +1,10 @@
+# [1.18.0](https://git.panter.ch/catladder/catladder/compare/v1.17.2...v1.18.0) (2022-04-06)
+
+
+### Features
+
+* allow to mount secrets as files ([b8b8f30](https://git.panter.ch/catladder/catladder/commit/b8b8f30d1d341c75deae14dae6c428ff4e5200ea))
+
 ## [1.17.2](https://git.panter.ch/catladder/catladder/compare/v1.17.1...v1.17.2) (2022-04-04)
 
 
