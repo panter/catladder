@@ -110,8 +110,8 @@ spec:
             secretName: {{ template "fullname" $ }}-app-secrets
             items:
         {{- range $index, $varName := .Values.secretsAsFile }}
-            - key: {{$varName}}
-              path: {{$varName}}
+            - key: "{{$varName}}_content" # we needed suffixed the var with _content, because there is a problem with kubernetes, when shadowing variables like this
+              path: "{{$varName}}"
         {{end}}
       {{end}}
         - name: scripts
