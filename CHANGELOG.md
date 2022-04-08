@@ -1,3 +1,10 @@
+## [1.19.1](https://git.panter.ch/catladder/catladder/compare/v1.19.0...v1.19.1) (2022-04-08)
+
+
+### Bug Fixes
+
+* catenv hangs ([5866927](https://git.panter.ch/catladder/catladder/commit/5866927de30ffd34221225a122e62f4b407ff943))
+
 # [1.19.0](https://git.panter.ch/catladder/catladder/compare/v1.18.1...v1.19.0) (2022-04-06)
 
 
