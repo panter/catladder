@@ -1,3 +1,10 @@
+## [1.20.1](https://git.panter.ch/catladder/catladder/compare/v1.20.0...v1.20.1) (2022-04-12)
+
+
+### Bug Fixes
+
+* accidential log ([211203a](https://git.panter.ch/catladder/catladder/commit/211203a0f93bc6e8056fc7f68f1697e8f0adaca0))
+
 # [1.20.0](https://git.panter.ch/catladder/catladder/compare/v1.19.1...v1.20.0) (2022-04-12)
 
 
