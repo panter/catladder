@@ -134,6 +134,12 @@ export type DeployConfigKubernetes = {
    * values to configure the app
    */
   values?: DeployConfigKubernetesValues;
+  /**
+   * whether to deploy automatically or manual. If not defined, these rules apply:
+   * - prod: manual
+   * - all other envs: auto
+   */
+  when?: "manual" | "auto";
 } & DeployConfigBase;
 
 type CustomDeployConfig = {

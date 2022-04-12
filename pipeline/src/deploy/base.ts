@@ -19,17 +19,24 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
 
   const autoStop =
     context.environment.envType === "review"
-      ? "2 weeks"
+      ? "3 days" // auto stop is not working properly when branch is merged, so we do
       : context.environment.envType === "dev"
       ? "3 weeks"
       : undefined;
-  // automatically run deploy job, unless its prod and stage is active
-  const autoDeploy =
+  // if auto or manual is configured explicitly, use that
+  const whenDeployDefined =
+    context.componentConfig.deploy && context.componentConfig.deploy.when
+      ? context.componentConfig.deploy.when
+      : undefined;
+  // otherwise auto deploy if env is not prod. If its prod, deploy automatically if stage is disabled
+  const whenDeployDefault =
     context.environment.envType !== "prod"
-      ? true // is not stage, auto deploy
+      ? "auto" // is not stage, auto deploy
       : context.componentConfig.env?.stage === false
-      ? true // is prod, but no staging, auto deploy
-      : false; // manually deploy
+      ? "auto" // is prod, but no staging, auto deploy
+      : "manual"; // manually deploy
+  const whenDeploy = whenDeployDefined ? whenDeployDefined : whenDeployDefault;
+
   return {
     name: DEPLOY_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
@@ -46,7 +53,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     ], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
 
     rules: [
-      autoDeploy
+      whenDeploy === "auto"
         ? {
             when: "on_success",
           }
