@@ -1,3 +1,15 @@
+# [1.20.0](https://git.panter.ch/catladder/catladder/compare/v1.19.1...v1.20.0) (2022-04-12)
+
+
+### Bug Fixes
+
+* endless loop in resolve references ([7e63586](https://git.panter.ch/catladder/catladder/commit/7e63586a0e47a2bbc505e516efb7e288a5e518c8))
+
+
+### Features
+
+* allow to force manual/auto deploy per env ([45fcace](https://git.panter.ch/catladder/catladder/commit/45fcace89e85ea74d483f000eb22225fe949d036))
+
 ## [1.19.1](https://git.panter.ch/catladder/catladder/compare/v1.19.0...v1.19.1) (2022-04-08)
 
 
