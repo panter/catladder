@@ -11,7 +11,6 @@ export const resolveReferences = (
   ) => string | null,
   alreadyVisitedBase: Record<string, Record<string, boolean>> = {}
 ) => {
-  console.log("resolve", alreadyVisitedBase);
   const replaceSingleValue = (
     value: string,
     alreadyVisited: Record<string, Record<string, boolean>> = alreadyVisitedBase
