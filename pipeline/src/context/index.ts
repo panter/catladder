@@ -30,7 +30,8 @@ export const getEnvironment = (
   config: Config,
   componentName: string,
   env: string,
-  commitInfo?: CommitInfo
+  commitInfo?: CommitInfo,
+  alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
 ): Environment => {
   const componentConfig = config.components[componentName];
   if (!componentConfig) {
@@ -151,15 +152,17 @@ export const getEnvironment = (
 
   const envVars = resolveReferences(
     envVarsRaw,
-    (componentName, variableName) => {
+    (componentName, variableName, alreadyVisited) => {
       const { envVars } = getEnvironment(
         config,
         componentName,
         env,
-        commitInfo
+        commitInfo,
+        alreadyVisited
       );
       return envVars[variableName];
-    }
+    },
+    alreadyVisited
   );
   return {
     envType,

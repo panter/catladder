@@ -6,32 +6,37 @@ export const resolveReferences = (
   vars: Record<string, string>,
   getOtherVariables?: (
     componentName: string,
-    variableName: string
-  ) => string | null
+    variableName: string,
+    alreadyVisited: Record<string, Record<string, boolean>>
+  ) => string | null,
+  alreadyVisitedBase: Record<string, Record<string, boolean>> = {}
 ) => {
+  console.log("resolve", alreadyVisitedBase);
   const replaceSingleValue = (
     value: string,
-    alreadyVisited: Record<string, Record<string, boolean>> = {}
+    alreadyVisited: Record<string, Record<string, boolean>> = alreadyVisitedBase
   ): string => {
     if (REGEX.test(value)) {
       return value.replace(REGEX, (match, _, componentName, variableName) => {
         if (alreadyVisited[componentName]?.[variableName]) {
           return match; // prevent endless loop
         }
+        const newAlreadyVisited = merge({}, alreadyVisited, {
+          [componentName]: {
+            [variableName]: true,
+          },
+        });
         const result = componentName
-          ? getOtherVariables?.(componentName, variableName) ?? null
+          ? getOtherVariables?.(
+              componentName,
+              variableName,
+              newAlreadyVisited
+            ) ?? null
           : vars[variableName]; // is self reference
 
         const replaced =
           result !== null && result !== undefined
-            ? replaceSingleValue(
-                result,
-                merge({}, alreadyVisited, {
-                  [componentName]: {
-                    [variableName]: true,
-                  },
-                })
-              )
+            ? replaceSingleValue(result, newAlreadyVisited)
             : match;
 
         return replaced;
