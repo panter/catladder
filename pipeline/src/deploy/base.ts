@@ -61,6 +61,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
             when: "manual",
           },
     ],
+    allow_failure: whenDeploy === "manual" ? true : false,
     stage: "deploy",
     variables: {
       ...DEPLOY_RUNNER_VARIABLES,
