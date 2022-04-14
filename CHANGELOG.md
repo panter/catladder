@@ -1,3 +1,10 @@
+## [1.20.3](https://git.panter.ch/catladder/catladder/compare/v1.20.2...v1.20.3) (2022-04-14)
+
+
+### Bug Fixes
+
+* don't block the pipeline on manual deploy jobs ([bdd1f21](https://git.panter.ch/catladder/catladder/commit/bdd1f21f8eda8f6ef3d0117fc4f702daa0481cce))
+
 ## [1.20.2](https://git.panter.ch/catladder/catladder/compare/v1.20.1...v1.20.2) (2022-04-14)
 
 
