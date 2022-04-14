@@ -1,3 +1,10 @@
+## [1.20.2](https://git.panter.ch/catladder/catladder/compare/v1.20.1...v1.20.2) (2022-04-14)
+
+
+### Bug Fixes
+
+* reduce the requests for job cpu defaults ([2039378](https://git.panter.ch/catladder/catladder/commit/20393784c76de089f7f42f2fdff6e9e9632e0d5e))
+
 ## [1.20.1](https://git.panter.ch/catladder/catladder/compare/v1.20.0...v1.20.1) (2022-04-12)
 
 
