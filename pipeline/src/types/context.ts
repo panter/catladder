@@ -16,7 +16,7 @@ export type Environment = {
 
 export type CommitInfo = {
   refName: string;
-  refSlug: string;
+  reviewSlug: string;
   buildTime: string;
   buildId: string;
   trigger: PipelineTrigger;

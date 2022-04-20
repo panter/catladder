@@ -70,7 +70,7 @@ export const getEnvironment = (
 
   const environmentSlug =
     envType === "review" && commitInfo
-      ? `${env}-${commitInfo.refSlug}-${componentName}`
+      ? `${env}-${commitInfo.reviewSlug}-${componentName}`
       : `${env}-${componentName}`;
 
   let predefinedVariables: Record<string, string>;
@@ -91,7 +91,7 @@ export const getEnvironment = (
 
     const componentSlug = slugify(componentName);
     const envInUrl =
-      envType === "review" && commitInfo ? `${commitInfo.refSlug}.${env}` : env;
+      envType === "review" && commitInfo ? `${commitInfo.reviewSlug}.${env}` : env;
 
     const domainCanonical =
       (mergedConfig?.deploy && mergedConfig.deploy.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
@@ -105,7 +105,7 @@ export const getEnvironment = (
     // FIXME: move to kube specific jobs
     const KUBE_APP_NAME =
       envType === "review" && commitInfo
-        ? `${commitInfo.refSlug}-${componentName}`
+        ? `${commitInfo.reviewSlug}-${componentName}`
         : componentName;
     const KUBE_NAMESPACE = getKubernetesNamespace(config, env);
 
