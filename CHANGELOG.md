@@ -1,3 +1,10 @@
+# [1.21.0](https://git.panter.ch/catladder/catladder/compare/v1.20.3...v1.21.0) (2022-04-20)
+
+
+### Features
+
+* custom job definition for arbitrary jobs ([20c2372](https://git.panter.ch/catladder/catladder/commit/20c2372b4bcf55e6ff77b893d0ddc12b309a827a))
+
 ## [1.20.3](https://git.panter.ch/catladder/catladder/compare/v1.20.2...v1.20.3) (2022-04-14)
 
 
