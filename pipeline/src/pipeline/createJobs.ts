@@ -1,5 +1,5 @@
 import { exec } from "child-process-promise";
-import { isObject } from "lodash";
+import { isFunction, isObject } from "lodash";
 import { BUILD_TYPES } from "../build";
 import { createContext } from "../context";
 import { DEPLOY_TYPES } from "../deploy";
@@ -11,6 +11,26 @@ import { notNil } from "../utils";
 import { makeGitlabJob } from "./gitlab/makeGitlabJob";
 import { getPackageManagerInfo } from "./packageManager";
 
+const injectDefaultVarsInCustomJobs = (
+  context: Context,
+  jobs: CatladderJob[]
+) =>
+  jobs.map(({ variables, ...job }) => ({
+    variables: {
+      ...(context.environment.envVars ?? {}),
+      ...(variables ?? {}),
+    },
+    ...job,
+  }));
+const getCustomJobs = (context: Context) => {
+  if (!context.componentConfig.customJobs) {
+    return [];
+  }
+  const rawJobs = isFunction(context.componentConfig.customJobs)
+    ? context.componentConfig.customJobs(context)
+    : context.componentConfig.customJobs;
+  return injectDefaultVarsInCustomJobs(context, rawJobs);
+};
 const createRawJobs = (context: Context): CatladderJob[] => {
   if (context.componentConfig.deploy === false) {
     return [];
@@ -20,7 +40,8 @@ const createRawJobs = (context: Context): CatladderJob[] => {
   const deployJobs =
     DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context);
 
-  return [...buildJobs, ...deployJobs];
+  const customJobs = getCustomJobs(context);
+  return [...buildJobs, ...deployJobs, ...customJobs];
 };
 const getFullJobName = (
   name: string,

@@ -1,6 +1,8 @@
 import { BuildConfig } from "../build/types";
 import { DeployConfig } from "../deploy/types";
 import { PartialDeep } from "type-fest";
+import { CatladderJob } from "./jobs";
+import { Context } from "./context";
 export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
 
 /**
@@ -123,6 +125,16 @@ export type ComponentConfig = {
    * the directory of the component (e.g. where the package.json or similar is located). You can set "." if you only have one app.
    */
   dir: string;
+
+  /**
+   * add custom jobs. Can be an array or a function that receives the context and returns an array of jobs.
+   * For convenience, all env vars are injectd as variables
+   *
+   * Please raise an issue on https://git.panter.ch/catladder/catladder
+   * to let us know about why you need to use custom jobs.
+   * This feedback will help us to generalize use cases
+   */
+  customJobs?: CatladderJob[] | ((context: Context) => CatladderJob[]);
 } & DefaultEnvConfig;
 
 export type Config = {
