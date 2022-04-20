@@ -143,7 +143,9 @@ export const createJobs = async <T extends PipelineType>(
 ): Promise<Record<string, PipelineJob<T>>> => {
   const commitInfo: CommitInfo = {
     refName: process.env.CI_COMMIT_REF_NAME ?? "unknown",
-    refSlug: process.env.CI_COMMIT_REF_SLUG ?? "unknown",
+    reviewSlug: process.env.CI_MERGE_REQUEST_IID
+      ? `mr${process.env.CI_MERGE_REQUEST_IID}`
+      : "unknown",
     buildTime: new Date().toISOString(),
     buildId: await exec("git describe --tags || git rev-parse HEAD").then((s) =>
       s.stdout.trim()

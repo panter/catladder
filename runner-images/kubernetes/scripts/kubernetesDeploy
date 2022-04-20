@@ -25,7 +25,6 @@ helm upgrade --install "$RELEASE_NAME" /helm-charts/$HELM_GITLAB_CHART_NAME \
     --cleanup-on-fail \
     --set global.componentName="$KUBE_APP_NAME" \
     --set global.ENV_SHORT="$ENV_SHORT" \
-    --set global.CI_COMMIT_REF_SLUG="$CI_COMMIT_REF_SLUG" \
     --set global.BUILD_ID="$BUILD_ID" \
     --set image.repository="$CI_REGISTRY_IMAGE" \
     --set image.pullSecret="$IMAGE_PULL_SECRET" \
