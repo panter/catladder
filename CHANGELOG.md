@@ -1,3 +1,10 @@
+## [1.21.1](https://git.panter.ch/catladder/catladder/compare/v1.21.0...v1.21.1) (2022-04-20)
+
+
+### Bug Fixes
+
+* use merge request id as deployment identifier to support long branches ([533a269](https://git.panter.ch/catladder/catladder/commit/533a26980775418b7f9705f95c98b1548b649c9e))
+
 # [1.21.0](https://git.panter.ch/catladder/catladder/compare/v1.20.3...v1.21.0) (2022-04-20)
 
 
