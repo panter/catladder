@@ -1,3 +1,10 @@
+# [1.22.0](https://git.panter.ch/catladder/catladder/compare/v1.21.1...v1.22.0) (2022-04-22)
+
+
+### Features
+
+* custom deploy job ([f7d582a](https://git.panter.ch/catladder/catladder/commit/f7d582a5fd66863dbd17d10ab96d45f4f76fc4bf))
+
 ## [1.21.1](https://git.panter.ch/catladder/catladder/compare/v1.21.0...v1.21.1) (2022-04-20)
 
 
