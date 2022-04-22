@@ -1,5 +1,5 @@
-import { Config } from "../types";
-import type { DeployConfigKubernetesCluster } from "./types";
+import { Config, Context } from "../types";
+import { DeployConfigKubernetesCluster, isOfDeployType } from "./types";
 
 export const getFullKubernetesClusterName = (
   cluster: DeployConfigKubernetesCluster
@@ -14,4 +14,17 @@ export const getKubernetesNamespace = (
   env: string
 ) => {
   return `${config.customerName}-${config.appName}-${env}`;
+};
+
+export const contextIsStoppable = (context: Context) => {
+  const deployConfig = context.componentConfig.deploy;
+  if (isOfDeployType(deployConfig, "kubernetes")) {
+    return true;
+  }
+
+  if (isOfDeployType(deployConfig, "custom") && deployConfig.stopScript) {
+    return true;
+  }
+
+  return false;
 };

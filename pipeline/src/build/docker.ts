@@ -1,4 +1,5 @@
 import { merge } from "lodash";
+import { isOfDeployType } from "../deploy";
 import { getRunnerImage } from "../runner";
 import { Context } from "../types";
 import { CatladderJob } from "../types/jobs";
@@ -8,6 +9,19 @@ const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_LIMIT: "1",
   KUBERNETES_MEMORY_REQUEST: "1Gi",
   KUBERNETES_MEMORY_LIMIT: "2Gi",
+};
+
+export const requiresDockerBuild = (context: Context) => {
+  const deployConfig = context.componentConfig.deploy;
+  if (isOfDeployType(deployConfig, "kubernetes")) {
+    return true;
+  }
+
+  if (isOfDeployType(deployConfig, "custom") && deployConfig.requiresDocker) {
+    return true;
+  }
+
+  return false;
 };
 
 export const getDockerBuildVariables = (context: Context) => {

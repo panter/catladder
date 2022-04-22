@@ -94,7 +94,9 @@ export const getEnvironment = (
       envType === "review" && commitInfo ? `${commitInfo.reviewSlug}.${env}` : env;
 
     const domainCanonical =
-      (mergedConfig?.deploy && mergedConfig.deploy.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
+      (mergedConfig?.deploy &&
+        mergedConfig?.deploy.type === "kubernetes" &&
+        mergedConfig.deploy.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
       config.domainCanonical ||
       "panter.cloud";
 

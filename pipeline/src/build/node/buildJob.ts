@@ -2,7 +2,7 @@ import { Context } from "../../types/context";
 import { ensureArray } from "../../utils";
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJobDefault } from "../docker";
+import { createDockerBuildJobDefault, requiresDockerBuild } from "../docker";
 import { join } from "path";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
@@ -43,29 +43,34 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
       : null;
   return [
     ...(appBuildJob ? [appBuildJob] : []),
-    createDockerBuildJobDefault(context, {
-      script: [
-        buildConfig.type === "node-static" || buildConfig.type === "storybook"
-          ? "ensureNginxDockerfile"
-          : "ensureNodeDockerfile",
-      ],
-      cache: [...getYarnCache(context, "pull")],
-      variables: {
-        // only required for non static
-        YARN_INSTALL: getYarnInstallCommand(context, {
-          prodOnly: true,
-        }),
-        YARN_INSTALL_WITHOUT_SCRIPTS: getYarnInstallCommand(context, {
-          prodOnly: true,
-          noScripts: true,
-        }),
-        DOCKER_COPY_WORKSPACE_FILES:
-          context.packageManagerInfo?.pathsToCopyInDocker
-            .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
-            ?.join("\n"),
-      },
+    ...(requiresDockerBuild(context)
+      ? [
+          createDockerBuildJobDefault(context, {
+            script: [
+              buildConfig.type === "node-static" ||
+              buildConfig.type === "storybook"
+                ? "ensureNginxDockerfile"
+                : "ensureNodeDockerfile",
+            ],
+            cache: [...getYarnCache(context, "pull")],
+            variables: {
+              // only required for non static
+              YARN_INSTALL: getYarnInstallCommand(context, {
+                prodOnly: true,
+              }),
+              YARN_INSTALL_WITHOUT_SCRIPTS: getYarnInstallCommand(context, {
+                prodOnly: true,
+                noScripts: true,
+              }),
+              DOCKER_COPY_WORKSPACE_FILES:
+                context.packageManagerInfo?.pathsToCopyInDocker
+                  .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
+                  ?.join("\n"),
+            },
 
-      needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
-    }),
+            needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
+          }),
+        ]
+      : []),
   ];
 };
