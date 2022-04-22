@@ -1,5 +1,12 @@
 // eslint-disable-next-line @typescript-eslint/ban-types
-export type DeployConfigBase = {};
+export type DeployConfigBase = {
+  /**
+   * whether to deploy automatically or manual. If not defined, these rules apply:
+   * - prod: manual
+   * - all other envs: auto
+   */
+  when?: "manual" | "auto";
+};
 type AllowUnknownProps<T extends Record<string, unknown>> = T &
   Record<string, unknown>;
 
@@ -134,20 +141,16 @@ export type DeployConfigKubernetes = {
    * values to configure the app
    */
   values?: DeployConfigKubernetesValues;
-  /**
-   * whether to deploy automatically or manual. If not defined, these rules apply:
-   * - prod: manual
-   * - all other envs: auto
-   */
-  when?: "manual" | "auto";
 } & DeployConfigBase;
 
-type CustomDeployConfig = {
+type DeployConfigCustom = {
   type: "custom";
+  requiresDocker: boolean;
   script: string[];
-};
+  stopScript?: string[];
+} & DeployConfigBase;
 
-export type DeployConfig = DeployConfigKubernetes;
+export type DeployConfig = DeployConfigKubernetes | DeployConfigCustom;
 
 export const isOfDeployType = <T extends Array<DeployConfig["type"]>>(
   t: DeployConfig | false,

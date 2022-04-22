@@ -156,6 +156,7 @@ const doItFor = async (
           const context = await getPipelineContextByChoice(env, componentName);
           if (
             context.componentConfig.deploy &&
+            context.componentConfig.deploy.type === "kubernetes" &&
             context.componentConfig.deploy.values?.cloudsql?.enabled
           ) {
             await upsertAllVariables(

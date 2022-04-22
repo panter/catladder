@@ -1,5 +1,7 @@
+import { requiresDockerBuild } from "../build/docker";
 import { Context } from "../types";
 import { CatladderJob } from "../types/jobs";
+import { contextIsStoppable } from "./utils";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
 export const STOP_JOB_NAME = "🛑 Stop ⚠️";
@@ -16,6 +18,9 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     name: context.environment.fullName,
     url: context.environment.url,
   };
+
+  const hasDocker = requiresDockerBuild(context);
+  const isStoppable = contextIsStoppable(context);
 
   const autoStop =
     context.environment.envType === "review"
@@ -44,7 +49,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     needsStages: [
       {
         stage: "build",
-        artifacts: false,
+        artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
       },
       {
         stage: "test",
@@ -65,11 +70,16 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     stage: "deploy",
     variables: {
       ...DEPLOY_RUNNER_VARIABLES,
+      ...context.environment.envVars,
     },
     environment: {
       ...environment,
-      on_stop: STOP_JOB_NAME,
-      auto_stop_in: autoStop,
+      ...(isStoppable
+        ? {
+            on_stop: STOP_JOB_NAME,
+            auto_stop_in: autoStop,
+          }
+        : {}),
     },
   };
 };
