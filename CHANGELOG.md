@@ -1,3 +1,10 @@
+## [1.22.1](https://git.panter.ch/catladder/catladder/compare/v1.22.0...v1.22.1) (2022-04-25)
+
+
+### Bug Fixes
+
+* **storybook:** storybook build logs verbosly ([dcf173a](https://git.panter.ch/catladder/catladder/commit/dcf173a6a9bfc88f7ec59496d11b4acbe40b2383))
+
 # [1.22.0](https://git.panter.ch/catladder/catladder/compare/v1.21.1...v1.22.0) (2022-04-22)
 
 
