@@ -1,0 +1,19 @@
+
+{{- if .Values.application -}}
+{{- if .Values.application.autoscale -}}
+{{ $context := . }}
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ template "fullname" $context }}-app-autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ template "fullname" $context }}-app
+{{ toYaml .Values.application.autoscale | indent 2 }}   
+
+{{- end }}
+{{- end }}
+
