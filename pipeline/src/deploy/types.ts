@@ -31,6 +31,24 @@ export type DeployConfigKubernetesClusterGCloud = {
 };
 export type DeployConfigKubernetesCluster = DeployConfigKubernetesClusterGCloud; // currently only this
 
+type KubernetesAutoscaleMetric = {
+  type: "Resource";
+  resource: {
+    name: "cpu" | "memory";
+    target: {
+      type: "Utilization";
+      averageUtilization: number;
+    };
+  };
+};
+type KubernetesAutoscale = {
+  minReplicas: number;
+  maxReplicas: number;
+  /**
+   * declare a number of metrics (at least one). Usually you would use cpu as a metric
+   */
+  metrics: KubernetesAutoscaleMetric[];
+};
 type KubernetesHealthDef = {
   httpGet?: {
     path?: string;
@@ -101,6 +119,11 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
      * how many pods will be started
      */
     replicas?: number;
+
+    /**
+     * autoscale the pods horizontally
+     */
+    autoscale?: KubernetesAutoscale;
     /**
      * kubernetes resources
      */

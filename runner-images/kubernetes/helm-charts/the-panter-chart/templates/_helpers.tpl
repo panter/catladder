@@ -103,6 +103,10 @@ args:
 securityContext:
   runAsUser: 2  # non-root user
   allowPrivilegeEscalation: false
+resources: # each container needs requests, or the auto load balancer does not work
+  requests:
+    cpu: 50m
+    memory: 150Mi
 volumeMounts:
   - name: cloudsql-proxy-credentials
     mountPath: /secrets/cloudsql
