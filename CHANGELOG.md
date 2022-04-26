@@ -1,3 +1,10 @@
+# [1.23.0](https://git.panter.ch/catladder/catladder/compare/v1.22.1...v1.23.0) (2022-04-26)
+
+
+### Features
+
+* **kubernetes:** horizontal pod autoscaler ([b4ee7de](https://git.panter.ch/catladder/catladder/commit/b4ee7de90c76bda1459cd2737aed8635c3d1c927))
+
 ## [1.22.1](https://git.panter.ch/catladder/catladder/compare/v1.22.0...v1.22.1) (2022-04-25)
 
 
