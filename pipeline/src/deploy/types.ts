@@ -31,17 +31,23 @@ export type DeployConfigKubernetesClusterGCloud = {
 };
 export type DeployConfigKubernetesCluster = DeployConfigKubernetesClusterGCloud; // currently only this
 
-type KubernetesAutoscaleMetric = {
+export type KubernetesAutoscaleMetricResourceTarget =
+  | {
+      type: "Utilization";
+      averageUtilization: number;
+    }
+  | {
+      type: "AverageValue";
+      averageValue: number;
+    };
+export type KubernetesAutoscaleMetric = {
   type: "Resource";
   resource: {
     name: "cpu" | "memory";
-    target: {
-      type: "Utilization";
-      averageUtilization: number;
-    };
+    target: KubernetesAutoscaleMetricResourceTarget;
   };
 };
-type KubernetesAutoscale = {
+export type KubernetesAutoscale = {
   minReplicas: number;
   maxReplicas: number;
   /**
