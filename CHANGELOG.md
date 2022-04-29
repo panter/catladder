@@ -1,3 +1,10 @@
+# [1.24.0](https://git.panter.ch/catladder/catladder/compare/v1.23.0...v1.24.0) (2022-04-29)
+
+
+### Features
+
+* **autoscale:** extend type to include AverageValue ([0829a69](https://git.panter.ch/catladder/catladder/commit/0829a69c9123b19324f07e5eb963b876facbde0f))
+
 # [1.23.0](https://git.panter.ch/catladder/catladder/compare/v1.22.1...v1.23.0) (2022-04-26)
 
 
