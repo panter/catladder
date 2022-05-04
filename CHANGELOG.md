@@ -1,3 +1,10 @@
+## [1.24.2](https://git.panter.ch/catladder/catladder/compare/v1.24.1...v1.24.2) (2022-05-04)
+
+
+### Bug Fixes
+
+* typeerror again ([a41aa60](https://git.panter.ch/catladder/catladder/commit/a41aa606734cc76edc8c10643af14fd25eeb1c5c))
+
 ## [1.24.1](https://git.panter.ch/catladder/catladder/compare/v1.24.0...v1.24.1) (2022-05-04)
 
 
