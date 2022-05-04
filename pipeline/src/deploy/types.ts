@@ -38,7 +38,7 @@ export type KubernetesAutoscaleMetricResourceTarget =
     }
   | {
       type: "AverageValue";
-      averageValue: number;
+      averageValue: number | "string";
     };
 export type KubernetesAutoscaleMetric = {
   type: "Resource";
