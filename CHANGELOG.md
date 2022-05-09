@@ -1,3 +1,10 @@
+# [1.25.0](https://git.panter.ch/catladder/catladder/compare/v1.24.2...v1.25.0) (2022-05-09)
+
+
+### Features
+
+* **kubernetes:** add mongodb oplog url variable ([9e5cd12](https://git.panter.ch/catladder/catladder/commit/9e5cd129b2e88f90b93d7d21fcfd3c055a72b181))
+
 ## [1.24.2](https://git.panter.ch/catladder/catladder/compare/v1.24.1...v1.24.2) (2022-05-04)
 
 
