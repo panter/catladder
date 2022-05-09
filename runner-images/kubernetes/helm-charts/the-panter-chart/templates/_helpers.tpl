@@ -86,6 +86,19 @@ mongodb://
 {{- end -}}
 {{- printf "/%s?replicaSet=rs0" .Values.mongodb.dbName -}}
 {{- end -}}
+# TODO: deduplicate code
+{{- define "MONGO_OPLOG_URL" -}}
+{{- $numberOfRecplias := int (index .Values "mongodb-replicaset" "replicas") -}}
+{{- $appName := default .Release.Name .Values.global.componentName -}}
+{{- $namespace := .Release.Namespace -}}
+mongodb://
+{{- range $i, $e := until $numberOfRecplias -}}
+{{- /* https://stackoverflow.com/a/21305933 */ -}}
+{{- if $i -}},{{- end -}}
+{{- printf "%s-mongodb-replicaset-%d.%s-mongodb-replicaset.%s.svc.cluster.local:27017" $appName $i $appName $namespace -}}
+{{- end -}}
+{{- printf "/%s?replicaSet=rs0" "local" -}}
+{{- end -}}
 
 
 {{- define "cloudSqlContainer" -}}
