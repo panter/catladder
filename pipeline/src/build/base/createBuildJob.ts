@@ -2,6 +2,7 @@ import { merge } from "lodash";
 import { Context, getRunnerImage } from "../..";
 import { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
+import { ensureNodeVersion } from "../node/yarn";
 import {
   APP_BUILD_JOB_NAME,
   RUNNER_BUILD_RESOURCE_VARIABLES,
@@ -29,6 +30,7 @@ export const createBuildJob = (
 
       script: [
         ...getBuildInfo(context),
+        ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.componentConfig.dir}`,
         ...(ensureArray(script) ?? []),
       ],

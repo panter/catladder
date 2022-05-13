@@ -19,7 +19,11 @@ export const getYarnInstallCommand = (
         options?.noScripts ? "YARN_ENABLE_SCRIPTS=false " : ""
       }yarn install --immutable`;
 
-export const getYarnInstall = (context: Context) => [
+export const ensureNodeVersion = (context: Context) => [
   "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+];
+
+export const getYarnInstall = (context: Context) => [
+  ...ensureNodeVersion(context),
   getYarnInstallCommand(context),
 ];
