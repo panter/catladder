@@ -1,3 +1,10 @@
+# [1.26.0](https://git.panter.ch/catladder/catladder/compare/v1.25.0...v1.26.0) (2022-05-13)
+
+
+### Features
+
+* respect nvmrc file in the root directory ([ddc1703](https://git.panter.ch/catladder/catladder/commit/ddc17037fbe42a6babefbfef23a45baec4ab0d31))
+
 # [1.25.0](https://git.panter.ch/catladder/catladder/compare/v1.24.2...v1.25.0) (2022-05-09)
 
 
