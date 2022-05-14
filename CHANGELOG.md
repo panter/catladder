@@ -1,3 +1,10 @@
+# [1.27.0](https://git.panter.ch/catladder/catladder/compare/v1.26.0...v1.27.0) (2022-05-14)
+
+
+### Features
+
+* support node 18 by using node 16 as base for pipeline ([ddfae61](https://git.panter.ch/catladder/catladder/commit/ddfae617fe1a62dccb87430291e42c38132a924a))
+
 # [1.26.0](https://git.panter.ch/catladder/catladder/compare/v1.25.0...v1.26.0) (2022-05-13)
 
 
