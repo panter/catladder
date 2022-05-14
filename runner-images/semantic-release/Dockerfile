@@ -1,5 +1,5 @@
 # build context is the root directory
-FROM node:14-alpine
+FROM node:16-alpine
 
 RUN apk add --no-cache bash git
 

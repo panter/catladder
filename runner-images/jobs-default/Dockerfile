@@ -1,6 +1,6 @@
 
 
-FROM node:14
+FROM node:16
 
 RUN rm /bin/sh && \
     ln -s /bin/bash /bin/sh && \
@@ -21,6 +21,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | b
     /root/.nvm/nvm.sh install 10 && \
     /root/.nvm/nvm.sh install 12 && \
     /root/.nvm/nvm.sh install 14 && \
-    /root/.nvm/nvm.sh install 16
+    /root/.nvm/nvm.sh install 16 && \
+    /root/.nvm/nvm.sh install 18 
 
 
