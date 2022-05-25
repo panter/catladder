@@ -1,3 +1,10 @@
+# [1.28.0](https://git.panter.ch/catladder/catladder/compare/v1.27.0...v1.28.0) (2022-05-25)
+
+
+### Features
+
+* catenv now supports passing an env if you want to print out env vars for another env ([4ce711c](https://git.panter.ch/catladder/catladder/commit/4ce711cd1839f8cc06b650ae4a266a0445dffbb1))
+
 # [1.27.0](https://git.panter.ch/catladder/catladder/compare/v1.26.0...v1.27.0) (2022-05-14)
 
 
