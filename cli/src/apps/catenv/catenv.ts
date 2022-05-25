@@ -14,21 +14,29 @@ const getCurrentComponentName = async (
 
 const sanitizeEnvVarName = (name: string) => name.replace(/[\s\-.]+/g, "_");
 
-const getAllVariablesToPrint = async (config: Config) => {
+const getAllVariablesToPrint = async (
+  config: Config,
+  choice?: {
+    env?: string;
+    componentName?: string;
+  }
+) => {
+  const env = choice?.env ?? "local";
   const { components } = config;
 
-  const currentComponent = await getCurrentComponentName(components);
+  const currentComponent =
+    choice?.componentName ?? (await getCurrentComponentName(components));
 
   let variables = {};
   if (currentComponent) {
-    variables = await getEnvVars(null, "local", currentComponent);
+    variables = await getEnvVars(null, env, currentComponent);
   } else {
     // when in a monorep and not in a subapp, merge all env vars.
     // this is not 100% correct, but better than not exporting any vars at all
     // so we also add prefixed variants
     variables = await Object.keys(components).reduce(
       async (acc, componentName) => {
-        const subappvars = await getEnvVars(null, "local", componentName);
+        const subappvars = await getEnvVars(null, env, componentName);
         return {
           ...(await acc),
           ...subappvars,
@@ -46,13 +54,12 @@ const getAllVariablesToPrint = async (config: Config) => {
   }
   return variables;
 };
-export default async () => {
+export default async (choice?: { env?: string; componentName?: string }) => {
   const config = await getProjectConfig();
   if (!config) {
     return;
   }
-
-  const variables = await getAllVariablesToPrint(config);
+  const variables = await getAllVariablesToPrint(config, choice);
 
   console.log(
     Object.entries(variables)
