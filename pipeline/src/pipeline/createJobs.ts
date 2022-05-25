@@ -77,22 +77,33 @@ const replaceReferences = (
 ): CatladderJob<string> => {
   const stage =
     job.envMode === "stagePerEnv" ? `${job.stage} ${env}` : job.stage;
+
+  const needsFromNeeds: CatladderJob["needs"] = job.needs?.map((n) =>
+    isObject(n)
+      ? {
+          job: getFullReferencedJobName(n.job, componentName, env, allRawJobs),
+          artifacts: n.artifacts,
+        }
+      : getFullReferencedJobName(n, componentName, env, allRawJobs)
+  );
+  const needsFromOtherComponents: CatladderJob["needs"] =
+    job.needsOtherComponent?.map((other) => ({
+      artifacts: other.artifacts,
+      job: getFullReferencedJobName(
+        other.job,
+        other.componentName,
+        env,
+        allRawJobs
+      ),
+    }));
+  const needs = [
+    ...(needsFromNeeds ?? []),
+    ...(needsFromOtherComponents ?? []),
+  ];
   return {
     ...job,
     stage,
-    needs: job.needs?.map((n) =>
-      isObject(n)
-        ? {
-            job: getFullReferencedJobName(
-              n.job,
-              componentName,
-              env,
-              allRawJobs
-            ),
-            artifacts: n.artifacts,
-          }
-        : getFullReferencedJobName(n, componentName, env, allRawJobs)
-    ),
+    needs,
     environment: job.environment?.on_stop
       ? {
           ...job.environment,

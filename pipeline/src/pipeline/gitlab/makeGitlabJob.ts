@@ -5,6 +5,7 @@ import { CatladderJob } from "../../types/jobs";
 export const makeGitlabJob = ({
   envMode,
   needsStages,
+  needsOtherComponent,
   name,
   ...rest
 }: CatladderJob<string>): GitlabJobDef => {
