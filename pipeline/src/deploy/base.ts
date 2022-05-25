@@ -45,6 +45,14 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
   return {
     name: DEPLOY_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
+
+    needsOtherComponent: context.componentConfig.deploy
+      ? context.componentConfig.deploy.waitFor?.map((c) => ({
+          componentName: c,
+          job: DEPLOY_JOB_NAME,
+          artifacts: false,
+        })) ?? undefined
+      : undefined,
     // we don't want to deploy when there is a broken test
     needsStages: [
       {
@@ -56,7 +64,6 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
         artifacts: false,
       },
     ], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
-
     rules: [
       whenDeploy === "auto"
         ? {

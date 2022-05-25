@@ -49,9 +49,15 @@ export type CatladderJob<S = BaseStage> = {
   }[];
 
   /**
-   * does this require another job?
+   * does this require another job (from the same component)?
    */
   needs?: Array<string | { job: string; artifacts: boolean }>;
+
+  needsOtherComponent?: Array<{
+    componentName: string;
+    job: string;
+    artifacts: boolean;
+  }>;
   /**
    * cache config, we use here the same shape as gitlab itself
    */

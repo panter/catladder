@@ -6,6 +6,12 @@ export type DeployConfigBase = {
    * - all other envs: auto
    */
   when?: "manual" | "auto";
+
+  /**
+   * EXPERIMENTAL
+   * wait for other components to deploy first, before doing this deployment
+   */
+  waitFor?: string[];
 };
 type AllowUnknownProps<T extends Record<string, unknown>> = T &
   Record<string, unknown>;
