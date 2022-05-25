@@ -1,3 +1,10 @@
+# [1.29.0](https://git.panter.ch/catladder/catladder/compare/v1.28.0...v1.29.0) (2022-05-25)
+
+
+### Features
+
+* deploy jobs can now wait for other deploy jobs to finish first (experimental) ([31ebcf1](https://git.panter.ch/catladder/catladder/commit/31ebcf145dd8b21a7fcd63d5ca0ad4e117a04893))
+
 # [1.28.0](https://git.panter.ch/catladder/catladder/compare/v1.27.0...v1.28.0) (2022-05-25)
 
 
