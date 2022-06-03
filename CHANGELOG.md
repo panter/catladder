@@ -1,3 +1,10 @@
+## [1.29.2](https://git.panter.ch/catladder/catladder/compare/v1.29.1...v1.29.2) (2022-06-03)
+
+
+### Bug Fixes
+
+* path-equal problem ([22ea1d7](https://git.panter.ch/catladder/catladder/commit/22ea1d7b0f34556cdf9ef83d99c7febe895777ca))
+
 ## [1.29.1](https://git.panter.ch/catladder/catladder/compare/v1.29.0...v1.29.1) (2022-06-03)
 
 
