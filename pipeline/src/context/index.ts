@@ -24,6 +24,10 @@ export const getSecretVarName = (
   key: string
 ) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
 
+const addIndexVar = (vars: Record<string, unknown>) => ({
+  ...vars,
+  _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),
+});
 export const getSecretVarNameForContext = (context: Context, key: string) =>
   getSecretVarName(context.environment.shortName, context.componentName, key);
 export const getEnvironment = (
@@ -91,7 +95,9 @@ export const getEnvironment = (
 
     const componentSlug = slugify(componentName);
     const envInUrl =
-      envType === "review" && commitInfo ? `${commitInfo.reviewSlug}.${env}` : env;
+      envType === "review" && commitInfo
+        ? `${commitInfo.reviewSlug}.${env}`
+        : env;
 
     const domainCanonical =
       (mergedConfig?.deploy &&
@@ -146,11 +152,11 @@ export const getEnvironment = (
     )
   );
 
-  const envVarsRaw = {
+  const envVarsRaw = addIndexVar({
     ...predefinedVariables,
     ...secretEnvVars,
     ...publicEnvVarsRawSanitized,
-  };
+  });
 
   const envVars = resolveReferences(
     envVarsRaw,
