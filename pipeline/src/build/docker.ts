@@ -11,6 +11,19 @@ const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_MEMORY_LIMIT: "2Gi",
 };
 
+export const getDockerImageVariables = (context: Context) => {
+  return {
+    DOCKER_REGISTRY: "$CI_REGISTRY",
+    DOCKER_REGISTRY_IMAGE_PATH: "$CI_REGISTRY_IMAGE",
+    DOCKER_CACHE_IMAGE:
+      "$DOCKER_REGISTRY_IMAGE_PATH/caches/" + context.componentName,
+    DOCKER_IMAGE_NAME:
+      context.environment.shortName + "/" + context.componentName,
+    DOCKER_IMAGE: "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+    DOCKER_IMAGE_TAG: "$CI_COMMIT_SHA",
+  };
+};
+
 export const requiresDockerBuild = (context: Context) => {
   const deployConfig = context.componentConfig.deploy;
   if (isOfDeployType(deployConfig, "kubernetes")) {
@@ -36,16 +49,10 @@ export const getDockerBuildVariables = (context: Context) => {
     DOCKER_HOST: "tcp://0.0.0.0:2375",
     DOCKER_TLS_CERTDIR: "",
     DOCKER_DIR: ".", // relative to componentdir
-    IMAGE_TAG: "$CI_COMMIT_SHA",
+
     DOCKER_DRIVER: "overlay2",
 
-    IMAGE_NAME:
-      "$CI_REGISTRY_IMAGE/" +
-      context.environment.shortName +
-      "/" +
-      context.componentName,
-
-    CACHE_IMAGE: "$CI_REGISTRY_IMAGE/caches/" + context.componentName,
+    ...getDockerImageVariables(context),
   };
 };
 
@@ -86,10 +93,10 @@ export const createDockerBuildJobDefault = (
     script: [
       ...(script || []),
       "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-      "docker build --network host --cache-from $CACHE_IMAGE --tag $IMAGE_NAME:$IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
-      "docker push $IMAGE_NAME:$IMAGE_TAG",
-      "docker tag $IMAGE_NAME:$IMAGE_TAG $CACHE_IMAGE",
-      "docker push $CACHE_IMAGE",
+      "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
+      "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+      "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+      "docker push $DOCKER_CACHE_IMAGE",
     ],
     ...def,
   });

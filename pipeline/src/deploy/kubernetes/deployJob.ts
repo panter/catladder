@@ -97,7 +97,7 @@ export const createKubernetesDeployJobs = (
     variables: {
       ...context.environment.envVars,
       HELM_EXPERIMENTAL_OCI: "1",
-      IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
+      KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
       KUBE_VALUES: dump(kubeValues, {
         lineWidth: -1,
         quotingType: "'",
@@ -110,9 +110,6 @@ export const createKubernetesDeployJobs = (
       ].join(" "),
       COMPONENT_NAME: context.componentName,
       BUILD_ID: context.commitInfo?.buildId,
-      // TODO: unify with docker build stage
-      IMAGE_NAME: context.environment.shortName + "/" + context.componentName,
-      IMAGE_TAG: "$CI_COMMIT_SHA",
     },
   };
 

@@ -1,4 +1,4 @@
-import { requiresDockerBuild } from "../build/docker";
+import { getDockerImageVariables, requiresDockerBuild } from "../build/docker";
 import { Context } from "../types";
 import { CatladderJob } from "../types/jobs";
 import { contextIsStoppable } from "./utils";
@@ -78,6 +78,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     variables: {
       ...DEPLOY_RUNNER_VARIABLES,
       ...context.environment.envVars,
+      ...(hasDocker ? getDockerImageVariables(context) : {}),
     },
     environment: {
       ...environment,
