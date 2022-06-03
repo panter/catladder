@@ -61,6 +61,16 @@ export type KubernetesAutoscale = {
    */
   metrics: KubernetesAutoscaleMetric[];
 };
+export type KubernetesResourcesDef = {
+  limits?: {
+    cpu?: string;
+    memory?: string;
+  };
+  requests?: {
+    cpu?: string;
+    memory?: string;
+  };
+};
 type KubernetesHealthDef = {
   httpGet?: {
     path?: string;
@@ -74,6 +84,15 @@ type KubernetesHealthDef = {
     periodSeconds?: number;
     successThreshold?: number;
   };
+};
+
+export type KubernetesWorkerDef = {
+  enabled: boolean;
+  /**
+   * which command to run. defaults to `yarn start`
+   */
+  command?: string;
+  resources?: KubernetesResourcesDef;
 };
 export type DeployConfigKubernetesValues = AllowUnknownProps<{
   /**
@@ -139,20 +158,17 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
     /**
      * kubernetes resources
      */
-    resources?: {
-      limits?: {
-        cpu?: string;
-        memory?: string;
-      };
-      requests?: {
-        cpu?: string;
-        memory?: string;
-      };
-    };
+    resources?: KubernetesResourcesDef;
     healthRoute?: string;
     startupProbe?: KubernetesHealthDef;
     readinessProbe?: KubernetesHealthDef;
     livenessProbe?: KubernetesHealthDef;
+    /**
+     * specify a worker. A worker is a separate deployment that runs continously in the background.
+     * The worker pod can use the same entry point as the app or a different one (specify command).
+     * It has the same environment variables as the application and an additional IS_WORKER="true" variable
+     */
+    worker?: KubernetesWorkerDef;
   }>;
   /**
    * Mount secrets as files in the filesystem.
