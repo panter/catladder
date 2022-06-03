@@ -1,3 +1,10 @@
+## [1.29.1](https://git.panter.ch/catladder/catladder/compare/v1.29.0...v1.29.1) (2022-06-03)
+
+
+### Bug Fixes
+
+* **worker:** add types for worker ([a906a45](https://git.panter.ch/catladder/catladder/commit/a906a458af4c6977525e7962f475a1fb29a27ce8))
+
 # [1.29.0](https://git.panter.ch/catladder/catladder/compare/v1.28.0...v1.29.0) (2022-05-25)
 
 
