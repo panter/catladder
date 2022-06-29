@@ -120,6 +120,7 @@ export const getEnvironment = (
     predefinedVariables = {
       ...basePredefinedVariables,
       HOST_CANONICAL,
+      HOST: host,
       ROOT_URL: url,
       KUBE_NAMESPACE,
       KUBE_APP_NAME,
