@@ -1,3 +1,19 @@
+# [1.30.0](https://git.panter.ch/catladder/catladder/compare/v1.29.2...v1.30.0) (2022-06-29)
+
+
+### Bug Fixes
+
+* **semrel:** ensure fallback patch release when git commit message header contains a slash ([9d32bab](https://git.panter.ch/catladder/catladder/commit/9d32bab0e351d17eead8bed7022c017f3b6fbed9))
+* **typescript:** export DeployConfigCustom ([536f32f](https://git.panter.ch/catladder/catladder/commit/536f32f726f9d5a6d58d6bee0dd012bf6ffb452b))
+
+
+### Features
+
+* allow upper case in cron job name ([adfcd24](https://git.panter.ch/catladder/catladder/commit/adfcd24436ee0c9e27c53c020f2104db495dcc68))
+* **custom-deploy:** expose docker variables in deploy job ([6443681](https://git.panter.ch/catladder/catladder/commit/6443681b037e604a58da427d5b808dbdfe38a1b5))
+* inject HOST variable which is the ROOT_URL without https ([a653418](https://git.panter.ch/catladder/catladder/commit/a653418c058dc64806cb7ae4ed1bf851b037c035))
+* new env var _ALL_ENV_VAR_KEYS, that contains other env vars ([9982ef7](https://git.panter.ch/catladder/catladder/commit/9982ef7a5ae7eaef773abc50e3025fffcaf93319))
+
 ## [1.29.2](https://git.panter.ch/catladder/catladder/compare/v1.29.1...v1.29.2) (2022-06-03)
 
 
