@@ -194,7 +194,7 @@ export type DeployConfigKubernetes = {
   values?: DeployConfigKubernetesValues;
 } & DeployConfigBase;
 
-type DeployConfigCustom = {
+export type DeployConfigCustom = {
   type: "custom";
   requiresDocker: boolean;
   script: string[];
