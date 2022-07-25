@@ -1,6 +1,6 @@
 import { exec } from "child-process-promise";
 import { getSecretVarName } from "@catladder/pipeline";
-import { isObject } from "lodash";
+import { has, isObject, times } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
@@ -143,12 +143,14 @@ const createVariable = async (
   vorpal: CommandInstance,
   projectId: string,
   key: string,
-  value: string
+  value: string,
+  environment_scope = "*"
 ) => {
   return await doGitlabRequest(vorpal, `projects/${projectId}/variables`, {
     key,
     value,
     masked: isMaskable(value),
+    environment_scope,
   });
 };
 
@@ -168,23 +170,89 @@ const updateVariable = async (
     true
   );
 };
+
+const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
+  const allVariables = await getAllVariables(vorpal).then((v) =>
+    v.reduce<{
+      [key: string]: {
+        value?: string;
+        backups: number[];
+      };
+    }>((acc, variable) => {
+      const { key } = variable;
+
+      if (key.startsWith("CL_")) {
+        const matchBackup = key.match(/(CL_.*)_backup_([0-9]+)/);
+
+        if (matchBackup) {
+          const key = matchBackup[1];
+          const timestamp = Number(matchBackup[2]);
+          const backups = [...(acc[key]?.backups ?? []), timestamp];
+          return {
+            ...acc,
+            [key]: {
+              ...(acc[key] ?? {}), // add value
+              backups,
+            },
+          };
+        }
+
+        return {
+          ...acc,
+          [key]: {
+            backups: [],
+            ...(acc[key] ?? {}), // may add backups
+            value: variable.value,
+          },
+        };
+      }
+
+      return acc;
+    }, {})
+  );
+  return allVariables;
+};
+
 export const upsertAllVariables = async (
   vorpal: CommandInstance,
   variables: Record<string, any>,
   env: string,
-  componentName: string
+  componentName: string,
+  backup = true
 ): Promise<void> => {
   const { id } = await getProjectInfo(vorpal);
 
+  // we list all existing variables. We also gather backup versions, but its currently unused
+  const existingVariables = await getAllCatladderEnvVarsInGitlab(vorpal);
   for (const [key, value] of Object.entries(variables ?? {})) {
     const fullKey = getSecretVarName(env, componentName, key);
     const valueSanitized = isObject(value) ? JSON.stringify(value) : `${value}`;
-    try {
-      await updateVariable(vorpal, id, fullKey, valueSanitized);
-    } catch (e) {
-      await createVariable(vorpal, id, fullKey, valueSanitized);
-    } finally {
-      getAllVariables.clear();
+
+    const exists = has(existingVariables, fullKey);
+    const oldValue = existingVariables[fullKey]?.value;
+    const changed = oldValue !== valueSanitized;
+    if (changed) {
+      if (exists) {
+        vorpal.log(`changed: ${key}`);
+
+        await updateVariable(vorpal, id, fullKey, valueSanitized);
+        // write backup
+        if (backup) {
+          await createVariable(
+            vorpal,
+            id,
+            fullKey + "_backup_" + new Date().getTime(),
+            oldValue,
+            "_backup"
+          );
+        }
+      } else {
+        vorpal.log(`new    : ${key}`);
+        await createVariable(vorpal, id, fullKey, valueSanitized);
+      }
+    } else {
+      vorpal.log(`skip   : ${key}`);
     }
   }
+  getAllVariables.clear();
 };

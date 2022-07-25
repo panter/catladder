@@ -14,13 +14,101 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName:  {{ template "fullname" . }}-mongodb-backup
+          restartPolicy: OnFailure
           containers:
-          - name: mongosnap
-            image: gcr.io/skynet-164509/mongosnap:latest
-            args:
-            - node
-            - stuff.js
-            - "{{ .Release.Namespace }}"
-            - "{{ .Release.Name }}"
-          restartPolicy: Never
+            - name: backup-cron
+            
+              env:
+                - name: M_RELEASE_NAME
+                  value: {{ template "fullname" . }}-mongodb
+                - name: MONGODB_ROOT_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ template "fullname" $ }}-app-secrets
+                      key: MONGODB_ROOT_PASSWORD
+                - name: VSC_NAME
+                  value: {{ .Values.mongodb.backup.volumeSnapshotClass }}
+              image: {{ .Values.mongodb.backup.image }}
+              imagePullPolicy: IfNotPresent
+              command:
+                - /bin/bash
+                - -i
+                - -c
+                - |
+                    set -e
+                    echo alias M_CMD=\'mongo admin --host {{ .Values.mongodb.backup.hostToBackup }} {{- if .Values.mongodb.auth.enabled }} --authenticationDatabase admin -u root -p "\"${MONGODB_ROOT_PASSWORD}\"" {{- end }} --quiet --eval\' >> ~/.bashrc
+                    source ~/.bashrc
+                    echo -e "[+] Check if it is a Primary node to make it stepDown\n"
+                    if [[ `M_CMD " db.runCommand( { isMaster: 1 } )['ismaster']"` != "false" ]]
+                    then
+                      echo -e "[+] Stepping Down\n"
+                      M_CMD "rs.stepDown()"
+                    fi
+                    echo -e "[+] Send Slave to Freeze\n"
+                    M_CMD "rs.freeze(99999999999)"
+                    export E_TIME=$(date +%s)
+                    echo -e "[+] Creating snapshot object\n"
+                    cat <<EOF | kubectl apply -f -
+                    apiVersion: snapshot.storage.k8s.io/v1beta1
+                    kind: VolumeSnapshot
+                    metadata:
+                      name: snapshot-${M_RELEASE_NAME}-${E_TIME}
+                    spec:
+                      volumeSnapshotClassName: ${VSC_NAME}
+                      source:
+                        persistentVolumeClaimName:  {{ .Values.mongodb.backup.pvcToBackup }}
+                    EOF
+                    echo -e "[+] Waiting for snapshot to finish\n"
+                    while : ; do
+                      result=$(kubectl get volumesnapshot   -o custom-columns='READY:.status.readyToUse' --field-selector metadata.name=snapshot-${M_RELEASE_NAME}-${E_TIME} | grep -v READY)
+                      [[ "${result}" == "true" ]] && break
+                      echo "[-] still waiting for snapshot to be ready .. "
+                      sleep 1
+                    done
+                    echo -e "[+] Snapshot finished, unfreeze Slave\n"
+                    M_CMD "rs.freeze(0)"
+                    echo -e "[+] Snapshotting finished successfully\n"
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "fullname" . }}-mongodb-backup
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "fullname" . }}-mongodb-backup
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - services
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - "snapshot.storage.k8s.io/v1beta1"
+      - "snapshot.storage.k8s.io"
+    resources:
+      - "volumesnapshots"
+    verbs:
+      - "*"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ template "fullname" . }}-mongodb-backup
+roleRef:
+  kind: Role
+  name: {{ template "fullname" . }}-mongodb-backup
+  apiGroup: rbac.authorization.k8s.io
+subjects:
+  - kind: ServiceAccount
+    name: {{ template "fullname" . }}-mongodb-backup
+
+
 {{- end }}

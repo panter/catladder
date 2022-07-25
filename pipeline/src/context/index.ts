@@ -4,7 +4,7 @@ import { BUILD_TYPES } from "../build";
 import { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
 import { DeployConfig } from "../deploy/types";
-import { Config, isKnowEnvType, DevLocalEnvConfig } from "../types/config";
+import { Config, DevLocalEnvConfig, isKnowEnvType } from "../types/config";
 import {
   CommitInfo,
   Context,
@@ -28,6 +28,7 @@ const addIndexVar = (vars: Record<string, unknown>) => ({
   ...vars,
   _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),
 });
+
 export const getSecretVarNameForContext = (context: Context, key: string) =>
   getSecretVarName(context.environment.shortName, context.componentName, key);
 export const getEnvironment = (
@@ -128,7 +129,18 @@ export const getEnvironment = (
     };
   }
   const publicEnvVarsRaw = mergedConfig.vars?.public ?? {};
-  const secretEnvVarKeys = mergedConfig.vars?.secret ?? [];
+
+  const additionalSecretKeys = componentConfig.deploy
+    ? DEPLOY_TYPES[componentConfig.deploy.type].additionalSecretKeys(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        componentConfig.deploy as any
+      )
+    : [];
+
+  const secretEnvVarKeys = [
+    ...(mergedConfig.vars?.secret ?? []),
+    ...additionalSecretKeys,
+  ];
   const secretEnvVars = Object.fromEntries(
     secretEnvVarKeys.map((key) => [
       key,

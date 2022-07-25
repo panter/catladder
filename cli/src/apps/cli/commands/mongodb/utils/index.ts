@@ -5,7 +5,12 @@ import {
 } from "../../../../../utils/projects";
 
 const filterMongoDbs = (podNames: string[]) =>
-  podNames.filter((name) => name.includes("mongodb-replicaset"));
+  podNames.filter(
+    (name) =>
+      name.includes("mongodb") &&
+      !name.includes("mongodb-backup") &&
+      !name.includes("arbiter")
+  );
 
 export const getProjectMongodbAllPods = async (envComponent: string) =>
   filterMongoDbs(await getProjectPodNames(envComponent));
@@ -43,13 +48,18 @@ export const executeMongodbCommand = async (
 };
 
 export const podIsMaster = async (namespace: string, podName: string) => {
-  const result = await executeMongodbCommand(
-    namespace,
-    podName,
-    "db.isMaster()"
-  );
+  try {
+    const result = await executeMongodbCommand(
+      namespace,
+      podName,
+      "db.isMaster()"
+    );
 
-  return result.ismaster;
+    return result.ismaster;
+  } catch (e) {
+    // maybe shutting down ?
+    return null;
+  }
 };
 
 const spaces = (n: number) => " ".repeat(n);

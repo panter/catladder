@@ -58,9 +58,9 @@ metadata:
   namespace: ${namespace}
   name: ${serviceAccountName}
 rules:
-- apiGroups: ["", "extensions", "apps", "networking.k8s.io", "batch", "autoscaling"]
-  resources: ["deployments", "replicasets", "statefulsets", "pods", "secrets", "configmaps", "services", "ingresses", "serviceaccounts", "jobs", "cronjobs", "horizontalpodautoscalers"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"] # You can also use ["*"]
+- apiGroups: ["", "extensions", "apps", "networking.k8s.io", "batch", "autoscaling", "rbac.authorization.k8s.io","snapshot.storage.k8s.io"]
+  resources: ["deployments", "replicasets", "statefulsets", "pods", "secrets", "configmaps", "services", "ingresses", "serviceaccounts", "roles", "rolebindings", "jobs", "cronjobs", "horizontalpodautoscalers", "persistentvolumeclaims", "volumesnapshots"]
+  verbs: ["*"] # You can also use ["*"]
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -106,7 +106,8 @@ EOF
     instance,
     vars,
     context.environment.shortName,
-    context.componentName
+    context.componentName,
+    false // no backup
   );
   instance.log("done!");
 };

@@ -1,9 +1,6 @@
 import { exec, spawn } from "child-process-promise";
 import commandExists from "command-exists-promise";
 import dayjs from "dayjs";
-import { readFile, writeFile } from "fs-extra";
-import { withFile } from "tmp-promise";
-import getEditor from "../getEditor";
 import { getPreference, hasPreference, setPreference } from "../preferences";
 
 const DEBUG = false;
@@ -120,14 +117,6 @@ export const readPass = async (path: string) => {
   return result.notes || result.login?.password;
 };
 
-const update = async (type: string, itemId: string, value: any) => {
-  const result = await execBitwardenCommand(
-    `edit ${type} ${itemId} ${encode(value)}`
-  );
-
-  return result;
-};
-
 const MAX_SYNC_AGE_IN_MINUTES = 30;
 export const syncBitwarden = async (force = true) => {
   const lastSync = (await hasPreference("bwLastSync"))
@@ -170,21 +159,4 @@ export const trashItem = async (path: string) => {
   const result = await execBitwardenCommand(`delete item ${item.id}`);
 
   return result;
-};
-export const editPass = async (path: string) => {
-  const item = await getItem(path);
-
-  await withFile(
-    async ({ path: tmpFilePath }) => {
-      await writeFile(tmpFilePath, item.notes);
-      await (await getEditor()).open(tmpFilePath);
-      const newContent = (await readFile(tmpFilePath)).toString("utf-8");
-
-      await update("item", item.id, {
-        ...item,
-        notes: newContent,
-      });
-    },
-    { postfix: ".yml" }
-  );
 };

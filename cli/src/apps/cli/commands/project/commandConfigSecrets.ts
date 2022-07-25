@@ -1,19 +1,17 @@
 /* eslint-disable no-constant-condition */
+import { getSecretVarName } from "@catladder/pipeline";
 import { stripIndents } from "common-tags";
 import { difference } from "lodash";
 import Vorpal, { CommandInstance } from "vorpal";
-import { GOOGLE_CLOUD_SQL_PASS_PATH } from "../../../../config/constants";
 import {
   getAllComponentsWithAllEnvsHierarchical,
   getEnvironment,
   getEnvVars,
-  getPipelineContextByChoice,
   getProjectComponents,
   parseChoice,
 } from "../../../../config/getProjectConfig";
 import { editAsFile } from "../../../../utils/editAsFile";
 import { upsertAllVariables } from "../../../../utils/gitlab";
-import { hasBitwarden, readPass } from "../../../../utils/passwordstore";
 import { delay } from "../../../../utils/promise";
 import { allEnvsAndAllComponents } from "./utils/autocompletions";
 
@@ -45,6 +43,7 @@ const resolveJson = (v: Vars) =>
       ];
     })
   );
+
 const getEnvVarsToEdit = async (
   instance: CommandInstance,
   env: string,
@@ -54,7 +53,13 @@ const getEnvVarsToEdit = async (
 
   const allEnvVars = await getEnvVars(instance, env, componentName);
   return Object.fromEntries(
-    secretEnvVarKeys.map((key) => [key, allEnvVars[key]])
+    secretEnvVarKeys.map((key) => {
+      const value = allEnvVars[key];
+      // due to some quirky way to resolve these variables, unset variables have the $CL_ prefix, so we remove thouse here
+      const variableIsNotSet =
+        value === "$" + getSecretVarName(env, componentName, key);
+      return [key, variableIsNotSet ? "🚨 FILL ME" : value];
+    })
   );
 };
 const doItFor = async (
@@ -148,32 +153,7 @@ const doItFor = async (
         env,
         componentName
       );
-
-      if (hasBitwarden()) {
-        // add cloud sql secret if needed.
-        // TODO: this is legacy, in the future we want to have one service account per app
-        try {
-          const context = await getPipelineContextByChoice(env, componentName);
-          if (
-            context.componentConfig.deploy &&
-            context.componentConfig.deploy.type === "kubernetes" &&
-            context.componentConfig.deploy.values?.cloudsql?.enabled
-          ) {
-            await upsertAllVariables(
-              instance,
-              {
-                cloudsqlProxyCredentials: await readPass(
-                  GOOGLE_CLOUD_SQL_PASS_PATH
-                ),
-              },
-              env,
-              componentName
-            );
-          }
-        } catch (e) {
-          // ignore atm
-        }
-      }
+      instance.log("");
       instance.log("✅ " + env + ":" + componentName);
     }
   }

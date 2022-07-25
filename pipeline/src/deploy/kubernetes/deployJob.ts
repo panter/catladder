@@ -1,20 +1,16 @@
 import { dump } from "js-yaml";
 import { merge } from "lodash";
-import { DeployConfigKubernetesValues } from "..";
 import { getSecretVarNameForContext } from "../..";
 import { getRunnerImage } from "../../runner";
 import { Context } from "../../types/context";
 import { CatladderJob } from "../../types/jobs";
-import { mergeWithMergingArrays } from "../../utils";
 import {
   getBaseDeploymentJob,
   getBaseDeploymentStopJob,
   getBaseRollbackJob,
 } from "../base";
 import { isOfDeployType } from "../types";
-import { createCloudsqlBaseConfig } from "./cloudsql";
-import { createMongodbBaseConfig } from "./mongodb";
-import { processSecretsAsFiles } from "./processSecretsAsFiles";
+import { createKubeValues } from "./kubeValues";
 
 export const createKubernetesDeployJobs = (
   context: Context
@@ -28,71 +24,7 @@ export const createKubernetesDeployJobs = (
     throw new Error("deploy config is not kubernetes");
   }
 
-  const allEnvVars = context.environment.envVars;
-  /**
-   * separate by secrets and public.
-   * we evalulate the actual values later, but want to store the secrets in kubernetes secrets
-   */
-  const env = Object.entries(allEnvVars).reduce<{
-    secret: Record<string, string>;
-    public: Record<string, string>;
-  }>(
-    (acc, [key, value]) => {
-      if (String(value)?.startsWith("$CL_")) {
-        acc.secret = {
-          ...acc.secret,
-          [key]: value,
-        };
-        return acc;
-      }
-      acc.public = {
-        ...acc.public,
-        [key]: value,
-      };
-      return acc;
-    },
-    {
-      secret: {},
-      public: {},
-    }
-  );
-
-  const defaultAppConfig: DeployConfigKubernetesValues["application"] = {
-    host: context.environment.host,
-    command: context.componentConfig.build.startCommand,
-    livenessProbe: {
-      httpGet: {
-        path: deployConfig.values?.application?.healthRoute ?? "__health",
-      },
-    },
-    readinessProbe: {
-      httpGet: {
-        path: deployConfig.values?.application?.healthRoute ?? "__health",
-      },
-    },
-    startupProbe: {
-      httpGet: {
-        path: deployConfig.values?.application?.healthRoute ?? "__health",
-      },
-    },
-  };
-
-  const defaultKubeValues = {
-    application: defaultAppConfig,
-
-    env: env,
-    ...(deployConfig.values?.cloudsql?.enabled
-      ? createCloudsqlBaseConfig(context)
-      : {}),
-    ...(deployConfig.values?.mongodb?.enabled
-      ? createMongodbBaseConfig(context)
-      : {}),
-  };
-
-  const kubeValues = processSecretsAsFiles(
-    mergeWithMergingArrays(defaultKubeValues, deployConfig.values)
-  );
-
+  const kubeValues = createKubeValues(context);
   const kubernetesEnvironment = {
     namespace: context.environment.envVars.KUBE_NAMESPACE,
   };
