@@ -1,3 +1,10 @@
+# [1.31.0](https://git.panter.ch/catladder/catladder/compare/v1.30.1...v1.31.0) (2022-07-26)
+
+
+### Features
+
+* add hostAliases to DeployConfigKubernetesValues ([7837db8](https://git.panter.ch/catladder/catladder/commit/7837db84e116d4280a8566ec688cb898c0a1e79d))
+
 ## [1.30.1](https://git.panter.ch/catladder/catladder/compare/v1.30.0...v1.30.1) (2022-07-14)
 
 # [1.30.0](https://git.panter.ch/catladder/catladder/compare/v1.29.2...v1.30.0) (2022-06-29)
