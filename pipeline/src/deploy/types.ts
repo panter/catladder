@@ -147,6 +147,10 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
      */
     redirects?: AllowUnknownProps<{ host: string }>[];
     /**
+     * Host aliases
+     */
+    hostAliases?: string[];
+    /**
      * how many pods will be started
      */
     replicas?: number;
