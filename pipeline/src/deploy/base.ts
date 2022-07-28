@@ -5,6 +5,7 @@ import { contextIsStoppable } from "./utils";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
 export const STOP_JOB_NAME = "🛑 Stop ⚠️";
+export const ROLLBACK_JOB_NAME = "↩️ Rollback ⚠️";
 
 const DEPLOY_RUNNER_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -123,6 +124,33 @@ export const getBaseDeploymentStopJob = (
     environment: {
       ...environment,
       action: "stop",
+    },
+  };
+};
+
+export const getBaseRollbackJob = (context: Context): JobWithoutScript => {
+  const environment = {
+    name: context.environment.fullName,
+    url: context.environment.url,
+  };
+  return {
+    name: ROLLBACK_JOB_NAME,
+    envMode: "stagePerEnv", // makes it easier to run manual tasks er env
+    needs: [DEPLOY_JOB_NAME],
+    rules: [
+      {
+        when: "manual",
+        allow_failure: true,
+      },
+    ],
+    variables: {
+      ...DEPLOY_RUNNER_VARIABLES,
+      GIT_STRATEGY: "none",
+    },
+    stage: "rollback",
+    environment: {
+      ...environment,
+      action: "access",
     },
   };
 };

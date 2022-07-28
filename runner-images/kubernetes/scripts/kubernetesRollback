@@ -1,0 +1,5 @@
+#!/bin/bash
+set -e
+
+echo "Rolling back $RELEASE_NAME"
+helm rollback "$RELEASE_NAME" --namespace "$KUBE_NAMESPACE"

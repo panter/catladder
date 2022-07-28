@@ -27,7 +27,7 @@ export type GitlabEnvironment = {
   kubernetes?: {
     namespace?: string;
   };
-  action?: "stop" | "start" | "prepare"; // defaults to start
+  action?: "stop" | "start" | "prepare" | "access"; // defaults to start
   on_stop?: string; // other job to run on stop
   auto_stop_in?: string;
 };
