@@ -13,6 +13,7 @@ export const BASE_STAGES = [
   "build",
   "deploy",
   "verify",
+  "rollback",
   "stop",
 ] as const;
 export type BaseStage = typeof BASE_STAGES[number];

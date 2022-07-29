@@ -3,9 +3,9 @@ import { RULES_ALWAYS } from "../rules";
 import { getRunnerImage } from "../runner";
 import { GitlabPipeline, Pipeline, PipelineJob, PipelineType } from "../types";
 import { Config, PipelineTrigger } from "../types/config";
+import { BASE_STAGES } from "../types/jobs";
 import { createJobs } from "./createJobs";
 
-const baseStages = ["setup", "test", "build", "deploy", "verify", "stop"];
 export const createChildPipeline = async <T extends PipelineType>(
   type: T,
   trigger: PipelineTrigger,
@@ -30,7 +30,7 @@ export const createChildPipeline = async <T extends PipelineType>(
   // this is just so that it looks nicer in gitlab and makes running mutliple manual tasks more easy to use
 
   const allEnvs = getAllEnvsInAllComponents(config);
-  const stages = baseStages.reduce<string[]>(
+  const stages = BASE_STAGES.reduce<string[]>(
     (acc, baseStage) => [
       ...acc,
       baseStage,

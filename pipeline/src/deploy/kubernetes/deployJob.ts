@@ -6,7 +6,11 @@ import { getRunnerImage } from "../../runner";
 import { Context } from "../../types/context";
 import { CatladderJob } from "../../types/jobs";
 import { mergeWithMergingArrays } from "../../utils";
-import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
+import {
+  getBaseDeploymentJob,
+  getBaseDeploymentStopJob,
+  getBaseRollbackJob,
+} from "../base";
 import { isOfDeployType } from "../types";
 import { createCloudsqlBaseConfig } from "./cloudsql";
 import { createMongodbBaseConfig } from "./mongodb";
@@ -115,6 +119,7 @@ export const createKubernetesDeployJobs = (
 
   const baseDeploymentJob = getBaseDeploymentJob(context);
   const baseStopJob = getBaseDeploymentStopJob(context);
+  const baseRollbackJob = getBaseRollbackJob(context);
   const clusterName = `kube-${context.environment.fullName}`;
   const connectContext = [
     `kubectl config set-cluster "${clusterName}" --server="$${getSecretVarNameForContext(
@@ -145,6 +150,13 @@ export const createKubernetesDeployJobs = (
     }),
     merge({}, baseStopJob, shared, {
       script: [...connectContext, "kubernetesDelete"],
+      environment: {
+        kubernetes: kubernetesEnvironment,
+      },
+    }),
+
+    merge({}, baseRollbackJob, shared, {
+      script: [...connectContext, "kubernetesRollback"],
       environment: {
         kubernetes: kubernetesEnvironment,
       },
