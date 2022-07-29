@@ -1,3 +1,10 @@
+# [1.32.0](https://git.panter.ch/catladder/catladder/compare/v1.31.0...v1.32.0) (2022-07-29)
+
+
+### Features
+
+* **deploy kubernetes:** add rollback job that reverts to the last helm version ([e2d82e9](https://git.panter.ch/catladder/catladder/commit/e2d82e96316af5bad38c161c2fc22f343ca1898e))
+
 # [1.31.0](https://git.panter.ch/catladder/catladder/compare/v1.30.1...v1.31.0) (2022-07-26)
 
 
