@@ -46,6 +46,7 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
     await doGitlabRequest(instance, `projects/${projectId}/variables`, {
       key: "GL_TOKEN",
       value: GL_TOKEN,
+      masked: true,
     });
   }
 
