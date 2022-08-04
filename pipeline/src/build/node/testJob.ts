@@ -1,3 +1,4 @@
+import { getRunnerImage } from "../../runner";
 import { Context } from "../../types/context";
 import { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
@@ -63,6 +64,7 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
           name: "🧪 test",
 
           ...base,
+          image: getRunnerImage("jobs-testing-chrome"),
           cache: getNodeCache(context),
           script: [
             `cd ${context.componentConfig.dir}`,
