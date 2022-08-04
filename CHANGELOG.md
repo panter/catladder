@@ -1,3 +1,11 @@
+# [1.33.0](https://git.panter.ch/catladder/catladder/compare/v1.32.0...v1.33.0) (2022-08-04)
+
+
+### Features
+
+* **cli:** mask GL_TOKEN variable ([e0311e9](https://git.panter.ch/catladder/catladder/commit/e0311e9e62c4e20229392f643416305547a57279))
+* **pipeline:** switch to runner image with chrome to support headless testing ([f5c594c](https://git.panter.ch/catladder/catladder/commit/f5c594ce2bc3ee521470f52302a2936afdab780f))
+
 # [1.32.0](https://git.panter.ch/catladder/catladder/compare/v1.31.0...v1.32.0) (2022-07-29)
 
 
