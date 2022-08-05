@@ -5,18 +5,15 @@ echo "Deploy to kubernetes"
 echo "Release: $RELEASE_NAME"
 echo "URL (canonical): $HOST_CANONICAL"
 
-# additional helm args if any (rarely used)
-helmArgsEvaluated=$(echo $HELM_ARGS | envsubst)
-
 # this bash-brainfuck simply splits $helmArgs by newline to an array...
-readarray -t helmArgsArray <<<"$helmArgsEvaluated"
+readarray -t helmArgsArray <<<"$HELM_ARGS"
 
 #Log the time until selfdestruct in case of review environment
 if [[ ${ENV_SHORT} == "review" ]]; then echo "NOTE - This deployment will stop itself after 2 weeks"; fi
 
 echo "all values"
 
-echo "$KUBE_VALUES" | envsubst >__all_values.yml
+echo "$KUBE_VALUES" >__all_values.yml
 
 echo "doing helm upgrade"
 helm upgrade --install "$RELEASE_NAME" /helm-charts/$HELM_GITLAB_CHART_NAME \

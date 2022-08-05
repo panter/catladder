@@ -6,11 +6,6 @@ RUN rm /bin/sh && \
     ln -s /bin/bash /bin/sh && \
     mkdir -p /root/.nvm
 
-# add gettext, TODO: find out why this is needed (i don't remember anymore)
-RUN apt-get update && apt-get install -y \
-    gettext-base
-
-
 # set high timeout for yarn, see https://github.com/dhis2/notes/issues/29
 RUN yarn config set network-timeout 600000 -g 
 
