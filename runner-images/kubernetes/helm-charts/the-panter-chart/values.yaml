@@ -57,6 +57,11 @@ application:
     requests:
       cpu: 50m
       memory: 150Mi
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
   leaderElector:
     enabled: false
   worker:

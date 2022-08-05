@@ -19,11 +19,8 @@ spec:
     matchLabels:
       app: {{ template "fullname" $context }}-app
       release: {{ .Release.Name }}
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-    type: RollingUpdate
+  strategy: 
+{{ toYaml .Values.application.updateStrategy | indent 4 }}
   template:
     metadata:
       annotations:

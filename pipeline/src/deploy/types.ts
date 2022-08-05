@@ -85,7 +85,23 @@ type KubernetesHealthDef = {
     successThreshold?: number;
   };
 };
-
+export type KubernetesUpdateStrategy = {
+  rollingUpdate: {
+    /**
+     * how many pods can be created additionally to the target number
+     * can be absolute number or percentage.
+     * defaults to 1 (kube default is 25%)
+     */
+    maxSurge: number | string;
+    /**
+     * how many pods are allowed to be unavailable
+     * can be absolute number or percentage
+     * defaults to 0 (kube default is 25%)
+     */
+    maxUnavailable: number | string;
+  };
+  type: "RollingUpdate";
+};
 export type KubernetesWorkerDef = {
   enabled: boolean;
   /**
@@ -159,9 +175,16 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
      * autoscale the pods horizontally
      */
     autoscale?: KubernetesAutoscale;
+
+    /**
+     * the update strategy, see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment
+     */
+    updateStrategy?: KubernetesUpdateStrategy;
+
     /**
      * kubernetes resources
      */
+
     resources?: KubernetesResourcesDef;
     healthRoute?: string;
     startupProbe?: KubernetesHealthDef;
@@ -177,6 +200,8 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
   /**
    * Mount secrets as files in the filesystem.
    * These secrets are still available as env vars, but will contain the path of the file instead
+   *
+   * @deprecated this will be removed in the future, because its very niche and not used
    */
   secretsAsFile?: string[];
 }>;
