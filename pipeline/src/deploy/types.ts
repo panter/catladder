@@ -142,7 +142,21 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
    * post-install/upgrade jobs. These use the app image and have all env vars available.
    * Typically used for migrations and seeds
    */
-  jobs?: Record<string, AllowUnknownProps<{ command: string }>>;
+  jobs?: Record<
+    string,
+    AllowUnknownProps<{
+      /**
+       * the command to execute
+       */
+      command: string;
+      /**
+       * comma-separated list of helm hooks, see https://helm.sh/docs/topics/charts_hooks/
+       *
+       * defaults to pre-install,pre-upgrade
+       */
+      hook?: string;
+    }>
+  >;
   /**
    * cronjobs that run periodically. These use the app image have all env vars available.
    */
