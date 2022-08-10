@@ -136,7 +136,7 @@ export const getBaseRollbackJob = (context: Context): JobWithoutScript => {
   return {
     name: ROLLBACK_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
-    needs: [DEPLOY_JOB_NAME],
+    needs: [], // can be executed even if the deploy job failed
     rules: [
       {
         when: "manual",
