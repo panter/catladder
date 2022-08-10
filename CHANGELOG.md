@@ -1,3 +1,10 @@
+## [1.34.1](https://git.panter.ch/catladder/catladder/compare/v1.34.0...v1.34.1) (2022-08-10)
+
+
+### Bug Fixes
+
+* **rollback:** rollback could not be triggered if deployment failed ([f28ddf1](https://git.panter.ch/catladder/catladder/commit/f28ddf1930436212245a29e9211ee009c000d655))
+
 # [1.34.0](https://git.panter.ch/catladder/catladder/compare/v1.33.1...v1.34.0) (2022-08-05)
 
 
