@@ -1,3 +1,10 @@
+# [1.35.0](https://git.panter.ch/catladder/catladder/compare/v1.34.1...v1.35.0) (2022-08-11)
+
+
+### Features
+
+* **kubernetes:** jobs run now before the app deployment ([aaf96a3](https://git.panter.ch/catladder/catladder/commit/aaf96a3fe8ae0808c7b16e7bebdcdf8c4efdda2f))
+
 ## [1.34.1](https://git.panter.ch/catladder/catladder/compare/v1.34.0...v1.34.1) (2022-08-10)
 
 
