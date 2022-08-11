@@ -21,7 +21,7 @@ metadata:
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
-    "helm.sh/hook": "{{- default "post-install,post-upgrade" $job.hook -}}"
+    "helm.sh/hook": "{{- default "pre-install,pre-upgrade" $job.hook -}}"
     "helm.sh/hook-weight": "{{- default $defaultIndex $job.hookWeight -}}"
     "helm.sh/hook-delete-policy": "{{- default "hook-succeeded,before-hook-creation" $job.hookDeletePolicy -}}"
 spec:
