@@ -1,3 +1,10 @@
+# [1.36.0](https://git.panter.ch/catladder/catladder/compare/v1.35.0...v1.36.0) (2022-08-12)
+
+
+### Features
+
+* new mongodb chart for kube, better secret env var handling ([314a7d8](https://git.panter.ch/catladder/catladder/commit/314a7d8c313f4beb862dd874d2c38403cfa04596))
+
 # [1.35.0](https://git.panter.ch/catladder/catladder/compare/v1.34.1...v1.35.0) (2022-08-11)
 
 
