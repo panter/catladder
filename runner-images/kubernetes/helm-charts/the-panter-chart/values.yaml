@@ -125,28 +125,12 @@ mongodb:
   enabled: false
   dbName: app
   backup:
-    enabled: true
-    schedule: "0 0 * * *"
+    enabled: false
 
 cloudsql:
   enabled: false
   projectId: skynet-164509
   region: europe-west6
-
-mongodb-replicaset:
-  replicas: 3
-  persistentVolume:
-    size: 20Gi
-  metrics:
-    enabled: true
-  extraLabels:
-    role: mongo # needed for backup cronjob
-  resources:
-    requests:
-      cpu: 50m
-      memory: 256Mi
-    limits:
-      memory: 512Mi
 
 mailhog:
   enabled: false

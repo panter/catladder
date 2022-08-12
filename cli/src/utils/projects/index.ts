@@ -35,7 +35,12 @@ export const getProjectPods = async (envComponent: string) => {
   const k8sApi = getk8sApi();
   const res = await k8sApi.listNamespacedPod(namespace);
 
-  return res.body.items;
+  const { componentName } = parseChoice(envComponent);
+  return res.body.items.filter((item) =>
+    componentName
+      ? item.metadata?.name?.includes("-" + componentName + "-")
+      : true
+  );
 };
 
 export const getProjectPvcs = async (envComponent: string) => {

@@ -1,6 +1,5 @@
 import { spawn } from "child-process-promise";
 import Vorpal from "vorpal";
-import { GOOGLE_CLOUD_SQL_PASS_PATH } from "../../../../config/constants";
 import {
   getEnvVars,
   getProjectConfig,
@@ -32,6 +31,7 @@ export default async (vorpal: Vorpal) =>
       }
 
       // TODO: reimpleent with new config
+      /*
       throw new Error("needs reimplementation with new config");
       const GOOGLE_CLOUD_SQL_REGION = "europe-west6"; // currently hardcoded
       const { POSTGRESQL_PASSWORD } = await getEnvVars(
@@ -88,4 +88,5 @@ export default async (vorpal: Vorpal) =>
       `;
 
       await spawn(copyDBScript, [], { shell: "bash", stdio: "inherit" });
+      */
     });

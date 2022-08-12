@@ -1,10 +1,12 @@
 import Vorpal from "vorpal";
+import { getEnvVars, parseChoice } from "../../../../config/getProjectConfig";
 import { logError } from "../../../../utils/log";
 import { startPortForward } from "../../../../utils/portForward";
 import { getProjectNamespace } from "../../../../utils/projects";
 import { envAndComponents } from "../project/utils/autocompletions";
 import ensureCluster from "../project/utils/ensureCluster";
 import { getProjectMongodbAllPodsSortedWithLabel } from "./utils";
+import clipboard from "clipboardy";
 
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -43,5 +45,18 @@ export default async (vorpal: Vorpal) =>
         default: "30000",
         message: "Local port: ",
       });
+      const { env, componentName } = parseChoice(envComponent);
+      const envVars = await getEnvVars(this, env, componentName);
+      const MONGODB_ROOT_PASSWORD = envVars?.MONGODB_ROOT_PASSWORD;
+      const connectionUrl = `mongodb://root:${MONGODB_ROOT_PASSWORD}@localhost:${localPort}`;
+      clipboard.writeSync(connectionUrl);
+      this.log("");
+      this.log("username: root");
+      this.log(`password: ${MONGODB_ROOT_PASSWORD}`);
+      this.log(`connection string: ${connectionUrl}`);
+      this.log("");
+      this.log("👆 connection string has been copied to your clipboard!");
+      this.log("");
+
       return startPortForward(podName, localPort, 27017, namespace);
     });

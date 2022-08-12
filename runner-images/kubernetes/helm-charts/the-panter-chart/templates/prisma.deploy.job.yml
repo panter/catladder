@@ -32,8 +32,9 @@ spec:
       restartPolicy: Never
       containers:
       - name: post-install-job
+        {{include "env" . | nindent 8}}
         image: "{{ template "appImage" .}}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/bin/sh","-c"]
-        args: ["cd /src; MONGO_URL={{template "MONGO_URL" . }} PRISMA_ENDPOINT={{template "PRISMA_ENDPOINT" . }} npx prisma1 deploy --force"]
+        args: ["cd /src; PRISMA_ENDPOINT={{template "PRISMA_ENDPOINT" . }} npx prisma1 deploy --force"]
 {{- end -}}

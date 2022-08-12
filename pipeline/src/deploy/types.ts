@@ -110,6 +110,25 @@ export type KubernetesWorkerDef = {
   command?: string;
   resources?: KubernetesResourcesDef;
 };
+
+export type DeployConfigMongodbBase = {
+  enabled?: boolean;
+  dbName?: string;
+};
+
+export type DeployConfigMongodbStandalone = {
+  architecture: "standalone";
+};
+export type DeployConfigMongodbReplicaset = {
+  architecture: "replicaset";
+  /**
+   * defaults to 2
+   */
+  replicaCount?: number;
+};
+export type DeployConfigMongodb = DeployConfigMongodbBase &
+  (DeployConfigMongodbStandalone | DeployConfigMongodbReplicaset);
+
 export type DeployConfigKubernetesValues = AllowUnknownProps<{
   /**
    * enable cloudsql db. Currently you have to manually set it up
@@ -122,11 +141,9 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
   };
   /**
    * enable mongodb. The mongodb is deployed using a helm chart.
-   * Consider using external services instead of this.
+   * See https://github.com/bitnami/charts/tree/master/bitnami/mongodb
    */
-  mongodb?: AllowUnknownProps<{
-    enabled: boolean;
-  }>;
+  mongodb?: DeployConfigMongodb;
   /**
    * enable mailhog. Mailhog is a virtual mail server that catches all outgoing mailsl and show them in a mailbox.
    * This is great for development as it prevents to accidentially send out real emails and helps with debugging outgoing mails.
@@ -246,7 +263,13 @@ export type DeployConfigCustom = {
 
 export type DeployConfig = DeployConfigKubernetes | DeployConfigCustom;
 
-export const isOfDeployType = <T extends Array<DeployConfig["type"]>>(
+export type DeployConfigType = DeployConfig["type"];
+export type DeployConfigGeneric<T extends DeployConfigType> = Extract<
+  DeployConfig,
+  { type: T }
+>;
+
+export const isOfDeployType = <T extends Array<DeployConfigType>>(
   t: DeployConfig | false,
   ...types: T
 ): t is Extract<DeployConfig, { type: T[number] }> => {
