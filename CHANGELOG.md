@@ -1,3 +1,10 @@
+## [1.36.1](https://git.panter.ch/catladder/catladder/compare/v1.36.0...v1.36.1) (2022-08-12)
+
+
+### Bug Fixes
+
+* **mongodb:** only enable backup on stage and prod envs ([f99b416](https://git.panter.ch/catladder/catladder/commit/f99b4162915d1758493fd21f1da74e254d5c285c))
+
 # [1.36.0](https://git.panter.ch/catladder/catladder/compare/v1.35.0...v1.36.0) (2022-08-12)
 
 
