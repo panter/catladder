@@ -50,7 +50,7 @@ const createMongoBackupDefaultConfig = (context: Context) => {
   }
   const mongodbConfig = context.componentConfig.deploy.values?.mongodb;
   const fullAppName = context.environment.envVars.KUBE_APP_NAME;
-  const backupEnabled = true; //  ["prod", "stage"].includes(context.environment.envType)
+  const backupEnabled = ["prod", "stage"].includes(context.environment.envType);
 
   let hostToBackup: string;
   let pvcToBackup: string;
