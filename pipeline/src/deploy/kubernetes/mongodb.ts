@@ -77,7 +77,7 @@ const createMongoBackupDefaultConfig = (context: Context) => {
     hostToBackup,
     pvcToBackup,
     image: "mrelite/kubectlmongoshell:v1.0",
-    schedule: "0 0 1 1 1",
+    schedule: "0 4 * * *",
     volumeSnapshotClass: "snapshotclass",
   };
 };
