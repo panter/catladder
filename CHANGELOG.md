@@ -1,3 +1,10 @@
+## [1.37.3](https://git.panter.ch/catladder/catladder/compare/v1.37.2...v1.37.3) (2022-08-15)
+
+
+### Bug Fixes
+
+* additional env keys do not respect custom env config ([f9884a5](https://git.panter.ch/catladder/catladder/commit/f9884a5acfc4576d40e1ca51bfbdb009d6bba837))
+
 ## [1.37.2](https://git.panter.ch/catladder/catladder/compare/v1.37.1...v1.37.2) (2022-08-15)
 
 
