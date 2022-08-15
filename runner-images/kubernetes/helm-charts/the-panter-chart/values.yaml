@@ -126,6 +126,23 @@ mongodb:
   dbName: app
   backup:
     enabled: false
+  # see https://github.com/bitnami/charts/issues/10264#issuecomment-1181574288
+  livenessProbe:
+    enabled: false
+  customLivenessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - mongo --port $MONGODB_PORT_NUMBER --eval "db.adminCommand('ping')"
+  readinessProbe:
+    enabled: false
+  customReadinessProbe:
+    exec:
+      command:
+        - sh
+        - -c
+        - mongo --port $MONGODB_PORT_NUMBER --eval 'db.isMaster().ismaster || db.isMaster().secondary' | grep -q 'true'
 
 cloudsql:
   enabled: false
