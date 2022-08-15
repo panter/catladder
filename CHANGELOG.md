@@ -1,3 +1,11 @@
+## [1.37.1](https://git.panter.ch/catladder/catladder/compare/v1.37.0...v1.37.1) (2022-08-15)
+
+
+### Bug Fixes
+
+* **mongodb:** add sane default backup schedule ([6174e5f](https://git.panter.ch/catladder/catladder/commit/6174e5fa93419af3ee6f11b6b0dcf62e0f5d7d69))
+* **mongodb:** high cpu usage ([2c34d3e](https://git.panter.ch/catladder/catladder/commit/2c34d3e8d087fcd650ddfbff0b950da8188fbd2d))
+
 # [1.37.0](https://git.panter.ch/catladder/catladder/compare/v1.36.2...v1.37.0) (2022-08-15)
 
 
