@@ -1,3 +1,11 @@
+## [1.36.2](https://git.panter.ch/catladder/catladder/compare/v1.36.1...v1.36.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **cli:** cannot get mongo pods on dev ([0faa096](https://git.panter.ch/catladder/catladder/commit/0faa096fed675d413fcfd1ecdb0886c9c32808df))
+* cloudsqlProxyCredentials missing in secrets ([6291df1](https://git.panter.ch/catladder/catladder/commit/6291df12b40fae271ccfb001089840de35bf8b0f))
+
 ## [1.36.1](https://git.panter.ch/catladder/catladder/compare/v1.36.0...v1.36.1) (2022-08-12)
 
 
