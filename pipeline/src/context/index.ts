@@ -38,14 +38,12 @@ export const getEnvironment = (
   commitInfo?: CommitInfo,
   alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
 ): Environment => {
-  const componentConfig = config.components[componentName];
-  if (!componentConfig) {
+  const defaultConfig = config.components[componentName];
+  if (!defaultConfig) {
     throw new Error("unknown component " + componentName);
   }
 
-  const defaultConfig = componentConfig;
-
-  const envConfig = componentConfig.env?.[env] ?? {};
+  const envConfig = defaultConfig.env?.[env] ?? {};
   if (envConfig === false) {
     throw new Error("env is disabled: " + env);
   }
@@ -64,7 +62,7 @@ export const getEnvironment = (
 
   const basePredefinedVariables = {
     ENV_SHORT: env,
-    APP_DIR: componentConfig.dir,
+    APP_DIR: mergedConfig.dir,
     ENV_TYPE: envType,
   };
 
@@ -130,10 +128,10 @@ export const getEnvironment = (
   }
   const publicEnvVarsRaw = mergedConfig.vars?.public ?? {};
 
-  const additionalSecretKeys = componentConfig.deploy
-    ? DEPLOY_TYPES[componentConfig.deploy.type].additionalSecretKeys(
+  const additionalSecretKeys = mergedConfig.deploy
+    ? DEPLOY_TYPES[mergedConfig.deploy.type].additionalSecretKeys(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        componentConfig.deploy as any
+        mergedConfig.deploy as any
       )
     : [];
 
