@@ -1,3 +1,10 @@
+## [1.37.2](https://git.panter.ch/catladder/catladder/compare/v1.37.1...v1.37.2) (2022-08-15)
+
+
+### Bug Fixes
+
+* **meteor:** docker build fails if app is in root directory ([6de5290](https://git.panter.ch/catladder/catladder/commit/6de5290165cdcd26eee9ecf4938eb2edd8243411))
+
 ## [1.37.1](https://git.panter.ch/catladder/catladder/compare/v1.37.0...v1.37.1) (2022-08-15)
 
 
