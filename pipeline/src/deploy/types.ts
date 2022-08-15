@@ -114,6 +114,12 @@ export type KubernetesWorkerDef = {
 export type DeployConfigMongodbBase = {
   enabled?: boolean;
   dbName?: string;
+  persistence?: {
+    /**
+     * set premium-rwo for ssd
+     */
+    storageClass?: "standard-rwo" | "premium-rwo";
+  };
 };
 
 export type DeployConfigMongodbStandalone = {
