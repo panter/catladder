@@ -1,3 +1,10 @@
+## [1.37.4](https://git.panter.ch/catladder/catladder/compare/v1.37.3...v1.37.4) (2022-08-15)
+
+
+### Bug Fixes
+
+* **mongodb:** expose persistence.storageClass ([7d31690](https://git.panter.ch/catladder/catladder/commit/7d31690e14335e22461dc1ed2df9aa817538ec70))
+
 ## [1.37.3](https://git.panter.ch/catladder/catladder/compare/v1.37.2...v1.37.3) (2022-08-15)
 
 
