@@ -1,3 +1,10 @@
+# [1.37.0](https://git.panter.ch/catladder/catladder/compare/v1.36.2...v1.37.0) (2022-08-15)
+
+
+### Features
+
+* **kubernetes:** do not wait for deployment ([210e1c3](https://git.panter.ch/catladder/catladder/commit/210e1c3963238c8f4804e4455d8dc6971945c3ed))
+
 ## [1.36.2](https://git.panter.ch/catladder/catladder/compare/v1.36.1...v1.36.2) (2022-08-15)
 
 
