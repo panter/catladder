@@ -169,7 +169,7 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
       /**
        * comma-separated list of helm hooks, see https://helm.sh/docs/topics/charts_hooks/
        *
-       * defaults to pre-install,pre-upgrade
+       * defaults to post-install,post-upgrade
        */
       hook?: string;
     }>
