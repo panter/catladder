@@ -1,3 +1,10 @@
+## [1.37.5](https://git.panter.ch/catladder/catladder/compare/v1.37.4...v1.37.5) (2022-08-19)
+
+
+### Bug Fixes
+
+* build broken with yarn 4 or newer ([3a787db](https://git.panter.ch/catladder/catladder/commit/3a787db2545e6942a9b6399f13094be68c8f892a))
+
 ## [1.37.4](https://git.panter.ch/catladder/catladder/compare/v1.37.3...v1.37.4) (2022-08-15)
 
 
