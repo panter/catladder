@@ -1,3 +1,10 @@
+# [1.38.0](https://git.panter.ch/catladder/catladder/compare/v1.37.5...v1.38.0) (2022-08-22)
+
+
+### Features
+
+* custom deploy job now detects whether it uses yarn install ([4a7cfbc](https://git.panter.ch/catladder/catladder/commit/4a7cfbc91e9dba8ca9443fa3e90a08f8be40d6cd))
+
 ## [1.37.5](https://git.panter.ch/catladder/catladder/compare/v1.37.4...v1.37.5) (2022-08-19)
 
 
