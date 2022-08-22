@@ -3,12 +3,12 @@ import { Context } from "../types/context";
 import { CatladderJob } from "../types/jobs";
 import { createNodeJobs, createStorybookJobs, createMeteorJobs } from "./node";
 
-import { BuildConfig } from "./types";
+import { BuildConfig, BuildConfigType } from "./types";
 export * from "./types";
 export * from "./node";
 
 export type BuildTypes = {
-  [type in BuildConfig["type"]]: {
+  [type in BuildConfigType]: {
     jobs: (context: Context) => CatladderJob[];
     defaults: () => Partial<Extract<BuildConfig, { type: type }>>;
   };

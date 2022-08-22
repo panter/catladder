@@ -79,7 +79,8 @@ export type BuildConfig =
   | BuildConfigStorybook
   | BuildConfigMeteor;
 
-export const isOfBuildType = <T extends Array<BuildConfig["type"]>>(
+export type BuildConfigType = BuildConfig["type"];
+export const isOfBuildType = <T extends Array<BuildConfigType>>(
   t: BuildConfig,
   ...types: T
 ): t is Extract<BuildConfig, { type: T[number] }> => {
