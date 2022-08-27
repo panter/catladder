@@ -22,7 +22,7 @@ if [ ! -f $APP_DIR/Dockerfile ]; then
     if [ -f $APP_DIR/package.json ] && [ -f $APP_DIR/yarn.lock ]; then
         read -d '' INSTALL_SCRIPTS <<EOF
 
-COPY --chown=node:node package.json yarn.lock ./
+COPY --chown=node:node $APP_DIR/package.json $APP_DIR/yarn.lock ./
 RUN chown -R node:node .
 USER node
 RUN yarn --frozen-lockfile --production=true --ignore-scripts --ignore-engines
