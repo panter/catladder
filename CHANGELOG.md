@@ -1,3 +1,10 @@
+## [1.39.1](https://git.panter.ch/catladder/catladder/compare/v1.39.0...v1.39.1) (2022-08-27)
+
+
+### Bug Fixes
+
+* meteor build in sub app ([fb8f66b](https://git.panter.ch/catladder/catladder/commit/fb8f66bb3fa914b97d2dd6dda52572f651f2b468))
+
 # [1.39.0](https://git.panter.ch/catladder/catladder/compare/v1.38.0...v1.39.0) (2022-08-27)
 
 
