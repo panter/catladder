@@ -1,3 +1,10 @@
+# [1.39.0](https://git.panter.ch/catladder/catladder/compare/v1.38.0...v1.39.0) (2022-08-27)
+
+
+### Features
+
+* improved types ([31e2c65](https://git.panter.ch/catladder/catladder/commit/31e2c65e202721d61608a50c528c0ec15a189a8d))
+
 # [1.38.0](https://git.panter.ch/catladder/catladder/compare/v1.37.5...v1.38.0) (2022-08-22)
 
 
