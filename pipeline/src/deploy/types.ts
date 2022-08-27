@@ -119,6 +119,11 @@ export type DeployConfigMongodbBase = {
      * set premium-rwo for ssd
      */
     storageClass?: "standard-rwo" | "premium-rwo";
+
+    /**
+     * size of the volume, defaults to 8Gi
+     */
+    size?: string;
   };
 };
 
@@ -194,46 +199,48 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
   /**
    * configuration for the application ("Deployment" in kubernetes)
    */
-  application?: AllowUnknownProps<{
-    /**
-     * redirects
-     */
-    redirects?: AllowUnknownProps<{ host: string }>[];
-    /**
-     * Host aliases
-     */
-    hostAliases?: string[];
-    /**
-     * how many pods will be started
-     */
-    replicas?: number;
+  application?:
+    | false
+    | AllowUnknownProps<{
+        /**
+         * redirects
+         */
+        redirects?: AllowUnknownProps<{ host: string }>[];
+        /**
+         * Host aliases
+         */
+        hostAliases?: string[];
+        /**
+         * how many pods will be started
+         */
+        replicas?: number;
 
-    /**
-     * autoscale the pods horizontally
-     */
-    autoscale?: KubernetesAutoscale;
+        /**
+         * autoscale the pods horizontally
+         */
+        autoscale?: KubernetesAutoscale;
 
-    /**
-     * the update strategy, see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment
-     */
-    updateStrategy?: KubernetesUpdateStrategy;
+        /**
+         * the update strategy, see https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#rolling-update-deployment
+         */
+        updateStrategy?: KubernetesUpdateStrategy;
 
-    /**
-     * kubernetes resources
-     */
+        /**
+         * kubernetes resources
+         */
 
-    resources?: KubernetesResourcesDef;
-    healthRoute?: string;
-    startupProbe?: KubernetesHealthDef;
-    readinessProbe?: KubernetesHealthDef;
-    livenessProbe?: KubernetesHealthDef;
-    /**
-     * specify a worker. A worker is a separate deployment that runs continously in the background.
-     * The worker pod can use the same entry point as the app or a different one (specify command).
-     * It has the same environment variables as the application and an additional IS_WORKER="true" variable
-     */
-    worker?: KubernetesWorkerDef;
-  }>;
+        resources?: KubernetesResourcesDef;
+        healthRoute?: string;
+        startupProbe?: KubernetesHealthDef;
+        readinessProbe?: KubernetesHealthDef;
+        livenessProbe?: KubernetesHealthDef;
+        /**
+         * specify a worker. A worker is a separate deployment that runs continously in the background.
+         * The worker pod can use the same entry point as the app or a different one (specify command).
+         * It has the same environment variables as the application and an additional IS_WORKER="true" variable
+         */
+        worker?: KubernetesWorkerDef;
+      }>;
   /**
    * Mount secrets as files in the filesystem.
    * These secrets are still available as env vars, but will contain the path of the file instead

@@ -19,25 +19,28 @@ export const createKubeValues = (context: Context) => {
   }
 
   const env = createKubeEnv(context);
-  const defaultAppConfig: DeployConfigKubernetesValues["application"] = {
-    host: context.environment.host,
-    command: context.componentConfig.build.startCommand,
-    livenessProbe: {
-      httpGet: {
-        path: deployConfig.values?.application?.healthRoute ?? "__health",
-      },
-    },
-    readinessProbe: {
-      httpGet: {
-        path: deployConfig.values?.application?.healthRoute ?? "__health",
-      },
-    },
-    startupProbe: {
-      httpGet: {
-        path: deployConfig.values?.application?.healthRoute ?? "__health",
-      },
-    },
-  };
+  const defaultAppConfig: DeployConfigKubernetesValues["application"] =
+    deployConfig.values?.application
+      ? {
+          host: context.environment.host,
+          command: context.componentConfig.build.startCommand,
+          livenessProbe: {
+            httpGet: {
+              path: deployConfig.values?.application?.healthRoute ?? "__health",
+            },
+          },
+          readinessProbe: {
+            httpGet: {
+              path: deployConfig.values?.application?.healthRoute ?? "__health",
+            },
+          },
+          startupProbe: {
+            httpGet: {
+              path: deployConfig.values?.application?.healthRoute ?? "__health",
+            },
+          },
+        }
+      : false;
 
   const defaultKubeValues = merge(
     {
