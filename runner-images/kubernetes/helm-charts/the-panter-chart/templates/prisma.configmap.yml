@@ -1,4 +1,5 @@
-{{- if .Values.prisma.enabled -}}
+
+{{- if .Values.legacyprisma1.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -12,5 +13,5 @@ data:
     databases:
       default:
         connector: mongo
-        uri: {{ template "MONGO_URL" . }}
+        uri: ${MONGO_URL}
 {{- end -}}

@@ -203,6 +203,10 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
     | false
     | AllowUnknownProps<{
         /**
+         * enable, disable app deployment, defaults to true
+         */
+        enabled?: boolean;
+        /**
          * redirects
          */
         redirects?: AllowUnknownProps<{ host: string }>[];

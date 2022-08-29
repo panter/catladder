@@ -21,7 +21,9 @@ export const createKubeValues = (context: Context) => {
   const env = createKubeEnv(context);
   const defaultAppConfig: DeployConfigKubernetesValues["application"] =
     deployConfig.values?.application === false
-      ? false
+      ? {
+          enabled: false,
+        }
       : {
           host: context.environment.host,
           command: context.componentConfig.build.startCommand,

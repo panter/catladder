@@ -1,4 +1,4 @@
-{{- if .Values.application -}}
+
 {{- if .Values.application.worker.enabled -}}
 {{- if .Values.application.worker.service.enabled -}}
 {{- $context := . }}
@@ -30,6 +30,5 @@ spec:
     release: {{ .Release.Name }}
   sessionAffinity: None
   type: NodePort
-{{- end -}}
 {{- end -}}
 {{- end -}}
