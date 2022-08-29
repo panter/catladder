@@ -17,7 +17,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 */}}
 {{- define "fullname" -}}
-{{- default .Release.Name .Values.global.componentName | trunc 63 | trimSuffix "-" -}}
+{{- default .Release.Name .Values.global.appName | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 
@@ -110,7 +110,7 @@ secret:
 Generate prisma-URL
 */}}
 {{- define "PRISMA_ENDPOINT" -}}
-  {{- $appName := default .Release.Name .Values.global.componentName -}}
+  {{- $appName := default .Release.Name .Values.global.appName -}}
   {{- $namespace := .Release.Namespace -}}
   {{- printf "http://%s-prisma.%s:4466/default/default" $appName $namespace -}}
 {{- end -}}
@@ -145,6 +145,17 @@ env:
         key: {{ $key }}
   {{- end }}
 
+  {{- range $key, $val := .Values.secretsFromOtherComponent }}
+  - name: {{ $key }}
+    valueFrom:
+      secretKeyRef:
+        name: {{ $.Values.global.appPrefix}}{{ $val }}-app-secrets
+        key: {{ $key }}
+        optional: true
+  {{- end }}
+
+
+
   # can't have these in app.env.configmap as some values contain  $(OTHER_ENV_VAR)
   {{ if .Values.cloudsql.enabled }}
   - name: POSTGRESQL_URL
@@ -164,6 +175,15 @@ env:
     value: "{{- template "DB_PASSWORD" . -}}"
   - name: POSTGRESQL_DBNAME # alias
     value: "{{- template "DB_NAME" . -}}"
+  {{- end -}}
+  {{ if .Values.legacyprisma1.enabled }}
+  - name: PRISMA_CONFIG
+    value: |
+      port: 4466
+      databases:
+        default:
+          connector: mongo
+          uri: ${env:MONGO_URL}
   {{- end -}}
   {{- range $index, $varName := .Values.secretsAsFile }}  # expose mounted secrets as variable that contain the path of the secret
   - name: "{{$varName}}"
