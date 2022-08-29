@@ -1,3 +1,10 @@
+## [1.39.2](https://git.panter.ch/catladder/catladder/compare/v1.39.1...v1.39.2) (2022-08-29)
+
+
+### Bug Fixes
+
+* **deploy kube:** if application in values is not set, the deployment fails ([0c035e5](https://git.panter.ch/catladder/catladder/commit/0c035e523d64c927b8d8697d75e81972c698f944))
+
 ## [1.39.1](https://git.panter.ch/catladder/catladder/compare/v1.39.0...v1.39.1) (2022-08-27)
 
 
