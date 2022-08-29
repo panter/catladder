@@ -67,6 +67,11 @@ export type BuildConfigNodeStatic = BuildConfigNodeBase & {
 
 export type BuildConfigMeteor = BuildConfigNodeBase & {
   type: "meteor";
+  /**
+   * whether to run yarn install inside the source folder in the docker image.
+   * This is only required if you have custom scripts in your image
+   */
+  installScripts?: boolean;
 };
 
 export type BuildConfigStorybook = BuildConfigNodeBase & {
