@@ -20,8 +20,9 @@ export const createKubeValues = (context: Context) => {
 
   const env = createKubeEnv(context);
   const defaultAppConfig: DeployConfigKubernetesValues["application"] =
-    deployConfig.values?.application
-      ? {
+    deployConfig.values?.application === false
+      ? false
+      : {
           host: context.environment.host,
           command: context.componentConfig.build.startCommand,
           livenessProbe: {
@@ -39,9 +40,7 @@ export const createKubeValues = (context: Context) => {
               path: deployConfig.values?.application?.healthRoute ?? "__health",
             },
           },
-        }
-      : false;
-
+        };
   const defaultKubeValues = merge(
     {
       application: defaultAppConfig,
