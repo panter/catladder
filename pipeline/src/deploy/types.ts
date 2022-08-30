@@ -260,6 +260,13 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
   secretsFromOtherComponent?: {
     [envVar: string]: string;
   };
+
+  /**
+   * map another services internal endpoint into a env var.
+   */
+  mapServiceUrlToEnv?: {
+    [envVar: string]: string;
+  };
   /**
    * Mount secrets as files in the filesystem.
    * These secrets are still available as env vars, but will contain the path of the file instead

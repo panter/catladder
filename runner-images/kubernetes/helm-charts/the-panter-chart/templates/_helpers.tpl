@@ -133,6 +133,8 @@ convert value to json-string if its an object
 {{- define "env" -}}
 {{ $context := . }}
 
+
+
 envFrom:
   - configMapRef:
       name: {{ template "fullname" $ }}-app-env
@@ -146,6 +148,7 @@ env:
   {{- end }}
 
   {{- range $key, $val := .Values.secretsFromOtherComponent }}
+  
   - name: {{ $key }}
     valueFrom:
       secretKeyRef:
@@ -153,6 +156,14 @@ env:
         key: {{ $key }}
         optional: true
   {{- end }}
+
+  {{- range $key, $val := .Values.mapServiceUrlToEnv }}
+  {{- $otherServiceFullName = printf "%s%s" $.Values.global.appPrefix $val-}}
+  {{- $variablePrefix = $otherServiceFullName | snakecase | upper -}}
+  - name: {{ $key }}
+    value: "http://$({{ $variablePrefix }}_SERVICE_HOST):$({{ $variablePrefix }}_SERVICE_PORT)"
+  {{- end }}
+
 
 
 
