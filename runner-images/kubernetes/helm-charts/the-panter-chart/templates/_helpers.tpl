@@ -158,14 +158,11 @@ env:
   {{- end }}
 
   {{- range $key, $val := .Values.mapServiceUrlToEnv }}
-  {{- $otherServiceFullName = printf "%s%s" $.Values.global.appPrefix $val-}}
-  {{- $variablePrefix = $otherServiceFullName | snakecase | upper -}}
+  {{- $otherServiceFullName := (printf "%s%s" $.Values.global.appPrefix $val) }}
+  {{- $variablePrefix := $otherServiceFullName | snakecase | upper }}
   - name: {{ $key }}
     value: "http://$({{ $variablePrefix }}_SERVICE_HOST):$({{ $variablePrefix }}_SERVICE_PORT)"
   {{- end }}
-
-
-
 
   # can't have these in app.env.configmap as some values contain  $(OTHER_ENV_VAR)
   {{ if .Values.cloudsql.enabled }}
@@ -194,7 +191,7 @@ env:
       databases:
         default:
           connector: mongo
-          uri: ${env:MONGO_URL}
+          uri: $(MONGO_URL)
   {{- end -}}
   {{- range $index, $varName := .Values.secretsAsFile }}  # expose mounted secrets as variable that contain the path of the secret
   - name: "{{$varName}}"

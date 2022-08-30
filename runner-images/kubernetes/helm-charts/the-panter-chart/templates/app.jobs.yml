@@ -46,12 +46,9 @@ spec:
         command:  ["/bin/sh", "-c"]
         args: 
           - |
-            . /scripts/additionalEnv
             trap "touch /tmp/pod/main-terminated" EXIT
             {{$job.command}}
         volumeMounts:
-        - name: scripts
-          mountPath: /scripts
         - mountPath: /tmp/pod
           name: tmp-pod
         resources:
@@ -61,10 +58,6 @@ spec:
       - {{- include "cloudSqlContainer" $context | nindent 8 }}
       {{- end }} 
       volumes:
-        - name: scripts
-          configMap:
-            name: {{ template "fullname" $context }}-scripts
-            defaultMode: 0755
         - name: tmp-pod
           emptyDir: {}
       {{if $context.Values.cloudsql.enabled}}
