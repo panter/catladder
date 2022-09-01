@@ -60,7 +60,7 @@ metadata:
 rules:
 - apiGroups: ["", "extensions", "apps", "networking.k8s.io", "batch", "autoscaling", "rbac.authorization.k8s.io","snapshot.storage.k8s.io"]
   resources: ["deployments", "replicasets", "statefulsets", "pods", "secrets", "configmaps", "services", "ingresses", "serviceaccounts", "roles", "rolebindings", "jobs", "cronjobs", "horizontalpodautoscalers", "persistentvolumeclaims", "volumesnapshots"]
-  verbs: ["*"] # You can also use ["*"]
+  verbs: ["*"]
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1

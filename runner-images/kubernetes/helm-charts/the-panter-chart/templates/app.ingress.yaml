@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- if .Values.application -}}
+{{- if .Values.application.enabled -}}
 {{- $servicePort := .Values.service.externalPort -}}
 {{- $app := .Values.application -}}
 {{ $hosts := without (prepend (default (list nil) $app.hostAliases) (include "host" .)) nil }}

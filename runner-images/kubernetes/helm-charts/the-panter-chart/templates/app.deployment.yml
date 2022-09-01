@@ -1,5 +1,5 @@
 
-{{- if .Values.application -}}
+{{- if .Values.application.enabled -}}
 {{ $context := . }}
 
 apiVersion: apps/v1
@@ -56,7 +56,6 @@ spec:
         command:  ["/bin/sh", "-c"]
         args: 
           - |
-            . /scripts/additionalEnv
             trap "touch /tmp/pod/main-terminated" EXIT
             {{(kindIs "slice" .Values.application.command) | ternary (join " " .Values.application.command) .Values.application.command}}
      
@@ -76,8 +75,6 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts: 
-          - name: scripts
-            mountPath: /scripts
         {{if gt (len .Values.secretsAsFile) 0 }}
           - name: secrets
             mountPath: /secrets
@@ -111,10 +108,6 @@ spec:
               path: "{{$varName}}"
         {{end}}
       {{end}}
-        - name: scripts
-          configMap:
-            name: {{ template "fullname" . }}-scripts
-            defaultMode: 0755
         - name: tmp-pod
           emptyDir: {}
       {{- range $key, $volume := .Values.application.volumes }}

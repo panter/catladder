@@ -203,6 +203,10 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
     | false
     | AllowUnknownProps<{
         /**
+         * enable, disable app deployment, defaults to true
+         */
+        enabled?: boolean;
+        /**
          * redirects
          */
         redirects?: AllowUnknownProps<{ host: string }>[];
@@ -241,6 +245,28 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
          */
         worker?: KubernetesWorkerDef;
       }>;
+
+  /**
+   * load secrets from other components.
+   * Use this only in cases where the secret is not known on pipeline-time
+   * and only if the component is also in the same cluster.
+   *
+   * a typical case is reusing mongo_url from other component
+   *
+   * also make sure that the other component deploys first
+   *
+   * in all other cases use normal env var handling
+   */
+  secretsFromOtherComponent?: {
+    [envVar: string]: string;
+  };
+
+  /**
+   * map another services internal endpoint into a env var.
+   */
+  mapServiceUrlToEnv?: {
+    [envVar: string]: string;
+  };
   /**
    * Mount secrets as files in the filesystem.
    * These secrets are still available as env vars, but will contain the path of the file instead

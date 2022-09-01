@@ -63,6 +63,9 @@ export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
     ...(appBuildJob ? [appBuildJob] : []),
     createDockerBuildJobDefault(context, {
       script: ["ensureMeteorDockerfile"],
+      variables: {
+        METEOR_INSTALL_SCRIPTS: buildConfig.installScripts ? "true" : "",
+      },
       needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
     }),
   ];

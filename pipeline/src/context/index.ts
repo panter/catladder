@@ -110,10 +110,10 @@ export const getEnvironment = (
     const url = `https://${host}`;
 
     // FIXME: move to kube specific jobs
-    const KUBE_APP_NAME =
-      envType === "review" && commitInfo
-        ? `${commitInfo.reviewSlug}-${componentName}`
-        : componentName;
+    const KUBE_APP_NAME_PREFIX =
+      envType === "review" && commitInfo ? `${commitInfo.reviewSlug}-` : "";
+
+    const KUBE_APP_NAME = `${KUBE_APP_NAME_PREFIX}${componentName}`;
     const KUBE_NAMESPACE = getKubernetesNamespace(config, env);
 
     predefinedVariables = {
@@ -123,6 +123,7 @@ export const getEnvironment = (
       ROOT_URL: url,
       KUBE_NAMESPACE,
       KUBE_APP_NAME,
+      KUBE_APP_NAME_PREFIX,
       RELEASE_NAME,
     };
   }

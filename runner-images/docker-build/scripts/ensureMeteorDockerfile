@@ -19,7 +19,7 @@ if [ ! -f $APP_DIR/Dockerfile ]; then
         NODE_VERSION=${NODE_VERSION_FULL/v/} # remove v
     fi
     INSTALL_SCRIPTS=""
-    if [ -f $APP_DIR/package.json ] && [ -f $APP_DIR/yarn.lock ]; then
+    if [[ $METEOR_INSTALL_SCRIPTS == "true" ]]; then
         read -d '' INSTALL_SCRIPTS <<EOF
 
 COPY --chown=node:node $APP_DIR/package.json $APP_DIR/yarn.lock ./

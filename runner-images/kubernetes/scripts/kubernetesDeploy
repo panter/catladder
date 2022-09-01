@@ -17,7 +17,8 @@ echo "$KUBE_VALUES" >__all_values.yml
 
 echo "doing helm upgrade"
 helm upgrade --install "$RELEASE_NAME" /helm-charts/$HELM_GITLAB_CHART_NAME \
-    --set global.componentName="$KUBE_APP_NAME" \
+    --set global.appName="$KUBE_APP_NAME" \
+    --set global.appPrefix="$KUBE_APP_NAME_PREFIX" \
     --set global.ENV_SHORT="$ENV_SHORT" \
     --set global.BUILD_ID="$BUILD_ID" \
     --set image.repository="$CI_REGISTRY_IMAGE" \

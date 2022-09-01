@@ -8,6 +8,40 @@ import { createKubeEnv } from "./kubeEnv";
 import { createMongodbBaseConfig } from "./mongodb";
 import { processSecretsAsFiles } from "./processSecretsAsFiles";
 
+const createAppConfig = (
+  context: Context,
+  application: DeployConfigKubernetesValues["application"]
+): DeployConfigKubernetesValues["application"] => {
+  if (application === false) {
+    return {
+      enabled: false,
+    };
+  }
+
+  return mergeWithMergingArrays(
+    {
+      host: context.environment.host,
+      command: context.componentConfig.build.startCommand,
+      livenessProbe: {
+        httpGet: {
+          path: application?.healthRoute ?? "__health",
+        },
+      },
+      readinessProbe: {
+        httpGet: {
+          path: application?.healthRoute ?? "__health",
+        },
+      },
+      startupProbe: {
+        httpGet: {
+          path: application?.healthRoute ?? "__health",
+        },
+      },
+    }, // default
+    application // merge rest in
+  );
+};
+
 export const createKubeValues = (context: Context) => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
@@ -18,33 +52,19 @@ export const createKubeValues = (context: Context) => {
     throw new Error("deploy config is not kubernetes");
   }
 
+  const { values } = deployConfig;
+
+  // we remove the application config because it can be just the value `false` which is a convenience feature, but not supported in the helm chart
+  // we only merge the rest of the values in
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { application, ...rest } = values ?? {};
+
   const env = createKubeEnv(context);
-  const defaultAppConfig: DeployConfigKubernetesValues["application"] =
-    deployConfig.values?.application === false
-      ? false
-      : {
-          host: context.environment.host,
-          command: context.componentConfig.build.startCommand,
-          livenessProbe: {
-            httpGet: {
-              path: deployConfig.values?.application?.healthRoute ?? "__health",
-            },
-          },
-          readinessProbe: {
-            httpGet: {
-              path: deployConfig.values?.application?.healthRoute ?? "__health",
-            },
-          },
-          startupProbe: {
-            httpGet: {
-              path: deployConfig.values?.application?.healthRoute ?? "__health",
-            },
-          },
-        };
+
   const defaultKubeValues = merge(
     {
-      application: defaultAppConfig,
-      env: env,
+      env,
+      application: createAppConfig(context, application),
     },
     deployConfig.values?.cloudsql?.enabled
       ? createCloudsqlBaseConfig(context)
@@ -55,7 +75,7 @@ export const createKubeValues = (context: Context) => {
   );
 
   const kubeValues = processSecretsAsFiles(
-    mergeWithMergingArrays(defaultKubeValues, deployConfig.values)
+    mergeWithMergingArrays(defaultKubeValues, rest)
   );
 
   return kubeValues;
