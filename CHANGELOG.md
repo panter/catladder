@@ -1,3 +1,10 @@
+## [1.40.1](https://git.panter.ch/catladder/catladder/compare/v1.40.0...v1.40.1) (2022-09-01)
+
+
+### Bug Fixes
+
+* **cli:** give hint which role to select for semantic relase token ([7a9cf92](https://git.panter.ch/catladder/catladder/commit/7a9cf92edeb66eb71290b845b5462fc3ec2b1b82))
+
 # [1.40.0](https://git.panter.ch/catladder/catladder/compare/v1.39.2...v1.40.0) (2022-09-01)
 
 
