@@ -18,7 +18,7 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
       "I need add a GL_TOKEN to the project, so that semantic release will work\n"
     );
     instance.log(
-      "👉 Please please create a project access token in gitlab and copy its value into clipboard\n\n - name: something like 'semantic-release'\n - expires: leave empty\n - scopes: api, read_repository"
+      "👉 Please please create a project access token in gitlab and copy its value into clipboard\n\n - name: something like 'semantic-release'\n - expires: leave empty\n - role: maintainer - scopes: api, read_repository"
     );
     instance.log("\n");
 
