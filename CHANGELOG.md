@@ -1,3 +1,18 @@
+# [1.40.0](https://git.panter.ch/catladder/catladder/compare/v1.39.2...v1.40.0) (2022-09-01)
+
+
+### Bug Fixes
+
+* improvements for disabling application ([5748659](https://git.panter.ch/catladder/catladder/commit/57486594bdd87df48f6c1f966c73332c699d7232))
+
+
+### Features
+
+* **kube:** allow to get other services url into an env var ([74bbabc](https://git.panter.ch/catladder/catladder/commit/74bbabc6e3b553ac1772ce4aaf87d735c9b81a37))
+* **kube:** remove non used additionalEnv as the only use case is now better implemented ([b6c8e14](https://git.panter.ch/catladder/catladder/commit/b6c8e146f56238787e1b28ef679701ceaa5b9a70))
+* **kubernetes:** experimental allow to use secrets from other component ([fb6730c](https://git.panter.ch/catladder/catladder/commit/fb6730c3edb26c590d909794f8b2ae5a33d5fa86))
+* **meteor:** make installing scripts optionally to speed build up a little ([b30181a](https://git.panter.ch/catladder/catladder/commit/b30181a1383c7c3703fd37b03b404f4f0b4f06ce))
+
 ## [1.39.2](https://git.panter.ch/catladder/catladder/compare/v1.39.1...v1.39.2) (2022-08-29)
 
 
