@@ -1,3 +1,10 @@
+## [1.40.2](https://git.panter.ch/catladder/catladder/compare/v1.40.1...v1.40.2) (2022-09-02)
+
+
+### Bug Fixes
+
+* add missing type in worker def ([72e9c10](https://git.panter.ch/catladder/catladder/commit/72e9c10e21f70db9ff254fceb6355e7a65b96e76))
+
 ## [1.40.1](https://git.panter.ch/catladder/catladder/compare/v1.40.0...v1.40.1) (2022-09-01)
 
 
