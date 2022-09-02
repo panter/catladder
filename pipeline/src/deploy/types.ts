@@ -109,6 +109,9 @@ export type KubernetesWorkerDef = {
    */
   command?: string;
   resources?: KubernetesResourcesDef;
+  service?: {
+    enabled?: boolean;
+  };
 };
 
 export type DeployConfigMongodbBase = {
