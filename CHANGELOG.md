@@ -1,3 +1,10 @@
+## [1.40.3](https://git.panter.ch/catladder/catladder/compare/v1.40.2...v1.40.3) (2022-09-09)
+
+
+### Bug Fixes
+
+* **cli:** does not work with https clones ([00323ce](https://git.panter.ch/catladder/catladder/commit/00323cef898cb3a3f87eae0e34a3902e622b83f7))
+
 ## [1.40.2](https://git.panter.ch/catladder/catladder/compare/v1.40.1...v1.40.2) (2022-09-02)
 
 
