@@ -90,9 +90,10 @@ export const getProjectInfo = async (
   const gitRemoteOriginUrl = (
     await exec("git config --get remote.origin.url")
   ).stdout.trim();
-  const projectPath = /(https:\/\/|git@)git\.panter\.ch[:/](.*)\.git/g.exec(
-    gitRemoteOriginUrl
-  );
+  const projectPath =
+    /(https:\/\/|git@)git\.panter\.ch[:/]([^.]*)(\.git)?/g.exec(
+      gitRemoteOriginUrl
+    );
   const project = await doGitlabRequest(
     vorpal,
     `projects/${encodeURIComponent(projectPath[2])}`
