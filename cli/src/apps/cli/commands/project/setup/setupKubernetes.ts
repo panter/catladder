@@ -4,7 +4,7 @@ import {
   isOfDeployType,
 } from "@catladder/pipeline";
 import { CommandInstance } from "vorpal";
-import { $ } from "zx";
+import { exec } from "child-process-promise";
 import { connectToCluster } from "../../../../../utils/cluster";
 import { upsertAllVariables } from "../../../../../utils/gitlab";
 import ensureNamespace from "../utils/ensureNamespace";
@@ -33,25 +33,32 @@ export const setupKubernetes = async (
   // we currently create one per component to better separate them
   instance.log("ensuring service accounts...");
   const serviceAccountName = `cl-${context.componentName}-deploy`;
-  const KUBE_URL =
-    await $`TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`.then(
-      (s) => s.stdout.trim()
-    );
+  const KUBE_URL = await exec(
+    `TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`
+  ).then((s: any) => s.stdout.trim());
 
   // first upsert service acount in the ns
   try {
-    await $`kubectl delete serviceaccount --namespace ${namespace} ${serviceAccountName}`;
-    await $`kubectl delete rolebinding --namespace ${namespace} ${serviceAccountName}`;
-    await $`kubectl delete role --namespace ${namespace} ${serviceAccountName}`;
+    await exec(
+      `kubectl delete serviceaccount --namespace ${namespace} ${serviceAccountName}`
+    );
+    await exec(
+      `kubectl delete rolebinding --namespace ${namespace} ${serviceAccountName}`
+    );
+    await exec(
+      `kubectl delete role --namespace ${namespace} ${serviceAccountName}`
+    );
   } catch (e) {
     // ignore
   }
 
-  await $`kubectl create serviceaccount --namespace ${namespace} ${serviceAccountName}`;
+  await exec(
+    `kubectl create serviceaccount --namespace ${namespace} ${serviceAccountName}`
+  );
 
   // upsert role in the ns
 
-  await $`cat <<EOF | kubectl apply -f -
+  await exec(`cat <<EOF | kubectl apply -f -
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -76,20 +83,19 @@ roleRef:
   name: ${serviceAccountName}
   apiGroup: rbac.authorization.k8s.io
 EOF
-`;
+`);
 
   // get token name
-  const tokenName =
-    await $`kubectl get serviceaccount --namespace ${namespace} ${serviceAccountName} -o jsonpath='{.secrets[0].name}'`;
+  const tokenName = await exec(
+    `kubectl get serviceaccount --namespace ${namespace} ${serviceAccountName} -o jsonpath='{.secrets[0].name}'`
+  ).then((c: any) => c.stdout.trim());
 
-  const KUBE_CA_PEM =
-    await $`kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`.then(
-      (c) => c.stdout.trim()
-    );
-  const KUBE_TOKEN =
-    await $`kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`.then(
-      (c) => c.stdout.trim()
-    );
+  const KUBE_CA_PEM = await exec(
+    `kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`
+  ).then((c: any) => c.stdout.trim());
+  const KUBE_TOKEN = await exec(
+    `kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`
+  ).then((c: any) => c.stdout.trim());
 
   const vars = {
     KUBE_TOKEN,
