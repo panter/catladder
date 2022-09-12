@@ -1,11 +1,11 @@
-import { $ } from "zx";
 import { join } from "path";
 import { getProjectConfig, parseChoice } from "../../config/getProjectConfig";
 import { getk8sApi } from "../../k8sApi";
 import { readFileOrError } from "../files";
+import { exec } from "child-process-promise";
 
 export const getGitRoot = async (): Promise<string> => {
-  return (await $`git rev-parse --show-toplevel`).stdout.trim();
+  return (await exec(`git rev-parse --show-toplevel`)).stdout.trim();
 };
 
 export const getRootGitlabCiFile = async () => {
