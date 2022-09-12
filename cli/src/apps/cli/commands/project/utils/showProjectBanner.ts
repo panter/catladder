@@ -1,4 +1,4 @@
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { getProjectConfig } from "../../../../../config/getProjectConfig";
 
 export const showProjectBanner = async (vorpal: Vorpal) => {

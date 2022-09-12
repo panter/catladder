@@ -1,5 +1,5 @@
 import open from "open";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import {
   GRAFANA_PROXY_LOCAL_PORT,
   GRAFANA_PROXY_TARGET_PORT,

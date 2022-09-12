@@ -3,7 +3,7 @@ import { dump } from "js-yaml";
 import { readConfigSync } from "./config";
 import { PIPELINE_IMAGE_TAG } from "./constants";
 import { createChildPipeline } from "./pipeline";
-import { PipelineTrigger } from "./types";
+import type { PipelineTrigger } from "./types";
 
 const {
   CI_MERGE_REQUEST_ID,

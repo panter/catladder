@@ -1,4 +1,4 @@
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { logError } from "../../../../utils/log";
 
 import { startPortForward } from "../../../../utils/portForward";

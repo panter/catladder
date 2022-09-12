@@ -1,4 +1,4 @@
-import { GitlabRule } from "../types";
+import type { GitlabRule } from "../types";
 
 const NEVER_ON_RELEASE_COMMIT: GitlabRule = {
   if: "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",

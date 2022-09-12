@@ -1,5 +1,6 @@
-import { Context, isOfDeployType } from "@catladder/pipeline";
-import { CommandInstance } from "vorpal";
+import type { Context} from "@catladder/pipeline";
+import { isOfDeployType } from "@catladder/pipeline";
+import type { CommandInstance } from "vorpal";
 import { setupKubernetes } from "./setupKubernetes";
 
 export const setupContext = async (

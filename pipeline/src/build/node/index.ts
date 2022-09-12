@@ -1,5 +1,5 @@
 import type { Context } from "../../types/context";
-import { CatladderJob } from "../../types/jobs";
+import type { CatladderJob } from "../../types/jobs";
 import { createNodeBuildJobs } from "./buildJob";
 import { createMeteorBuildJobs } from "./meteor";
 import { createNodeTestJobs } from "./testJob";

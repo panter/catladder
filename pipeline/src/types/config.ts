@@ -1,8 +1,8 @@
-import { BuildConfig } from "../build/types";
-import { DeployConfig } from "../deploy/types";
-import { PartialDeep } from "type-fest";
-import { CatladderJob } from "./jobs";
-import { Context } from "./context";
+import type { BuildConfig } from "../build/types";
+import type { DeployConfig } from "../deploy/types";
+import type { PartialDeep } from "type-fest";
+import type { CatladderJob } from "./jobs";
+import type { Context } from "./context";
 export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
 
 /**

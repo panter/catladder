@@ -1,4 +1,5 @@
-import { Context, getSecretVarNameForContext } from "../..";
+import type { Context} from "../..";
+import { getSecretVarNameForContext } from "../..";
 
 export const createCloudsqlBaseConfig = (context: Context) => {
   return {

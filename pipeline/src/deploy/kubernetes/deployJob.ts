@@ -2,8 +2,8 @@ import { dump } from "js-yaml";
 import { merge } from "lodash";
 import { getSecretVarNameForContext } from "../..";
 import { getRunnerImage } from "../../runner";
-import { Context } from "../../types/context";
-import { CatladderJob } from "../../types/jobs";
+import type { Context } from "../../types/context";
+import type { CatladderJob } from "../../types/jobs";
 import {
   getBaseDeploymentJob,
   getBaseDeploymentStopJob,

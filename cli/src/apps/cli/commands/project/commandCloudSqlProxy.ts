@@ -2,7 +2,7 @@ import { isOfDeployType } from "@catladder/pipeline";
 import { spawn } from "child-process-promise";
 import { writeFile } from "fs-extra";
 import { withFile } from "tmp-promise";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import {
   getEnvVars,
   getGitlabVar,

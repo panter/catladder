@@ -1,4 +1,4 @@
-import { Config } from "../types";
+import type { Config } from "../types";
 import { createChildPipeline } from "./createChildPipeline";
 
 describe("createChildPipeline", () => {

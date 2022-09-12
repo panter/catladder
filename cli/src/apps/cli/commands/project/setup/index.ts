@@ -1,4 +1,4 @@
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { getAllPipelineContexts } from "../../../../../config/getProjectConfig";
 import { projectConfigSecrets } from "../commandConfigSecrets";
 import { setupAccessTokens } from "./setupAccessTokens";

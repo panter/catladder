@@ -1,5 +1,5 @@
 import { exec } from "child-process-promise";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import {
   getEnvironment,
   parseChoice,

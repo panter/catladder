@@ -1,4 +1,4 @@
-import {
+import type {
   BuildConfig,
   ComponentConfig,
   Config,
@@ -14,7 +14,7 @@ import {
 } from "fs-extra";
 import { isEmpty } from "lodash";
 import { join } from "path";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import {
   getGitlabCi,
   getGitlabCiFilePath,
@@ -24,11 +24,8 @@ import { syncBitwarden } from "../../../../utils/passwordstore";
 import { getGitRoot } from "../../../../utils/projects";
 import { writeConfig } from "../../config/writeConfig";
 import { migrateSecrets } from "./migrateSecrets";
-import {
-  detectBuildConfig,
-  isOldInclude,
-  OldGitlabCiFile,
-} from "./oldGitlabCi";
+import type { OldGitlabCiFile } from "./oldGitlabCi";
+import { detectBuildConfig, isOldInclude } from "./oldGitlabCi";
 export const LEGACY_ENVS = [
   "dev-local",
   "dev",

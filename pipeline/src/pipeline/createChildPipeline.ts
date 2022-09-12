@@ -1,8 +1,8 @@
 import { getAllEnvsByTrigger, getAllEnvsInAllComponents } from "../config";
 import { RULES_ALWAYS } from "../rules";
 import { getRunnerImage } from "../runner";
-import { GitlabPipeline, Pipeline, PipelineJob, PipelineType } from "../types";
-import { Config, PipelineTrigger } from "../types/config";
+import type { GitlabPipeline, Pipeline, PipelineJob, PipelineType } from "../types";
+import type { Config, PipelineTrigger } from "../types/config";
 import { BASE_STAGES } from "../types/jobs";
 import { createJobs } from "./createJobs";
 

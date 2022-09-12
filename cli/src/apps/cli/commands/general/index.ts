@@ -1,5 +1,5 @@
 import memoizee from "memoizee";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { getk8sApi } from "../../../../k8sApi";
 import { getCurrentContext } from "../../../../utils/cluster";
 import { logError } from "../../../../utils/log";

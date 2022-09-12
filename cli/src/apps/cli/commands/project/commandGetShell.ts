@@ -1,9 +1,7 @@
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
+import { getProjectPodNames } from "../../../../kubernetes";
 import { logError } from "../../../../utils/log";
-import {
-  getProjectNamespace,
-  getProjectPodNames,
-} from "../../../../utils/projects";
+import { getProjectNamespace } from "../../../../utils/projects";
 import { getShell } from "../../../../utils/shell";
 
 import { envAndComponents } from "./utils/autocompletions";

@@ -1,4 +1,4 @@
-import { DeployTypeDefinition } from "..";
+import type { DeployTypeDefinition } from "..";
 import { additionalKubernetesSecretKeys } from "./additionalSecretKeys";
 import { createKubernetesDeployJobs } from "./deployJob";
 

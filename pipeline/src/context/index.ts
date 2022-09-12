@@ -1,11 +1,12 @@
 import { isObject, merge } from "lodash";
 import slugify from "slugify";
 import { BUILD_TYPES } from "../build";
-import { BuildConfig } from "../build/types";
+import type { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES, getKubernetesNamespace } from "../deploy";
-import { DeployConfig } from "../deploy/types";
-import { Config, DevLocalEnvConfig, isKnowEnvType } from "../types/config";
-import {
+import type { DeployConfig } from "../deploy/types";
+import type { Config, DevLocalEnvConfig } from "../types/config";
+import { isKnowEnvType } from "../types/config";
+import type {
   CommitInfo,
   Context,
   Environment,

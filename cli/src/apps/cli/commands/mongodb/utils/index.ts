@@ -1,8 +1,6 @@
 import { exec, spawn } from "child-process-promise";
-import {
-  getProjectNamespace,
-  getProjectPodNames,
-} from "../../../../../utils/projects";
+import { getProjectPodNames } from "../../../../../kubernetes";
+import { getProjectNamespace } from "../../../../../utils/projects";
 
 const filterMongoDbs = (podNames: string[]) =>
   podNames.filter(

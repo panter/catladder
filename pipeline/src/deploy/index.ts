@@ -1,8 +1,8 @@
-import { Context } from "../types/context";
-import { CatladderJob } from "../types/jobs";
+import type { Context } from "../types/context";
+import type { CatladderJob } from "../types/jobs";
 import { CUSTOM_DEPLOY_TYPE } from "./custom";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
-import { DeployConfigGeneric, DeployConfigType } from "./types";
+import type { DeployConfigGeneric, DeployConfigType } from "./types";
 export * from "./kubernetes";
 export * from "./types";
 export * from "./utils";

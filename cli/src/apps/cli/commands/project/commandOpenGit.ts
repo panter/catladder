@@ -1,4 +1,4 @@
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { exec } from "child-process-promise";
 
 export default async (vorpal: Vorpal) =>

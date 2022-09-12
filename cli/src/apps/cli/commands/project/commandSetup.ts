@@ -1,4 +1,4 @@
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { setupProject } from "./setup";
 
 export default async (vorpal: Vorpal) =>

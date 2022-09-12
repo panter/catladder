@@ -1,9 +1,9 @@
-import { Config } from "@catladder/pipeline";
+import type { Config } from "@catladder/pipeline";
 import { spawn, exec } from "child-process-promise";
 import { writeFile } from "fs-extra";
 import { dump } from "js-yaml";
 import { format } from "prettier";
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { getGitRoot } from "../../../utils/projects";
 
 export const writeConfig = async (

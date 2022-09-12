@@ -1,9 +1,9 @@
 import { join } from "path";
 import { getRunnerImage } from "../../runner";
-import { GitlabJobCache } from "../../types";
+import type { GitlabJobCache } from "../../types";
 import type { Context } from "../../types/context";
 
-import { CatladderJob } from "../../types/jobs";
+import type { CatladderJob } from "../../types/jobs";
 
 import { APP_BUILD_JOB_NAME } from "../base/constants";
 import { createBuildJob } from "../base/createBuildJob";

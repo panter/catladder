@@ -1,5 +1,6 @@
-import { Config, Context } from "../types";
-import { DeployConfigKubernetesCluster, isOfDeployType } from "./types";
+import type { Config, Context } from "../types";
+import type { DeployConfigKubernetesCluster} from "./types";
+import { isOfDeployType } from "./types";
 
 export const getFullKubernetesClusterName = (
   cluster: DeployConfigKubernetesCluster

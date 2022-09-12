@@ -1,5 +1,5 @@
 import { omit } from "lodash";
-import { DeployConfigKubernetesValues } from "../types";
+import type { DeployConfigKubernetesValues } from "../types";
 
 export const processSecretsAsFiles = <
   T extends {

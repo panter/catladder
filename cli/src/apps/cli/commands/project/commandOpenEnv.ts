@@ -1,5 +1,5 @@
 import open from "open";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import {
   getEnvironment,
   parseChoice,
