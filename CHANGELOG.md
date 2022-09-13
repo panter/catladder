@@ -1,3 +1,10 @@
+# [1.41.0](https://git.panter.ch/catladder/catladder/compare/v1.40.4...v1.41.0) (2022-09-13)
+
+
+### Features
+
+* less (nearly no) runtime dependencies for cli and pipeline ([db2f553](https://git.panter.ch/catladder/catladder/commit/db2f553f5df6a72667bee99470f30e96575d182a))
+
 ## [1.40.4](https://git.panter.ch/catladder/catladder/compare/v1.40.3...v1.40.4) (2022-09-12)
 
 ## [1.40.3](https://git.panter.ch/catladder/catladder/compare/v1.40.2...v1.40.3) (2022-09-09)
