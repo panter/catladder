@@ -1,5 +1,4 @@
-import type {
-  Context} from "@catladder/pipeline";
+import type { Context } from "@catladder/pipeline";
 import {
   getFullKubernetesClusterName,
   isOfDeployType,
@@ -36,7 +35,7 @@ export const setupKubernetes = async (
   const serviceAccountName = `cl-${context.componentName}-deploy`;
   const KUBE_URL = await exec(
     `TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`
-  ).then((s: any) => s.stdout.trim());
+  ).then((s) => s.stdout.trim());
 
   // first upsert service acount in the ns
   try {
@@ -89,14 +88,14 @@ EOF
   // get token name
   const tokenName = await exec(
     `kubectl get serviceaccount --namespace ${namespace} ${serviceAccountName} -o jsonpath='{.secrets[0].name}'`
-  ).then((c: any) => c.stdout.trim());
+  ).then((c) => c.stdout.trim());
 
   const KUBE_CA_PEM = await exec(
     `kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`
-  ).then((c: any) => c.stdout.trim());
+  ).then((c) => c.stdout.trim());
   const KUBE_TOKEN = await exec(
     `kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`
-  ).then((c: any) => c.stdout.trim());
+  ).then((c) => c.stdout.trim());
 
   const vars = {
     KUBE_TOKEN,

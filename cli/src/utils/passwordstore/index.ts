@@ -15,7 +15,7 @@ const unlockBitwarden = async () => {
   let session = null;
   promise.childProcess.stdout.on(
     "data",
-    (d: any) => (session = d.toString("utf-8"))
+    (d) => (session = d.toString("utf-8"))
   );
   await promise;
   await setPreference("bwsession", session);
@@ -30,7 +30,7 @@ const loginBitwarden = async () => {
   let session = null;
   promise.childProcess.stdout.on(
     "data",
-    (d: any) => (session = d.toString("utf-8"))
+    (d) => (session = d.toString("utf-8"))
   );
   await promise;
   await setPreference("bwsession", session);
