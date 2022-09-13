@@ -1,3 +1,10 @@
+## [1.41.2](https://git.panter.ch/catladder/catladder/compare/v1.41.1...v1.41.2) (2022-09-13)
+
+
+### Bug Fixes
+
+* problem with update notifier ([d50fae6](https://git.panter.ch/catladder/catladder/commit/d50fae6c8cf62d184576b9e5fb3ed53435d2141e))
+
 ## [1.41.1](https://git.panter.ch/catladder/catladder/compare/v1.41.0...v1.41.1) (2022-09-13)
 
 # [1.41.0](https://git.panter.ch/catladder/catladder/compare/v1.40.4...v1.41.0) (2022-09-13)
