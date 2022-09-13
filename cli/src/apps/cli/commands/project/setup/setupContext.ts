@@ -1,6 +1,8 @@
-import type { Context} from "@catladder/pipeline";
-import { isOfDeployType } from "@catladder/pipeline";
+import type { Context } from "@catladder/pipeline";
+import { isOfDeployType, hasCloudSQL } from "@catladder/pipeline";
 import type { CommandInstance } from "vorpal";
+import { setupCloudSQL } from "./setupCloudSQL";
+
 import { setupKubernetes } from "./setupKubernetes";
 
 export const setupContext = async (
@@ -20,6 +22,10 @@ export const setupContext = async (
       "..."
   );
   instance.log("");
+  if (hasCloudSQL(context)) {
+    await setupCloudSQL(instance, context);
+  }
+
   const deployConfig = context.componentConfig.deploy;
   if (isOfDeployType(deployConfig, "kubernetes")) {
     await setupKubernetes(instance, context);

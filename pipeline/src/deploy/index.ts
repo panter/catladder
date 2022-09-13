@@ -12,6 +12,7 @@ export type DeployTypeDefinition<T extends DeployConfigType> = {
   defaults: () => Partial<DeployConfigGeneric<T>>;
   additionalSecretKeys: (config: DeployConfigGeneric<T>) => string[];
 };
+export * from "./cloudSql";
 export type DeployTypes = {
   [T in DeployConfigType]: DeployTypeDefinition<T>;
 };
