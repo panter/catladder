@@ -1,5 +1,7 @@
-import { Context, getKubernetesNamespace } from "@catladder/pipeline";
-import { V1Namespace, V1ObjectMeta } from "@kubernetes/client-node";
+import type { Context} from "@catladder/pipeline";
+import { getKubernetesNamespace } from "@catladder/pipeline";
+import type { V1ObjectMeta } from "@kubernetes/client-node";
+import { V1Namespace } from "@kubernetes/client-node";
 import { getk8sApi } from "../../../../../k8sApi";
 
 export default async function (context: Context) {

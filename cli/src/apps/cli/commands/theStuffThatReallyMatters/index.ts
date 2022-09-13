@@ -1,6 +1,6 @@
 import { spawn } from "child-process-promise";
 import fetch from "node-fetch";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 
 export default async (vorpal: Vorpal) => {
   vorpal.command("dadjoke", "something for jonas.").action(async function () {

@@ -2,7 +2,8 @@
 import { getSecretVarName } from "@catladder/pipeline";
 import { stripIndents } from "common-tags";
 import { difference } from "lodash";
-import Vorpal, { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
+import type Vorpal from "vorpal";
 import {
   getAllComponentsWithAllEnvsHierarchical,
   getEnvironment,

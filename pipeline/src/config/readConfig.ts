@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "fs";
 import { register } from "ts-node";
 import { load } from "js-yaml";
-import { Config } from "../types";
+import type { Config } from "../types";
 
 // allows us to load ts files
 

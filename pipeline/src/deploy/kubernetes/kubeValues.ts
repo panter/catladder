@@ -1,6 +1,6 @@
 import { merge } from "lodash";
-import { DeployConfigKubernetesValues } from "..";
-import { Context } from "../../types/context";
+import type { DeployConfigKubernetesValues } from "..";
+import type { Context } from "../../types/context";
 import { mergeWithMergingArrays } from "../../utils";
 import { isOfDeployType } from "../types";
 import { createCloudsqlBaseConfig } from "./cloudsql";

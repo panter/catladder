@@ -1,6 +1,6 @@
 import { join } from "path";
-import { Context } from "../../types/context";
-import { GitlabJobCache } from "../../types/gitlab-types";
+import type { Context } from "../../types/context";
+import type { GitlabJobCache } from "../../types/gitlab-types";
 
 export const getYarnCache = (
   context: Context,

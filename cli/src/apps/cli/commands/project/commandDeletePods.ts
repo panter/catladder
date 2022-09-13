@@ -1,11 +1,9 @@
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { getk8sApi } from "../../../../k8sApi";
+import { getProjectPodNames } from "../../../../kubernetes";
 
 import { logError } from "../../../../utils/log";
-import {
-  getProjectNamespace,
-  getProjectPodNames,
-} from "../../../../utils/projects";
+import { getProjectNamespace } from "../../../../utils/projects";
 import { envAndComponents } from "./utils/autocompletions";
 import ensureCluster from "./utils/ensureCluster";
 

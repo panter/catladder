@@ -1,6 +1,6 @@
 import { getRunnerImage } from "../../runner";
-import { Context } from "../../types/context";
-import { CatladderJob } from "../../types/jobs";
+import type { Context } from "../../types/context";
+import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";

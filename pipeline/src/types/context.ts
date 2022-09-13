@@ -1,4 +1,4 @@
-import { PipelineTrigger, ComponentConfig, Config, EnvType } from "./config";
+import type { PipelineTrigger, ComponentConfig, Config, EnvType } from "./config";
 
 export type Environment = {
   host: string;

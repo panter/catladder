@@ -1,4 +1,4 @@
-import { Config, ComponentConfig } from "@catladder/pipeline";
+import type { Config, ComponentConfig } from "@catladder/pipeline";
 import { getEnvVars, getProjectConfig } from "../../config/getProjectConfig";
 import { getGitRoot } from "../../utils/projects";
 import { join } from "path";

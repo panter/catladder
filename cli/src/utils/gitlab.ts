@@ -4,7 +4,7 @@ import { has, isObject, times } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { getPreference, hasPreference, setPreference } from "./preferences";
 
 const TOKEN_KEY = "gitlab-personal-access-token";

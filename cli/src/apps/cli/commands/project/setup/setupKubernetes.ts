@@ -1,9 +1,10 @@
+import type {
+  Context} from "@catladder/pipeline";
 import {
-  Context,
   getFullKubernetesClusterName,
   isOfDeployType,
 } from "@catladder/pipeline";
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { exec } from "child-process-promise";
 import { connectToCluster } from "../../../../../utils/cluster";
 import { upsertAllVariables } from "../../../../../utils/gitlab";

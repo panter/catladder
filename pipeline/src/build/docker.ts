@@ -1,8 +1,8 @@
 import { merge } from "lodash";
 import { isOfDeployType } from "../deploy";
 import { getRunnerImage } from "../runner";
-import { Context } from "../types";
-import { CatladderJob } from "../types/jobs";
+import type { Context } from "../types";
+import type { CatladderJob } from "../types/jobs";
 
 const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",

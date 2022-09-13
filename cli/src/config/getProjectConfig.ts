@@ -1,18 +1,21 @@
+import type {
+  Config} from "@catladder/pipeline";
 import {
   readConfigSync,
   getAllEnvs,
   getEnvironment as _getEnvironment,
   createContext,
-  getSecretVarName,
-  Config,
+  getSecretVarName
 } from "@catladder/pipeline";
 
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
 
 import { getGitRoot } from "../utils/projects";
 import { readYaml } from "../utils/files";
 import { watch } from "fs";
+
+export { parseChoice } from "./parseChoice";
 
 let currentConfig: Config = null;
 
@@ -57,11 +60,6 @@ export const getProjectComponents = async () => {
   const config = await getProjectConfig();
   if (!config) return [];
   return Object.keys(config.components);
-};
-
-export const parseChoice = (envComponent: string) => {
-  const [env, componentName] = envComponent.split(":").map((x) => x || null);
-  return { env, componentName };
 };
 
 export const getPipelineContextByChoice = async (

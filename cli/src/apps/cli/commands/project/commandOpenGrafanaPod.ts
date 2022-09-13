@@ -1,15 +1,13 @@
 import open from "open";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import {
   GRAFANA_PROXY_LOCAL_PORT,
   GRAFANA_PROXY_TARGET_PORT,
 } from "../../../../config/constants";
+import { getProjectPodNames } from "../../../../kubernetes";
 import { logError } from "../../../../utils/log";
 import { startPortForward } from "../../../../utils/portForward";
-import {
-  getProjectNamespace,
-  getProjectPodNames,
-} from "../../../../utils/projects";
+import { getProjectNamespace } from "../../../../utils/projects";
 import { envAndComponents } from "./utils/autocompletions";
 import ensureCluster from "./utils/ensureCluster";
 

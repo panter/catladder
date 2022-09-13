@@ -1,3 +1,3 @@
 #! /usr/bin/env node
 
-require("../dist/catladder-gitlab.js");
+require("../dist/bundles/catladder-gitlab/index.js");

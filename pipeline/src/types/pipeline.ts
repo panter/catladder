@@ -1,4 +1,4 @@
-import { GitlabJobDef, GitlabPipeline } from "./gitlab-types";
+import type { GitlabJobDef, GitlabPipeline } from "./gitlab-types";
 
 export type PipelineType = "gitlab";
 

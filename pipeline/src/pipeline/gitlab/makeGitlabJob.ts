@@ -1,6 +1,6 @@
 import { BASE_RETRY } from "../../defaults";
-import { GitlabJobDef } from "../../types";
-import { CatladderJob } from "../../types/jobs";
+import type { GitlabJobDef } from "../../types";
+import type { CatladderJob } from "../../types/jobs";
 
 export const makeGitlabJob = ({
   envMode,

@@ -1,7 +1,8 @@
 import { exec } from "child-process-promise";
 import { last } from "lodash";
 import open from "open";
-import Vorpal, { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
+import type Vorpal from "vorpal";
 import {
   doGitlabRequest,
   getGitlabToken,

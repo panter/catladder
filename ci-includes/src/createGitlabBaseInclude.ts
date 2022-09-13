@@ -1,8 +1,8 @@
 /**
  *
  */
+import type { GitlabJobDef } from "@catladder/pipeline";
 import {
-  GitlabJobDef,
   RULES_ALWAYS,
   getRunnerImage,
   RULES_RELEASE,

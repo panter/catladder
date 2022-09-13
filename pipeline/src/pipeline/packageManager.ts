@@ -1,5 +1,5 @@
 import { exec } from "child-process-promise";
-import { Config, PackageManagerInfo } from "../types";
+import type { Config, PackageManagerInfo } from "../types";
 import { pathEqual } from "path-equal";
 import memoizee from "memoizee";
 import { join } from "path";

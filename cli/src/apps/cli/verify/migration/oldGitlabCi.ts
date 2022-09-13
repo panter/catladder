@@ -1,4 +1,4 @@
-import { BuildConfig } from "@catladder/pipeline";
+import type { BuildConfig } from "@catladder/pipeline";
 
 export type OldGitlabCiFile = {
   variables: {

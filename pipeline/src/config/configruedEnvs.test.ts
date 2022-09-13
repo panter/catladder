@@ -1,6 +1,6 @@
 import { getAllEnvsByTrigger } from ".";
-import { DeployConfigKubernetesCluster } from "..";
-import { Config } from "../types";
+import type { DeployConfigKubernetesCluster } from "..";
+import type { Config } from "../types";
 
 describe("getAllEnvsByTrigger", () => {
   const cluster: DeployConfigKubernetesCluster = {

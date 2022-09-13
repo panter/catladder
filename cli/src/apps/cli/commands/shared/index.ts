@@ -1,4 +1,4 @@
-import { DeployConfigKubernetesCluster } from "@catladder/pipeline";
+import type { DeployConfigKubernetesCluster } from "@catladder/pipeline";
 import open from "open";
 
 export const openGoogleCloudLogs = async (

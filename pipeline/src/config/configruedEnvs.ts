@@ -1,9 +1,10 @@
-import {
+import type {
   Config,
-  DEFAULT_ENV_TYPES,
   EnvType,
-  getEnvTypesByTrigger,
-  PipelineTrigger,
+  PipelineTrigger} from "../types";
+import {
+  DEFAULT_ENV_TYPES,
+  getEnvTypesByTrigger
 } from "../types";
 
 const getConfiguredAndDefaultEnvs = (

@@ -1,7 +1,7 @@
 import { dump } from "js-yaml";
 import { pick } from "lodash";
-import Vorpal from "vorpal";
-import { getProjectPods } from "../../../../utils/projects";
+import type Vorpal from "vorpal";
+import { getProjectPods } from "../../../../kubernetes";
 import { envAndComponents } from "./utils/autocompletions";
 import ensureCluster from "./utils/ensureCluster";
 

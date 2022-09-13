@@ -1,4 +1,4 @@
-import { DeployConfigKubernetes } from "../types";
+import type { DeployConfigKubernetes } from "../types";
 
 export const additionalKubernetesSecretKeys = (
   config: DeployConfigKubernetes

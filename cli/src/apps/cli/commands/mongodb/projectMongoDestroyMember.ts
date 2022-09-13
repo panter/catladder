@@ -1,10 +1,8 @@
 import { exec } from "child-process-promise";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
+import { getProjectPvcs } from "../../../../kubernetes";
 import { logError } from "../../../../utils/log";
-import {
-  getProjectNamespace,
-  getProjectPvcs,
-} from "../../../../utils/projects";
+import { getProjectNamespace } from "../../../../utils/projects";
 import { envAndComponents } from "../project/utils/autocompletions";
 import ensureCluster from "../project/utils/ensureCluster";
 import { getMongoDbPodsWithReplInfo } from "./utils";

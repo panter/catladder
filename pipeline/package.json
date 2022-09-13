@@ -3,15 +3,18 @@
   "version": "0.0.0",
   "scripts": {
     "build:tsc": "yarn tsc",
-    "build": "yarn tsc && yarn build:inline-variables",
-    "build:watch": "yarn tsc -w",
+    "build": "yarn build:compile && yarn build:inline-variables && yarn build:bundle",
+    "build:bundle": "./scripts/bundle",
+    "build:compile": "yarn tsc",
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
+    "build:watch": "yarn tsc -w",
     "test": "jest",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix"
   },
-  "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "sideEffects": false,
   "bin": {
     "catladder-gitlab": "./bin/catladder-gitlab.js"
   },
@@ -22,20 +25,20 @@
     "@babel/preset-typescript": "^7.16.5",
     "@types/child-process-promise": "^2.2.2",
     "@types/jest": "^27.4.0",
-    "@types/lodash": "^4.14.172",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
-    "eslint": "^8.7.0"
-  },
-  "dependencies": {
+    "@types/lodash": "^4.14.185",
     "@types/node": "^17.0.10",
+    "babel-plugin-transform-inline-environment-variables": "^0.4.3",
     "child-process-promise": "^2.2.1",
+    "eslint": "^8.7.0",
     "js-yaml": "^4.1.0",
     "lodash": "^4.17.21",
     "memoizee": "^0.4.15",
     "path-equal": "1.1.3",
     "slugify": "^1.6.3",
+    "type-fest": "^2.10.0"
+  },
+  "dependencies": {
     "ts-node": "^10.4.0",
-    "type-fest": "^2.10.0",
     "typescript": "^4.5.4"
   },
   "stableVersion": "0.1.0"

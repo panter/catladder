@@ -1,5 +1,5 @@
 import open from "open";
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 
 export const setupAccessTokens = async (instance: CommandInstance) => {

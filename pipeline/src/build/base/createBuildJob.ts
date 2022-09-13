@@ -1,6 +1,7 @@
 import { merge } from "lodash";
-import { Context, getRunnerImage } from "../..";
-import { CatladderJob } from "../../types/jobs";
+import type { Context } from "../..";
+import { getRunnerImage } from "../..";
+import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { ensureNodeVersion } from "../node/yarn";
 import {

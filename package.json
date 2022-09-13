@@ -4,9 +4,9 @@
   "author": "Marco Wettstein <maw@panter.ch>",
   "license": "MIT",
   "scripts": {
-    "build": "yarn workspaces foreach -vt run build",
+    "build": "yarn workspaces foreach -v --topological-dev run build",
     "lint": "yarn workspaces foreach run lint",
-    "dev": "yarn build && yarn workspaces foreach -vi --parallel run build:watch"
+    "dev": "yarn workspaces foreach -vi --parallel run build:watch"
   },
   "workspaces": [
     "pipeline",
@@ -17,6 +17,7 @@
     "@types/jest": "^27.0.3",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
+    "@vercel/ncc": "^0.34.0",
     "eslint": "^8.6.0",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.4.5",

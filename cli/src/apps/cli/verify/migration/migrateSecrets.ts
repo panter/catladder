@@ -1,10 +1,11 @@
-import { Config, getEnvironment } from "@catladder/pipeline";
+import type { Config } from "@catladder/pipeline";
+import { getEnvironment } from "@catladder/pipeline";
 import { load } from "js-yaml";
 import { pick } from "lodash";
-import { CommandInstance } from "vorpal";
+import type { CommandInstance } from "vorpal";
 import { upsertAllVariables } from "../../../../utils/gitlab";
 import { readPass, trashItem } from "../../../../utils/passwordstore";
-import { LEGACY_ENVS } from "./fromv2";
+import type { LEGACY_ENVS } from "./fromv2";
 
 const getPassPath = (newConfig: Config, env: string) => {
   return `${newConfig.customerName}/${newConfig.appName}/${env}/secrets.yml`;

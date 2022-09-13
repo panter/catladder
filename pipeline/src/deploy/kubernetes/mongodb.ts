@@ -1,5 +1,6 @@
 import { range } from "lodash";
-import { Context, getSecretVarNameForContext, isOfDeployType } from "../..";
+import type { Context } from "../..";
+import { getSecretVarNameForContext, isOfDeployType } from "../..";
 
 const getCredentialString = (context: Context) =>
   `root:$${getSecretVarNameForContext(context, "MONGODB_ROOT_PASSWORD")}@`;

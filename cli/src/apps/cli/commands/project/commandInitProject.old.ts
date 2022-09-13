@@ -2,7 +2,7 @@ import { readFile, writeFile } from "fs-extra";
 import { dump } from "js-yaml";
 import { mapKeys, snakeCase, toUpper } from "lodash";
 import path from "path";
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { hasGitlabCiFile } from "../../../../utils/projects";
 
 const transformVar = (key: string) => toUpper(snakeCase(key));

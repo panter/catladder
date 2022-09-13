@@ -1,6 +1,7 @@
-import { V1Job, V1ObjectMeta } from "@kubernetes/client-node";
+import type { V1ObjectMeta } from "@kubernetes/client-node";
+import { V1Job } from "@kubernetes/client-node";
 
-import Vorpal from "vorpal";
+import type Vorpal from "vorpal";
 import { getk8sApiBatch, getk8sApiBatchBeta } from "../../../../k8sApi";
 import { logError } from "../../../../utils/log";
 import { namespaceAutoCompletion } from "../general/namespaceAutoCompletion";
