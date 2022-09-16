@@ -4,7 +4,7 @@ import {
 } from "./resolveReferences";
 
 describe("resolveReferences", () => {
-  it("replaces occurences of ${componentName:VARIABLE_NAME}", () => {
+  it("replaces occurences of ${componentName:VARIABLE_NAME}", async () => {
     const variables = {
       a: "hello world",
       b: "a replaced value looks like this: '${api:FOO}', nice!",
@@ -17,9 +17,9 @@ describe("resolveReferences", () => {
         FOO: "foo from frontend",
       },
     };
-    const result = resolveReferences(
+    const result = await resolveReferences(
       variables,
-      (componentName, variableName) => {
+      async (componentName, variableName) => {
         return otherVariables[componentName]?.[variableName];
       }
     );
@@ -43,7 +43,7 @@ describe("resolveReferences", () => {
     });
   });
 
-  it("replaces self references mixed with other vars", () => {
+  it("replaces self references mixed with other vars", async () => {
     const variables = {
       FOO: "hello from ${api:FOO}",
       BAR: "this: ${FOO}!",
@@ -53,9 +53,9 @@ describe("resolveReferences", () => {
         FOO: "foo from api",
       },
     };
-    const result = resolveReferences(
+    const result = await resolveReferences(
       variables,
-      (componentName, variableName) => {
+      async (componentName, variableName) => {
         return otherVariables[componentName]?.[variableName];
       }
     );
@@ -66,15 +66,15 @@ describe("resolveReferences", () => {
     });
   });
 
-  it("keeps variables as is if not found (when null is returned)", () => {
+  it("keeps variables as is if not found (when null is returned)", async () => {
     const variables = {
       a: "hello world",
       b: "a not found value looks like this: '${api:FOO}'",
     };
     const otherVariables: Record<string, Record<string, string>> = {};
-    const result = resolveReferences(
+    const result = await resolveReferences(
       variables,
-      (componentName, variableName) => {
+      async (componentName, variableName) => {
         return otherVariables[componentName]?.[variableName];
       }
     );
@@ -85,7 +85,7 @@ describe("resolveReferences", () => {
     });
   });
 
-  it("replaces mulitple levels deep", () => {
+  it("replaces mulitple levels deep", async () => {
     const variables = {
       a: "value is ${frontend:FOO}!",
     };
@@ -97,9 +97,9 @@ describe("resolveReferences", () => {
         FOO: "hi, ${api:FOO}",
       },
     };
-    const result = resolveReferences(
+    const result = await resolveReferences(
       variables,
-      (componentName, variableName) => {
+      async (componentName, variableName) => {
         return otherVariables[componentName]?.[variableName] ?? "";
       }
     );
@@ -109,7 +109,7 @@ describe("resolveReferences", () => {
     });
   });
 
-  it("prevents endless loops", () => {
+  it("prevents endless loops", async () => {
     const variables = {
       a: "value is ${frontend:FOO}!",
     };
@@ -121,9 +121,9 @@ describe("resolveReferences", () => {
         FOO: "frontend ${api:FOO}",
       },
     };
-    const result = resolveReferences(
+    const result = await resolveReferences(
       variables,
-      (componentName, variableName) => {
+      async (componentName, variableName) => {
         return otherVariables[componentName]?.[variableName] ?? "";
       }
     );

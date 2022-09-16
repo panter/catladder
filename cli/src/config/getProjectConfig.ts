@@ -1,11 +1,10 @@
-import type {
-  Config} from "@catladder/pipeline";
+import type { Config } from "@catladder/pipeline";
 import {
   readConfigSync,
   getAllEnvs,
   getEnvironment as _getEnvironment,
   createContext,
-  getSecretVarName
+  getSecretVarName,
 } from "@catladder/pipeline";
 
 import type { CommandInstance } from "vorpal";
@@ -67,7 +66,7 @@ export const getPipelineContextByChoice = async (
   componentName: string
 ) => {
   const config = await getProjectConfig();
-  return createContext(config, componentName, env);
+  return await createContext(config, componentName, env);
 };
 export const getAllComponentsWithAllEnvsFlat = async (): Promise<
   Array<{ env: string; componentName: string }>

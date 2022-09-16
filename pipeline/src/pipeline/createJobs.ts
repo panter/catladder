@@ -166,8 +166,8 @@ export const createJobs = async <T extends PipelineType>(
 
   const packageManagerInfo = await getPackageManagerInfo(config, componentName);
 
-  return envs.reduce((acc, env) => {
-    const context = createContext(
+  return envs.reduce(async (acc, env) => {
+    const context = await createContext(
       config,
       componentName,
       env,
@@ -177,7 +177,7 @@ export const createJobs = async <T extends PipelineType>(
     const jobs = addStageNeeds(createRawJobs(context));
 
     const result = {
-      ...acc,
+      ...(await acc),
       ...jobs.reduce<Record<string, PipelineJob<T>>>((acc, job) => {
         const jobWithResolvedReferences = replaceReferences(
           job,
@@ -199,7 +199,7 @@ export const createJobs = async <T extends PipelineType>(
           };
         }
         throw new Error("not supported");
-      }, {}),
+      }, await Promise.resolve({})),
     };
     return result;
   }, {});
