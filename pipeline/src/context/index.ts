@@ -32,13 +32,13 @@ const addIndexVar = (vars: Record<string, unknown>) => ({
 
 export const getSecretVarNameForContext = (context: Context, key: string) =>
   getSecretVarName(context.environment.shortName, context.componentName, key);
-export const getEnvironment = (
+export const getEnvironment = async (
   config: Config,
   componentName: string,
   env: string,
   commitInfo?: CommitInfo,
   alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
-): Environment => {
+): Promise<Environment> => {
   const defaultConfig = config.components[componentName];
   if (!defaultConfig) {
     throw new Error("unknown component " + componentName);
@@ -171,10 +171,10 @@ export const getEnvironment = (
     ...publicEnvVarsRawSanitized,
   });
 
-  const envVars = resolveReferences(
+  const envVars = await resolveReferences(
     envVarsRaw,
-    (componentName, variableName, alreadyVisited) => {
-      const { envVars } = getEnvironment(
+    async (componentName, variableName, alreadyVisited) => {
+      const { envVars } = await getEnvironment(
         config,
         componentName,
         env,
@@ -197,13 +197,13 @@ export const getEnvironment = (
   };
 };
 
-export const createContext = (
+export const createContext = async (
   config: Config,
   componentName: string,
   env: string,
   commitInfo?: CommitInfo,
   packageManagerInfo?: PackageManagerInfo
-): Context => {
+): Promise<Context> => {
   if (!/^[a-z0-9-]+$/.test(componentName)) {
     throw new Error(
       "componentName may only contain lower case letters, numbers and -"
@@ -244,7 +244,7 @@ export const createContext = (
     fullConfig: config,
     componentConfig,
     componentName,
-    environment: getEnvironment(config, componentName, env, commitInfo),
+    environment: await getEnvironment(config, componentName, env, commitInfo),
     commitInfo,
     packageManagerInfo,
   };

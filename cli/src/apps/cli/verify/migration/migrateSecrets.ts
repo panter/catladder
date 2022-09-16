@@ -23,7 +23,11 @@ export const migrateSecrets = async (
     const secrets = load(yamlstring);
 
     Object.keys(newConfig.components).forEach(async (componentName) => {
-      const environment = getEnvironment(newConfig, componentName, newEnv);
+      const environment = await getEnvironment(
+        newConfig,
+        componentName,
+        newEnv
+      );
       await upsertAllVariables(
         vorpal,
         pick(secrets, environment.secretEnvVarKeys),

@@ -1,55 +1,62 @@
 import { merge } from "lodash";
+import replaceAsync from "string-replace-async";
 
 const REGEX = /\$\{(([^:]+):)?([^}]+)}/gm;
 
-export const resolveReferences = (
+export const resolveReferences = async (
   vars: Record<string, string>,
   getOtherVariables?: (
     componentName: string,
     variableName: string,
     alreadyVisited: Record<string, Record<string, boolean>>
-  ) => string | null,
+  ) => Promise<string | null>,
   alreadyVisitedBase: Record<string, Record<string, boolean>> = {}
 ) => {
-  const replaceSingleValue = (
+  const replaceSingleValue = async (
     value: string,
     alreadyVisited: Record<string, Record<string, boolean>> = alreadyVisitedBase
-  ): string => {
+  ): Promise<string> => {
     if (REGEX.test(value)) {
-      return value.replace(REGEX, (match, _, componentName, variableName) => {
-        if (alreadyVisited[componentName]?.[variableName]) {
-          return match; // prevent endless loop
+      return await replaceAsync(
+        value,
+        REGEX,
+        async (match, _, componentName, variableName) => {
+          if (alreadyVisited[componentName]?.[variableName]) {
+            return match; // prevent endless loop
+          }
+          const newAlreadyVisited = merge({}, alreadyVisited, {
+            [componentName]: {
+              [variableName]: true,
+            },
+          });
+          const result = componentName
+            ? (await getOtherVariables?.(
+                componentName,
+                variableName,
+                newAlreadyVisited
+              )) ?? null
+            : vars[variableName]; // is self reference
+
+          const replaced =
+            result !== null && result !== undefined
+              ? await replaceSingleValue(result, newAlreadyVisited)
+              : match;
+
+          return replaced;
         }
-        const newAlreadyVisited = merge({}, alreadyVisited, {
-          [componentName]: {
-            [variableName]: true,
-          },
-        });
-        const result = componentName
-          ? getOtherVariables?.(
-              componentName,
-              variableName,
-              newAlreadyVisited
-            ) ?? null
-          : vars[variableName]; // is self reference
-
-        const replaced =
-          result !== null && result !== undefined
-            ? replaceSingleValue(result, newAlreadyVisited)
-            : match;
-
-        return replaced;
-      });
+      );
     } else {
       return value;
     }
   };
 
   return Object.fromEntries(
-    Object.entries(vars).map(([key, value]) => {
-      return [key, replaceSingleValue(value)];
-    })
-  );
+    await Promise.all(
+      Object.entries(vars).map(async ([key, value]) => {
+        return [key, await replaceSingleValue(value)];
+      })
+    )
+  ) as Record<string, string>;
 };
 
 export const translateLegacyFromComponents = (
