@@ -1,15 +1,18 @@
 import type { DeployConfigCustom } from "./custom";
+import type { DeployConfigDockerTag } from "./dockerTag";
 import type { DeployConfigCloudRun } from "./googleCloudRun";
 import type { DeployConfigKubernetes } from "./kubernetes";
 
 export * from "./custom";
 export * from "./googleCloudRun";
 export * from "./kubernetes";
+export * from "./dockerTag";
 
 export type DeployConfig =
   | DeployConfigKubernetes
   | DeployConfigCustom
-  | DeployConfigCloudRun;
+  | DeployConfigCloudRun
+  | DeployConfigDockerTag;
 
 export type DeployConfigType = DeployConfig["type"];
 export type DeployConfigGeneric<T extends DeployConfigType> = Extract<

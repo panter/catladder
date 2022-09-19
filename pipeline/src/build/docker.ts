@@ -38,6 +38,10 @@ export const requiresDockerBuild = (context: Context) => {
     return true;
   }
 
+  if (isOfDeployType(deployConfig, "dockerTag")) {
+    return true;
+  }
+
   return false;
 };
 
