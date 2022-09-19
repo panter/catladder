@@ -30,6 +30,10 @@ export const requiresDockerBuild = (context: Context) => {
     return true;
   }
 
+  if (isOfDeployType(deployConfig, "google-cloudrun")) {
+    return true;
+  }
+
   if (isOfDeployType(deployConfig, "custom") && deployConfig.requiresDocker) {
     return true;
   }
@@ -57,34 +61,36 @@ export const getDockerBuildVariables = (context: Context) => {
 };
 
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
-
+export const getDockerJobBaseProps = (context: Context) => {
+  return {
+    image: getRunnerImage("docker-build"),
+    services: [
+      {
+        name: "docker:20-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
+        command: ["--tls=false"],
+      },
+    ],
+    variables: getDockerBuildVariables(context),
+  };
+};
 export const createDockerBuildJobBase = (
   context: Context,
-  { script, variables, ...def }: Partial<CatladderJob>
+  { script, ...def }: Partial<CatladderJob>
 ): CatladderJob => {
   return merge(
     {
       name: DOCKER_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
-      image: getRunnerImage("docker-build"),
-
-      services: [
-        {
-          name: "docker:20-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
-          command: ["--tls=false"],
-        },
-      ],
-      variables: {
-        ...getDockerBuildVariables(context),
-        ...(variables ?? {}),
-      },
+      ...getDockerJobBaseProps(context),
       script: script || [],
     },
     def
   );
 };
 
+export const gitlabDockerLogin =
+  "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY";
 export const createDockerBuildJobDefault = (
   context: Context,
   { script, ...def }: Partial<CatladderJob>
@@ -92,7 +98,7 @@ export const createDockerBuildJobDefault = (
   return createDockerBuildJobBase(context, {
     script: [
       ...(script || []),
-      "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+      gitlabDockerLogin,
       "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
       "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
       "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",

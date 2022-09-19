@@ -7,6 +7,7 @@ export type RunnerImageName =
   | "kubernetes"
   | "base-pipeline"
   | "docker-build"
+  | "gcloud"
   | "semantic-release";
 export const getRunnerImage = (imageName: RunnerImageName) =>
   DOCKER_REGISTRY + "/" + imageName + ":" + PIPELINE_IMAGE_TAG;
