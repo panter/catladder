@@ -23,6 +23,9 @@ export const contextIsStoppable = (context: Context) => {
     return true;
   }
 
+  if (isOfDeployType(deployConfig, "google-cloudrun")) {
+    return true;
+  }
   if (isOfDeployType(deployConfig, "custom") && deployConfig.stopScript) {
     return true;
   }
