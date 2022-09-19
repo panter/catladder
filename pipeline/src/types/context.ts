@@ -1,11 +1,22 @@
-import type { PipelineTrigger, ComponentConfig, Config, EnvType } from "./config";
+import type {
+  PipelineTrigger,
+  ComponentConfig,
+  Config,
+  EnvType,
+} from "./config";
 
 export type Environment = {
   host: string;
+  /**
+   * the full name of the app. We use this as RELEASE_NAME in kubernetes and the service name in google cloud run
+   */
   fullName: string;
+  gitlabEnvironment: {
+    name: string;
+    url: string;
+  };
   shortName: string;
   slug: string;
-  url: string;
   /**
    * env vars contain all build-time env vars. secrets have to be resolved (they are stored in gitlab)
    */

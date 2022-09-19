@@ -43,8 +43,9 @@ export default async (vorpal: Vorpal) =>
           // ignore
         }
 
-        const releaseName = (await getEnvironment(env, componentName)).envVars
-          .RELEASE_NAME; // TODO: maybe its own function would be better
+        // we use the app full name as the release name
+        const releaseName = (await getEnvironment(env, componentName)).fullName;
+
         this.log(`helm release name: ${releaseName}`);
         this.log("");
         this.log("migrating now... 😼. This may take a moment");

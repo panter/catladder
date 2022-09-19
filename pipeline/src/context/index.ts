@@ -72,7 +72,7 @@ export const getEnvironment = async (
     ENV_TYPE: envType,
   };
 
-  const environmentName =
+  const gitlabEnvironmentName =
     envType === "review" && commitInfo
       ? `${env}/${commitInfo.refName}/${componentName}`
       : `${env}/${componentName}`;
@@ -85,6 +85,8 @@ export const getEnvironment = async (
   let predefinedVariables: Record<string, string>;
   let host: string;
   let url: string;
+  const fullName = `${config.customerName}-${config.appName}-${environmentSlug}`;
+
   if (envType === "local") {
     const devLocalConfig: DevLocalEnvConfig = mergedConfig;
     const port = devLocalConfig.port ?? 3000;
@@ -96,8 +98,6 @@ export const getEnvironment = async (
       PORT: port.toString(),
     };
   } else {
-    const RELEASE_NAME = `${config.customerName}-${config.appName}-${environmentSlug}`;
-
     const componentSlug = slugify(componentName);
     const envInUrl =
       envType === "review" && commitInfo
@@ -138,7 +138,6 @@ export const getEnvironment = async (
       KUBE_NAMESPACE,
       KUBE_APP_NAME,
       KUBE_APP_NAME_PREFIX,
-      RELEASE_NAME,
     };
   }
   const publicEnvVarsRaw = mergedConfig.vars?.public ?? {};
@@ -201,10 +200,13 @@ export const getEnvironment = async (
   return {
     envType,
     host,
-    fullName: environmentName,
+    gitlabEnvironment: {
+      name: gitlabEnvironmentName,
+      url: predefinedVariables.ROOT_URL,
+    },
+    fullName,
     slug: environmentSlug,
     shortName: env,
-    url: predefinedVariables.ROOT_URL,
     envVars,
     secretEnvVarKeys,
   };

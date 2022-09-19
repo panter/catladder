@@ -16,11 +16,6 @@ const DEPLOY_RUNNER_VARIABLES = {
 };
 type JobWithoutScript = Omit<CatladderJob, "script">;
 export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
-  const environment = {
-    name: context.environment.fullName,
-    url: context.environment.url,
-  };
-
   const hasDocker = requiresDockerBuild(context);
   const isStoppable = contextIsStoppable(context);
 
@@ -84,7 +79,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
       ...(hasDocker ? getDockerImageVariables(context) : {}),
     },
     environment: {
-      ...environment,
+      ...context.environment.gitlabEnvironment,
       ...(isStoppable
         ? {
             on_stop: STOP_JOB_NAME,
@@ -98,10 +93,6 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
 export const getBaseDeploymentStopJob = (
   context: Context
 ): JobWithoutScript => {
-  const environment = {
-    name: context.environment.fullName,
-    url: context.environment.url,
-  };
   return {
     name: STOP_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
@@ -124,17 +115,13 @@ export const getBaseDeploymentStopJob = (
     },
     stage: "stop",
     environment: {
-      ...environment,
+      ...context.environment.gitlabEnvironment,
       action: "stop",
     },
   };
 };
 
 export const getBaseRollbackJob = (context: Context): JobWithoutScript => {
-  const environment = {
-    name: context.environment.fullName,
-    url: context.environment.url,
-  };
   return {
     name: ROLLBACK_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
@@ -151,7 +138,7 @@ export const getBaseRollbackJob = (context: Context): JobWithoutScript => {
     },
     stage: "rollback",
     environment: {
-      ...environment,
+      ...context.environment.gitlabEnvironment,
       action: "access",
     },
   };

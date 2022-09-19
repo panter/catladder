@@ -32,6 +32,7 @@ export const createKubernetesDeployJobs = (
     image: getRunnerImage("kubernetes"),
     variables: {
       ...context.environment.envVars,
+      RELEASE_NAME: context.environment.fullName,
       HELM_EXPERIMENTAL_OCI: "1",
       KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
       KUBE_VALUES: dump(kubeValues, {
