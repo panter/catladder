@@ -39,7 +39,7 @@ export const createDeployJob = (context: Context): CatladderJob[] => {
     GCLOUD_DEPLOY_CREDENTIALS_KEY
   );
 
-  const serviceName = context.environment.slug;
+  const serviceName = context.environment.fullName;
 
   const labelsString = Object.entries(getLabels(context))
     .map(([key, value]) => `${key}=${value}`)
