@@ -1,3 +1,15 @@
+# [1.47.0](https://git.panter.ch/catladder/catladder/compare/v1.46.0...v1.47.0) (2022-09-19)
+
+
+### Bug Fixes
+
+* broken ([90605e1](https://git.panter.ch/catladder/catladder/commit/90605e10e021f94bc8342fc495d4bdeca950d0f4))
+
+
+### Features
+
+* **cloudrun:** use fullName as service name ([80da672](https://git.panter.ch/catladder/catladder/commit/80da6721fae8111c6b91f31881e8f8ba37c520b6))
+
 # [1.46.0](https://git.panter.ch/catladder/catladder/compare/v1.45.0...v1.46.0) (2022-09-19)
 
 
