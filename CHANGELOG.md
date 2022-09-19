@@ -1,3 +1,11 @@
+## [1.47.1](https://git.panter.ch/catladder/catladder/compare/v1.47.0...v1.47.1) (2022-09-19)
+
+
+### Bug Fixes
+
+* **cloudrun:** make sure service name is lowercase ([8baf8f3](https://git.panter.ch/catladder/catladder/commit/8baf8f32c867e325f91a705a377ae82c1268be47))
+* **cloudrun:** url wrong ([39609fd](https://git.panter.ch/catladder/catladder/commit/39609fd6f3d3318d97f19a97bc7da18f86088411))
+
 # [1.47.0](https://git.panter.ch/catladder/catladder/compare/v1.46.0...v1.47.0) (2022-09-19)
 
 
