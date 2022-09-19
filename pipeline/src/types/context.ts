@@ -7,6 +7,7 @@ import type {
 
 export type Environment = {
   host: string;
+  url: string;
   /**
    * the full name of the app. We use this as RELEASE_NAME in kubernetes and the service name in google cloud run
    */
