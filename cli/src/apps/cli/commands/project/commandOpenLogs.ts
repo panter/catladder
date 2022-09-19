@@ -3,12 +3,9 @@ import {
   getPipelineContextByChoice,
   parseChoice,
 } from "../../../../config/getProjectConfig";
-import { getCurrentConnectedClusterName } from "../../../../utils/cluster";
-import { getProjectNamespace } from "../../../../utils/projects";
+import { openGoogleCloudLogs } from "../../../../kubernetes/openKubernetesDashboards";
 import { getGoogleAuthUserNumber } from "../../utils/getGoogleAuthUserNumber";
-import { openGoogleCloudLogs } from "../shared";
 import { envAndComponents } from "./utils/autocompletions";
-import ensureCluster from "./utils/ensureCluster";
 
 export default async (vorpal: Vorpal) =>
   vorpal

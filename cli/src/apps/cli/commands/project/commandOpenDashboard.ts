@@ -1,4 +1,7 @@
+import type { Context } from "@catladder/pipeline";
+import { isOfDeployType } from "@catladder/pipeline";
 import type Vorpal from "vorpal";
+import type { CommandInstance } from "vorpal";
 import {
   getPipelineContextByChoice,
   parseChoice,
@@ -6,6 +9,54 @@ import {
 import { getGoogleAuthUserNumber } from "../../utils/getGoogleAuthUserNumber";
 import { openGoogleCloudKubernetesDashboard } from "../shared";
 import { envAndComponents } from "./utils/autocompletions";
+
+const openDashboardForKubernetes = async (
+  instance: CommandInstance,
+  context: Context
+) => {
+  const deployConfig = context.componentConfig.deploy;
+  if (!isOfDeployType(deployConfig, "kubernetes")) {
+    throw new Error("context is not of type kubernetes");
+  }
+
+  if (!deployConfig.cluster || deployConfig.cluster.type !== "gcloud") {
+    throw new Error("no gcloud custer configured");
+  }
+  // currently only supports kubernetes
+  const namespace = context.environment.envVars.KUBE_NAMESPACE;
+
+  const authGoogleNumber = await getGoogleAuthUserNumber.call(instance);
+
+  await openGoogleCloudKubernetesDashboard(
+    deployConfig.cluster,
+    namespace,
+    authGoogleNumber
+  );
+};
+
+const openDashboardForGoogleCloudRun = async (
+  instance: CommandInstance,
+  context: Context
+) => {
+  const deployConfig = context.componentConfig.deploy;
+  if (!isOfDeployType(deployConfig, "google-cloudrun")) {
+    throw new Error("context is not of type kubernetes");
+  }
+
+  if (!deployConfig.cluster || deployConfig.cluster.type !== "gcloud") {
+    throw new Error("no gcloud custer configured");
+  }
+  // currently only supports kubernetes
+  const namespace = context.environment.envVars.KUBE_NAMESPACE;
+
+  const authGoogleNumber = await getGoogleAuthUserNumber.call(instance);
+
+  await openGoogleCloudKubernetesDashboard(
+    deployConfig.cluster,
+    namespace,
+    authGoogleNumber
+  );
+};
 export default async (vorpal: Vorpal) =>
   vorpal
     .command(
@@ -15,34 +66,11 @@ export default async (vorpal: Vorpal) =>
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
       const { env, componentName } = parseChoice(envComponent);
-      const { componentConfig, environment } = await getPipelineContextByChoice(
-        env,
-        componentName
-      );
-
-      if (
-        !componentConfig.deploy ||
-        componentConfig.deploy.type !== "kubernetes"
-      ) {
-        throw new Error(
-          "only kubernetes deployments are supported at the moment"
-        );
+      const context = await getPipelineContextByChoice(env, componentName);
+      if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+        await openDashboardForKubernetes(this, context);
       }
-
-      if (
-        !componentConfig.deploy.cluster ||
-        componentConfig.deploy.cluster.type !== "gcloud"
-      ) {
-        throw new Error("no gcloud custer configured");
+      if (isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+        await openDashboardForGoogleCloudRun(this, context);
       }
-      // currently only supports kubernetes
-      const namespace = environment.envVars.KUBE_NAMESPACE;
-
-      const authGoogleNumber = await getGoogleAuthUserNumber.call(this, vorpal);
-
-      openGoogleCloudKubernetesDashboard(
-        componentConfig.deploy.cluster,
-        namespace,
-        authGoogleNumber
-      );
     });
