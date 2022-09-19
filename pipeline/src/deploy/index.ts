@@ -2,6 +2,7 @@ import type { Context } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
 import { GCLOUD_RUN_DEPLOY_TYPE } from "./cloudRun";
 import { CUSTOM_DEPLOY_TYPE } from "./custom";
+import { DOCKER_TAG_DEPLOY_TYPE } from "./dockerTag";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
 import type { DeployConfigGeneric, DeployConfigType } from "./types";
 export * from "./kubernetes";
@@ -23,4 +24,5 @@ export const DEPLOY_TYPES: DeployTypes = {
   kubernetes: KUBERNETES_DEPLOY_TYPE,
   custom: CUSTOM_DEPLOY_TYPE,
   "google-cloudrun": GCLOUD_RUN_DEPLOY_TYPE,
+  dockerTag: DOCKER_TAG_DEPLOY_TYPE,
 };
