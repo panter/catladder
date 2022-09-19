@@ -1,3 +1,10 @@
+# [1.45.0](https://git.panter.ch/catladder/catladder/compare/v1.44.1...v1.45.0) (2022-09-19)
+
+
+### Features
+
+* deploy type that adds a docker tag ([8dd0a89](https://git.panter.ch/catladder/catladder/commit/8dd0a89ce844a16baf0491fb286baa8ffb123d6b))
+
 ## [1.44.1](https://git.panter.ch/catladder/catladder/compare/v1.44.0...v1.44.1) (2022-09-19)
 
 
