@@ -1,5 +1,4 @@
 import { merge } from "lodash";
-import type { BuildConfigType } from "../..";
 import { getRunnerImage } from "../..";
 
 import { getYarnInstall } from "../../build/node/yarn";
@@ -27,22 +26,9 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
         : undefined,
       script: [
         `cd ${context.componentConfig.dir}`,
-        ...(requiresYarnInstall(context) ? yarnInstall : []),
+        ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
         ...deployConfig.script,
       ],
     }),
   ];
-};
-
-const buildTypesThatRequireYarn: BuildConfigType[] = [
-  "meteor",
-  "node",
-  "node-static",
-  "storybook",
-];
-
-const requiresYarnInstall = (context: Context) => {
-  const buildConfig = context.componentConfig.build;
-
-  return buildTypesThatRequireYarn.includes(buildConfig.type);
 };

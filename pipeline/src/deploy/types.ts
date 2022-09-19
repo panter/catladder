@@ -301,6 +301,7 @@ export type DeployConfigKubernetes = {
 export type DeployConfigCustom = {
   type: "custom";
   requiresDocker: boolean;
+  requiresYarnInstall?: boolean;
   script: string[];
   stopScript?: string[];
   image?: RunnerImageName;
