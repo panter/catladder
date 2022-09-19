@@ -1,2 +1,2 @@
 #!/bin/bash
-ncc build dist/catladder-gitlab.js -o dist/bundles/catladder-gitlab -e 'ts-node' -m
+ncc build dist/catladder-gitlab.js -o dist/bundles/catladder-gitlab -e 'ts-node' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
