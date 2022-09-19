@@ -1,3 +1,10 @@
+# [1.44.0](https://git.panter.ch/catladder/catladder/compare/v1.43.0...v1.44.0) (2022-09-19)
+
+
+### Features
+
+* google cloud run support ([b6a775a](https://git.panter.ch/catladder/catladder/commit/b6a775a10dc04a3fbf5eec53f41723a5f4a62506))
+
 # [1.43.0](https://git.panter.ch/catladder/catladder/compare/v1.42.2...v1.43.0) (2022-09-19)
 
 
