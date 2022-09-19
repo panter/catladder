@@ -1,3 +1,10 @@
+# [1.46.0](https://git.panter.ch/catladder/catladder/compare/v1.45.0...v1.46.0) (2022-09-19)
+
+
+### Features
+
+* increase autostop time ([582c181](https://git.panter.ch/catladder/catladder/commit/582c181cafbd22f53808665dc5cb16e03ae276ff))
+
 # [1.45.0](https://git.panter.ch/catladder/catladder/compare/v1.44.1...v1.45.0) (2022-09-19)
 
 
