@@ -1,3 +1,10 @@
+## [1.44.1](https://git.panter.ch/catladder/catladder/compare/v1.44.0...v1.44.1) (2022-09-19)
+
+
+### Bug Fixes
+
+* cloud run does not stop on merge ([24bccda](https://git.panter.ch/catladder/catladder/commit/24bccda4358b6fc2b2e9980eafe29df21cfdb4b5))
+
 # [1.44.0](https://git.panter.ch/catladder/catladder/compare/v1.43.0...v1.44.0) (2022-09-19)
 
 
