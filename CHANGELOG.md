@@ -1,3 +1,10 @@
+# [1.48.0](https://git.panter.ch/catladder/catladder/compare/v1.47.1...v1.48.0) (2022-09-19)
+
+
+### Features
+
+* **cloudrun:** open dashboard ([8e6e080](https://git.panter.ch/catladder/catladder/commit/8e6e0805ec0df54101c86aa03878733a60404e8f))
+
 ## [1.47.1](https://git.panter.ch/catladder/catladder/compare/v1.47.0...v1.47.1) (2022-09-19)
 
 
