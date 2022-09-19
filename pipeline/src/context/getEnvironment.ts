@@ -106,7 +106,7 @@ export const getEnvironment = async (
     const HOST_CANONICAL = isOfDeployType(mergedConfig.deploy, "kubernetes")
       ? `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`
       : isOfDeployType(mergedConfig.deploy, "google-cloudrun")
-      ? environmentSlug +
+      ? fullName.toLowerCase() +
         "-" +
         process.env[
           getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
