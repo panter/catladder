@@ -1,6 +1,7 @@
 import { merge } from "lodash";
 import type { BuildConfigType } from "../..";
-import { BuildTypes } from "../..";
+import { getRunnerImage } from "../..";
+
 import { getYarnInstall } from "../../build/node/yarn";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
@@ -21,6 +22,9 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
   const yarnInstall = getYarnInstall(context);
   return [
     merge({}, baseDeploymentJob, {
+      image: deployConfig.image
+        ? getRunnerImage(deployConfig.image)
+        : undefined,
       script: [
         `cd ${context.componentConfig.dir}`,
         ...(requiresYarnInstall(context) ? yarnInstall : []),

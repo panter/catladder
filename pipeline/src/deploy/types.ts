@@ -1,3 +1,5 @@
+import type { RunnerImageName } from "../runner";
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type DeployConfigBase = {
   /**
@@ -301,6 +303,7 @@ export type DeployConfigCustom = {
   requiresDocker: boolean;
   script: string[];
   stopScript?: string[];
+  image?: RunnerImageName;
 } & DeployConfigBase;
 
 export type DeployConfig = DeployConfigKubernetes | DeployConfigCustom;

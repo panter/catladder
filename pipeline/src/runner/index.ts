@@ -1,6 +1,6 @@
 import { PIPELINE_IMAGE_TAG, DOCKER_REGISTRY } from "../constants";
 
-type RunnerImageName =
+export type RunnerImageName =
   | "jobs-default"
   | "jobs-meteor"
   | "jobs-testing-chrome"
