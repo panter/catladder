@@ -4,7 +4,6 @@ import {
   parseChoice,
 } from "../../../../config/getProjectConfig";
 import { openGoogleCloudLogs } from "../../../../kubernetes/openKubernetesDashboards";
-import { getGoogleAuthUserNumber } from "../../utils/getGoogleAuthUserNumber";
 import { envAndComponents } from "./utils/autocompletions";
 
 export default async (vorpal: Vorpal) =>
@@ -16,34 +15,7 @@ export default async (vorpal: Vorpal) =>
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
       const { env, componentName } = parseChoice(envComponent);
-      const { componentConfig, environment } = await getPipelineContextByChoice(
-        env,
-        componentName
-      );
+      const context = await getPipelineContextByChoice(env, componentName);
 
-      if (
-        !componentConfig.deploy ||
-        componentConfig.deploy.type !== "kubernetes"
-      ) {
-        throw new Error(
-          "only kubernetes deployments are supported at the moment"
-        );
-      }
-
-      if (
-        !componentConfig.deploy.cluster ||
-        componentConfig.deploy.cluster.type !== "gcloud"
-      ) {
-        throw new Error("no gcloud custer configured");
-      }
-      // currently only supports kubernetes
-      const namespace = environment.envVars.KUBE_NAMESPACE;
-
-      const authGoogleNumber = await getGoogleAuthUserNumber.call(this, vorpal);
-
-      await openGoogleCloudLogs(
-        componentConfig.deploy.cluster,
-        namespace,
-        authGoogleNumber
-      );
+      await openGoogleCloudLogs(this, context);
     });

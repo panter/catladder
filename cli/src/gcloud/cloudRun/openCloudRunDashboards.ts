@@ -1,13 +1,22 @@
 import type { Context } from "@catladder/pipeline";
+import { isOfDeployType } from "@catladder/pipeline";
+import type { CommandInstance } from "vorpal";
+import { openGoogleCloudDashboard } from "../openDashboard";
 
 export const openGoogleCloudRunDashboard = async (
-  context: Context,
-  googleAuthUserNumber = 0
+  instance: CommandInstance,
+  context: Context
 ) => {
-  const pageState = `("savedViews":("c":["gke/${cluster.region}/${cluster.name}"],"n":["${namespace}"],"i":"4e42e0b9cd6147f8a4fba7516752ec48"))`;
-  const url = `https://console.cloud.google.com/kubernetes/workload?authuser=${googleAuthUserNumber}&project=${
-    cluster.projectId
-  }&pageState=${encodeURIComponent(pageState)}`;
-
-  open(url);
+  if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+    throw new Error("deploy type is not google-cloudrun ");
+  }
+  const { fullName } = context.environment;
+  const { region, projectId } = context.componentConfig.deploy;
+  await openGoogleCloudDashboard(
+    instance,
+    `run/detail/${region}/${fullName}/metrics`,
+    {
+      project: projectId,
+    }
+  );
 };
