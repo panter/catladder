@@ -1,3 +1,10 @@
+# [1.42.0](https://git.panter.ch/catladder/catladder/compare/v1.41.4...v1.42.0) (2022-09-19)
+
+
+### Features
+
+* **custom deploy:** allow to specify image ([e3fce8c](https://git.panter.ch/catladder/catladder/commit/e3fce8c3fb77de4cff4bb3dacd3c63c359fb750a))
+
 ## [1.41.4](https://git.panter.ch/catladder/catladder/compare/v1.41.3...v1.41.4) (2022-09-16)
 
 ## [1.41.3](https://git.panter.ch/catladder/catladder/compare/v1.41.2...v1.41.3) (2022-09-13)
