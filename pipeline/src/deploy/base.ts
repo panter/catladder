@@ -1,6 +1,7 @@
 import { getDockerImageVariables, requiresDockerBuild } from "../build/docker";
 import type { Context } from "../types";
 import type { CatladderJob } from "../types/jobs";
+import { isOfDeployType } from "./types";
 import { contextIsStoppable } from "./utils";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
@@ -25,10 +26,11 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
 
   const autoStop =
     context.environment.envType === "review"
-      ? "3 days" // auto stop is not working properly when branch is merged, so we do
+      ? "2 week"
       : context.environment.envType === "dev"
-      ? "3 weeks"
+      ? "4 weeks"
       : undefined;
+
   // if auto or manual is configured explicitly, use that
   const whenDeployDefined =
     context.componentConfig.deploy && context.componentConfig.deploy.when
