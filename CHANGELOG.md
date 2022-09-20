@@ -1,3 +1,10 @@
+## [1.48.1](https://git.panter.ch/catladder/catladder/compare/v1.48.0...v1.48.1) (2022-09-20)
+
+
+### Bug Fixes
+
+* does not work with yarn2 ([c079d76](https://git.panter.ch/catladder/catladder/commit/c079d764278fed08f8a75904a7f13bfd59397c5d))
+
 # [1.48.0](https://git.panter.ch/catladder/catladder/compare/v1.47.1...v1.48.0) (2022-09-19)
 
 
