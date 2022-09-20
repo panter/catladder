@@ -103,15 +103,16 @@ export const getEnvironment = async (
       config.domainCanonical ||
       "panter.cloud";
 
-    const HOST_CANONICAL = isOfDeployType(mergedConfig.deploy, "kubernetes")
-      ? `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`
-      : isOfDeployType(mergedConfig.deploy, "google-cloudrun")
+    const HOST_CANONICAL = isOfDeployType(
+      mergedConfig.deploy,
+      "google-cloudrun"
+    )
       ? fullName.toLowerCase() +
         "-" +
         process.env[
           getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
         ]
-      : "";
+      : `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`; // default for kubernetes and rest
     host = mergedConfig?.host ?? HOST_CANONICAL;
     url = `https://${host}`;
 
