@@ -1,3 +1,10 @@
+# [1.49.0](https://git.panter.ch/catladder/catladder/compare/v1.48.2...v1.49.0) (2022-09-20)
+
+
+### Features
+
+* remove update notifier ([ecee5ee](https://git.panter.ch/catladder/catladder/commit/ecee5eea51feadb56a40d68c270f155be431a910))
+
 ## [1.48.2](https://git.panter.ch/catladder/catladder/compare/v1.48.1...v1.48.2) (2022-09-20)
 
 
