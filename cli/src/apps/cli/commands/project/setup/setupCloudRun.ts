@@ -29,9 +29,10 @@ export const setupCloudRun = async (
     ["run.googleapis.com", "artifactregistry.googleapis.com"],
     config
   );
-
+  instance.log("upsert artifacts registry...");
   await upsertGcloudArtifactsRegistry(config);
 
+  instance.log("upsert deploy service account...");
   await upsertGcloudServiceAccountAndSaveSecret(
     instance,
     context,
@@ -54,7 +55,9 @@ export const setupCloudRun = async (
   // but the pipeline need to know it before deployment
   // so we get this through some magic and add this as a ci/cd variable
   // the pipeline than can use this to construct the canonical host
-
+  instance.log(
+    "get service domain suffix... that might take a while initially"
+  );
   const suffix = await getCloudRunDomainSuffix(config);
   instance.log("domain suffix: " + suffix);
 
