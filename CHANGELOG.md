@@ -1,3 +1,11 @@
+## [1.48.2](https://git.panter.ch/catladder/catladder/compare/v1.48.1...v1.48.2) (2022-09-20)
+
+
+### Bug Fixes
+
+* always expose a canonical url ([e5e0296](https://git.panter.ch/catladder/catladder/commit/e5e0296fa065d223f0b7288ede1a7f95b4c6e9d3))
+* more logging ([fdec7ec](https://git.panter.ch/catladder/catladder/commit/fdec7ec612bf93d2a0351e4b6efad403616756fb))
+
 ## [1.48.1](https://git.panter.ch/catladder/catladder/compare/v1.48.0...v1.48.1) (2022-09-20)
 
 
