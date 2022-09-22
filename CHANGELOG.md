@@ -1,3 +1,10 @@
+## [1.49.1](https://git.panter.ch/catladder/catladder/compare/v1.49.0...v1.49.1) (2022-09-22)
+
+
+### Bug Fixes
+
+* increase timeout to 10min (default is 5min) ([0ba85af](https://git.panter.ch/catladder/catladder/commit/0ba85af21623530caa2005a8b237683da9213986))
+
 # [1.49.0](https://git.panter.ch/catladder/catladder/compare/v1.48.2...v1.49.0) (2022-09-20)
 
 
