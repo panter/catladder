@@ -40,6 +40,9 @@ export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
       ? createBuildJob(context, {
           cache: [...getNodeCache(context), ...getMeteorCache(context)],
           image: getRunnerImage("jobs-meteor"),
+          variables: {
+            METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
+          },
           script: [
             ...yarnInstall,
 
