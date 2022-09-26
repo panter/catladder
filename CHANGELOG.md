@@ -1,3 +1,10 @@
+## [1.49.2](https://git.panter.ch/catladder/catladder/compare/v1.49.1...v1.49.2) (2022-09-26)
+
+
+### Bug Fixes
+
+* **meteor:** maybe improve build time ([7dba80c](https://git.panter.ch/catladder/catladder/commit/7dba80cd1a37e56d1d3824ed9e1e7552f912c861))
+
 ## [1.49.1](https://git.panter.ch/catladder/catladder/compare/v1.49.0...v1.49.1) (2022-09-22)
 
 
