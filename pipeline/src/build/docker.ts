@@ -103,6 +103,7 @@ export const createDockerBuildJobDefault = (
     script: [
       ...(script || []),
       gitlabDockerLogin,
+      "docker version",
       "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
       "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
       "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
