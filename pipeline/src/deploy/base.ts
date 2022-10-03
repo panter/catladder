@@ -96,8 +96,7 @@ export const getBaseDeploymentStopJob = (
   return {
     name: STOP_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
-
-    needs: [DEPLOY_JOB_NAME],
+    needs: [], // can be executed even if the deploy job failed
     rules: [
       {
         if: "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/", // automatic on hotfix branches
