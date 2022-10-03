@@ -1,3 +1,10 @@
+# [1.50.0](https://git.panter.ch/catladder/catladder/compare/v1.49.4...v1.50.0) (2022-10-03)
+
+
+### Features
+
+* stop jobs can also be triggered when deployment failed ([f018a40](https://git.panter.ch/catladder/catladder/commit/f018a4081652dfea9777412aef64d385f6a50d45))
+
 ## [1.49.4](https://git.panter.ch/catladder/catladder/compare/v1.49.3...v1.49.4) (2022-09-27)
 
 ## [1.49.3](https://git.panter.ch/catladder/catladder/compare/v1.49.2...v1.49.3) (2022-09-26)
