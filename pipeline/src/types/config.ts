@@ -11,7 +11,7 @@ export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
  */
 export const ENV_TYPES = {
   dev: {
-    triggers: ["mainBranch", "taggedRelease"], // we also trigger dev on tagged release, so that the versions match
+    triggers: ["mainBranch"],
   },
   review: {
     triggers: ["mr"],
