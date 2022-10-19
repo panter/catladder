@@ -1,3 +1,16 @@
+# [1.51.0](https://git.panter.ch/catladder/catladder/compare/v1.50.2...v1.51.0) (2022-10-19)
+
+
+### Bug Fixes
+
+* **kube:** increase deploy timeout ([001e545](https://git.panter.ch/catladder/catladder/commit/001e545906687f734f349bf1e6a5e280318fa7e1))
+* prisma legacy deploy ([d5c891d](https://git.panter.ch/catladder/catladder/commit/d5c891d902e03d2a0488bfda60f3425e338e25ee))
+
+
+### Features
+
+* no longer trigger dev release on tagged releases ([0327107](https://git.panter.ch/catladder/catladder/commit/032710730c52aca40c0531e8db62711203b7df26))
+
 ## [1.50.2](https://git.panter.ch/catladder/catladder/compare/v1.50.1...v1.50.2) (2022-10-18)
 
 ## [1.50.1](https://git.panter.ch/catladder/catladder/compare/v1.50.0...v1.50.1) (2022-10-05)
