@@ -36,5 +36,5 @@ spec:
         image: "{{ template "appImage" .}}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         command: ["/bin/sh","-c"]
-        args: ["cd /src; PRISMA_ENDPOINT={{template "PRISMA_ENDPOINT" . }} npx prisma1 deploy --force"]
+        args: ["cd /src; npx prisma1 deploy --force"]
 {{- end -}}
