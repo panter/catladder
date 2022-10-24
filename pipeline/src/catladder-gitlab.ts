@@ -14,7 +14,9 @@ const {
 
 const isDefaultBranch =
   Boolean(CI_DEFAULT_BRANCH) && CI_COMMIT_BRANCH === CI_DEFAULT_BRANCH;
-const isHotfixBranch = false; // TODO:  $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/
+const isHotfixBranch = CI_COMMIT_BRANCH
+  ? /^[0-9]+\.([0-9]+|x)\.x$/.test(CI_COMMIT_BRANCH)
+  : false;
 const isMergeRequest = Boolean(CI_MERGE_REQUEST_ID);
 const isTaggedRelease = Boolean(CI_COMMIT_TAG);
 
