@@ -1,3 +1,10 @@
+## [1.51.1](https://git.panter.ch/catladder/catladder/compare/v1.51.0...v1.51.1) (2022-10-24)
+
+
+### Bug Fixes
+
+* trigger full pipeline on hotfix branch ([3147f63](https://git.panter.ch/catladder/catladder/commit/3147f6346a0cecf6f33569cc0b38aacb2a4f86a1))
+
 # [1.51.0](https://git.panter.ch/catladder/catladder/compare/v1.50.2...v1.51.0) (2022-10-19)
 
 
