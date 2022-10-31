@@ -1,3 +1,10 @@
+# [1.52.0](https://git.panter.ch/catladder/catladder/compare/v1.51.1...v1.52.0) (2022-10-31)
+
+
+### Features
+
+* **node-static:** add default security headers ([b65f36e](https://git.panter.ch/catladder/catladder/commit/b65f36e412ce33e1a5d4ee2694a6c647fedbee7f))
+
 ## [1.51.1](https://git.panter.ch/catladder/catladder/compare/v1.51.0...v1.51.1) (2022-10-24)
 
 
