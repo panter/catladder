@@ -247,7 +247,7 @@ export const upsertAllVariables = async (
             id,
             fullKey + "_backup_" + new Date().getTime(),
             oldValue,
-            true,
+            masked,
             "_backup"
           );
         }
