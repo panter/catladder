@@ -1,3 +1,11 @@
+## [1.52.2](https://git.panter.ch/catladder/catladder/compare/v1.52.1...v1.52.2) (2022-11-05)
+
+
+### Bug Fixes
+
+* **cloudRun:** do not mask service suffix ([0a548b2](https://git.panter.ch/catladder/catladder/commit/0a548b20504045d93f7acc4bd4afe7d0e507e349))
+* keep masked in backup ([7b4a3dd](https://git.panter.ch/catladder/catladder/commit/7b4a3dd5f60276721ed9e570657357527badb2b6))
+
 ## [1.52.1](https://git.panter.ch/catladder/catladder/compare/v1.52.0...v1.52.1) (2022-11-05)
 
 # [1.52.0](https://git.panter.ch/catladder/catladder/compare/v1.51.1...v1.52.0) (2022-10-31)
