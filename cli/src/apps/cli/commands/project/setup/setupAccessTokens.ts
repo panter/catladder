@@ -43,11 +43,17 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
       name: "GL_TOKEN",
       message: "Access Token: ",
     });
-    await doGitlabRequest(instance, `projects/${projectId}/variables`, {
-      key: "GL_TOKEN",
-      value: GL_TOKEN,
-      masked: true,
-    });
+
+    await doGitlabRequest(
+      instance,
+      `projects/${projectId}/variables`,
+      {
+        key: "GL_TOKEN",
+        value: GL_TOKEN,
+        masked: true,
+      },
+      "POST"
+    );
   }
 
   const deploy_tokens = await doGitlabRequest(
@@ -64,10 +70,15 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
       "I will setup the 'GitLab Deploy Token', so Kubernetes can pull images from this project."
     );
 
-    await doGitlabRequest(instance, `projects/${projectId}/deploy_tokens`, {
-      id: projectId,
-      name: "gitlab-deploy-token",
-      scopes: ["read_registry"],
-    });
+    await doGitlabRequest(
+      instance,
+      `projects/${projectId}/deploy_tokens`,
+      {
+        id: projectId,
+        name: "gitlab-deploy-token",
+        scopes: ["read_registry"],
+      },
+      "POST"
+    );
   }
 };
