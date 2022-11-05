@@ -145,12 +145,13 @@ const createVariable = async (
   projectId: string,
   key: string,
   value: string,
+  masked = true,
   environment_scope = "*"
 ) => {
   return await doGitlabRequest(vorpal, `projects/${projectId}/variables`, {
     key,
     value,
-    masked: isMaskable(value),
+    masked: masked && isMaskable(value),
     environment_scope,
   });
 };
@@ -159,14 +160,15 @@ const updateVariable = async (
   vorpal: CommandInstance,
   projectId: string,
   key: string,
-  value: string
+  value: string,
+  masked = true
 ) => {
   return await doGitlabRequest(
     vorpal,
     `projects/${projectId}/variables/${key}`,
     {
       value,
-      masked: isMaskable(value),
+      masked: masked && isMaskable(value),
     },
     true
   );
@@ -219,7 +221,8 @@ export const upsertAllVariables = async (
   variables: Record<string, any>,
   env: string,
   componentName: string,
-  backup = true
+  backup = true,
+  masked = true // FIXME: would be better to have this per variable
 ): Promise<void> => {
   const { id } = await getProjectInfo(vorpal);
 
@@ -236,7 +239,7 @@ export const upsertAllVariables = async (
       if (exists) {
         vorpal.log(`changed: ${key}`);
 
-        await updateVariable(vorpal, id, fullKey, valueSanitized);
+        await updateVariable(vorpal, id, fullKey, valueSanitized, masked);
         // write backup
         if (backup) {
           await createVariable(
@@ -244,12 +247,13 @@ export const upsertAllVariables = async (
             id,
             fullKey + "_backup_" + new Date().getTime(),
             oldValue,
+            true,
             "_backup"
           );
         }
       } else {
         vorpal.log(`new    : ${key}`);
-        await createVariable(vorpal, id, fullKey, valueSanitized);
+        await createVariable(vorpal, id, fullKey, valueSanitized, masked);
       }
     } else {
       vorpal.log(`skip   : ${key}`);
