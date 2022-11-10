@@ -1,3 +1,10 @@
+# [1.54.0](https://git.panter.ch/catladder/catladder/compare/v1.53.0...v1.54.0) (2022-11-10)
+
+
+### Features
+
+* **cloud-run:** allow to deploy cloud run jobs ([368846a](https://git.panter.ch/catladder/catladder/commit/368846adea738abfcf23f4b7b294c04f9813be00))
+
 # [1.53.0](https://git.panter.ch/catladder/catladder/compare/v1.52.2...v1.53.0) (2022-11-10)
 
 
