@@ -4,6 +4,7 @@ import { DEPLOY_TYPES } from "../deploy";
 import type { DeployConfig, DeployConfigType } from "../deploy/types";
 import type { Config } from "../types/config";
 import type { CommitInfo, Context, PackageManagerInfo } from "../types/context";
+import type { PartialDeep } from "../types/utils";
 import { mergeWithMergingArrays } from "../utils";
 import { getEnvironment } from "./getEnvironment";
 import { getEnvironmentContext } from "./getEnvironmentContext";
@@ -33,8 +34,8 @@ export const createContext = async (
 
   const componentConfigWithoutDefaults = envContext.envConfigRaw;
   const defaults: {
-    build: Partial<BuildConfig>;
-    deploy: Partial<DeployConfig>;
+    build: PartialDeep<BuildConfig>;
+    deploy: PartialDeep<DeployConfig>;
   } = componentConfigWithoutDefaults.deploy
     ? {
         build:

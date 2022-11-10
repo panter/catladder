@@ -13,7 +13,10 @@ import type {
 } from "../types";
 import { isOfDeployType } from "../types";
 import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
-
+import {
+  getDatabaseCreateScript,
+  getDatabaseDeleteScript,
+} from "./utils/database";
 import { allowFailureInScripts } from "../../utils/gitlab";
 
 export const createGoogleCloudRunDeployJobs = (
@@ -52,8 +55,10 @@ export const createGoogleCloudRunDeployJobs = (
     .join(",");
 
   const commonArgs = `--project ${deployConfig.projectId} --region=${deployConfig.region}`;
-
-  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} --labels ${labelsString}`;
+  const cloudRunArgs = deployConfig.cloudSql
+    ? `--set-cloudsql-instances=${deployConfig.cloudSql.instanceConnectionName}`
+    : "";
+  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} ${cloudRunArgs} --labels ${labelsString}`;
   const serviceName = context.environment.fullName.toLowerCase();
 
   const getServiceDeployScript = (
@@ -81,7 +86,7 @@ export const createGoogleCloudRunDeployJobs = (
     // also we cannot upsert a job, so we have to create it and catch the error and then update
     const args = `${jobName} --command="${job.command
       .split(" ")
-      .join(",")}" ${commonDeployArgs}`;
+      .join(",")}" ${commonDeployArgs} --memory=${job.memory || "512Mi"}`;
     return [
       ...allowFailureInScripts([`gcloud beta run jobs create ${args}`]),
       `gcloud beta run jobs update ${args} --env-vars-file=____envvars.yaml`,
@@ -93,29 +98,34 @@ export const createGoogleCloudRunDeployJobs = (
   };
 
   const getFullJobName = (name: string) =>
-    context.environment.fullName.toLowerCase() + "-" + name;
+    context.environment.fullName.toLowerCase() + "-" + name.toLowerCase();
 
-  const jobsWithNames = Object.entries(deployConfig.jobs ?? {}).map(
-    ([name, job]) => [getFullJobName(name), job] as const
-  );
+  const jobsWithNames = Object.entries(deployConfig.jobs ?? {})
+    // filter out disabled jobs
+    .filter((entry): entry is [string, DeployConfigCloudRunJob] =>
+      Boolean(entry[1])
+    )
+    .map(([name, job]) => [getFullJobName(name), job] as const);
   const cloudRunDeployScripts = [
     `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
-    `cat ____envvars.yaml`,
+    ...(deployConfig.cloudSql
+      ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
+      : []),
 
     ...jobsWithNames
       .map(([name, job]) => getJobCreateScripts(name, job))
       .flat(),
     ...jobsWithNames
-      .filter(([name, job]) => job.when === "preDeploy")
-      .map(([name, job]) => getJobRunScript(name)),
+      .filter(([, job]) => job.when === "preDeploy")
+      .map(([name]) => getJobRunScript(name)),
 
     ...(deployConfig.service !== false
       ? [getServiceDeployScript(deployConfig.service)]
       : []),
 
     ...jobsWithNames
-      .filter(([name, job]) => job.when === "postDeploy")
-      .map(([name, job]) => getJobRunScript(name)),
+      .filter(([, job]) => job.when === "postDeploy")
+      .map(([name]) => getJobRunScript(name)),
     `docker image rm ${gcloudImageName}`,
   ];
 
@@ -123,10 +133,12 @@ export const createGoogleCloudRunDeployJobs = (
     ...(deployConfig.service !== false
       ? [`gcloud run services delete ${serviceName} ${commonArgs}`]
       : []),
-    ...Object.entries(deployConfig.jobs ?? {}).map(
-      ([name, job]) =>
-        `gcloud beta run jobs delete ${getFullJobName(name)} ${commonArgs}`
+    ...jobsWithNames.map(
+      ([name]) => `gcloud beta run jobs delete ${name} ${commonArgs}`
     ),
+    ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop
+      ? getDatabaseDeleteScript(context, deployConfig)
+      : []),
   ];
 
   const baseStopJob = getBaseDeploymentStopJob(context);

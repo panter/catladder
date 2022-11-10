@@ -26,7 +26,13 @@ export const setupCloudRun = async (
 
   instance.log("enable required servies...");
   await enableGCloudServices(
-    ["run.googleapis.com", "artifactregistry.googleapis.com"],
+    [
+      "run.googleapis.com",
+      "artifactregistry.googleapis.com",
+      ...(config.cloudSql
+        ? ["sqladmin.googleapis.com", "sql-component.googleapis.com"]
+        : []),
+    ],
     config
   );
   instance.log("upsert artifacts registry...");
@@ -46,6 +52,7 @@ export const setupCloudRun = async (
         "roles/artifactregistry.repoAdmin",
         "roles/run.admin",
         "roles/iam.serviceAccountUser",
+        ...(config.cloudSql ? ["roles/cloudsql.admin"] : []),
       ],
     },
     GCLOUD_DEPLOY_CREDENTIALS_KEY

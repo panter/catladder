@@ -37,6 +37,21 @@ export type Gcloudregion =
   | "us-west3"
   | "us-west4";
 
+export type DeployConfigCloudRunCloudSql = {
+  type: "unmanaged";
+  instanceConnectionName: string;
+  /**
+   * the prefix of the database, the full db name is this plus the environment slug
+   *
+   * defaults to customerName-appName
+   */
+  dbNamePrefix?: string | false;
+  /**
+   * whether to delete the database if the environment is stopped
+   * defaults to true for review envs, to false for every other environment
+   */
+  deleteDatabaseOnStop?: boolean;
+};
 export type DeployConfigCloudRunService = {
   /**
    * command / entrypoint, fallsback to buildConfig.startcommand
@@ -51,6 +66,11 @@ export type DeployConfigCloudRunJob = {
   command: string;
 
   when: "manual" | "preDeploy" | "postDeploy";
+
+  /**
+   * memory limit of the job, defaults to 51Mi
+   */
+  memory?: `${number}${"M" | "G" | "Mi" | "Gi"}`;
 };
 export type DeployConfigCloudRun = {
   /**
@@ -76,6 +96,11 @@ export type DeployConfigCloudRun = {
   service?: boolean | DeployConfigCloudRunService;
 
   jobs?: {
-    [name: string]: DeployConfigCloudRunJob;
+    [name: string]: DeployConfigCloudRunJob | false | null;
   };
+
+  /**
+   * add cloudSql
+   */
+  cloudSql?: DeployConfigCloudRunCloudSql | false;
 } & DeployConfigBase;

@@ -2,7 +2,7 @@ import { merge } from "lodash";
 
 import type { Context } from "../../types/context";
 import { mergeWithMergingArrays } from "../../utils";
-import { hasCloudSQL } from "../cloudSql";
+import { hasKubernetesCloudSQL } from "./cloudSql";
 import type { DeployConfigKubernetesValues } from "../types";
 import { isOfDeployType } from "../types";
 import { createCloudsqlBaseConfig } from "./cloudsql";
@@ -68,7 +68,7 @@ export const createKubeValues = (context: Context) => {
       env,
       application: createAppConfig(context, application),
     },
-    hasCloudSQL(context) ? createCloudsqlBaseConfig(context) : {},
+    hasKubernetesCloudSQL(context) ? createCloudsqlBaseConfig(context) : {},
     deployConfig.values?.mongodb?.enabled
       ? createMongodbBaseConfig(context)
       : {}
