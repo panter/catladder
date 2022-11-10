@@ -5,4 +5,5 @@ export const DOCKER_TAG_DEPLOY_TYPE: DeployTypeDefinition<"dockerTag"> = {
   jobs: createDockerTagDeployJobs,
   defaults: () => ({}),
   additionalSecretKeys: () => [],
+  getAdditionalEnvVars: () => ({}),
 };

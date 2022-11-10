@@ -37,13 +37,7 @@ export type Gcloudregion =
   | "us-west3"
   | "us-west4";
 
-export type DeployConfigCloudRun = {
-  /**
-   * EXPERIMENTAL cloud run deployment.
-   *
-   * Requires that cloud run is enabled on the project, as well as cloud run api and artifacts registry.
-   */
-  type: "google-cloudrun";
+export type DeployConfigCloudRunBase = {
   /**
    * the google cloud porject id
    */
@@ -52,4 +46,34 @@ export type DeployConfigCloudRun = {
    * the region. Set to europe-west6 for switzerland
    */
   region: Gcloudregion;
+
+  /**
+   * command / entrypoint, fallsback to buildConfig.startcommand
+   */
+  command?: string;
 } & DeployConfigBase;
+export type DeployConfigCloudRunService = {
+  /**
+   * EXPERIMENTAL cloud run deployment.
+   *
+   * This will deploy a cloud run service.
+   *
+   * Requires that cloud run is enabled on the project, as well as cloud run api and artifacts registry.
+   */
+  type: "google-cloudrun";
+} & DeployConfigCloudRunBase;
+
+export type DeployConfigCloudRunJob = {
+  /**
+   * EXPERIMENTAL cloud run job.
+   *
+   * This will deploy a cloud run job. This does not do much currently, but will be later used for cronjobs
+   *
+   * Requires that cloud run is enabled on the project, as well as cloud run api and artifacts registry.
+   */
+  type: "google-cloudrun-job";
+} & DeployConfigCloudRunBase;
+
+export type DeployConfigCloudRun =
+  | DeployConfigCloudRunService
+  | DeployConfigCloudRunJob;

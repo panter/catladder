@@ -5,4 +5,5 @@ export const CUSTOM_DEPLOY_TYPE: DeployTypeDefinition<"custom"> = {
   jobs: createCustomDeployJobs,
   defaults: () => ({}),
   additionalSecretKeys: () => [],
+  getAdditionalEnvVars: () => ({}),
 };
