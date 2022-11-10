@@ -51,15 +51,16 @@ export const getGitlabToken = async (vorpal: CommandInstance) => {
   return getPreference(TOKEN_KEY);
 };
 
+type Method = "GET" | "PUT" | "POST" | "DELETE";
 export const doGitlabRequest = async <T = any>(
   vorpal: CommandInstance,
   path: string,
   data: any = undefined,
-  update?: boolean
+  method: Method = "GET"
 ): Promise<T> => {
   const rootToken = await getGitlabToken(vorpal);
 
-  const method = data ? (update ? "PUT" : "POST") : "GET";
+  //const method = data ? (update ? "PUT" : "POST") : "GET";
 
   const result = await fetch(`https://git.panter.ch/api/v4/${path}`, {
     method,
@@ -67,11 +68,14 @@ export const doGitlabRequest = async <T = any>(
       "Content-Type": "application/json",
       "Private-Token": rootToken,
     },
-    body: JSON.stringify(data),
+    body: data ? JSON.stringify(data) : undefined,
   });
 
   if (result.status >= 200 && result.status < 400) {
-    return result.json();
+    if (result.headers.get("content-type") === "application/json") {
+      return result.json();
+    }
+    return null;
   }
   if (result.status === 404) {
     throw new Error("not found");
@@ -148,12 +152,17 @@ const createVariable = async (
   masked = true,
   environment_scope = "*"
 ) => {
-  return await doGitlabRequest(vorpal, `projects/${projectId}/variables`, {
-    key,
-    value,
-    masked: masked && isMaskable(value),
-    environment_scope,
-  });
+  return await doGitlabRequest(
+    vorpal,
+    `projects/${projectId}/variables`,
+    {
+      key,
+      value,
+      masked: masked && isMaskable(value),
+      environment_scope,
+    },
+    "POST"
+  );
 };
 
 const updateVariable = async (
@@ -170,7 +179,20 @@ const updateVariable = async (
       value,
       masked: masked && isMaskable(value),
     },
-    true
+    "PUT"
+  );
+};
+
+const deleteVariable = async (
+  vorpal: CommandInstance,
+  projectId: string,
+  key: string
+) => {
+  return await doGitlabRequest(
+    vorpal,
+    `projects/${projectId}/variables/${key}`,
+    undefined,
+    "DELETE"
   );
 };
 
@@ -216,6 +238,22 @@ const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
   return allVariables;
 };
 
+const getBackupKey = (fullKey: string, timestamp: number) =>
+  `${fullKey}_backup_${timestamp}`;
+export const clearBackups = async (vorpal: CommandInstance, keep: number) => {
+  const existingVariables = await getAllCatladderEnvVarsInGitlab(vorpal);
+  const { id } = await getProjectInfo(vorpal);
+  for (const [key, { backups }] of Object.entries(existingVariables)) {
+    const backupsSorted = backups.sort((a, b) => b - a);
+    //const toKeep = backupsSorted.slice(0, keep);
+    const toDelete = backupsSorted.slice(keep);
+
+    for (const timestamp of toDelete) {
+      await deleteVariable(vorpal, id, getBackupKey(key, timestamp));
+    }
+  }
+};
+
 export const upsertAllVariables = async (
   vorpal: CommandInstance,
   variables: Record<string, any>,
@@ -245,7 +283,7 @@ export const upsertAllVariables = async (
           await createVariable(
             vorpal,
             id,
-            fullKey + "_backup_" + new Date().getTime(),
+            getBackupKey(fullKey, new Date().getTime()),
             oldValue,
             masked,
             "_backup"

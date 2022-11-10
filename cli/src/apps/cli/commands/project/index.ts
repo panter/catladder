@@ -24,6 +24,7 @@ import commandPortForward from "./commandPortForward";
 import commandTriggerCronjob from "./commandTriggerCronjob";
 
 import commandOpenGrafanaPod from "./commandOpenGrafanaPod";
+import commandSecretsClearBackups from "./commandSecretsClearBackups";
 
 export default async (vorpal: Vorpal) => {
   commandSetup(vorpal);
@@ -48,6 +49,7 @@ export default async (vorpal: Vorpal) => {
   commandOpenEnv(vorpal);
   commandTriggerCronjob(vorpal);
   commandConfigSecrets(vorpal);
+  commandSecretsClearBackups(vorpal);
   commandDeletePods(vorpal);
   commandCopyDB(vorpal);
 
