@@ -12,6 +12,7 @@ export type Environment = {
    * the full name of the app. We use this as RELEASE_NAME in kubernetes and the service name in google cloud run
    */
   fullName: string;
+
   gitlabEnvironment: {
     name: string;
     url: string;
@@ -51,6 +52,13 @@ export type YarnPackageManagerInfo = {
 };
 
 export type PackageManagerInfo = YarnPackageManagerInfo;
+
+export type ContextBeforeConfig = {
+  componentName: string;
+  fullConfig: Config;
+  commitInfo?: CommitInfo;
+  packageManagerInfo?: PackageManagerInfo;
+};
 export type Context = {
   componentName: string;
   componentConfig: ComponentConfig;

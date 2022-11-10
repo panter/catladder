@@ -6,12 +6,20 @@ export const getYarnCache = (
   context: Context,
   policy = "pull-push"
 ): GitlabJobCache[] => {
+  const componentIsInWorkspace =
+    context.packageManagerInfo?.componentIsInWorkspace;
   return [
-    {
-      key: "yarn",
-      policy,
-      paths: [".yarn"],
-    },
+    componentIsInWorkspace
+      ? {
+          key: "yarn",
+          policy,
+          paths: [".yarn"],
+        }
+      : {
+          key: context.componentConfig.dir + "-yarn",
+          policy,
+          paths: [join(context.componentConfig.dir, ".yarn")],
+        },
   ];
 };
 

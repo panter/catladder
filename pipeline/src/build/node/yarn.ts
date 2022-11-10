@@ -24,7 +24,7 @@ export const getYarnInstallCommand = (
         doesNotShipWithBuiltInPlugins
           ? "yarn plugin import workspace-tools && "
           : " "
-      }yarn workspaces focus --production` // needs yarn plugin import workspace-tools
+      }yarn workspaces focus --production && yarn rebuild` // needs yarn plugin import workspace-tools
     : `${
         options?.noScripts ? "YARN_ENABLE_SCRIPTS=false " : ""
       }yarn install --immutable`;
