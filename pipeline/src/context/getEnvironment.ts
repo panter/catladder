@@ -1,11 +1,6 @@
 import { isObject, merge } from "lodash";
-import slugify from "slugify";
-import {
-  DEPLOY_TYPES,
-  GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
-  getKubernetesNamespace,
-} from "../deploy";
-import { isOfDeployType } from "../deploy/types";
+import type { EnvVarContext } from "../deploy";
+import { DEPLOY_TYPES } from "../deploy";
 import type { Config, DevLocalEnvConfig } from "../types/config";
 import { isKnowEnvType } from "../types/config";
 import type { CommitInfo, Context, Environment } from "../types/context";
@@ -15,20 +10,6 @@ import {
   translateLegacyFromComponents,
 } from "./resolveReferences";
 
-const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
-export const getSecretVarName = (
-  env: string,
-  componentName: string,
-  key: string
-) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
-
-const addIndexVar = (vars: Record<string, unknown>) => ({
-  ...vars,
-  _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),
-});
-
-export const getSecretVarNameForContext = (context: Context, key: string) =>
-  getSecretVarName(context.environment.shortName, context.componentName, key);
 export const getEnvironment = async (
   config: Config,
   componentName: string,
@@ -36,20 +17,8 @@ export const getEnvironment = async (
   commitInfo?: CommitInfo,
   alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
 ): Promise<Environment> => {
-  const defaultConfig = config.components[componentName];
-  if (!defaultConfig) {
-    throw new Error("unknown component " + componentName);
-  }
-
-  const envConfig = defaultConfig.env?.[env] ?? {};
-  if (envConfig === false) {
-    throw new Error("env is disabled: " + env);
-  }
-
-  const mergedConfig = mergeWithMergingArrays(defaultConfig, envConfig);
-
+  const envConfig = getEnvConfig(config, componentName, env);
   // env type: if its set manually, use that, otherwise use the known env types
-
   const envType = envConfig?.type ?? (isKnowEnvType(env) ? env : null);
 
   if (!envType) {
@@ -60,7 +29,7 @@ export const getEnvironment = async (
 
   const basePredefinedVariables = {
     ENV_SHORT: env,
-    APP_DIR: mergedConfig.dir,
+    APP_DIR: envConfig.dir,
     ENV_TYPE: envType,
   };
 
@@ -79,8 +48,19 @@ export const getEnvironment = async (
   let url: string;
   const fullName = `${config.customerName}-${config.appName}-${environmentSlug}`;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const envVarContext: EnvVarContext<any> = {
+    deployConfig: envConfig.deploy,
+    fullName,
+    envType,
+    commitInfo,
+    componentName,
+    env,
+    fullConfig: config,
+  };
+
   if (envType === "local") {
-    const devLocalConfig: DevLocalEnvConfig = mergedConfig;
+    const devLocalConfig: DevLocalEnvConfig = envConfig;
     const port = devLocalConfig.port ?? 3000;
     host = "localhost:" + port;
     url = "http://" + host;
@@ -90,60 +70,31 @@ export const getEnvironment = async (
       PORT: port.toString(),
     };
   } else {
-    const componentSlug = slugify(componentName);
-    const envInUrl =
-      envType === "review" && commitInfo
-        ? `${commitInfo.reviewSlug}.${env}`
-        : env;
+    const additionalEnvVars = envConfig.deploy
+      ? DEPLOY_TYPES[envConfig.deploy.type].getAdditionalEnvVars(envVarContext)
+      : {};
 
-    const domainCanonical =
-      (mergedConfig?.deploy &&
-        mergedConfig?.deploy.type === "kubernetes" &&
-        mergedConfig.deploy.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
-      config.domainCanonical ||
-      "panter.cloud";
-
-    const HOST_CANONICAL = isOfDeployType(
-      mergedConfig.deploy,
-      "google-cloudrun"
-    )
-      ? fullName.toLowerCase() +
-        "-" +
-        process.env[
-          getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
-        ]
-      : `${componentSlug}.${envInUrl}.${config.appName}.${config.customerName}.${domainCanonical}`; // default for kubernetes and rest
-    host = mergedConfig?.host ?? HOST_CANONICAL;
+    host =
+      envConfig?.host ??
+      additionalEnvVars.HOST_CANONICAL ??
+      "unknown-host.example.com";
     url = `https://${host}`;
-
-    // FIXME: move to kube specific jobs
-    const KUBE_APP_NAME_PREFIX =
-      envType === "review" && commitInfo ? `${commitInfo.reviewSlug}-` : "";
-
-    const KUBE_APP_NAME = `${KUBE_APP_NAME_PREFIX}${componentName}`;
-    const KUBE_NAMESPACE = getKubernetesNamespace(config, env);
 
     predefinedVariables = {
       ...basePredefinedVariables,
-      HOST_CANONICAL,
       HOST: host,
       ROOT_URL: url,
-      KUBE_NAMESPACE,
-      KUBE_APP_NAME,
-      KUBE_APP_NAME_PREFIX,
+      ...additionalEnvVars,
     };
   }
-  const publicEnvVarsRaw = mergedConfig.vars?.public ?? {};
+  const publicEnvVarsRaw = envConfig.vars?.public ?? {};
 
-  const additionalSecretKeys = mergedConfig.deploy
-    ? DEPLOY_TYPES[mergedConfig.deploy.type].additionalSecretKeys(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        mergedConfig.deploy as any
-      )
+  const additionalSecretKeys = envConfig.deploy
+    ? DEPLOY_TYPES[envConfig.deploy.type].additionalSecretKeys(envVarContext)
     : [];
 
   const secretEnvVarKeys = [
-    ...(mergedConfig.vars?.secret ?? []),
+    ...(envConfig.vars?.secret ?? []),
     ...additionalSecretKeys,
   ];
   const secretEnvVars = Object.fromEntries(
@@ -154,7 +105,7 @@ export const getEnvironment = async (
   );
 
   // this is deprecated, we now support: $componentname:FOO
-  const legacyFromComponents = mergedConfig.vars?.fromComponents ?? {};
+  const legacyFromComponents = envConfig.vars?.fromComponents ?? {};
   const publicEnvVarsRawWithLegasyFromComponents = merge(
     {},
     translateLegacyFromComponents(legacyFromComponents),
@@ -204,4 +155,33 @@ export const getEnvironment = async (
     envVars,
     secretEnvVarKeys,
   };
+};
+
+const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
+export const getSecretVarName = (
+  env: string,
+  componentName: string,
+  key: string
+) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
+
+const addIndexVar = (vars: Record<string, unknown>) => ({
+  ...vars,
+  _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),
+});
+
+export const getSecretVarNameForContext = (context: Context, key: string) =>
+  getSecretVarName(context.environment.shortName, context.componentName, key);
+
+const getEnvConfig = (config: Config, componentName: string, env: string) => {
+  const defaultConfig = config.components[componentName];
+  if (!defaultConfig) {
+    throw new Error("unknown component " + componentName);
+  }
+
+  const envCustomizations = defaultConfig.env?.[env] ?? {};
+  if (envCustomizations === false) {
+    throw new Error("env is disabled: " + env);
+  }
+
+  return mergeWithMergingArrays(defaultConfig, envCustomizations);
 };

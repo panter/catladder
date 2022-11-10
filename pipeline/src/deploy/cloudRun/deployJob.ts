@@ -10,14 +10,16 @@ import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
 import { isOfDeployType } from "../types";
 import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
 
-export const createDeployJob = (context: Context): CatladderJob[] => {
+export const createGoogleCloudRunDeployJobs = (
+  context: Context
+): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
     return [];
   }
-  if (!isOfDeployType(deployConfig, "google-cloudrun")) {
+  if (!isOfDeployType(deployConfig, "google-cloudrun", "google-cloudrun-job")) {
     // should not happen
-    throw new Error("deploy config is not custom");
+    throw new Error("deploy config is wrong");
   }
   const baseDeploymentJob = getBaseDeploymentJob(context);
 
@@ -39,21 +41,42 @@ export const createDeployJob = (context: Context): CatladderJob[] => {
     GCLOUD_DEPLOY_CREDENTIALS_KEY
   );
 
-  const serviceName = context.environment.fullName.toLowerCase();
-
   const labelsString = Object.entries(getLabels(context))
     .map(([key, value]) => `${key}=${value}`)
     .join(",");
 
-  const command = context.componentConfig.build.startCommand
-    ? `--command="${context.componentConfig.build.startCommand
-        .split(" ")
-        .join(",")}"`
-    : "";
-  // TODO: split secrets out
+  const commonArgs = `--project ${deployConfig.projectId} --region=${deployConfig.region}`;
+  const getDeployCommand = () => {
+    const name = context.environment.fullName.toLowerCase();
+    const command =
+      deployConfig.command ?? context.componentConfig.build.startCommand;
+    const commandArg = command
+      ? `--command="${command.split(" ").join(",")}"`
+      : "";
+
+    const commonDeployArgs = `${commandArg} --image ${gcloudImageName} ${commonArgs} --env-vars-file=____envvars.yaml --labels ${labelsString}`;
+    if (deployConfig.type === "google-cloudrun") {
+      return `gcloud run deploy ${name} ${commonDeployArgs} --allow-unauthenticated`;
+    }
+    if (deployConfig.type === "google-cloudrun-job") {
+      return `gcloud beta run jobs create ${name} ${commonDeployArgs}`;
+    }
+  };
+
+  const getStopCommand = () => {
+    const name = context.environment.fullName.toLowerCase();
+    const commonStopArgs = `${commonArgs} --quiet`;
+    if (deployConfig.type === "google-cloudrun") {
+      return `gcloud run services delete ${name} ${commonStopArgs}`;
+    }
+    if (deployConfig.type === "google-cloudrun-job") {
+      return `gcloud beta run jobs delete ${name} ${commonStopArgs}`;
+    }
+  };
+
   const cloudRunDeploy = [
-    `echo "$ENV_VARS" > ____envvars.yaml`,
-    `gcloud run deploy ${serviceName} --image ${gcloudImageName} --region=${deployConfig.region} --allow-unauthenticated --project ${deployConfig.projectId} ${command} --env-vars-file=____envvars.yaml --labels ${labelsString}`,
+    `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
+    getDeployCommand(),
     `docker image rm ${gcloudImageName}`,
   ];
 
@@ -75,10 +98,7 @@ export const createDeployJob = (context: Context): CatladderJob[] => {
 
     merge({}, baseStopJob, {
       image: getRunnerImage("gcloud"),
-      script: [
-        ...gcloudServiceAccountLoginCommands(context),
-        `gcloud run services delete ${serviceName} --project ${deployConfig.projectId} --region=${deployConfig.region} --quiet`,
-      ],
+      script: [...gcloudServiceAccountLoginCommands(context), getStopCommand()],
     }),
   ];
 };
