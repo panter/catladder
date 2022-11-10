@@ -1,3 +1,10 @@
+# [1.53.0](https://git.panter.ch/catladder/catladder/compare/v1.52.2...v1.53.0) (2022-11-10)
+
+
+### Features
+
+* **cli:** allow to clear backups ([6a81d84](https://git.panter.ch/catladder/catladder/commit/6a81d84f0f9cc0d12b6b72aef510b1d5a1163dc8))
+
 ## [1.52.2](https://git.panter.ch/catladder/catladder/compare/v1.52.1...v1.52.2) (2022-11-05)
 
 
