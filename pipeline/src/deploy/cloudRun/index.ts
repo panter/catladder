@@ -11,7 +11,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
   jobs: createGoogleCloudRunDeployJobs,
   defaults: () => ({}),
   additionalSecretKeys: () => [GCLOUD_DEPLOY_CREDENTIALS_KEY],
-  getAdditionalEnvVars: ({ fullName, env, componentName }) => {
+  getAdditionalEnvVars: ({ fullName, env, componentName, deployConfig }) => {
     const HOST_CANONICAL =
       fullName.toLowerCase() +
       "-" +
@@ -19,30 +19,19 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
         getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
       ];
 
+    const jobTriggers =
+      deployConfig && deployConfig.jobs
+        ? Object.fromEntries(
+            Object.entries(deployConfig.jobs).map(([name, job]) => [
+              "CLOUD_RUN_JOB_TRIGGER_URL_" + name,
+              `https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${name}:run`,
+            ])
+          )
+        : {};
+
     return {
       HOST_CANONICAL,
+      ...jobTriggers,
     };
   },
-};
-
-export const GCLOUD_RUN_JOB_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun-job"> =
-  {
-    jobs: createGoogleCloudRunDeployJobs,
-    defaults: () => ({}),
-    additionalSecretKeys: () => [GCLOUD_DEPLOY_CREDENTIALS_KEY],
-    getAdditionalEnvVars: ({ deployConfig, fullName }) => {
-      if (!deployConfig) {
-        return {};
-      }
-
-      const jobName = fullName.toLowerCase();
-      const CLOUD_RUN_JOB_TRIGGER_URL = `https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run`;
-
-      return { CLOUD_RUN_JOB_TRIGGER_URL };
-    },
-  };
-
-export const GCLOUD_RUN_DEPLOY_TYPES = {
-  "google-cloudrun": GCLOUD_RUN_DEPLOY_TYPE,
-  "google-cloudrun-job": GCLOUD_RUN_JOB_DEPLOY_TYPE,
 };
