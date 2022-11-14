@@ -7,6 +7,10 @@ import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
+import type {
+  DeployConfigCloudRunJob,
+  DeployConfigCloudRunService,
+} from "../types";
 import { isOfDeployType } from "../types";
 import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
 
@@ -17,7 +21,7 @@ export const createGoogleCloudRunDeployJobs = (
   if (deployConfig === false) {
     return [];
   }
-  if (!isOfDeployType(deployConfig, "google-cloudrun", "google-cloudrun-job")) {
+  if (!isOfDeployType(deployConfig, "google-cloudrun")) {
     // should not happen
     throw new Error("deploy config is wrong");
   }
@@ -46,38 +50,78 @@ export const createGoogleCloudRunDeployJobs = (
     .join(",");
 
   const commonArgs = `--project ${deployConfig.projectId} --region=${deployConfig.region}`;
-  const getDeployCommand = () => {
-    const name = context.environment.fullName.toLowerCase();
+
+  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} --labels ${labelsString}`;
+  const serviceName = context.environment.fullName.toLowerCase();
+
+  const getServiceDeployScript = (
+    service?: DeployConfigCloudRunService | true
+  ) => {
     const command =
-      deployConfig.command ?? context.componentConfig.build.startCommand;
+      service !== true
+        ? service?.command ?? context.componentConfig.build.startCommand
+        : undefined;
+
     const commandArg = command
       ? `--command="${command.split(" ").join(",")}"`
       : "";
 
-    const commonDeployArgs = `${commandArg} --image ${gcloudImageName} ${commonArgs} --env-vars-file=____envvars.yaml --labels ${labelsString}`;
-    if (deployConfig.type === "google-cloudrun") {
-      return `gcloud run deploy ${name} ${commonDeployArgs} --allow-unauthenticated`;
-    }
-    if (deployConfig.type === "google-cloudrun-job") {
-      return `gcloud beta run jobs create ${name} ${commonDeployArgs}`;
-    }
+    return `gcloud run deploy ${serviceName} ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml --allow-unauthenticated`;
   };
 
-  const getStopCommand = () => {
-    const name = context.environment.fullName.toLowerCase();
-    const commonStopArgs = `${commonArgs} --quiet`;
-    if (deployConfig.type === "google-cloudrun") {
-      return `gcloud run services delete ${name} ${commonStopArgs}`;
-    }
-    if (deployConfig.type === "google-cloudrun-job") {
-      return `gcloud beta run jobs delete ${name} ${commonStopArgs}`;
-    }
+  const getJobDeployScripts = (
+    jobName: string,
+    job: DeployConfigCloudRunJob
+  ) => {
+    // due to some oversight from google, jobs create does not accept `--env-vars-file` 🤦
+    // lucky, update on the other hand accepts it... so let's just imediatly update it
+
+    // also we cannot upsert a job, so we have to create it and catch the error and then update
+    const args = `${jobName} --command="${job.command
+      .split(" ")
+      .join(",")}" ${commonDeployArgs}`;
+    return [
+      "set +e", // disable fail job on error
+      `gcloud beta run jobs create ${args}`,
+      "set -e", // reenable
+      `gcloud beta run jobs update ${args} --env-vars-file=____envvars.yaml`,
+    ];
   };
 
-  const cloudRunDeploy = [
+  const getJobRunScript = (jobName: string) => {
+    return `gcloud beta run jobs execute ${jobName} ${commonArgs}`;
+  };
+
+  const getFullJobName = (name: string) =>
+    context.environment.fullName.toLowerCase() + "-" + name;
+
+  const jobsWithNames = Object.entries(deployConfig.jobs ?? {}).map(
+    ([name, job]) => [getFullJobName(name), job] as const
+  );
+  const cloudRunDeployScripts = [
     `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
-    getDeployCommand(),
+
+    ...jobsWithNames
+      .map(([name, job]) => getJobDeployScripts(name, job))
+      .flat(),
+
+    ...(deployConfig.service !== false
+      ? [getServiceDeployScript(deployConfig.service)]
+      : []),
+
+    ...jobsWithNames
+      .filter(([name, job]) => job.when === "postDeploy")
+      .map(([name, job]) => getJobRunScript(name)),
     `docker image rm ${gcloudImageName}`,
+  ];
+
+  const cloudRunStopScripts = [
+    ...(deployConfig.service !== false
+      ? [`gcloud run services delete ${serviceName}`]
+      : []),
+    ...Object.entries(deployConfig.jobs ?? {}).map(
+      ([jobName, job]) => `gcloud beta run jobs delete ${jobName}`
+    ),
   ];
 
   const baseStopJob = getBaseDeploymentStopJob(context);
@@ -86,6 +130,7 @@ export const createGoogleCloudRunDeployJobs = (
     merge({}, baseDeploymentJob, getDockerJobBaseProps(context), {
       artifacts: { paths: ["____envvars.yaml"] },
       variables: {
+        CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
         ENV_VARS: dump(allEnvVars, {
           lineWidth: -1,
           quotingType: "'",
@@ -93,12 +138,18 @@ export const createGoogleCloudRunDeployJobs = (
         }),
       },
       image: getRunnerImage("gcloud"),
-      script: [...pushImageToArtifactsRegistry, ...cloudRunDeploy],
+      script: [...pushImageToArtifactsRegistry, ...cloudRunDeployScripts],
     }),
 
     merge({}, baseStopJob, {
       image: getRunnerImage("gcloud"),
-      script: [...gcloudServiceAccountLoginCommands(context), getStopCommand()],
+      variables: {
+        CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
+      },
+      script: [
+        ...gcloudServiceAccountLoginCommands(context),
+        ...cloudRunStopScripts,
+      ],
     }),
   ];
 };
