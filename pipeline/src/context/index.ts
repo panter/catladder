@@ -1,13 +1,15 @@
 import { BUILD_TYPES } from "../build";
-import type { BuildConfig } from "../build/types";
+import type { BuildConfig, BuildConfigType } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
-import type { DeployConfig } from "../deploy/types";
+import type { DeployConfig, DeployConfigType } from "../deploy/types";
 import type { Config } from "../types/config";
 import type { CommitInfo, Context, PackageManagerInfo } from "../types/context";
 import { mergeWithMergingArrays } from "../utils";
 import { getEnvironment } from "./getEnvironment";
+import { getEnvironmentContext } from "./getEnvironmentContext";
 
 export * from "./getEnvironment";
+export * from "./getEnvironmentVariables";
 
 export const createContext = async (
   config: Config,
@@ -21,27 +23,28 @@ export const createContext = async (
       "componentName may only contain lower case letters, numbers and -"
     );
   }
-  const rawConfig = config.components[componentName];
-  if (!rawConfig) {
-    throw new Error("unknown component " + componentName);
-  }
-  // envs can override the config
-  const envConfig = rawConfig.env?.[env] ?? {};
-  const componentConfigWithoutDefaults = mergeWithMergingArrays(
-    rawConfig,
-    envConfig
+
+  const envContext = getEnvironmentContext(
+    config,
+    env,
+    componentName,
+    commitInfo
   );
 
-  // fill in defaults of build and deploy
+  const componentConfigWithoutDefaults = envContext.envConfigRaw;
   const defaults: {
     build: Partial<BuildConfig>;
     deploy: Partial<DeployConfig>;
   } = componentConfigWithoutDefaults.deploy
     ? {
         build:
-          BUILD_TYPES[componentConfigWithoutDefaults.build.type].defaults(),
+          BUILD_TYPES[
+            componentConfigWithoutDefaults.build.type as BuildConfigType
+          ].defaults(envContext),
         deploy:
-          DEPLOY_TYPES[componentConfigWithoutDefaults.deploy.type].defaults(),
+          DEPLOY_TYPES[
+            componentConfigWithoutDefaults.deploy.type as DeployConfigType
+          ].defaults(envContext),
       }
     : {
         build: {},

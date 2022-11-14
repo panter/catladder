@@ -85,6 +85,12 @@ export type BuildConfig =
   | BuildConfigMeteor;
 
 export type BuildConfigType = BuildConfig["type"];
+
+export type BuildConfigGeneric<T extends BuildConfigType> = Extract<
+  BuildConfig,
+  { type: T }
+>;
+
 export const isOfBuildType = <T extends Array<BuildConfigType>>(
   t: BuildConfig,
   ...types: T

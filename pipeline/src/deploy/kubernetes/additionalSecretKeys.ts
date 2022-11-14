@@ -1,20 +1,20 @@
-import type { EnvVarContext } from "..";
+import type { EnvironmentContext } from "../../types/environmentContext";
 
 export const additionalKubernetesSecretKeys = ({
-  deployConfig,
-}: EnvVarContext<"kubernetes">) => {
-  if (!deployConfig) {
+  deployConfigRaw,
+}: EnvironmentContext<any, "kubernetes">) => {
+  if (!deployConfigRaw) {
     return [];
   }
   const keys = [];
-  if (deployConfig.values?.mongodb?.enabled) {
+  if (deployConfigRaw.values?.mongodb?.enabled) {
     keys.push("MONGODB_ROOT_PASSWORD");
-    if (deployConfig.values.mongodb.architecture === "replicaset") {
+    if (deployConfigRaw.values.mongodb.architecture === "replicaset") {
       keys.push("MONGODB_REPLICASET_KEY");
     }
   }
 
-  if (deployConfig.values?.cloudsql?.enabled) {
+  if (deployConfigRaw.values?.cloudsql?.enabled) {
     keys.push("POSTGRESQL_PASSWORD");
     keys.push("cloudsqlProxyCredentials");
   }

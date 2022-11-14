@@ -104,6 +104,8 @@ export type EnvConfig<E extends EnvType = EnvType> = {
   host?: string;
 } & PartialDeep<DefaultEnvConfig>;
 
+export type EnvConfigWithComponent = EnvConfig<EnvType> & ComponentConfig;
+
 export type Env = {
   /**
    * local is a special env that is only used in local development
