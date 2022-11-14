@@ -1,3 +1,15 @@
+# [1.56.0](https://git.panter.ch/catladder/catladder/compare/v1.55.1...v1.56.0) (2022-11-14)
+
+
+### Bug Fixes
+
+* remove accidential commit ([c4786f8](https://git.panter.ch/catladder/catladder/commit/c4786f8d984b3e263f45a853ad1cb52a6b72ff67))
+
+
+### Features
+
+* basic support for cloud run ([6a73435](https://git.panter.ch/catladder/catladder/commit/6a73435fb927f7051c767a206b6a6d413e752027))
+
 ## [1.55.1](https://git.panter.ch/catladder/catladder/compare/v1.55.0...v1.55.1) (2022-11-14)
 
 # [1.55.0](https://git.panter.ch/catladder/catladder/compare/v1.54.0...v1.55.0) (2022-11-14)
