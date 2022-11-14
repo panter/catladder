@@ -1,3 +1,10 @@
+## [1.56.1](https://git.panter.ch/catladder/catladder/compare/v1.56.0...v1.56.1) (2022-11-14)
+
+
+### Bug Fixes
+
+* **cloudRun:** stop job does not delete services ([8835fbc](https://git.panter.ch/catladder/catladder/commit/8835fbc46a7268a9f723a1f717b6b0dc342181fe))
+
 # [1.56.0](https://git.panter.ch/catladder/catladder/compare/v1.55.1...v1.56.0) (2022-11-14)
 
 
