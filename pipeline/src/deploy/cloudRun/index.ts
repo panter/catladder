@@ -11,7 +11,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
   jobs: createGoogleCloudRunDeployJobs,
   defaults: () => ({}),
   additionalSecretKeys: () => [GCLOUD_DEPLOY_CREDENTIALS_KEY],
-  getAdditionalEnvVars: ({ fullName, env, componentName, deployConfig }) => {
+  getAdditionalEnvVars: ({ fullName, env, componentName, deployConfigRaw }) => {
     const HOST_CANONICAL =
       fullName.toLowerCase() +
       "-" +
@@ -20,11 +20,11 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
       ];
 
     const jobTriggers =
-      deployConfig && deployConfig.jobs
+      deployConfigRaw && deployConfigRaw.jobs
         ? Object.fromEntries(
-            Object.entries(deployConfig.jobs).map(([name, job]) => [
+            Object.entries(deployConfigRaw.jobs).map(([name, job]) => [
               "CLOUD_RUN_JOB_TRIGGER_URL_" + name,
-              `https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${name}:run`,
+              `https://${deployConfigRaw.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfigRaw.projectId}/jobs/${name}:run`,
             ])
           )
         : {};

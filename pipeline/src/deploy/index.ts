@@ -1,39 +1,27 @@
-import type { Config, EnvType } from "../types";
-import type { CommitInfo, Context } from "../types/context";
+import type { Context } from "../types/context";
+import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
 import { GCLOUD_RUN_DEPLOY_TYPE } from "./cloudRun";
 import { CUSTOM_DEPLOY_TYPE } from "./custom";
 import { DOCKER_TAG_DEPLOY_TYPE } from "./dockerTag";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
 import type { DeployConfigGeneric, DeployConfigType } from "./types";
+export * from "./cloudRun";
+export * from "./cloudSql";
 export * from "./kubernetes";
 export * from "./types";
 export * from "./utils";
 
-export type EnvVarContext<D extends DeployConfigType> = {
-  deployConfig: false | DeployConfigGeneric<D>;
-  commitInfo?: CommitInfo;
-  env: string;
-  envType: EnvType;
-  componentName: string;
-  fullName: string;
-
-  /**
-   * the full catladder config
-   */
-  fullConfig: Config;
-};
-
 export type DeployTypeDefinition<T extends DeployConfigType> = {
   jobs: (context: Context) => CatladderJob[];
-  defaults: () => Partial<DeployConfigGeneric<T>>;
-  additionalSecretKeys: (envVarContext: EnvVarContext<T>) => string[];
+  defaults: (
+    envContext: EnvironmentContext<any, T>
+  ) => Partial<DeployConfigGeneric<T>>;
+  additionalSecretKeys: (envContext: EnvironmentContext<any, T>) => string[];
   getAdditionalEnvVars: (
-    envVarContext: EnvVarContext<T>
+    envContext: EnvironmentContext<any, T>
   ) => Record<string, string | undefined | null>;
 };
-export * from "./cloudSql";
-export * from "./cloudRun";
 export type DeployTypes = {
   [T in DeployConfigType]: DeployTypeDefinition<T>;
 };
