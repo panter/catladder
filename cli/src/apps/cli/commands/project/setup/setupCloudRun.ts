@@ -26,11 +26,7 @@ export const setupCloudRun = async (
 
   instance.log("enable required servies...");
   await enableGCloudServices(
-    [
-      "run.googleapis.com",
-      "artifactregistry.googleapis.com",
-      ...(config.cloudSql ? ["sqladmin.googleapis.com"] : []),
-    ],
+    ["run.googleapis.com", "artifactregistry.googleapis.com"],
     config
   );
   instance.log("upsert artifacts registry...");

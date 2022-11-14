@@ -37,16 +37,6 @@ export type Gcloudregion =
   | "us-west3"
   | "us-west4";
 
-export type DeployConfigCloudRunCloudSql = {
-  type: "unmanaged";
-  instanceConnectionName: string;
-  dbNamePrefix?: string | false; // defaults to customerName-appName-componentName
-  /**
-   * whether to delete the database if the environment is stopped
-   * defaults to true for review envs, to false for every other environment
-   */
-  deleteDatabaseOnStop?: boolean;
-};
 export type DeployConfigCloudRunService = {
   /**
    * command / entrypoint, fallsback to buildConfig.startcommand
@@ -88,9 +78,4 @@ export type DeployConfigCloudRun = {
   jobs?: {
     [name: string]: DeployConfigCloudRunJob;
   };
-
-  /**
-   * add cloudSql
-   */
-  cloudSql?: DeployConfigCloudRunCloudSql | false;
 } & DeployConfigBase;

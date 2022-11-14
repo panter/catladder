@@ -13,10 +13,7 @@ import type {
 } from "../types";
 import { isOfDeployType } from "../types";
 import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
-import {
-  getDatabaseCreateScript,
-  getDatabaseDeleteScript,
-} from "./utils/database";
+
 import { allowFailureInScripts } from "../../utils/gitlab";
 
 export const createGoogleCloudRunDeployJobs = (
@@ -55,10 +52,8 @@ export const createGoogleCloudRunDeployJobs = (
     .join(",");
 
   const commonArgs = `--project ${deployConfig.projectId} --region=${deployConfig.region}`;
-  const cloudRunArgs = deployConfig.cloudSql
-    ? `--add-cloudsql-instances=${deployConfig.cloudSql.instanceConnectionName}`
-    : "";
-  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} ${cloudRunArgs} --labels ${labelsString}`;
+
+  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} --labels ${labelsString}`;
   const serviceName = context.environment.fullName.toLowerCase();
 
   const getServiceDeployScript = (
@@ -106,11 +101,6 @@ export const createGoogleCloudRunDeployJobs = (
   const cloudRunDeployScripts = [
     `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
     `cat ____envvars.yaml`,
-    ...(deployConfig.cloudSql
-      ? [
-          getDatabaseCreateScript(context, deployConfig), // we create the db, so that we can also delete it afterwards
-        ]
-      : []),
 
     ...jobsWithNames
       .map(([name, job]) => getJobCreateScripts(name, job))
@@ -136,9 +126,6 @@ export const createGoogleCloudRunDeployJobs = (
     ...Object.entries(deployConfig.jobs ?? {}).map(
       ([jobName, job]) => `gcloud beta run jobs delete ${jobName}`
     ),
-    ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop
-      ? [getDatabaseDeleteScript(context, deployConfig)]
-      : []),
   ];
 
   const baseStopJob = getBaseDeploymentStopJob(context);
