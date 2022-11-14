@@ -1,3 +1,10 @@
+# [1.55.0](https://git.panter.ch/catladder/catladder/compare/v1.54.0...v1.55.0) (2022-11-14)
+
+
+### Features
+
+* add jobs to cloud-run ([6b15c77](https://git.panter.ch/catladder/catladder/commit/6b15c770b8b6eeb67857f6bd7f38ed1320e73e04))
+
 # [1.54.0](https://git.panter.ch/catladder/catladder/compare/v1.53.0...v1.54.0) (2022-11-10)
 
 
