@@ -74,12 +74,26 @@ export type BuildConfigMeteor = BuildConfigNodeBase & {
   installScripts?: boolean;
 };
 
+export type BuildConfigCustomDocker = BuildConfigBase["docker"] &
+  (
+    | {
+        /**
+         * use the built-in nginx image for simple static apps
+         */
+        type: "nginx";
+      }
+    | {
+        /**
+         * custom docker build, expect that a Dockerfile in your directory
+         */
+        type: "custom";
+      }
+  );
+
 export type BuildConfigCustom = BuildConfigBase & {
   type: "custom";
   jobImage: string;
-  docker: BuildConfigBase["docker"] & {
-    type: "nginx";
-  };
+  docker: BuildConfigCustomDocker;
 };
 
 export type BuildConfigStorybook = BuildConfigNodeBase & {
