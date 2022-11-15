@@ -74,6 +74,14 @@ export type BuildConfigMeteor = BuildConfigNodeBase & {
   installScripts?: boolean;
 };
 
+export type BuildConfigCustom = BuildConfigBase & {
+  type: "custom";
+  jobImage: string;
+  docker: BuildConfigBase["docker"] & {
+    type: "nginx";
+  };
+};
+
 export type BuildConfigStorybook = BuildConfigNodeBase & {
   type: "storybook";
   startCommand?: never;
@@ -82,7 +90,8 @@ export type BuildConfig =
   | BuildConfigNode
   | BuildConfigNodeStatic
   | BuildConfigStorybook
-  | BuildConfigMeteor;
+  | BuildConfigMeteor
+  | BuildConfigCustom;
 
 export type BuildConfigType = BuildConfig["type"];
 
