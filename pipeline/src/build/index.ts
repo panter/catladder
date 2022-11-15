@@ -2,6 +2,7 @@ import type { Context } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 
 import type { CatladderJob } from "../types/jobs";
+import { createCustomJobs } from "./custom";
 import { createNodeJobs, createStorybookJobs, createMeteorJobs } from "./node";
 
 import type { BuildConfig, BuildConfigType } from "./types";
@@ -42,5 +43,9 @@ export const BUILD_TYPES: BuildTypes = {
     defaults: () => ({
       startCommand: "node main.js",
     }),
+  },
+  custom: {
+    jobs: createCustomJobs,
+    defaults: () => ({}),
   },
 };
