@@ -1,3 +1,10 @@
+# [1.58.0](https://git.panter.ch/catladder/catladder/compare/v1.57.1...v1.58.0) (2022-11-15)
+
+
+### Features
+
+* allow (simple) custom build jobs ([a8796ed](https://git.panter.ch/catladder/catladder/commit/a8796ed9294f1dba99f5f34a4a4e75b4d9b614bb))
+
 ## [1.57.1](https://git.panter.ch/catladder/catladder/compare/v1.57.0...v1.57.1) (2022-11-15)
 
 
