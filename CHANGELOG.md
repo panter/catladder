@@ -1,3 +1,10 @@
+## [1.58.1](https://git.panter.ch/catladder/catladder/compare/v1.58.0...v1.58.1) (2022-11-15)
+
+
+### Bug Fixes
+
+* **cloudRun:** jobs are not properly removed on stop ([8cd7e9c](https://git.panter.ch/catladder/catladder/commit/8cd7e9cce6378cfd3a27f71a4a995c2218fd9fb7))
+
 # [1.58.0](https://git.panter.ch/catladder/catladder/compare/v1.57.1...v1.58.0) (2022-11-15)
 
 
