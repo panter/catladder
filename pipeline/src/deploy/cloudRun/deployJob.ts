@@ -125,7 +125,7 @@ export const createGoogleCloudRunDeployJobs = (
       : []),
     ...Object.entries(deployConfig.jobs ?? {}).map(
       ([name, job]) =>
-        `gcloud beta run jobs delete ${getJobRunScript(name)} ${commonArgs}`
+        `gcloud beta run jobs delete ${getFullJobName(name)} ${commonArgs}`
     ),
   ];
 
