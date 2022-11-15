@@ -1,3 +1,10 @@
+## [1.59.1](https://git.panter.ch/catladder/catladder/compare/v1.59.0...v1.59.1) (2022-11-15)
+
+
+### Bug Fixes
+
+* **cloudRun:** fails on deleting jobs on stop... again 🤦‍♂️ ([1060ad3](https://git.panter.ch/catladder/catladder/commit/1060ad3a0dff484ddedd1ba79e83adf481e1b6ec))
+
 # [1.59.0](https://git.panter.ch/catladder/catladder/compare/v1.58.1...v1.59.0) (2022-11-15)
 
 
