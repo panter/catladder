@@ -106,7 +106,10 @@ export type EnvConfig<E extends EnvType = EnvType> = {
 
 export type EnvConfigWithComponent = EnvConfig<EnvType> & ComponentConfig;
 
-export type Env = {
+export type CustomEnv = EnvConfig & {
+  type: EnvType;
+};
+export type Env<C extends ConfigProps = never> = {
   /**
    * local is a special env that is only used in local development
    */
@@ -116,13 +119,16 @@ export type Env = {
   stage?: EnvConfig<"stage"> | false;
   review?: EnvConfig<"review"> | false;
   prod?: EnvConfig<"prod"> | false;
-} & Record<string, EnvConfig | false>;
-
-export type ComponentConfig = {
+  // unfortunatly, typescript does not properly support objects with a mix of known and unknown properties.
+  // for backwards compatiblity we allow unknown props, but we cannot type it (typescript problem)
+  // however, we now support providing custom envs through a generic parameter of `Config`
+} & Record<C["CustomEnvs"], CustomEnv> &
+  Record<string, any>;
+export type ComponentConfig<C extends ConfigProps = never> = {
   /**
    * specify environment configurations
    */
-  env?: Env;
+  env?: Env<C>;
   /**
    * the directory of the component (e.g. where the package.json or similar is located). You can set "." if you only have one app.
    */
@@ -139,7 +145,11 @@ export type ComponentConfig = {
   customJobs?: CatladderJob[] | ((context: Context) => CatladderJob[]);
 } & DefaultEnvConfig;
 
-export type Config = {
+export type ConfigProps = {
+  CustomEnvs: string;
+};
+
+export type Config<C extends ConfigProps = never> = {
   /**
    * name of the customer or group
    */
@@ -157,7 +167,7 @@ export type Config = {
   /**
    * components (sub apps)
    */
-  components: Record<string, ComponentConfig>;
+  components: Record<string, ComponentConfig<C>>;
 
   /**
    * additional meta data (only for organisational purposes)
