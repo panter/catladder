@@ -1,3 +1,10 @@
+# [1.59.0](https://git.panter.ch/catladder/catladder/compare/v1.58.1...v1.59.0) (2022-11-15)
+
+
+### Features
+
+* **build:** custom docker type ([ab77ebf](https://git.panter.ch/catladder/catladder/commit/ab77ebf755c2abf2497ed68df14dcd6d27b0edec))
+
 ## [1.58.1](https://git.panter.ch/catladder/catladder/compare/v1.58.0...v1.58.1) (2022-11-15)
 
 
