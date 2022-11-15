@@ -1,3 +1,10 @@
+## [1.57.1](https://git.panter.ch/catladder/catladder/compare/v1.57.0...v1.57.1) (2022-11-15)
+
+
+### Bug Fixes
+
+* add missing dep ([3cb199b](https://git.panter.ch/catladder/catladder/commit/3cb199ba6ea695541aec68edaed1aad44d04c480))
+
 # [1.57.0](https://git.panter.ch/catladder/catladder/compare/v1.56.1...v1.57.0) (2022-11-15)
 
 
