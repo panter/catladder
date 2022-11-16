@@ -1,3 +1,10 @@
+# [1.62.0](https://git.panter.ch/catladder/catladder/compare/v1.61.2...v1.62.0) (2022-11-16)
+
+
+### Features
+
+* expose DATABASE_JDBC_URL ([e085519](https://git.panter.ch/catladder/catladder/commit/e08551907ceb2cb0b4cc7c9ce7c70981b9bf18a7))
+
 ## [1.61.2](https://git.panter.ch/catladder/catladder/compare/v1.61.1...v1.61.2) (2022-11-16)
 
 ## [1.61.1](https://git.panter.ch/catladder/catladder/compare/v1.61.0...v1.61.1) (2022-11-16)
