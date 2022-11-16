@@ -3,7 +3,7 @@ import type { DeployTypeDefinition } from "..";
 import { getKubernetesNamespace } from "..";
 import { additionalKubernetesSecretKeys } from "./additionalSecretKeys";
 import { createKubernetesDeployJobs } from "./deployJob";
-
+export * from "./cloudSql";
 export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<"kubernetes"> = {
   jobs: createKubernetesDeployJobs,
   defaults: () => ({}),

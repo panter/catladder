@@ -2,10 +2,10 @@ import { merge } from "lodash";
 
 import type { Context } from "../../types/context";
 import { mergeWithMergingArrays } from "../../utils";
-import { hasKubernetesCloudSQL } from "./cloudSql";
 import type { DeployConfigKubernetesValues } from "../types";
 import { isOfDeployType } from "../types";
-import { createCloudsqlBaseConfig } from "./cloudsql";
+import { hasKubernetesCloudSQL, createCloudsqlBaseConfig } from "./cloudSql";
+
 import { createKubeEnv } from "./kubeEnv";
 import { createMongodbBaseConfig } from "./mongodb";
 import { processSecretsAsFiles } from "./processSecretsAsFiles";
