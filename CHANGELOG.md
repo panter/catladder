@@ -1,3 +1,15 @@
+# [1.60.0](https://git.panter.ch/catladder/catladder/compare/v1.59.1...v1.60.0) (2022-11-16)
+
+
+### Bug Fixes
+
+* deploy fails if job name contains dash ([332b079](https://git.panter.ch/catladder/catladder/commit/332b079a88e8c8e7cc271da580aff6ed8b4d2303))
+
+
+### Features
+
+* **cloudrun:** basic support for cloud sql ([5ebc657](https://git.panter.ch/catladder/catladder/commit/5ebc657d22767cf7881be9119736ead8549cf018))
+
 ## [1.59.1](https://git.panter.ch/catladder/catladder/compare/v1.59.0...v1.59.1) (2022-11-15)
 
 
