@@ -1,3 +1,10 @@
+# [1.61.0](https://git.panter.ch/catladder/catladder/compare/v1.60.0...v1.61.0) (2022-11-16)
+
+
+### Features
+
+* DATABASE_URL_NO_PW for libs that do not accept full connection strings (looking at you, spring boot) ([752fde5](https://git.panter.ch/catladder/catladder/commit/752fde5b63f1bf21027f15ffb0fdb19ceaea6990))
+
 # [1.60.0](https://git.panter.ch/catladder/catladder/compare/v1.59.1...v1.60.0) (2022-11-16)
 
 
