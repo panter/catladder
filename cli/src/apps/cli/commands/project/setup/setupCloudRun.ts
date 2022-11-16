@@ -29,6 +29,8 @@ export const setupCloudRun = async (
     [
       "run.googleapis.com",
       "artifactregistry.googleapis.com",
+      "cloudscheduler.googleapis.com", // for scheduling jobs
+      "cloudresourcemanager.googleapis.com", // only required to get google cloud project number
       ...(config.cloudSql
         ? ["sqladmin.googleapis.com", "sql-component.googleapis.com"]
         : []),
@@ -52,6 +54,7 @@ export const setupCloudRun = async (
         "roles/artifactregistry.repoAdmin",
         "roles/run.admin",
         "roles/iam.serviceAccountUser",
+        "roles/cloudscheduler.admin", // for scheduling
         ...(config.cloudSql ? ["roles/cloudsql.admin"] : []),
       ],
     },

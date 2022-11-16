@@ -59,19 +59,37 @@ export type DeployConfigCloudRunService = {
   command?: string;
 };
 
-export type DeployConfigCloudRunJob = {
+export type DeployConfigCloudRunJobBase = {
   /**
    * command
    */
   command: string;
-
-  when: "manual" | "preDeploy" | "postDeploy";
 
   /**
    * memory limit of the job, defaults to 51Mi
    */
   memory?: `${number}${"M" | "G" | "Mi" | "Gi"}`;
 };
+
+type Minute = string;
+type Hour = string;
+type DayOfMonth = string;
+type DayOfWeek = string;
+type Month = string;
+export type DeployConfigCloudRunJobWithSchedule =
+  DeployConfigCloudRunJobBase & {
+    when: "schedule";
+    schedule: `${Minute} ${Hour} ${DayOfMonth} ${Month} ${DayOfWeek}`;
+  };
+
+export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {
+  when: "manual" | "preDeploy" | "postDeploy";
+};
+
+export type DeployConfigCloudRunJob =
+  | DeployConfigCloudRunJobNormal
+  | DeployConfigCloudRunJobWithSchedule;
+
 export type DeployConfigCloudRun = {
   /**
    * EXPERIMENTAL cloud run deployment.
