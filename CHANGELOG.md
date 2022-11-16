@@ -1,3 +1,5 @@
+## [1.61.2](https://git.panter.ch/catladder/catladder/compare/v1.61.1...v1.61.2) (2022-11-16)
+
 ## [1.61.1](https://git.panter.ch/catladder/catladder/compare/v1.61.0...v1.61.1) (2022-11-16)
 
 # [1.61.0](https://git.panter.ch/catladder/catladder/compare/v1.60.0...v1.61.0) (2022-11-16)
