@@ -3,3 +3,6 @@ export const allowFailureInScripts = (script: string[]): string[] => [
   ...script,
   "set -e", // reenable
 ];
+
+export const sanitizeForBashVariable = (name: string) =>
+  name.replace(/-/g, "_");

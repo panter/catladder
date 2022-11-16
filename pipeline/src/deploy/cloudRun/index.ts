@@ -1,5 +1,6 @@
 import type { DeployTypeDefinition } from "..";
 import { getSecretVarName } from "../../context";
+import { sanitizeForBashVariable } from "../../utils/gitlab";
 import { createGoogleCloudRunDeployJobs } from "./deployJob";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
@@ -24,7 +25,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
       deployConfigRaw && deployConfigRaw.jobs
         ? Object.fromEntries(
             Object.entries(deployConfigRaw.jobs).map(([name, job]) => [
-              "CLOUD_RUN_JOB_TRIGGER_URL_" + name,
+              "CLOUD_RUN_JOB_TRIGGER_URL_" + sanitizeForBashVariable(name),
               `https://${deployConfigRaw.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfigRaw.projectId}/jobs/${name}:run`,
             ])
           )
