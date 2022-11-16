@@ -1,5 +1,5 @@
 import type { Context } from "@catladder/pipeline";
-import { isOfDeployType, hasCloudSQL } from "@catladder/pipeline";
+import { isOfDeployType, hasKubernetesCloudSQL } from "@catladder/pipeline";
 import type { CommandInstance } from "vorpal";
 import { setupCloudRun } from "./setupCloudRun";
 import { setupCloudSQL } from "./setupCloudSQL";
@@ -25,7 +25,7 @@ export const setupContext = async (
   if (isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
     await setupCloudRun(instance, context);
   }
-  if (hasCloudSQL(context)) {
+  if (hasKubernetesCloudSQL(context)) {
     await setupCloudSQL(instance, context);
   }
 

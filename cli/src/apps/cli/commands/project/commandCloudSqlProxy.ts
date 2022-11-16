@@ -1,3 +1,4 @@
+import type { Context } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import { spawn } from "child-process-promise";
 import { writeFile } from "fs-extra";
@@ -7,11 +8,15 @@ import {
   getEnvVars,
   getGitlabVar,
   getPipelineContextByChoice,
-  getProjectConfig,
   parseChoice,
 } from "../../../../config/getProjectConfig";
 import { envAndComponents } from "./utils/autocompletions";
 
+type ProxyInfo = {
+  instanceName: string;
+  DB_NAME: string;
+  DB_PASSWORD: string;
+};
 export default async (vorpal: Vorpal) =>
   vorpal
     .command("project-cloud-sql-proxy <envComponent>", "proxy to cloud sql db")
@@ -19,9 +24,26 @@ export default async (vorpal: Vorpal) =>
     .action(async function ({ envComponent }) {
       const { env, componentName } = parseChoice(envComponent);
 
-      const config = await getProjectConfig();
-      // skynet-164509:europe-west6:pvl-cyclomania-review=tcp:5432
+      const context = await getPipelineContextByChoice(env, componentName);
+      let proxyInfo: ProxyInfo;
 
+      if (env === "review") {
+        vorpal.log(
+          "⚠️ connection string does not include mr information on review environments"
+        );
+      }
+      if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+        proxyInfo = await getProxyInfoForKubernetes(context);
+      } else if (
+        isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
+      ) {
+        proxyInfo = await getProxyInfoForCloudRun(context);
+      } else {
+        throw new Error("unsupported environment");
+      }
+
+      // skynet-164509:europe-west6:pvl-cyclomania-review=tcp:5432
+      const { DB_PASSWORD, DB_NAME, instanceName } = proxyInfo;
       const { localPort } = await this.prompt({
         type: "number",
         name: "localPort",
@@ -29,35 +51,16 @@ export default async (vorpal: Vorpal) =>
         message: "Local port: ",
       });
 
-      const envVars = await getEnvVars(this, env, componentName);
-      const POSTGRESQL_PASSWORD = envVars?.POSTGRESQL_PASSWORD;
-
-      const context = await getPipelineContextByChoice(env, componentName);
-      if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
-        throw new Error("currently only supported for kubernetes deployment");
-      }
       this.log("");
-      this.log(`postgres-PW: ${POSTGRESQL_PASSWORD}`);
+      this.log(`postgres-PW: ${DB_PASSWORD}`);
       this.log("");
       this.log(
-        `POSTGRESQL_URL=postgresql://postgres:${POSTGRESQL_PASSWORD}@localhost:${localPort}/${context.environment.envVars.KUBE_APP_NAME}?schema=public`
+        `POSTGRESQL_URL=postgresql://postgres:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`
       );
       this.log("");
 
-      const values = context.componentConfig.deploy.values;
-
-      const projectId =
-        values?.cloudsql?.projectId ||
-        context.componentConfig.deploy.cluster?.projectId;
-
-      const defaultInstanceId = `${config.customerName}-${config.appName}-${env}`;
-      const instanceId = values?.cloudsql?.instanceId || defaultInstanceId;
-
-      const defaultRegion = "europe-west6"; // currently hardcoded
-      const region = values?.cloudsql?.region || defaultRegion;
-
-      const instanceName = `${projectId}:${region}:${instanceId}=tcp:${localPort}`;
-
+      // legacy, some projects have the cloudsqlProxyCredentials in the secrets
+      // actually it works without, if the current local shell user has access to the db through google cloud
       const cloudsqlProxyCredentials = await getGitlabVar(
         this,
         env,
@@ -65,20 +68,20 @@ export default async (vorpal: Vorpal) =>
         "cloudsqlProxyCredentials"
       );
 
-      if (!cloudsqlProxyCredentials) {
-        // we store cloudsqlProxyCredentials on gitlab, but its currently get pushed via bitwarden due to legacy reasons
-        // this will be fixed with when https://git.panter.ch/catladder/catladder/-/merge_requests/32/ is merged
-        this.log(
-          "cloudsqlProxyCredentials env var missing in gitlab. Please contact gilde-ci-cd about that."
-        );
-        throw new Error("cloudsqlProxyCredentials missing in secrets");
-      }
       await withFile(async ({ path: tmpFilePath }) => {
-        await writeFile(tmpFilePath, cloudsqlProxyCredentials);
+        if (cloudsqlProxyCredentials) {
+          await writeFile(tmpFilePath, cloudsqlProxyCredentials);
+        }
 
         await spawn(
           "cloud_sql_proxy",
-          ["-instances", instanceName, "-credential_file", tmpFilePath],
+          [
+            "-instances",
+            `${instanceName}=tcp:${localPort}`,
+            ...(cloudsqlProxyCredentials
+              ? ["-credential_file", tmpFilePath]
+              : []),
+          ],
           {
             stdio: "inherit",
             shell: true,
@@ -86,3 +89,69 @@ export default async (vorpal: Vorpal) =>
         );
       });
     });
+
+const getProxyInfoForKubernetes = async (
+  context: Context
+): Promise<ProxyInfo> => {
+  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+    throw new Error("unsupported");
+  }
+
+  const envVars = await getEnvVars(
+    this,
+    context.environment.shortName,
+    context.componentName
+  );
+
+  const DB_PASSWORD = envVars?.DB_PASSWORD || envVars?.POSTGRESQL_PASSWORD;
+
+  const DB_NAME = context.environment.envVars.KUBE_APP_NAME;
+
+  const values = context.componentConfig.deploy.values;
+
+  const projectId =
+    values?.cloudsql?.projectId ||
+    context.componentConfig.deploy.cluster?.projectId;
+
+  const defaultInstanceId = `${context.fullConfig.customerName}-${context.fullConfig.appName}-${context.environment.shortName}`;
+  const instanceId = values?.cloudsql?.instanceId || defaultInstanceId;
+
+  const defaultRegion = "europe-west6"; // currently hardcoded
+  const region = values?.cloudsql?.region || defaultRegion;
+
+  const instanceName = `${projectId}:${region}:${instanceId}`;
+
+  return {
+    instanceName,
+    DB_PASSWORD,
+    DB_NAME,
+  };
+};
+
+const getProxyInfoForCloudRun = async (
+  context: Context
+): Promise<ProxyInfo> => {
+  if (
+    !isOfDeployType(context.componentConfig.deploy, "google-cloudrun") ||
+    !context.componentConfig.deploy.cloudSql
+  ) {
+    throw new Error("unsupported");
+  }
+
+  const envVars = await getEnvVars(
+    this,
+    context.environment.shortName,
+    context.componentName
+  );
+
+  const DB_PASSWORD = envVars?.DB_PASSWORD;
+
+  const DB_NAME = context.environment.envVars.DB_NAME;
+
+  return {
+    instanceName:
+      context.componentConfig.deploy.cloudSql.instanceConnectionName,
+    DB_PASSWORD,
+    DB_NAME,
+  };
+};

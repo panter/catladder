@@ -1,13 +1,14 @@
 import type { Context } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
+import type { PartialDeep } from "../types/utils";
 import { GCLOUD_RUN_DEPLOY_TYPE } from "./cloudRun";
 import { CUSTOM_DEPLOY_TYPE } from "./custom";
 import { DOCKER_TAG_DEPLOY_TYPE } from "./dockerTag";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
 import type { DeployConfigGeneric, DeployConfigType } from "./types";
 export * from "./cloudRun";
-export * from "./cloudSql";
+export * from "./kubernetes/cloudSql";
 export * from "./kubernetes";
 export * from "./types";
 export * from "./utils";
@@ -16,7 +17,7 @@ export type DeployTypeDefinition<T extends DeployConfigType> = {
   jobs: (context: Context) => CatladderJob[];
   defaults: (
     envContext: EnvironmentContext<any, T>
-  ) => Partial<DeployConfigGeneric<T>>;
+  ) => PartialDeep<DeployConfigGeneric<T>>;
   additionalSecretKeys: (envContext: EnvironmentContext<any, T>) => string[];
   getAdditionalEnvVars: (
     envContext: EnvironmentContext<any, T>
