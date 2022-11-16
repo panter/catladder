@@ -8,7 +8,6 @@ import { DOCKER_TAG_DEPLOY_TYPE } from "./dockerTag";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
 import type { DeployConfigGeneric, DeployConfigType } from "./types";
 export * from "./cloudRun";
-export * from "./kubernetes/cloudSql";
 export * from "./kubernetes";
 export * from "./types";
 export * from "./utils";
