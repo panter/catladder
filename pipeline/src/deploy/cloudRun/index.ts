@@ -25,13 +25,15 @@ const getCloudSqlVariables = ({
       .filter(Boolean)
       .join("-");
 
+    const hostAndDb = `localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME`;
     return {
       CLOUD_SQL_INSTANCE_CONNECTION_NAME:
         deployConfigRaw.cloudSql.instanceConnectionName,
       DB_NAME: DB_NAME,
       DB_USER: "postgres",
       DB_PASSWORD: "$" + getSecretVarName(env, componentName, "DB_PASSWORD"),
-      DATABASE_URL: `postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME`,
+      DATABASE_URL: `postgresql://$DB_USER:$DB_PASSWORD@${hostAndDb}`,
+      DATABASE_URL_NO_PW: `postgresql://${hostAndDb}`,
     };
   }
   return {};
