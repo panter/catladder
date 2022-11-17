@@ -8,7 +8,9 @@ import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
 import type {
+  DeployConfigCloudRun,
   DeployConfigCloudRunJob,
+  DeployConfigCloudRunJobWithSchedule,
   DeployConfigCloudRunService,
 } from "../types";
 import { isOfDeployType } from "../types";
@@ -19,6 +21,10 @@ import {
 } from "./utils/database";
 import { allowFailureInScripts } from "../../utils/gitlab";
 
+const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
+  `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
+  `echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"`,
+];
 export const createGoogleCloudRunDeployJobs = (
   context: Context
 ): CatladderJob[] => {
@@ -38,7 +44,6 @@ export const createGoogleCloudRunDeployJobs = (
 
   const pushImageToArtifactsRegistry = [
     gitlabDockerLogin,
-    ...gcloudServiceAccountLoginCommands(context),
     `gcloud auth configure-docker ${deployConfig.region}-docker.pkg.dev`,
     `docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG`,
     `docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG ${gcloudImageName}`,
@@ -61,6 +66,33 @@ export const createGoogleCloudRunDeployJobs = (
   const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} ${cloudRunArgs} --labels ${labelsString}`;
   const serviceName = context.environment.fullName.toLowerCase();
 
+  const getFullJobName = (name: string) =>
+    context.environment.fullName.toLowerCase() + "-" + name.toLowerCase();
+
+  const jobsWithNames = Object.entries(deployConfig.jobs ?? {})
+    // filter out disabled jobs
+    .filter((entry): entry is [string, DeployConfigCloudRunJob] =>
+      Boolean(entry[1])
+    )
+    .map(([name, job]) => ({
+      jobName: getFullJobName(name),
+      job,
+    }));
+  const jobsWithSchedule = jobsWithNames
+    .filter(
+      (
+        entry
+      ): entry is {
+        jobName: string;
+        job: DeployConfigCloudRunJobWithSchedule;
+      } => entry.job.when === "schedule"
+    )
+    .map(({ job, jobName }) => ({
+      job,
+      jobName,
+      schedulerName: jobName + "-scheduler",
+    }));
+
   const getServiceDeployScript = (
     service?: DeployConfigCloudRunService | true
   ) => {
@@ -76,7 +108,7 @@ export const createGoogleCloudRunDeployJobs = (
     return `gcloud run deploy ${serviceName} ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml --allow-unauthenticated`;
   };
 
-  const getJobCreateScripts = (
+  const getJobCreateScriptsForJob = (
     jobName: string,
     job: DeployConfigCloudRunJob
   ) => {
@@ -93,56 +125,86 @@ export const createGoogleCloudRunDeployJobs = (
     ];
   };
 
-  const getJobRunScript = (jobName: string) => {
+  const getJobCreateScripts = () =>
+    jobsWithNames
+      .map(({ job, jobName }) => getJobCreateScriptsForJob(jobName, job))
+      .flat();
+
+  const getJobRunScriptForJob = (jobName: string) => {
     return `gcloud beta run jobs execute ${jobName} ${commonArgs}`;
   };
 
-  const getFullJobName = (name: string) =>
-    context.environment.fullName.toLowerCase() + "-" + name.toLowerCase();
+  const getJobRunScripts = (when: DeployConfigCloudRunJob["when"]) =>
+    jobsWithNames
+      .filter(({ job }) => job.when === when)
+      .map(({ jobName }) => getJobRunScriptForJob(jobName));
 
-  const jobsWithNames = Object.entries(deployConfig.jobs ?? {})
-    // filter out disabled jobs
-    .filter((entry): entry is [string, DeployConfigCloudRunJob] =>
-      Boolean(entry[1])
-    )
-    .map(([name, job]) => [getFullJobName(name), job] as const);
-  const cloudRunDeployScripts = [
+  const getCreateScheduleScripts = () => {
+    return jobsWithSchedule
+      .map(({ job, jobName, schedulerName }) => {
+        const commonArgs = `http ${schedulerName} --project=${deployConfig.projectId} --location ${deployConfig.region} \
+      --schedule="${job.schedule}" \
+      --uri="https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run" \
+      --http-method POST \
+      --oauth-service-account-email $GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com`;
+        return [
+          ...allowFailureInScripts([
+            `gcloud scheduler jobs create ${commonArgs}`,
+          ]),
+          `gcloud scheduler jobs update ${commonArgs}`,
+        ];
+      })
+      .flat();
+  };
+
+  const getDeleteSchedulesScripts = () => {
+    return jobsWithSchedule
+      .map(({ schedulerName }) => {
+        return [
+          ...allowFailureInScripts([
+            `gcloud scheduler jobs delete ${schedulerName} --project=${deployConfig.projectId} --location ${deployConfig.region}`,
+          ]),
+        ];
+      })
+      .flat();
+  };
+
+  const getDeleteJobsScripts = () =>
+    jobsWithNames.map(
+      ({ jobName }) => `gcloud beta run jobs delete ${jobName} ${commonArgs}`
+    );
+
+  const deployScripts = [
+    ...gcloudServiceAccountLoginCommands(context),
+    ...setExtraVarsScripts(deployConfig),
+    ...pushImageToArtifactsRegistry,
     `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
     ...(deployConfig.cloudSql
       ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
       : []),
-
-    ...jobsWithNames
-      .map(([name, job]) => getJobCreateScripts(name, job))
-      .flat(),
-    ...jobsWithNames
-      .filter(([, job]) => job.when === "preDeploy")
-      .map(([name]) => getJobRunScript(name)),
+    ...getCreateScheduleScripts(),
+    ...getJobCreateScripts(),
+    ...getJobRunScripts("preDeploy"),
 
     ...(deployConfig.service !== false
       ? [getServiceDeployScript(deployConfig.service)]
       : []),
+    ...getJobRunScripts("postDeploy"),
 
-    ...jobsWithNames
-      .filter(([, job]) => job.when === "postDeploy")
-      .map(([name]) => getJobRunScript(name)),
     `docker image rm ${gcloudImageName}`,
   ];
 
-  const cloudRunStopScripts = [
+  const stopScripts = [
+    ...gcloudServiceAccountLoginCommands(context),
     ...(deployConfig.service !== false
       ? [`gcloud run services delete ${serviceName} ${commonArgs}`]
       : []),
-    ...jobsWithNames.map(
-      ([name]) => `gcloud beta run jobs delete ${name} ${commonArgs}`
-    ),
+    ...getDeleteSchedulesScripts(),
+    ...getDeleteJobsScripts(),
     ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop
       ? getDatabaseDeleteScript(context, deployConfig)
       : []),
   ];
-
-  const baseStopJob = getBaseDeploymentStopJob(context);
-
   return [
     merge({}, baseDeploymentJob, getDockerJobBaseProps(context), {
       artifacts: { paths: ["____envvars.yaml"] },
@@ -155,18 +217,15 @@ export const createGoogleCloudRunDeployJobs = (
         }),
       },
       image: getRunnerImage("gcloud"),
-      script: [...pushImageToArtifactsRegistry, ...cloudRunDeployScripts],
+      script: deployScripts,
     }),
 
-    merge({}, baseStopJob, {
+    merge({}, getBaseDeploymentStopJob(context), {
       image: getRunnerImage("gcloud"),
       variables: {
         CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
       },
-      script: [
-        ...gcloudServiceAccountLoginCommands(context),
-        ...cloudRunStopScripts,
-      ],
+      script: stopScripts,
     }),
   ];
 };
