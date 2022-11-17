@@ -1,3 +1,10 @@
+## [1.62.1](https://git.panter.ch/catladder/catladder/compare/v1.62.0...v1.62.1) (2022-11-17)
+
+
+### Bug Fixes
+
+* **catenv:** do not throw when env is disabled ([7c0e2c7](https://git.panter.ch/catladder/catladder/commit/7c0e2c743f8d8358ab4cf07d1ee90d6563f13810))
+
 # [1.62.0](https://git.panter.ch/catladder/catladder/compare/v1.61.2...v1.62.0) (2022-11-16)
 
 
