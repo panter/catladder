@@ -14,7 +14,7 @@ export const getEnvConfig = (
 
   const envCustomizations = defaultConfig.env?.[env] ?? {};
   if (envCustomizations === false) {
-    throw new Error("env is disabled: " + env);
+    throw new Error("env is disabled: " + env + ":" + componentName);
   }
 
   return mergeWithMergingArrays(defaultConfig, envCustomizations);

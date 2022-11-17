@@ -150,8 +150,13 @@ export const getEnvVars = async (
   env: string,
   componentName: string
 ) => {
-  const envionment = await getEnvironment(env, componentName);
-  // in the pipeline the secrets alreadyy exists  and bash will expand them
-  // but here we need to manually load them
-  return resolveSecrets(vorpal, envionment.envVars);
+  try {
+    const envionment = await getEnvironment(env, componentName);
+    // in the pipeline the secrets alreadyy exists  and bash will expand them
+    // but here we need to manually load them
+    return resolveSecrets(vorpal, envionment.envVars);
+  } catch (e) {
+    // env is disabled
+    return {};
+  }
 };
