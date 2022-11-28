@@ -4,7 +4,7 @@ import type {
   GitlabJobCache,
   GitlabRule,
   GitlabVariables,
-  Service,
+  GitlabJobService,
 } from "./gitlab-types";
 
 export const BASE_STAGES = [
@@ -72,7 +72,7 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * additional services, mainly used for docker
    */
-  services?: Service[];
+  services?: GitlabJobService[];
 
   /**
    * image to use
