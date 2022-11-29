@@ -16,9 +16,11 @@ export type Retry = {
   when: string[];
 };
 
-export type Service = {
+export type GitlabJobService = {
   name: string;
   command: string[];
+  entrypoint?: string[];
+  alias?: string;
 };
 
 export type GitlabEnvironment = {
@@ -41,7 +43,7 @@ export type GitlabJobDef = {
   cache?: GitlabJobCache | GitlabJobCache[];
   artifacts?: Artifacts;
   retry?: Retry;
-  services?: Service[];
+  services?: GitlabJobService[];
   image?: string;
   variables?: GitlabVariables;
   dependencies?: string[];

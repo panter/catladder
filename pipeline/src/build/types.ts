@@ -1,3 +1,5 @@
+import type { GitlabJobService } from "../types";
+
 export type BuildConfigBase = {
   /**
    * command to run on the image to start the app (e.g. yarn start)
@@ -93,6 +95,7 @@ export type BuildConfigCustomDocker = BuildConfigBase["docker"] &
 export type BuildConfigCustom = BuildConfigBase & {
   type: "custom";
   jobImage: string;
+  jobServices?: GitlabJobService[];
   docker: BuildConfigCustomDocker;
 };
 
