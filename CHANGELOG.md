@@ -1,3 +1,11 @@
+# [1.63.0](https://git.panter.ch/catladder/catladder/compare/v1.62.1...v1.63.0) (2022-11-29)
+
+
+### Features
+
+* **cloudrun:** job schedule ([4f1268c](https://git.panter.ch/catladder/catladder/commit/4f1268c56ed64d987bf355137525325a51010ccc))
+* **custom build job:** allow to specify jobServices on custom build job ([2d26ea2](https://git.panter.ch/catladder/catladder/commit/2d26ea20c5e6c697bcdf60925e2c9f85f05d22bc))
+
 ## [1.62.1](https://git.panter.ch/catladder/catladder/compare/v1.62.0...v1.62.1) (2022-11-17)
 
 
