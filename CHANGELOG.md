@@ -1,3 +1,10 @@
+# [1.64.0](https://git.panter.ch/catladder/catladder/compare/v1.63.0...v1.64.0) (2022-11-29)
+
+
+### Features
+
+* **kube:** increase helm timeout ([dba18e6](https://git.panter.ch/catladder/catladder/commit/dba18e64604ee808be3a74cb8ff877faa02a7aa9))
+
 # [1.63.0](https://git.panter.ch/catladder/catladder/compare/v1.62.1...v1.63.0) (2022-11-29)
 
 
