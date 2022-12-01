@@ -36,6 +36,7 @@ export const LEGACY_ENVS = [
 
 const arrayToRecord = (arr: { name: string }[]): Record<string, any> => {
   if (!arr) return undefined;
+  if (!Array.isArray(arr)) return arr;
   return Object.fromEntries(arr.map(({ name, ...rest }) => [name, rest]));
 };
 
