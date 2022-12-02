@@ -1,5 +1,7 @@
 export type Artifacts = {
   paths: string[];
+  expire_in?: string;
+  when?: "always" | "on_success" | "on_failure";
 };
 export type GitlabJobCache = {
   key: string;
@@ -49,6 +51,7 @@ export type GitlabJobDef = {
   dependencies?: string[];
   environment?: GitlabEnvironment;
   allow_failure?: boolean;
+  parallel?: number;
   trigger?: {
     strategy: "depend";
     include: Array<{
