@@ -10,6 +10,7 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
         CNB_ENV_VARS: "BUNDLE_GIT__PANTER__CH",
         CNB_EXTRA_ARGS: "",
         CNB_PACK_VERSION: "0.20.0",
+        ...context.componentConfig.build.extraVars
       },
       // custom script
       script: [
