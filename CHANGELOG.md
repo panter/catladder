@@ -1,3 +1,10 @@
+## [1.64.2](https://git.panter.ch/catladder/catladder/compare/v1.64.1...v1.64.2) (2022-12-02)
+
+
+### Bug Fixes
+
+* **cli:** support migrating jobs in dictionary format ([7288f39](https://git.panter.ch/catladder/catladder/commit/7288f396607c8128836ed7974cbddc4afbd8add8))
+
 ## [1.64.1](https://git.panter.ch/catladder/catladder/compare/v1.64.0...v1.64.1) (2022-12-02)
 
 
