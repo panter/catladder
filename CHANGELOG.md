@@ -1,3 +1,10 @@
+# [1.65.0](https://git.panter.ch/catladder/catladder/compare/v1.64.2...v1.65.0) (2022-12-02)
+
+
+### Features
+
+* **pipeline:** add some more artifact and custom job options ([82c00e9](https://git.panter.ch/catladder/catladder/commit/82c00e9ec529173d0bf932055cb8a8aa7eaa07cf))
+
 ## [1.64.2](https://git.panter.ch/catladder/catladder/compare/v1.64.1...v1.64.2) (2022-12-02)
 
 
