@@ -1,3 +1,10 @@
+## [1.64.1](https://git.panter.ch/catladder/catladder/compare/v1.64.0...v1.64.1) (2022-12-02)
+
+
+### Bug Fixes
+
+* **pipeline:** make job service command optional ([d766e40](https://git.panter.ch/catladder/catladder/commit/d766e40d1f15a888447ce1664587d7605a42ac84))
+
 # [1.64.0](https://git.panter.ch/catladder/catladder/compare/v1.63.0...v1.64.0) (2022-11-29)
 
 
