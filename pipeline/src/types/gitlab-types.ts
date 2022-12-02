@@ -4,9 +4,13 @@ export type Artifacts = {
   when?: "always" | "on_success" | "on_failure";
 };
 export type GitlabJobCache = {
-  key: string;
+  key: GitlabJobCacheKey;
   policy?: string;
   paths: string[];
+};
+export type GitlabJobCacheKey = string | {
+  files: string[];
+  prefix?: string;
 };
 export type GitlabRule = {
   if?: string;

@@ -29,6 +29,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
+        jobImage?: string;
       };
 
   /**
@@ -38,6 +39,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
+        jobImage?: string;
       };
 
   /**
@@ -47,6 +49,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
+        jobImage?: string;
       };
 
   /**
