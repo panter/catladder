@@ -18,7 +18,7 @@ export type Retry = {
 
 export type GitlabJobService = {
   name: string;
-  command: string[];
+  command?: string[];
   entrypoint?: string[];
   alias?: string;
 };
