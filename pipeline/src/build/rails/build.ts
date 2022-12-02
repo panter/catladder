@@ -1,6 +1,6 @@
-import { Context } from "../..";
-import { CatladderJob } from "../../types/jobs";
-import { createDockerBuildJobBase } from "../docker";
+import type { Context } from "../..";
+import type { CatladderJob } from "../../types/jobs";
+import { createDockerBuildJobBase, gitlabDockerLogin } from "../docker";
 
 export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
   return [
@@ -14,15 +14,15 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
       },
       // custom script
       script: [
-        `docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY`,
-        `docker pull $CACHE_IMAGE || true`,
+        gitlabDockerLogin,
+        `docker pull $DOCKER_CACHE_IMAGE || true`,
         `wget --output-document=- https://github.com/buildpacks/pack/releases/download/v$CNB_PACK_VERSION/pack-v$CNB_PACK_VERSION-linux.tgz | tar -zx --directory /usr/local/bin pack`,
         `chmod +x /usr/local/bin/pack`,
         //  replace private git ssh gem sources with https to make bundler with credentials via env var work
         // eslint-disable-next-line no-useless-escape
         `sed --in-place 's|git@\([^:]*\):|https://\1/|g' Gemfile Gemfile.lock`,
         `for v in $CNB_ENV_VARS; do env_args="$env_args --env $v"; done`,
-        `pack build $IMAGE_NAME:$IMAGE_TAG --builder $CNB_BUILDER --publish --cache-image $CACHE_IMAGE $env_args $CNB_EXTRA_ARGS`,
+        `pack build $DOCKER_IMAGE:$DOCKER_IMAGE_TAG --builder $CNB_BUILDER --publish --cache-image $DOCKER_CACHE_IMAGE $env_args $CNB_EXTRA_ARGS`,
       ],
     }),
   ];
