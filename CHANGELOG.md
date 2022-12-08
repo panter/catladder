@@ -1,3 +1,10 @@
+## [1.65.1](https://git.panter.ch/catladder/catladder/compare/v1.65.0...v1.65.1) (2022-12-08)
+
+
+### Bug Fixes
+
+* **prisma1 legacy:** wait before try to deploy ([a3cf9c2](https://git.panter.ch/catladder/catladder/commit/a3cf9c2c72d2420a39c371c0c0180f4a687722f7))
+
 # [1.65.0](https://git.panter.ch/catladder/catladder/compare/v1.64.2...v1.65.0) (2022-12-02)
 
 
