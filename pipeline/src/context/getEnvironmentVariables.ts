@@ -65,7 +65,8 @@ export const getEnvironmentVariables = async (
 
     predefinedVariables = {
       ...basePredefinedVariables,
-      HOST: host,
+      // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
+      ...(config.components[componentName].build.type === "rails" ? {} : {HOST: host}),
       ROOT_URL: url,
       ...additionalEnvVars,
     };
