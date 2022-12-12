@@ -54,6 +54,20 @@ export type BuildConfigBase = {
    * by default "dist" and ".next" are allways included
    */
   artifactsPaths?: string[];
+
+  /**
+   * additional CI/CD artifacts reports,
+   * use to display information in merge requests, pipeline views and security dashboards.
+   */
+  artifactsReports?: {
+    /**
+     * The junit report collects JUnit report format XML files.
+     * The collected Unit test reports upload to GitLab as an artifact.
+     * Paths are prefixed with component's root folder.
+     * eg. `["dist/test-results/TEST-*.xml", "dist/rspec.xml", ...]`
+     */
+    junit?: string[];
+  }
 };
 
 export type BuildConfigNodeBase = BuildConfigBase;

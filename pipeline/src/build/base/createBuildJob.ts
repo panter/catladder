@@ -1,4 +1,5 @@
 import { merge } from "lodash";
+import { join } from "path";
 import type { Context } from "../..";
 import { getRunnerImage } from "../..";
 import type { CatladderJob } from "../../types/jobs";
@@ -36,7 +37,10 @@ export const createBuildJob = (
         ...(ensureArray(script) ?? []),
       ],
       artifacts: {
-        paths: [context.componentConfig.dir + "/__build_info.json"],
+        paths: [join(context.componentConfig.dir, "__build_info.json")],
+        reports: {
+          junit: context.componentConfig.build.artifactsReports?.junit?.map(p => join(context.componentConfig.dir, p))
+        },
       },
     },
     def
