@@ -1,3 +1,10 @@
+# [1.66.0](https://git.panter.ch/catladder/catladder/compare/v1.65.1...v1.66.0) (2022-12-15)
+
+
+### Features
+
+* add option for extending artifacts reports ([b56aac3](https://git.panter.ch/catladder/catladder/commit/b56aac3e7cff2b60ed198bddb5677314b6b14a47))
+
 ## [1.65.1](https://git.panter.ch/catladder/catladder/compare/v1.65.0...v1.65.1) (2022-12-08)
 
 
