@@ -20,6 +20,7 @@ import {
   getDatabaseDeleteScript,
 } from "./utils/database";
 import { allowFailureInScripts } from "../../utils/gitlab";
+import { getCloudRunJobName } from "./utils/jobName";
 
 const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
   `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
@@ -67,7 +68,7 @@ export const createGoogleCloudRunDeployJobs = (
   const serviceName = context.environment.fullName.toLowerCase();
 
   const getFullJobName = (name: string) =>
-    context.environment.fullName.toLowerCase() + "-" + name.toLowerCase();
+    getCloudRunJobName(context.environment.fullName, name);
 
   const jobsWithNames = Object.entries(deployConfig.jobs ?? {})
     // filter out disabled jobs
