@@ -1,3 +1,10 @@
+# [1.67.0](https://git.panter.ch/catladder/catladder/compare/v1.66.1...v1.67.0) (2022-12-16)
+
+
+### Features
+
+* **cloud run:** dbAdditionalQueryParams can now be speciified ([7d7b68f](https://git.panter.ch/catladder/catladder/commit/7d7b68fa07f6bd9d8ea1eb3cf568dd3d9067ea4b))
+
 ## [1.66.1](https://git.panter.ch/catladder/catladder/compare/v1.66.0...v1.66.1) (2022-12-16)
 
 
