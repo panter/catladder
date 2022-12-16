@@ -1,3 +1,10 @@
+## [1.66.1](https://git.panter.ch/catladder/catladder/compare/v1.66.0...v1.66.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **cloud-run:** wrong job url in trigger env var ([c6343c5](https://git.panter.ch/catladder/catladder/commit/c6343c508b52ceb7625f8924881eaa392d9093b6))
+
 # [1.66.0](https://git.panter.ch/catladder/catladder/compare/v1.65.1...v1.66.0) (2022-12-15)
 
 
