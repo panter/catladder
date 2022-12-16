@@ -51,6 +51,16 @@ export type DeployConfigCloudRunCloudSql = {
    * defaults to true for review envs, to false for every other environment
    */
   deleteDatabaseOnStop?: boolean;
+
+  /**
+   * add additional query params to the database connection string
+   */
+  dbAdditionalQueryParams?: Record<string, string | number> & {
+    /**
+     * set to 0 for prisma in review or dev apps where you reset the db occasionally without restarting any server
+     */
+    statement_cache_size?: number;
+  };
 };
 export type DeployConfigCloudRunService = {
   /**
