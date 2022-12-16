@@ -34,7 +34,7 @@ FROM node:$NODE_VERSION-alpine
 
 $DOCKERFILE_ADDITIONS
 
-RUN apk add --no-cache git curl
+RUN apk add --no-cache git curl openssl1.1-compat-dev
 USER node
 
 $DOCKER_COPY_WORKSPACE_FILES
@@ -45,7 +45,7 @@ RUN $YARN_INSTALL_WITHOUT_SCRIPTS
 
 COPY --chown=node:node $APP_DIR .
 
-RUN $YARN_INSTALL 
+RUN $YARN_INSTALL
 
 $DOCKERFILE_ADDITIONS_END
 
