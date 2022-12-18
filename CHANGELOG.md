@@ -1,3 +1,10 @@
+## [1.67.1](https://git.panter.ch/catladder/catladder/compare/v1.67.0...v1.67.1) (2022-12-18)
+
+
+### Bug Fixes
+
+* **pipeline:** add openssl dependency base-pipeline image ([2119ac2](https://git.panter.ch/catladder/catladder/commit/2119ac28043a36c7a460a741bfd5cfb6fd48e0e3))
+
 # [1.67.0](https://git.panter.ch/catladder/catladder/compare/v1.66.1...v1.67.0) (2022-12-16)
 
 
