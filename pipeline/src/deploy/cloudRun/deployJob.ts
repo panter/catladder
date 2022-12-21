@@ -95,7 +95,8 @@ export const createGoogleCloudRunDeployJobs = (
     }));
 
   const getServiceDeployScript = (
-    service?: DeployConfigCloudRunService | true
+    service: DeployConfigCloudRunService | true | undefined,
+    nameSuffix?: string
   ) => {
     const command =
       service !== true
@@ -106,7 +107,9 @@ export const createGoogleCloudRunDeployJobs = (
       ? `--command="${command.split(" ").join(",")}"`
       : "";
 
-    return `gcloud run deploy ${serviceName} ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml --allow-unauthenticated`;
+    return `gcloud run deploy ${serviceName}${
+      nameSuffix ?? ""
+    } ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml --allow-unauthenticated`;
   };
 
   const getJobCreateScriptsForJob = (
@@ -190,6 +193,9 @@ export const createGoogleCloudRunDeployJobs = (
     ...(deployConfig.service !== false
       ? [getServiceDeployScript(deployConfig.service)]
       : []),
+    ...Object.entries(deployConfig.additionalServices ?? {}).map(
+      ([name, service]) => getServiceDeployScript(service, "-" + name)
+    ),
     ...getJobRunScripts("postDeploy"),
 
     `docker image rm ${gcloudImageName}`,
@@ -200,6 +206,10 @@ export const createGoogleCloudRunDeployJobs = (
     ...(deployConfig.service !== false
       ? [`gcloud run services delete ${serviceName} ${commonArgs}`]
       : []),
+    ...Object.entries(deployConfig.additionalServices ?? {}).map(
+      ([name]) =>
+        `gcloud run services delete ${serviceName}-${name} ${commonArgs}`
+    ),
     ...getDeleteSchedulesScripts(),
     ...getDeleteJobsScripts(),
     ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop
