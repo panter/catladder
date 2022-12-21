@@ -1,3 +1,11 @@
+## [1.67.2](https://git.panter.ch/catladder/catladder/compare/v1.67.1...v1.67.2) (2022-12-21)
+
+
+### Bug Fixes
+
+* starwars ([e52d663](https://git.panter.ch/catladder/catladder/commit/e52d6632bbea7f0729880e08b9aacb8beb857081))
+* very important stuff ([1259766](https://git.panter.ch/catladder/catladder/commit/1259766c18e3009a423ecec3ecd43bd635eca342))
+
 ## [1.67.1](https://git.panter.ch/catladder/catladder/compare/v1.67.0...v1.67.1) (2022-12-18)
 
 
