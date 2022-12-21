@@ -19,7 +19,7 @@ export default async (vorpal: Vorpal) => {
   vorpal
     .command("starwars", "Long time ago... in a galaxy far far away...")
     .action(async function () {
-      starwarsPromise = spawn("telnet", ["towel.blinkenlights.nl"], {
+      starwarsPromise = spawn("telnet", ["2001:7b8:666:ffff::1:42"], {
         stdio: ["pipe", "inherit", "pipe"],
       });
       await starwarsPromise;
