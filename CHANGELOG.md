@@ -1,3 +1,11 @@
+# [1.68.0](https://git.panter.ch/catladder/catladder/compare/v1.67.2...v1.68.0) (2022-12-22)
+
+
+### Features
+
+* **cloud run:** allow to specify additional services, e.g. for workers ([aa15686](https://git.panter.ch/catladder/catladder/commit/aa1568622015a62feccf0e73ab6d420e3a9f97b9))
+* **cloudrun:** allow to set min, max and cpu allocation ([88d943e](https://git.panter.ch/catladder/catladder/commit/88d943e019aa372e1845dbe58189f29fa9613aa9))
+
 ## [1.67.2](https://git.panter.ch/catladder/catladder/compare/v1.67.1...v1.67.2) (2022-12-21)
 
 
