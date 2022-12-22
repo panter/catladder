@@ -67,6 +67,22 @@ export type DeployConfigCloudRunService = {
    * command / entrypoint, fallsback to buildConfig.startcommand
    */
   command?: string;
+
+  /**
+   * how many instances to keep around when there are no requests. defaults to 0.
+   * Set to 1 for workers
+   */
+  minInstances?: number;
+
+  /**
+   * maximum amount of instances. Defaults to 100
+   */
+  maxInstances?: number;
+
+  /**
+   * set to true for workers
+   */
+  noCpuThrottling?: true;
 };
 
 export type DeployConfigCloudRunJobBase = {
@@ -122,6 +138,13 @@ export type DeployConfigCloudRun = {
    * whether to enable the service, defaults to true
    */
   service?: boolean | DeployConfigCloudRunService;
+
+  /**
+   * deploy additional services with different entry pointss
+   */
+  additionalServices?: {
+    [name: string]: DeployConfigCloudRunService;
+  };
 
   jobs?: {
     [name: string]: DeployConfigCloudRunJob | false | null;
