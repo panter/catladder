@@ -1,5 +1,5 @@
 import { dump } from "js-yaml";
-import { merge, omit } from "lodash";
+import { isNil, merge, omit } from "lodash";
 import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from ".";
 import { getDockerJobBaseProps, gitlabDockerLogin } from "../../build/docker";
 import { getLabels } from "../../context/getLabels";
@@ -98,6 +98,7 @@ export const createGoogleCloudRunDeployJobs = (
     service: DeployConfigCloudRunService | true | undefined,
     nameSuffix?: string
   ) => {
+    const customConfig = service !== true ? service : undefined;
     const command =
       service !== true
         ? service?.command ?? context.componentConfig.build.startCommand
@@ -107,9 +108,21 @@ export const createGoogleCloudRunDeployJobs = (
       ? `--command="${command.split(" ").join(",")}"`
       : "";
 
+    const args = {
+      "allow-unauthenticated": true,
+      "min-instances": customConfig?.minInstances,
+      "max-instances": customConfig?.maxInstances,
+      "no-cpu-throttling": customConfig?.noCpuThrottling,
+    } as const;
+
+    const argsString = Object.entries(args)
+      .filter(([, value]) => !isNil(value))
+      .map(([key, value]) => `--${key}${value !== true ? `=${value}` : ""}`)
+      .join(" ");
+
     return `gcloud run deploy ${serviceName}${
       nameSuffix ?? ""
-    } ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml --allow-unauthenticated`;
+    } ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml ${argsString}`;
   };
 
   const getJobCreateScriptsForJob = (
