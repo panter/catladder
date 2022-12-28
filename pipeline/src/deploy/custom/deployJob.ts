@@ -22,6 +22,7 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
   return [
     merge({}, baseDeploymentJob, {
       image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
+      cache: deployConfig.jobCache ?? [],
       script: [
         `cd ${context.componentConfig.dir}`,
         ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
