@@ -1,3 +1,10 @@
+# [1.70.0](https://git.panter.ch/catladder/catladder/compare/v1.69.0...v1.70.0) (2022-12-28)
+
+
+### Features
+
+* **cli:** command to copy a cloud sql instance to another ([c3e3046](https://git.panter.ch/catladder/catladder/commit/c3e304655b860f467d7cd82914f206d70c8a1f14))
+
 # [1.69.0](https://git.panter.ch/catladder/catladder/compare/v1.68.0...v1.69.0) (2022-12-28)
 
 
