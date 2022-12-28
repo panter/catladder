@@ -1,3 +1,10 @@
+# [1.71.0](https://git.panter.ch/catladder/catladder/compare/v1.70.0...v1.71.0) (2022-12-28)
+
+
+### Features
+
+* **custom deploy job:** custom deploy supports now custom image ([fc4475f](https://git.panter.ch/catladder/catladder/commit/fc4475f017a8e9fe158ca91b5cb10b410a805759))
+
 # [1.70.0](https://git.panter.ch/catladder/catladder/compare/v1.69.0...v1.70.0) (2022-12-28)
 
 
