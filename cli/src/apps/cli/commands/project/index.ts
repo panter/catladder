@@ -1,7 +1,7 @@
 import type Vorpal from "vorpal";
 import commandCloudSqlProxy from "./commandCloudSqlProxy";
 import commandConfigSecrets from "./commandConfigSecrets";
-import commandCopyDB from "./commandCopyDB";
+
 import commandDeletePods from "./commandDeletePods";
 import commandDeleteProject from "./commandDeleteProject";
 import commandEnvVars from "./commandEnvVars";
@@ -51,7 +51,6 @@ export default async (vorpal: Vorpal) => {
   commandConfigSecrets(vorpal);
   commandSecretsClearBackups(vorpal);
   commandDeletePods(vorpal);
-  commandCopyDB(vorpal);
 
   commandGetShell(vorpal);
   commandPortForward(vorpal);

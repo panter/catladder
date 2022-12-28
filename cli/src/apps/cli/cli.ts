@@ -4,6 +4,7 @@ import packageInfos from "../../packageInfos";
 import { stopAllPortForwards } from "../../utils/portForward";
 import general from "./commands/general";
 import mongodb from "./commands/mongodb";
+import cloudSQL from "./commands/cloudSQL";
 import project from "./commands/project";
 import theStuffThatReallyMatters from "./commands/theStuffThatReallyMatters";
 
@@ -29,6 +30,7 @@ export default async () => {
 
   general(vorpal);
   project(vorpal);
+  cloudSQL(vorpal);
   mongodb(vorpal);
   theStuffThatReallyMatters(vorpal);
 
