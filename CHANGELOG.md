@@ -1,3 +1,10 @@
+# [1.72.0](https://git.panter.ch/catladder/catladder/compare/v1.71.0...v1.72.0) (2022-12-28)
+
+
+### Features
+
+* **custom deploy job:** allow to specify cache ([33d4592](https://git.panter.ch/catladder/catladder/commit/33d4592466ee048ff04a99563eff006f6ff47945))
+
 # [1.71.0](https://git.panter.ch/catladder/catladder/compare/v1.70.0...v1.71.0) (2022-12-28)
 
 
