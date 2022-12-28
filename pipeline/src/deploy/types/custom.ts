@@ -21,4 +21,9 @@ export type DeployConfigCustom = {
    * script to run to stop the environment
    */
   stopScript?: string[];
+
+  /**
+   * image to use
+   */
+  jobImage?: string;
 } & DeployConfigBase;

@@ -8,10 +8,12 @@ export type GitlabJobCache = {
   policy?: string;
   paths: string[];
 };
-export type GitlabJobCacheKey = string | {
-  files: string[];
-  prefix?: string;
-};
+export type GitlabJobCacheKey =
+  | string
+  | {
+      files: string[];
+      prefix?: string;
+    };
 export type GitlabRule = {
   if?: string;
   when?: "always" | "on_success" | "manual" | "never"; // todo
