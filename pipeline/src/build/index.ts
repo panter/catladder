@@ -4,6 +4,7 @@ import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
 import { createCustomJobs } from "./custom";
 import { createNodeJobs, createStorybookJobs, createMeteorJobs } from "./node";
+import { createRailsJobs } from "./rails";
 
 import type { BuildConfig, BuildConfigType } from "./types";
 export * from "./types";
@@ -46,6 +47,10 @@ export const BUILD_TYPES: BuildTypes = {
   },
   custom: {
     jobs: createCustomJobs,
+    defaults: () => ({}),
+  },
+  rails: {
+    jobs: createRailsJobs,
     defaults: () => ({}),
   },
 };

@@ -29,6 +29,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
+        jobImage?: string;
       };
 
   /**
@@ -38,6 +39,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
+        jobImage?: string;
       };
 
   /**
@@ -47,6 +49,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
+        jobImage?: string;
       };
 
   /**
@@ -113,6 +116,10 @@ export type BuildConfigCustom = BuildConfigBase & {
   docker: BuildConfigCustomDocker;
 };
 
+export type BuildConfigRails = BuildConfigBase & {
+  type: "rails";
+};
+
 export type BuildConfigStorybook = BuildConfigNodeBase & {
   type: "storybook";
   startCommand?: never;
@@ -122,7 +129,8 @@ export type BuildConfig =
   | BuildConfigNodeStatic
   | BuildConfigStorybook
   | BuildConfigMeteor
-  | BuildConfigCustom;
+  | BuildConfigCustom
+  | BuildConfigRails;
 
 export type BuildConfigType = BuildConfig["type"];
 
