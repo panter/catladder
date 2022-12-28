@@ -1,3 +1,18 @@
+# [1.69.0](https://git.panter.ch/catladder/catladder/compare/v1.68.0...v1.69.0) (2022-12-28)
+
+
+### Bug Fixes
+
+* **rails:** docker image env vars ([5c045e0](https://git.panter.ch/catladder/catladder/commit/5c045e0e87d32f3fb01f582eb0317f0ae313f20e))
+* **rails:** suppress the HOST env variable as it breaks deployments on rails 6.0 and lower ([0c61eca](https://git.panter.ch/catladder/catladder/commit/0c61ecaddd91d2e73f6f4d46f3942ff54d11bf42))
+
+
+### Features
+
+* rails build ([e9e87a3](https://git.panter.ch/catladder/catladder/commit/e9e87a32570e23fed71bae481eb629a1bc1671ff))
+* **rails:** add basic test stage jobs ([17b2278](https://git.panter.ch/catladder/catladder/commit/17b2278806e86f481ac53b1d2e973f0dee416a49))
+* **rails:** add build vars support ([5639dac](https://git.panter.ch/catladder/catladder/commit/5639dacaeb6befb9ad8870e9b864b5bb42cc2b8c))
+
 # [1.68.0](https://git.panter.ch/catladder/catladder/compare/v1.67.2...v1.68.0) (2022-12-22)
 
 
