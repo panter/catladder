@@ -65,6 +65,17 @@ export const createGitlabBaseInclude = () => {
       script: ["semanticRelease"],
       rules: RULES_RELEASE,
     },
+    ["⚠️ force create release"]: {
+      stage: "release",
+      image: getRunnerImage("semantic-release"),
+      script: ["semanticRelease"],
+      needs: [],
+      rules: [
+        {
+          when: "manual",
+        },
+      ],
+    },
   };
   return {
     image: getRunnerImage("base-pipeline"),
