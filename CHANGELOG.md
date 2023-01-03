@@ -1,3 +1,16 @@
+# [1.73.0](https://git.panter.ch/catladder/catladder/compare/v1.72.0...v1.73.0) (2023-01-03)
+
+
+### Bug Fixes
+
+* accidential merge conflict ([18fe87b](https://git.panter.ch/catladder/catladder/commit/18fe87b8bb8e6126793c252cdecd46068c653612))
+* cache missing in custom job ([6bca300](https://git.panter.ch/catladder/catladder/commit/6bca300ea7ffe1ca82cb18067cceabf77f7618db))
+
+
+### Features
+
+* remove prisma1 deploy job. This anyway did not work and was only used in one project which has now a workaround ([e2178f4](https://git.panter.ch/catladder/catladder/commit/e2178f40616ea88b7b8ce4de3c97a974c0a5da66))
+
 # [1.72.0](https://git.panter.ch/catladder/catladder/compare/v1.71.0...v1.72.0) (2022-12-28)
 
 
