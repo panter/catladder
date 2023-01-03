@@ -1,10 +1,7 @@
 import { getSecretVarName } from "@catladder/pipeline";
 import { exec } from "child-process-promise";
 import { has, isObject } from "lodash";
-<<<<<<< Updated upstream
 import memoizee from "memoizee";
-=======
->>>>>>> Stashed changes
 import fetch from "node-fetch";
 import open from "open";
 import type { CommandInstance } from "vorpal";
@@ -116,41 +113,31 @@ type GitlabVariable = {
   masked: boolean;
   environment_scope: string;
 };
-const getAllVariables = async (
-  vorpal: CommandInstance
-): Promise<Array<GitlabVariable>> => {
-  const { id } = await getProjectInfo(vorpal);
-  let all: Array<GitlabVariable> = [];
-  let result: Array<GitlabVariable>;
-  let page = 1;
-  do {
-    result = await doGitlabRequest(
-      vorpal,
-      // 100 is max page size
-      `projects/${id}/variables?per_page=100&page=${page}`
-    );
-    page++;
-    all = [...all, ...result];
-  } while (result?.length > 0);
-  return all;
-};
-
-let getAllVariablesCachePromise: Promise<Array<GitlabVariable>>;
-export const getAllVariablesMemoized = async (
-  vorpal: CommandInstance
-): Promise<Array<GitlabVariable>> => {
-  if (!getAllVariablesCachePromise) {
-    getAllVariablesCachePromise = getAllVariables(vorpal);
-  }
-
-  return await getAllVariablesCachePromise;
-};
+export const getAllVariables = memoizee(
+  async (vorpal: CommandInstance): Promise<Array<GitlabVariable>> => {
+    const { id } = await getProjectInfo(vorpal);
+    let all: Array<GitlabVariable> = [];
+    let result: Array<GitlabVariable>;
+    let page = 1;
+    do {
+      result = await doGitlabRequest(
+        vorpal,
+        // 100 is max page size
+        `projects/${id}/variables?per_page=100&page=${page}`
+      );
+      page++;
+      all = [...all, ...result];
+    } while (result?.length > 0);
+    return all;
+  },
+  { promise: true }
+);
 
 export const getVariableValueByRawName = async (
   vorpal: CommandInstance,
   rawName: string
 ) => {
-  const allVariables = await getAllVariablesMemoized(vorpal);
+  const allVariables = await getAllVariables(vorpal);
   return allVariables.find((v) => v.key === rawName)?.value;
 };
 
@@ -210,7 +197,7 @@ const deleteVariable = async (
 };
 
 const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
-  const allVariables = await getAllVariablesMemoized(vorpal).then((v) =>
+  const allVariables = await getAllVariables(vorpal).then((v) =>
     v.reduce<{
       [key: string]: {
         value?: string;
@@ -251,7 +238,6 @@ const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
   return allVariables;
 };
 
-<<<<<<< Updated upstream
 const getBackupKey = (fullKey: string, timestamp: number) =>
   `${fullKey}_backup_${timestamp}`;
 export const clearBackups = async (vorpal: CommandInstance, keep: number) => {
@@ -266,10 +252,6 @@ export const clearBackups = async (vorpal: CommandInstance, keep: number) => {
       await deleteVariable(vorpal, id, getBackupKey(key, timestamp));
     }
   }
-=======
-const clearAllVariablesCache = () => {
-  getAllVariablesCachePromise = null;
->>>>>>> Stashed changes
 };
 
 export const upsertAllVariables = async (
@@ -315,5 +297,5 @@ export const upsertAllVariables = async (
       vorpal.log(`skip   : ${key}`);
     }
   }
-  clearAllVariablesCache();
+  getAllVariables.clear();
 };
