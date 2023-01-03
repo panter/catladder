@@ -36,16 +36,29 @@ export default async (vorpal: Vorpal) =>
         type: "input",
         name: "sourceInstance",
 
-        message: "Source instance (connection string)? 🤔 ",
+        message: "Source instance (connection string or 'local')? 🤔 ",
       });
 
-      const SOURCE_INSTANCE_PORT = 54399;
-      const TARGET_INSTANCE_PORT = 54499;
+      let sourceProxy: { stop: () => void };
 
-      const sourceProxy = await createProxy(
-        sourceInstance,
-        SOURCE_INSTANCE_PORT
-      );
+      let targetProxy: { stop: () => void };
+
+      let sourcePort: number;
+      let targetPort: number;
+
+      if (sourceInstance === "local") {
+        const { sourceLocalPort } = await this.prompt({
+          type: "number",
+          name: "sourceLocalPort",
+          default: 5432,
+
+          message: "Local Port for source? 🤔 ",
+        });
+        sourcePort = sourceLocalPort;
+      } else {
+        sourcePort = 54399;
+        sourceProxy = await createProxy(sourceInstance, sourcePort);
+      }
 
       const { sourcePassword } = await this.prompt({
         type: "input",
@@ -65,13 +78,22 @@ export default async (vorpal: Vorpal) =>
         type: "input",
         name: "targetInstance",
 
-        message: "Targe INSTANCE (connection string)? 🤔  ",
+        message: "Targe INSTANCE (connection string or 'local')? 🤔  ",
       });
 
-      const targetProxy = await createProxy(
-        targetInstance,
-        TARGET_INSTANCE_PORT
-      );
+      if (targetInstance === "local") {
+        const { targetLocalPort } = await this.prompt({
+          type: "number",
+          name: "targetLocalPort",
+          default: 5432,
+
+          message: "Local Port for target? 🤔 ",
+        });
+        targetPort = targetLocalPort;
+      } else {
+        targetPort = 54499;
+        targetProxy = await createProxy(targetInstance, targetPort);
+      }
 
       const { targetPassword } = await this.prompt({
         type: "input",
@@ -98,7 +120,7 @@ export default async (vorpal: Vorpal) =>
       }
 
       const targetPSQL = (command: string) =>
-        `PGPASSWORD=${targetPassword} psql -p ${TARGET_INSTANCE_PORT} --host=localhost --user=postgres -q ${command}`;
+        `PGPASSWORD=${targetPassword} psql -p ${targetPort} --host=localhost --user=postgres -q ${command}`;
 
       const copyDBScript = `
       set -e
@@ -108,7 +130,7 @@ export default async (vorpal: Vorpal) =>
       dumptmp=$(mktemp /tmp/dump.XXXXXX)
 
       echo "Dumping file to $dumptmp"
-      pg_dump --dbname=postgres://postgres:${sourcePassword}@localhost:${SOURCE_INSTANCE_PORT}/${sourceDbName} --no-owner --no-privileges > $dumptmp
+      pg_dump --dbname=postgres://postgres:${sourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
       echo "dump done"
       ${targetPSQL(
         `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`
@@ -126,7 +148,7 @@ export default async (vorpal: Vorpal) =>
       try {
         await spawn(copyDBScript, [], { shell: "bash", stdio: "inherit" });
       } finally {
-        sourceProxy.stop();
-        targetProxy.stop();
+        sourceProxy?.stop();
+        targetProxy?.stop();
       }
     });
