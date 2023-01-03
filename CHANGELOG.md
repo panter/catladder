@@ -1,3 +1,10 @@
+# [1.74.0](https://git.panter.ch/catladder/catladder/compare/v1.73.0...v1.74.0) (2023-01-03)
+
+
+### Features
+
+* **cli:** restore db command now supports local db as source or target ([f23b236](https://git.panter.ch/catladder/catladder/commit/f23b2362e1a4883dda5da3b41943c2d54c721a4a))
+
 # [1.73.0](https://git.panter.ch/catladder/catladder/compare/v1.72.0...v1.73.0) (2023-01-03)
 
 
