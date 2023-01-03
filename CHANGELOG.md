@@ -1,3 +1,10 @@
+# [1.75.0](https://git.panter.ch/catladder/catladder/compare/v1.74.0...v1.75.0) (2023-01-03)
+
+
+### Features
+
+* allow to force a new release independent on pipeline status ([a1be1c6](https://git.panter.ch/catladder/catladder/commit/a1be1c6b60812fb492313a4b802ae2b9c096e702))
+
 # [1.74.0](https://git.panter.ch/catladder/catladder/compare/v1.73.0...v1.74.0) (2023-01-03)
 
 
