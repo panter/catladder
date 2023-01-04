@@ -20,14 +20,17 @@ export const RULES_ALWAYS: GitlabRule[] = [
   },
 ];
 
+export const RULE_CONDITION_MAIN_BRANCH =
+  "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH";
+
 export const RULES_RELEASE: GitlabRule[] = [
   NEVER_ON_RELEASE_COMMIT,
   {
-    if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $AUTO_RELEASE == "true"',
+    if: RULE_CONDITION_MAIN_BRANCH + ' && $AUTO_RELEASE == "true"',
     when: "on_success",
   },
   {
-    if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+    if: RULE_CONDITION_MAIN_BRANCH,
     when: "manual",
   },
   {
