@@ -1,3 +1,10 @@
+## [1.75.1](https://git.panter.ch/catladder/catladder/compare/v1.75.0...v1.75.1) (2023-01-04)
+
+
+### Bug Fixes
+
+* force release only on main branch ([6c20eab](https://git.panter.ch/catladder/catladder/commit/6c20eabfa69f533ae7cc6b14bc5c9b958fa70f43))
+
 # [1.75.0](https://git.panter.ch/catladder/catladder/compare/v1.74.0...v1.75.0) (2023-01-03)
 
 
