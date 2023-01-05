@@ -1,3 +1,10 @@
+## [1.75.3](https://git.panter.ch/catladder/catladder/compare/v1.75.2...v1.75.3) (2023-01-05)
+
+
+### Bug Fixes
+
+* **rails:** sed command escapes for git repo replacement ([e721743](https://git.panter.ch/catladder/catladder/commit/e7217433dd7dbc988386d5e0757a91e5c55c331f))
+
 ## [1.75.2](https://git.panter.ch/catladder/catladder/compare/v1.75.1...v1.75.2) (2023-01-05)
 
 
