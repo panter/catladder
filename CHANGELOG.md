@@ -1,3 +1,10 @@
+## [1.75.2](https://git.panter.ch/catladder/catladder/compare/v1.75.1...v1.75.2) (2023-01-05)
+
+
+### Bug Fixes
+
+* force release job shown after release commit ([0ea6279](https://git.panter.ch/catladder/catladder/commit/0ea627924650b1fdb95b6816ba0c428de036a3db))
+
 ## [1.75.1](https://git.panter.ch/catladder/catladder/compare/v1.75.0...v1.75.1) (2023-01-04)
 
 
