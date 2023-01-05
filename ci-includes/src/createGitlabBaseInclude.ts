@@ -6,6 +6,7 @@ import {
   RULES_ALWAYS,
   getRunnerImage,
   RULES_RELEASE,
+  RULE_NEVER_ON_RELEASE_COMMIT,
   RULE_CONDITION_MAIN_BRANCH,
 } from "@catladder/pipeline";
 
@@ -72,6 +73,7 @@ export const createGitlabBaseInclude = () => {
       script: ["semanticRelease"],
       needs: [],
       rules: [
+        RULE_NEVER_ON_RELEASE_COMMIT,
         {
           if: RULE_CONDITION_MAIN_BRANCH,
           when: "manual",
