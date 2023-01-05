@@ -9,7 +9,7 @@ import {
   APP_BUILD_JOB_NAME,
   RUNNER_BUILD_RESOURCE_VARIABLES,
 } from "./constants";
-import { getBuildInfo } from "./getBuildInfo";
+import { writeBuildInfo } from "./writeBuildInfo";
 
 export const createBuildJob = (
   context: Context,
@@ -31,7 +31,7 @@ export const createBuildJob = (
       },
 
       script: [
-        ...getBuildInfo(context),
+        ...writeBuildInfo(context),
         ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.componentConfig.dir}`,
         ...(ensureArray(script) ?? []),
@@ -39,7 +39,9 @@ export const createBuildJob = (
       artifacts: {
         paths: [join(context.componentConfig.dir, "__build_info.json")],
         reports: {
-          junit: context.componentConfig.build.artifactsReports?.junit?.map(p => join(context.componentConfig.dir, p))
+          junit: context.componentConfig.build.artifactsReports?.junit?.map(
+            (p) => join(context.componentConfig.dir, p)
+          ),
         },
       },
     },
