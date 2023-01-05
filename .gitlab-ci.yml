@@ -36,8 +36,17 @@ workflow:
         - node_modules
         - "**/node_modules/"
 
+test:
+  stage: "test"
+  extends:
+    - .yarn-cache
+  script:
+    - yarn install --immutable
+    - yarn test
+
 🔨 packages:
   stage: "build"
+  needs: [] # don't wait for test atm
   extends:
     - .yarn-cache
   script:
@@ -49,6 +58,7 @@ workflow:
 
 .docker-build-base:
   image: docker:20.10
+  needs: []
   interruptible: true
   services:
     - name: docker:20.10-dind

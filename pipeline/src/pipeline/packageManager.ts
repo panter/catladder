@@ -1,43 +1,9 @@
-import { exec } from "child-process-promise";
-import type { Config, PackageManagerInfo } from "../types";
-import { pathEqual } from "path-equal";
-import memoizee from "memoizee";
-import { join } from "path";
 import { existsSync } from "fs";
+import { join } from "path";
+import { pathEqual } from "path-equal";
+import type { Config, PackageManagerInfo } from "../types";
+import { getWorkspaces, getYarnVersion } from "./yarn/yarnUtils";
 
-const execOrFail = async (cmd: string, onFail: string): Promise<string> => {
-  try {
-    return await exec(cmd).then((r) => r.stdout);
-  } catch (e) {
-    return onFail ?? null;
-  }
-};
-
-const getYarnVersion = memoizee(
-  async () => {
-    return await execOrFail("yarn --version", "");
-  },
-  { promise: true }
-);
-
-const getWorkspaces = memoizee(
-  async (isClassic: boolean): Promise<PackageManagerInfo["workspaces"]> => {
-    return isClassic
-      ? Object.values(
-          JSON.parse(
-            JSON.parse(await execOrFail("yarn workspaces --json info", "{}"))
-              ?.data ?? "{}"
-          )
-        )
-      : JSON.parse(
-          `[${(await execOrFail("yarn workspaces list --json --verbose", ""))
-            .trim()
-            .split("\n")
-            .join(",")}]`
-        );
-  },
-  { promise: true }
-);
 export const getPackageManagerInfo = async (
   config: Config,
   componentName: string

@@ -1,4 +1,3 @@
-import { exec } from "child-process-promise";
 import { isFunction, isObject } from "lodash";
 import { BUILD_TYPES } from "../build";
 import { createContext } from "../context";
@@ -6,8 +5,9 @@ import { DEPLOY_TYPES } from "../deploy";
 import type { PipelineJob, PipelineType } from "../types";
 import type { Config, PipelineTrigger } from "../types/config";
 import type { CommitInfo, Context } from "../types/context";
-import type { CatladderJob } from "../types/jobs";
+import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
 import { notNil } from "../utils";
+import { getBaseCommitInfo } from "./commitInfo/getCommitInfo";
 import { makeGitlabJob } from "./gitlab/makeGitlabJob";
 import { getPackageManagerInfo } from "./packageManager";
 
@@ -153,14 +153,7 @@ export const createJobs = async <T extends PipelineType>(
   trigger: PipelineTrigger
 ): Promise<Record<string, PipelineJob<T>>> => {
   const commitInfo: CommitInfo = {
-    refName: process.env.CI_COMMIT_REF_NAME ?? "unknown",
-    reviewSlug: process.env.CI_MERGE_REQUEST_IID
-      ? `mr${process.env.CI_MERGE_REQUEST_IID}`
-      : "unknown",
-    buildTime: new Date().toISOString(),
-    buildId: await exec("git describe --tags || git rev-parse HEAD").then((s) =>
-      s.stdout.trim()
-    ),
+    ...(await getBaseCommitInfo()),
     trigger,
   };
 

@@ -18,6 +18,7 @@ export const BASE_STAGES = [
 ] as const;
 export type BaseStage = typeof BASE_STAGES[number];
 
+export type CatladderJobNeed = string | { job: string; artifacts: boolean };
 export type CatladderJob<S = BaseStage> = {
   /**
    * the name of the job (without any env or app prefix and suffix)
@@ -52,7 +53,7 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * does this require another job (from the same component)?
    */
-  needs?: Array<string | { job: string; artifacts: boolean }>;
+  needs?: Array<CatladderJobNeed>;
 
   needsOtherComponent?: Array<{
     componentName: string;
