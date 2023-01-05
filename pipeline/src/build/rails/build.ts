@@ -19,8 +19,7 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
         `wget --output-document=- https://github.com/buildpacks/pack/releases/download/v$CNB_PACK_VERSION/pack-v$CNB_PACK_VERSION-linux.tgz | tar -zx --directory /usr/local/bin pack`,
         `chmod +x /usr/local/bin/pack`,
         //  replace private git ssh gem sources with https to make bundler with credentials via env var work
-        // eslint-disable-next-line no-useless-escape
-        `sed --in-place 's|git@\([^:]*\):|https://\\1/|g' Gemfile Gemfile.lock`,
+        `sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock`,
         `for v in $CNB_ENV_VARS; do env_args="$env_args --env $v"; done`,
         `pack build $DOCKER_IMAGE:$DOCKER_IMAGE_TAG --builder $CNB_BUILDER --publish --cache-image $DOCKER_CACHE_IMAGE $env_args $CNB_EXTRA_ARGS`,
       ],
