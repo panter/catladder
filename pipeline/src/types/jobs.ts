@@ -19,7 +19,9 @@ export const BASE_STAGES = [
 ] as const;
 export type BaseStage = typeof BASE_STAGES[number];
 
-export type CatladderJobNeed = string | { job: string; artifacts: boolean };
+export type CatladderJobNeed =
+  | string
+  | { job: string; artifacts: boolean; componentName?: string };
 export type CatladderJob<S = BaseStage> = {
   /**
    * the name of the job (without any env or app prefix and suffix)
@@ -53,9 +55,15 @@ export type CatladderJob<S = BaseStage> = {
 
   /**
    * does this require another job (from the same component)?
+   *
+   * You can also require a job from another component if you set `componentName`
+   *
    */
   needs?: Array<CatladderJobNeed>;
 
+  /**
+   * @deprecated set `componentName` to `needs` if you want to wait for a job from another component
+   */
   needsOtherComponent?: Array<{
     componentName: string;
     job: string;
