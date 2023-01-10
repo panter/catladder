@@ -1,7 +1,7 @@
 import {
   resolveReferences,
   translateLegacyFromComponents,
-} from "./resolveReferences";
+} from "../resolveReferences";
 
 describe("resolveReferences", () => {
   it("replaces occurences of ${componentName:VARIABLE_NAME}", async () => {
@@ -30,12 +30,12 @@ describe("resolveReferences", () => {
     });
   });
 
-  it("replaces self references with structure ${VARIABLE_NAME}", () => {
+  it("replaces self references with structure ${VARIABLE_NAME}", async () => {
     const variables = {
       FOO: "hello world",
       BAR: "this: ${FOO}!",
     };
-    const result = resolveReferences(variables);
+    const result = await resolveReferences(variables);
 
     expect(result).toEqual({
       FOO: "hello world",

@@ -1,6 +1,6 @@
 import type { Config } from "../src";
-
-const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
+import { createAllPipelines } from "./__utils__/helpers";
+const config: Config = {
   appName: "test-app",
   customerName: "pan",
   components: {
@@ -11,7 +11,7 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
       },
       deploy: {
         type: "google-cloudrun",
-        projectId: "asdf",
+        projectId: "google-project-id",
         region: "europe-west6",
         cloudSql: {
           type: "unmanaged",
@@ -22,21 +22,17 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
             when: "postDeploy",
             command: "yarn migrate",
           },
-        },
-      },
-      env: {
-        local: {
-          port: 4000,
-        },
-        asdf: {
-          type: "dev",
-        },
-        bla: {
-          type: "dev",
+          ["send-reminders"]: {
+            when: "schedule",
+            command: "yarn job:send-reminders",
+            schedule: "0 * * * *",
+          },
         },
       },
     },
   },
 };
 
-export default config;
+it("matches snapshot", async () => {
+  expect(await createAllPipelines(config)).toMatchSnapshot();
+});

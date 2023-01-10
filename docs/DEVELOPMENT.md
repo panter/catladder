@@ -2,6 +2,12 @@
 
 ### Pipeline
 
+### Snapshot tests
+
+there are some [examples](../pipeline/examples/) that double for snapshot-testing.
+
+Please add more examples there. If you need to update the snapshots, run `yarn test:update` in the root directory
+
 #### Create a pipeline locally
 
 1. Build catladder: `yarn build`

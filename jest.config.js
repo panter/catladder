@@ -1,6 +1,11 @@
-/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+/** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  rootDir: ".",
+  testPathIgnorePatterns: ["dist", "/__utils__/"],
+  testMatch: [
+    "**/__tests__/**/*.[jt]s?(x)",
+    "**/pipeline/examples/**/*.[jt]s?(x)",
+  ],
+  setupFiles: ["./jest/setup.ts"],
 };

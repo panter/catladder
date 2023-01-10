@@ -1,23 +1,26 @@
 import type { Config } from "../src";
 import { createAllPipelines } from "./__utils__/helpers";
 
-const config: Config = {
+const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
   appName: "test-app",
   customerName: "pan",
   components: {
-    www: {
-      dir: "www",
+    api: {
+      dir: "api",
       build: {
-        type: "custom",
-        jobImage: "foo",
-        docker: {
-          type: "nginx",
-        },
+        type: "node",
       },
-      deploy: {
-        type: "google-cloudrun",
-        projectId: "asdf",
-        region: "asia-east1",
+      deploy: false,
+      env: {
+        local: {
+          port: 4000,
+        },
+        asdf: {
+          type: "dev",
+        },
+        bla: {
+          type: "dev",
+        },
       },
     },
   },
