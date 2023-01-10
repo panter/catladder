@@ -16,6 +16,7 @@ type ProxyInfo = {
   instanceName: string;
   DB_NAME: string;
   DB_PASSWORD: string;
+  DB_USER: string;
 };
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -43,7 +44,7 @@ export default async (vorpal: Vorpal) =>
       }
 
       // skynet-164509:europe-west6:pvl-cyclomania-review=tcp:5432
-      const { DB_PASSWORD, DB_NAME, instanceName } = proxyInfo;
+      const { DB_PASSWORD, DB_NAME, DB_USER, instanceName } = proxyInfo;
       const { localPort } = await this.prompt({
         type: "number",
         name: "localPort",
@@ -55,7 +56,7 @@ export default async (vorpal: Vorpal) =>
       this.log(`postgres-PW: ${DB_PASSWORD}`);
       this.log("");
       this.log(
-        `POSTGRESQL_URL=postgresql://postgres:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`
+        `POSTGRESQL_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`
       );
       this.log("");
 
@@ -125,6 +126,7 @@ const getProxyInfoForKubernetes = async (
     instanceName,
     DB_PASSWORD,
     DB_NAME,
+    DB_USER: "postgres",
   };
 };
 
@@ -145,6 +147,7 @@ const getProxyInfoForCloudRun = async (
   );
 
   const DB_PASSWORD = envVars?.DB_PASSWORD;
+  const DB_USER = envVars?.DB_USER;
 
   const DB_NAME = context.environment.envVars.DB_NAME;
 
@@ -153,5 +156,6 @@ const getProxyInfoForCloudRun = async (
       context.componentConfig.deploy.cloudSql.instanceConnectionName,
     DB_PASSWORD,
     DB_NAME,
+    DB_USER,
   };
 };

@@ -31,11 +31,12 @@ const getCloudSqlVariables = ({
     )
       .map(([key, value]) => `&${key}=${value}`)
       .join("");
+
     return {
       CLOUD_SQL_INSTANCE_CONNECTION_NAME:
         deployConfigRaw.cloudSql.instanceConnectionName,
       DB_NAME: DB_NAME,
-      DB_USER: "postgres",
+      DB_USER: deployConfigRaw.cloudSql.dbUser ?? "postgres",
       DB_PASSWORD: "$" + getSecretVarName(env, componentName, "DB_PASSWORD"),
       DATABASE_URL: `postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME${additionalQueryParamsString}`,
       DATABASE_JDBC_URL: `jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD${additionalQueryParamsString}`,

@@ -41,6 +41,11 @@ export type DeployConfigCloudRunCloudSql = {
   type: "unmanaged";
   instanceConnectionName: string;
   /**
+   * the database username, defaults to "postgres"
+   */
+  dbUser?: string;
+
+  /**
    * the prefix of the database, the full db name is this plus the environment slug
    *
    * defaults to customerName-appName

@@ -16,6 +16,7 @@ const config: Config = {
         cloudSql: {
           type: "unmanaged",
           instanceConnectionName: "projectId:region:instancename",
+          dbUser: "my-user",
         },
         jobs: {
           migration: {
