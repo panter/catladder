@@ -111,8 +111,8 @@ export type DeployConfigMongodbBase = {
      * size of the volume, defaults to 8Gi
      */
     size?: string;
-    resources?: KubernetesResourcesDef;
   };
+  resources?: KubernetesResourcesDef;
 };
 
 export type DeployConfigMongodbStandalone = {
