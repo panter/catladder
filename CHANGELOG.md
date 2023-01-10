@@ -1,3 +1,10 @@
+## [1.76.1](https://git.panter.ch/catladder/catladder/compare/v1.76.0...v1.76.1) (2023-01-10)
+
+
+### Bug Fixes
+
+* **kube:** mongodb wrong type ([d52d365](https://git.panter.ch/catladder/catladder/commit/d52d3655631f5928104056756a5fab832adcf402))
+
 # [1.76.0](https://git.panter.ch/catladder/catladder/compare/v1.75.5...v1.76.0) (2023-01-10)
 
 
