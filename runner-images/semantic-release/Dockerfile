@@ -5,7 +5,7 @@ RUN apk add --no-cache bash git
 
 # add semantic release
 RUN yarn global add \
-    semantic-release \
+    semantic-release@^19 \
     @semantic-release/commit-analyzer \
     @semantic-release/release-notes-generator \
     https://github.com/panter/git.git#b4037626cc583d3e9f7995ea0604b23730d0a22e \
