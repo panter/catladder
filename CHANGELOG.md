@@ -1,3 +1,10 @@
+# [1.76.0](https://git.panter.ch/catladder/catladder/compare/v1.75.5...v1.76.0) (2023-01-10)
+
+
+### Features
+
+* allow to specify db username ([2a759f4](https://git.panter.ch/catladder/catladder/commit/2a759f407c7e62fe17023a855859172837106cec))
+
 ## [1.75.5](https://git.panter.ch/catladder/catladder/compare/v1.75.4...v1.75.5) (2023-01-10)
 
 
