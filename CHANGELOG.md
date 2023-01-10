@@ -1,3 +1,10 @@
+## [1.75.5](https://git.panter.ch/catladder/catladder/compare/v1.75.4...v1.75.5) (2023-01-10)
+
+
+### Bug Fixes
+
+* pin semantic release to 19 as 20 uses node 18. ([f3a3750](https://git.panter.ch/catladder/catladder/commit/f3a3750fcaa0d2204285c67879bdf1bc3ddfbd6f))
+
 ## [1.75.4](https://git.panter.ch/catladder/catladder/compare/v1.75.3...v1.75.4) (2023-01-09)
 
 ## [1.75.3](https://git.panter.ch/catladder/catladder/compare/v1.75.2...v1.75.3) (2023-01-05)
