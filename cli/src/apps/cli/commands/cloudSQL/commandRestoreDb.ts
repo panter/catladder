@@ -60,6 +60,14 @@ export default async (vorpal: Vorpal) =>
         sourceProxy = await createProxy(sourceInstance, sourcePort);
       }
 
+      const { sourceUsername } = await this.prompt({
+        type: "input",
+        name: "sourceUsername",
+        default: "postgres",
+
+        message: "Source Username? 🤔 ",
+      });
+
       const { sourcePassword } = await this.prompt({
         type: "input",
         name: "sourcePassword",
@@ -95,6 +103,13 @@ export default async (vorpal: Vorpal) =>
         targetProxy = await createProxy(targetInstance, targetPort);
       }
 
+      const { targetUsername } = await this.prompt({
+        type: "input",
+        name: "targetUsername",
+        default: "postgres",
+
+        message: "Target Username? 🤔 ",
+      });
       const { targetPassword } = await this.prompt({
         type: "input",
         name: "targetPassword",
@@ -120,7 +135,7 @@ export default async (vorpal: Vorpal) =>
       }
 
       const targetPSQL = (command: string) =>
-        `PGPASSWORD=${targetPassword} psql -p ${targetPort} --host=localhost --user=postgres -q ${command}`;
+        `PGPASSWORD=${targetPassword} psql -p ${targetPort} --host=localhost --user=${targetUsername} -q ${command}`;
 
       const copyDBScript = `
       set -e
@@ -130,7 +145,7 @@ export default async (vorpal: Vorpal) =>
       dumptmp=$(mktemp /tmp/dump.XXXXXX)
 
       echo "Dumping file to $dumptmp"
-      pg_dump --dbname=postgres://postgres:${sourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
+      pg_dump --dbname=postgres://${sourceUsername}:${sourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
       echo "dump done"
       ${targetPSQL(
         `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`
