@@ -93,4 +93,11 @@ export type CatladderJob<S = BaseStage> = {
   environment?: GitlabEnvironment;
 
   rules?: GitlabRule[];
+
+  /**
+   * How many instances of a job should be run in parallel.
+   * Useful for big test suites that can be split into multiple pipeline jobs.
+   * We use the same shape as GitLab itself.
+   */
+  parallel?: number;
 };
