@@ -1,3 +1,10 @@
+# [1.77.0](https://git.panter.ch/catladder/catladder/compare/v1.76.2...v1.77.0) (2023-01-16)
+
+
+### Features
+
+* **pipeline:** add support for multiple instances of the same custom job ([4ba2432](https://git.panter.ch/catladder/catladder/commit/4ba2432f7fbe373e76d7f1e775fe7682a23ed8b1))
+
 ## [1.76.2](https://git.panter.ch/catladder/catladder/compare/v1.76.1...v1.76.2) (2023-01-16)
 
 
