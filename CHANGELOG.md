@@ -1,3 +1,10 @@
+## [1.76.2](https://git.panter.ch/catladder/catladder/compare/v1.76.1...v1.76.2) (2023-01-16)
+
+
+### Bug Fixes
+
+* **pipeline:** slugify cache key in case component is in subdirectory ([f41fc34](https://git.panter.ch/catladder/catladder/commit/f41fc34fb9128a03ed4b7118723a82574aad464e))
+
 ## [1.76.1](https://git.panter.ch/catladder/catladder/compare/v1.76.0...v1.76.1) (2023-01-10)
 
 
