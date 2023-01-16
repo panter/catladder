@@ -1,4 +1,5 @@
 import { join } from "path";
+import slugify from "slugify";
 import type { Context } from "../../types/context";
 import type { GitlabJobCache } from "../../types/gitlab-types";
 
@@ -16,7 +17,7 @@ export const getYarnCache = (
           paths: [".yarn"],
         }
       : {
-          key: context.componentConfig.dir + "-yarn",
+          key: slugify(context.componentConfig.dir) + "-yarn",
           policy,
           paths: [join(context.componentConfig.dir, ".yarn")],
         },
@@ -35,7 +36,7 @@ export const getNodeModulesCache = (
       // if component is in a shared workspace, use workspace cache. use individual cache else
       key: componentIsInWorkspace
         ? "node-modules-workspace"
-        : context.componentConfig.dir + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
+        : slugify(context.componentConfig.dir) + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
       policy,
       paths: [
         ...(componentIsInWorkspace
