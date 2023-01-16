@@ -69,6 +69,12 @@ spec:
                     echo -e "[+] Snapshot finished, unfreeze Slave\n"
                     M_CMD "rs.freeze(0)"
                     echo -e "[+] Snapshotting finished successfully\n"
+                    kubectl get volumesnapshots --no-headers --output=custom-columns="NAME:metadata.name,CREATED:status.creationTime" | while read name creation; do
+                      if [[ "${name}" =~ ^snapshot-$M_RELEASE_NAME-[0-9]*$ ]] && [[ "${creation}" < "$(date --date "now 90 days ago" +%F)" ]]; then
+                        echo "[+] Removing expired snapshot ${name} created on ${creation}"
+                        kubectl delete volumesnapshot "${name}"
+                      fi
+                    done
 ---
 
 apiVersion: v1
