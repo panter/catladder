@@ -9,6 +9,12 @@ might happen if you cancel the deploy job.
 - then `helm rollback --namespace <your namespace> <name> [<deployed-revision-number>]` to rollback to the previous version (the revision number is only required if the deployed revision is **not** the second last version)
 - trigger the update again
 
+## Yarn Build fails due to `node_modules` Content
+
+The `node_modules` is cached between all pipeline jobs, which means more packages are present than what is in the lockfile. Yarn should handle this well.
+
+But if you suspect the build fail due to the content of `node_modules` try to [clear the CI/CD cache manually](https://docs.gitlab.com/ee/ci/caching/#clear-the-cache-manually) and retry the job(s).
+
 ---
 
 Please add more!
