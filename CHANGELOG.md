@@ -1,3 +1,10 @@
+# [1.79.0](https://git.panter.ch/catladder/catladder/compare/v1.78.1...v1.79.0) (2023-01-18)
+
+
+### Features
+
+* **kube:** autorollback failed deployments on review branches ([0bb4209](https://git.panter.ch/catladder/catladder/commit/0bb42099c05714329b8af42948f3f81ba8a9ac76))
+
 ## [1.78.1](https://git.panter.ch/catladder/catladder/compare/v1.78.0...v1.78.1) (2023-01-18)
 
 # [1.78.0](https://git.panter.ch/catladder/catladder/compare/v1.77.2...v1.78.0) (2023-01-18)
