@@ -160,29 +160,31 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
    */
   jobs?: Record<
     string,
-    AllowUnknownProps<{
-      /**
-       * the command to execute
-       */
-      command: string;
-      /**
-       * comma-separated list of helm hooks, see https://helm.sh/docs/topics/charts_hooks/
-       *
-       * defaults to post-install,post-upgrade
-       */
-      hook?: string;
-    }>
+    | false
+    | AllowUnknownProps<{
+        /**
+         * the command to execute
+         */
+        command: string;
+        /**
+         * comma-separated list of helm hooks, see https://helm.sh/docs/topics/charts_hooks/
+         *
+         * defaults to post-install,post-upgrade
+         */
+        hook?: string;
+      }>
   >;
   /**
    * cronjobs that run periodically. These use the app image have all env vars available.
    */
   cronjobs?: Record<
     string,
-    AllowUnknownProps<{
-      schedule: string;
-      command: string;
-      concurrencyPolicy?: "Forbid" | "Allow" | "Replace";
-    }>
+    | false
+    | AllowUnknownProps<{
+        schedule: string;
+        command: string;
+        concurrencyPolicy?: "Forbid" | "Allow" | "Replace";
+      }>
   >;
   /**
    * configuration for the application ("Deployment" in kubernetes)

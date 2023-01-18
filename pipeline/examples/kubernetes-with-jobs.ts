@@ -32,6 +32,17 @@ const config: Config = {
           },
         },
       },
+      env: {
+        review: {
+          deploy: {
+            values: {
+              cronjobs: {
+                ["send-emails"]: false,
+              },
+            },
+          },
+        },
+      },
     },
     www: {
       dir: "www",
