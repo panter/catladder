@@ -5,5 +5,5 @@ INCLUDE+ ./jobs-default/Dockerfile
 
 # add meteor (used by some apps)
 RUN curl https://install.meteor.com/ | sh
-
+RUN meteor --version  # show version
 
