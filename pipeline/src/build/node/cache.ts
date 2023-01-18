@@ -31,6 +31,8 @@ export const getNodeModulesCache = (
   const componentIsInWorkspace =
     context.packageManagerInfo?.componentIsInWorkspace;
 
+   // We intentionally do not use the contents of yarn.lock as a cache key, as yarn install should always guarantee that the files are updated, but it can still use part of the cache if not all packages are up-to-date.
+   // It would slow down all pipelines whenever one adds a new dependency as it will need to download all node_modules again.
   return [
     {
       // if component is in a shared workspace, use workspace cache. use individual cache else
