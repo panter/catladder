@@ -1,3 +1,10 @@
+# [1.78.0](https://git.panter.ch/catladder/catladder/compare/v1.77.2...v1.78.0) (2023-01-18)
+
+
+### Features
+
+* **kube:** allow to disable jobs and cronjobs ([0e2b472](https://git.panter.ch/catladder/catladder/commit/0e2b472ab24571e3df410fc0c9a15836c3db366f))
+
 ## [1.77.2](https://git.panter.ch/catladder/catladder/compare/v1.77.1...v1.77.2) (2023-01-18)
 
 ## [1.77.1](https://git.panter.ch/catladder/catladder/compare/v1.77.0...v1.77.1) (2023-01-18)
