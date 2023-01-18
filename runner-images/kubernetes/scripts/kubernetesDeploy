@@ -11,8 +11,6 @@ readarray -t helmArgsArray <<<"$HELM_ARGS"
 #Log the time until selfdestruct in case of review environment
 if [[ ${ENV_SHORT} == "review" ]]; then echo "NOTE - This deployment will stop itself after 2 weeks"; fi
 
-echo "all values"
-
 echo "$KUBE_VALUES" >__all_values.yml
 
 echo "doing helm upgrade"
