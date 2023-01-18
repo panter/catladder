@@ -11,6 +11,25 @@ readarray -t helmArgsArray <<<"$HELM_ARGS"
 #Log the time until selfdestruct in case of review environment
 if [[ ${ENV_SHORT} == "review" ]]; then echo "NOTE - This deployment will stop itself after 2 weeks"; fi
 
+if [[ ${ENV_SHORT} == "review" ]]; then
+    # auto rollback
+    set +e # disable fail job on error
+    helmStatus=$(helm status --namespace $KUBE_NAMESPACE $RELEASE_NAME 2>/dev/null | awk -F': ' -v key="STATUS" '$1==key {print $2}')
+    helmRevision=$(helm status --namespace $KUBE_NAMESPACE $RELEASE_NAME 2>/dev/null | awk -F': ' -v key="REVISION" '$1==key {print $2}')
+    if [ "$helmStatus" = "failed" ] || [ "$helmStatus" = "pending-install" ] || [ "$helmStatus" = "pending-upgrade" ]; then
+        # rollback
+        echo "helm deployment is pending or failed, rollback (only on review)..."
+        if [ "$helmRevision" = "1" ]; then
+            helm uninstall "$RELEASE_NAME" --namespace "$KUBE_NAMESPACE"
+        else
+            helm rollback "$RELEASE_NAME" --namespace "$KUBE_NAMESPACE"
+        fi
+
+    fi
+    set -e # reenable
+
+fi
+
 echo "$KUBE_VALUES" >__all_values.yml
 
 echo "doing helm upgrade"
