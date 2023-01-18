@@ -1,0 +1,4086 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+{
+  "mainBranch": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api ↩️ Rollback ⚠️ | dev ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-dev",
+          },
+          "name": "dev/api",
+          "url": "https://api.dev.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
+          "kubectl config use-context "kube-pan-test-app-dev-api"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback dev",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'api'
+    ENV_TYPE: 'dev'
+    HOST: 'api.dev.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-dev'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.dev.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-dev-api",
+          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "HOST": "api.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🔨 docker | dev ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "api 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": "4 weeks",
+          "kubernetes": {
+            "namespace": "pan-test-app-dev",
+          },
+          "name": "dev/api",
+          "on_stop": "api 🛑 Stop ⚠️ | dev ",
+          "url": "https://api.dev.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
+          "kubectl config use-context "kube-pan-test-app-dev-api"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy dev",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'api'
+    ENV_TYPE: 'dev'
+    HOST: 'api.dev.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-dev'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.dev.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-dev-api",
+          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | dev ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-dev",
+          },
+          "name": "dev/api",
+          "url": "https://api.dev.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
+          "kubectl config use-context "kube-pan-test-app-dev-api"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop dev",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'api'
+    ENV_TYPE: 'dev'
+    HOST: 'api.dev.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-dev'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.dev.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-dev-api",
+          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www ↩️ Rollback ⚠️ | dev ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-dev",
+          },
+          "name": "dev/www",
+          "url": "https://www.dev.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-dev-www" --server="$CL_dev_www_KUBE_URL" --certificate-authority <(echo $CL_dev_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-dev-www" --token="$CL_dev_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-dev-www" --cluster="kube-pan-test-app-dev-www" --user="kube-pan-test-app-dev-www" --namespace="pan-test-app-dev"",
+          "kubectl config use-context "kube-pan-test-app-dev-www"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback dev",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'www'
+    ENV_TYPE: 'dev'
+    HOST: 'www.dev.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.dev.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-dev'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.dev.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-dev-www",
+          "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 👮 lint": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+            "www/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-next-cache",
+            "paths": [
+              "www/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "HOST": "www.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🔨 docker | dev ": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node www/package.json /app/www/package.json
+COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "www 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": "4 weeks",
+          "kubernetes": {
+            "namespace": "pan-test-app-dev",
+          },
+          "name": "dev/www",
+          "on_stop": "www 🛑 Stop ⚠️ | dev ",
+          "url": "https://www.dev.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-dev-www" --server="$CL_dev_www_KUBE_URL" --certificate-authority <(echo $CL_dev_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-dev-www" --token="$CL_dev_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-dev-www" --cluster="kube-pan-test-app-dev-www" --user="kube-pan-test-app-dev-www" --namespace="pan-test-app-dev"",
+          "kubectl config use-context "kube-pan-test-app-dev-www"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy dev",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'www'
+    ENV_TYPE: 'dev'
+    HOST: 'www.dev.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.dev.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-dev'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.dev.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-dev-www",
+          "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | dev ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-dev",
+          },
+          "name": "dev/www",
+          "url": "https://www.dev.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-dev-www" --server="$CL_dev_www_KUBE_URL" --certificate-authority <(echo $CL_dev_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-dev-www" --token="$CL_dev_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-dev-www" --cluster="kube-pan-test-app-dev-www" --user="kube-pan-test-app-dev-www" --namespace="pan-test-app-dev"",
+          "kubectl config use-context "kube-pan-test-app-dev-www"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop dev",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.dev.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.dev.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-dev",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'www'
+    ENV_TYPE: 'dev'
+    HOST: 'www.dev.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.dev.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-dev'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.dev.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-dev-www",
+          "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd www",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🧪 test": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "mr": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api ↩️ Rollback ⚠️ | review ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-review",
+          },
+          "name": "review/some-commit/api",
+          "url": "https://api.mr1234.review.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-api" --token="$CL_review_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback review",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-api",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'api'
+    ENV_TYPE: 'review'
+    HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-review'
+    KUBE_APP_NAME: 'mr1234-api'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.mr1234.review.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-review-mr1234-api",
+          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "mr1234-api",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🔨 docker | review ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "api 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": "2 week",
+          "kubernetes": {
+            "namespace": "pan-test-app-review",
+          },
+          "name": "review/some-commit/api",
+          "on_stop": "api 🛑 Stop ⚠️ | review ",
+          "url": "https://api.mr1234.review.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-api" --token="$CL_review_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy review",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-api",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'api'
+    ENV_TYPE: 'review'
+    HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-review'
+    KUBE_APP_NAME: 'mr1234-api'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.mr1234.review.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-review-mr1234-api",
+          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | review ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-review",
+          },
+          "name": "review/some-commit/api",
+          "url": "https://api.mr1234.review.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-api" --token="$CL_review_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop review",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-api",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'api'
+    ENV_TYPE: 'review'
+    HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-review'
+    KUBE_APP_NAME: 'mr1234-api'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.mr1234.review.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-review-mr1234-api",
+          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www ↩️ Rollback ⚠️ | review ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-review",
+          },
+          "name": "review/some-commit/www",
+          "url": "https://www.mr1234.review.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-www" --server="$CL_review_www_KUBE_URL" --certificate-authority <(echo $CL_review_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-www" --token="$CL_review_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-mr1234-www" --cluster="kube-pan-test-app-review-mr1234-www" --user="kube-pan-test-app-review-mr1234-www" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-mr1234-www"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback review",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-www",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'www'
+    ENV_TYPE: 'review'
+    HOST: 'www.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.mr1234.review.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-review'
+    KUBE_APP_NAME: 'mr1234-www'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'www.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.mr1234.review.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-review-mr1234-www",
+          "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 👮 lint": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+            "www/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-next-cache",
+            "paths": [
+              "www/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "HOST": "www.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "mr1234-www",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🔨 docker | review ": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node www/package.json /app/www/package.json
+COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "www 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": "2 week",
+          "kubernetes": {
+            "namespace": "pan-test-app-review",
+          },
+          "name": "review/some-commit/www",
+          "on_stop": "www 🛑 Stop ⚠️ | review ",
+          "url": "https://www.mr1234.review.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-www" --server="$CL_review_www_KUBE_URL" --certificate-authority <(echo $CL_review_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-www" --token="$CL_review_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-mr1234-www" --cluster="kube-pan-test-app-review-mr1234-www" --user="kube-pan-test-app-review-mr1234-www" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-mr1234-www"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy review",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-www",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'www'
+    ENV_TYPE: 'review'
+    HOST: 'www.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.mr1234.review.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-review'
+    KUBE_APP_NAME: 'mr1234-www'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'www.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.mr1234.review.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-review-mr1234-www",
+          "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | review ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-review",
+          },
+          "name": "review/some-commit/www",
+          "url": "https://www.mr1234.review.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-www" --server="$CL_review_www_KUBE_URL" --certificate-authority <(echo $CL_review_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-www" --token="$CL_review_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-mr1234-www" --cluster="kube-pan-test-app-review-mr1234-www" --user="kube-pan-test-app-review-mr1234-www" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-mr1234-www"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop review",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.mr1234.review.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-www",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-review",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'www'
+    ENV_TYPE: 'review'
+    HOST: 'www.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.mr1234.review.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-review'
+    KUBE_APP_NAME: 'mr1234-www'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'www.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.mr1234.review.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-review-mr1234-www",
+          "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd www",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🧪 test": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "taggedRelease": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api ↩️ Rollback ⚠️ | prod ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-prod",
+          },
+          "name": "prod/api",
+          "url": "https://api.prod.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
+          "kubectl config use-context "kube-pan-test-app-prod-api"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback prod",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'api'
+    ENV_TYPE: 'prod'
+    HOST: 'api.prod.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-prod'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.prod.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-prod-api",
+          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api ↩️ Rollback ⚠️ | stage ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-stage",
+          },
+          "name": "stage/api",
+          "url": "https://api.stage.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
+          "kubectl config use-context "kube-pan-test-app-stage-api"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback stage",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'api'
+    ENV_TYPE: 'stage'
+    HOST: 'api.stage.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-stage'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.stage.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-stage-api",
+          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🔨 app | prod ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "HOST": "api.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🔨 app | stage ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "HOST": "api.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🔨 docker | prod ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "api 🔨 docker | stage ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "api 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "environment": {
+          "auto_stop_in": undefined,
+          "kubernetes": {
+            "namespace": "pan-test-app-prod",
+          },
+          "name": "prod/api",
+          "on_stop": "api 🛑 Stop ⚠️ | prod ",
+          "url": "https://api.prod.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | prod ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
+          "kubectl config use-context "kube-pan-test-app-prod-api"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy prod",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'api'
+    ENV_TYPE: 'prod'
+    HOST: 'api.prod.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-prod'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.prod.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-prod-api",
+          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": undefined,
+          "kubernetes": {
+            "namespace": "pan-test-app-stage",
+          },
+          "name": "stage/api",
+          "on_stop": "api 🛑 Stop ⚠️ | stage ",
+          "url": "https://api.stage.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | stage ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
+          "kubectl config use-context "kube-pan-test-app-stage-api"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy stage",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'api'
+    ENV_TYPE: 'stage'
+    HOST: 'api.stage.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-stage'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.stage.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-stage-api",
+          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | prod ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-prod",
+          },
+          "name": "prod/api",
+          "url": "https://api.prod.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
+          "kubectl config use-context "kube-pan-test-app-prod-api"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop prod",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'api'
+    ENV_TYPE: 'prod'
+    HOST: 'api.prod.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-prod'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.prod.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-prod-api",
+          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | stage ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-stage",
+          },
+          "name": "stage/api",
+          "url": "https://api.stage.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
+          "kubectl config use-context "kube-pan-test-app-stage-api"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop stage",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "api",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "api.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "api",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'api'
+    ENV_TYPE: 'stage'
+    HOST: 'api.stage.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-stage'
+    KUBE_APP_NAME: 'api'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'api.stage.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+jobs:
+  migration:
+    command: 'yarn migrate'
+cronjobs:
+  send-emails:
+    command: 'yarn send emails'
+    schedule: '0 * * * *'
+",
+          "RELEASE_NAME": "pan-test-app-stage-api",
+          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www ↩️ Rollback ⚠️ | prod ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-prod",
+          },
+          "name": "prod/www",
+          "url": "https://www.prod.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-prod-www" --server="$CL_prod_www_KUBE_URL" --certificate-authority <(echo $CL_prod_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-prod-www" --token="$CL_prod_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-prod-www" --cluster="kube-pan-test-app-prod-www" --user="kube-pan-test-app-prod-www" --namespace="pan-test-app-prod"",
+          "kubectl config use-context "kube-pan-test-app-prod-www"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback prod",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'www'
+    ENV_TYPE: 'prod'
+    HOST: 'www.prod.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.prod.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-prod'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.prod.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-prod-www",
+          "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www ↩️ Rollback ⚠️ | stage ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-test-app-stage",
+          },
+          "name": "stage/www",
+          "url": "https://www.stage.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-stage-www" --server="$CL_stage_www_KUBE_URL" --certificate-authority <(echo $CL_stage_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-stage-www" --token="$CL_stage_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-stage-www" --cluster="kube-pan-test-app-stage-www" --user="kube-pan-test-app-stage-www" --namespace="pan-test-app-stage"",
+          "kubectl config use-context "kube-pan-test-app-stage-www"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback stage",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'www'
+    ENV_TYPE: 'stage'
+    HOST: 'www.stage.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.stage.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-stage'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.stage.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-stage-www",
+          "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🔨 app | prod ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+            "www/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-next-cache",
+            "paths": [
+              "www/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "HOST": "www.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🔨 app | stage ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+            "www/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-node-modules",
+            "paths": [
+              "www/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "www-next-cache",
+            "paths": [
+              "www/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "HOST": "www.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🔨 docker | prod ": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node www/package.json /app/www/package.json
+COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "www 🔨 docker | stage ": {
+        "cache": [
+          {
+            "key": "www-yarn",
+            "paths": [
+              "www/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node www/package.json /app/www/package.json
+COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+        },
+      },
+      "www 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "environment": {
+          "auto_stop_in": undefined,
+          "kubernetes": {
+            "namespace": "pan-test-app-prod",
+          },
+          "name": "prod/www",
+          "on_stop": "www 🛑 Stop ⚠️ | prod ",
+          "url": "https://www.prod.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | prod ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-prod-www" --server="$CL_prod_www_KUBE_URL" --certificate-authority <(echo $CL_prod_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-prod-www" --token="$CL_prod_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-prod-www" --cluster="kube-pan-test-app-prod-www" --user="kube-pan-test-app-prod-www" --namespace="pan-test-app-prod"",
+          "kubectl config use-context "kube-pan-test-app-prod-www"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy prod",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'www'
+    ENV_TYPE: 'prod'
+    HOST: 'www.prod.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.prod.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-prod'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.prod.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-prod-www",
+          "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": undefined,
+          "kubernetes": {
+            "namespace": "pan-test-app-stage",
+          },
+          "name": "stage/www",
+          "on_stop": "www 🛑 Stop ⚠️ | stage ",
+          "url": "https://www.stage.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | stage ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-stage-www" --server="$CL_stage_www_KUBE_URL" --certificate-authority <(echo $CL_stage_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-stage-www" --token="$CL_stage_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-stage-www" --cluster="kube-pan-test-app-stage-www" --user="kube-pan-test-app-stage-www" --namespace="pan-test-app-stage"",
+          "kubectl config use-context "kube-pan-test-app-stage-www"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy stage",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'www'
+    ENV_TYPE: 'stage'
+    HOST: 'www.stage.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.stage.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-stage'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.stage.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-stage-www",
+          "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | prod ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-prod",
+          },
+          "name": "prod/www",
+          "url": "https://www.prod.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-prod-www" --server="$CL_prod_www_KUBE_URL" --certificate-authority <(echo $CL_prod_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-prod-www" --token="$CL_prod_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-prod-www" --cluster="kube-pan-test-app-prod-www" --user="kube-pan-test-app-prod-www" --namespace="pan-test-app-prod"",
+          "kubectl config use-context "kube-pan-test-app-prod-www"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop prod",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.prod.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.prod.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-prod",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'www'
+    ENV_TYPE: 'prod'
+    HOST: 'www.prod.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.prod.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-prod'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.prod.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-prod-www",
+          "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | stage ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-test-app-stage",
+          },
+          "name": "stage/www",
+          "url": "https://www.stage.test-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-test-app-stage-www" --server="$CL_stage_www_KUBE_URL" --certificate-authority <(echo $CL_stage_www_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-stage-www" --token="$CL_stage_www_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-stage-www" --cluster="kube-pan-test-app-stage-www" --user="kube-pan-test-app-stage-www" --namespace="pan-test-app-stage"",
+          "kubectl config use-context "kube-pan-test-app-stage-www"",
+          "kubernetesDelete",
+        ],
+        "stage": "stop stage",
+        "variables": {
+          "APP_DIR": "www",
+          "BUILD_ID": "some-id",
+          "COMPONENT_NAME": "www",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "the-panter-chart",
+          "HOST": "www.stage.test-app.pan.panter.cloud",
+          "HOST_CANONICAL": "www.stage.test-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "www",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-www",
+          "KUBE_NAMESPACE": "pan-test-app-stage",
+          "KUBE_VALUES": "env:
+  secret: {}
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'www'
+    ENV_TYPE: 'stage'
+    HOST: 'www.stage.test-app.pan.panter.cloud'
+    ROOT_URL: 'https://www.stage.test-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-test-app-stage'
+    KUBE_APP_NAME: 'www'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'www.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+application:
+  host: 'www.stage.test-app.pan.panter.cloud'
+  command: 'yarn start'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+",
+          "RELEASE_NAME": "pan-test-app-stage-www",
+          "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+        },
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+}
+`;
