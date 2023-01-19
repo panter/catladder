@@ -60,11 +60,11 @@ export const createGoogleCloudRunDeployJobs = (
     .map(([key, value]) => `${key}=${value}`)
     .join(",");
 
-  const commonArgs = `--project ${deployConfig.projectId} --region=${deployConfig.region}`;
+  const commonArgs = `--project=${deployConfig.projectId} --region=${deployConfig.region}`;
   const cloudRunArgs = deployConfig.cloudSql
-    ? `--set-cloudsql-instances=${deployConfig.cloudSql.instanceConnectionName}`
+    ? `--set-cloudsql-instances=${deployConfig.cloudSql.instanceConnectionName} `
     : "";
-  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} ${cloudRunArgs} --labels ${labelsString}`;
+  const commonDeployArgs = `--image=${gcloudImageName} ${commonArgs} ${cloudRunArgs}--labels=${labelsString}`;
   const serviceName = context.environment.fullName.toLowerCase();
 
   const getFullJobName = (name: string) =>
@@ -105,7 +105,7 @@ export const createGoogleCloudRunDeployJobs = (
         : undefined;
 
     const commandArg = command
-      ? `--command="${command.split(" ").join(",")}"`
+      ? `--command="${command.split(" ").join(",")}" `
       : "";
 
     const args = {
@@ -122,7 +122,7 @@ export const createGoogleCloudRunDeployJobs = (
 
     return `gcloud run deploy ${serviceName}${
       nameSuffix ?? ""
-    } ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml ${argsString}`;
+    } ${commandArg}${commonDeployArgs} --env-vars-file=____envvars.yaml ${argsString}`;
   };
 
   const getJobCreateScriptsForJob = (
@@ -159,11 +159,7 @@ export const createGoogleCloudRunDeployJobs = (
   const getCreateScheduleScripts = () => {
     return jobsWithSchedule
       .map(({ job, jobName, schedulerName }) => {
-        const commonArgs = `http ${schedulerName} --project=${deployConfig.projectId} --location ${deployConfig.region} \
-      --schedule="${job.schedule}" \
-      --uri="https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run" \
-      --http-method POST \
-      --oauth-service-account-email $GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com`;
+        const commonArgs = `http ${schedulerName} --project=${deployConfig.projectId} --location=${deployConfig.region} --schedule="${job.schedule}" --uri="https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com`;
         return [
           ...allowFailureInScripts([
             `gcloud scheduler jobs create ${commonArgs}`,
@@ -179,7 +175,7 @@ export const createGoogleCloudRunDeployJobs = (
       .map(({ schedulerName }) => {
         return [
           ...allowFailureInScripts([
-            `gcloud scheduler jobs delete ${schedulerName} --project=${deployConfig.projectId} --location ${deployConfig.region}`,
+            `gcloud scheduler jobs delete ${schedulerName} --project=${deployConfig.projectId} --location=${deployConfig.region}`,
           ]),
         ];
       })
