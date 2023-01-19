@@ -13,6 +13,12 @@ const config: Config = {
         type: "google-cloudrun",
         projectId: "google-project-id",
         region: "europe-west6",
+        // optional, set min and max instances
+        // defaults to 0-100
+        service: {
+          minInstances: 0,
+          maxInstances: 5,
+        },
         cloudSql: {
           type: "unmanaged",
           instanceConnectionName: "projectId:region:instancename",
