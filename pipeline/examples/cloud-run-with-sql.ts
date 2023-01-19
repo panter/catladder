@@ -37,6 +37,22 @@ const config: Config = {
         },
       },
     },
+    www: {
+      dir: "www",
+      build: {
+        type: "node",
+      },
+      deploy: {
+        type: "google-cloudrun",
+        projectId: "google-project-id",
+        region: "europe-west6",
+      },
+      vars: {
+        public: {
+          API_URL: "${api:ROOT_URL}",
+        },
+      },
+    },
   },
 };
 
