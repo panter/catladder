@@ -25,7 +25,7 @@ export const createRailsTestJobs = (context: Context): CatladderJob[] => {
   const bundlerCache = {
     key: {
       files: ["Gemfile.lock"],
-      prefix: "$CI_JOB_IMAGE"
+      prefix: "$CI_JOB_IMAGE" // a changed image might have different OS libraries which no longer work with the cached gems
     },
     paths: [bundlerCacheDir]
   }
