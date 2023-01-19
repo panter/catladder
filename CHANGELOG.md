@@ -1,3 +1,10 @@
+# [1.80.0](https://git.panter.ch/catladder/catladder/compare/v1.79.0...v1.80.0) (2023-01-19)
+
+
+### Features
+
+* **mongodb:** expire snapshots after a while ([1836752](https://git.panter.ch/catladder/catladder/commit/1836752bd983fc6c0fc76e3d12e7a9cb58205555))
+
 # [1.79.0](https://git.panter.ch/catladder/catladder/compare/v1.78.1...v1.79.0) (2023-01-18)
 
 
