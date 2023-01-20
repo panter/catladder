@@ -1,14 +1,14 @@
 import type Vorpal from "vorpal";
 import { logError } from "../../../../utils/log";
 
-import { startPortForward } from "../../../../utils/portForward";
+import { startKubePortForward } from "../../../../kubernetes/portForward";
 
 import { getk8sApi } from "../../../../k8sApi";
 import { namespaceAutoCompletion } from "./namespaceAutoCompletion";
 
 export default async (vorpal: Vorpal) =>
   vorpal
-    .command("port-forward <namespace>", "start port-forwarding")
+    .command("kube-port-forward <namespace>", "start port-forwarding")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
       const k8sApi = getk8sApi();
@@ -44,5 +44,5 @@ export default async (vorpal: Vorpal) =>
         message: "Remote port: ",
       });
 
-      return startPortForward(podName, localPort, remotePort, namespace);
+      return startKubePortForward(podName, localPort, remotePort, namespace);
     });

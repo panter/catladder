@@ -1,5 +1,5 @@
 import open from "open";
-import { startPortForward } from "../../../../utils/portForward";
+import { startKubePortForward } from "../../../../kubernetes/portForward";
 import type Vorpal from "vorpal";
 import {
   GRAFANA_PROXY_LOCAL_PORT,
@@ -21,7 +21,7 @@ export default async (vorpal: Vorpal) =>
       await ensureCluster.call(this, envComponent);
       const namespace = await getProjectNamespace(envComponent);
       const url = `http://localhost:${GRAFANA_PROXY_LOCAL_PORT}/grafana/d/at-cost-analysis-namespace2/namespace-utilization-metrics?var-namespace=${namespace}`;
-      await startPortForward(
+      await startKubePortForward(
         "deployment/kubecost-cost-analyzer",
         GRAFANA_PROXY_LOCAL_PORT,
         GRAFANA_PROXY_TARGET_PORT,
