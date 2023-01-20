@@ -1,3 +1,11 @@
+## [1.81.1](https://git.panter.ch/catladder/catladder/compare/v1.81.0...v1.81.1) (2023-01-20)
+
+
+### Bug Fixes
+
+* **kube:** cluster cannot scale down ([83c6703](https://git.panter.ch/catladder/catladder/commit/83c6703d94c8b4d7a5e37a3a650e18ceda5e9ce3))
+* **kube:** remove unessecary exit trap ([0926970](https://git.panter.ch/catladder/catladder/commit/0926970a0c22b6bbe59389b28c30bebcc7b02d26))
+
 # [1.81.0](https://git.panter.ch/catladder/catladder/compare/v1.80.4...v1.81.0) (2023-01-20)
 
 
