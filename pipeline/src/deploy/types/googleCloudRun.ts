@@ -85,7 +85,7 @@ export type DeployConfigCloudRunService = {
   maxInstances?: number;
 
   /**
-   * set to true for workers
+   * set to true to allways allocate cpu, e.g. for workers. Careful that this is expensive!
    */
   noCpuThrottling?: true;
 
