@@ -7,6 +7,7 @@ kind: Deployment
 metadata:
   name: {{ template "fullname" $context }}-app
   annotations:
+    "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
     {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
     {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
   labels:
