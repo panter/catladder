@@ -117,7 +117,7 @@ export const getEnvironmentVariables = async (
 
   const envVars = await resolveReferences(
     envVarsRaw,
-    async (otherComponentName, variableName, alreadyVisited) => {
+    async (otherComponentName, alreadyVisited) => {
       const { envVars: otherEnvVars } = await getEnvironmentVariables(
         config,
         otherComponentName,
@@ -125,7 +125,7 @@ export const getEnvironmentVariables = async (
         commitInfo,
         alreadyVisited
       );
-      return otherEnvVars[variableName];
+      return otherEnvVars;
     },
     alreadyVisited
   );

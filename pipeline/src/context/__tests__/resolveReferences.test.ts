@@ -17,12 +17,9 @@ describe("resolveReferences", () => {
         FOO: "foo from frontend",
       },
     };
-    const result = await resolveReferences(
-      variables,
-      async (componentName, variableName) => {
-        return otherVariables[componentName]?.[variableName];
-      }
-    );
+    const result = await resolveReferences(variables, async (componentName) => {
+      return otherVariables[componentName];
+    });
 
     expect(result).toEqual({
       a: "hello world",
@@ -53,12 +50,9 @@ describe("resolveReferences", () => {
         FOO: "foo from api",
       },
     };
-    const result = await resolveReferences(
-      variables,
-      async (componentName, variableName) => {
-        return otherVariables[componentName]?.[variableName];
-      }
-    );
+    const result = await resolveReferences(variables, async (componentName) => {
+      return otherVariables[componentName];
+    });
 
     expect(result).toEqual({
       FOO: "hello from foo from api",
@@ -72,12 +66,9 @@ describe("resolveReferences", () => {
       b: "a not found value looks like this: '${api:FOO}'",
     };
     const otherVariables: Record<string, Record<string, string>> = {};
-    const result = await resolveReferences(
-      variables,
-      async (componentName, variableName) => {
-        return otherVariables[componentName]?.[variableName];
-      }
-    );
+    const result = await resolveReferences(variables, async (componentName) => {
+      return otherVariables[componentName];
+    });
 
     expect(result).toEqual({
       a: "hello world",
@@ -97,12 +88,9 @@ describe("resolveReferences", () => {
         FOO: "hi, ${api:FOO}",
       },
     };
-    const result = await resolveReferences(
-      variables,
-      async (componentName, variableName) => {
-        return otherVariables[componentName]?.[variableName] ?? "";
-      }
-    );
+    const result = await resolveReferences(variables, async (componentName) => {
+      return otherVariables[componentName];
+    });
 
     expect(result).toEqual({
       a: "value is hi, foo from api!",
@@ -121,12 +109,9 @@ describe("resolveReferences", () => {
         FOO: "frontend ${api:FOO}",
       },
     };
-    const result = await resolveReferences(
-      variables,
-      async (componentName, variableName) => {
-        return otherVariables[componentName]?.[variableName] ?? "";
-      }
-    );
+    const result = await resolveReferences(variables, async (componentName) => {
+      return otherVariables[componentName];
+    });
 
     expect(result).toEqual({
       a: "value is frontend api ${frontend:FOO}!",

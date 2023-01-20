@@ -7,9 +7,8 @@ export const resolveReferences = async (
   vars: Record<string, string>,
   getOtherVariables?: (
     componentName: string,
-    variableName: string,
     alreadyVisited: Record<string, Record<string, boolean>>
-  ) => Promise<string | null>,
+  ) => Promise<Record<string, string | null>>,
   alreadyVisitedBase: Record<string, Record<string, boolean>> = {}
 ) => {
   const replaceSingleValue = async (
@@ -30,10 +29,8 @@ export const resolveReferences = async (
             },
           });
           const result = componentName
-            ? (await getOtherVariables?.(
-                componentName,
-                variableName,
-                newAlreadyVisited
+            ? (await getOtherVariables?.(componentName, newAlreadyVisited).then(
+                (r) => r?.[variableName]
               )) ?? null
             : vars[variableName]; // is self reference
 
