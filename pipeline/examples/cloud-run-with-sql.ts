@@ -49,7 +49,7 @@ const config: Config = {
       },
       vars: {
         public: {
-          API_URL: "${api:ROOT_URL}",
+          API_URL: "${api:ROOT_URL}/graphql",
         },
       },
     },

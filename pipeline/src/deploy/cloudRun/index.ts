@@ -67,9 +67,9 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
     const HOST_CANONICAL =
       fullName.toLowerCase() +
       "-" +
-      process.env[
+      (process.env[
         getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
-      ];
+      ] ?? "unknown-host.example.com");
 
     const jobTriggers =
       deployConfigRaw && deployConfigRaw.jobs
