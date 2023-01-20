@@ -21,11 +21,13 @@ import {
 } from "./utils/database";
 import { allowFailureInScripts } from "../../utils/gitlab";
 import { getCloudRunJobName } from "./utils/jobName";
+import { createArgsString } from "./utils/createArgsString";
 
 const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
   `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
   `echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"`,
 ];
+
 export const createGoogleCloudRunDeployJobs = (
   context: Context
 ): CatladderJob[] => {
@@ -60,11 +62,20 @@ export const createGoogleCloudRunDeployJobs = (
     .map(([key, value]) => `${key}=${value}`)
     .join(",");
 
-  const commonArgs = `--project ${deployConfig.projectId} --region=${deployConfig.region}`;
-  const cloudRunArgs = deployConfig.cloudSql
-    ? `--set-cloudsql-instances=${deployConfig.cloudSql.instanceConnectionName}`
-    : "";
-  const commonDeployArgs = `--image ${gcloudImageName} ${commonArgs} ${cloudRunArgs} --labels ${labelsString}`;
+  const commonArgs = {
+    project: deployConfig.projectId,
+    region: deployConfig.region,
+  };
+
+  const commonDeployArgs = {
+    image: gcloudImageName,
+    ...commonArgs,
+    "set-cloudsql-instances": deployConfig.cloudSql
+      ? deployConfig.cloudSql.instanceConnectionName
+      : undefined,
+    labels: labelsString,
+  };
+
   const serviceName = context.environment.fullName.toLowerCase();
 
   const getFullJobName = (name: string) =>
@@ -104,25 +115,16 @@ export const createGoogleCloudRunDeployJobs = (
         ? service?.command ?? context.componentConfig.build.startCommand
         : undefined;
 
-    const commandArg = command
-      ? `--command="${command.split(" ").join(",")}"`
-      : "";
-
-    const args = {
+    const argsString = createArgsString({
+      command: command ? '"' + command.split(" ").join(",") + '"' : undefined, // not sure if quotes are needed
+      ...commonDeployArgs,
+      "env-vars-file": "____envvars.yaml",
       "allow-unauthenticated": true,
       "min-instances": customConfig?.minInstances,
       "max-instances": customConfig?.maxInstances,
       "no-cpu-throttling": customConfig?.noCpuThrottling,
-    } as const;
-
-    const argsString = Object.entries(args)
-      .filter(([, value]) => !isNil(value))
-      .map(([key, value]) => `--${key}${value !== true ? `=${value}` : ""}`)
-      .join(" ");
-
-    return `gcloud run deploy ${serviceName}${
-      nameSuffix ?? ""
-    } ${commandArg} ${commonDeployArgs} --env-vars-file=____envvars.yaml ${argsString}`;
+    });
+    return `gcloud run deploy ${serviceName}${nameSuffix ?? ""} ${argsString}`;
   };
 
   const getJobCreateScriptsForJob = (
@@ -133,14 +135,20 @@ export const createGoogleCloudRunDeployJobs = (
     // lucky, update on the other hand accepts it... so let's just imediatly update it
 
     // also we cannot upsert a job, so we have to create it and catch the error and then update
-    const args = `${jobName} --command="${job.command
-      .split(" ")
-      .join(",")}" ${commonDeployArgs} --memory=${job.memory || "512Mi"}`;
+    const commonDeployArgsString = createArgsString({
+      command: '"' + job.command.split(" ").join(",") + '"',
+      ...commonDeployArgs,
+      memory: job.memory || "512Mi",
+    });
+
+    const argsString = `${jobName} ${commonDeployArgsString}`;
     return [
-      ...allowFailureInScripts([`gcloud beta run jobs create ${args}`]),
-      `gcloud beta run jobs update ${args} --env-vars-file=____envvars.yaml`,
+      ...allowFailureInScripts([`gcloud beta run jobs create ${argsString}`]),
+      `gcloud beta run jobs update ${argsString} --env-vars-file=____envvars.yaml`,
     ];
   };
+
+  const commonArgsString = createArgsString(commonArgs);
 
   const getJobCreateScripts = () =>
     jobsWithNames
@@ -148,7 +156,7 @@ export const createGoogleCloudRunDeployJobs = (
       .flat();
 
   const getJobRunScriptForJob = (jobName: string) => {
-    return `gcloud beta run jobs execute ${jobName} ${commonArgs}`;
+    return `gcloud beta run jobs execute ${jobName} ${commonArgsString}`;
   };
 
   const getJobRunScripts = (when: DeployConfigCloudRunJob["when"]) =>
@@ -159,11 +167,16 @@ export const createGoogleCloudRunDeployJobs = (
   const getCreateScheduleScripts = () => {
     return jobsWithSchedule
       .map(({ job, jobName, schedulerName }) => {
-        const commonArgs = `http ${schedulerName} --project=${deployConfig.projectId} --location ${deployConfig.region} \
-      --schedule="${job.schedule}" \
-      --uri="https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run" \
-      --http-method POST \
-      --oauth-service-account-email $GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com`;
+        const argsString = createArgsString({
+          project: deployConfig.projectId,
+          location: deployConfig.region,
+          schedule: `"${job.schedule}"`,
+          uri: `"https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run"`,
+          "http-method": "POST",
+          "oauth-service-account-email":
+            "$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com",
+        });
+        const commonArgs = `http ${schedulerName} ${argsString}`;
         return [
           ...allowFailureInScripts([
             `gcloud scheduler jobs create ${commonArgs}`,
@@ -175,11 +188,15 @@ export const createGoogleCloudRunDeployJobs = (
   };
 
   const getDeleteSchedulesScripts = () => {
+    const argsString = createArgsString({
+      project: deployConfig.projectId,
+      location: deployConfig.region,
+    });
     return jobsWithSchedule
       .map(({ schedulerName }) => {
         return [
           ...allowFailureInScripts([
-            `gcloud scheduler jobs delete ${schedulerName} --project=${deployConfig.projectId} --location ${deployConfig.region}`,
+            `gcloud scheduler jobs delete ${schedulerName} ${argsString}`,
           ]),
         ];
       })
@@ -188,7 +205,8 @@ export const createGoogleCloudRunDeployJobs = (
 
   const getDeleteJobsScripts = () =>
     jobsWithNames.map(
-      ({ jobName }) => `gcloud beta run jobs delete ${jobName} ${commonArgs}`
+      ({ jobName }) =>
+        `gcloud beta run jobs delete ${jobName} ${commonArgsString}`
     );
 
   const deployScripts = [
@@ -217,11 +235,11 @@ export const createGoogleCloudRunDeployJobs = (
   const stopScripts = [
     ...gcloudServiceAccountLoginCommands(context),
     ...(deployConfig.service !== false
-      ? [`gcloud run services delete ${serviceName} ${commonArgs}`]
+      ? [`gcloud run services delete ${serviceName} ${commonArgsString}`]
       : []),
     ...Object.entries(deployConfig.additionalServices ?? {}).map(
       ([name]) =>
-        `gcloud run services delete ${serviceName}-${name} ${commonArgs}`
+        `gcloud run services delete ${serviceName}-${name} ${commonArgsString}`
     ),
     ...getDeleteSchedulesScripts(),
     ...getDeleteJobsScripts(),
