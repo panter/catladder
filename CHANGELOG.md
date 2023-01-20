@@ -1,3 +1,11 @@
+# [1.81.0](https://git.panter.ch/catladder/catladder/compare/v1.80.4...v1.81.0) (2023-01-20)
+
+
+### Features
+
+* cloud run port forward ([7bf3072](https://git.panter.ch/catladder/catladder/commit/7bf3072741eadcb784d9de14f289475474248a55))
+* **cloud run:** allow to specify --no-allow-unauthenticated ([5726cc4](https://git.panter.ch/catladder/catladder/commit/5726cc4794a2a067eb0eef9beada49b37cc7ea00))
+
 ## [1.80.4](https://git.panter.ch/catladder/catladder/compare/v1.80.3...v1.80.4) (2023-01-20)
 
 ## [1.80.3](https://git.panter.ch/catladder/catladder/compare/v1.80.2...v1.80.3) (2023-01-19)
