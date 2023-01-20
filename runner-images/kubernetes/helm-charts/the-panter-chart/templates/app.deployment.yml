@@ -7,6 +7,7 @@ kind: Deployment
 metadata:
   name: {{ template "fullname" $context }}-app
   annotations:
+    "cluster-autoscaler.kubernetes.io/safe-to-evict": "true"
     {{ if .Values.gitlab.app }}app.gitlab.com/app: {{ .Values.gitlab.app | quote }}{{ end }}
     {{ if .Values.gitlab.env }}app.gitlab.com/env: {{ .Values.gitlab.env | quote }}{{ end }}
   labels:
@@ -56,7 +57,6 @@ spec:
         command:  ["/bin/sh", "-c"]
         args: 
           - |
-            trap "touch /tmp/pod/main-terminated" EXIT
             {{(kindIs "slice" .Values.application.command) | ternary (join " " .Values.application.command) .Values.application.command}}
      
         {{- end }}
@@ -75,6 +75,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts: 
+        # deprecated
         {{if gt (len .Values.secretsAsFile) 0 }}
           - name: secrets
             mountPath: /secrets
@@ -83,6 +84,8 @@ spec:
           - mountPath: {{$volume.mountPath}}
             name: {{ template "fullname" $context }}-{{$volume.name}}
         {{- end }}
+
+      # deprecated
       {{if .Values.application.leaderElector.enabled}}
       - name: leader-elector
         image: "k8s.gcr.io/leader-elector:0.5"
@@ -108,8 +111,10 @@ spec:
               path: "{{$varName}}"
         {{end}}
       {{end}}
-        - name: tmp-pod
+      {{if .Values.cloudsql.enabled}}
+        - name: tmp-pod # required for a hack
           emptyDir: {}
+      {{- end }}
       {{- range $key, $volume := .Values.application.volumes }}
         - name: {{ template "fullname" $context }}-{{$volume.name}}
           persistentVolumeClaim:
