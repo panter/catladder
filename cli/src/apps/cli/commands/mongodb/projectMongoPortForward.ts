@@ -1,7 +1,7 @@
 import type Vorpal from "vorpal";
 import { getEnvVars, parseChoice } from "../../../../config/getProjectConfig";
 import { logError } from "../../../../utils/log";
-import { startPortForward } from "../../../../utils/portForward";
+import { startKubePortForward } from "../../../../kubernetes/portForward";
 import { getProjectNamespace } from "../../../../utils/projects";
 import { envAndComponents } from "../project/utils/autocompletions";
 import ensureCluster from "../project/utils/ensureCluster";
@@ -58,5 +58,5 @@ export default async (vorpal: Vorpal) =>
       this.log("👆 connection string has been copied to your clipboard!");
       this.log("");
 
-      return startPortForward(podName, localPort, 27017, namespace);
+      return startKubePortForward(podName, localPort, 27017, namespace);
     });

@@ -1,7 +1,7 @@
 import Vorpal from "vorpal";
 // tslint:disable-next-line:no-var-requires
 import packageInfos from "../../packageInfos";
-import { stopAllPortForwards } from "../../utils/portForward";
+import { stopAllPortForwards } from "../../utils/portForwards";
 import general from "./commands/general";
 import mongodb from "./commands/mongodb";
 import cloudSQL from "./commands/cloudSQL";

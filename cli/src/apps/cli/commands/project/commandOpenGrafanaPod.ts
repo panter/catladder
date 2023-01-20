@@ -6,7 +6,7 @@ import {
 } from "../../../../config/constants";
 import { getProjectPodNames } from "../../../../kubernetes";
 import { logError } from "../../../../utils/log";
-import { startPortForward } from "../../../../utils/portForward";
+import { startKubePortForward } from "../../../../kubernetes/portForward";
 import { getProjectNamespace } from "../../../../utils/projects";
 import { envAndComponents } from "./utils/autocompletions";
 import ensureCluster from "./utils/ensureCluster";
@@ -33,7 +33,7 @@ export default async (vorpal: Vorpal) =>
       });
       const namespace = await getProjectNamespace(envComponent);
       const url = `http://localhost:${GRAFANA_PROXY_LOCAL_PORT}/grafana/d/at-cost-analysis-pod/pod-cost-and-utilization-metrics?var-namespace=${namespace}&var-pod=${podName}`;
-      await startPortForward(
+      await startKubePortForward(
         "deployment/kubecost-cost-analyzer",
         GRAFANA_PROXY_LOCAL_PORT,
         GRAFANA_PROXY_TARGET_PORT,

@@ -7,7 +7,7 @@ import { syncBitwarden } from "../../../../utils/passwordstore";
 import {
   getAllRunningPortForwards,
   stopPortForward,
-} from "../../../../utils/portForward";
+} from "../../../../utils/portForwards";
 import { getShell } from "../../../../utils/shell";
 import { namespaceAutoCompletion } from "./namespaceAutoCompletion";
 import portForward from "./portForward";
@@ -26,19 +26,19 @@ export const getAllNamespacesNames = async () => {
   return namespaces.map((n) => n.metadata.name);
 };
 export default async (vorpal: Vorpal) => {
-  vorpal.command("current-context").action(async function () {
+  vorpal.command("kube-current-context").action(async function () {
     this.log(await getCurrentContext());
   });
 
   vorpal
-    .command("list-namespaces", "list all namespaces")
+    .command("kube-list-namespaces", "list all namespaces")
     .action(async function () {
       const namespaces = await getAllNamespacesNames();
       this.log(namespaces.join("\n"));
     });
 
   vorpal
-    .command("list-secrets <namespace>", "show secrets")
+    .command("kube-list-secrets <namespace>", "show secrets")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
       const k8sApi = getk8sApi();
@@ -53,7 +53,7 @@ export default async (vorpal: Vorpal) => {
   });
 
   vorpal
-    .command("list-pods <namespace>", "list all pods of namespace")
+    .command("kube-list-pods <namespace>", "list all pods of namespace")
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
       const k8sApi = getk8sApi();
@@ -62,14 +62,17 @@ export default async (vorpal: Vorpal) => {
     });
 
   vorpal
-    .command("stop-portforward <name>", "stop a running port forward")
+    .command("kube-stop-portforward <name>", "stop a running port forward")
     .autocomplete({ data: async () => getAllRunningPortForwards() })
     .action(async function ({ name }) {
       stopPortForward(name.trim());
     });
 
   vorpal
-    .command("get-shell <namespace>", "get a shell to a pod in the environment")
+    .command(
+      "kube-get-shell <namespace>",
+      "get a shell to a pod in the environment"
+    )
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {
       const k8sApi = getk8sApi();
