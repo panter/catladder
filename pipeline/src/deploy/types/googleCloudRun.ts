@@ -88,6 +88,11 @@ export type DeployConfigCloudRunService = {
    * set to true for workers
    */
   noCpuThrottling?: true;
+
+  /**
+   * whether to allow public access (defaults to true)
+   */
+  allowUnauthenticated?: boolean;
 };
 
 export type DeployConfigCloudRunJobBase = {

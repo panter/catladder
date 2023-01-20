@@ -119,12 +119,17 @@ export const createGoogleCloudRunDeployJobs = (
       command: command ? '"' + command.split(" ").join(",") + '"' : undefined, // not sure if quotes are needed
       ...commonDeployArgs,
       "env-vars-file": "____envvars.yaml",
-      "allow-unauthenticated": true,
       "min-instances": customConfig?.minInstances,
       "max-instances": customConfig?.maxInstances,
       "no-cpu-throttling": customConfig?.noCpuThrottling,
     });
-    return `gcloud run deploy ${serviceName}${nameSuffix ?? ""} ${argsString}`;
+    const authenticationString =
+      customConfig?.allowUnauthenticated ?? true
+        ? "--allow-unauthenticated"
+        : "--no-allow-unauthenticated";
+    return `gcloud run deploy ${serviceName}${
+      nameSuffix ?? ""
+    } ${argsString} ${authenticationString}`;
   };
 
   const getJobCreateScriptsForJob = (
