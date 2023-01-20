@@ -53,7 +53,7 @@ export const getEnvironmentVariables = async (
   } else {
     const additionalEnvVars = deployConfigRaw
       ? DEPLOY_TYPES[deployConfigRaw.type].getAdditionalEnvVars(
-          environmentContext
+          environmentContext as never
         )
       : {};
 
@@ -66,7 +66,9 @@ export const getEnvironmentVariables = async (
     predefinedVariables = {
       ...basePredefinedVariables,
       // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
-      ...(config.components[componentName].build.type === "rails" ? {} : {HOST: host}),
+      ...(config.components[componentName].build.type === "rails"
+        ? {}
+        : { HOST: host }),
       ROOT_URL: url,
       ...additionalEnvVars,
     };
@@ -75,7 +77,7 @@ export const getEnvironmentVariables = async (
 
   const additionalSecretKeys = deployConfigRaw
     ? DEPLOY_TYPES[deployConfigRaw.type].additionalSecretKeys(
-        environmentContext
+        environmentContext as never
       )
     : [];
 
