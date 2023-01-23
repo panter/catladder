@@ -114,13 +114,13 @@ exports[`matches snapshot 1`] = `
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-dev-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-dev-api-undefined",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-dev-api-undefined",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -201,7 +201,7 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "auto_stop_in": "4 weeks",
           "name": "dev/api",
           "on_stop": "api 🛑 Stop ⚠️ | dev ",
-          "url": "https://pan-test-app-dev-api-undefined",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -309,9 +309,9 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "ENV_VARS": "ENV_SHORT: 'dev'
 APP_DIR: 'api'
 ENV_TYPE: 'dev'
-HOST: 'pan-test-app-dev-api-undefined'
-ROOT_URL: 'https://pan-test-app-dev-api-undefined'
-HOST_CANONICAL: 'pan-test-app-dev-api-undefined'
+HOST: 'pan-test-app-dev-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-dev-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-dev-api-unknown-host.example.com'
 CLOUD_SQL_INSTANCE_CONNECTION_NAME: 'projectId:region:instancename'
 DB_NAME: 'pan-test-app-dev-api'
 DB_USER: 'my-user'
@@ -323,13 +323,13 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: 'https://europe-west6-run.googleapis.c
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-dev-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-dev-api-undefined",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-dev-api-undefined",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -337,7 +337,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "dev/api",
-          "url": "https://pan-test-app-dev-api-undefined",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -547,18 +547,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "API_URL": "https://pan-test-app-dev-api-undefined",
+          "API_URL": "https://pan-test-app-dev-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-dev-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-dev-www-undefined",
+          "HOST": "pan-test-app-dev-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-dev-www-undefined",
+          "ROOT_URL": "https://pan-test-app-dev-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -639,7 +639,7 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
           "auto_stop_in": "4 weeks",
           "name": "dev/www",
           "on_stop": "www 🛑 Stop ⚠️ | dev ",
-          "url": "https://pan-test-app-dev-www-undefined",
+          "url": "https://pan-test-app-dev-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -702,7 +702,7 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
         ],
         "stage": "deploy dev",
         "variables": {
-          "API_URL": "https://pan-test-app-dev-api-undefined",
+          "API_URL": "https://pan-test-app-dev-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
@@ -723,20 +723,20 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
           "ENV_VARS": "ENV_SHORT: 'dev'
 APP_DIR: 'www'
 ENV_TYPE: 'dev'
-HOST: 'pan-test-app-dev-www-undefined'
-ROOT_URL: 'https://pan-test-app-dev-www-undefined'
-HOST_CANONICAL: 'pan-test-app-dev-www-undefined'
-API_URL: 'https://pan-test-app-dev-api-undefined'
+HOST: 'pan-test-app-dev-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-dev-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-dev-www-unknown-host.example.com'
+API_URL: 'https://pan-test-app-dev-api-unknown-host.example.com/graphql'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-dev-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-dev-www-undefined",
+          "HOST": "pan-test-app-dev-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-dev-www-undefined",
+          "ROOT_URL": "https://pan-test-app-dev-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -744,7 +744,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "dev/www",
-          "url": "https://pan-test-app-dev-www-undefined",
+          "url": "https://pan-test-app-dev-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1033,13 +1033,13 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-review-mr1234-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-undefined",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-api-undefined",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -1120,7 +1120,7 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "auto_stop_in": "2 week",
           "name": "review/some-commit/api",
           "on_stop": "api 🛑 Stop ⚠️ | review ",
-          "url": "https://pan-test-app-review-mr1234-api-undefined",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1228,9 +1228,9 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "ENV_VARS": "ENV_SHORT: 'review'
 APP_DIR: 'api'
 ENV_TYPE: 'review'
-HOST: 'pan-test-app-review-mr1234-api-undefined'
-ROOT_URL: 'https://pan-test-app-review-mr1234-api-undefined'
-HOST_CANONICAL: 'pan-test-app-review-mr1234-api-undefined'
+HOST: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
 CLOUD_SQL_INSTANCE_CONNECTION_NAME: 'projectId:region:instancename'
 DB_NAME: 'pan-test-app-review-mr1234-api'
 DB_USER: 'my-user'
@@ -1242,13 +1242,13 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: 'https://europe-west6-run.googleapis.c
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-review-mr1234-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-undefined",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-api-undefined",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -1256,7 +1256,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "review/some-commit/api",
-          "url": "https://pan-test-app-review-mr1234-api-undefined",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1475,18 +1475,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "API_URL": "https://pan-test-app-review-mr1234-api-undefined",
+          "API_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-review-mr1234-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-undefined",
+          "HOST": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-www-undefined",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -1567,7 +1567,7 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
           "auto_stop_in": "2 week",
           "name": "review/some-commit/www",
           "on_stop": "www 🛑 Stop ⚠️ | review ",
-          "url": "https://pan-test-app-review-mr1234-www-undefined",
+          "url": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1630,7 +1630,7 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
         ],
         "stage": "deploy review",
         "variables": {
-          "API_URL": "https://pan-test-app-review-mr1234-api-undefined",
+          "API_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
@@ -1651,20 +1651,20 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
           "ENV_VARS": "ENV_SHORT: 'review'
 APP_DIR: 'www'
 ENV_TYPE: 'review'
-HOST: 'pan-test-app-review-mr1234-www-undefined'
-ROOT_URL: 'https://pan-test-app-review-mr1234-www-undefined'
-HOST_CANONICAL: 'pan-test-app-review-mr1234-www-undefined'
-API_URL: 'https://pan-test-app-review-mr1234-api-undefined'
+HOST: 'pan-test-app-review-mr1234-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-review-mr1234-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-review-mr1234-www-unknown-host.example.com'
+API_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-review-mr1234-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-undefined",
+          "HOST": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-www-undefined",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -1672,7 +1672,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "review/some-commit/www",
-          "url": "https://pan-test-app-review-mr1234-www-undefined",
+          "url": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1919,13 +1919,13 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-prod-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-prod-api-undefined",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-prod-api-undefined",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -1996,13 +1996,13 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-stage-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-stage-api-undefined",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-stage-api-undefined",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -2149,7 +2149,7 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "auto_stop_in": undefined,
           "name": "prod/api",
           "on_stop": "api 🛑 Stop ⚠️ | prod ",
-          "url": "https://pan-test-app-prod-api-undefined",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -2245,9 +2245,9 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "ENV_VARS": "ENV_SHORT: 'prod'
 APP_DIR: 'api'
 ENV_TYPE: 'prod'
-HOST: 'pan-test-app-prod-api-undefined'
-ROOT_URL: 'https://pan-test-app-prod-api-undefined'
-HOST_CANONICAL: 'pan-test-app-prod-api-undefined'
+HOST: 'pan-test-app-prod-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-prod-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-prod-api-unknown-host.example.com'
 CLOUD_SQL_INSTANCE_CONNECTION_NAME: 'projectId:region:instancename'
 DB_NAME: 'pan-test-app-prod-api'
 DB_USER: 'my-user'
@@ -2259,13 +2259,13 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: 'https://europe-west6-run.googleapis.c
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-prod-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-prod-api-undefined",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-prod-api-undefined",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -2280,7 +2280,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "auto_stop_in": undefined,
           "name": "stage/api",
           "on_stop": "api 🛑 Stop ⚠️ | stage ",
-          "url": "https://pan-test-app-stage-api-undefined",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -2376,9 +2376,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_VARS": "ENV_SHORT: 'stage'
 APP_DIR: 'api'
 ENV_TYPE: 'stage'
-HOST: 'pan-test-app-stage-api-undefined'
-ROOT_URL: 'https://pan-test-app-stage-api-undefined'
-HOST_CANONICAL: 'pan-test-app-stage-api-undefined'
+HOST: 'pan-test-app-stage-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-stage-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-stage-api-unknown-host.example.com'
 CLOUD_SQL_INSTANCE_CONNECTION_NAME: 'projectId:region:instancename'
 DB_NAME: 'pan-test-app-stage-api'
 DB_USER: 'my-user'
@@ -2390,13 +2390,13 @@ CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: 'https://europe-west6-run.googleapis.c
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-stage-api-undefined",
-          "HOST_CANONICAL": "pan-test-app-stage-api-undefined",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-stage-api-undefined",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
@@ -2404,7 +2404,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "prod/api",
-          "url": "https://pan-test-app-prod-api-undefined",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -2452,7 +2452,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "stage/api",
-          "url": "https://pan-test-app-stage-api-undefined",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -2551,18 +2551,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "API_URL": "https://pan-test-app-prod-api-undefined",
+          "API_URL": "https://pan-test-app-prod-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-prod-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-prod-www-undefined",
+          "HOST": "pan-test-app-prod-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-prod-www-undefined",
+          "ROOT_URL": "https://pan-test-app-prod-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -2621,18 +2621,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "API_URL": "https://pan-test-app-stage-api-undefined",
+          "API_URL": "https://pan-test-app-stage-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-stage-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-stage-www-undefined",
+          "HOST": "pan-test-app-stage-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-stage-www-undefined",
+          "ROOT_URL": "https://pan-test-app-stage-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -2779,7 +2779,7 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
           "auto_stop_in": undefined,
           "name": "prod/www",
           "on_stop": "www 🛑 Stop ⚠️ | prod ",
-          "url": "https://pan-test-app-prod-www-undefined",
+          "url": "https://pan-test-app-prod-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -2830,7 +2830,7 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
         ],
         "stage": "deploy prod",
         "variables": {
-          "API_URL": "https://pan-test-app-prod-api-undefined",
+          "API_URL": "https://pan-test-app-prod-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
@@ -2851,20 +2851,20 @@ COPY --chown=node:node www/yarn.lock /app/www/yarn.lock",
           "ENV_VARS": "ENV_SHORT: 'prod'
 APP_DIR: 'www'
 ENV_TYPE: 'prod'
-HOST: 'pan-test-app-prod-www-undefined'
-ROOT_URL: 'https://pan-test-app-prod-www-undefined'
-HOST_CANONICAL: 'pan-test-app-prod-www-undefined'
-API_URL: 'https://pan-test-app-prod-api-undefined'
+HOST: 'pan-test-app-prod-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-prod-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-prod-www-unknown-host.example.com'
+API_URL: 'https://pan-test-app-prod-api-unknown-host.example.com/graphql'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-prod-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-prod-www-undefined",
+          "HOST": "pan-test-app-prod-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-prod-www-undefined",
+          "ROOT_URL": "https://pan-test-app-prod-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -2879,7 +2879,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "auto_stop_in": undefined,
           "name": "stage/www",
           "on_stop": "www 🛑 Stop ⚠️ | stage ",
-          "url": "https://pan-test-app-stage-www-undefined",
+          "url": "https://pan-test-app-stage-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -2930,7 +2930,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "deploy stage",
         "variables": {
-          "API_URL": "https://pan-test-app-stage-api-undefined",
+          "API_URL": "https://pan-test-app-stage-api-unknown-host.example.com/graphql",
           "APP_DIR": "www",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
@@ -2951,20 +2951,20 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_VARS": "ENV_SHORT: 'stage'
 APP_DIR: 'www'
 ENV_TYPE: 'stage'
-HOST: 'pan-test-app-stage-www-undefined'
-ROOT_URL: 'https://pan-test-app-stage-www-undefined'
-HOST_CANONICAL: 'pan-test-app-stage-www-undefined'
-API_URL: 'https://pan-test-app-stage-api-undefined'
+HOST: 'pan-test-app-stage-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-stage-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-stage-www-unknown-host.example.com'
+API_URL: 'https://pan-test-app-stage-api-unknown-host.example.com/graphql'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-stage-www-undefined",
-          "HOST_CANONICAL": "pan-test-app-stage-www-undefined",
+          "HOST": "pan-test-app-stage-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-www-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-stage-www-undefined",
+          "ROOT_URL": "https://pan-test-app-stage-www-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","API_URL"]",
         },
       },
@@ -2972,7 +2972,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "prod/www",
-          "url": "https://pan-test-app-prod-www-undefined",
+          "url": "https://pan-test-app-prod-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -3015,7 +3015,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         "environment": {
           "action": "stop",
           "name": "stage/www",
-          "url": "https://pan-test-app-stage-www-undefined",
+          "url": "https://pan-test-app-stage-www-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
