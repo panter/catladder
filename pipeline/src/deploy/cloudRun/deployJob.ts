@@ -121,15 +121,11 @@ export const createGoogleCloudRunDeployJobs = (
       "env-vars-file": "____envvars.yaml",
       "min-instances": customConfig?.minInstances,
       "max-instances": customConfig?.maxInstances,
-      "no-cpu-throttling": customConfig?.noCpuThrottling,
+      "cpu-throttling": customConfig?.noCpuThrottling !== true,
+      "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
     });
-    const authenticationString =
-      customConfig?.allowUnauthenticated ?? true
-        ? "--allow-unauthenticated"
-        : "--no-allow-unauthenticated";
-    return `gcloud run deploy ${serviceName}${
-      nameSuffix ?? ""
-    } ${argsString} ${authenticationString}`;
+
+    return `gcloud run deploy ${serviceName}${nameSuffix ?? ""} ${argsString}`;
   };
 
   const getJobCreateScriptsForJob = (
