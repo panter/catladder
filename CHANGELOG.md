@@ -1,3 +1,10 @@
+## [1.81.3](https://git.panter.ch/catladder/catladder/compare/v1.81.2...v1.81.3) (2023-01-23)
+
+
+### Bug Fixes
+
+* always set either cpu-throttling (the default) or no-cpu-throttling ([8b09a18](https://git.panter.ch/catladder/catladder/commit/8b09a188d43f194eb59897da159c758c64f8f144))
+
 ## [1.81.2](https://git.panter.ch/catladder/catladder/compare/v1.81.1...v1.81.2) (2023-01-23)
 
 ## [1.81.1](https://git.panter.ch/catladder/catladder/compare/v1.81.0...v1.81.1) (2023-01-20)
