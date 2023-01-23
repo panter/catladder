@@ -2,7 +2,18 @@ export type Artifacts = {
   paths: string[];
   expire_in?: string;
   when?: "always" | "on_success" | "on_failure";
+  reports?: ArtifactReports;
 };
+// Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
+export type ArtifactReports = 
+  | { accessibility: string }
+  | { coverage_report: string }
+  | { codequality: string }
+  | { cyclonedx: string }
+  | { dotenv: string }
+  | { sast: string }
+  | { secret_detection: string }
+  | { terraform: string }
 export type GitlabJobCache = {
   key: GitlabJobCacheKey;
   policy?: string;
