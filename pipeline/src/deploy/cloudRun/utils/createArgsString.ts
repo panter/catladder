@@ -11,9 +11,16 @@ import { isNil } from "lodash";
  * @returns
  */
 export const createArgsString = (
-  args: Record<string, string | number | true | undefined>
+  args: Record<string, string | number | true | false | undefined>
 ) =>
   Object.entries(args)
     .filter(([, value]) => !isNil(value))
-    .map(([key, value]) => `--${key}${value !== true ? `=${value}` : ""}`)
+    .map(([key, value]) => {
+      if (value === true) {
+        return `--${key}`;
+      } else if (value === false) {
+        return `--no-${key}`;
+      }
+      return `--${key}=${value}`;
+    })
     .join(" ");

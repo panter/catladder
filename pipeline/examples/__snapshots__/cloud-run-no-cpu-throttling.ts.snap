@@ -5,19 +5,24 @@ exports[`matches snapshot 1`] = `
   "mainBranch": {
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
-      "www 🔨 app | dev ": {
-        "artifacts": {
-          "paths": [
-            "www/__build_info.json",
-            "www/dist",
-          ],
-          "reports": {
-            "junit": undefined,
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
           },
-        },
-        "cache": [],
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
         "environment": undefined,
-        "image": "foo",
         "interruptible": true,
         "needs": [],
         "retry": {
@@ -28,33 +33,104 @@ exports[`matches snapshot 1`] = `
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "cd api",
           "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
-          "cd www",
+          "yarn install --immutable",
+          "yarn lint",
         ],
-        "services": undefined,
-        "stage": "build",
+        "stage": "test",
         "variables": {
-          "APP_DIR": "www",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-dev-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-dev-www-unknown-host.example.com",
+          "APP_PATH": "api",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-dev-www-unknown-host.example.com",
+        },
+      },
+      "api 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🔨 docker | dev ": {
+      "api 🔨 docker | dev ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
         "environment": undefined,
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | dev ",
+          "api 🔨 app | dev ",
         ],
         "retry": {
           "max": 2,
@@ -64,7 +140,7 @@ exports[`matches snapshot 1`] = `
           ],
         },
         "script": [
-          "ensureNginxDockerfile",
+          "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
@@ -82,16 +158,18 @@ exports[`matches snapshot 1`] = `
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "dev/www",
+          "DOCKER_IMAGE_NAME": "dev/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -100,9 +178,11 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
-      "www 🚀 Deploy | dev ": {
+      "api 🚀 Deploy | dev ": {
         "allow_failure": false,
         "artifacts": {
           "paths": [
@@ -111,20 +191,32 @@ exports[`matches snapshot 1`] = `
         },
         "environment": {
           "auto_stop_in": "4 weeks",
-          "name": "dev/www",
-          "on_stop": "www 🛑 Stop ⚠️ | dev ",
-          "url": "https://pan-test-app-dev-www-unknown-host.example.com",
+          "name": "dev/api",
+          "on_stop": "api 🛑 Stop ⚠️ | dev ",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
         "needs": [
           {
             "artifacts": false,
-            "job": "www 🔨 app | dev ",
+            "job": "api 👮 lint",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 docker | dev ",
+            "job": "api 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
           },
         ],
         "retry": {
@@ -140,19 +232,19 @@ exports[`matches snapshot 1`] = `
           },
         ],
         "script": [
-          "echo $CL_dev_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
           "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
-          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
-          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-dev-www --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=dev,env-name=dev,build-type=custom --env-vars-file=____envvars.yaml --cpu-throttling --allow-unauthenticated",
-          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=dev,env-name=dev,build-type=node --env-vars-file=____envvars.yaml --min-instances=1 --no-cpu-throttling --allow-unauthenticated",
+          "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
         ],
         "services": [
           {
@@ -164,17 +256,17 @@ exports[`matches snapshot 1`] = `
         ],
         "stage": "deploy dev",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "dev/www",
+          "DOCKER_IMAGE_NAME": "dev/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -182,29 +274,29 @@ exports[`matches snapshot 1`] = `
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "ENV_VARS": "ENV_SHORT: 'dev'
-APP_DIR: 'www'
+APP_DIR: 'api'
 ENV_TYPE: 'dev'
-HOST: 'pan-test-app-dev-www-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-dev-www-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-dev-www-unknown-host.example.com'
+HOST: 'pan-test-app-dev-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-dev-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-dev-api-unknown-host.example.com'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]'
 ",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-dev-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-dev-www-unknown-host.example.com",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-dev-www-unknown-host.example.com",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🛑 Stop ⚠️ | dev ": {
+      "api 🛑 Stop ⚠️ | dev ": {
         "environment": {
           "action": "stop",
-          "name": "dev/www",
-          "url": "https://pan-test-app-dev-www-unknown-host.example.com",
+          "name": "dev/api",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -228,10 +320,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_dev_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "gcloud run services delete pan-test-app-dev-www --project=asdf --region=asia-east1",
+          "gcloud run services delete pan-test-app-dev-api --project=google-project-id --region=europe-west6",
         ],
         "stage": "stop dev",
         "variables": {
@@ -241,6 +333,75 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
     },
@@ -315,19 +476,24 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
   "mr": {
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
-      "www 🔨 app | review ": {
-        "artifacts": {
-          "paths": [
-            "www/__build_info.json",
-            "www/dist",
-          ],
-          "reports": {
-            "junit": undefined,
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
           },
-        },
-        "cache": [],
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
         "environment": undefined,
-        "image": "foo",
         "interruptible": true,
         "needs": [],
         "retry": {
@@ -338,33 +504,104 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "cd api",
           "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
-          "cd www",
+          "yarn install --immutable",
+          "yarn lint",
         ],
-        "services": undefined,
-        "stage": "build",
+        "stage": "test",
         "variables": {
-          "APP_DIR": "www",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-review-mr1234-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "APP_PATH": "api",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+        },
+      },
+      "api 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🔨 docker | review ": {
+      "api 🔨 docker | review ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
         "environment": undefined,
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | review ",
+          "api 🔨 app | review ",
         ],
         "retry": {
           "max": 2,
@@ -374,7 +611,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           ],
         },
         "script": [
-          "ensureNginxDockerfile",
+          "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
@@ -392,16 +629,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "review/www",
+          "DOCKER_IMAGE_NAME": "review/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -410,9 +649,11 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
-      "www 🚀 Deploy | review ": {
+      "api 🚀 Deploy | review ": {
         "allow_failure": false,
         "artifacts": {
           "paths": [
@@ -421,20 +662,32 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         },
         "environment": {
           "auto_stop_in": "2 week",
-          "name": "review/some-commit/www",
-          "on_stop": "www 🛑 Stop ⚠️ | review ",
-          "url": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "name": "review/some-commit/api",
+          "on_stop": "api 🛑 Stop ⚠️ | review ",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
         "needs": [
           {
             "artifacts": false,
-            "job": "www 🔨 app | review ",
+            "job": "api 👮 lint",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 docker | review ",
+            "job": "api 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
           },
         ],
         "retry": {
@@ -450,19 +703,19 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_review_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
           "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
-          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
-          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-review-mr1234-www --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=review,env-name=review,build-type=custom --env-vars-file=____envvars.yaml --cpu-throttling --allow-unauthenticated",
-          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "gcloud run deploy pan-test-app-review-mr1234-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=review,env-name=review,build-type=node --env-vars-file=____envvars.yaml --min-instances=1 --no-cpu-throttling --allow-unauthenticated",
+          "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
         ],
         "services": [
           {
@@ -474,17 +727,17 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "deploy review",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "review/www",
+          "DOCKER_IMAGE_NAME": "review/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -492,29 +745,29 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "ENV_VARS": "ENV_SHORT: 'review'
-APP_DIR: 'www'
+APP_DIR: 'api'
 ENV_TYPE: 'review'
-HOST: 'pan-test-app-review-mr1234-www-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-review-mr1234-www-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-review-mr1234-www-unknown-host.example.com'
+HOST: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]'
 ",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-review-mr1234-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🛑 Stop ⚠️ | review ": {
+      "api 🛑 Stop ⚠️ | review ": {
         "environment": {
           "action": "stop",
-          "name": "review/some-commit/www",
-          "url": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "name": "review/some-commit/api",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -538,10 +791,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_review_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "gcloud run services delete pan-test-app-review-mr1234-www --project=asdf --region=asia-east1",
+          "gcloud run services delete pan-test-app-review-mr1234-api --project=google-project-id --region=europe-west6",
         ],
         "stage": "stop review",
         "variables": {
@@ -551,6 +804,75 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "environment": undefined,
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
     },
@@ -625,19 +947,42 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
   "taggedRelease": {
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
-      "www 🔨 app | prod ": {
+      "api 🔨 app | prod ": {
         "artifacts": {
           "paths": [
-            "www/__build_info.json",
-            "www/dist",
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
           ],
           "reports": {
             "junit": undefined,
           },
         },
-        "cache": [],
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
         "environment": undefined,
-        "image": "foo",
+        "image": "path/to/docker/jobs-default:the-version",
         "interruptible": true,
         "needs": [],
         "retry": {
@@ -648,40 +993,65 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
           "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
-          "cd www",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
         ],
-        "services": undefined,
         "stage": "build",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-prod-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-prod-www-unknown-host.example.com",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-prod-www-unknown-host.example.com",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🔨 app | stage ": {
+      "api 🔨 app | stage ": {
         "artifacts": {
           "paths": [
-            "www/__build_info.json",
-            "www/dist",
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
           ],
           "reports": {
             "junit": undefined,
           },
         },
-        "cache": [],
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
         "environment": undefined,
-        "image": "foo",
+        "image": "path/to/docker/jobs-default:the-version",
         "interruptible": true,
         "needs": [],
         "retry": {
@@ -692,33 +1062,44 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
           "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
-          "cd www",
+          "cd api",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "yarn install --immutable",
+          "yarn build",
         ],
-        "services": undefined,
         "stage": "build",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-stage-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-stage-www-unknown-host.example.com",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-stage-www-unknown-host.example.com",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🔨 docker | prod ": {
+      "api 🔨 docker | prod ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
         "environment": undefined,
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | prod ",
+          "api 🔨 app | prod ",
         ],
         "retry": {
           "max": 2,
@@ -728,7 +1109,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           ],
         },
         "script": [
-          "ensureNginxDockerfile",
+          "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
@@ -746,16 +1127,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "prod/www",
+          "DOCKER_IMAGE_NAME": "prod/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -764,14 +1147,25 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
-      "www 🔨 docker | stage ": {
+      "api 🔨 docker | stage ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
         "environment": undefined,
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | stage ",
+          "api 🔨 app | stage ",
         ],
         "retry": {
           "max": 2,
@@ -781,7 +1175,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           ],
         },
         "script": [
-          "ensureNginxDockerfile",
+          "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
@@ -799,16 +1193,18 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "stage/www",
+          "DOCKER_IMAGE_NAME": "stage/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -817,9 +1213,11 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
+          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
-      "www 🚀 Deploy | prod ": {
+      "api 🚀 Deploy | prod ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -828,20 +1226,20 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         },
         "environment": {
           "auto_stop_in": undefined,
-          "name": "prod/www",
-          "on_stop": "www 🛑 Stop ⚠️ | prod ",
-          "url": "https://pan-test-app-prod-www-unknown-host.example.com",
+          "name": "prod/api",
+          "on_stop": "api 🛑 Stop ⚠️ | prod ",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
         "needs": [
           {
             "artifacts": false,
-            "job": "www 🔨 app | prod ",
+            "job": "api 🔨 app | prod ",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 docker | prod ",
+            "job": "api 🔨 docker | prod ",
           },
         ],
         "retry": {
@@ -857,19 +1255,19 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_prod_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
           "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
-          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
-          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-prod-www --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=prod,env-name=prod,build-type=custom --env-vars-file=____envvars.yaml --cpu-throttling --allow-unauthenticated",
-          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=prod,env-name=prod,build-type=node --env-vars-file=____envvars.yaml --min-instances=1 --no-cpu-throttling --allow-unauthenticated",
+          "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
         ],
         "services": [
           {
@@ -881,17 +1279,17 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "deploy prod",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "prod/www",
+          "DOCKER_IMAGE_NAME": "prod/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -899,25 +1297,25 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "ENV_VARS": "ENV_SHORT: 'prod'
-APP_DIR: 'www'
+APP_DIR: 'api'
 ENV_TYPE: 'prod'
-HOST: 'pan-test-app-prod-www-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-prod-www-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-prod-www-unknown-host.example.com'
+HOST: 'pan-test-app-prod-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-prod-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-prod-api-unknown-host.example.com'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]'
 ",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-prod-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-prod-www-unknown-host.example.com",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-prod-www-unknown-host.example.com",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🚀 Deploy | stage ": {
+      "api 🚀 Deploy | stage ": {
         "allow_failure": false,
         "artifacts": {
           "paths": [
@@ -926,20 +1324,20 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         },
         "environment": {
           "auto_stop_in": undefined,
-          "name": "stage/www",
-          "on_stop": "www 🛑 Stop ⚠️ | stage ",
-          "url": "https://pan-test-app-stage-www-unknown-host.example.com",
+          "name": "stage/api",
+          "on_stop": "api 🛑 Stop ⚠️ | stage ",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
         "needs": [
           {
             "artifacts": false,
-            "job": "www 🔨 app | stage ",
+            "job": "api 🔨 app | stage ",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 docker | stage ",
+            "job": "api 🔨 docker | stage ",
           },
         ],
         "retry": {
@@ -955,19 +1353,19 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_stage_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
           "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
-          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
-          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-stage-www --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=stage,env-name=stage,build-type=custom --env-vars-file=____envvars.yaml --cpu-throttling --allow-unauthenticated",
-          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=stage,env-name=stage,build-type=node --env-vars-file=____envvars.yaml --min-instances=1 --no-cpu-throttling --allow-unauthenticated",
+          "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
         ],
         "services": [
           {
@@ -979,17 +1377,17 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
         ],
         "stage": "deploy stage",
         "variables": {
-          "APP_DIR": "www",
+          "APP_DIR": "api",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "DOCKERFILE_ADDITIONS": undefined,
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "stage/www",
+          "DOCKER_IMAGE_NAME": "stage/api",
           "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
           "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
@@ -997,29 +1395,29 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "ENV_VARS": "ENV_SHORT: 'stage'
-APP_DIR: 'www'
+APP_DIR: 'api'
 ENV_TYPE: 'stage'
-HOST: 'pan-test-app-stage-www-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-stage-www-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-stage-www-unknown-host.example.com'
+HOST: 'pan-test-app-stage-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-stage-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-stage-api-unknown-host.example.com'
 _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]'
 ",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey",
-          "HOST": "pan-test-app-stage-www-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-stage-www-unknown-host.example.com",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "ROOT_URL": "https://pan-test-app-stage-www-unknown-host.example.com",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey"]",
         },
       },
-      "www 🛑 Stop ⚠️ | prod ": {
+      "api 🛑 Stop ⚠️ | prod ": {
         "environment": {
           "action": "stop",
-          "name": "prod/www",
-          "url": "https://pan-test-app-prod-www-unknown-host.example.com",
+          "name": "prod/api",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1043,10 +1441,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_prod_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "gcloud run services delete pan-test-app-prod-www --project=asdf --region=asia-east1",
+          "gcloud run services delete pan-test-app-prod-api --project=google-project-id --region=europe-west6",
         ],
         "stage": "stop prod",
         "variables": {
@@ -1058,11 +1456,11 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛑 Stop ⚠️ | stage ": {
+      "api 🛑 Stop ⚠️ | stage ": {
         "environment": {
           "action": "stop",
-          "name": "stage/www",
-          "url": "https://pan-test-app-stage-www-unknown-host.example.com",
+          "name": "stage/api",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1086,10 +1484,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
-          "echo $CL_stage_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
-          "gcloud run services delete pan-test-app-stage-www --project=asdf --region=asia-east1",
+          "gcloud run services delete pan-test-app-stage-api --project=google-project-id --region=europe-west6",
         ],
         "stage": "stop stage",
         "variables": {
