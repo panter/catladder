@@ -67,6 +67,8 @@ export type DeployConfigCloudRunCloudSql = {
     statement_cache_size?: number;
   };
 };
+
+type Memory = `${number}${"M" | "G" | "Mi" | "Gi"}`;
 export type DeployConfigCloudRunService = {
   /**
    * command / entrypoint, fallsback to buildConfig.startcommand
@@ -93,6 +95,11 @@ export type DeployConfigCloudRunService = {
    * whether to allow public access (defaults to true)
    */
   allowUnauthenticated?: boolean;
+
+  /**
+   * memory limit. Defaults to 512MB
+   */
+  memory?: Memory;
 };
 
 export type DeployConfigCloudRunJobBase = {
