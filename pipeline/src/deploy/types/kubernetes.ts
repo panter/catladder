@@ -234,6 +234,13 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
          * It has the same environment variables as the application and an additional IS_WORKER="true" variable
          */
         worker?: KubernetesWorkerDef;
+
+        /**
+         * kubernetes resources for jobs and cronjobs
+         */
+        jobDefaults: {
+          resources: KubernetesResourcesDef;
+        }
       }>;
 
   /**
