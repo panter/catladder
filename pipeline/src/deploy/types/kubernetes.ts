@@ -238,7 +238,7 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
         /**
          * kubernetes resources for jobs and cronjobs
          */
-        jobDefaults: {
+        jobDefaults?: {
           resources: KubernetesResourcesDef;
         }
       }>;
