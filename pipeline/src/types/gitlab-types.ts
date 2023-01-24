@@ -6,14 +6,15 @@ export type Artifacts = {
 };
 // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
 export type ArtifactReports = 
-  | { accessibility: string }
-  | { coverage_report: string }
-  | { codequality: string }
-  | { cyclonedx: string }
-  | { dotenv: string }
-  | { sast: string }
-  | { secret_detection: string }
-  | { terraform: string }
+  | { accessibility: string | string[] }
+  | { coverage_report: string | string[] }
+  | { codequality: string | string[] }
+  | { cyclonedx: string | string[] }
+  | { dotenv: string | string[] }
+  | { junit: string | string[] }
+  | { sast: string | string[] }
+  | { secret_detection: string | string[] }
+  | { terraform: string | string[] }
 export type GitlabJobCache = {
   key: GitlabJobCacheKey;
   policy?: string;
