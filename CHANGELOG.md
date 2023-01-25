@@ -1,3 +1,10 @@
+## [1.82.1](https://git.panter.ch/catladder/catladder/compare/v1.82.0...v1.82.1) (2023-01-25)
+
+
+### Bug Fixes
+
+* **cloud run:** min/max instance keep last value if undefined ([619b31f](https://git.panter.ch/catladder/catladder/commit/619b31f222302b834850d7b862658de607a0704d))
+
 # [1.82.0](https://git.panter.ch/catladder/catladder/compare/v1.81.5...v1.82.0) (2023-01-25)
 
 
