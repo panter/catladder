@@ -1,3 +1,10 @@
+# [1.82.0](https://git.panter.ch/catladder/catladder/compare/v1.81.5...v1.82.0) (2023-01-25)
+
+
+### Features
+
+* **cloud run:** allow to specify container memory ([5d321f0](https://git.panter.ch/catladder/catladder/commit/5d321f012a1a2abe8f36e7cfd8757f57e3c3c0ec))
+
 ## [1.81.5](https://git.panter.ch/catladder/catladder/compare/v1.81.4...v1.81.5) (2023-01-24)
 
 ## [1.81.4](https://git.panter.ch/catladder/catladder/compare/v1.81.3...v1.81.4) (2023-01-24)
