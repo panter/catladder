@@ -122,6 +122,7 @@ export const createGoogleCloudRunDeployJobs = (
       "min-instances": customConfig?.minInstances,
       "max-instances": customConfig?.maxInstances,
       "cpu-throttling": customConfig?.noCpuThrottling !== true,
+      memory: customConfig?.memory,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
     });
 
