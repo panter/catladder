@@ -119,8 +119,8 @@ export const createGoogleCloudRunDeployJobs = (
       command: command ? '"' + command.split(" ").join(",") + '"' : undefined, // not sure if quotes are needed
       ...commonDeployArgs,
       "env-vars-file": "____envvars.yaml",
-      "min-instances": customConfig?.minInstances,
-      "max-instances": customConfig?.maxInstances,
+      "min-instances": customConfig?.minInstances ?? 0,
+      "max-instances": customConfig?.maxInstances ?? 100,
       "cpu-throttling": customConfig?.noCpuThrottling !== true,
       memory: customConfig?.memory,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
