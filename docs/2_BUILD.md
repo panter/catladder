@@ -20,6 +20,14 @@ It will create a docker-image (if the deployment requires a container) based on 
 
 The node-static type is the same as node, but will create a static nginx docker image without any node runtime. This is useful to host static apps (angular, react, nextjs static exports) on a container hosting
 
+## rails
+
+The `rails` build type is for Ruby on Rails apps.
+
+It creates some very basic test, lint and audit jobs that most likely need to be customized.
+
+It will build a container with the help of Cloud Native Buildpacks, similar to Heroku. No variables are available during build unless explicitly provided with `build.cnbBuilder.buildVars`.
+
 ## meteor
 
 For (legacy) meteor apps.
