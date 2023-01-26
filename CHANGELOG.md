@@ -1,3 +1,10 @@
+## [1.82.2](https://git.panter.ch/catladder/catladder/compare/v1.82.1...v1.82.2) (2023-01-26)
+
+
+### Bug Fixes
+
+* **cloud run:** removing command does not change it once the service is deployed ([710f75f](https://git.panter.ch/catladder/catladder/commit/710f75f12c0a8ade869f8e6e0be4b654d4b32d6e))
+
 ## [1.82.1](https://git.panter.ch/catladder/catladder/compare/v1.82.0...v1.82.1) (2023-01-25)
 
 
