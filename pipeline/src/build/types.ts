@@ -118,6 +118,33 @@ export type BuildConfigCustom = BuildConfigBase & {
 
 export type BuildConfigRails = BuildConfigBase & {
   type: "rails";
+  cnbBuilder?: {
+    /**
+     * The Cloud Native Buildpacks builder image to use.
+     * See e.g. https://github.com/heroku/builder or others.
+     * Default: heroku/buildpacks:18
+     */
+    image?: string;
+    /**
+     * The version of the Cloud Native Buildpacks pack command to use.
+     * See https://buildpacks.io/docs/tools/pack/
+     * Default: 0.20.0
+     */
+    packVersion?: string;
+    /**
+     * Additional command arguments passed to the pack command.
+     * See https://buildpacks.io/docs/tools/pack/
+     */
+    packExtraArgs?: string[];
+    /**
+     * Variables needed for Bundler and Rails asset precompilation.
+     * 
+     * Specify a key with the value `undefined` to inherit it from the EnvVars.
+     * 
+     * See https://github.com/rails/rails/issues/32947
+     */
+    buildVars?: Record<string, string | undefined>
+  }
 };
 
 export type BuildConfigStorybook = BuildConfigNodeBase & {
