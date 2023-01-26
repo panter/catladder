@@ -122,13 +122,13 @@ export type BuildConfigRails = BuildConfigBase & {
     /**
      * The Cloud Native Buildpacks builder image to use.
      * See e.g. https://github.com/heroku/builder or others.
-     * Default: heroku/buildpacks:18
+     * Default: heroku/buildpacks:20
      */
     image?: string;
     /**
      * The version of the Cloud Native Buildpacks pack command to use.
      * See https://buildpacks.io/docs/tools/pack/
-     * Default: 0.20.0
+     * Default: 0.28.0
      */
     packVersion?: string;
     /**

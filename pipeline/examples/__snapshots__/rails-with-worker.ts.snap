@@ -145,10 +145,10 @@ jobs:
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker pull $DOCKER_CACHE_IMAGE || true",
-          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.20.0/pack-v0.20.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
+          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.28.0/pack-v0.28.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
           "sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock",
-          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:18' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
+          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:20' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
         ],
         "services": [
           {
@@ -665,10 +665,10 @@ jobs:
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker pull $DOCKER_CACHE_IMAGE || true",
-          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.20.0/pack-v0.20.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
+          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.28.0/pack-v0.28.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
           "sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock",
-          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:18' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
+          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:20' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
         ],
         "services": [
           {
@@ -1249,10 +1249,10 @@ jobs:
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker pull $DOCKER_CACHE_IMAGE || true",
-          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.20.0/pack-v0.20.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
+          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.28.0/pack-v0.28.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
           "sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock",
-          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:18' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
+          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:20' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
         ],
         "services": [
           {
@@ -1299,10 +1299,10 @@ jobs:
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
           "docker pull $DOCKER_CACHE_IMAGE || true",
-          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.20.0/pack-v0.20.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
+          "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.28.0/pack-v0.28.0-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
           "sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock",
-          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:18' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
+          "pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/buildpacks:20' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' ",
         ],
         "services": [
           {

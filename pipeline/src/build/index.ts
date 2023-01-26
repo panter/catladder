@@ -54,8 +54,8 @@ export const BUILD_TYPES: BuildTypes = {
     defaults: () => ({
       startCommand: "/cnb/process/web",
       cnbBuilder: {
-        image: "heroku/buildpacks:18",
-        packVersion: "0.20.0",
+        image: "heroku/buildpacks:20",
+        packVersion: "0.28.0",
       }
     }),
   },
