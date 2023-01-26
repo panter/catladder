@@ -52,7 +52,7 @@ export const BUILD_TYPES: BuildTypes = {
   rails: {
     jobs: createRailsJobs,
     defaults: () => ({
-    defaults: () => ({}),
+      startCommand: "/cnb/process/web",
       cnbBuilder: {
         image: "heroku/buildpacks:18",
         packVersion: "0.20.0",
