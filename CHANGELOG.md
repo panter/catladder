@@ -1,3 +1,10 @@
+# [1.83.0](https://git.panter.ch/catladder/catladder/compare/v1.82.2...v1.83.0) (2023-01-27)
+
+
+### Features
+
+* **cloud run:** you can now change the db base name ([064ce68](https://git.panter.ch/catladder/catladder/commit/064ce68fee66b69e703943ab6893f8eebb05afbe))
+
 ## [1.82.2](https://git.panter.ch/catladder/catladder/compare/v1.82.1...v1.82.2) (2023-01-26)
 
 
