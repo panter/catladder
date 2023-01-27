@@ -1,3 +1,10 @@
+## [1.83.1](https://git.panter.ch/catladder/catladder/compare/v1.83.0...v1.83.1) (2023-01-27)
+
+
+### Bug Fixes
+
+* **rails:** add default start command ([300c1e0](https://git.panter.ch/catladder/catladder/commit/300c1e03a4672feded3dc0a788f3bc4de5b0b75f))
+
 # [1.83.0](https://git.panter.ch/catladder/catladder/compare/v1.82.2...v1.83.0) (2023-01-27)
 
 
