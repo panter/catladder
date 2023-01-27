@@ -31,6 +31,7 @@ export const getEnvironment = async (
       url,
     },
     fullName: envContext.fullName,
+    slugPrefix: envContext.environmentSlugPrefix,
     slug: envContext.environmentSlug,
     shortName: env,
     envVars,

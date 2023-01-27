@@ -46,11 +46,16 @@ export type DeployConfigCloudRunCloudSql = {
   dbUser?: string;
 
   /**
-   * the prefix of the database, the full db name is this plus the environment slug
+   * the prefix of the database, the full db name is this plus the environment slug prefix plus the componentName
    *
    * defaults to customerName-appName
    */
   dbNamePrefix?: string | false;
+
+  /**
+   * the base name of the db, defaults to the componentName
+   */
+  dbBaseName?: string;
   /**
    * whether to delete the database if the environment is stopped
    * defaults to true for review envs, to false for every other environment

@@ -18,6 +18,7 @@ export type Environment = {
     url: string;
   };
   shortName: string;
+  slugPrefix: string;
   slug: string;
   /**
    * env vars contain all build-time env vars. secrets have to be resolved (they are stored in gitlab)

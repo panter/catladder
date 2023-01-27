@@ -5,17 +5,16 @@ import type { EnvironmentContext } from "../types/environmentContext";
 import { getEnvConfig } from "./getEnvConfig";
 import { getEnvType } from "./getEnvType";
 
-const getEnvironmentSlug = (
+const getEnvironmentSlugPrefix = (
   envConfig: EnvConfigWithComponent,
   env: string,
-  componentName: string,
   commitInfo?: CommitInfo
 ) => {
   const envType = getEnvType(env, envConfig);
 
   return envType === "review" && commitInfo
-    ? `${env}-${commitInfo.reviewSlug}-${componentName}`
-    : `${env}-${componentName}`;
+    ? `${env}-${commitInfo.reviewSlug}`
+    : `${env}`;
 };
 
 export const getEnvironmentContext = (
@@ -27,13 +26,13 @@ export const getEnvironmentContext = (
   const envConfigRaw = getEnvConfig(config, componentName, env);
   const envType = getEnvType(env, envConfigRaw);
 
-  const environmentSlug = getEnvironmentSlug(
+  const environmentSlugPrefix = getEnvironmentSlugPrefix(
     envConfigRaw,
     env,
-    componentName,
     commitInfo
   );
 
+  const environmentSlug = `${environmentSlugPrefix}-${componentName}`;
   const gitlabEnvironmentName =
     envType === "review" && commitInfo
       ? `${env}/${commitInfo.refName}/${componentName}`
@@ -45,6 +44,7 @@ export const getEnvironmentContext = (
     envConfigRaw,
     deployConfigRaw: envConfigRaw.deploy,
     buildConfigRaw: envConfigRaw.build,
+    environmentSlugPrefix,
     environmentSlug,
     gitlabEnvironmentName,
     fullName,
