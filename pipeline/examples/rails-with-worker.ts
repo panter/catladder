@@ -50,14 +50,14 @@ const config: Config = {
             // if deployed to Google Cloud Run use a gem like cloudtasker instead of a permanently running expensive worker
             worker: {
               enabled: true,
-              command: "/cnb/lifecycle/launcher bundle exec rake jobs:work",
+              command: "launcher bundle exec rake jobs:work",
             },
           },
           jobs: {
             "db-migrate": {
               hook: "post-install,post-upgrade",
               command:
-                "/cnb/lifecycle/launcher bundle exec rake db:migrate",
+                "launcher bundle exec rake db:migrate",
             },
           },
         },
@@ -70,12 +70,12 @@ const config: Config = {
                 "db-prepare-seed": {
                   hook: "post-install",
                   command:
-                    "/cnb/lifecycle/launcher bundle exec rake db:prepare db:seed",
+                    "launcher bundle exec rake db:prepare db:seed",
                 },
                 "db-migrate": {
                   hook: "post-upgrade",
                   command:
-                    "/cnb/lifecycle/launcher bundle exec rake db:migrate",
+                    "launcher bundle exec rake db:migrate",
                 },
               },
             },
