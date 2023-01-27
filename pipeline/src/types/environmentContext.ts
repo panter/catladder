@@ -16,6 +16,13 @@ export type EnvironmentContext<
   envType: EnvType;
   componentName: string;
   fullName: string;
+  /**
+   * the environment slug without component name.
+   */
+  environmentSlugPrefix: string;
+  /**
+   * the full environment slug, including the componentName
+   */
   environmentSlug: string;
   gitlabEnvironmentName: string;
 

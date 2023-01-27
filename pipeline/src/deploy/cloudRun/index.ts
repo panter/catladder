@@ -12,7 +12,7 @@ export const GCLOUD_RUN_CANONICAL_HOST_SUFFIX =
 
 const getCloudSqlVariables = ({
   deployConfigRaw,
-  environmentSlug,
+  environmentSlugPrefix,
   env,
   componentName,
   fullConfig,
@@ -21,7 +21,8 @@ const getCloudSqlVariables = ({
     const DB_NAME = [
       deployConfigRaw.cloudSql.dbNamePrefix ??
         `${fullConfig.customerName}-${fullConfig.appName}`,
-      environmentSlug,
+      environmentSlugPrefix,
+      deployConfigRaw.cloudSql.dbBaseName ?? componentName,
     ]
       .filter(Boolean)
       .join("-");
