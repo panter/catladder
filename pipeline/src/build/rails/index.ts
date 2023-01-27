@@ -1,5 +1,5 @@
-import { Context } from "../../types";
-import { CatladderJob } from "../../types/jobs";
+import type { Context } from "../../types";
+import type { CatladderJob } from "../../types/jobs";
 import { createRailsBuildJobs } from "./build";
 import { createRailsTestJobs } from "./test";
 
