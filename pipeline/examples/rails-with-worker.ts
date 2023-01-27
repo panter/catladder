@@ -47,6 +47,7 @@ const config: Config = {
         },
         values: {
           application: {
+            // if deployed to Google Cloud Run use a gem like cloudtasker instead of a permanently running expensive worker
             worker: {
               enabled: true,
               command: "/cnb/lifecycle/launcher bundle exec rake jobs:work",
