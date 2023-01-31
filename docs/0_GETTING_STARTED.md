@@ -4,7 +4,7 @@
 
 currently only gitlab is supported.
 
-1. create a .gitlab-ci.yml file with this content: include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
+1. create a .gitlab-ci.yml file with this content: `include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml`
 2. its recommended to add a local version of @catladder/cli and @catladder/pipeline as dev dependencies to your project
 3. create a file `catladder.ts` in the root of your repository
 
@@ -14,7 +14,7 @@ currently only gitlab is supported.
 
 ```typescript
 
-import type { Config } from '@catladder/pipeline`
+import type { Config } from '@catladder/pipeline'
 
 
 const config: Config = {
