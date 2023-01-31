@@ -288,4 +288,9 @@ export type DeployConfigKubernetes = {
    * values to configure the app
    */
   values?: DeployConfigKubernetesValues;
+  /**
+   * Custom Helm chart location.
+   * Not recommended to use.
+   */
+  chartName?: string
 } & DeployConfigBase;
