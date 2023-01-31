@@ -33,7 +33,7 @@ fi
 echo "$KUBE_VALUES" >__all_values.yml
 
 echo "doing helm upgrade"
-helm upgrade --install "$RELEASE_NAME" /helm-charts/$HELM_GITLAB_CHART_NAME \
+helm upgrade --install "$RELEASE_NAME" "$HELM_GITLAB_CHART_NAME" \
     --timeout="30m0s" \
     --set global.appName="$KUBE_APP_NAME" \
     --set global.appPrefix="$KUBE_APP_NAME_PREFIX" \
