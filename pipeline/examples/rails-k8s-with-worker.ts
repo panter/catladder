@@ -46,6 +46,7 @@ const config: Config = {
           domainCanonical: "panter.cloud",
         },
         values: {
+          cloudsql: { enabled: true, projectId: "some-project-id" },
           application: {
             // if deployed to Google Cloud Run use a gem like cloudtasker instead of a permanently running expensive worker
             worker: {
