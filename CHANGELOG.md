@@ -1,3 +1,10 @@
+# [1.84.0](https://git.panter.ch/catladder/catladder/compare/v1.83.2...v1.84.0) (2023-01-31)
+
+
+### Features
+
+* **deploy-k8s:** add support for a custom helm chart ([374de9e](https://git.panter.ch/catladder/catladder/commit/374de9e574d69945d04330e6dfa6a15886c87151))
+
 ## [1.83.2](https://git.panter.ch/catladder/catladder/compare/v1.83.1...v1.83.2) (2023-01-31)
 
 ## [1.83.1](https://git.panter.ch/catladder/catladder/compare/v1.83.0...v1.83.1) (2023-01-27)
