@@ -1,3 +1,10 @@
+# [1.86.0](https://git.panter.ch/catladder/catladder/compare/v1.85.0...v1.86.0) (2023-02-01)
+
+
+### Features
+
+* **pipeine:** allow entrypoint override on all job images ([8888903](https://git.panter.ch/catladder/catladder/commit/8888903a5279b7596b63c89bcdbde59bc165ad2c))
+
 # [1.85.0](https://git.panter.ch/catladder/catladder/compare/v1.84.0...v1.85.0) (2023-02-01)
 
 
