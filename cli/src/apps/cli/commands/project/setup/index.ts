@@ -3,6 +3,7 @@ import { getAllPipelineContexts } from "../../../../../config/getProjectConfig";
 import { projectConfigSecrets } from "../commandConfigSecrets";
 import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
+import { setupTopic } from "./setupTopic";
 
 export const setupProject = async (instance: CommandInstance) => {
   const allContext = await getAllPipelineContexts();
@@ -11,6 +12,7 @@ export const setupProject = async (instance: CommandInstance) => {
     await setupContext(instance, context);
   }
   await setupAccessTokens(instance);
+  await setupTopic(instance);
   instance.log("");
   const { configSecrets } = await instance.prompt({
     default: true,
