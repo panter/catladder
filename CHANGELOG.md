@@ -1,3 +1,10 @@
+# [1.85.0](https://git.panter.ch/catladder/catladder/compare/v1.84.0...v1.85.0) (2023-02-01)
+
+
+### Features
+
+* **cli:** add gitlab topic on project setup to improve discovery ([cda30de](https://git.panter.ch/catladder/catladder/commit/cda30ded4e72223a8514d81bbf85eb62c3462971))
+
 # [1.84.0](https://git.panter.ch/catladder/catladder/compare/v1.83.2...v1.84.0) (2023-01-31)
 
 
