@@ -1,3 +1,4 @@
+import type { GitlabJobImage } from "../../types";
 import type { CatladderJob } from "../../types/jobs";
 import type { DeployConfigBase } from "./base";
 
@@ -26,7 +27,7 @@ export type DeployConfigCustom = {
   /**
    * image to use
    */
-  jobImage?: string;
+  jobImage?: GitlabJobImage;
 
   /**
    * customize cache for the job

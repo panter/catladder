@@ -5,6 +5,7 @@ import type {
   GitlabRule,
   GitlabVariables,
   GitlabJobService,
+  GitlabJobImage,
 } from "./gitlab-types";
 
 export const BASE_STAGES = [
@@ -78,7 +79,7 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * image to use
    */
-  image?: string;
+  image?: GitlabJobImage;
 
   /**
    * variables to pass
