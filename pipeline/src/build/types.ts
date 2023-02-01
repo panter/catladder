@@ -1,4 +1,4 @@
-import type { GitlabJobService } from "../types";
+import type { GitlabJobImage, GitlabJobService } from "../types";
 
 export type BuildConfigBase = {
   /**
@@ -29,7 +29,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
-        jobImage?: string;
+        jobImage?: GitlabJobImage;
       };
 
   /**
@@ -39,7 +39,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
-        jobImage?: string;
+        jobImage?: GitlabJobImage;
       };
 
   /**
@@ -49,7 +49,7 @@ export type BuildConfigBase = {
     | false
     | {
         command?: string | string[];
-        jobImage?: string;
+        jobImage?: GitlabJobImage;
       };
 
   /**

@@ -43,6 +43,11 @@ export type GitlabJobService = {
   alias?: string;
 };
 
+export type GitlabJobImage = string | {
+  name: string;
+  entrypoint?: string[];
+}
+
 export type GitlabEnvironment = {
   url: string;
   name: string;
@@ -64,7 +69,7 @@ export type GitlabJobDef = {
   artifacts?: Artifacts;
   retry?: Retry;
   services?: GitlabJobService[];
-  image?: string;
+  image?: GitlabJobImage;
   variables?: GitlabVariables;
   dependencies?: string[];
   environment?: GitlabEnvironment;
