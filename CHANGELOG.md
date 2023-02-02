@@ -1,3 +1,10 @@
+# [1.87.0](https://git.panter.ch/catladder/catladder/compare/v1.86.0...v1.87.0) (2023-02-02)
+
+
+### Features
+
+* **custom build:** allow to set job cache ([75ccd35](https://git.panter.ch/catladder/catladder/commit/75ccd35736c3a8f07c0ffa568662e6f13e0d1717))
+
 # [1.86.0](https://git.panter.ch/catladder/catladder/compare/v1.85.0...v1.86.0) (2023-02-01)
 
 
