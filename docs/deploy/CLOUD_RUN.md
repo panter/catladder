@@ -62,6 +62,8 @@ deploy: {
 
 Catladder will automatically create the databases on this instance. You can reuse the same instance for multiple apps as the database-names contain the full app name and should not clash.
 
+To use a db from another project refer to this https://stackoverflow.com/a/70770872/1463534
+
 ## Jobs and migrations
 
 You can declare jobs too. Those jobs are either for one-time work that needs to be done or for recurring tasks on a schedule (cronjobs):
