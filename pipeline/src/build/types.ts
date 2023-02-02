@@ -1,5 +1,7 @@
 import type { GitlabJobImage, GitlabJobService } from "../types";
 
+import type { CatladderJob } from "../types/jobs";
+
 export type BuildConfigBase = {
   /**
    * command to run on the image to start the app (e.g. yarn start)
@@ -70,7 +72,7 @@ export type BuildConfigBase = {
      * eg. `["dist/test-results/TEST-*.xml", "dist/rspec.xml", ...]`
      */
     junit?: string[];
-  }
+  };
 };
 
 export type BuildConfigNodeBase = BuildConfigBase;
@@ -113,7 +115,13 @@ export type BuildConfigCustom = BuildConfigBase & {
   type: "custom";
   jobImage: string;
   jobServices?: GitlabJobService[];
+
   docker: BuildConfigCustomDocker;
+
+  /**
+   * customize cache for the job
+   */
+  jobCache?: CatladderJob["cache"];
 };
 
 export type BuildConfigRails = BuildConfigBase & {
@@ -138,13 +146,13 @@ export type BuildConfigRails = BuildConfigBase & {
     packExtraArgs?: string[];
     /**
      * Variables needed for Bundler and Rails asset precompilation.
-     * 
+     *
      * Specify a key with the value `undefined` to inherit it from the EnvVars.
-     * 
+     *
      * See https://github.com/rails/rails/issues/32947
      */
-    buildVars?: Record<string, string | undefined>
-  }
+    buildVars?: Record<string, string | undefined>;
+  };
 };
 
 export type BuildConfigStorybook = BuildConfigNodeBase & {

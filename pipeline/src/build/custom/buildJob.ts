@@ -29,6 +29,7 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
           variables: {
             ...RUNNER_BUILD_VARIABLES,
           },
+          cache: buildConfig.jobCache,
           services: buildConfig.jobServices,
           script: [...(ensureArray(buildConfig.buildCommand) ?? [])],
           artifacts: {
