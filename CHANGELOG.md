@@ -1,3 +1,10 @@
+# [1.88.0](https://git.panter.ch/catladder/catladder/compare/v1.87.0...v1.88.0) (2023-02-03)
+
+
+### Features
+
+* needs can now reference other components ([aae6e67](https://git.panter.ch/catladder/catladder/commit/aae6e67d62132a6e96290e9ee1b36ee2900b7e0e))
+
 # [1.87.0](https://git.panter.ch/catladder/catladder/compare/v1.86.0...v1.87.0) (2023-02-02)
 
 
