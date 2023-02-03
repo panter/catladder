@@ -45,20 +45,24 @@ export const requiresDockerBuild = (context: Context) => {
   return false;
 };
 
+const getDockerBaseVariables = () => ({
+  DOCKER_HOST: "tcp://0.0.0.0:2375",
+  DOCKER_TLS_CERTDIR: "",
+  DOCKER_DRIVER: "overlay2",
+  DOCKER_BUILDKIT: "1", // see https://docs.docker.com/develop/develop-images/build_enhancements/
+});
+
 export const getDockerBuildVariables = (context: Context) => {
   return {
     ...DOCKER_RUNNER_BUILD_VARIABLES,
-    DOCKER_BUILDKIT: "1", // see https://docs.docker.com/develop/develop-images/build_enhancements/
     DOCKERFILE_ADDITIONS:
       context.componentConfig.build.docker?.additionsBegin?.join("\n"),
     DOCKERFILE_ADDITIONS_END:
       context.componentConfig.build.docker?.additionsEnd?.join("\n"),
     APP_DIR: context.componentConfig.dir,
-    DOCKER_HOST: "tcp://0.0.0.0:2375",
-    DOCKER_TLS_CERTDIR: "",
-    DOCKER_DIR: ".", // relative to componentdir
 
-    DOCKER_DRIVER: "overlay2",
+    DOCKER_DIR: ".", // relative to componentdir
+    ...getDockerBaseVariables(),
 
     ...getDockerImageVariables(context),
   };
@@ -74,7 +78,7 @@ export const getDockerJobBaseProps = (context: Context) => {
         command: ["--tls=false"],
       },
     ],
-    variables: getDockerBuildVariables(context),
+    variables: getDockerBaseVariables(),
   };
 };
 export const createDockerBuildJobBase = (
@@ -88,6 +92,9 @@ export const createDockerBuildJobBase = (
       stage: "build",
       ...getDockerJobBaseProps(context),
       script: script || [],
+    },
+    {
+      variables: getDockerBuildVariables(context),
     },
     def
   );
