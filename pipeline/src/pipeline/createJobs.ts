@@ -5,7 +5,7 @@ import { DEPLOY_TYPES } from "../deploy";
 import type { PipelineJob, PipelineType } from "../types";
 import type { Config, PipelineTrigger } from "../types/config";
 import type { CommitInfo, Context } from "../types/context";
-import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
+import type { CatladderJob } from "../types/jobs";
 import { notNil } from "../utils";
 import { getBaseCommitInfo } from "./commitInfo/getCommitInfo";
 import { makeGitlabJob } from "./gitlab/makeGitlabJob";
@@ -78,28 +78,25 @@ const replaceReferences = (
   const stage =
     job.envMode === "stagePerEnv" ? `${job.stage} ${env}` : job.stage;
 
-  const needsFromNeeds: CatladderJob["needs"] = job.needs?.map((n) =>
+  const cleanedNeeds: CatladderJob["needs"] = [
+    ...(job.needs ?? []),
+    // pull in legacy needs from other component, which is now identical to needs
+    ...(job.needsOtherComponent ?? []),
+  ];
+  const needs: CatladderJob["needs"] = cleanedNeeds?.map((n) =>
     isObject(n)
       ? {
-          job: getFullReferencedJobName(n.job, componentName, env, allRawJobs),
+          job: getFullReferencedJobName(
+            n.job,
+            n.componentName ?? componentName,
+            env,
+            allRawJobs
+          ),
           artifacts: n.artifacts,
         }
       : getFullReferencedJobName(n, componentName, env, allRawJobs)
   );
-  const needsFromOtherComponents: CatladderJob["needs"] =
-    job.needsOtherComponent?.map((other) => ({
-      artifacts: other.artifacts,
-      job: getFullReferencedJobName(
-        other.job,
-        other.componentName,
-        env,
-        allRawJobs
-      ),
-    }));
-  const needs = [
-    ...(needsFromNeeds ?? []),
-    ...(needsFromOtherComponents ?? []),
-  ];
+
   return {
     ...job,
     stage,

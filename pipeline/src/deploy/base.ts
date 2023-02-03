@@ -44,7 +44,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     name: DEPLOY_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
 
-    needsOtherComponent: context.componentConfig.deploy
+    needs: context.componentConfig.deploy
       ? context.componentConfig.deploy.waitFor?.map((c) => ({
           componentName: c,
           job: DEPLOY_JOB_NAME,

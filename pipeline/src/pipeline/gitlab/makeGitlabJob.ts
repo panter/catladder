@@ -16,7 +16,9 @@ export const makeGitlabJob = ({
   return {
     ...rest,
     // sort in a predictable manner for snapshot tests
-    needs: needs?.sort((a, b) => getJobName(a).localeCompare(getJobName(b))),
+    needs: needs
+      ? [...needs].sort((a, b) => getJobName(a).localeCompare(getJobName(b)))
+      : undefined,
     retry: BASE_RETRY,
     interruptible: true,
   };
