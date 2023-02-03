@@ -1,3 +1,10 @@
+# [1.89.0](https://git.panter.ch/catladder/catladder/compare/v1.88.0...v1.89.0) (2023-02-03)
+
+
+### Features
+
+* **kube:** customize command in application ([59ed84c](https://git.panter.ch/catladder/catladder/commit/59ed84ccf66d76f8aff330a5cf746ee39b04d6c6))
+
 # [1.88.0](https://git.panter.ch/catladder/catladder/compare/v1.87.0...v1.88.0) (2023-02-03)
 
 
