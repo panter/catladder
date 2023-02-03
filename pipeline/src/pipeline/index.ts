@@ -1,2 +1,2 @@
 export * from "./createChildPipeline";
-export * from "./createJobs";
+export * from "./createJobsForComponent";

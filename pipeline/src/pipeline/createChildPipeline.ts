@@ -1,34 +1,18 @@
-import { getAllEnvsByTrigger, getAllEnvsInAllComponents } from "../config";
+import { getAllEnvsInAllComponents } from "../config";
 import { RULES_ALWAYS } from "../rules";
 import { getRunnerImage } from "../runner";
-import type {
-  GitlabPipeline,
-  Pipeline,
-  PipelineJob,
-  PipelineType,
-} from "../types";
+import type { GitlabPipeline, Pipeline, PipelineType } from "../types";
 import type { Config, PipelineTrigger } from "../types/config";
 import { BASE_STAGES } from "../types/jobs";
-import { createJobs } from "./createJobs";
+import { createAllJobs } from "./createAllJobs";
+import { createGitlabJobs } from "./gitlab/createGitlabJobs";
 
 export const createChildPipeline = async <T extends PipelineType>(
   type: T,
   trigger: PipelineTrigger,
   config: Config
 ): Promise<Pipeline<T>> => {
-  const components = Object.keys(config.components);
-
-  // 2. write the triggering pipeline
-  const jobs = await components.reduce<Promise<Record<string, PipelineJob<T>>>>(
-    async (acc, componentName) => {
-      const envs = getAllEnvsByTrigger(config, componentName, trigger);
-      return {
-        ...(await acc),
-        ...(await createJobs(type, envs, config, componentName, trigger)),
-      };
-    },
-    Promise.resolve({})
-  );
+  const jobs = await createAllJobs(config, trigger);
 
   // while technically not required, we group different envs in its own stage
   // each job from `createJobs` that is defined as `envMode: "stagePerEnv"` will have `deploy dev`, etc. instead of just `deploy`
@@ -53,7 +37,7 @@ export const createChildPipeline = async <T extends PipelineType>(
         rules: RULES_ALWAYS,
       },
       stages,
-      jobs,
+      jobs: await createGitlabJobs(jobs),
     };
     return pipeline as Pipeline<T>;
   }
