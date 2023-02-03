@@ -20,27 +20,29 @@ const createAppConfig = (
     };
   }
 
+  const { healthRoute, command, ...rest } = application ?? {};
+
   return mergeWithMergingArrays(
     {
       host: context.environment.host,
-      command: context.componentConfig.build.startCommand,
+      command: command ?? context.componentConfig.build.startCommand,
       livenessProbe: {
         httpGet: {
-          path: application?.healthRoute ?? "__health",
+          path: healthRoute ?? "__health",
         },
       },
       readinessProbe: {
         httpGet: {
-          path: application?.healthRoute ?? "__health",
+          path: healthRoute ?? "__health",
         },
       },
       startupProbe: {
         httpGet: {
-          path: application?.healthRoute ?? "__health",
+          path: healthRoute ?? "__health",
         },
       },
     }, // default
-    application // merge rest in
+    rest // merge rest in
   );
 };
 

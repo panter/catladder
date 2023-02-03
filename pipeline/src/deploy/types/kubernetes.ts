@@ -193,6 +193,11 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
     | false
     | AllowUnknownProps<{
         /**
+         * command to start, defaults to build's startCommand
+         */
+        command?: string;
+
+        /**
          * enable, disable app deployment, defaults to true
          */
         enabled?: boolean;
@@ -240,7 +245,7 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
          */
         jobDefaults?: {
           resources: KubernetesResourcesDef;
-        }
+        };
       }>;
 
   /**
@@ -292,5 +297,5 @@ export type DeployConfigKubernetes = {
    * Custom Helm chart location.
    * Not recommended to use.
    */
-  chartName?: string
+  chartName?: string;
 } & DeployConfigBase;
