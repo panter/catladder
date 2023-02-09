@@ -40,7 +40,8 @@ export const createKubernetesDeployJobs = (
         quotingType: "'",
         forceQuotes: true,
       }),
-      HELM_GITLAB_CHART_NAME: deployConfig.chartName ?? "/helm-charts/the-panter-chart",
+      HELM_GITLAB_CHART_NAME:
+        deployConfig.chartName ?? "/helm-charts/the-panter-chart",
       HELM_ARGS: [
         ...(deployConfig.debug ? ["--debug"] : []),
         ...(deployConfig.additionalHelmArgs ?? []),
