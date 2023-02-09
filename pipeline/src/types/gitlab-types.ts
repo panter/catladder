@@ -5,7 +5,7 @@ export type Artifacts = {
   reports?: ArtifactReports;
 };
 // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
-export type ArtifactReports = 
+export type ArtifactReports =
   | { accessibility: string | string[] }
   | { coverage_report: string | string[] }
   | { codequality: string | string[] }
@@ -14,7 +14,7 @@ export type ArtifactReports =
   | { junit: string | string[] }
   | { sast: string | string[] }
   | { secret_detection: string | string[] }
-  | { terraform: string | string[] }
+  | { terraform: string | string[] };
 export type GitlabJobCache = {
   key: GitlabJobCacheKey;
   policy?: string;
@@ -43,10 +43,12 @@ export type GitlabJobService = {
   alias?: string;
 };
 
-export type GitlabJobImage = string | {
-  name: string;
-  entrypoint?: string[];
-}
+export type GitlabJobImage =
+  | string
+  | {
+      name: string;
+      entrypoint?: string[];
+    };
 
 export type GitlabEnvironment = {
   url: string;

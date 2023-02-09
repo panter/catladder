@@ -56,7 +56,7 @@ export const BUILD_TYPES: BuildTypes = {
       cnbBuilder: {
         image: "heroku/buildpacks:20",
         packVersion: "0.28.0",
-      }
+      },
     }),
   },
 };
