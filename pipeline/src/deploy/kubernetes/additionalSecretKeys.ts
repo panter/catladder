@@ -19,5 +19,5 @@ export const additionalKubernetesSecretKeys = ({
     keys.push("cloudsqlProxyCredentials");
   }
 
-  return keys;
+  return keys.map((key) => ({ key }));
 };

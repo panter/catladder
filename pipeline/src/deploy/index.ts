@@ -1,3 +1,4 @@
+import type { SecretEnvVar } from "..";
 import type { Context } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
@@ -17,7 +18,9 @@ export type DeployTypeDefinition<T extends DeployConfigType> = {
   defaults: (
     envContext: EnvironmentContext<any, T>
   ) => PartialDeep<DeployConfigGeneric<T>>;
-  additionalSecretKeys: (envContext: EnvironmentContext<any, T>) => string[];
+  additionalSecretKeys: (
+    envContext: EnvironmentContext<any, T>
+  ) => SecretEnvVar[];
   getAdditionalEnvVars: (
     envContext: EnvironmentContext<any, T>
   ) => Record<string, string | undefined | null>;

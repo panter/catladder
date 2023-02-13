@@ -112,6 +112,7 @@ exports[`matches snapshot 1`] = `
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-dev-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -119,7 +120,7 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | dev ": {
@@ -298,9 +299,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_dev_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-dev-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -308,7 +311,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
@@ -530,6 +533,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-dev-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-dev-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -537,7 +541,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-dev-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🔨 docker | dev ": {
@@ -716,9 +720,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_dev_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-dev-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-dev-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -726,7 +732,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-dev-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🛑 Stop ⚠️ | dev ": {
@@ -1020,6 +1026,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -1027,7 +1034,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | review ": {
@@ -1206,9 +1213,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_review_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_review_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -1216,7 +1225,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
@@ -1447,6 +1456,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-review-mr1234-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-review-mr1234-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -1454,7 +1464,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🔨 docker | review ": {
@@ -1633,9 +1643,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_review_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-review-mr1234-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-review-mr1234-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -1643,7 +1655,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🛑 Stop ⚠️ | review ": {
@@ -1904,6 +1916,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-prod-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -1911,7 +1924,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 app | stage ": {
@@ -1979,6 +1992,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-stage-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -1986,7 +2000,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | prod ": {
@@ -2219,9 +2233,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_prod_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-prod-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -2229,7 +2245,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🚀 Deploy | stage ": {
@@ -2330,9 +2346,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_stage_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-stage-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -2340,7 +2358,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
@@ -2494,6 +2512,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-prod-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-prod-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -2501,7 +2520,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-prod-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🔨 app | stage ": {
@@ -2569,6 +2588,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-stage-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-stage-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
@@ -2576,7 +2596,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-stage-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🔨 docker | prod ": {
@@ -2809,9 +2829,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_prod_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-prod-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-prod-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -2819,7 +2841,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-prod-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🚀 Deploy | stage ": {
@@ -2920,9 +2942,11 @@ DB_USER: 'my-user'
 DB_PASSWORD: '$CL_stage_api_DB_PASSWORD'
 DATABASE_URL: 'postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME'
 DATABASE_JDBC_URL: 'jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_worker_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-stage-worker-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-stage-worker-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
@@ -2930,7 +2954,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "KUBERNETES_MEMORY_LIMIT": "500Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-stage-worker-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "worker 🛑 Stop ⚠️ | prod ": {

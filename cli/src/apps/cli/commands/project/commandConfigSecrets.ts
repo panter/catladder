@@ -45,12 +45,22 @@ const resolveJson = (v: Vars) =>
     })
   );
 
+const getNonHiddenSecretEnvVarKeys = async (
+  env: string,
+  componentName: string
+) => {
+  const { secretEnvVarKeys } = await getEnvironment(env, componentName);
+  return secretEnvVarKeys.filter((k) => !k.hidden).map((k) => k.key);
+};
 const getEnvVarsToEdit = async (
   instance: CommandInstance,
   env: string,
   componentName: string
 ) => {
-  const { secretEnvVarKeys } = await getEnvironment(env, componentName);
+  const secretEnvVarKeys = await getNonHiddenSecretEnvVarKeys(
+    env,
+    componentName
+  );
 
   const allEnvVars = await getEnvVars(instance, env, componentName);
   return Object.fromEntries(
@@ -107,7 +117,11 @@ const doItFor = async (
           ? Object.keys(valuesToEdit[componentName][env])
           : [];
         // check whether newValues have the exact number of keys
-        const { secretEnvVarKeys } = await getEnvironment(env, componentName);
+        const secretEnvVarKeys = await getNonHiddenSecretEnvVarKeys(
+          env,
+          componentName
+        );
+
         const extranous = difference(usedKeys, secretEnvVarKeys);
         const missing = difference(secretEnvVarKeys, usedKeys);
 
