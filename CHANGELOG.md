@@ -1,3 +1,10 @@
+## [1.89.4](https://git.panter.ch/catladder/catladder/compare/v1.89.3...v1.89.4) (2023-02-14)
+
+
+### Bug Fixes
+
+* lock semantic release gitlab ([b7c3d58](https://git.panter.ch/catladder/catladder/commit/b7c3d58728c81451a9b496785574d30ec4b27070))
+
 ## [1.89.3](https://git.panter.ch/catladder/catladder/compare/v1.89.2...v1.89.3) (2023-02-09)
 
 ## [1.89.2](https://git.panter.ch/catladder/catladder/compare/v1.89.1...v1.89.2) (2023-02-09)
