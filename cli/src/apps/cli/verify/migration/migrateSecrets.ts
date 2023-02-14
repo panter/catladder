@@ -30,7 +30,12 @@ export const migrateSecrets = async (
       );
       await upsertAllVariables(
         vorpal,
-        pick(secrets, environment.secretEnvVarKeys),
+        pick(
+          secrets,
+          environment.secretEnvVarKeys
+            .filter((k) => !k.hidden)
+            .map((k) => k.key)
+        ),
         newEnv,
         componentName
       );

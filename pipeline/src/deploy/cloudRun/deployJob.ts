@@ -1,5 +1,5 @@
 import { dump } from "js-yaml";
-import { isNil, merge, omit } from "lodash";
+import { merge, omit } from "lodash";
 import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from ".";
 import { getDockerJobBaseProps, gitlabDockerLogin } from "../../build/docker";
 import { getLabels } from "../../context/getLabels";

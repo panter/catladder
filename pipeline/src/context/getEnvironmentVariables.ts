@@ -9,6 +9,11 @@ import {
   translateLegacyFromComponents,
 } from "./resolveReferences";
 
+export type SecretEnvVar = {
+  key: string;
+  // hidden env vars are not shown in config-secrets
+  hidden?: boolean;
+};
 export const getEnvironmentVariables = async (
   config: Config,
   componentName: string,
@@ -17,7 +22,7 @@ export const getEnvironmentVariables = async (
   alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
 ): Promise<{
   envVars: Record<string, string>;
-  secretEnvVarKeys: string[];
+  secretEnvVarKeys: SecretEnvVar[];
   host: string;
   url: string;
 }> => {
@@ -81,12 +86,12 @@ export const getEnvironmentVariables = async (
       )
     : [];
 
-  const secretEnvVarKeys = [
-    ...(envConfigRaw.vars?.secret ?? []),
+  const secretEnvVarKeys: SecretEnvVar[] = [
+    ...(envConfigRaw.vars?.secret ?? []).map((key) => ({ key })),
     ...additionalSecretKeys,
   ];
   const secretEnvVars = Object.fromEntries(
-    secretEnvVarKeys.map((key) => [
+    secretEnvVarKeys.map(({ key }) => [
       key,
       `$${getSecretVarName(env, componentName, key)}`,
     ])

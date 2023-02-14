@@ -58,9 +58,16 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
     return {};
   },
   additionalSecretKeys: (ctx) => [
-    GCLOUD_DEPLOY_CREDENTIALS_KEY,
+    {
+      key: GCLOUD_DEPLOY_CREDENTIALS_KEY,
+      hidden: true,
+    },
+    {
+      key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+      hidden: true,
+    },
     ...(ctx.deployConfigRaw && ctx.deployConfigRaw.cloudSql
-      ? ["DB_PASSWORD"]
+      ? [{ key: "DB_PASSWORD" }]
       : []),
   ],
   getAdditionalEnvVars: (ctx) => {

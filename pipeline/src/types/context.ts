@@ -1,3 +1,4 @@
+import type { SecretEnvVar } from "../context";
 import type {
   PipelineTrigger,
   ComponentConfig,
@@ -25,7 +26,7 @@ export type Environment = {
    */
   envVars: Record<string, string>;
   envType: EnvType;
-  secretEnvVarKeys: string[];
+  secretEnvVarKeys: SecretEnvVar[];
 };
 
 export type CommitInfo = {
