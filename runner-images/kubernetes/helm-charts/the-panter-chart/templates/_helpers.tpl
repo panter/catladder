@@ -51,11 +51,11 @@ get the right host
 {{- end -}}
 
 {{- define "DB_NAME" -}}
-{{ template "fullname" . }}
+{{ .Values.cloudsql.fullDbName }}
 {{- end -}}
 
 {{- define "POSTGRESQL_URL" -}}
-postgresql://postgres:$(POSTGRESQL_PASSWORD)@localhost/{{ template "DB_NAME" . }}?schema=public
+postgresql://{{ .Values.cloudsql.dbUser }}:$(POSTGRESQL_PASSWORD)@localhost/{{ .Values.cloudsql.fullDbName }}?schema=public
 {{- end -}}
 
 {{- define "POSTGRESQL_HOST" -}}
@@ -63,7 +63,7 @@ localhost
 {{- end -}}
 
 {{- define "DB_USERNAME" -}}
-postgres
+{{ .Values.cloudsql.dbUser }}
 {{- end -}}
 
 
@@ -79,7 +79,7 @@ image: eu.gcr.io/cloudsql-docker/gce-proxy:1.27.0-alpine
 command: ["/bin/sh", "-c"]
 args:
   - |
-    /cloud_sql_proxy -instances={{ .Values.cloudsql.projectId}}:{{ .Values.cloudsql.region}}:{{ default .Release.Namespace .Values.cloudsql.instanceId }}=tcp:5432 -credential_file=/secrets/cloudsql/credentials.json &
+    /cloud_sql_proxy -instances={{ .Values.cloudsql.instanceConnectionName }}=tcp:5432 -credential_file=/secrets/cloudsql/credentials.json &
     CHILD_PID=$!
     (while true; do if [[ -f "/tmp/pod/main-terminated" ]]; then kill $CHILD_PID; fi; sleep 1; done) &
     wait $CHILD_PID

@@ -4,7 +4,10 @@ import type { Context } from "../../types/context";
 import { mergeWithMergingArrays } from "../../utils";
 import type { DeployConfigKubernetesValues } from "../types";
 import { isOfDeployType } from "../types";
-import { hasKubernetesCloudSQL, createCloudsqlBaseConfig } from "./cloudSql";
+import {
+  hasKubernetesCloudSQL,
+  createKubernetesCloudsqlBaseValues,
+} from "./cloudSql";
 
 import { createKubeEnv } from "./kubeEnv";
 import { createMongodbBaseConfig } from "./mongodb";
@@ -77,7 +80,9 @@ export const createKubeValues = (context: Context) => {
       env,
       application: createAppConfig(context, application),
     },
-    hasKubernetesCloudSQL(context) ? createCloudsqlBaseConfig(context) : {},
+    hasKubernetesCloudSQL(context)
+      ? createKubernetesCloudsqlBaseValues(context)
+      : {},
     deployConfig.values?.mongodb?.enabled
       ? createMongodbBaseConfig(context)
       : {}
