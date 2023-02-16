@@ -4,7 +4,7 @@ import { getYarnInstall } from "../../build/node/yarn";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { getBaseDeploymentJob } from "../base";
+import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
 import { isOfDeployType } from "../types";
 
 export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
@@ -29,5 +29,13 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
         ...deployConfig.script,
       ],
     }),
+    ...(deployConfig.stopScript
+      ? [
+          merge({}, getBaseDeploymentStopJob(context), {
+            image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
+            script: deployConfig.stopScript,
+          }),
+        ]
+      : []),
   ];
 };
