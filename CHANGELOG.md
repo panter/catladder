@@ -1,3 +1,15 @@
+# [1.90.0](https://git.panter.ch/catladder/catladder/compare/v1.89.4...v1.90.0) (2023-02-16)
+
+
+### Bug Fixes
+
+* **custom deploy:** stopScript does not work ([c698737](https://git.panter.ch/catladder/catladder/commit/c698737600e20e60c19173f9b7bde26e783ad4cd))
+
+
+### Features
+
+* hide GCLOUD_DEPLOY_credentialsKey from config-secrets ([76519b6](https://git.panter.ch/catladder/catladder/commit/76519b66c61c2f6e9455c481a90d9961e88b80a6))
+
 ## [1.89.4](https://git.panter.ch/catladder/catladder/compare/v1.89.3...v1.89.4) (2023-02-14)
 
 
