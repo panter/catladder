@@ -1,3 +1,10 @@
+# [1.91.0](https://git.panter.ch/catladder/catladder/compare/v1.90.0...v1.91.0) (2023-02-17)
+
+
+### Features
+
+* **kube:** new cloudsql config that is similar to the one from cloudRun ([032ef73](https://git.panter.ch/catladder/catladder/commit/032ef73b4098340abe2afe5f14b04b8bc51fb416))
+
 # [1.90.0](https://git.panter.ch/catladder/catladder/compare/v1.89.4...v1.90.0) (2023-02-16)
 
 
