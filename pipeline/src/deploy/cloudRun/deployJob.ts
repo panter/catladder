@@ -197,11 +197,7 @@ export const createGoogleCloudRunDeployJobs = (
     });
     return jobsWithSchedule
       .map(({ schedulerName }) => {
-        return [
-          ...allowFailureInScripts([
-            `gcloud scheduler jobs delete ${schedulerName} ${argsString}`,
-          ]),
-        ];
+        return [`gcloud scheduler jobs delete ${schedulerName} ${argsString}`];
       })
       .flat();
   };
@@ -270,7 +266,7 @@ export const createGoogleCloudRunDeployJobs = (
       variables: {
         CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
       },
-      script: stopScripts,
+      script: allowFailureInScripts(stopScripts),
     }),
   ];
 };

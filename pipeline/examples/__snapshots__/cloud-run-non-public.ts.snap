@@ -320,10 +320,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-dev-api --project=asdf --region=asia-east1",
+          "set -e",
         ],
         "stage": "stop dev",
         "variables": {
@@ -791,10 +793,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-review-mr1234-api --project=asdf --region=asia-east1",
+          "set -e",
         ],
         "stage": "stop review",
         "variables": {
@@ -1441,10 +1445,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-prod-api --project=asdf --region=asia-east1",
+          "set -e",
         ],
         "stage": "stop prod",
         "variables": {
@@ -1484,10 +1490,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-stage-api --project=asdf --region=asia-east1",
+          "set -e",
         ],
         "stage": "stop stage",
         "variables": {

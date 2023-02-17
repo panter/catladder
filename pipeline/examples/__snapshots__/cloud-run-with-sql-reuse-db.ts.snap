@@ -342,10 +342,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-dev-api --project=google-project-id --region=europe-west6",
+          "set -e",
         ],
         "stage": "stop dev",
         "variables": {
@@ -763,10 +765,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_dev_worker_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-dev-worker --project=google-project-id --region=europe-west6",
+          "set -e",
         ],
         "stage": "stop dev",
         "variables": {
@@ -1256,6 +1260,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
@@ -1269,6 +1274,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
       sleep 10
     done
   ",
+          "set -e",
         ],
         "stage": "stop review",
         "variables": {
@@ -1686,6 +1692,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_review_worker_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
@@ -1699,6 +1706,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
       sleep 10
     done
   ",
+          "set -e",
         ],
         "stage": "stop review",
         "variables": {
@@ -2389,10 +2397,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-prod-api --project=google-project-id --region=europe-west6",
+          "set -e",
         ],
         "stage": "stop prod",
         "variables": {
@@ -2432,10 +2442,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-stage-api --project=google-project-id --region=europe-west6",
+          "set -e",
         ],
         "stage": "stop stage",
         "variables": {
@@ -2985,10 +2997,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_prod_worker_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-prod-worker --project=google-project-id --region=europe-west6",
+          "set -e",
         ],
         "stage": "stop prod",
         "variables": {
@@ -3028,10 +3042,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           },
         ],
         "script": [
+          "set +e",
           "echo $CL_stage_worker_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-stage-worker --project=google-project-id --region=europe-west6",
+          "set -e",
         ],
         "stage": "stop stage",
         "variables": {
