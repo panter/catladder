@@ -61,35 +61,14 @@ export default async (vorpal: Vorpal) =>
       );
       this.log("");
 
-      // legacy, some projects have the cloudsqlProxyCredentials in the secrets
-      // actually it works without, if the current local shell user has access to the db through google cloud
-      const cloudsqlProxyCredentials = await getGitlabVar(
-        this,
-        env,
-        componentName,
-        "cloudsqlProxyCredentials"
-      );
-
-      await withFile(async ({ path: tmpFilePath }) => {
-        if (cloudsqlProxyCredentials) {
-          await writeFile(tmpFilePath, cloudsqlProxyCredentials);
+      await spawn(
+        "cloud_sql_proxy",
+        ["-instances", `${instanceName}=tcp:${localPort}`],
+        {
+          stdio: "inherit",
+          shell: true,
         }
-
-        await spawn(
-          "cloud_sql_proxy",
-          [
-            "-instances",
-            `${instanceName}=tcp:${localPort}`,
-            ...(cloudsqlProxyCredentials
-              ? ["-credential_file", tmpFilePath]
-              : []),
-          ],
-          {
-            stdio: "inherit",
-            shell: true,
-          }
-        );
-      });
+      );
     });
 
 const getProxyInfoForKubernetes = async (
