@@ -14,7 +14,7 @@ export const repeatOnFailure = (
   }
 ): string => {
   return `
-    until ${command} &> /dev/null
+    until ${command}
     do
       echo "Trying again."
       sleep ${options.pauseInSeconds}
