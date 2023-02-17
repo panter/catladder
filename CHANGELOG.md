@@ -1,3 +1,10 @@
+## [1.91.2](https://git.panter.ch/catladder/catladder/compare/v1.91.1...v1.91.2) (2023-02-17)
+
+
+### Bug Fixes
+
+* **cloud run:** any error in stop script will prevent rest of stop script from running ([c5b1754](https://git.panter.ch/catladder/catladder/commit/c5b17545cf3f6b0d64cfe33e60ab2d2af0ad6cee))
+
 ## [1.91.1](https://git.panter.ch/catladder/catladder/compare/v1.91.0...v1.91.1) (2023-02-17)
 
 
