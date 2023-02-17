@@ -1263,7 +1263,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "echo "deleting database pan-test-app-review-mr1234-api..."",
           "echo "👆 this can take multiple attemps (3-5min), because google cloud run may still have a connection to the database after the cloud run service is shut down"",
           "
-    until gcloud sql databases delete pan-test-app-review-mr1234-api --instance=instancename --project projectId &> /dev/null
+    until gcloud sql databases delete pan-test-app-review-mr1234-api --instance=instancename --project projectId
     do
       echo "Trying again."
       sleep 10
@@ -1693,7 +1693,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "echo "deleting database pan-test-app-review-mr1234-api..."",
           "echo "👆 this can take multiple attemps (3-5min), because google cloud run may still have a connection to the database after the cloud run service is shut down"",
           "
-    until gcloud sql databases delete pan-test-app-review-mr1234-api --instance=instancename --project projectId &> /dev/null
+    until gcloud sql databases delete pan-test-app-review-mr1234-api --instance=instancename --project projectId
     do
       echo "Trying again."
       sleep 10
