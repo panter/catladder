@@ -128,16 +128,69 @@ export type DeployConfigMongodbReplicaset = {
 export type DeployConfigMongodb = DeployConfigMongodbBase &
   (DeployConfigMongodbStandalone | DeployConfigMongodbReplicaset);
 
+/**
+ * @deprecated use config with instanceConnectionName
+ */
+type DeployConfigKubernetesValuesCloudSQLLegacy = {
+  enabled: boolean;
+  /**
+   * @deprecated use config with instanceConnectionName
+   */
+  instanceId?: string;
+  /**
+   * @deprecated use config with instanceConnectionName
+   */
+  projectId?: string;
+  /**
+   * @deprecated use config with instanceConnectionName
+   */
+  region?: string;
+  /**
+   * @deprecated use type "unmanaged".
+   *
+   * Be aware that "unmanaged" is not fully backward compatible with "legacy".
+   *
+   *
+   */
+  type?: "legacy";
+};
+
+export type DeployConfigKubernetesValuesCloudSQLUnmanaged = {
+  enabled: boolean;
+  instanceConnectionName: string;
+  /**
+   * the recommended type for the config.
+   *
+   * this mode is similar to cloudrun and declares fully-qualified db names including env.
+   *
+   * This makes it easier to share db instances across envs and dbs
+   */
+  type: "unmanaged";
+  /**
+   * the database username, defaults to "postgres"
+   */
+  dbUser?: string;
+
+  /**
+   * the prefix of the database, the full db name is this plus the environment slug prefix plus the componentName
+   *
+   * defaults to customerName-appName
+   */
+  dbNamePrefix?: string | false;
+
+  /**
+   * the base name of the db, defaults to the componentName
+   */
+  dbBaseName?: string;
+};
+export type DeployConfigKubernetesValuesCloudSQL =
+  | DeployConfigKubernetesValuesCloudSQLLegacy
+  | DeployConfigKubernetesValuesCloudSQLUnmanaged;
 export type DeployConfigKubernetesValues = AllowUnknownProps<{
   /**
    * enable cloudsql db. Currently you have to manually set it up
    */
-  cloudsql?: {
-    enabled: boolean;
-    instanceId?: string;
-    projectId?: string;
-    region?: string;
-  };
+  cloudsql?: DeployConfigKubernetesValuesCloudSQL;
   /**
    * enable mongodb. The mongodb is deployed using a helm chart.
    * See https://github.com/bitnami/charts/tree/master/bitnami/mongodb

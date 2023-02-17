@@ -1,7 +1,8 @@
 import type { DeployTypeDefinition } from "..";
 import { getSecretVarName } from "../../context";
-import { sanitizeForBashVariable } from "../../utils/gitlab";
 import type { EnvironmentContext } from "../../types/environmentContext";
+import { sanitizeForBashVariable } from "../../utils/gitlab";
+import { getFullDbName } from "../cloudSql/utils";
 import { createGoogleCloudRunDeployJobs } from "./deployJob";
 import { getCloudRunJobName } from "./utils/jobName";
 
@@ -18,14 +19,12 @@ const getCloudSqlVariables = ({
   fullConfig,
 }: EnvironmentContext<any, "google-cloudrun">) => {
   if (deployConfigRaw && deployConfigRaw.cloudSql) {
-    const DB_NAME = [
-      deployConfigRaw.cloudSql.dbNamePrefix ??
-        `${fullConfig.customerName}-${fullConfig.appName}`,
+    const DB_NAME = getFullDbName(
+      deployConfigRaw.cloudSql,
+      fullConfig,
       environmentSlugPrefix,
-      deployConfigRaw.cloudSql.dbBaseName ?? componentName,
-    ]
-      .filter(Boolean)
-      .join("-");
+      componentName
+    );
 
     const additionalQueryParamsString = Object.entries(
       deployConfigRaw.cloudSql.dbAdditionalQueryParams ?? {}

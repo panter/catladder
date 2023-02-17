@@ -1,4 +1,5 @@
 import type { Context } from "@catladder/pipeline";
+import { createKubernetesCloudsqlBaseValues } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import { spawn } from "child-process-promise";
 import { writeFile } from "fs-extra";
@@ -103,24 +104,14 @@ const getProxyInfoForKubernetes = async (
     context.environment.shortName,
     context.componentName
   );
+  // bit hacky, would be nicer if we would also declare this through env vars
+  const cloudSqlValues = createKubernetesCloudsqlBaseValues(context);
 
   const DB_PASSWORD = envVars?.DB_PASSWORD || envVars?.POSTGRESQL_PASSWORD;
 
-  const DB_NAME = context.environment.envVars.KUBE_APP_NAME;
+  const DB_NAME = cloudSqlValues.cloudsql.fullDbName;
 
-  const values = context.componentConfig.deploy.values;
-
-  const projectId =
-    values?.cloudsql?.projectId ||
-    context.componentConfig.deploy.cluster?.projectId;
-
-  const defaultInstanceId = `${context.fullConfig.customerName}-${context.fullConfig.appName}-${context.environment.shortName}`;
-  const instanceId = values?.cloudsql?.instanceId || defaultInstanceId;
-
-  const defaultRegion = "europe-west6"; // currently hardcoded
-  const region = values?.cloudsql?.region || defaultRegion;
-
-  const instanceName = `${projectId}:${region}:${instanceId}`;
+  const instanceName = cloudSqlValues.cloudsql.instanceConnectionName;
 
   return {
     instanceName,
