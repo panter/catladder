@@ -1,3 +1,11 @@
+## [1.91.1](https://git.panter.ch/catladder/catladder/compare/v1.91.0...v1.91.1) (2023-02-17)
+
+
+### Bug Fixes
+
+* don't use cloudsqlProxyCredentials as its not needed and might be wrong ([351d46f](https://git.panter.ch/catladder/catladder/commit/351d46f5041b95bf19f785f8e53ec9f7ec2852fa))
+* error in db delete is surpressed ([dc247fd](https://git.panter.ch/catladder/catladder/commit/dc247fdd41f2d5f4479735351e5a2f0fad9bfb28))
+
 # [1.91.0](https://git.panter.ch/catladder/catladder/compare/v1.90.0...v1.91.0) (2023-02-17)
 
 
