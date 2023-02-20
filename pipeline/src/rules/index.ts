@@ -23,6 +23,9 @@ export const RULES_ALWAYS: GitlabRule[] = [
 export const RULE_CONDITION_MAIN_BRANCH =
   "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH";
 
+export const RULE_CONDITION_HOTFIX_BRANCH =
+  "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/";
+
 export const RULES_RELEASE: GitlabRule[] = [
   RULE_NEVER_ON_RELEASE_COMMIT,
   {
@@ -34,7 +37,7 @@ export const RULES_RELEASE: GitlabRule[] = [
     when: "manual",
   },
   {
-    if: "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/", // hotfix branches
+    if: RULE_CONDITION_HOTFIX_BRANCH,
     when: "manual",
   },
 ];

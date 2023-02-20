@@ -8,6 +8,7 @@ import {
   RULES_RELEASE,
   RULE_NEVER_ON_RELEASE_COMMIT,
   RULE_CONDITION_MAIN_BRANCH,
+  RULE_CONDITION_HOTFIX_BRANCH,
 } from "@catladder/pipeline";
 
 type GitlabJobDefWithTrigger = Omit<GitlabJobDef, "script"> & {
@@ -76,6 +77,10 @@ export const createGitlabBaseInclude = () => {
         RULE_NEVER_ON_RELEASE_COMMIT,
         {
           if: RULE_CONDITION_MAIN_BRANCH,
+          when: "manual",
+        },
+        {
+          if: RULE_CONDITION_HOTFIX_BRANCH,
           when: "manual",
         },
       ],
