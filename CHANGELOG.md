@@ -1,3 +1,10 @@
+## [1.91.3](https://git.panter.ch/catladder/catladder/compare/v1.91.2...v1.91.3) (2023-02-20)
+
+
+### Bug Fixes
+
+* if repo is using git-lfs ([0ba3abf](https://git.panter.ch/catladder/catladder/commit/0ba3abfcf01d13e452d0cc4a129a8715fea2518a))
+
 ## [1.91.2](https://git.panter.ch/catladder/catladder/compare/v1.91.1...v1.91.2) (2023-02-17)
 
 
