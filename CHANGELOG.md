@@ -1,3 +1,10 @@
+# [1.92.0](https://git.panter.ch/catladder/catladder/compare/v1.91.3...v1.92.0) (2023-02-20)
+
+
+### Features
+
+* force release also for hotfix branches ([9ffcb12](https://git.panter.ch/catladder/catladder/commit/9ffcb1216f1f4f6feafebda94c01528df3cbffe5))
+
 ## [1.91.3](https://git.panter.ch/catladder/catladder/compare/v1.91.2...v1.91.3) (2023-02-20)
 
 
