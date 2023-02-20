@@ -1,7 +1,7 @@
 # build context is the root directory
 FROM node:16-alpine
 
-RUN apk add --no-cache bash git
+RUN apk add --no-cache bash git git-lfs
 
 # add semantic release
 RUN yarn global add \
