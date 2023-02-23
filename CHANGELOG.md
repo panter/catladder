@@ -1,3 +1,10 @@
+# [1.93.0](https://git.panter.ch/catladder/catladder/compare/v1.92.0...v1.93.0) (2023-02-23)
+
+
+### Features
+
+* **node-static:** create unprivileged nginx container for increased security ([c142365](https://git.panter.ch/catladder/catladder/commit/c1423652556d66de78cb060109a271fdea85d47d))
+
 # [1.92.0](https://git.panter.ch/catladder/catladder/compare/v1.91.3...v1.92.0) (2023-02-20)
 
 
