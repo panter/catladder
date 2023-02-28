@@ -1,3 +1,10 @@
+## [1.93.1](https://git.panter.ch/catladder/catladder/compare/v1.93.0...v1.93.1) (2023-02-28)
+
+
+### Bug Fixes
+
+* **cli:** only propose running pods to shell into ([de1ff2f](https://git.panter.ch/catladder/catladder/commit/de1ff2f107665f7542ccf7e761198dcb85048318))
+
 # [1.93.0](https://git.panter.ch/catladder/catladder/compare/v1.92.0...v1.93.0) (2023-02-23)
 
 
