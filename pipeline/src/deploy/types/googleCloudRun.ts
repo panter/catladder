@@ -92,7 +92,7 @@ export type DeployConfigCloudRunService = {
   maxInstances?: number;
 
   /**
-   * set to true to allways allocate cpu, e.g. for workers. Careful that this is expensive!
+   * set to true to allways allocate cpu, e.g. for workers. Careful that this is expensive, unless you get really regularly requests!
    */
   noCpuThrottling?: true;
 
@@ -128,6 +128,7 @@ export type DeployConfigCloudRunJobWithSchedule =
   DeployConfigCloudRunJobBase & {
     when: "schedule";
     schedule: `${Minute} ${Hour} ${DayOfMonth} ${Month} ${DayOfWeek}`;
+    maxRetryAttempts?: 0 | 1 | 2 | 3 | 4 | 5;
   };
 
 export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {

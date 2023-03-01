@@ -174,6 +174,8 @@ export const createGoogleCloudRunDeployJobs = (
           project: deployConfig.projectId,
           location: deployConfig.region,
           schedule: `"${job.schedule}"`,
+          "max-retry-attempts": job.maxRetryAttempts ?? 0,
+
           uri: `"https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run"`,
           "http-method": "POST",
           "oauth-service-account-email":
