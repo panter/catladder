@@ -1,3 +1,10 @@
+# [1.94.0](https://git.panter.ch/catladder/catladder/compare/v1.93.1...v1.94.0) (2023-03-03)
+
+
+### Features
+
+* **cloudrun:** scheduled jobs can now define how many times they retry ([6fc5cb4](https://git.panter.ch/catladder/catladder/commit/6fc5cb4ec11c5325feead768df0ad13a7440a86b))
+
 ## [1.93.1](https://git.panter.ch/catladder/catladder/compare/v1.93.0...v1.93.1) (2023-02-28)
 
 
