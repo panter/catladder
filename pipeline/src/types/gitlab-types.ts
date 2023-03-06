@@ -12,9 +12,9 @@ export type ArtifactReports =
   | { cyclonedx: string | string[] }
   | { dotenv: string | string[] }
   | { junit: string | string[] }
-  | { sast: string | string[] }
-  | { secret_detection: string | string[] }
-  | { terraform: string | string[] };
+  | { sast: string }
+  | { secret_detection: string }
+  | { terraform: string };
 export type GitlabJobCache = {
   key: GitlabJobCacheKey;
   policy?: string;
