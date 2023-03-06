@@ -1,3 +1,10 @@
+## [1.94.1](https://git.panter.ch/catladder/catladder/compare/v1.94.0...v1.94.1) (2023-03-06)
+
+
+### Bug Fixes
+
+* **cloud run:** jobs cannot be deleted on review stop when a job is still running ([8ee27ff](https://git.panter.ch/catladder/catladder/commit/8ee27ffefb00377a394b7309ec9e133fdb9d0920))
+
 # [1.94.0](https://git.panter.ch/catladder/catladder/compare/v1.93.1...v1.94.0) (2023-03-03)
 
 
