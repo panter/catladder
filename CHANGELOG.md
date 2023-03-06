@@ -1,3 +1,11 @@
+## [1.94.2](https://git.panter.ch/catladder/catladder/compare/v1.94.1...v1.94.2) (2023-03-06)
+
+
+### Bug Fixes
+
+* add mising options for coverage_report type ([78ea52b](https://git.panter.ch/catladder/catladder/commit/78ea52b7e66dbc3a95ca992bd7fa87c439aebd83))
+* **pipeline:** typings of gitlab artifact report types ([07fbe5c](https://git.panter.ch/catladder/catladder/commit/07fbe5cd9181577c997a2b0eb04157f9f47966b6))
+
 ## [1.94.1](https://git.panter.ch/catladder/catladder/compare/v1.94.0...v1.94.1) (2023-03-06)
 
 
