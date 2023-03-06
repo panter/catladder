@@ -205,10 +205,11 @@ export const createGoogleCloudRunDeployJobs = (
   };
 
   const getDeleteJobsScripts = () =>
-    jobsWithNames.map(
-      ({ jobName }) =>
-        `gcloud beta run jobs delete ${jobName} ${commonArgsString}`
-    );
+    jobsWithNames.flatMap(({ jobName }) => [
+      // first delete all job executions. Otherwise delete might fail if one of those is still running
+      `gcloud beta run jobs executions list ${commonArgsString} --job ${jobName} --format="value(name)" | xargs -I {} gcloud beta run jobs executions delete {}  --quiet ${commonArgsString}`,
+      `gcloud beta run jobs delete ${jobName} ${commonArgsString}`,
+    ]);
 
   const deployScripts = [
     ...gcloudServiceAccountLoginCommands(context),
