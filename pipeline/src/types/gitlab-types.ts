@@ -7,7 +7,7 @@ export type Artifacts = {
 // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
 export type ArtifactReports =
   | { accessibility: string | string[] }
-  | { coverage_report: string | string[] }
+  | { coverage_report: { coverage_format: string; path: string } }
   | { codequality: string | string[] }
   | { cyclonedx: string | string[] }
   | { dotenv: string | string[] }
