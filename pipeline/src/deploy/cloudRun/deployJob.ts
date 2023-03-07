@@ -125,6 +125,7 @@ export const createGoogleCloudRunDeployJobs = (
       "cpu-throttling": customConfig?.noCpuThrottling !== true,
       memory: customConfig?.memory,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
+      "cpu-boost": true,
     });
 
     return `gcloud run deploy ${serviceName}${nameSuffix ?? ""} ${argsString}`;
