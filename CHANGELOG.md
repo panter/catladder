@@ -1,3 +1,10 @@
+# [1.95.0](https://git.panter.ch/catladder/catladder/compare/v1.94.2...v1.95.0) (2023-03-20)
+
+
+### Features
+
+* add test, lint, audit jobs for custom type ([de1c1d2](https://git.panter.ch/catladder/catladder/commit/de1c1d21e5c902ccaa73a1581decf3958ed5fff7))
+
 ## [1.94.2](https://git.panter.ch/catladder/catladder/compare/v1.94.1...v1.94.2) (2023-03-06)
 
 
