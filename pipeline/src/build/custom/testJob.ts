@@ -1,0 +1,66 @@
+import type { Context } from "../../types/context";
+import type { CatladderJob } from "../../types/jobs";
+import { ensureArray, notNil } from "../../utils";
+import { isOfBuildType } from "../types";
+
+const RUNNER_CUSTOM_TEST_VARIABLES = {
+  KUBERNETES_CPU_REQUEST: "0.5",
+  KUBERNETES_CPU_LIMIT: "2",
+  KUBERNETES_MEMORY_REQUEST: "2Gi",
+  KUBERNETES_MEMORY_LIMIT: "4Gi",
+};
+
+export const createCustomTestJobs = (context: Context): CatladderJob[] => {
+  // don't run tests after release
+  if (context.commitInfo?.trigger === "taggedRelease") {
+    return [];
+  }
+
+  const buildConfig = context.componentConfig.build;
+
+  if (!isOfBuildType(buildConfig, "custom")) {
+    throw new Error("deploy config is not custom");
+  }
+
+  const base: Omit<CatladderJob, "script" | "name"> = {
+    variables: {
+      APP_PATH: context.componentConfig.dir,
+      ...RUNNER_CUSTOM_TEST_VARIABLES,
+      ...(buildConfig.extraVars ?? {}),
+    },
+    cache: buildConfig.jobCache,
+    stage: "test",
+    needs: [],
+    envMode: "none",
+  };
+  const auditJob: CatladderJob | null = buildConfig.audit
+    ? {
+        name: "🛡 audit",
+        ...base,
+        image: buildConfig.audit?.jobImage ?? buildConfig.jobImage,
+        cache: undefined,
+        script: [...(ensureArray(buildConfig.audit?.command) ?? [])],
+        allow_failure: true,
+      }
+    : null;
+
+  const lintJob: CatladderJob | null = buildConfig.lint
+    ? {
+        name: "👮 lint",
+
+        ...base,
+        image: buildConfig.lint?.jobImage ?? buildConfig.jobImage,
+        script: [...(ensureArray(buildConfig.lint?.command) ?? [])],
+      }
+    : null;
+  const testJob: CatladderJob | null = buildConfig.test
+    ? {
+        name: "🧪 test",
+
+        ...base,
+        image: buildConfig.test?.jobImage ?? buildConfig.jobImage,
+        script: [...(ensureArray(buildConfig.test?.command) ?? [])],
+      }
+    : null;
+  return [auditJob, lintJob, testJob].filter(notNil);
+};

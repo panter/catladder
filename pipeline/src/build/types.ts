@@ -111,7 +111,10 @@ export type BuildConfigCustomDocker = BuildConfigBase["docker"] &
       }
   );
 
-export type BuildConfigCustom = BuildConfigBase & {
+export type BuildConfigCustom = Omit<
+  BuildConfigBase,
+  "lint" | "test" | "audit"
+> & {
   type: "custom";
   jobImage: string;
   jobServices?: GitlabJobService[];
@@ -122,6 +125,30 @@ export type BuildConfigCustom = BuildConfigBase & {
    * customize cache for the job
    */
   jobCache?: CatladderJob["cache"];
+
+  /**
+   * custom lint, disabled when not set
+   */
+  lint?: {
+    command?: string | string[];
+    jobImage?: GitlabJobImage;
+  };
+
+  /**
+   * custom test, disabled when not set
+   */
+  test?: {
+    command?: string | string[];
+    jobImage?: GitlabJobImage;
+  };
+
+  /**
+   * custom audit, disabled when not set
+   */
+  audit?: {
+    command?: string | string[];
+    jobImage?: GitlabJobImage;
+  };
 };
 
 export type BuildConfigRails = BuildConfigBase & {

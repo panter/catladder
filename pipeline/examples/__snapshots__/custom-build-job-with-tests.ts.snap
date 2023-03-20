@@ -1,0 +1,1358 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+{
+  "mainBranch": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "www 👮 lint": {
+        "cache": undefined,
+        "environment": undefined,
+        "image": "lint-image",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [],
+        "environment": undefined,
+        "image": "foo",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+        ],
+        "services": undefined,
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-dev-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-dev-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🔨 docker | dev ": {
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNginxDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "www 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": "4 weeks",
+          "name": "dev/www",
+          "on_stop": "www 🛑 Stop ⚠️ | dev ",
+          "url": "https://pan-test-app-dev-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo $CL_dev_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-dev-www --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=dev,env-name=dev,build-type=custom --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy dev",
+        "variables": {
+          "APP_DIR": "www",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "ENV_VARS": "ENV_SHORT: 'dev'
+APP_DIR: 'www'
+ENV_TYPE: 'dev'
+HOST: 'pan-test-app-dev-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-dev-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-dev-www-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-dev-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-dev-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | dev ": {
+        "environment": {
+          "action": "stop",
+          "name": "dev/www",
+          "url": "https://pan-test-app-dev-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_dev_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-dev-www --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop dev",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "www 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "image": "audit-image",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "audit",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🧪 test": {
+        "cache": undefined,
+        "environment": undefined,
+        "image": "test-image",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "mr": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "www 👮 lint": {
+        "cache": undefined,
+        "environment": undefined,
+        "image": "lint-image",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [],
+        "environment": undefined,
+        "image": "foo",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+        ],
+        "services": undefined,
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🔨 docker | review ": {
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNginxDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "www 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": "2 week",
+          "name": "review/some-commit/www",
+          "on_stop": "www 🛑 Stop ⚠️ | review ",
+          "url": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo $CL_review_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-review-mr1234-www --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=review,env-name=review,build-type=custom --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy review",
+        "variables": {
+          "APP_DIR": "www",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "ENV_VARS": "ENV_SHORT: 'review'
+APP_DIR: 'www'
+ENV_TYPE: 'review'
+HOST: 'pan-test-app-review-mr1234-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-review-mr1234-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-review-mr1234-www-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_review_www_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | review ": {
+        "environment": {
+          "action": "stop",
+          "name": "review/some-commit/www",
+          "url": "https://pan-test-app-review-mr1234-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_review_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-review-mr1234-www --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop review",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "www 🛡 audit": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "image": "audit-image",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "audit",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "www 🧪 test": {
+        "cache": undefined,
+        "environment": undefined,
+        "image": "test-image",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "www",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "taggedRelease": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "www 🔨 app | prod ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [],
+        "environment": undefined,
+        "image": "foo",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+        ],
+        "services": undefined,
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-prod-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-prod-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🔨 app | stage ": {
+        "artifacts": {
+          "paths": [
+            "www/__build_info.json",
+            "www/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [],
+        "environment": undefined,
+        "image": "foo",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > www/__build_info.json",
+          "if [ -f ./.nvmrc ]; then source /root/.nvm/nvm.sh && nvm install <<< .nvmrc; fi",
+          "cd www",
+        ],
+        "services": undefined,
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-stage-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-stage-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🔨 docker | prod ": {
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNginxDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "www 🔨 docker | stage ": {
+        "environment": undefined,
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "www 🔨 app | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNginxDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "www",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "www 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": undefined,
+          "name": "prod/www",
+          "on_stop": "www 🛑 Stop ⚠️ | prod ",
+          "url": "https://pan-test-app-prod-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | prod ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "echo $CL_prod_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-prod-www --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=prod,env-name=prod,build-type=custom --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy prod",
+        "variables": {
+          "APP_DIR": "www",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "ENV_VARS": "ENV_SHORT: 'prod'
+APP_DIR: 'www'
+ENV_TYPE: 'prod'
+HOST: 'pan-test-app-prod-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-prod-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-prod-www-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-prod-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-prod-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": undefined,
+          "name": "stage/www",
+          "on_stop": "www 🛑 Stop ⚠️ | stage ",
+          "url": "https://pan-test-app-stage-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "www 🔨 app | stage ",
+          },
+          {
+            "artifacts": false,
+            "job": "www 🔨 docker | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo $CL_stage_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-stage-www --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=stage,env-name=stage,build-type=custom --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy stage",
+        "variables": {
+          "APP_DIR": "www",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/www",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "ENV_VARS": "ENV_SHORT: 'stage'
+APP_DIR: 'www'
+ENV_TYPE: 'stage'
+HOST: 'pan-test-app-stage-www-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-stage-www-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-stage-www-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-stage-www-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-www-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-stage-www-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "www 🛑 Stop ⚠️ | prod ": {
+        "environment": {
+          "action": "stop",
+          "name": "prod/www",
+          "url": "https://pan-test-app-prod-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_prod_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-prod-www --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop prod",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "www 🛑 Stop ⚠️ | stage ": {
+        "environment": {
+          "action": "stop",
+          "name": "stage/www",
+          "url": "https://pan-test-app-stage-www-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_stage_www_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-stage-www --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop stage",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "500Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+}
+`;
