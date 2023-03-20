@@ -10,6 +10,12 @@ const config: Config = {
       build: {
         type: "custom",
         jobImage: "foo",
+        jobServices: [
+          {
+            name: "job-service-1",
+            command: ["--some-command=some-value"],
+          },
+        ],
         docker: {
           type: "nginx",
         },

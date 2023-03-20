@@ -28,6 +28,7 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
       ...RUNNER_CUSTOM_TEST_VARIABLES,
       ...(buildConfig.extraVars ?? {}),
     },
+    services: buildConfig.jobServices,
     cache: buildConfig.jobCache,
     stage: "test",
     needs: [],
