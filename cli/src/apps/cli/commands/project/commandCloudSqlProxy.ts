@@ -56,11 +56,18 @@ export default async (vorpal: Vorpal) =>
       this.log("");
       this.log(`postgres-PW: ${DB_PASSWORD}`);
       this.log("");
+      this.log("connection string:");
+      this.log("");
       this.log(
-        `POSTGRESQL_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`
+        `postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`
       );
       this.log("");
-
+      this.log("jdbc connection string:");
+      this.log("");
+      this.log(
+        `jdbc:postgresql://localhost:${localPort}/${DB_NAME}?schema=public&user=${DB_USER}&password=${DB_PASSWORD}`
+      );
+      this.log("");
       await spawn(
         "cloud_sql_proxy",
         ["-instances", `${instanceName}=tcp:${localPort}`],
