@@ -1,3 +1,15 @@
+# [1.96.0](https://git.panter.ch/catladder/catladder/compare/v1.95.0...v1.96.0) (2023-03-22)
+
+
+### Bug Fixes
+
+* slightly alter ([28af10c](https://git.panter.ch/catladder/catladder/commit/28af10cfa5afd173828e8bebe0736f133f173ce8))
+
+
+### Features
+
+* **cli:** cloud sql proxy now shows different string formats ([defeed7](https://git.panter.ch/catladder/catladder/commit/defeed7a4e4e352bb206478b0dc6e5d347898701))
+
 # [1.95.0](https://git.panter.ch/catladder/catladder/compare/v1.94.2...v1.95.0) (2023-03-20)
 
 
