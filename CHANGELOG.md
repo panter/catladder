@@ -1,3 +1,10 @@
+# [1.97.0](https://git.panter.ch/catladder/catladder/compare/v1.96.0...v1.97.0) (2023-03-24)
+
+
+### Features
+
+* share job services in test, lint, audit jobs ([7ca3605](https://git.panter.ch/catladder/catladder/commit/7ca360529030128bafc73535248921f7b97e5d19))
+
 # [1.96.0](https://git.panter.ch/catladder/catladder/compare/v1.95.0...v1.96.0) (2023-03-22)
 
 
