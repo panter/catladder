@@ -30,13 +30,12 @@ const getCustomJobs = (context: Context) => {
   return injectDefaultVarsInCustomJobs(context, rawJobs);
 };
 const createRawJobs = (context: Context): CatladderJob[] => {
-  if (context.componentConfig.deploy === false) {
-    return [];
-  }
   const buildJobs =
     BUILD_TYPES[context.componentConfig.build.type].jobs(context);
   const deployJobs =
-    DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context);
+    context.componentConfig.deploy !== false
+      ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
+      : [];
   const reportingJobs = createReportingJobs(context);
 
   const customJobs = getCustomJobs(context);
