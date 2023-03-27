@@ -17,3 +17,15 @@ Please add more examples there. If you need to update the snapshots, run `yarn t
    - Release: `CI_COMMIT_TAG=v0.0.1 pipeline/bin/catladder-gitlab.js`
 
 ...and a `__pipeline.yml` will magically appear - enjoy deciphering it 😉
+
+#### Create quickly a pipeline from catladder.ts
+
+This script runs exact Docker image that is used by Gitlab CI. 
+
+`cl-gitlab.sh`
+```bash
+#!/bin/bash
+LATEST_CATLADDER_DOCKER_IMAGE=$(curl -L -s https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml | head -n 1 | sed -En "s/image: (.*)/\1/p")
+docker run --user=$(echo $UID) --workdir=/app -v $(pwd):/app -e CI_MERGE_REQUEST_ID=999999 -it $LATEST_CATLADDER_DOCKER_IMAGE catladder-gitlab
+```
+
