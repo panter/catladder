@@ -18,3 +18,15 @@ But if you suspect the build fail due to the content of `node_modules` try to [c
 ---
 
 Please add more!
+
+## Create quickly a __pipeline.yml from catladder.ts
+
+If you'd like to quickly create `__pipeline.yml` on a project:
+
+`cl-gitlab.sh`
+```bash
+#!/bin/bash
+LATEST_CATLADDER_DOCKER_IMAGE=$(curl -L -s https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml | head -n 1 | sed -En "s/image: (.*)/\1/p")
+docker run --user=$(echo $UID) --workdir=/app -v $(pwd):/app -e CI_MERGE_REQUEST_ID=999999 -it $LATEST_CATLADDER_DOCKER_IMAGE catladder-gitlab
+```
+
