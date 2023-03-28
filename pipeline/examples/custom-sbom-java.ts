@@ -1,0 +1,34 @@
+import type { Config } from "../src";
+import { createAllPipelines } from "./__utils__/helpers";
+
+const config: Config = {
+  appName: "test-app",
+  customerName: "pan",
+  components: {
+    app: {
+      dir: ".",
+      build: {
+        type: "custom",
+        docker: { type: "custom" },
+        jobImage: "maven:3-eclipse-temurin-11",
+        buildCommand: ["mvn package", "cp -r target dist"],
+        sbom: {
+          jobImage: "maven:3-eclipse-temurin-11",
+          command: [
+            "mvn org.cyclonedx:cyclonedx-maven-plugin:2.7.4:makeBom",
+            "mv target/bom.json __sbom.json",
+          ],
+        },
+      },
+      deploy: {
+        type: "google-cloudrun",
+        projectId: "asdf",
+        region: "asia-east1",
+      },
+    },
+  },
+};
+
+it("matches snapshot", async () => {
+  expect(await createAllPipelines(config)).toMatchSnapshot();
+});

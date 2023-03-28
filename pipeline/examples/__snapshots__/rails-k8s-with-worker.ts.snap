@@ -483,6 +483,56 @@ jobs:
         "stage": "test",
         "variables": {},
       },
+      "app 🧾 sbom upload | dev ": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "touch vex.json",
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "dev" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | dev ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "cache": undefined,
+        "environment": undefined,
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" .",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
     },
     "stages": [
       "setup",
@@ -1040,6 +1090,56 @@ jobs:
           "bundle exec rspec",
         ],
         "stage": "test",
+        "variables": {},
+      },
+      "app 🧾 sbom upload | review ": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "touch vex.json",
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "review" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | review ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "cache": undefined,
+        "environment": undefined,
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" .",
+        ],
+        "stage": "verify",
         "variables": {},
       },
     },
@@ -1873,6 +1973,106 @@ jobs:
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
+      },
+      "app 🧾 sbom upload | prod ": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "touch vex.json",
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "prod" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom upload | stage ": {
+        "allow_failure": true,
+        "cache": undefined,
+        "environment": undefined,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "touch vex.json",
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "stage" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "cache": undefined,
+        "environment": undefined,
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" .",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | stage ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "cache": undefined,
+        "environment": undefined,
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" .",
+        ],
+        "stage": "verify",
+        "variables": {},
       },
     },
     "stages": [

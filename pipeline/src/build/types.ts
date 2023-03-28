@@ -149,6 +149,19 @@ export type BuildConfigCustom = Omit<
     command?: string | string[];
     jobImage?: GitlabJobImage;
   };
+
+  /**
+   * custom sbom (software bill of materials), set false to disable
+   */
+  sbom?:
+    | false
+    | {
+        /**
+         * needs to create a file at `/__sbom.json` in CycloneDX format
+         */
+        command: string | string[];
+        jobImage: GitlabJobImage;
+      };
 };
 
 export type BuildConfigRails = BuildConfigBase & {
