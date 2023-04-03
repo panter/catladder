@@ -575,7 +575,7 @@ cloudsql:
         "allow_failure": true,
         "cache": undefined,
         "environment": undefined,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
         "interruptible": true,
         "needs": [
           "api 🧾 sbom | dev ",
@@ -588,7 +588,6 @@ cloudsql:
           ],
         },
         "script": [
-          "touch vex.json",
           "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "dev" "__sbom.json" vex.json",
         ],
         "stage": "verify",
@@ -1263,7 +1262,7 @@ cloudsql:
         "allow_failure": true,
         "cache": undefined,
         "environment": undefined,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
         "interruptible": true,
         "needs": [
           "api 🧾 sbom | review ",
@@ -1276,7 +1275,6 @@ cloudsql:
           ],
         },
         "script": [
-          "touch vex.json",
           "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "review" "__sbom.json" vex.json",
         ],
         "stage": "verify",
@@ -2271,7 +2269,7 @@ cloudsql:
         "allow_failure": true,
         "cache": undefined,
         "environment": undefined,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
         "interruptible": true,
         "needs": [
           "api 🧾 sbom | prod ",
@@ -2284,7 +2282,6 @@ cloudsql:
           ],
         },
         "script": [
-          "touch vex.json",
           "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "prod" "__sbom.json" vex.json",
         ],
         "stage": "verify",
@@ -2294,7 +2291,7 @@ cloudsql:
         "allow_failure": true,
         "cache": undefined,
         "environment": undefined,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.1.1",
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
         "interruptible": true,
         "needs": [
           "api 🧾 sbom | stage ",
@@ -2307,7 +2304,6 @@ cloudsql:
           ],
         },
         "script": [
-          "touch vex.json",
           "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "stage" "__sbom.json" vex.json",
         ],
         "stage": "verify",
