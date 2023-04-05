@@ -1,3 +1,10 @@
+# [1.98.0](https://git.panter.ch/catladder/catladder/compare/v1.97.2...v1.98.0) (2023-04-05)
+
+
+### Features
+
+* **pipeline:** add sbom reporting with dependency track ([85ebd31](https://git.panter.ch/catladder/catladder/commit/85ebd31f1c1d4bdf4ccfed6af458c56f01e68380))
+
 ## [1.97.2](https://git.panter.ch/catladder/catladder/compare/v1.97.1...v1.97.2) (2023-03-27)
 
 ## [1.97.1](https://git.panter.ch/catladder/catladder/compare/v1.97.0...v1.97.1) (2023-03-27)
