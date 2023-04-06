@@ -85,16 +85,26 @@ roleRef:
 EOF
 `);
 
-  // get token name
-  const tokenName = await exec(
-    `kubectl get serviceaccount --namespace ${namespace} ${serviceAccountName} -o jsonpath='{.secrets[0].name}'`
-  ).then((c) => c.stdout.trim());
+  const secretName = `${serviceAccountName}-secret`;
+  // create token for the service account
+  await exec(`
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ${secretName}
+  namespace: ${namespace}
+  annotations:
+    kubernetes.io/service-account.name: ${serviceAccountName}
+type: kubernetes.io/service-account-token
+EOF
+  `);
 
   const KUBE_CA_PEM = await exec(
-    `kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`
+    `kubectl get secret ${secretName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`
   ).then((c) => c.stdout.trim());
   const KUBE_TOKEN = await exec(
-    `kubectl get secret ${tokenName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`
+    `kubectl get secret ${secretName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`
   ).then((c) => c.stdout.trim());
 
   const vars = {
@@ -102,6 +112,17 @@ EOF
     KUBE_CA_PEM,
     KUBE_URL,
   };
+
+  const missing = Object.entries(vars).filter((e) => !e[1]);
+  if (missing.length > 0) {
+    throw new Error(
+      "could not setup credentials. Missing vars: " +
+        missing.map((m) => m[0]).join(", ") +
+        ". Check whether your local kubectl is still working for '" +
+        fullName +
+        "'"
+    );
+  }
 
   instance.log("service accounts created / updated!");
 
