@@ -1,3 +1,10 @@
+## [1.98.1](https://git.panter.ch/catladder/catladder/compare/v1.98.0...v1.98.1) (2023-04-06)
+
+
+### Bug Fixes
+
+* **kubernetes:** deployement fails on newly (re-)setup kubernetes deploy type ([91b2d41](https://git.panter.ch/catladder/catladder/commit/91b2d4126cb07c5c030fa076f7b9c8737f3a98cf))
+
 # [1.98.0](https://git.panter.ch/catladder/catladder/compare/v1.97.2...v1.98.0) (2023-04-05)
 
 
