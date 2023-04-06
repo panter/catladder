@@ -1,3 +1,10 @@
+## [1.98.2](https://git.panter.ch/catladder/catladder/compare/v1.98.1...v1.98.2) (2023-04-06)
+
+
+### Bug Fixes
+
+* **pipeline:** create build and custom jobs when deploy is disabled ([7b58db1](https://git.panter.ch/catladder/catladder/commit/7b58db1e2abd61fcd6dc625703d96e62f275423a))
+
 ## [1.98.1](https://git.panter.ch/catladder/catladder/compare/v1.98.0...v1.98.1) (2023-04-06)
 
 
