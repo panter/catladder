@@ -164,8 +164,13 @@ exports[`matches snapshot 1`] = `
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
           "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
@@ -179,8 +184,6 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
-          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
       "api 🚀 Deploy | dev ": {
@@ -686,8 +689,13 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
           "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
@@ -701,8 +709,6 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
-          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
       "api 🚀 Deploy | review ": {
@@ -1236,8 +1242,13 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","HOST_CA
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
           "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
@@ -1251,8 +1262,6 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
-          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
       "api 🔨 docker | stage ": {
@@ -1302,8 +1311,13 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
           "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
           "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
@@ -1317,8 +1331,6 @@ COPY --chown=node:node api/yarn.lock /app/api/yarn.lock",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
-          "YARN_INSTALL": "yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
-          "YARN_INSTALL_WITHOUT_SCRIPTS": "YARN_ENABLE_SCRIPTS=false yarn plugin import workspace-tools && yarn workspaces focus --production && yarn rebuild",
         },
       },
       "api 🚀 Deploy | prod ": {

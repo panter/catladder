@@ -7,7 +7,7 @@ import { join } from "path";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
-import { getYarnInstall, getYarnInstallCommand } from "./yarn";
+import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 import type { CatladderJob } from "../../types/jobs";
 
 export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
@@ -55,13 +55,8 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
             cache: [...getYarnCache(context, "pull")],
             variables: {
               // only required for non static
-              YARN_INSTALL: getYarnInstallCommand(context, {
-                prodOnly: true,
-              }),
-              YARN_INSTALL_WITHOUT_SCRIPTS: getYarnInstallCommand(context, {
-                prodOnly: true,
-                noScripts: true,
-              }),
+              DOCKER_COPY_AND_INSTALL_APP:
+                getDockerAppCopyAndBuildScript(context),
               DOCKER_COPY_WORKSPACE_FILES:
                 context.packageManagerInfo?.pathsToCopyInDocker
                   .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)

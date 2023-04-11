@@ -29,11 +29,12 @@ export const getPackageManagerInfo = async (
     ? join(workspaceRoot, "yarn.lock")
     : join(component.dir, "yarn.lock");
   const configFiles = [".yarnrc", ".yarnrc.yml", ".npmrc", ".yarn"]; // ".yarn" is yarn 2 folder
-  const rcFiles = (
-    componentIsInWorkspace
-      ? configFiles
-      : configFiles.map((f) => join(component.dir, f))
-  ).filter((f) => existsSync(f));
+  // copy all those configFiles from workspace root and/or component folder
+
+  const configFilePaths = [
+    ...configFiles,
+    ...configFiles.map((f) => join(component.dir, f)),
+  ].filter((f) => existsSync(f));
 
   // get all folders that this workspace depend on
   // we will later copy them into the docker build
@@ -50,7 +51,7 @@ export const getPackageManagerInfo = async (
     packageJson,
     ...(workspacePackageJson ? [workspacePackageJson] : []),
     lockFile,
-    ...rcFiles,
+    ...configFilePaths,
     ...workspaceDependencies,
   ];
   return {
