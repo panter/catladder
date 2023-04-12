@@ -1,3 +1,10 @@
+# [1.99.0](https://git.panter.ch/catladder/catladder/compare/v1.98.2...v1.99.0) (2023-04-12)
+
+
+### Features
+
+* **kube:** tolerations for mongodb ([bc2a338](https://git.panter.ch/catladder/catladder/commit/bc2a3387df55a5f07d3f1f630ff171d5360f712a))
+
 ## [1.98.2](https://git.panter.ch/catladder/catladder/compare/v1.98.1...v1.98.2) (2023-04-06)
 
 
