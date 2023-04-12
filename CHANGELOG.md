@@ -1,3 +1,10 @@
+# [1.100.0](https://git.panter.ch/catladder/catladder/compare/v1.99.1...v1.100.0) (2023-04-12)
+
+
+### Features
+
+* add option for artifacts reports in custom test, lint, audit jobs ([03e0177](https://git.panter.ch/catladder/catladder/commit/03e0177ef08a6b1d2401d7e888f664de9a286214))
+
 ## [1.99.1](https://git.panter.ch/catladder/catladder/compare/v1.99.0...v1.99.1) (2023-04-12)
 
 
