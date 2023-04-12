@@ -98,6 +98,19 @@ export type KubernetesWorkerDef = {
   };
 };
 
+type KubernetesTolerationExists = {
+  operator: "Exists";
+};
+
+type KubernetesTolerationEqual = {
+  operator: "Equal";
+  value: string;
+};
+
+export type KubernetesToleration = {
+  key: string;
+  effect: "NoSchedule" | "PreferNoSchedule" | "NoExecute";
+} & (KubernetesTolerationEqual | KubernetesTolerationExists);
 export type DeployConfigMongodbBase = {
   enabled?: boolean;
   dbName?: string;
@@ -113,6 +126,7 @@ export type DeployConfigMongodbBase = {
     size?: string;
   };
   resources?: KubernetesResourcesDef;
+  tolerations?: KubernetesToleration[];
 };
 
 export type DeployConfigMongodbStandalone = {
