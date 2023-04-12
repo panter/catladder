@@ -1,7 +1,10 @@
+import { join } from "path";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { isOfBuildType } from "../types";
+import type { BuildConfigArtifactsReports } from "../types";
+import type { Artifacts } from "../../types";
 
 const RUNNER_CUSTOM_TEST_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -42,6 +45,10 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         cache: undefined,
         script: [...(ensureArray(buildConfig.audit?.command) ?? [])],
         allow_failure: true,
+        ...createArtifactsConfig(
+          context.componentConfig.dir,
+          buildConfig.audit?.artifactsReports
+        ),
       }
     : null;
 
@@ -52,6 +59,10 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         ...base,
         image: buildConfig.lint?.jobImage ?? buildConfig.jobImage,
         script: [...(ensureArray(buildConfig.lint?.command) ?? [])],
+        ...createArtifactsConfig(
+          context.componentConfig.dir,
+          buildConfig.lint?.artifactsReports
+        ),
       }
     : null;
   const testJob: CatladderJob | null = buildConfig.test
@@ -61,7 +72,32 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         ...base,
         image: buildConfig.test?.jobImage ?? buildConfig.jobImage,
         script: [...(ensureArray(buildConfig.test?.command) ?? [])],
+        ...createArtifactsConfig(
+          context.componentConfig.dir,
+          buildConfig.test?.artifactsReports
+        ),
       }
     : null;
   return [auditJob, lintJob, testJob].filter(notNil);
 };
+
+type OptionalArtifacts =
+  | {
+      artifacts: Artifacts;
+    }
+  | undefined;
+
+const createArtifactsConfig = (
+  rootPath: string,
+  artifactsReports?: BuildConfigArtifactsReports
+): OptionalArtifacts =>
+  artifactsReports
+    ? {
+        artifacts: {
+          paths: [],
+          reports: {
+            junit: artifactsReports?.junit?.map((p) => join(rootPath, p)) ?? [],
+          },
+        },
+      }
+    : undefined;

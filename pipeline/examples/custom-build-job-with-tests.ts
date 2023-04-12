@@ -22,14 +22,23 @@ const config: Config = {
         lint: {
           command: "lint",
           jobImage: "lint-image",
+          artifactsReports: {
+            junit: ["dist/lint.xml"],
+          },
         },
         test: {
           command: "test",
           jobImage: "test-image",
+          artifactsReports: {
+            junit: ["dist/TEST-*.xml", "dist/junit-*.xml"],
+          },
         },
         audit: {
           command: "audit",
           jobImage: "audit-image",
+          artifactsReports: {
+            junit: ["dist/audit.xml"],
+          },
         },
       },
       deploy: {

@@ -2,6 +2,16 @@ import type { GitlabJobImage, GitlabJobService } from "../types";
 
 import type { CatladderJob } from "../types/jobs";
 
+export type BuildConfigArtifactsReports = {
+  /**
+   * The junit report collects JUnit report format XML files.
+   * The collected Unit test reports upload to GitLab as an artifact.
+   * Paths are prefixed with component's root folder.
+   * eg. `["dist/test-results/TEST-*.xml", "dist/rspec.xml", ...]`
+   */
+  junit?: string[];
+};
+
 export type BuildConfigBase = {
   /**
    * command to run on the image to start the app (e.g. yarn start)
@@ -64,15 +74,7 @@ export type BuildConfigBase = {
    * additional CI/CD artifacts reports,
    * use to display information in merge requests, pipeline views and security dashboards.
    */
-  artifactsReports?: {
-    /**
-     * The junit report collects JUnit report format XML files.
-     * The collected Unit test reports upload to GitLab as an artifact.
-     * Paths are prefixed with component's root folder.
-     * eg. `["dist/test-results/TEST-*.xml", "dist/rspec.xml", ...]`
-     */
-    junit?: string[];
-  };
+  artifactsReports?: BuildConfigArtifactsReports;
 };
 
 export type BuildConfigNodeBase = BuildConfigBase;
@@ -132,6 +134,11 @@ export type BuildConfigCustom = Omit<
   lint?: {
     command?: string | string[];
     jobImage?: GitlabJobImage;
+    /**
+     * additional CI/CD artifacts reports,
+     * use to display information in merge requests, pipeline views and security dashboards.
+     */
+    artifactsReports?: BuildConfigArtifactsReports;
   };
 
   /**
@@ -140,6 +147,11 @@ export type BuildConfigCustom = Omit<
   test?: {
     command?: string | string[];
     jobImage?: GitlabJobImage;
+    /**
+     * additional CI/CD artifacts reports,
+     * use to display information in merge requests, pipeline views and security dashboards.
+     */
+    artifactsReports?: BuildConfigArtifactsReports;
   };
 
   /**
@@ -148,6 +160,11 @@ export type BuildConfigCustom = Omit<
   audit?: {
     command?: string | string[];
     jobImage?: GitlabJobImage;
+    /**
+     * additional CI/CD artifacts reports,
+     * use to display information in merge requests, pipeline views and security dashboards.
+     */
+    artifactsReports?: BuildConfigArtifactsReports;
   };
 
   /**
