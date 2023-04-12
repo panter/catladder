@@ -1,3 +1,10 @@
+## [1.99.1](https://git.panter.ch/catladder/catladder/compare/v1.99.0...v1.99.1) (2023-04-12)
+
+
+### Bug Fixes
+
+* yarn berry does not work if its not a workspace setup ([205341d](https://git.panter.ch/catladder/catladder/commit/205341d4c1890a583183de0f3e8ddaf2f09e2134))
+
 # [1.99.0](https://git.panter.ch/catladder/catladder/compare/v1.98.2...v1.99.0) (2023-04-12)
 
 
