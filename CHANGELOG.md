@@ -1,3 +1,10 @@
+## [1.100.1](https://git.panter.ch/catladder/catladder/compare/v1.100.0...v1.100.1) (2023-04-13)
+
+
+### Bug Fixes
+
+* **node-static:** add mjs mime type ([8865989](https://git.panter.ch/catladder/catladder/commit/88659890e0a779a3783a702194bce7719ff82513))
+
 # [1.100.0](https://git.panter.ch/catladder/catladder/compare/v1.99.1...v1.100.0) (2023-04-12)
 
 
