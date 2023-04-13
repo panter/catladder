@@ -10,7 +10,7 @@ apiVersion: batch/v1
 kind: CronJob
 
 metadata:
-  name: {{ include "fullname" $context | trunc 24}}-{{ $name | trunc 20 | lower }}-cronjob
+  name: {{ include "fullname" $context | trunc 24}}-{{ $name | trunc 35 | lower }}
   namespace: {{ $context.Release.Namespace }}
   labels:
     app: {{ $context.Release.Name }}

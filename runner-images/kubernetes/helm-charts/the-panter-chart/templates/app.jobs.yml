@@ -11,7 +11,7 @@ apiVersion: batch/v1
 kind: Job
 
 metadata:
-  name: {{ include "fullname" $context | trunc 24 }}-{{ $name | trunc 24 }}-job
+  name: {{ include "fullname" $context | trunc 24 }}-{{ $name | trunc 35 }}
   namespace: {{ $context.Release.Namespace }}
   labels:
     app: {{ $context.Release.Name }}
