@@ -6,6 +6,10 @@ import type { AllCatladderJobs } from "../createAllJobs";
 
 type AllGitlabJobs = Record<string, GitlabJobDef>;
 
+const removeUndefined = <T extends Record<string, unknown>>(obj: T): T =>
+  Object.fromEntries(
+    Object.entries(obj).filter(([, value]) => value !== undefined)
+  ) as T;
 const getFullJobName = (
   name: string,
   componentName: string,
@@ -95,7 +99,7 @@ export const makeGitlabJob = (
     envMode !== "none" ? env : undefined
   );
 
-  const gitlabJob = {
+  const gitlabJob: GitlabJobDef = removeUndefined({
     ...job,
     stage,
     environment: job.environment?.on_stop
@@ -113,7 +117,7 @@ export const makeGitlabJob = (
     needs: gitlabNeeds,
     retry: BASE_RETRY,
     interruptible: true,
-  };
+  });
 
   return [fullJobName, gitlabJob];
 };
