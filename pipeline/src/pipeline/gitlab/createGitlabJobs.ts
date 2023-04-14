@@ -51,6 +51,7 @@ export const makeGitlabJob = (
     needsOtherComponent,
     name,
     needs,
+    jobTags,
     ...job
   }: CatladderJob<string>,
   allJobs: AllCatladderJobs
@@ -101,6 +102,7 @@ export const makeGitlabJob = (
 
   const gitlabJob: GitlabJobDef = removeUndefined({
     ...job,
+    tags: jobTags,
     stage,
     environment: job.environment?.on_stop
       ? {

@@ -1,7 +1,6 @@
 import { getDockerImageVariables, requiresDockerBuild } from "../build/docker";
 import type { Context } from "../types";
 import type { CatladderJob } from "../types/jobs";
-import { isOfDeployType } from "./types";
 import { contextIsStoppable } from "./utils";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
@@ -12,7 +11,7 @@ const DEPLOY_RUNNER_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
   KUBERNETES_CPU_LIMIT: "1",
   KUBERNETES_MEMORY_REQUEST: "200Mi",
-  KUBERNETES_MEMORY_LIMIT: "500Mi",
+  KUBERNETES_MEMORY_LIMIT: "200Mi",
 };
 type JobWithoutScript = Omit<CatladderJob, "script">;
 export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
@@ -77,6 +76,9 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
       ...DEPLOY_RUNNER_VARIABLES,
       ...context.environment.envVars,
       ...(hasDocker ? getDockerImageVariables(context) : {}),
+      ...(context.componentConfig.deploy
+        ? context.componentConfig.deploy.extraVars ?? {}
+        : {}),
     },
     environment: {
       ...context.environment.gitlabEnvironment,
@@ -87,6 +89,9 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
           }
         : {}),
     },
+    jobTags: context.componentConfig.deploy
+      ? context.componentConfig.deploy.jobTags
+      : undefined,
   };
 };
 

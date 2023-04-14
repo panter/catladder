@@ -75,6 +75,16 @@ export type BuildConfigBase = {
    * use to display information in merge requests, pipeline views and security dashboards.
    */
   artifactsReports?: BuildConfigArtifactsReports;
+
+  /**
+   * customize cache for the job
+   */
+  jobCache?: CatladderJob["cache"];
+
+  /**
+   * tags for the underlying job runner (e.g gitlab)
+   */
+  jobTags?: string[];
 };
 
 export type BuildConfigNodeBase = BuildConfigBase;
@@ -122,11 +132,6 @@ export type BuildConfigCustom = Omit<
   jobServices?: GitlabJobService[];
 
   docker: BuildConfigCustomDocker;
-
-  /**
-   * customize cache for the job
-   */
-  jobCache?: CatladderJob["cache"];
 
   /**
    * custom lint, disabled when not set

@@ -11,6 +11,16 @@ export type DeployConfigBase = {
    * wait for other components to deploy first, before doing this deployment
    */
   waitFor?: string[];
+
+  /**
+   * tags for the underlying job runner (e.g gitlab)
+   */
+  jobTags?: string[];
+
+  /**
+   * additional env vars for the deploy job
+   */
+  extraVars?: Record<string, string>;
 };
 
 export type AllowUnknownProps<T extends Record<string, unknown>> = T &

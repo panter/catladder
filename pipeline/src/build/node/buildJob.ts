@@ -24,7 +24,11 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
           variables: {
             ...NODE_RUNNER_BUILD_VARIABLES,
           },
-          cache: [...getNodeCache(context), ...getNextCache(context)],
+          cache: [
+            ...(ensureArray(buildConfig.jobCache) ?? []),
+            ...getNodeCache(context),
+            ...getNextCache(context),
+          ],
           script: [
             ...yarnInstall,
             ...(ensureArray(buildConfig.buildCommand) ?? []),
@@ -39,6 +43,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
               ) ?? []),
             ],
           },
+          jobTags: buildConfig.jobTags,
         })
       : null;
   return [

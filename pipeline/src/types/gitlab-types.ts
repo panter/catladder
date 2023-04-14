@@ -77,6 +77,7 @@ export type GitlabJobDef = {
   environment?: GitlabEnvironment;
   allow_failure?: boolean;
   parallel?: number;
+  tags?: string[];
   trigger?: {
     strategy: "depend";
     include: Array<{

@@ -109,4 +109,9 @@ export type CatladderJob<S = BaseStage> = {
    * We use the same shape as GitLab itself.
    */
   parallel?: number;
+
+  /**
+   * tags for the underlying job runner (e.g gitlab)
+   */
+  jobTags?: string[];
 };

@@ -6,7 +6,7 @@ export function notNil<TValue>(
   return value !== null && value !== undefined;
 }
 
-export const ensureArray = <T>(s: T | T[]): T[] | null =>
+export const ensureArray = <T>(s: undefined | T | T[]): T[] | null =>
   isNil(s) ? null : Array.isArray(s) ? s : [s];
 
 // see https://github.com/lodash/lodash/issues/5384
