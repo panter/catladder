@@ -1,3 +1,10 @@
+## [1.100.2](https://git.panter.ch/catladder/catladder/compare/v1.100.1...v1.100.2) (2023-04-14)
+
+
+### Bug Fixes
+
+* remove undefined props from gitlab job ([66ca133](https://git.panter.ch/catladder/catladder/commit/66ca13369bea65a6073b45ae33d454ab59553082))
+
 ## [1.100.1](https://git.panter.ch/catladder/catladder/compare/v1.100.0...v1.100.1) (2023-04-13)
 
 
