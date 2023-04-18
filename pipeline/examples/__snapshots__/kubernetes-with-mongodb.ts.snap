@@ -41,6 +41,9 @@ exports[`matches snapshot 1`] = `
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
@@ -68,13 +71,16 @@ exports[`matches snapshot 1`] = `
     ENV_SHORT: 'dev'
     APP_DIR: 'api'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -113,7 +119,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_dev_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 👮 lint": {
@@ -215,6 +221,9 @@ mongodb:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "HOST": "api.dev.test-app.pan.panter.cloud",
@@ -229,7 +238,7 @@ mongodb:
           "MONGODB_REPLICASET_KEY": "$CL_dev_api_MONGODB_REPLICASET_KEY",
           "MONGODB_ROOT_PASSWORD": "$CL_dev_api_MONGODB_ROOT_PASSWORD",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🔨 docker | dev ": {
@@ -360,6 +369,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -392,13 +404,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'dev'
     APP_DIR: 'api'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -437,7 +452,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_dev_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
@@ -481,6 +496,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
@@ -508,13 +526,16 @@ mongodb:
     ENV_SHORT: 'dev'
     APP_DIR: 'api'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -553,7 +574,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_dev_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🛡 audit": {
@@ -776,6 +797,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
@@ -803,13 +827,16 @@ mongodb:
     ENV_SHORT: 'review'
     APP_DIR: 'api'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -848,7 +875,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_review_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 👮 lint": {
@@ -950,6 +977,9 @@ mongodb:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
@@ -964,7 +994,7 @@ mongodb:
           "MONGODB_REPLICASET_KEY": "$CL_review_api_MONGODB_REPLICASET_KEY",
           "MONGODB_ROOT_PASSWORD": "$CL_review_api_MONGODB_ROOT_PASSWORD",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🔨 docker | review ": {
@@ -1095,6 +1125,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -1127,13 +1160,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'review'
     APP_DIR: 'api'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -1172,7 +1208,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_review_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
@@ -1216,6 +1252,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
@@ -1243,13 +1282,16 @@ mongodb:
     ENV_SHORT: 'review'
     APP_DIR: 'api'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -1288,7 +1330,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_review_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🛡 audit": {
@@ -1511,6 +1553,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
@@ -1538,13 +1583,16 @@ mongodb:
     ENV_SHORT: 'prod'
     APP_DIR: 'api'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -1583,7 +1631,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_prod_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api ↩️ Rollback ⚠️ | stage ": {
@@ -1622,6 +1670,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
@@ -1649,13 +1700,16 @@ mongodb:
     ENV_SHORT: 'stage'
     APP_DIR: 'api'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -1694,7 +1748,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_stage_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🔨 app | prod ": {
@@ -1754,6 +1808,9 @@ mongodb:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "HOST": "api.prod.test-app.pan.panter.cloud",
@@ -1768,7 +1825,7 @@ mongodb:
           "MONGODB_REPLICASET_KEY": "$CL_prod_api_MONGODB_REPLICASET_KEY",
           "MONGODB_ROOT_PASSWORD": "$CL_prod_api_MONGODB_ROOT_PASSWORD",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🔨 app | stage ": {
@@ -1828,6 +1885,9 @@ mongodb:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "HOST": "api.stage.test-app.pan.panter.cloud",
@@ -1842,7 +1902,7 @@ mongodb:
           "MONGODB_REPLICASET_KEY": "$CL_stage_api_MONGODB_REPLICASET_KEY",
           "MONGODB_ROOT_PASSWORD": "$CL_stage_api_MONGODB_ROOT_PASSWORD",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🔨 docker | prod ": {
@@ -2029,6 +2089,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -2061,13 +2124,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'prod'
     APP_DIR: 'api'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -2106,7 +2172,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_prod_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🚀 Deploy | stage ": {
@@ -2157,6 +2223,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -2189,13 +2258,16 @@ mongodb:
     ENV_SHORT: 'stage'
     APP_DIR: 'api'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -2234,7 +2306,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_stage_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
@@ -2278,6 +2350,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
@@ -2305,13 +2380,16 @@ mongodb:
     ENV_SHORT: 'prod'
     APP_DIR: 'api'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -2350,7 +2428,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_prod_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🛑 Stop ⚠️ | stage ": {
@@ -2394,6 +2472,9 @@ mongodb:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
@@ -2421,13 +2502,16 @@ mongodb:
     ENV_SHORT: 'stage'
     APP_DIR: 'api'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'node main.js'
@@ -2466,7 +2550,7 @@ mongodb:
           "MONGODB_ROOT_PASSWORD": "$CL_stage_api_MONGODB_ROOT_PASSWORD",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
         },
       },
       "api 🧾 sbom upload | prod ": {

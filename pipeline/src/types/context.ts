@@ -35,6 +35,7 @@ export type CommitInfo = {
   buildTime: string;
   buildId: string;
   trigger: PipelineTrigger;
+  currentVersion: string;
 };
 
 type Workspace = {

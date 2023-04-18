@@ -39,9 +39,12 @@ export const getEnvironmentVariables = async (
     ENV_SHORT: env,
     APP_DIR: envConfigRaw.dir,
     ENV_TYPE: envType,
+    BUILD_INFO_ID: commitInfo?.buildId,
+    BUILD_INFO_BUILD_TIME: commitInfo?.buildTime,
+    BUILD_INFO_CURRENT_VERSION: commitInfo?.currentVersion,
   };
 
-  let predefinedVariables: Record<string, string>;
+  let predefinedVariables: Record<string, string | undefined>;
   let host: string;
   let url: string;
 

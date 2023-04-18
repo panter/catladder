@@ -9,6 +9,7 @@ jest
 
 jest.mock("../pipeline/src/pipeline/commitInfo/getBuildId", () => ({
   getBuildId: () => "some-id",
+  getCurrentVersionString: () => "3.2.1",
 }));
 
 jest.mock("../pipeline/src/pipeline/yarn/yarnUtils", () => ({

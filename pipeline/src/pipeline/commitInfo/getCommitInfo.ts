@@ -1,5 +1,5 @@
 import type { CommitInfo } from "../../types";
-import { getBuildId } from "./getBuildId";
+import { getBuildId, getCurrentVersionString } from "./getBuildId";
 export const getBaseCommitInfo = async (): Promise<
   Omit<CommitInfo, "trigger">
 > => ({
@@ -9,4 +9,5 @@ export const getBaseCommitInfo = async (): Promise<
     : "unknown",
   buildTime: new Date().toISOString(),
   buildId: await getBuildId(),
+  currentVersion: await getCurrentVersionString(),
 });

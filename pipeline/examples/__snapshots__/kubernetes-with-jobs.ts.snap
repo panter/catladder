@@ -41,6 +41,9 @@ exports[`matches snapshot 1`] = `
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
@@ -64,13 +67,16 @@ exports[`matches snapshot 1`] = `
     ENV_SHORT: 'dev'
     APP_DIR: 'api'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -93,7 +99,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 👮 lint": {
@@ -195,6 +201,9 @@ cronjobs:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "HOST": "api.dev.test-app.pan.panter.cloud",
@@ -207,7 +216,7 @@ cronjobs:
           "KUBE_APP_NAME_PREFIX": "",
           "KUBE_NAMESPACE": "pan-test-app-dev",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🔨 docker | dev ": {
@@ -338,6 +347,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -366,13 +378,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'dev'
     APP_DIR: 'api'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -395,7 +410,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
@@ -439,6 +454,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
@@ -462,13 +480,16 @@ cronjobs:
     ENV_SHORT: 'dev'
     APP_DIR: 'api'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -491,7 +512,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🛡 audit": {
@@ -642,6 +663,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
@@ -665,13 +689,16 @@ cronjobs:
     ENV_SHORT: 'dev'
     APP_DIR: 'www'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -687,7 +714,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-dev-www",
           "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 👮 lint": {
@@ -789,6 +816,9 @@ application:
         "stage": "build",
         "variables": {
           "APP_DIR": "www",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "HOST": "www.dev.test-app.pan.panter.cloud",
@@ -801,7 +831,7 @@ application:
           "KUBE_APP_NAME_PREFIX": "",
           "KUBE_NAMESPACE": "pan-test-app-dev",
           "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🔨 docker | dev ": {
@@ -932,6 +962,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -960,13 +993,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'dev'
     APP_DIR: 'www'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -982,7 +1018,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-dev-www",
           "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🛑 Stop ⚠️ | dev ": {
@@ -1026,6 +1062,9 @@ application:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
@@ -1049,13 +1088,16 @@ application:
     ENV_SHORT: 'dev'
     APP_DIR: 'www'
     ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1071,7 +1113,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-dev-www",
           "ROOT_URL": "https://www.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🛡 audit": {
@@ -1294,6 +1336,9 @@ application:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
@@ -1317,13 +1362,16 @@ application:
     ENV_SHORT: 'review'
     APP_DIR: 'api'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1343,7 +1391,7 @@ cronjobs: {}
 ",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 👮 lint": {
@@ -1445,6 +1493,9 @@ cronjobs: {}
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
@@ -1457,7 +1508,7 @@ cronjobs: {}
           "KUBE_APP_NAME_PREFIX": "mr1234-",
           "KUBE_NAMESPACE": "pan-test-app-review",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🔨 docker | review ": {
@@ -1588,6 +1639,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -1616,13 +1670,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'review'
     APP_DIR: 'api'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1642,7 +1699,7 @@ cronjobs: {}
 ",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
@@ -1686,6 +1743,9 @@ cronjobs: {}
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
@@ -1709,13 +1769,16 @@ cronjobs: {}
     ENV_SHORT: 'review'
     APP_DIR: 'api'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1735,7 +1798,7 @@ cronjobs: {}
 ",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🛡 audit": {
@@ -1886,6 +1949,9 @@ cronjobs: {}
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
@@ -1909,13 +1975,16 @@ cronjobs: {}
     ENV_SHORT: 'review'
     APP_DIR: 'www'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-www'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'www.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1931,7 +2000,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-review-mr1234-www",
           "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 👮 lint": {
@@ -2033,6 +2102,9 @@ application:
         "stage": "build",
         "variables": {
           "APP_DIR": "www",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "HOST": "www.mr1234.review.test-app.pan.panter.cloud",
@@ -2045,7 +2117,7 @@ application:
           "KUBE_APP_NAME_PREFIX": "mr1234-",
           "KUBE_NAMESPACE": "pan-test-app-review",
           "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🔨 docker | review ": {
@@ -2176,6 +2248,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -2204,13 +2279,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'review'
     APP_DIR: 'www'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-www'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'www.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2226,7 +2304,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-review-mr1234-www",
           "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🛑 Stop ⚠️ | review ": {
@@ -2270,6 +2348,9 @@ application:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
@@ -2293,13 +2374,16 @@ application:
     ENV_SHORT: 'review'
     APP_DIR: 'www'
     ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-www'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
     HOST_CANONICAL: 'www.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2315,7 +2399,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-review-mr1234-www",
           "ROOT_URL": "https://www.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🛡 audit": {
@@ -2538,6 +2622,9 @@ application:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
@@ -2561,13 +2648,16 @@ application:
     ENV_SHORT: 'prod'
     APP_DIR: 'api'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2590,7 +2680,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api ↩️ Rollback ⚠️ | stage ": {
@@ -2629,6 +2719,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
@@ -2652,13 +2745,16 @@ cronjobs:
     ENV_SHORT: 'stage'
     APP_DIR: 'api'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2681,7 +2777,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🔨 app | prod ": {
@@ -2741,6 +2837,9 @@ cronjobs:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "HOST": "api.prod.test-app.pan.panter.cloud",
@@ -2753,7 +2852,7 @@ cronjobs:
           "KUBE_APP_NAME_PREFIX": "",
           "KUBE_NAMESPACE": "pan-test-app-prod",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🔨 app | stage ": {
@@ -2813,6 +2912,9 @@ cronjobs:
         "stage": "build",
         "variables": {
           "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "HOST": "api.stage.test-app.pan.panter.cloud",
@@ -2825,7 +2927,7 @@ cronjobs:
           "KUBE_APP_NAME_PREFIX": "",
           "KUBE_NAMESPACE": "pan-test-app-stage",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🔨 docker | prod ": {
@@ -3012,6 +3114,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -3040,13 +3145,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'prod'
     APP_DIR: 'api'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -3069,7 +3177,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🚀 Deploy | stage ": {
@@ -3120,6 +3228,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -3148,13 +3259,16 @@ cronjobs:
     ENV_SHORT: 'stage'
     APP_DIR: 'api'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -3177,7 +3291,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
@@ -3221,6 +3335,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
@@ -3244,13 +3361,16 @@ cronjobs:
     ENV_SHORT: 'prod'
     APP_DIR: 'api'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -3273,7 +3393,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🛑 Stop ⚠️ | stage ": {
@@ -3317,6 +3437,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "api",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "api",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
@@ -3340,13 +3463,16 @@ cronjobs:
     ENV_SHORT: 'stage'
     APP_DIR: 'api'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -3369,7 +3495,7 @@ cronjobs:
 ",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "api 🧾 sbom upload | prod ": {
@@ -3498,6 +3624,9 @@ cronjobs:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
@@ -3521,13 +3650,16 @@ cronjobs:
     ENV_SHORT: 'prod'
     APP_DIR: 'www'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -3543,7 +3675,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-prod-www",
           "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www ↩️ Rollback ⚠️ | stage ": {
@@ -3582,6 +3714,9 @@ application:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
@@ -3605,13 +3740,16 @@ application:
     ENV_SHORT: 'stage'
     APP_DIR: 'www'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -3627,7 +3765,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-stage-www",
           "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🔨 app | prod ": {
@@ -3687,6 +3825,9 @@ application:
         "stage": "build",
         "variables": {
           "APP_DIR": "www",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "HOST": "www.prod.test-app.pan.panter.cloud",
@@ -3699,7 +3840,7 @@ application:
           "KUBE_APP_NAME_PREFIX": "",
           "KUBE_NAMESPACE": "pan-test-app-prod",
           "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🔨 app | stage ": {
@@ -3759,6 +3900,9 @@ application:
         "stage": "build",
         "variables": {
           "APP_DIR": "www",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "HOST": "www.stage.test-app.pan.panter.cloud",
@@ -3771,7 +3915,7 @@ application:
           "KUBE_APP_NAME_PREFIX": "",
           "KUBE_NAMESPACE": "pan-test-app-stage",
           "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🔨 docker | prod ": {
@@ -3958,6 +4102,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -3986,13 +4133,16 @@ COPY --chown=node:node .yarn /app/.yarn",
     ENV_SHORT: 'prod'
     APP_DIR: 'www'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -4008,7 +4158,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-prod-www",
           "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🚀 Deploy | stage ": {
@@ -4059,6 +4209,9 @@ application:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/www",
           "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
@@ -4087,13 +4240,16 @@ application:
     ENV_SHORT: 'stage'
     APP_DIR: 'www'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -4109,7 +4265,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-stage-www",
           "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🛑 Stop ⚠️ | prod ": {
@@ -4153,6 +4309,9 @@ application:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
@@ -4176,13 +4335,16 @@ application:
     ENV_SHORT: 'prod'
     APP_DIR: 'www'
     ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -4198,7 +4360,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-prod-www",
           "ROOT_URL": "https://www.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🛑 Stop ⚠️ | stage ": {
@@ -4242,6 +4404,9 @@ application:
         "variables": {
           "APP_DIR": "www",
           "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
           "COMPONENT_NAME": "www",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
@@ -4265,13 +4430,16 @@ application:
     ENV_SHORT: 'stage'
     APP_DIR: 'www'
     ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'www.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://www.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'www'
     KUBE_APP_NAME_PREFIX: ''
     HOST_CANONICAL: 'www.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]'
 application:
   host: 'www.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -4287,7 +4455,7 @@ application:
 ",
           "RELEASE_NAME": "pan-test-app-stage-www",
           "ROOT_URL": "https://www.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
       "www 🧾 sbom upload | prod ": {
