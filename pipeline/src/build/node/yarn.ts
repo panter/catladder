@@ -15,7 +15,7 @@ const getYarnInstallCommand = (context: Context) => {
 
 export const ensureNodeVersion = (context: Context) => [
   "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-  "if [ -f ./.nvmrc ]; then nvm install <<< .nvmrc; fi",
+  "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
 ];
 
 export const getYarnInstall = (context: Context) => [
