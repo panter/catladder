@@ -1,3 +1,11 @@
+# [1.101.0](https://git.panter.ch/catladder/catladder/compare/v1.100.2...v1.101.0) (2023-04-18)
+
+
+### Features
+
+* add build info environment variables ([4dd17ee](https://git.panter.ch/catladder/catladder/commit/4dd17ee115909b53e197a9dab6b9bd732e7dcc67))
+* allow to set tags and cache options on build and deploy ([d6b2b8f](https://git.panter.ch/catladder/catladder/commit/d6b2b8f05c95f0f14187c3b1673bac4e74d05deb))
+
 ## [1.100.2](https://git.panter.ch/catladder/catladder/compare/v1.100.1...v1.100.2) (2023-04-14)
 
 
