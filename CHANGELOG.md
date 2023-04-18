@@ -1,3 +1,11 @@
+## [1.101.1](https://git.panter.ch/catladder/catladder/compare/v1.101.0...v1.101.1) (2023-04-18)
+
+
+### Bug Fixes
+
+* job does fail if repo contains nvmrc but image does not provide nvm ([14cf564](https://git.panter.ch/catladder/catladder/commit/14cf5640e0ac37800e94d6c8ef1182057dcc3485))
+* update tests ([8d606de](https://git.panter.ch/catladder/catladder/commit/8d606de8b95207aca174b4de3aa57e5dca36d234))
+
 # [1.101.0](https://git.panter.ch/catladder/catladder/compare/v1.100.2...v1.101.0) (2023-04-18)
 
 
