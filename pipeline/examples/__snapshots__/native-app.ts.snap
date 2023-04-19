@@ -1,0 +1,2958 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+{
+  "mainBranch": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 docker | dev ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": "4 weeks",
+          "name": "dev/api",
+          "on_stop": "api 🛑 Stop ⚠️ | dev ",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=dev,env-name=dev,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy dev",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "ENV_VARS": "ENV_SHORT: 'dev'
+APP_DIR: 'api'
+ENV_TYPE: 'dev'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-dev-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-dev-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-dev-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | dev ": {
+        "environment": {
+          "action": "stop",
+          "name": "dev/api",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-dev-api --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop dev",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧾 sbom upload | dev ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "api 🧾 sbom | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "dev" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "api 🧾 sbom | dev ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "api 🚀 Deploy | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 👮 lint": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+        },
+      },
+      "app 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+            "app/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-next-cache",
+            "paths": [
+              "app/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cat <<EOF > app/.env
+ENV_SHORT=dev
+APP_DIR=app
+ENV_TYPE=dev
+BUILD_INFO_ID=some-id
+BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
+BUILD_INFO_CURRENT_VERSION=3.2.1
+HOST=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+APP_STORE_CONNECT_API_KEY_CONTENT=$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT
+APP_STORE_CONNECT_ISSUER_ID=$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID
+APP_STORE_CONNECT_API_KEY_ID=$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID
+GRAPHQL_URL=https://pan-test-app-dev-api-unknown-host.example.com/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+EOF",
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec pod install --project-directory=ios",
+          "bundle exec fastlane build",
+        ],
+        "stage": "build",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GRAPHQL_URL": "https://pan-test-app-dev-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+        ],
+        "environment": {
+          "name": "dev/app",
+          "url": "https://unknown-host.example.com",
+        },
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "app 👮 lint",
+          },
+          {
+            "artifacts": true,
+            "job": "app 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "app 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "app 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "cd app",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec fastlane deploy_test",
+        ],
+        "stage": "deploy dev",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GRAPHQL_URL": "https://pan-test-app-dev-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🛡 audit": {
+        "allow_failure": true,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+        },
+      },
+      "app 🧪 test": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+        },
+      },
+      "app 🧾 sbom upload | dev ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "dev" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | dev ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "mr": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 docker | review ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": "2 week",
+          "name": "review/some-commit/api",
+          "on_stop": "api 🛑 Stop ⚠️ | review ",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-review-mr1234-api --command="yarn,start" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=review,env-name=review,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy review",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "ENV_VARS": "ENV_SHORT: 'review'
+APP_DIR: 'api'
+ENV_TYPE: 'review'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_review_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | review ": {
+        "environment": {
+          "action": "stop",
+          "name": "review/some-commit/api",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-review-mr1234-api --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop review",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧾 sbom upload | review ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "api 🧾 sbom | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "review" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "api 🧾 sbom | review ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "api 🚀 Deploy | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 👮 lint": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+        },
+      },
+      "app 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+            "app/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-next-cache",
+            "paths": [
+              "app/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cat <<EOF > app/.env
+ENV_SHORT=review
+APP_DIR=app
+ENV_TYPE=review
+BUILD_INFO_ID=some-id
+BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
+BUILD_INFO_CURRENT_VERSION=3.2.1
+HOST=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+APP_STORE_CONNECT_API_KEY_CONTENT=$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT
+APP_STORE_CONNECT_ISSUER_ID=$CL_review_app_APP_STORE_CONNECT_ISSUER_ID
+APP_STORE_CONNECT_API_KEY_ID=$CL_review_app_APP_STORE_CONNECT_API_KEY_ID
+GRAPHQL_URL=https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+EOF",
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec pod install --project-directory=ios",
+          "bundle exec fastlane build",
+        ],
+        "stage": "build",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_review_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_review_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GRAPHQL_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+        ],
+        "environment": {
+          "name": "review/some-commit/app",
+          "url": "https://unknown-host.example.com",
+        },
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "app 👮 lint",
+          },
+          {
+            "artifacts": true,
+            "job": "app 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "app 🧪 test",
+          },
+          {
+            "artifacts": false,
+            "job": "app 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "cd app",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec fastlane deploy_test",
+        ],
+        "stage": "deploy review",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_review_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_review_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GRAPHQL_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🛡 audit": {
+        "allow_failure": true,
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+        },
+      },
+      "app 🧪 test": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+        },
+      },
+      "app 🧾 sbom upload | review ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "review" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | review ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "taggedRelease": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api 🔨 app | prod ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 app | stage ": {
+        "artifacts": {
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd api",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 docker | prod ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🔨 docker | stage ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": undefined,
+          "name": "prod/api",
+          "on_stop": "api 🛑 Stop ⚠️ | prod ",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | prod ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=prod,env-name=prod,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy prod",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "ENV_VARS": "ENV_SHORT: 'prod'
+APP_DIR: 'api'
+ENV_TYPE: 'prod'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-prod-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-prod-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-prod-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": undefined,
+          "name": "stage/api",
+          "on_stop": "api 🛑 Stop ⚠️ | stage ",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | stage ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "gcloud auth configure-docker asia-east1-docker.pkg.dev",
+          "docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "docker push asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,app-name=test-app,env-type=stage,env-name=stage,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated",
+          "docker image rm asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "deploy stage",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "ENV_VARS": "ENV_SHORT: 'stage'
+APP_DIR: 'api'
+ENV_TYPE: 'stage'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-stage-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-stage-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-stage-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | prod ": {
+        "environment": {
+          "action": "stop",
+          "name": "prod/api",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-prod-api --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop prod",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛑 Stop ⚠️ | stage ": {
+        "environment": {
+          "action": "stop",
+          "name": "stage/api",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
+          ",
+          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud run services delete pan-test-app-stage-api --project=asdf --region=asia-east1",
+          "set -e",
+        ],
+        "stage": "stop stage",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🧾 sbom upload | prod ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "api 🧾 sbom | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "prod" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "api 🧾 sbom upload | stage ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "api 🧾 sbom | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/api" "stage" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "api 🧾 sbom | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "api 🚀 Deploy | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "api 🧾 sbom | stage ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "api 🚀 Deploy | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🔨 app | prod ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+            "app/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-next-cache",
+            "paths": [
+              "app/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cat <<EOF > app/.env
+ENV_SHORT=prod
+APP_DIR=app
+ENV_TYPE=prod
+BUILD_INFO_ID=some-id
+BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
+BUILD_INFO_CURRENT_VERSION=3.2.1
+HOST=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+APP_STORE_CONNECT_API_KEY_CONTENT=$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT
+APP_STORE_CONNECT_ISSUER_ID=$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID
+APP_STORE_CONNECT_API_KEY_ID=$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID
+GRAPHQL_URL=https://pan-test-app-prod-api-unknown-host.example.com/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+EOF",
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec pod install --project-directory=ios",
+          "bundle exec fastlane build",
+        ],
+        "stage": "build",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GRAPHQL_URL": "https://pan-test-app-prod-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🔨 app | stage ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+            "app/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-next-cache",
+            "paths": [
+              "app/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cat <<EOF > app/.env
+ENV_SHORT=stage
+APP_DIR=app
+ENV_TYPE=stage
+BUILD_INFO_ID=some-id
+BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
+BUILD_INFO_CURRENT_VERSION=3.2.1
+HOST=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+APP_STORE_CONNECT_API_KEY_CONTENT=$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT
+APP_STORE_CONNECT_ISSUER_ID=$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID
+APP_STORE_CONNECT_API_KEY_ID=$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID
+GRAPHQL_URL=https://pan-test-app-stage-api-unknown-host.example.com/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+EOF",
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec pod install --project-directory=ios",
+          "bundle exec fastlane build",
+        ],
+        "stage": "build",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GRAPHQL_URL": "https://pan-test-app-stage-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+        ],
+        "environment": {
+          "name": "prod/app",
+          "url": "https://unknown-host.example.com",
+        },
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": true,
+            "job": "app 🔨 app | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "cd app",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec fastlane deploy_test",
+        ],
+        "stage": "deploy prod",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GRAPHQL_URL": "https://pan-test-app-prod-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "cache": [
+          {
+            "key": {
+              "files": [
+                "app/Gemfile.lock",
+              ],
+            },
+            "paths": [
+              "app/vendor",
+            ],
+          },
+        ],
+        "environment": {
+          "name": "stage/app",
+          "url": "https://unknown-host.example.com",
+        },
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": true,
+            "job": "app 🔨 app | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "cd app",
+          "bundle config set --local path 'vendor/ruby'",
+          "gem install bundler",
+          "bundle install",
+          "bundle exec fastlane deploy_test",
+        ],
+        "stage": "deploy stage",
+        "tags": [
+          "mac-runner",
+        ],
+        "variables": {
+          "APP_DIR": "app",
+          "APP_STORE_CONNECT_API_KEY_CONTENT": "$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT",
+          "APP_STORE_CONNECT_API_KEY_ID": "$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID",
+          "APP_STORE_CONNECT_ISSUER_ID": "$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GRAPHQL_URL": "https://pan-test-app-stage-api-unknown-host.example.com/graphql",
+          "HOST": "unknown-host.example.com",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "LANG": "en_US.UTF-8",
+          "LC_A": "L=en_US.UTF-8",
+          "ROOT_URL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+        },
+      },
+      "app 🧾 sbom upload | prod ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "prod" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom upload | stage ": {
+        "allow_failure": true,
+        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
+        "interruptible": true,
+        "needs": [
+          "app 🧾 sbom | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "/dtrackuploader https://dep.panter.dev/ "$DT_KEY" upload "pan-test-app/app" "stage" "__sbom.json" vex.json",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+      "app 🧾 sbom | stage ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [
+          "app 🚀 Deploy | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "verify",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+}
+`;
