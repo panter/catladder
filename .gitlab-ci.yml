@@ -1,4 +1,4 @@
-image: node:14 # npm publish has some problem with node 16
+image: node:16
 variables:
   INLINE_DOCKER_REGISTRY: $CI_REGISTRY_IMAGE
   DOCKER_HOST: tcp://0.0.0.0:2375
@@ -157,6 +157,7 @@ test:
     - set -e # reenable
 
 .npm-publish-base:
+  image: node:14 # npm publish has some problem with node 16
   extends:
     - .yarn-cache
   needs: ["🔨 packages"]
