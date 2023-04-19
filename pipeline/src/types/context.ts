@@ -6,6 +6,22 @@ import type {
   EnvType,
 } from "./config";
 
+export type EnvironmentEnvVars = {
+  envVars: Record<string, string>;
+  secretEnvVarKeys: SecretEnvVar[];
+};
+export type EnvironmentEnvVarPart = {
+  host: string;
+  url: string;
+
+  /**
+   * vars that only are injected in certain jobs, but not elsewhere
+   */
+  jobOnlyVars: {
+    deploy: EnvironmentEnvVars;
+    build: EnvironmentEnvVars;
+  };
+} & EnvironmentEnvVars;
 export type Environment = {
   host: string;
   url: string;
@@ -21,13 +37,9 @@ export type Environment = {
   shortName: string;
   slugPrefix: string;
   slug: string;
-  /**
-   * env vars contain all build-time env vars. secrets have to be resolved (they are stored in gitlab)
-   */
-  envVars: Record<string, string>;
+
   envType: EnvType;
-  secretEnvVarKeys: SecretEnvVar[];
-};
+} & EnvironmentEnvVarPart;
 
 export type CommitInfo = {
   refName: string;

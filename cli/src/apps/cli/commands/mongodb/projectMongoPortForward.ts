@@ -1,5 +1,8 @@
 import type Vorpal from "vorpal";
-import { getEnvVars, parseChoice } from "../../../../config/getProjectConfig";
+import {
+  getEnvVarsResolved,
+  parseChoice,
+} from "../../../../config/getProjectConfig";
 import { logError } from "../../../../utils/log";
 import { startKubePortForward } from "../../../../kubernetes/portForward";
 import { getProjectNamespace } from "../../../../utils/projects";
@@ -46,7 +49,7 @@ export default async (vorpal: Vorpal) =>
         message: "Local port: ",
       });
       const { env, componentName } = parseChoice(envComponent);
-      const envVars = await getEnvVars(this, env, componentName);
+      const envVars = await getEnvVarsResolved(this, env, componentName);
       const MONGODB_ROOT_PASSWORD = envVars?.MONGODB_ROOT_PASSWORD;
       const connectionUrl = `mongodb://root:${MONGODB_ROOT_PASSWORD}@localhost:${localPort}`;
       clipboard.writeSync(connectionUrl);

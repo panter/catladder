@@ -27,6 +27,7 @@ export const createBuildJob = (
         ...RUNNER_BUILD_RESOURCE_VARIABLES,
         ...(variables ?? {}),
         ...context.environment.envVars,
+        ...context.environment.jobOnlyVars.build.envVars,
         ...(context.componentConfig.build.extraVars ?? {}),
       },
 

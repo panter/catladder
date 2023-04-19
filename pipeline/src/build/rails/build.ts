@@ -18,7 +18,10 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
 
   return [
     createDockerBuildJobBase(context, {
-      variables: context.componentConfig.build.extraVars,
+      variables: {
+        ...context.environment.jobOnlyVars.build.envVars,
+        ...context.componentConfig.build.extraVars,
+      },
       // custom script
       script: [
         gitlabDockerLogin,

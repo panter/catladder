@@ -7,7 +7,8 @@ import type Vorpal from "vorpal";
 import {
   getAllComponentsWithAllEnvsHierarchical,
   getEnvironment,
-  getEnvVars,
+  getEnvVarsResolved,
+  getJobOnlyEnvVarsResolved,
   getProjectComponents,
   parseChoice,
 } from "../../../../config/getProjectConfig";
@@ -45,24 +46,42 @@ const resolveJson = (v: Vars) =>
     })
   );
 
-const getNonHiddenSecretEnvVarKeys = async (
+const getSecretEnvVarKeysToConfigure = async (
   env: string,
   componentName: string
 ) => {
-  const { secretEnvVarKeys } = await getEnvironment(env, componentName);
-  return secretEnvVarKeys.filter((k) => !k.hidden).map((k) => k.key);
+  const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment(
+    env,
+    componentName
+  );
+  return [
+    ...jobOnlyVars.build.secretEnvVarKeys,
+    ...jobOnlyVars.deploy.secretEnvVarKeys,
+    ...secretEnvVarKeys,
+  ]
+    .filter((k) => !k.hidden)
+    .map((k) => k.key);
 };
 const getEnvVarsToEdit = async (
   instance: CommandInstance,
   env: string,
   componentName: string
 ) => {
-  const secretEnvVarKeys = await getNonHiddenSecretEnvVarKeys(
+  const secretEnvVarKeys = await getSecretEnvVarKeysToConfigure(
     env,
     componentName
   );
 
-  const allEnvVars = await getEnvVars(instance, env, componentName);
+  const normalEnvVars = await getEnvVarsResolved(instance, env, componentName);
+  const jobOnlyEnvVars = await getJobOnlyEnvVarsResolved(
+    instance,
+    env,
+    componentName
+  );
+  const allEnvVars = {
+    ...normalEnvVars,
+    ...jobOnlyEnvVars,
+  };
   return Object.fromEntries(
     secretEnvVarKeys.map((key) => {
       const value = allEnvVars[key];
@@ -117,7 +136,7 @@ const doItFor = async (
           ? Object.keys(valuesToEdit[componentName][env])
           : [];
         // check whether newValues have the exact number of keys
-        const secretEnvVarKeys = await getNonHiddenSecretEnvVarKeys(
+        const secretEnvVarKeys = await getSecretEnvVarKeysToConfigure(
           env,
           componentName
         );

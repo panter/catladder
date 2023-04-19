@@ -38,7 +38,7 @@ export const setupGitlabToken = async (vorpal: CommandInstance) => {
     await setPreference(TOKEN_KEY, personalToken);
   }
 };
-export const getGitlabToken = async (vorpal: CommandInstance) => {
+export const getGitlabToken = async (vorpal: CommandInstance | null) => {
   if (!(await hasGitlabToken())) {
     if (!vorpal) {
       console.error(
@@ -53,7 +53,7 @@ export const getGitlabToken = async (vorpal: CommandInstance) => {
 
 type Method = "GET" | "PUT" | "POST" | "DELETE";
 export const doGitlabRequest = async <T = any>(
-  vorpal: CommandInstance,
+  vorpal: CommandInstance | null,
   path: string,
   data: any = undefined,
   method: Method = "GET"
@@ -89,7 +89,7 @@ export const doGitlabRequest = async <T = any>(
 };
 
 export const getProjectInfo = async (
-  vorpal: CommandInstance
+  vorpal: CommandInstance | null
 ): Promise<{ id: string; web_url: string }> => {
   const gitRemoteOriginUrl = (
     await exec("git config --get remote.origin.url")
@@ -114,7 +114,7 @@ type GitlabVariable = {
   environment_scope: string;
 };
 export const getAllVariables = memoizee(
-  async (vorpal: CommandInstance): Promise<Array<GitlabVariable>> => {
+  async (vorpal: CommandInstance | null): Promise<Array<GitlabVariable>> => {
     const { id } = await getProjectInfo(vorpal);
     let all: Array<GitlabVariable> = [];
     let result: Array<GitlabVariable>;

@@ -1,5 +1,8 @@
 import type { Config, ComponentConfig } from "@catladder/pipeline";
-import { getEnvVars, getProjectConfig } from "../../config/getProjectConfig";
+import {
+  getEnvVarsResolved,
+  getProjectConfig,
+} from "../../config/getProjectConfig";
 import { getGitRoot } from "../../utils/projects";
 import { join } from "path";
 const getCurrentComponentName = async (
@@ -29,14 +32,14 @@ const getAllVariablesToPrint = async (
 
   let variables = {};
   if (currentComponent) {
-    variables = await getEnvVars(null, env, currentComponent);
+    variables = await getEnvVarsResolved(null, env, currentComponent);
   } else {
     // when in a monorep and not in a subapp, merge all env vars.
     // this is not 100% correct, but better than not exporting any vars at all
     // so we also add prefixed variants
     variables = await Object.keys(components).reduce(
       async (acc, componentName) => {
-        const subappvars = await getEnvVars(null, env, componentName);
+        const subappvars = await getEnvVarsResolved(null, env, componentName);
         return {
           ...(await acc),
           ...subappvars,

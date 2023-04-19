@@ -18,6 +18,7 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
     variables: {
       APP_PATH: context.componentConfig.dir,
       ...NODE_RUNNER_BUILD_VARIABLES,
+      ...context.environment.jobOnlyVars.build.envVars,
       ...(buildConfig.extraVars ?? {}),
     },
     stage: "test",

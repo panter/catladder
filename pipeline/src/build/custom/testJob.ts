@@ -29,6 +29,7 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
     variables: {
       APP_PATH: context.componentConfig.dir,
       ...RUNNER_CUSTOM_TEST_VARIABLES,
+      ...context.environment.jobOnlyVars.build.envVars,
       ...(buildConfig.extraVars ?? {}),
     },
     services: buildConfig.jobServices,

@@ -1,6 +1,10 @@
-import { isObject, merge } from "lodash";
+import { merge } from "lodash";
 import { DEPLOY_TYPES } from "../deploy";
-import type { CommitInfo, Context } from "../types";
+import type {
+  CommitInfo,
+  Context,
+  EnvironmentEnvVarPart as EnvironmentVariables,
+} from "../types";
 import type { Config, DevLocalEnvConfig } from "../types/config";
 
 import { getEnvironmentContext } from "./getEnvironmentContext";
@@ -8,6 +12,12 @@ import {
   resolveReferences,
   translateLegacyFromComponents,
 } from "./resolveReferences";
+import {
+  stringListToSecreteEnvVarList,
+  makeSecretEnvVarMapping,
+  stringifyValues,
+} from "./utils/envVars";
+import { transformJobOnlyVars } from "./transformJobOnlyVars";
 
 export type SecretEnvVar = {
   key: string;
@@ -20,12 +30,7 @@ export const getEnvironmentVariables = async (
   env: string,
   commitInfo?: CommitInfo,
   alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
-): Promise<{
-  envVars: Record<string, string>;
-  secretEnvVarKeys: SecretEnvVar[];
-  host: string;
-  url: string;
-}> => {
+): Promise<EnvironmentVariables> => {
   const environmentContext = getEnvironmentContext(
     config,
     env,
@@ -33,7 +38,8 @@ export const getEnvironmentVariables = async (
     commitInfo
   );
 
-  const { envConfigRaw, deployConfigRaw, envType } = environmentContext;
+  const { envConfigRaw, deployConfigRaw, buildConfigRaw, envType } =
+    environmentContext;
 
   const basePredefinedVariables = {
     ENV_SHORT: env,
@@ -90,31 +96,24 @@ export const getEnvironmentVariables = async (
     : [];
 
   const secretEnvVarKeys: SecretEnvVar[] = [
-    ...(envConfigRaw.vars?.secret ?? []).map((key) => ({ key })),
+    ...stringListToSecreteEnvVarList(envConfigRaw.vars?.secret ?? []),
     ...additionalSecretKeys,
   ];
-  const secretEnvVars = Object.fromEntries(
-    secretEnvVarKeys.map(({ key }) => [
-      key,
-      `$${getSecretVarName(env, componentName, key)}`,
-    ])
+  const secretEnvVars = makeSecretEnvVarMapping(
+    env,
+    componentName,
+    secretEnvVarKeys
   );
-
   // this is deprecated, we now support: $componentname:FOO
   const legacyFromComponents = envConfigRaw.vars?.fromComponents ?? {};
-  const publicEnvVarsRawWithLegasyFromComponents = merge(
+  const publicEnvVarsRawWithLegacyFromComponents = merge(
     {},
     translateLegacyFromComponents(legacyFromComponents),
     publicEnvVarsRaw
   );
 
-  const publicEnvVarsRawSanitized = Object.fromEntries(
-    Object.entries(publicEnvVarsRawWithLegasyFromComponents).map(
-      ([key, value]) => [
-        key,
-        isObject(value) ? JSON.stringify(value) : `${value}`,
-      ]
-    )
+  const publicEnvVarsRawSanitized = stringifyValues(
+    publicEnvVarsRawWithLegacyFromComponents
   );
 
   const envVarsRaw = addIndexVar({
@@ -141,6 +140,19 @@ export const getEnvironmentVariables = async (
   return {
     envVars,
     secretEnvVarKeys,
+    jobOnlyVars: {
+      build: await transformJobOnlyVars(
+        env,
+        componentName,
+        (buildConfigRaw && buildConfigRaw.jobVars) || null
+      ),
+      deploy: await transformJobOnlyVars(
+        env,
+        componentName,
+        (deployConfigRaw && deployConfigRaw.jobVars) || null
+      ),
+    },
+
     host,
     url,
   };

@@ -10,8 +10,12 @@ export const getEnvironment = async (
   env: string,
   commitInfo?: CommitInfo
 ): Promise<Environment> => {
-  const { envVars, secretEnvVarKeys, host, url } =
-    await getEnvironmentVariables(config, componentName, env, commitInfo);
+  const variables = await getEnvironmentVariables(
+    config,
+    componentName,
+    env,
+    commitInfo
+  );
 
   const envContext = getEnvironmentContext(
     config,
@@ -24,17 +28,15 @@ export const getEnvironment = async (
 
   return {
     envType,
-    host,
-    url,
+
     gitlabEnvironment: {
       name: envContext.gitlabEnvironmentName,
-      url,
+      url: variables.url,
     },
     fullName: envContext.fullName,
     slugPrefix: envContext.environmentSlugPrefix,
     slug: envContext.environmentSlug,
     shortName: env,
-    envVars,
-    secretEnvVarKeys,
+    ...variables,
   };
 };

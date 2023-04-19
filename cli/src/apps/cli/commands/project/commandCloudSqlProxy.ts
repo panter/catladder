@@ -1,13 +1,13 @@
 import type { Context } from "@catladder/pipeline";
-import { createKubernetesCloudsqlBaseValues } from "@catladder/pipeline";
-import { isOfDeployType } from "@catladder/pipeline";
-import { spawn } from "child-process-promise";
-import { writeFile } from "fs-extra";
-import { withFile } from "tmp-promise";
-import type Vorpal from "vorpal";
 import {
-  getEnvVars,
-  getGitlabVar,
+  createKubernetesCloudsqlBaseValues,
+  isOfDeployType,
+} from "@catladder/pipeline";
+import { spawn } from "child-process-promise";
+import type Vorpal from "vorpal";
+import type { CommandInstance } from "vorpal";
+import {
+  getEnvVarsResolved,
   getPipelineContextByChoice,
   parseChoice,
 } from "../../../../config/getProjectConfig";
@@ -25,6 +25,10 @@ export default async (vorpal: Vorpal) =>
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
       const { env, componentName } = parseChoice(envComponent);
+      if (!componentName) {
+        this.log("need componentName");
+        return;
+      }
 
       const context = await getPipelineContextByChoice(env, componentName);
       let proxyInfo: ProxyInfo;
@@ -35,11 +39,11 @@ export default async (vorpal: Vorpal) =>
         );
       }
       if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
-        proxyInfo = await getProxyInfoForKubernetes(context);
+        proxyInfo = await getProxyInfoForKubernetes(this, context);
       } else if (
         isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
       ) {
-        proxyInfo = await getProxyInfoForCloudRun(context);
+        proxyInfo = await getProxyInfoForCloudRun(this, context);
       } else {
         throw new Error("unsupported environment");
       }
@@ -77,14 +81,15 @@ export default async (vorpal: Vorpal) =>
     });
 
 const getProxyInfoForKubernetes = async (
+  vorpal: CommandInstance,
   context: Context
 ): Promise<ProxyInfo> => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("unsupported");
   }
 
-  const envVars = await getEnvVars(
-    this,
+  const envVars = await getEnvVarsResolved(
+    vorpal,
     context.environment.shortName,
     context.componentName
   );
@@ -106,6 +111,7 @@ const getProxyInfoForKubernetes = async (
 };
 
 const getProxyInfoForCloudRun = async (
+  vorpal: CommandInstance,
   context: Context
 ): Promise<ProxyInfo> => {
   if (
@@ -115,8 +121,8 @@ const getProxyInfoForCloudRun = async (
     throw new Error("unsupported");
   }
 
-  const envVars = await getEnvVars(
-    this,
+  const envVars = await getEnvVarsResolved(
+    vorpal,
     context.environment.shortName,
     context.componentName
   );

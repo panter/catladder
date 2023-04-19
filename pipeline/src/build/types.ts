@@ -1,4 +1,4 @@
-import type { GitlabJobImage, GitlabJobService } from "../types";
+import type { EnvVars, GitlabJobImage, GitlabJobService } from "../types";
 
 import type { CatladderJob } from "../types/jobs";
 
@@ -17,8 +17,16 @@ export type BuildConfigBase = {
    * command to run on the image to start the app (e.g. yarn start)
    */
   startCommand?: string;
+
+  /**
+   * vars that only exist in the build jobs.
+   * Can curently not reference other variables from other components
+   */
+  jobVars?: EnvVars;
   /**
    * additional env vars for the buid jobs
+   *
+   * @deprecated use jobVars
    */
   extraVars?: Record<string, string>;
   /**

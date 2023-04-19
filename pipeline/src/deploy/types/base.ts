@@ -1,3 +1,5 @@
+import type { EnvVars } from "../../types/config";
+
 export type DeployConfigBase = {
   /**
    * whether to deploy automatically or manual. If not defined, these rules apply:
@@ -18,7 +20,15 @@ export type DeployConfigBase = {
   jobTags?: string[];
 
   /**
+   * vars that only exist in the deploy job.
+   * Can curently not reference other variables from other components
+   */
+  jobVars?: EnvVars;
+
+  /**
    * additional env vars for the deploy job
+   *
+   * @deprecated use deploy.jobVars for deploy job specific variables
    */
   extraVars?: Record<string, string>;
 };

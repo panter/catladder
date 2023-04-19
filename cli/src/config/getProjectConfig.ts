@@ -16,7 +16,7 @@ import { watch } from "fs";
 
 export { parseChoice } from "./parseChoice";
 
-let currentConfig: Config = null;
+let currentConfig: Config | null = null;
 
 // reload the config on change
 const reloadConfigAndObserve = async () => {
@@ -39,7 +39,7 @@ export const getProjectConfig = async () => {
     // initially
     await reloadConfigAndObserve();
   }
-  return currentConfig;
+  return currentConfig as Config;
 };
 
 export const getGitlabCiFilePath = async () => {
@@ -123,7 +123,7 @@ export const getGitlabVar = async (
 };
 
 const resolveSecrets = async (
-  vorpal: CommandInstance,
+  vorpal: CommandInstance | null,
   allEnvVars: Record<string, string>
 ) => {
   const allVariablesInGitlab = await getAllVariables(vorpal);
@@ -145,16 +145,40 @@ const resolveSecrets = async (
   );
 };
 
-export const getEnvVars = async (
+export const getEnvVarsResolved = async (
+  vorpal: CommandInstance | null,
+  env: string,
+  componentName: string | null
+) => {
+  if (!componentName) {
+    return {};
+  }
+  try {
+    const envionment = await getEnvironment(env, componentName);
+    // in the pipeline the secrets alreadyy exists  and bash will expand them
+    // but here we need to manually load them
+    return resolveSecrets(vorpal, envionment.envVars);
+  } catch (e) {
+    // env is disabled
+    return {};
+  }
+};
+
+/**
+ *
+ * is used to get job only vars that should also be editable locally with catladder.
+ */
+export const getJobOnlyEnvVarsResolved = async (
   vorpal: CommandInstance,
   env: string,
   componentName: string
 ) => {
   try {
     const envionment = await getEnvironment(env, componentName);
-    // in the pipeline the secrets alreadyy exists  and bash will expand them
-    // but here we need to manually load them
-    return resolveSecrets(vorpal, envionment.envVars);
+    return resolveSecrets(vorpal, {
+      ...envionment.jobOnlyVars.build.envVars,
+      ...envionment.jobOnlyVars.deploy.envVars,
+    });
   } catch (e) {
     // env is disabled
     return {};

@@ -76,6 +76,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
       ...DEPLOY_RUNNER_VARIABLES,
       ...context.environment.envVars,
       ...(hasDocker ? getDockerImageVariables(context) : {}),
+      ...context.environment.jobOnlyVars.deploy.envVars,
       ...(context.componentConfig.deploy
         ? context.componentConfig.deploy.extraVars ?? {}
         : {}),
@@ -115,6 +116,7 @@ export const getBaseDeploymentStopJob = (
     ],
     variables: {
       ...DEPLOY_RUNNER_VARIABLES,
+      ...context.environment.jobOnlyVars.deploy.envVars,
       GIT_STRATEGY: "none",
     },
     stage: "stop",
@@ -138,6 +140,7 @@ export const getBaseRollbackJob = (context: Context): JobWithoutScript => {
     ],
     variables: {
       ...DEPLOY_RUNNER_VARIABLES,
+      ...context.environment.jobOnlyVars.deploy.envVars,
       GIT_STRATEGY: "none",
     },
     stage: "rollback",
