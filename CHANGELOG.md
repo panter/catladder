@@ -1,3 +1,10 @@
+## [1.101.2](https://git.panter.ch/catladder/catladder/compare/v1.101.1...v1.101.2) (2023-04-19)
+
+
+### Bug Fixes
+
+* **node-static:** broken nginx config ([60473b6](https://git.panter.ch/catladder/catladder/commit/60473b68c4dd36a62e21b2af1ef06d3467a15baa))
+
 ## [1.101.1](https://git.panter.ch/catladder/catladder/compare/v1.101.0...v1.101.1) (2023-04-18)
 
 
