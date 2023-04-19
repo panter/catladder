@@ -144,6 +144,13 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * This feedback will help us to generalize use cases
    */
   customJobs?: CatladderJob[] | ((context: Context) => CatladderJob[]);
+
+  /**
+   * experimental. whether to create a .env localy and during build jobs
+   *
+   * Be careful, this will overwrite any existing .env file!
+   */
+  dotEnv?: boolean;
 } & DefaultEnvConfig;
 
 export type ConfigProps = {

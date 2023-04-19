@@ -10,6 +10,7 @@ import {
   RUNNER_BUILD_RESOURCE_VARIABLES,
 } from "./constants";
 import { writeBuildInfo } from "./writeBuildInfo";
+import { writeDotEnv } from "./writeDotEnv";
 
 export const createBuildJob = (
   context: Context,
@@ -32,6 +33,7 @@ export const createBuildJob = (
       },
 
       script: [
+        ...(context.componentConfig.dotEnv ? writeDotEnv(context) : []),
         ...writeBuildInfo(context),
         ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.componentConfig.dir}`,
