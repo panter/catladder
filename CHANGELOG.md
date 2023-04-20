@@ -1,3 +1,10 @@
+# [1.102.0](https://git.panter.ch/catladder/catladder/compare/v1.101.4...v1.102.0) (2023-04-20)
+
+
+### Features
+
+* job only env vars ([fc37e0d](https://git.panter.ch/catladder/catladder/commit/fc37e0dba2301d690ee4cbc14132f5471f9ccb1e))
+
 ## [1.101.4](https://git.panter.ch/catladder/catladder/compare/v1.101.3...v1.101.4) (2023-04-20)
 
 
