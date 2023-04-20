@@ -13,6 +13,9 @@ const config: Config = {
       deploy: {
         type: "custom",
         requiresDocker: true,
+        jobVars: {
+          secret: ["DEPLOY_API_KEY"],
+        },
         script: ["echo 'would deploy'"],
         stopScript: ["echo 'would stop'"],
       },
