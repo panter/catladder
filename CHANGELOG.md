@@ -1,3 +1,10 @@
+## [1.101.4](https://git.panter.ch/catladder/catladder/compare/v1.101.3...v1.101.4) (2023-04-20)
+
+
+### Performance Improvements
+
+* increase memory limit for certain small jobs ([005713d](https://git.panter.ch/catladder/catladder/commit/005713dd0bd47c0b14817682b6e655728f1ae513))
+
 ## [1.101.3](https://git.panter.ch/catladder/catladder/compare/v1.101.2...v1.101.3) (2023-04-19)
 
 ## [1.101.2](https://git.panter.ch/catladder/catladder/compare/v1.101.1...v1.101.2) (2023-04-19)
