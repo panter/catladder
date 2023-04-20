@@ -11,7 +11,7 @@ const DEPLOY_RUNNER_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
   KUBERNETES_CPU_LIMIT: "1",
   KUBERNETES_MEMORY_REQUEST: "200Mi",
-  KUBERNETES_MEMORY_LIMIT: "200Mi",
+  KUBERNETES_MEMORY_LIMIT: "400Mi",
 };
 type JobWithoutScript = Omit<CatladderJob, "script">;
 export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
