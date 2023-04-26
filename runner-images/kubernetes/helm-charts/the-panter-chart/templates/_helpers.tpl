@@ -74,12 +74,13 @@ $(POSTGRESQL_PASSWORD)
 
 {{- define "cloudSqlContainer" -}}
 name: cloudsql-proxy
-image: eu.gcr.io/cloudsql-docker/gce-proxy:1.27.0-alpine
+image: eu.gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.3.0-alpine
 # see https://github.com/kubernetes/kubernetes/issues/25908#issuecomment-308569672
+# and https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/753-sidecar-containers
 command: ["/bin/sh", "-c"]
 args:
   - |
-    /cloud_sql_proxy -instances={{ .Values.cloudsql.instanceConnectionName }}=tcp:5432 -credential_file=/secrets/cloudsql/credentials.json &
+    /cloud-sql-proxy --auto-ip --credentials-file /secrets/cloudsql/credentials.json "{{ .Values.cloudsql.instanceConnectionName }}" &
     CHILD_PID=$!
     (while true; do if [[ -f "/tmp/pod/main-terminated" ]]; then kill $CHILD_PID; fi; sleep 1; done) &
     wait $CHILD_PID
