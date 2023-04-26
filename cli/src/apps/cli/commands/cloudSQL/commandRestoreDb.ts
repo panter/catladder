@@ -1,29 +1,8 @@
 import { spawn } from "child-process-promise";
+
 import type Vorpal from "vorpal";
-
-const createProxy = async (instance: string, port: number) => {
-  const proxy = spawn(
-    `cloud_sql_proxy -instances ${instance}=tcp:${port}`,
-    [],
-    { shell: "bash" }
-  );
-  // wait until it starts
-  await spawn(
-    `echo -n "Waiting for proxy"
-      until echo > /dev/tcp/localhost/${port}; do
-        sleep 0.2
-        echo -n "."
-      done 2>/dev/null`,
-    [],
-    { shell: "bash" }
-  );
-  const stop = () => proxy.childProcess.kill();
-  process.on("beforeExit", stop);
-
-  return {
-    stop,
-  };
-};
+import type { CloudSqlBackgroundProxy } from "../../../../gcloud/cloudSql/startProxy";
+import { startCloudSqlProxyInBackground } from "../../../../gcloud/cloudSql/startProxy";
 
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -39,9 +18,9 @@ export default async (vorpal: Vorpal) =>
         message: "Source instance (connection string or 'local')? 🤔 ",
       });
 
-      let sourceProxy: { stop: () => void };
+      let sourceProxy: CloudSqlBackgroundProxy;
 
-      let targetProxy: { stop: () => void };
+      let targetProxy: CloudSqlBackgroundProxy;
 
       let sourcePort: number;
       let targetPort: number;
@@ -57,7 +36,10 @@ export default async (vorpal: Vorpal) =>
         sourcePort = sourceLocalPort;
       } else {
         sourcePort = 54399;
-        sourceProxy = await createProxy(sourceInstance, sourcePort);
+        sourceProxy = await startCloudSqlProxyInBackground({
+          instanceName: sourceInstance,
+          localPort: sourcePort,
+        });
       }
 
       const { sourceUsername } = await this.prompt({
@@ -86,7 +68,7 @@ export default async (vorpal: Vorpal) =>
         type: "input",
         name: "targetInstance",
 
-        message: "Targe INSTANCE (connection string or 'local')? 🤔  ",
+        message: "Target INSTANCE (connection string or 'local')? 🤔  ",
       });
 
       if (targetInstance === "local") {
@@ -100,7 +82,10 @@ export default async (vorpal: Vorpal) =>
         targetPort = targetLocalPort;
       } else {
         targetPort = 54499;
-        targetProxy = await createProxy(targetInstance, targetPort);
+        targetProxy = await startCloudSqlProxyInBackground({
+          instanceName: targetInstance,
+          localPort: targetPort,
+        });
       }
 
       const { targetUsername } = await this.prompt({

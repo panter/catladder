@@ -3,7 +3,6 @@ import {
   createKubernetesCloudsqlBaseValues,
   isOfDeployType,
 } from "@catladder/pipeline";
-import { spawn } from "child-process-promise";
 import type Vorpal from "vorpal";
 import type { CommandInstance } from "vorpal";
 import {
@@ -12,6 +11,7 @@ import {
   parseChoice,
 } from "../../../../config/getProjectConfig";
 import { envAndComponents } from "./utils/autocompletions";
+import { startCloudSqlProxyInCurrentShell } from "../../../../gcloud/cloudSql/startProxy";
 
 type ProxyInfo = {
   instanceName: string;
@@ -70,14 +70,11 @@ export default async (vorpal: Vorpal) =>
         `DATABASE_JDBC_URL=jdbc:postgresql://localhost:${localPort}/${DB_NAME}?schema=public&user=${DB_USER}&password=${DB_PASSWORD}`
       );
       this.log("");
-      await spawn(
-        "cloud_sql_proxy",
-        ["-instances", `${instanceName}=tcp:${localPort}`],
-        {
-          stdio: "inherit",
-          shell: true,
-        }
-      );
+
+      await startCloudSqlProxyInCurrentShell({
+        instanceName,
+        localPort,
+      });
     });
 
 const getProxyInfoForKubernetes = async (

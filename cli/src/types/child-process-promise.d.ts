@@ -13,7 +13,7 @@ declare module "child-process-promise" {
   type Stdio = "inherit" | "pipe";
   type SpawnOptions = {
     stdio?: Stdio | Stdio[];
-    shell?: boolean;
+    shell?: boolean | string;
     env?: Record<string, string>;
   };
 
@@ -31,6 +31,7 @@ declare module "child-process-promise" {
   ): Promise<unknown> & {
     childProcess: {
       stdout: ReadStream;
+      kill: () => void;
     };
   };
 }
