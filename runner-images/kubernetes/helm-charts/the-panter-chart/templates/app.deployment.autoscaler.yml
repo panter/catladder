@@ -3,7 +3,7 @@
 {{- if .Values.application.autoscale -}}
 {{ $context := . }}
 
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ template "fullname" $context }}-app-autoscaler
