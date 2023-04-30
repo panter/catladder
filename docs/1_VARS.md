@@ -41,3 +41,17 @@ if you added a new key to `secrets` or want to change secrets, open a terminal a
 this will open up your editor with all env vars in the YAML-format. Save this fill close it and catladder will update the secrets.
 
 _catladder makes a copy of old values as backup, you can restore those manually in gitlab if needed_
+
+## Typescript and process.env
+To get autocompletion in IDE on `process.env`, set `envDTs` to `true` on component:
+
+```ts
+// ...
+  components: {
+    api: {
+      envDTs: true, // <--
+      dir: "api",
+// ...
+```
+
+This will make `catenv` generate `env.d.ts` file with type definitions for `process.env`.
