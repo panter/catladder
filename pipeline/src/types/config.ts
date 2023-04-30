@@ -151,6 +151,12 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * Be careful, this will overwrite any existing .env file!
    */
   dotEnv?: boolean;
+  /**
+   * experimental. whether to create a env.d.ts localy and during build jobs
+   *
+   * Be careful, this will overwrite any existing env.d.ts file!
+   */
+  envDTs?: boolean;
 } & DefaultEnvConfig;
 
 export type ConfigProps = {
