@@ -35,6 +35,12 @@ export type BuildConfigBase = {
   buildCommand?: string | string[] | null;
 
   /**
+   * runs a command after yarn install. postinstall in package.json won't work for yarn plug and play.
+   * the command will be invoked in the component dir.
+   */
+  postInstall?: string | string[];
+
+  /**
    * customize docker build
    */
   docker?: {

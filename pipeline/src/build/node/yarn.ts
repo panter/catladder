@@ -1,4 +1,5 @@
 import type { Context } from "../../types";
+import { ensureArray } from "../../utils";
 
 const YARN_INSTALL_CLASSIC = `yarn install --frozen-lockfile`;
 
@@ -18,10 +19,14 @@ export const ensureNodeVersion = (context: Context) => [
   "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
 ];
 
-export const getYarnInstall = (context: Context) => [
-  ...ensureNodeVersion(context),
-  getYarnInstallCommand(context),
-];
+export const getYarnInstall = (context: Context) => {
+  const postInstall = context.componentConfig.build.postInstall;
+  return [
+    ...ensureNodeVersion(context),
+    getYarnInstallCommand(context),
+    ...(postInstall ? ensureArray(postInstall) ?? [] : []),
+  ];
+};
 
 const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
 
