@@ -1,3 +1,10 @@
+## [1.105.1](https://git.panter.ch/catladder/catladder/compare/v1.105.0...v1.105.1) (2023-05-02)
+
+
+### Bug Fixes
+
+* don't run build post install on custom deploy ([84b0442](https://git.panter.ch/catladder/catladder/commit/84b044248da2d3c63af5988c711f61a10c812ef8))
+
 # [1.105.0](https://git.panter.ch/catladder/catladder/compare/v1.104.1...v1.105.0) (2023-05-02)
 
 
