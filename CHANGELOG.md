@@ -1,3 +1,10 @@
+# [1.105.0](https://git.panter.ch/catladder/catladder/compare/v1.104.1...v1.105.0) (2023-05-02)
+
+
+### Features
+
+* allow to run command after yarn install for all jobs ([c5de17a](https://git.panter.ch/catladder/catladder/commit/c5de17aa94dc2cab6865e07534214844f7074061))
+
 ## [1.104.1](https://git.panter.ch/catladder/catladder/compare/v1.104.0...v1.104.1) (2023-04-30)
 
 # [1.104.0](https://git.panter.ch/catladder/catladder/compare/v1.103.0...v1.104.0) (2023-04-30)
