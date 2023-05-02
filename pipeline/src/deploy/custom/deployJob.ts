@@ -17,8 +17,8 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
     throw new Error("deploy config is not custom");
   }
   const baseDeploymentJob = getBaseDeploymentJob(context);
-
-  const yarnInstall = getYarnInstall(context);
+  // FIXME: custom deploy currently assumes yarn-based project
+  const yarnInstall = getYarnInstall(context, { noCustomPostInstall: true });
   return [
     merge({}, baseDeploymentJob, {
       image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),

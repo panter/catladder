@@ -19,12 +19,22 @@ export const ensureNodeVersion = (context: Context) => [
   "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
 ];
 
-export const getYarnInstall = (context: Context) => {
-  const postInstall = context.componentConfig.build.postInstall;
+export const getYarnInstall = (
+  context: Context,
+  options?: {
+    noCustomPostInstall: boolean;
+  }
+) => {
+  const postInstall =
+    "postInstall" in context.componentConfig.build
+      ? context.componentConfig.build.postInstall
+      : null;
   return [
     ...ensureNodeVersion(context),
     getYarnInstallCommand(context),
-    ...(postInstall ? ensureArray(postInstall) ?? [] : []),
+    ...(postInstall && !options?.noCustomPostInstall
+      ? ensureArray(postInstall) ?? []
+      : []),
   ];
 };
 
