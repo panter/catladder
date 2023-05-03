@@ -1,3 +1,10 @@
+## [1.105.2](https://git.panter.ch/catladder/catladder/compare/v1.105.1...v1.105.2) (2023-05-03)
+
+
+### Bug Fixes
+
+* dotenv prints hidden env vars ([1e915e2](https://git.panter.ch/catladder/catladder/commit/1e915e242b7f1422fdf4d4bc38b390f597fdf6ff))
+
 ## [1.105.1](https://git.panter.ch/catladder/catladder/compare/v1.105.0...v1.105.1) (2023-05-02)
 
 
