@@ -13,7 +13,7 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
     choice
   );
 
-  let variables = {};
+  let variables: Record<string, string> = {};
   if (currentComponent) {
     variables = await getEnvVarsResolved(null, env, currentComponent);
   } else {
@@ -23,6 +23,7 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
     variables = await Object.keys(config.components).reduce(
       async (acc, componentName) => {
         const subappvars = await getEnvVarsResolved(null, env, componentName);
+        delete subappvars["_ALL_ENV_VAR_KEYS"];
         return {
           ...(await acc),
           ...subappvars,
@@ -38,6 +39,7 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
       {}
     );
   }
+
   return variables;
 };
 

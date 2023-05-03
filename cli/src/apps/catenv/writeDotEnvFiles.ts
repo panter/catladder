@@ -32,6 +32,7 @@ export const writeDotEnvFiles = async (config: Config, choice?: Choice) => {
 
   for (const componentName of componentsToActuallyWriteDotEnvNow) {
     const variables = await getEnvVarsResolved(null, env, componentName);
+    delete variables["_ALL_ENV_VAR_KEYS"];
     const componentDir = getComponentFullPath(gitRoot, config, componentName);
     const filePath = join(componentDir, ".env");
     // many .dotenv don't like multiline values, so we sanitize them here

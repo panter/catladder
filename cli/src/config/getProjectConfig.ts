@@ -1,4 +1,4 @@
-import type { Config } from "@catladder/pipeline";
+import type { Config, EnvironmentEnvVars } from "@catladder/pipeline";
 import {
   readConfigSync,
   getAllEnvs,
@@ -124,24 +124,32 @@ export const getGitlabVar = async (
 
 const resolveSecrets = async (
   vorpal: CommandInstance | null,
-  allEnvVars: Record<string, string>
+  varSets: EnvironmentEnvVars[]
 ) => {
   const allVariablesInGitlab = await getAllVariables(vorpal);
 
   return Object.fromEntries(
-    Object.entries(allEnvVars).map(([key, value]) => {
-      const containsSecret = String(value)?.includes?.("$CL_");
-      if (containsSecret) {
-        for (const variable of allVariablesInGitlab) {
-          value = value.replace(
-            new RegExp("\\$" + variable.key, "g"),
-            variable.value
-          );
-        }
-        return [key, value];
-      }
-      return [key, value];
-    })
+    varSets.flatMap((set) =>
+      Object.entries(set.envVars)
+        .map(([key, value]) => {
+          const secretKey = set.secretEnvVarKeys.find((k) => k.key === key);
+
+          if (secretKey) {
+            if (secretKey.hidden) {
+              return null;
+            }
+            for (const variable of allVariablesInGitlab) {
+              value = value.replace(
+                new RegExp("\\$" + variable.key, "g"),
+                variable.value
+              );
+            }
+            return [key, value];
+          }
+          return [key, value];
+        })
+        .filter(Boolean)
+    )
   );
 };
 
@@ -155,9 +163,15 @@ export const getEnvVarsResolved = async (
   }
   try {
     const envionment = await getEnvironment(env, componentName);
+
     // in the pipeline the secrets alreadyy exists  and bash will expand them
     // but here we need to manually load them
-    return resolveSecrets(vorpal, envionment.envVars);
+    return resolveSecrets(vorpal, [
+      {
+        envVars: envionment.envVars,
+        secretEnvVarKeys: envionment.secretEnvVarKeys,
+      },
+    ]);
   } catch (e) {
     // env is disabled
     return {};
@@ -175,10 +189,10 @@ export const getJobOnlyEnvVarsResolved = async (
 ) => {
   try {
     const envionment = await getEnvironment(env, componentName);
-    return resolveSecrets(vorpal, {
-      ...envionment.jobOnlyVars.build.envVars,
-      ...envionment.jobOnlyVars.deploy.envVars,
-    });
+    return resolveSecrets(vorpal, [
+      envionment.jobOnlyVars.build,
+      envionment.jobOnlyVars.deploy,
+    ]);
   } catch (e) {
     // env is disabled
     return {};
