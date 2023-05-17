@@ -1,3 +1,10 @@
+# [1.106.0](https://git.panter.ch/catladder/catladder/compare/v1.105.2...v1.106.0) (2023-05-17)
+
+
+### Features
+
+* **cli:** support cloud-sql-proxy 2.x ([675caed](https://git.panter.ch/catladder/catladder/commit/675caed25bf7a7c6a9d980656be4a81d567eab4d))
+
 ## [1.105.2](https://git.panter.ch/catladder/catladder/compare/v1.105.1...v1.105.2) (2023-05-03)
 
 
