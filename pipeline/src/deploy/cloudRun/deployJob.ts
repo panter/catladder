@@ -1,7 +1,7 @@
 import { dump } from "js-yaml";
 import { merge, omit } from "lodash";
 import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from ".";
-import { getDockerJobBaseProps, gitlabDockerLogin } from "../../build/docker";
+import { getDockerJobBaseProps } from "../../build/docker";
 import { getLabels } from "../../context/getLabels";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
@@ -26,6 +26,12 @@ import {
 } from "./utils/database";
 import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
 import { getCloudRunJobName } from "./utils/jobName";
+import {
+  getArtifactsRegistryImage,
+  getPushToArtifactsRegistryCommands,
+} from "./artifactsRegistry";
+import { getServiceName } from "./utils/getServiceName";
+import { getRemoveOldRevisionsAndImagesCommand } from "./cleanup";
 
 const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
   `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
@@ -44,26 +50,6 @@ export const createGoogleCloudRunDeployJobs = (
     throw new Error("deploy config is wrong");
   }
 
-  const fullAppName = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
-  const dockerUrl = `${deployConfig.region}-docker.pkg.dev/${deployConfig.projectId}/catladder-deploy/${fullAppName}`;
-  const gcloudImagePath = [
-    dockerUrl,
-    context.environment.shortName,
-    context.componentName,
-
-    ...(context.environment.envType === "review"
-      ? [context.commitInfo?.reviewSlug]
-      : []),
-  ];
-  const gcloudImageName = `${gcloudImagePath.join("/")}:$DOCKER_IMAGE_TAG`;
-
-  const pushImageToArtifactsRegistry = [
-    gitlabDockerLogin,
-    `gcloud auth configure-docker ${deployConfig.region}-docker.pkg.dev`,
-    `docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG`,
-    `docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG ${gcloudImageName}`,
-    `docker push ${gcloudImageName}`,
-  ];
   const allEnvVars = omit(
     context.environment.envVars,
     GCLOUD_DEPLOY_CREDENTIALS_KEY
@@ -79,7 +65,7 @@ export const createGoogleCloudRunDeployJobs = (
   };
 
   const commonDeployArgs = {
-    image: gcloudImageName,
+    image: getArtifactsRegistryImage(context),
     ...commonArgs,
     "set-cloudsql-instances": deployConfig.cloudSql
       ? deployConfig.cloudSql.instanceConnectionName
@@ -87,7 +73,7 @@ export const createGoogleCloudRunDeployJobs = (
     labels: labelsString,
   };
 
-  const serviceName = context.environment.fullName.toLowerCase();
+  const serviceName = getServiceName(context);
 
   const getFullJobName = (name: string) =>
     getCloudRunJobName(context.environment.fullName, name);
@@ -235,7 +221,7 @@ export const createGoogleCloudRunDeployJobs = (
     ...collapseableSection(
       "pushToArtifactRegistry",
       "Pushing image to artifacts registry"
-    )(pushImageToArtifactsRegistry),
+    )(getPushToArtifactsRegistryCommands(context)),
     ...collapseableSection(
       "deploy",
       "Deploy to cloud run"
@@ -256,7 +242,12 @@ export const createGoogleCloudRunDeployJobs = (
       ),
       ...getJobRunScripts("postDeploy"),
     ]),
-    `docker image rm ${gcloudImageName}`,
+    ...collapseableSection(
+      "cleanup",
+      "Cleanup"
+    )(
+      getRemoveOldRevisionsAndImagesCommand(context, "postDeploy") // we cleanup inactive images both on deploy and stop
+    ),
     ...getDependencyTrackUploadScript(context),
   ];
 
@@ -274,6 +265,8 @@ export const createGoogleCloudRunDeployJobs = (
     ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop
       ? getDatabaseDeleteScript(context, deployConfig)
       : []),
+
+    ...getRemoveOldRevisionsAndImagesCommand(context, "onStop"), // we cleanup inactive images both on deploy and stop
     ...getDependencyTrackDeleteScript(context),
   ];
   return createDeployementJobs(context, {

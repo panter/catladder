@@ -1,0 +1,30 @@
+import type { Context } from "../../types/context";
+import { getDeleteUnusedImagesCommands } from "./artifactsRegistry";
+import { getDeleteUnusedRevisionsCommands } from "./cloudRunRevisions";
+
+export const getRemoveOldRevisionsAndImagesCommand = (
+  context: Context,
+  when: "postDeploy" | "onStop"
+) => {
+  if (when === "onStop") {
+    // service is already deleted, so we don't need to delete old revisions, just delete all images
+    return getDeleteUnusedImagesCommands(context);
+  }
+
+  // this number only targets inactive revisions
+  const revisionsToKeep = context.environment.envType === "prod" ? 5 : 0;
+
+  // this number needs to be higher than inactive after deploy, so we add one
+  const imagesToKeep = revisionsToKeep + 1;
+
+  const deleteOldRevisionsCommands = getDeleteUnusedRevisionsCommands(
+    context,
+    revisionsToKeep
+  );
+  const deleteOldImagesCommands = getDeleteUnusedImagesCommands(
+    context,
+    imagesToKeep
+  );
+
+  return [...deleteOldRevisionsCommands, ...deleteOldImagesCommands];
+};
