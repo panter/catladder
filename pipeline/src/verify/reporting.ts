@@ -56,7 +56,7 @@ const createSbomUploadJob = (context: Context): CatladderJob => {
     image:
       "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
     script: [
-      `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.componentName}" "${context.environment.shortName}" "${SBOM_FILE}" vex.json`,
+      `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.componentName}" "${context.environment.shortName}" "${SBOM_FILE}" vex.json`,
     ],
     allow_failure: true,
   };
