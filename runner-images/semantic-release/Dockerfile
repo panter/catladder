@@ -1,5 +1,5 @@
 # build context is the root directory
-FROM node:16-alpine
+FROM node:lts-alpine
 
 RUN apk add --no-cache bash git git-lfs
 
@@ -19,4 +19,3 @@ COPY ./scripts/* /scripts/
 RUN chmod +x /scripts/*
 
 ENV PATH="/scripts:${PATH}"
-
