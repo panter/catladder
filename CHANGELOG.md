@@ -1,3 +1,10 @@
+# [1.107.0](https://git.panter.ch/catladder/catladder/compare/v1.106.3...v1.107.0) (2023-06-08)
+
+
+### Features
+
+* **kube:** update cloud sql proxy to latest version ([4b28f1d](https://git.panter.ch/catladder/catladder/commit/4b28f1d2ac22cbb0de216d315dc672c4e3d21f99))
+
 ## [1.106.3](https://git.panter.ch/catladder/catladder/compare/v1.106.2...v1.106.3) (2023-06-08)
 
 ## [1.106.2](https://git.panter.ch/catladder/catladder/compare/v1.106.1...v1.106.2) (2023-05-25)
