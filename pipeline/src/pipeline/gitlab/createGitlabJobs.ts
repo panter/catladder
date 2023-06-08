@@ -72,10 +72,10 @@ export const makeGitlabJob = (
     }));
   });
   const cleanedNeeds: CatladderJob["needs"] = [
+    ...(needsFromStages ?? []),
     ...(needs ?? []),
     // pull in legacy needs from other component, which is now identical to needs
     ...(needsOtherComponent ?? []),
-    ...(needsFromStages ?? []),
   ];
 
   const gitlabNeeds: GitlabJobDef["needs"] = cleanedNeeds
@@ -93,6 +93,10 @@ export const makeGitlabJob = (
         : getFullReferencedJobName(n, componentName, env, allJobs)
     ) // sort in a predictable manner for snapshot tests
     .sort((a, b) => getJobName(a).localeCompare(getJobName(b)));
+
+  const deduplicatedGitlabNeeds: GitlabJobDef["needs"] = [
+    ...new Map(gitlabNeeds.map((n) => [isObject(n) ? n.job : n, n])).values(),
+  ];
 
   const fullJobName = getFullJobName(
     name,
@@ -116,7 +120,7 @@ export const makeGitlabJob = (
         }
       : job.environment,
     // sort in a predictable manner for snapshot tests
-    needs: gitlabNeeds,
+    needs: deduplicatedGitlabNeeds,
     retry: BASE_RETRY,
     interruptible: true,
   });

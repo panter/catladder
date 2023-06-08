@@ -22,6 +22,10 @@ import {
 import { allowFailureInScripts } from "../../utils/gitlab";
 import { getCloudRunJobName } from "./utils/jobName";
 import { createArgsString } from "./utils/createArgsString";
+import {
+  getDependencyTrackDeleteScript,
+  getDependencyTrackUploadScript,
+} from "../sbom";
 
 const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
   `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
@@ -234,6 +238,7 @@ export const createGoogleCloudRunDeployJobs = (
     ...getJobRunScripts("postDeploy"),
 
     `docker image rm ${gcloudImageName}`,
+    ...getDependencyTrackUploadScript(context),
   ];
 
   const stopScripts = [
@@ -250,6 +255,7 @@ export const createGoogleCloudRunDeployJobs = (
     ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop
       ? getDatabaseDeleteScript(context, deployConfig)
       : []),
+    ...getDependencyTrackDeleteScript(context),
   ];
   return [
     merge({}, baseDeploymentJob, getDockerJobBaseProps(context), {

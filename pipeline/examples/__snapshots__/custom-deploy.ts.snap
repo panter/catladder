@@ -217,6 +217,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "job": "www 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "www 🧾 sbom | dev ",
+          },
+          {
             "artifacts": false,
             "job": "www 🛡 audit",
           },
@@ -236,6 +240,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "cd www",
           "echo 'would deploy'",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy dev",
         "variables": {
@@ -290,6 +296,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo 'would stop'",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true",
         ],
         "stage": "stop dev",
         "variables": {
@@ -369,26 +377,6 @@ COPY --chown=node:node .yarn /app/.yarn",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "www 🧾 sbom upload | dev ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | dev ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "dev" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "www 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
@@ -398,9 +386,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | dev ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -411,7 +397,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -698,6 +684,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "job": "www 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "www 🧾 sbom | review ",
+          },
+          {
             "artifacts": false,
             "job": "www 🛡 audit",
           },
@@ -717,6 +707,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "cd www",
           "echo 'would deploy'",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy review",
         "variables": {
@@ -771,6 +763,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo 'would stop'",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true",
         ],
         "stage": "stop review",
         "variables": {
@@ -850,26 +844,6 @@ COPY --chown=node:node .yarn /app/.yarn",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "www 🧾 sbom upload | review ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | review ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "review" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "www 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
@@ -879,9 +853,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | review ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -892,7 +864,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -1267,6 +1239,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "artifacts": false,
             "job": "www 🔨 docker | prod ",
           },
+          {
+            "artifacts": true,
+            "job": "www 🧾 sbom | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1283,6 +1259,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "cd www",
           "echo 'would deploy'",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy prod",
         "variables": {
@@ -1328,6 +1306,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "artifacts": false,
             "job": "www 🔨 docker | stage ",
           },
+          {
+            "artifacts": true,
+            "job": "www 🧾 sbom | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1344,6 +1326,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "cd www",
           "echo 'would deploy'",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy stage",
         "variables": {
@@ -1398,6 +1382,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo 'would stop'",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true",
         ],
         "stage": "stop prod",
         "variables": {
@@ -1438,6 +1424,8 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo 'would stop'",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true",
         ],
         "stage": "stop stage",
         "variables": {
@@ -1449,46 +1437,6 @@ COPY --chown=node:node .yarn /app/.yarn",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🧾 sbom upload | prod ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | prod ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "prod" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
-      "www 🧾 sbom upload | stage ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | stage ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "stage" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "www 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
@@ -1498,9 +1446,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | prod ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1511,7 +1457,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "www 🧾 sbom | stage ": {
@@ -1523,9 +1469,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | stage ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1536,7 +1480,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },

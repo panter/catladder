@@ -1,6 +1,5 @@
 import { isFunction } from "lodash";
 import { BUILD_TYPES } from "../build";
-import { createReportingJobs } from "../verify/reporting";
 import { createContext } from "../context";
 import { DEPLOY_TYPES } from "../deploy";
 import type { Config, PipelineTrigger } from "../types/config";
@@ -36,10 +35,9 @@ const createRawJobs = (context: Context): CatladderJob[] => {
     context.componentConfig.deploy !== false
       ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
       : [];
-  const reportingJobs = createReportingJobs(context);
 
   const customJobs = getCustomJobs(context);
-  return [...buildJobs, ...deployJobs, ...reportingJobs, ...customJobs];
+  return [...buildJobs, ...deployJobs, ...customJobs];
 };
 export const createJobsForComponent = async (
   config: Config,

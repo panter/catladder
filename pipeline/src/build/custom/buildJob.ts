@@ -7,6 +7,8 @@ import { createDockerBuildJobDefault, requiresDockerBuild } from "../docker";
 import { isOfBuildType } from "../types";
 
 import type { CatladderJob } from "../../types/jobs";
+import { createSbomBuildJob } from "../sbom";
+import { sbomDeactivated } from "../../deploy/sbom";
 
 const RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -61,5 +63,6 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
           }),
         ]
       : []),
+    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
   ];
 };

@@ -1,0 +1,43 @@
+import type { Context } from "../types/context";
+import type { CatladderJob } from "../types/jobs";
+import { ensureArray } from "../utils";
+
+export const SBOM_BUILD_JOB_NAME = "🧾 sbom";
+export const SBOM_FILE = "__sbom.json";
+
+export const createSbomBuildJob = (context: Context): CatladderJob => {
+  const buildConfig = context.componentConfig.build;
+
+  const defaultImage = "aquasec/trivy:0.38.3";
+  const defaultScript = [
+    `trivy fs --quiet --format cyclonedx --output "${SBOM_FILE}" ${
+      context.packageManagerInfo?.componentIsInWorkspace
+        ? "."
+        : context.componentConfig.dir
+    }`,
+  ];
+
+  const image =
+    buildConfig.type === "custom" && buildConfig.sbom !== false
+      ? buildConfig.sbom?.jobImage ?? defaultImage
+      : defaultImage;
+
+  const script =
+    buildConfig.type === "custom" && buildConfig.sbom !== false
+      ? ensureArray(buildConfig.sbom?.command) ?? defaultScript
+      : defaultScript;
+
+  return {
+    name: SBOM_BUILD_JOB_NAME,
+    stage: "build",
+    envMode: "jobPerEnv",
+    variables: {},
+    cache: undefined,
+    image,
+    script,
+    allow_failure: true,
+    artifacts: {
+      paths: [SBOM_FILE],
+    },
+  };
+};

@@ -11,6 +11,10 @@ import {
 } from "../base";
 import { isOfDeployType } from "../types";
 import { createKubeValues } from "./kubeValues";
+import {
+  getDependencyTrackDeleteScript,
+  getDependencyTrackUploadScript,
+} from "../sbom";
 
 export const createKubernetesDeployJobs = (
   context: Context
@@ -76,6 +80,7 @@ export const createKubernetesDeployJobs = (
         ...connectContext,
         "kubernetesCreateSecret",
         "kubernetesDeploy",
+        ...getDependencyTrackUploadScript(context),
         "echo deployment successful 😻",
       ],
       environment: {
@@ -83,7 +88,11 @@ export const createKubernetesDeployJobs = (
       },
     }),
     merge({}, baseStopJob, shared, {
-      script: [...connectContext, "kubernetesDelete"],
+      script: [
+        ...connectContext,
+        "kubernetesDelete",
+        ...getDependencyTrackDeleteScript(context),
+      ],
       environment: {
         kubernetes: kubernetesEnvironment,
       },

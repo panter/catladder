@@ -2,6 +2,8 @@ import type { Context } from "../..";
 import { isOfBuildType } from "../types";
 import type { CatladderJob } from "../../types/jobs";
 import { createDockerBuildJobBase, gitlabDockerLogin } from "../docker";
+import { sbomDeactivated } from "../../deploy/sbom";
+import { createSbomBuildJob } from "../sbom";
 
 export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
@@ -37,5 +39,6 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
         }`,
       ],
     }),
+    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
   ];
 };

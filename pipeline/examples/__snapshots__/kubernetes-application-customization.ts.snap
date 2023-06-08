@@ -327,6 +327,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "job": "api 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "api 🧾 sbom | dev ",
+          },
+          {
             "artifacts": false,
             "job": "api 🛡 audit",
           },
@@ -350,6 +354,8 @@ COPY --chown=node:node .yarn /app/.yarn",
           "kubectl config use-context "kube-pan-test-app-dev-api"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.dev.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
         ],
         "stage": "deploy dev",
@@ -465,6 +471,8 @@ application:
           "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
           "kubectl config use-context "kube-pan-test-app-dev-api"",
           "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.dev.test-app.pan.panter.cloud" || true",
         ],
         "stage": "stop dev",
         "variables": {
@@ -606,26 +614,6 @@ application:
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🧾 sbom upload | dev ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | dev ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "dev" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
@@ -635,9 +623,7 @@ application:
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | dev ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -648,7 +634,7 @@ application:
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -1045,6 +1031,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "job": "api 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "api 🧾 sbom | review ",
+          },
+          {
             "artifacts": false,
             "job": "api 🛡 audit",
           },
@@ -1068,6 +1058,8 @@ COPY --chown=node:node .yarn /app/.yarn",
           "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.mr1234.review.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
         ],
         "stage": "deploy review",
@@ -1183,6 +1175,8 @@ application:
           "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
           "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
           "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.mr1234.review.test-app.pan.panter.cloud" || true",
         ],
         "stage": "stop review",
         "variables": {
@@ -1324,26 +1318,6 @@ application:
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🧾 sbom upload | review ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | review ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "review" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
@@ -1353,9 +1327,7 @@ application:
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | review ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1366,7 +1338,7 @@ application:
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -1959,6 +1931,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "artifacts": false,
             "job": "api 🔨 docker | prod ",
           },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1979,6 +1955,8 @@ COPY --chown=node:node .yarn /app/.yarn",
           "kubectl config use-context "kube-pan-test-app-prod-api"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.prod.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
         ],
         "stage": "deploy prod",
@@ -2080,6 +2058,10 @@ application:
             "artifacts": false,
             "job": "api 🔨 docker | stage ",
           },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -2100,6 +2082,8 @@ application:
           "kubectl config use-context "kube-pan-test-app-stage-api"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.stage.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
         ],
         "stage": "deploy stage",
@@ -2215,6 +2199,8 @@ application:
           "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
           "kubectl config use-context "kube-pan-test-app-prod-api"",
           "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.prod.test-app.pan.panter.cloud" || true",
         ],
         "stage": "stop prod",
         "variables": {
@@ -2324,6 +2310,8 @@ application:
           "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
           "kubectl config use-context "kube-pan-test-app-stage-api"",
           "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.stage.test-app.pan.panter.cloud" || true",
         ],
         "stage": "stop stage",
         "variables": {
@@ -2397,46 +2385,6 @@ application:
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL"]",
         },
       },
-      "api 🧾 sbom upload | prod ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | prod ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "prod" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
-      "api 🧾 sbom upload | stage ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | stage ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "stage" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
@@ -2446,9 +2394,7 @@ application:
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | prod ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -2459,7 +2405,7 @@ application:
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "api 🧾 sbom | stage ": {
@@ -2471,9 +2417,7 @@ application:
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | stage ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -2484,7 +2428,7 @@ application:
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },

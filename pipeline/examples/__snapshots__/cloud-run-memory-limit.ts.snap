@@ -224,6 +224,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "job": "api 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "api 🧾 sbom | dev ",
+          },
+          {
             "artifacts": false,
             "job": "api 🛡 audit",
           },
@@ -254,6 +258,8 @@ COPY --chown=node:node .yarn /app/.yarn",
           "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=dev,env-name=dev,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --memory=1024Mi --allow-unauthenticated --cpu-boost",
           "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-dev-api-unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "services": [
           {
@@ -339,6 +345,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-dev-api --project=google-project-id --region=europe-west6",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-dev-api-unknown-host.example.com" || true",
           "set -e",
         ],
         "stage": "stop dev",
@@ -419,26 +427,6 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🧾 sbom upload | dev ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | dev ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "dev" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
@@ -448,9 +436,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | dev ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -461,7 +447,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -755,6 +741,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "job": "api 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "api 🧾 sbom | review ",
+          },
+          {
             "artifacts": false,
             "job": "api 🛡 audit",
           },
@@ -785,6 +775,8 @@ COPY --chown=node:node .yarn /app/.yarn",
           "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-review-mr1234-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=review,env-name=review,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --memory=1024Mi --allow-unauthenticated --cpu-boost",
           "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-review-mr1234-api-unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "services": [
           {
@@ -870,6 +862,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-review-mr1234-api --project=google-project-id --region=europe-west6",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-review-mr1234-api-unknown-host.example.com" || true",
           "set -e",
         ],
         "stage": "stop review",
@@ -950,26 +944,6 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🧾 sbom upload | review ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | review ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "review" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
@@ -979,9 +953,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | review ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -992,7 +964,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -1377,6 +1349,10 @@ COPY --chown=node:node .yarn /app/.yarn",
             "artifacts": false,
             "job": "api 🔨 docker | prod ",
           },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1404,6 +1380,8 @@ COPY --chown=node:node .yarn /app/.yarn",
           "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=prod,env-name=prod,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --memory=1024Mi --allow-unauthenticated --cpu-boost",
           "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-prod-api-unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "services": [
           {
@@ -1480,6 +1458,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
             "artifacts": false,
             "job": "api 🔨 docker | stage ",
           },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1507,6 +1489,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,app-name=test-app,env-type=stage,env-name=stage,build-type=node --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --memory=1024Mi --allow-unauthenticated --cpu-boost",
           "docker image rm europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-stage-api-unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "services": [
           {
@@ -1592,6 +1576,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-prod-api --project=google-project-id --region=europe-west6",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-prod-api-unknown-host.example.com" || true",
           "set -e",
         ],
         "stage": "stop prod",
@@ -1637,6 +1623,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-stage-api --project=google-project-id --region=europe-west6",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-stage-api-unknown-host.example.com" || true",
           "set -e",
         ],
         "stage": "stop stage",
@@ -1649,46 +1637,6 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🧾 sbom upload | prod ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | prod ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "prod" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
-      "api 🧾 sbom upload | stage ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | stage ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "stage" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
@@ -1698,9 +1646,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | prod ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1711,7 +1657,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "api 🧾 sbom | stage ": {
@@ -1723,9 +1669,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | stage ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1736,7 +1680,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },

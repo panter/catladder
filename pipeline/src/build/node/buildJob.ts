@@ -10,6 +10,8 @@ import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 import type { CatladderJob } from "../../types/jobs";
 import { getRunnerImage } from "../../runner";
+import { createSbomBuildJob } from "../sbom";
+import { sbomDeactivated } from "../../deploy/sbom";
 
 export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
@@ -76,5 +78,6 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
           }),
         ]
       : []),
+    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
   ];
 };

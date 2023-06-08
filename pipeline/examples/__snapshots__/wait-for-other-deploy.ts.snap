@@ -143,6 +143,10 @@ exports[`matches snapshot 1`] = `
             "job": "api 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "api 🧾 sbom | dev ",
+          },
+          {
             "artifacts": false,
             "job": "api 🛡 audit",
           },
@@ -162,6 +166,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd api",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy dev",
         "variables": {
@@ -248,26 +254,6 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🧾 sbom upload | dev ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | dev ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "dev" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
@@ -277,9 +263,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | dev ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -290,7 +274,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "www 👮 lint": {
@@ -435,6 +419,10 @@ exports[`matches snapshot 1`] = `
             "job": "www 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "www 🧾 sbom | dev ",
+          },
+          {
             "artifacts": false,
             "job": "www 🛡 audit",
           },
@@ -454,6 +442,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd www",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy dev",
         "variables": {
@@ -540,26 +530,6 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "www 🧾 sbom upload | dev ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | dev ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "dev" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "www 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
@@ -569,9 +539,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | dev ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -582,7 +550,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -795,6 +763,10 @@ exports[`matches snapshot 1`] = `
             "job": "api 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "api 🧾 sbom | review ",
+          },
+          {
             "artifacts": false,
             "job": "api 🛡 audit",
           },
@@ -814,6 +786,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd api",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy review",
         "variables": {
@@ -900,26 +874,6 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🧾 sbom upload | review ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | review ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "review" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
@@ -929,9 +883,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | review ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -942,7 +894,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "www 👮 lint": {
@@ -1087,6 +1039,10 @@ exports[`matches snapshot 1`] = `
             "job": "www 🧪 test",
           },
           {
+            "artifacts": true,
+            "job": "www 🧾 sbom | review ",
+          },
+          {
             "artifacts": false,
             "job": "www 🛡 audit",
           },
@@ -1106,6 +1062,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd www",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy review",
         "variables": {
@@ -1192,26 +1150,6 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "www 🧾 sbom upload | review ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | review ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "review" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "www 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
@@ -1221,9 +1159,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | review ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1234,7 +1170,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },
@@ -1467,6 +1403,10 @@ exports[`matches snapshot 1`] = `
             "artifacts": true,
             "job": "api 🔨 app | prod ",
           },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1483,6 +1423,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd api",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy prod",
         "variables": {
@@ -1515,6 +1457,10 @@ exports[`matches snapshot 1`] = `
             "artifacts": true,
             "job": "api 🔨 app | stage ",
           },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1531,6 +1477,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd api",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy stage",
         "variables": {
@@ -1549,46 +1497,6 @@ exports[`matches snapshot 1`] = `
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL"]",
         },
       },
-      "api 🧾 sbom upload | prod ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | prod ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "prod" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
-      "api 🧾 sbom upload | stage ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "api 🧾 sbom | stage ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "stage" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "api 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
@@ -1598,9 +1506,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | prod ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1611,7 +1517,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "api 🧾 sbom | stage ": {
@@ -1623,9 +1529,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "api 🚀 Deploy | stage ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1636,7 +1540,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "www 🔨 app | prod ": {
@@ -1801,6 +1705,10 @@ exports[`matches snapshot 1`] = `
             "artifacts": true,
             "job": "www 🔨 app | prod ",
           },
+          {
+            "artifacts": true,
+            "job": "www 🧾 sbom | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1817,6 +1725,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd www",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy prod",
         "variables": {
@@ -1853,6 +1763,10 @@ exports[`matches snapshot 1`] = `
             "artifacts": true,
             "job": "www 🔨 app | stage ",
           },
+          {
+            "artifacts": true,
+            "job": "www 🧾 sbom | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1869,6 +1783,8 @@ exports[`matches snapshot 1`] = `
         "script": [
           "cd www",
           "yarn deploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true",
         ],
         "stage": "deploy stage",
         "variables": {
@@ -1887,46 +1803,6 @@ exports[`matches snapshot 1`] = `
           "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL"]",
         },
       },
-      "www 🧾 sbom upload | prod ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | prod ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "prod" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
-      "www 🧾 sbom upload | stage ": {
-        "allow_failure": true,
-        "image": "git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1",
-        "interruptible": true,
-        "needs": [
-          "www 🧾 sbom | stage ",
-        ],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "stage" "__sbom.json" vex.json",
-        ],
-        "stage": "verify",
-        "variables": {},
-      },
       "www 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
@@ -1936,9 +1812,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | prod ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1949,7 +1823,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
       "www 🧾 sbom | stage ": {
@@ -1961,9 +1835,7 @@ exports[`matches snapshot 1`] = `
         },
         "image": "aquasec/trivy:0.38.3",
         "interruptible": true,
-        "needs": [
-          "www 🚀 Deploy | stage ",
-        ],
+        "needs": [],
         "retry": {
           "max": 2,
           "when": [
@@ -1974,7 +1846,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" www",
         ],
-        "stage": "verify",
+        "stage": "build",
         "variables": {},
       },
     },

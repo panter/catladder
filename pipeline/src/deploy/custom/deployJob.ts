@@ -6,6 +6,10 @@ import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
 import { isOfDeployType } from "../types";
+import {
+  getDependencyTrackDeleteScript,
+  getDependencyTrackUploadScript,
+} from "../sbom";
 
 export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
@@ -27,13 +31,17 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
         `cd ${context.componentConfig.dir}`,
         ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
         ...deployConfig.script,
+        ...getDependencyTrackUploadScript(context),
       ],
     }),
     ...(deployConfig.stopScript
       ? [
           merge({}, getBaseDeploymentStopJob(context), {
             image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
-            script: deployConfig.stopScript,
+            script: [
+              ...deployConfig.stopScript,
+              ...getDependencyTrackDeleteScript(context),
+            ],
           }),
         ]
       : []),

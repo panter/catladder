@@ -1,6 +1,8 @@
 import { getDockerImageVariables, requiresDockerBuild } from "../build/docker";
+import { SBOM_BUILD_JOB_NAME } from "../build/sbom";
 import type { Context } from "../types";
 import type { CatladderJob } from "../types/jobs";
+import { sbomDeactivated } from "./sbom";
 import { contextIsStoppable } from "./utils";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
@@ -43,13 +45,18 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
     name: DEPLOY_JOB_NAME,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
 
-    needs: context.componentConfig.deploy
-      ? context.componentConfig.deploy.waitFor?.map((c) => ({
-          componentName: c,
-          job: DEPLOY_JOB_NAME,
-          artifacts: false,
-        })) ?? undefined
-      : undefined,
+    needs: [
+      ...(sbomDeactivated(context)
+        ? []
+        : [{ job: SBOM_BUILD_JOB_NAME, artifacts: true }]),
+      ...(context.componentConfig.deploy
+        ? context.componentConfig.deploy.waitFor?.map((c) => ({
+            componentName: c,
+            job: DEPLOY_JOB_NAME,
+            artifacts: false,
+          })) ?? []
+        : []),
+    ],
     // we don't want to deploy when there is a broken test
     needsStages: [
       {
