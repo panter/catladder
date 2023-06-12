@@ -6,7 +6,7 @@ export const getBaseCommitInfo = async (): Promise<
   refName: process.env.CI_COMMIT_REF_NAME ?? "unknown",
   reviewSlug: process.env.CI_MERGE_REQUEST_IID
     ? `mr${process.env.CI_MERGE_REQUEST_IID}`
-    : "unknown",
+    : process.env.CI_COMMIT_REF_SLUG ?? "unknown",
   buildTime: new Date().toISOString(),
   buildId: await getBuildId(),
   currentVersion: await getCurrentVersionString(),
