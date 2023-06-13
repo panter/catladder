@@ -42,6 +42,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
                 join(context.componentConfig.dir, path)
               ) ?? []),
             ],
+            expire_in: "1 day",
           },
           jobTags: buildConfig.jobTags,
         })
