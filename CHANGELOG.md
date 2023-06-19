@@ -1,3 +1,10 @@
+## [1.107.2](https://git.panter.ch/catladder/catladder/compare/v1.107.1...v1.107.2) (2023-06-19)
+
+
+### Bug Fixes
+
+* **pipeline:** use branch name as hotfix slug ([4cc9594](https://git.panter.ch/catladder/catladder/commit/4cc959422946af05feb145911a488be9e450b299))
+
 ## [1.107.1](https://git.panter.ch/catladder/catladder/compare/v1.107.0...v1.107.1) (2023-06-13)
 
 # [1.107.0](https://git.panter.ch/catladder/catladder/compare/v1.106.3...v1.107.0) (2023-06-08)
