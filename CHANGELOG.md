@@ -1,3 +1,10 @@
+# [1.108.0](https://git.panter.ch/catladder/catladder/compare/v1.107.2...v1.108.0) (2023-06-19)
+
+
+### Features
+
+* **cloud run:** use cpu boost for faster cold starts ([bbb818f](https://git.panter.ch/catladder/catladder/commit/bbb818f3fbe62e888da6195157bfdb5807693dd2))
+
 ## [1.107.2](https://git.panter.ch/catladder/catladder/compare/v1.107.1...v1.107.2) (2023-06-19)
 
 
