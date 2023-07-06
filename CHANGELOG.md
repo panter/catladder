@@ -1,3 +1,10 @@
+## [1.108.1](https://git.panter.ch/catladder/catladder/compare/v1.108.0...v1.108.1) (2023-07-06)
+
+
+### Bug Fixes
+
+* **pipeline:** prefix hotflix slug with alpha chars to conform to k8s specs ([18cb8d8](https://git.panter.ch/catladder/catladder/commit/18cb8d8614d51acc8a16e6b7150f57d4764160a8))
+
 # [1.108.0](https://git.panter.ch/catladder/catladder/compare/v1.107.2...v1.108.0) (2023-06-19)
 
 
