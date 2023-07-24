@@ -33,6 +33,7 @@ const config: Config = {
             when: "schedule",
             command: "yarn job:send-reminders",
             schedule: "0 * * * *",
+            timeout: "15m",
           },
         },
       },

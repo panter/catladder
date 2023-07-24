@@ -143,6 +143,7 @@ export const createGoogleCloudRunDeployJobs = (
       command: '"' + job.command.split(" ").join(",") + '"',
       ...commonDeployArgs,
       memory: job.memory || "512Mi",
+      "task-timeout": job.timeout || "10m",
     });
 
     const argsString = `${jobName} ${commonDeployArgsString}`;

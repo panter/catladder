@@ -117,6 +117,13 @@ export type DeployConfigCloudRunJobBase = {
    * memory limit of the job, defaults to 51Mi
    */
   memory?: `${number}${"M" | "G" | "Mi" | "Gi"}`;
+
+  /**
+   * timeout of job, defaults to 10 minutes
+   *
+   * you can specify something like 10m30s
+   */
+  timeout?: string;
 };
 
 type Minute = string;
