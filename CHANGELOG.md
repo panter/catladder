@@ -1,3 +1,10 @@
+# [1.109.0](https://git.panter.ch/catladder/catladder/compare/v1.108.1...v1.109.0) (2023-07-24)
+
+
+### Features
+
+* **cloudrun:** jobs can now specify timeout (defaults to 10min) ([2f7a4b4](https://git.panter.ch/catladder/catladder/commit/2f7a4b4ae22d4de216b6484628ed239826f53ad0))
+
 ## [1.108.1](https://git.panter.ch/catladder/catladder/compare/v1.108.0...v1.108.1) (2023-07-06)
 
 
