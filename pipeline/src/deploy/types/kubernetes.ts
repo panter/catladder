@@ -129,6 +129,21 @@ export type DeployConfigMongodbBase = {
   tolerations?: KubernetesToleration[];
 };
 
+export type KubernetesRedirect = {
+  /**
+   * the domain to redirect from
+   */
+  host: string;
+  /**
+   * optional path to redirect from, defaults to `/`
+   */
+  path?: string;
+  /**
+   * optional nginx config snippet, defaults to a 301 redirect to the environment host name name with the request path appended
+   */
+  rule?: string;
+};
+
 export type DeployConfigMongodbStandalone = {
   architecture: "standalone";
 };
@@ -271,7 +286,7 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
         /**
          * redirects
          */
-        redirects?: AllowUnknownProps<{ host: string }>[];
+        redirects?: KubernetesRedirect[];
         /**
          * Host aliases
          */
