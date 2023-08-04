@@ -140,6 +140,9 @@ export type KubernetesRedirect = {
   path?: string;
   /**
    * optional nginx config snippet, defaults to a 301 redirect to the environment host name name with the request path appended
+   *
+   * important: to get a literal `$` use `$$` to prevent variable expansion by gitlab
+   * see https://docs.gitlab.com/ee/ci/variables/#use-the--character-in-cicd-variables
    */
   rule?: string;
 };
