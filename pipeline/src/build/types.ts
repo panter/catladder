@@ -38,7 +38,21 @@ export type BuildConfigBase = {
    * customize docker build
    */
   docker?: {
+    /**
+     * Custom Dockerfile lines integrated in the generated Dockerfile before the standard build steps.
+     *
+     * - [runner-images/docker-build/scripts/ensureNodeDockerfile:35](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile#L35)
+     * - [runner-images/docker-build/scripts/ensureNginxDockerfile:62](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile#L62)
+     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile:38](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile#L38)
+     */
     additionsBegin?: string[];
+    /**
+     * Custom Dockerfile lines integrated in the generated Dockerfile after the standard build steps.
+     *
+     * - [runner-images/docker-build/scripts/ensureNodeDockerfile:47](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile#L47)
+     * - [runner-images/docker-build/scripts/ensureNginxDockerfile:79](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile#L79)
+     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile:52](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile#L52)
+     */
     additionsEnd?: string[];
   };
 
@@ -147,6 +161,9 @@ export type BuildConfigCustom = Omit<
 > & {
   type: "custom";
   jobImage: GitlabJobImage;
+  /**
+   * {@link GitlabJobService}s used in lint, test, audit, and build jobs.
+   */
   jobServices?: GitlabJobService[];
 
   docker: BuildConfigCustomDocker;
