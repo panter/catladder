@@ -1,4 +1,9 @@
-import type { EnvVars, GitlabJobImage, GitlabJobService } from "../types";
+import type {
+  Artifacts,
+  EnvVars,
+  GitlabJobImage,
+  GitlabJobService,
+} from "../types";
 
 import type { CatladderJob } from "../types/jobs";
 
@@ -10,6 +15,22 @@ export type BuildConfigArtifactsReports = {
    * eg. `["dist/test-results/TEST-*.xml", "dist/rspec.xml", ...]`
    */
   junit?: string[];
+};
+
+export type TestJobCustom = {
+  command?: string | string[];
+  jobImage?: GitlabJobImage;
+  /**
+   * additional CI/CD artifacts reports,
+   * use to display information in merge requests, pipeline views and security dashboards.
+   */
+  artifactsReports?: BuildConfigArtifactsReports;
+  /**
+   * GitLab {@link Artifacts} configuration.
+   *
+   * {@link TestJobCustom.artifacts}.reports.junit is merged with {@link TestJobCustom.artifactsReports} in case both given.
+   */
+  artifacts?: Artifacts;
 };
 
 export type BuildConfigBase = {
@@ -59,32 +80,17 @@ export type BuildConfigBase = {
   /**
    * customize lint, set false to disable
    */
-  lint?:
-    | false
-    | {
-        command?: string | string[];
-        jobImage?: GitlabJobImage;
-      };
+  lint?: false | TestJobCustom;
 
   /**
    * customize test, set false to disable
    */
-  test?:
-    | false
-    | {
-        command?: string | string[];
-        jobImage?: GitlabJobImage;
-      };
+  test?: false | TestJobCustom;
 
   /**
    * customize audit, set false to disable
    */
-  audit?:
-    | false
-    | {
-        command?: string | string[];
-        jobImage?: GitlabJobImage;
-      };
+  audit?: false | TestJobCustom;
 
   /**
    * additional paths for artifacts,
@@ -171,41 +177,17 @@ export type BuildConfigCustom = Omit<
   /**
    * custom lint, disabled when not set
    */
-  lint?: {
-    command?: string | string[];
-    jobImage?: GitlabJobImage;
-    /**
-     * additional CI/CD artifacts reports,
-     * use to display information in merge requests, pipeline views and security dashboards.
-     */
-    artifactsReports?: BuildConfigArtifactsReports;
-  };
+  lint?: TestJobCustom;
 
   /**
    * custom test, disabled when not set
    */
-  test?: {
-    command?: string | string[];
-    jobImage?: GitlabJobImage;
-    /**
-     * additional CI/CD artifacts reports,
-     * use to display information in merge requests, pipeline views and security dashboards.
-     */
-    artifactsReports?: BuildConfigArtifactsReports;
-  };
+  test?: TestJobCustom;
 
   /**
    * custom audit, disabled when not set
    */
-  audit?: {
-    command?: string | string[];
-    jobImage?: GitlabJobImage;
-    /**
-     * additional CI/CD artifacts reports,
-     * use to display information in merge requests, pipeline views and security dashboards.
-     */
-    artifactsReports?: BuildConfigArtifactsReports;
-  };
+  audit?: TestJobCustom;
 
   /**
    * custom sbom (software bill of materials), set false to disable

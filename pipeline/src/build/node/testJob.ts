@@ -5,6 +5,7 @@ import { ensureArray, notNil } from "../../utils";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getYarnInstall } from "./yarn";
+import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
 export const createNodeTestJobs = (context: Context): CatladderJob[] => {
   // don't run tests after release
@@ -42,6 +43,11 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
             ]),
           ],
           allow_failure: true,
+          ...createArtifactsConfig(
+            context.componentConfig.dir,
+            buildConfig.audit?.artifactsReports,
+            buildConfig.audit?.artifacts
+          ),
         }
       : null;
 
@@ -57,6 +63,11 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
             ...yarnInstall,
             ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
           ],
+          ...createArtifactsConfig(
+            context.componentConfig.dir,
+            buildConfig.lint?.artifactsReports,
+            buildConfig.lint?.artifacts
+          ),
         }
       : null;
   const testJob: CatladderJob | null =
@@ -73,6 +84,11 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
             ...yarnInstall,
             ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),
           ],
+          ...createArtifactsConfig(
+            context.componentConfig.dir,
+            buildConfig.test?.artifactsReports,
+            buildConfig.test?.artifacts
+          ),
         }
       : null;
   return [auditJob, lintJob, testJob].filter(notNil);

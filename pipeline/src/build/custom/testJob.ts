@@ -1,10 +1,9 @@
-import { join } from "path";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { isOfBuildType } from "../types";
-import type { BuildConfigArtifactsReports } from "../types";
 import type { Artifacts } from "../../types";
+import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
 const RUNNER_CUSTOM_TEST_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -48,7 +47,8 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         allow_failure: true,
         ...createArtifactsConfig(
           context.componentConfig.dir,
-          buildConfig.audit?.artifactsReports
+          buildConfig.audit?.artifactsReports,
+          buildConfig.audit?.artifacts
         ),
       }
     : null;
@@ -62,7 +62,8 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         script: [...(ensureArray(buildConfig.lint?.command) ?? [])],
         ...createArtifactsConfig(
           context.componentConfig.dir,
-          buildConfig.lint?.artifactsReports
+          buildConfig.lint?.artifactsReports,
+          buildConfig.lint?.artifacts
         ),
       }
     : null;
@@ -75,30 +76,16 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         script: [...(ensureArray(buildConfig.test?.command) ?? [])],
         ...createArtifactsConfig(
           context.componentConfig.dir,
-          buildConfig.test?.artifactsReports
+          buildConfig.test?.artifactsReports,
+          buildConfig.test?.artifacts
         ),
       }
     : null;
   return [auditJob, lintJob, testJob].filter(notNil);
 };
 
-type OptionalArtifacts =
+export type OptionalArtifacts =
   | {
       artifacts: Artifacts;
     }
   | undefined;
-
-const createArtifactsConfig = (
-  rootPath: string,
-  artifactsReports?: BuildConfigArtifactsReports
-): OptionalArtifacts =>
-  artifactsReports
-    ? {
-        artifacts: {
-          paths: [],
-          reports: {
-            junit: artifactsReports?.junit?.map((p) => join(rootPath, p)) ?? [],
-          },
-        },
-      }
-    : undefined;
