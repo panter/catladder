@@ -13,7 +13,7 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
   }
 
   const buildConfig = context.componentConfig.build;
-
+  const defaultImage = getRunnerImage("jobs-default");
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,
@@ -30,8 +30,8 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
     buildConfig.audit !== false
       ? {
           name: "🛡 audit",
-
           ...base,
+          image: buildConfig.audit?.jobImage ?? defaultImage,
           cache: undefined, // audit does not need yarn install and no cache
           script: [
             `cd ${context.componentConfig.dir}`,
@@ -49,8 +49,8 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
     buildConfig.lint !== false
       ? {
           name: "👮 lint",
-
           ...base,
+          image: buildConfig.lint?.jobImage ?? defaultImage,
           cache: getNodeCache(context),
           script: [
             `cd ${context.componentConfig.dir}`,
@@ -65,7 +65,8 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
           name: "🧪 test",
 
           ...base,
-          image: getRunnerImage("jobs-testing-chrome"),
+          image:
+            buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
           cache: getNodeCache(context),
           script: [
             `cd ${context.componentConfig.dir}`,
