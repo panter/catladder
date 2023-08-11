@@ -9,6 +9,7 @@ import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 import type { CatladderJob } from "../../types/jobs";
+import { getRunnerImage } from "../../runner";
 
 export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
@@ -17,10 +18,12 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
     throw new Error("deploy config is not node, node-static or storybook");
   }
 
+  const defaultImage = getRunnerImage("jobs-default");
   const yarnInstall = getYarnInstall(context);
   const appBuildJob: CatladderJob | null =
     buildConfig.buildCommand !== null
       ? createBuildJob(context, {
+          image: buildConfig.jobImage ?? defaultImage,
           variables: {
             ...NODE_RUNNER_BUILD_VARIABLES,
           },

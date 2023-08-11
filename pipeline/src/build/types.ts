@@ -93,6 +93,10 @@ export type BuildConfigBase = {
    * tags for the underlying job runner (e.g gitlab)
    */
   jobTags?: string[];
+  /**
+   * custom image to use
+   */
+  jobImage?: GitlabJobImage;
 };
 
 export type BuildConfigNodeBase = BuildConfigBase & {
@@ -142,7 +146,7 @@ export type BuildConfigCustom = Omit<
   "lint" | "test" | "audit"
 > & {
   type: "custom";
-  jobImage: string;
+  jobImage: GitlabJobImage;
   jobServices?: GitlabJobService[];
 
   docker: BuildConfigCustomDocker;

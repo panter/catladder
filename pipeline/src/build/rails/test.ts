@@ -39,7 +39,8 @@ export const createRailsTestJobs = (context: Context): CatladderJob[] => {
 
           ...base,
           cache: undefined, // audit does not need bundle install and no cache
-          image: buildConfig.audit?.jobImage ?? defaultImage,
+          image:
+            buildConfig.audit?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
             `cd ${context.componentConfig.dir}`,
             ...(ensureArray(buildConfig.audit?.command) ?? [
@@ -58,7 +59,8 @@ export const createRailsTestJobs = (context: Context): CatladderJob[] => {
 
           ...base,
           cache: bundlerCache,
-          image: buildConfig.lint?.jobImage ?? defaultImage,
+          image:
+            buildConfig.lint?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
             `cd ${context.componentConfig.dir}`,
             ...bundlerInstall,
@@ -75,7 +77,8 @@ export const createRailsTestJobs = (context: Context): CatladderJob[] => {
 
           ...base,
           cache: bundlerCache,
-          image: buildConfig.test?.jobImage ?? defaultImage,
+          image:
+            buildConfig.test?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
             `cd ${context.componentConfig.dir}`,
             ...bundlerInstall,
