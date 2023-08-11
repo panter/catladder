@@ -1,3 +1,10 @@
+# [1.110.0](https://git.panter.ch/catladder/catladder/compare/v1.109.2...v1.110.0) (2023-08-11)
+
+
+### Features
+
+* all build types can now specify a custom image ([e7ef37a](https://git.panter.ch/catladder/catladder/commit/e7ef37ac85a643d0022f02270978d31819c3f686))
+
 ## [1.109.2](https://git.panter.ch/catladder/catladder/compare/v1.109.1...v1.109.2) (2023-08-04)
 
 ## [1.109.1](https://git.panter.ch/catladder/catladder/compare/v1.109.0...v1.109.1) (2023-07-31)
