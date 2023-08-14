@@ -1,3 +1,10 @@
+## [1.110.1](https://git.panter.ch/catladder/catladder/compare/v1.110.0...v1.110.1) (2023-08-14)
+
+
+### Bug Fixes
+
+* node audit and test should not use build image ([a008667](https://git.panter.ch/catladder/catladder/commit/a008667a28f42e1ccbe5bbabf20aa2b5e6de0ec8))
+
 # [1.110.0](https://git.panter.ch/catladder/catladder/compare/v1.109.2...v1.110.0) (2023-08-11)
 
 
