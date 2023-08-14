@@ -9,7 +9,8 @@
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
     "build:watch": "yarn tsc -w",
     "lint": "eslint \"src/**/*.ts\"",
-    "lint:fix": "eslint \"src/**/*.ts\" --fix"
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
+    "generate:gitlab-ci-yml-types": "ts-node ./scripts/generate-gitlab-ci-types.ts"
   },
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
@@ -31,6 +32,7 @@
     "child-process-promise": "^2.2.1",
     "eslint": "^8.7.0",
     "js-yaml": "^4.1.0",
+    "json-schema-to-typescript": "^13.0.2",
     "lodash": "^4.17.21",
     "memoizee": "^0.4.15",
     "path-equal": "1.1.3",
