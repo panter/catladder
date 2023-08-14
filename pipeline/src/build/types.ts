@@ -62,17 +62,17 @@ export type BuildConfigBase = {
     /**
      * Custom Dockerfile lines integrated in the generated Dockerfile before the standard build steps.
      *
-     * - [runner-images/docker-build/scripts/ensureNodeDockerfile:35](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile#L35)
-     * - [runner-images/docker-build/scripts/ensureNginxDockerfile:62](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile#L62)
-     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile:38](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile#L38)
+     * - [runner-images/docker-build/scripts/ensureNodeDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile)
+     * - [runner-images/docker-build/scripts/ensureNginxDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile)
+     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile)
      */
     additionsBegin?: string[];
     /**
      * Custom Dockerfile lines integrated in the generated Dockerfile after the standard build steps.
      *
-     * - [runner-images/docker-build/scripts/ensureNodeDockerfile:47](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile#L47)
-     * - [runner-images/docker-build/scripts/ensureNginxDockerfile:79](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile#L79)
-     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile:52](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile#L52)
+     * - [runner-images/docker-build/scripts/ensureNodeDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile)
+     * - [runner-images/docker-build/scripts/ensureNginxDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile)
+     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile)
      */
     additionsEnd?: string[];
   };
