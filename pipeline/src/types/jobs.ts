@@ -3,9 +3,8 @@ import type {
   GitlabEnvironment,
   GitlabJobCache,
   GitlabRule,
-  GitlabVariables,
-  GitlabJobService,
   GitlabJobImage,
+  GitlabJobDef,
 } from "./gitlab-types";
 
 export const BASE_STAGES = [
@@ -82,7 +81,7 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * additional services, mainly used for docker
    */
-  services?: GitlabJobService[];
+  services?: GitlabJobDef["services"];
 
   /**
    * image to use
@@ -92,7 +91,7 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * variables to pass
    */
-  variables: GitlabVariables;
+  variables: GitlabJobDef["variables"];
 
   /**
    * whether failures are allowed

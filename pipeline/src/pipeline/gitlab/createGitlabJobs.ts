@@ -3,6 +3,7 @@ import { BASE_RETRY } from "../../defaults";
 import type { GitlabJobDef } from "../../types";
 import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import type { AllCatladderJobs } from "../createAllJobs";
+import { notNil } from "../../utils";
 
 type AllGitlabJobs = Record<string, GitlabJobDef>;
 
@@ -52,6 +53,7 @@ export const makeGitlabJob = (
     name,
     needs,
     jobTags,
+    script,
     ...job
   }: CatladderJob<string>,
   allJobs: AllCatladderJobs
@@ -106,6 +108,7 @@ export const makeGitlabJob = (
 
   const gitlabJob: GitlabJobDef = removeUndefined({
     ...job,
+    script: script?.filter(notNil),
     tags: jobTags,
     stage,
     environment: job.environment?.on_stop

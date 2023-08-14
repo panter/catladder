@@ -1,102 +1,68 @@
-export type Artifacts = {
+import type {
+  Artifacts as GitlabCiArtifacts,
+  JobTemplate,
+  Cache,
+  Rules,
+} from "./gitlab-ci-yml";
+
+export { Retry, Image as GitlabJobImage } from "./gitlab-ci-yml";
+
+// Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
+export interface Artifacts extends Omit<GitlabCiArtifacts, "paths"> {
   paths: string[];
-  expire_in?: string;
-  when?: "always" | "on_success" | "on_failure";
-  // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
-  reports?: {
-    accessibility?: string | string[];
-    coverage_report?: { coverage_format: string; path: string };
-    codequality?: string | string[];
-    cyclonedx?: string | string[];
-    dotenv?: string | string[];
-    junit?: string | string[];
-    sast?: string;
-    secret_detection?: string;
-    terraform?: string;
-  };
-};
-export type GitlabJobCache = {
-  key: GitlabJobCacheKey;
-  policy?: string;
-  paths: string[];
-};
-export type GitlabJobCacheKey =
-  | string
-  | {
-      files: string[];
-      prefix?: string;
-    };
-export type GitlabRule = {
-  if?: string;
-  when?: "always" | "on_success" | "manual" | "never"; // todo
-  allow_failure?: boolean;
-};
-export type Retry = {
-  max: number;
-  when: string[];
-};
+}
+export type GitlabJobCache = Cache;
+export type GitlabRule = Exclude<Rules, null>[number];
+export type GitlabEnvironment = Omit<
+  Exclude<JobTemplate["environment"], undefined | string>,
+  "deployment_tier"
+>;
 
-export type GitlabJobService = {
-  name: string;
-  command?: string[];
-  entrypoint?: string[];
-  alias?: string;
-};
-
-export type GitlabJobImage =
-  | string
-  | {
-      name: string;
-      entrypoint?: string[];
-    };
-
-export type GitlabEnvironment = {
-  url: string;
-  name: string;
-  action?: "stop" | "start" | "prepare" | "access"; // defaults to start
-  on_stop?: string; // other job to run on stop
-  auto_stop_in?: string;
-};
-export type GitlabJobDef = {
-  stage: string;
-  before_script?: string[];
-  script: (string | undefined)[];
-  interruptible?: boolean;
-  needs?: Array<string | { job: string; artifacts: boolean }>;
+export interface GitlabJobDef
+  extends Pick<
+    JobTemplate,
+    | "after_script"
+    | "allow_failure"
+    | "artifacts"
+    | "before_script"
+    | "coverage"
+    | "dependencies"
+    | "environment"
+    | "except"
+    | "hooks"
+    | "image"
+    | "interruptible"
+    | "needs"
+    | "only"
+    | "parallel"
+    | "release"
+    | "resource_group"
+    | "retry"
+    | "rules"
+    | "script"
+    | "services"
+    | "stage"
+    | "tags"
+    | "trigger"
+    | "variables"
+  > {
+  stage: JobTemplate["stage"];
   rules?: GitlabRule[];
   cache?: GitlabJobCache | GitlabJobCache[];
   artifacts?: Artifacts;
-  retry?: Retry;
-  services?: GitlabJobService[];
-  image?: GitlabJobImage;
-  variables?: GitlabVariables;
-  dependencies?: string[];
-  environment?: GitlabEnvironment;
-  allow_failure?: boolean;
-  parallel?: number;
   tags?: string[];
-  trigger?: {
-    strategy: "depend";
-    include: Array<{
-      artifact: string;
-      job: string;
-    }>;
-  };
-};
-
-export type GitlabVariables = Record<string, string | undefined>;
+}
 
 /**
  * this is not precicily the type of a gitlab-pipeline
  * the jobs nee to be merge into the object.
  * Problem is, that this type cannot be represented properly with typescript, see https://github.com/microsoft/TypeScript/issues/17867
  */
-export type GitlabPipeline = {
+export interface GitlabPipeline extends Pick<JobTemplate, "variables"> {
   image: string;
-  variables: GitlabVariables;
   workflow?: {
     rules: GitlabRule[];
   };
   stages: string[];
   jobs: Record<string, GitlabJobDef>;
-};
+}

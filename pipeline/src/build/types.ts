@@ -1,9 +1,5 @@
-import type {
-  Artifacts,
-  EnvVars,
-  GitlabJobImage,
-  GitlabJobService,
-} from "../types";
+import type { Artifacts, EnvVars, GitlabJobImage } from "../types";
+import type { Services } from "../types/gitlab-ci-yml";
 
 import type { CatladderJob } from "../types/jobs";
 
@@ -168,9 +164,9 @@ export type BuildConfigCustom = Omit<
   type: "custom";
   jobImage: GitlabJobImage;
   /**
-   * {@link GitlabJobService}s used in lint, test, audit, and build jobs.
+   * {@link Services}s used in lint, test, audit, and build jobs.
    */
-  jobServices?: GitlabJobService[];
+  jobServices?: Services;
 
   docker: BuildConfigCustomDocker;
 
