@@ -1,3 +1,10 @@
+## [1.110.2](https://git.panter.ch/catladder/catladder/compare/v1.110.1...v1.110.2) (2023-08-14)
+
+
+### Bug Fixes
+
+* **typo:** coverage_report instead of overage_report ([0653b4d](https://git.panter.ch/catladder/catladder/commit/0653b4d0889668393633b850d9fb6038c56b3921))
+
 ## [1.110.1](https://git.panter.ch/catladder/catladder/compare/v1.110.0...v1.110.1) (2023-08-14)
 
 
