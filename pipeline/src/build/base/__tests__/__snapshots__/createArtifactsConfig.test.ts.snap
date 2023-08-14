@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`createArtifactsConfig merges junit files if both given 1`] = `
+{
+  "artifacts": {
+    "paths": [
+      "testpath",
+    ],
+    "reports": {
+      "junit": [
+        "partial-report.xml",
+        "full-report.xml",
+      ],
+      "terraform": "something",
+    },
+  },
+}
+`;
+
+exports[`createArtifactsConfig returns artifacts if no artifactsReports 1`] = `
+{
+  "artifacts": {
+    "paths": [
+      "testpath",
+    ],
+    "reports": {
+      "coverage_report": {
+        "coverage_format": "cobertura",
+        "path": "some",
+      },
+      "junit": [],
+      "terraform": "something",
+    },
+  },
+}
+`;
+
+exports[`createArtifactsConfig returns junit parts of artifactsReports 1`] = `
+{
+  "artifacts": {
+    "paths": [],
+    "reports": {
+      "junit": [
+        "report.xml",
+      ],
+    },
+  },
+}
+`;
