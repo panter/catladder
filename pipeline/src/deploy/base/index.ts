@@ -1,9 +1,12 @@
-import { getDockerImageVariables, requiresDockerBuild } from "../build/docker";
-import { SBOM_BUILD_JOB_NAME } from "../build/sbom";
-import type { Context } from "../types";
-import type { CatladderJob } from "../types/jobs";
-import { sbomDeactivated } from "./sbom";
-import { contextIsStoppable } from "./utils";
+import {
+  getDockerImageVariables,
+  requiresDockerBuild,
+} from "../../build/docker";
+import { SBOM_BUILD_JOB_NAME } from "../../build/sbom";
+import type { Context } from "../../types";
+import type { CatladderJob } from "../../types/jobs";
+import { sbomDeactivated } from "../sbom";
+import { contextIsStoppable } from "../utils";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
 export const STOP_JOB_NAME = "🛑 Stop ⚠️";
