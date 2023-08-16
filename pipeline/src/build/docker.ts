@@ -24,26 +24,14 @@ export const getDockerImageVariables = (context: Context) => {
   };
 };
 
-export const requiresDockerBuild = (context: Context) => {
-  const deployConfig = context.componentConfig.deploy;
-  if (isOfDeployType(deployConfig, "kubernetes")) {
-    return true;
-  }
-
-  if (isOfDeployType(deployConfig, "google-cloudrun")) {
-    return true;
-  }
-
-  if (isOfDeployType(deployConfig, "custom") && deployConfig.requiresDocker) {
-    return true;
-  }
-
-  if (isOfDeployType(deployConfig, "dockerTag")) {
-    return true;
-  }
-
-  return false;
-};
+/**
+ * Weather the context requires a docker build
+ */
+export const requiresDockerBuild = ({
+  componentConfig: { deploy },
+}: Context): boolean =>
+  isOfDeployType(deploy, "kubernetes", "google-cloudrun", "dockerTag") ||
+  (isOfDeployType(deploy, "custom") && deploy.requiresDocker);
 
 const getDockerBaseVariables = () => ({
   DOCKER_HOST: "tcp://0.0.0.0:2375",
