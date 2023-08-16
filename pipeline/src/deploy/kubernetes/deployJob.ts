@@ -29,9 +29,7 @@ export const createKubernetesDeployJobs = (
   }
 
   const kubeValues = createKubeValues(context);
-  const kubernetesEnvironment = {
-    namespace: context.environment.envVars.KUBE_NAMESPACE,
-  };
+
   const shared = {
     image: getRunnerImage("kubernetes"),
     variables: {
@@ -83,9 +81,6 @@ export const createKubernetesDeployJobs = (
         ...getDependencyTrackUploadScript(context),
         "echo deployment successful 😻",
       ],
-      environment: {
-        kubernetes: kubernetesEnvironment,
-      },
     }),
     merge({}, baseStopJob, shared, {
       script: [
@@ -93,16 +88,10 @@ export const createKubernetesDeployJobs = (
         "kubernetesDelete",
         ...getDependencyTrackDeleteScript(context),
       ],
-      environment: {
-        kubernetes: kubernetesEnvironment,
-      },
     }),
 
     merge({}, baseRollbackJob, shared, {
       script: [...connectContext, "kubernetesRollback"],
-      environment: {
-        kubernetes: kubernetesEnvironment,
-      },
     }),
   ];
 };

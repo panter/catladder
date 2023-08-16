@@ -53,9 +53,6 @@ export type GitlabJobImage =
 export type GitlabEnvironment = {
   url: string;
   name: string;
-  kubernetes?: {
-    namespace?: string;
-  };
   action?: "stop" | "start" | "prepare" | "access"; // defaults to start
   on_stop?: string; // other job to run on stop
   auto_stop_in?: string;
