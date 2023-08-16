@@ -1,3 +1,10 @@
+# [1.111.0](https://git.panter.ch/catladder/catladder/compare/v1.110.3...v1.111.0) (2023-08-16)
+
+
+### Features
+
+* **catenv:** no longer prints env vars for components that define dotenv ([19c86f2](https://git.panter.ch/catladder/catladder/commit/19c86f2e6070ea546fdcba814c35a0b8be5b5f2f))
+
 ## [1.110.3](https://git.panter.ch/catladder/catladder/compare/v1.110.2...v1.110.3) (2023-08-16)
 
 ## [1.110.2](https://git.panter.ch/catladder/catladder/compare/v1.110.1...v1.110.2) (2023-08-14)
