@@ -1,3 +1,10 @@
+# [1.112.0](https://git.panter.ch/catladder/catladder/compare/v1.111.5...v1.112.0) (2023-08-16)
+
+
+### Features
+
+* **gitlab-types:** generate from editor json schema ([2199c5a](https://git.panter.ch/catladder/catladder/commit/2199c5a284b3cac1ddc7bd79b1124f7995f3bb2d))
+
 ## [1.111.5](https://git.panter.ch/catladder/catladder/compare/v1.111.4...v1.111.5) (2023-08-16)
 
 ## [1.111.4](https://git.panter.ch/catladder/catladder/compare/v1.111.3...v1.111.4) (2023-08-16)
