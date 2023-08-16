@@ -6,7 +6,12 @@ import { getLabels } from "../../context/getLabels";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
+import { allowFailureInScripts } from "../../utils/gitlab";
+import { createDeployementJobs } from "../base";
+import {
+  getDependencyTrackDeleteScript,
+  getDependencyTrackUploadScript,
+} from "../sbom";
 import type {
   DeployConfigCloudRun,
   DeployConfigCloudRunJob,
@@ -14,18 +19,13 @@ import type {
   DeployConfigCloudRunService,
 } from "../types";
 import { isOfDeployType } from "../types";
-import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
+import { createArgsString } from "./utils/createArgsString";
 import {
   getDatabaseCreateScript,
   getDatabaseDeleteScript,
 } from "./utils/database";
-import { allowFailureInScripts } from "../../utils/gitlab";
+import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
 import { getCloudRunJobName } from "./utils/jobName";
-import { createArgsString } from "./utils/createArgsString";
-import {
-  getDependencyTrackDeleteScript,
-  getDependencyTrackUploadScript,
-} from "../sbom";
 
 const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
   `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
@@ -43,7 +43,6 @@ export const createGoogleCloudRunDeployJobs = (
     // should not happen
     throw new Error("deploy config is wrong");
   }
-  const baseDeploymentJob = getBaseDeploymentJob(context);
 
   const fullAppName = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
   const dockerUrl = `${deployConfig.region}-docker.pkg.dev/${deployConfig.projectId}/catladder-deploy/${fullAppName}`;
@@ -257,8 +256,8 @@ export const createGoogleCloudRunDeployJobs = (
       : []),
     ...getDependencyTrackDeleteScript(context),
   ];
-  return [
-    merge({}, baseDeploymentJob, getDockerJobBaseProps(context), {
+  return createDeployementJobs(context, {
+    deploy: merge(getDockerJobBaseProps(context), {
       artifacts: { paths: ["____envvars.yaml"] },
       variables: {
         CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
@@ -271,13 +270,12 @@ export const createGoogleCloudRunDeployJobs = (
       image: getRunnerImage("gcloud"),
       script: deployScripts,
     }),
-
-    merge({}, getBaseDeploymentStopJob(context), {
+    stop: {
       image: getRunnerImage("gcloud"),
       variables: {
         CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
       },
       script: allowFailureInScripts(stopScripts),
-    }),
-  ];
+    },
+  });
 };

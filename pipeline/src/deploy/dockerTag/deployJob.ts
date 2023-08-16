@@ -1,9 +1,8 @@
-import { merge } from "lodash";
 import { getDockerJobBaseProps, gitlabDockerLogin } from "../../build/docker";
 
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { getBaseDeploymentJob } from "../base";
+import { createDeployementJobs } from "../base";
 import { isOfDeployType } from "../types";
 
 export const createDockerTagDeployJobs = (context: Context): CatladderJob[] => {
@@ -15,10 +14,10 @@ export const createDockerTagDeployJobs = (context: Context): CatladderJob[] => {
     // should not happen
     throw new Error("deploy config is not dockerTag");
   }
-  const baseDeploymentJob = getBaseDeploymentJob(context);
   const tag = deployConfig.tag;
-  return [
-    merge({}, baseDeploymentJob, getDockerJobBaseProps(context), {
+  return createDeployementJobs(context, {
+    deploy: {
+      ...getDockerJobBaseProps(context),
       script: [
         gitlabDockerLogin,
         `docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG`,
@@ -26,6 +25,6 @@ export const createDockerTagDeployJobs = (context: Context): CatladderJob[] => {
         `docker push $DOCKER_IMAGE:${tag}`,
         `echo "pushed as $DOCKER_IMAGE:${tag}"`,
       ],
-    }),
-  ];
+    },
+  });
 };

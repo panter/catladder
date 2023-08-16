@@ -1,20 +1,15 @@
 import { dump } from "js-yaml";
-import { merge } from "lodash";
 import { getSecretVarNameForContext } from "../..";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import {
-  getBaseDeploymentJob,
-  getBaseDeploymentStopJob,
-  getBaseRollbackJob,
-} from "../base";
-import { isOfDeployType } from "../types";
-import { createKubeValues } from "./kubeValues";
+import { createDeployementJobs } from "../base";
 import {
   getDependencyTrackDeleteScript,
   getDependencyTrackUploadScript,
 } from "../sbom";
+import { isOfDeployType } from "../types";
+import { createKubeValues } from "./kubeValues";
 
 export const createKubernetesDeployJobs = (
   context: Context
@@ -29,8 +24,7 @@ export const createKubernetesDeployJobs = (
   }
 
   const kubeValues = createKubeValues(context);
-
-  const shared = {
+  const shared: Pick<CatladderJob, "image" | "variables"> = {
     image: getRunnerImage("kubernetes"),
     variables: {
       ...context.environment.envVars,
@@ -53,9 +47,6 @@ export const createKubernetesDeployJobs = (
     },
   };
 
-  const baseDeploymentJob = getBaseDeploymentJob(context);
-  const baseStopJob = getBaseDeploymentStopJob(context);
-  const baseRollbackJob = getBaseRollbackJob(context);
   const clusterName = `kube-${context.environment.fullName}`;
   const connectContext = [
     `kubectl config set-cluster "${clusterName}" --server="$${getSecretVarNameForContext(
@@ -72,8 +63,10 @@ export const createKubernetesDeployJobs = (
     `kubectl config set-context "${clusterName}" --cluster="${clusterName}" --user="${clusterName}" --namespace="${context.environment.envVars.KUBE_NAMESPACE}"`,
     `kubectl config use-context "${clusterName}"`,
   ];
-  return [
-    merge({}, baseDeploymentJob, shared, {
+
+  return createDeployementJobs(context, {
+    deploy: {
+      ...shared,
       script: [
         ...connectContext,
         "kubernetesCreateSecret",
@@ -81,17 +74,18 @@ export const createKubernetesDeployJobs = (
         ...getDependencyTrackUploadScript(context),
         "echo deployment successful 😻",
       ],
-    }),
-    merge({}, baseStopJob, shared, {
+    },
+    stop: {
+      ...shared,
       script: [
         ...connectContext,
         "kubernetesDelete",
         ...getDependencyTrackDeleteScript(context),
       ],
-    }),
-
-    merge({}, baseRollbackJob, shared, {
+    },
+    rollback: {
+      ...shared,
       script: [...connectContext, "kubernetesRollback"],
-    }),
-  ];
+    },
+  });
 };

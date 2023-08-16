@@ -4,15 +4,23 @@ import {
 } from "../../build/docker";
 import { SBOM_BUILD_JOB_NAME } from "../../build/sbom";
 import type { Context } from "../../types/context";
+import type { CatladderJob } from "../../types/jobs";
 import { sbomDeactivated } from "../sbom";
 import { contextIsStoppable } from "../utils";
 import { STOP_JOB_NAME } from "./stop";
-import type { JobWithoutScript } from "./types";
+
 import { DEPLOY_RUNNER_VARIABLES } from "./variables";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
 
-export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
+export type DeployJobDefinition = Pick<
+  CatladderJob,
+  "script" | "variables" | "image" | "cache" | "artifacts" | "services"
+>;
+export const createDeployJob = (
+  context: Context,
+  jobDefinition: DeployJobDefinition
+): CatladderJob => {
   const hasDocker = requiresDockerBuild(context);
   const isStoppable = contextIsStoppable(context);
 
@@ -39,6 +47,11 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
 
   return {
     name: DEPLOY_JOB_NAME,
+    script: jobDefinition.script,
+    image: jobDefinition.image,
+    cache: jobDefinition.cache,
+    artifacts: jobDefinition.artifacts,
+    services: jobDefinition.services,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
 
     needs: [
@@ -83,6 +96,7 @@ export const getBaseDeploymentJob = (context: Context): JobWithoutScript => {
       ...(context.componentConfig.deploy
         ? context.componentConfig.deploy.extraVars ?? {}
         : {}),
+      ...jobDefinition.variables,
     },
     environment: {
       ...context.environment.gitlabEnvironment,

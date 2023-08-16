@@ -57,6 +57,7 @@ export const getDockerBuildVariables = (context: Context) => {
 };
 
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
+
 export const getDockerJobBaseProps = (context: Context) => {
   return {
     image: getRunnerImage("docker-build"),

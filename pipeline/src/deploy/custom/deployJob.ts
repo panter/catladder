@@ -1,15 +1,13 @@
-import { merge } from "lodash";
-
 import { getYarnInstall } from "../../build/node/yarn";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { getBaseDeploymentJob, getBaseDeploymentStopJob } from "../base";
-import { isOfDeployType } from "../types";
+import { createDeployementJobs } from "../base";
 import {
   getDependencyTrackDeleteScript,
   getDependencyTrackUploadScript,
 } from "../sbom";
+import { isOfDeployType } from "../types";
 
 export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
@@ -20,11 +18,10 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
     // should not happen
     throw new Error("deploy config is not custom");
   }
-  const baseDeploymentJob = getBaseDeploymentJob(context);
   // FIXME: custom deploy currently assumes yarn-based project
   const yarnInstall = getYarnInstall(context, { noCustomPostInstall: true });
-  return [
-    merge({}, baseDeploymentJob, {
+  return createDeployementJobs(context, {
+    deploy: {
       image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
       cache: deployConfig.jobCache ?? [],
       script: [
@@ -33,17 +30,17 @@ export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
         ...deployConfig.script,
         ...getDependencyTrackUploadScript(context),
       ],
-    }),
-    ...(deployConfig.stopScript
-      ? [
-          merge({}, getBaseDeploymentStopJob(context), {
-            image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
-            script: [
-              ...deployConfig.stopScript,
-              ...getDependencyTrackDeleteScript(context),
-            ],
-          }),
-        ]
-      : []),
-  ];
+      variables: {},
+    },
+    stop: deployConfig.stopScript
+      ? {
+          image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
+          script: [
+            ...deployConfig.stopScript,
+            ...getDependencyTrackDeleteScript(context),
+          ],
+          variables: {},
+        }
+      : undefined,
+  });
 };
