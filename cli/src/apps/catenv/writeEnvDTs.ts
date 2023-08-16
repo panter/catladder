@@ -19,14 +19,14 @@ export const writeDTsFiles = async (config: Config, choice?: Choice) => {
     .filter(([, component]) => component?.envDTs)
     .map(([componentName]) => componentName);
 
-  const componentsToActuallyWriteDotEnvNow = currentComponent
+  const componentsToActuallyWriteEnvDts = currentComponent
     ? componentsWithEnabledEnvDTsWrite.includes(currentComponent)
       ? [currentComponent]
       : []
     : componentsWithEnabledEnvDTsWrite;
   const gitRoot = await getGitRoot();
 
-  for (const componentName of componentsToActuallyWriteDotEnvNow) {
+  for (const componentName of componentsToActuallyWriteEnvDts) {
     const envNames = await getEnvsForDTs(env, componentName);
     const envDTsContent = createEnvDTsContent(envNames);
 

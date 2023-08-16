@@ -13,15 +13,22 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
     choice
   );
 
-  let variables: Record<string, string> = {};
   if (currentComponent) {
-    variables = await getEnvVarsResolved(null, env, currentComponent);
+    // don't print vars if dotenv is enabled
+    if (config.components[currentComponent].dotEnv) {
+      return {};
+    }
+    return await getEnvVarsResolved(null, env, currentComponent);
   } else {
     // when in a monorep and not in a subapp, merge all env vars.
     // this is not 100% correct, but better than not exporting any vars at all
     // so we also add prefixed variants
-    variables = await Object.keys(config.components).reduce(
+    return await Object.keys(config.components).reduce(
       async (acc, componentName) => {
+        // don't print vars if dotenv is enabled
+        if (config.components[componentName].dotEnv) {
+          return await acc;
+        }
         const subappvars = await getEnvVarsResolved(null, env, componentName);
         delete subappvars["_ALL_ENV_VAR_KEYS"];
         return {
@@ -36,11 +43,9 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
           ),
         };
       },
-      {}
+      Promise.resolve({} as Record<string, string>)
     );
   }
-
-  return variables;
 };
 
 export const printVariables = async (config: Config, choice?: Choice) => {

@@ -17,8 +17,6 @@ export const writeDotEnvFiles = async (config: Config, choice?: Choice) => {
     choice
   );
 
-  // whether to print .dotenv is currentl configure on the "local" part of the env
-
   const componentsWithEnabledDotEnvWrite = Object.entries(config.components)
     .filter(([, component]) => component?.dotEnv)
     .map(([componentName]) => componentName);

@@ -125,7 +125,7 @@ export const getGitlabVar = async (
 const resolveSecrets = async (
   vorpal: CommandInstance | null,
   varSets: EnvironmentEnvVars[]
-) => {
+): Promise<Record<string, string>> => {
   const allVariablesInGitlab = await getAllVariables(vorpal);
 
   return Object.fromEntries(
