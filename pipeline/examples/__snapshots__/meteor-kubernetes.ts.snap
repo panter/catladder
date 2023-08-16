@@ -1,0 +1,2593 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+{
+  "mainBranch": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "web ↩️ Rollback ⚠️ | dev ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-my-app-dev",
+          },
+          "name": "dev/web",
+          "url": "https://web.dev.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-dev-web" --server="$CL_dev_web_KUBE_URL" --certificate-authority <(echo $CL_dev_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-dev-web" --token="$CL_dev_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"",
+          "kubectl config use-context "kube-pan-my-app-dev-web"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback dev",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.dev.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.dev.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-dev",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_dev_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_dev_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-dev.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'app'
+    ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.dev.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.dev.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-dev'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.dev.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.dev.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_dev_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_dev_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: false
+    hostToBackup: 'web-mongodb.pan-my-app-dev.svc.cluster.local:27017'
+    pvcToBackup: 'web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_dev_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-dev-web",
+          "ROOT_URL": "https://web.dev.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 👮 lint": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "web 🔨 app | dev ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "webmeteor-build-cache",
+            "paths": [
+              "app/.meteor/local/resolver-result-cache.json",
+              "app/.meteor/local/plugin-cache",
+              "app/.meteor/local/isopacks",
+              "app/.meteor/local/bundler-cache/scanner",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-meteor:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "echo "add healthcheck package"",
+          "meteor add panter:healthroute --allow-superuser",
+          "meteor add qualia:prod-shell --allow-superuser",
+          "TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory",
+          "cp ./__build_info.json ./dist/bundle/programs/server",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "HOST": "web.dev.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.dev.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-my-app-dev",
+          "METEOR_DISABLE_OPTIMISTIC_CACHING": "1",
+          "MONGODB_ROOT_PASSWORD": "$CL_dev_web_MONGODB_ROOT_PASSWORD",
+          "ROOT_URL": "https://web.dev.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🔨 docker | dev ": {
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "web 🔨 app | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureMeteorDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "METEOR_INSTALL_SCRIPTS": "",
+        },
+      },
+      "web 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": "4 weeks",
+          "kubernetes": {
+            "namespace": "pan-my-app-dev",
+          },
+          "name": "dev/web",
+          "on_stop": "web 🛑 Stop ⚠️ | dev ",
+          "url": "https://web.dev.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "web 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🧪 test",
+          },
+          {
+            "artifacts": true,
+            "job": "web 🧾 sbom | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-dev-web" --server="$CL_dev_web_KUBE_URL" --certificate-authority <(echo $CL_dev_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-dev-web" --token="$CL_dev_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"",
+          "kubectl config use-context "kube-pan-my-app-dev-web"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://web.dev.my-app.pan.panter.cloud" "__sbom.json" vex.json || true",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy dev",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "dev/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.dev.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.dev.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-dev",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_dev_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_dev_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-dev.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'app'
+    ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.dev.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.dev.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-dev'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.dev.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.dev.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_dev_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_dev_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: false
+    hostToBackup: 'web-mongodb.pan-my-app-dev.svc.cluster.local:27017'
+    pvcToBackup: 'web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_dev_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-dev-web",
+          "ROOT_URL": "https://web.dev.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🛑 Stop ⚠️ | dev ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-my-app-dev",
+          },
+          "name": "dev/web",
+          "url": "https://web.dev.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-dev-web" --server="$CL_dev_web_KUBE_URL" --certificate-authority <(echo $CL_dev_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-dev-web" --token="$CL_dev_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"",
+          "kubectl config use-context "kube-pan-my-app-dev-web"",
+          "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://web.dev.my-app.pan.panter.cloud" || true",
+        ],
+        "stage": "stop dev",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.dev.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.dev.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-dev",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_dev_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_dev_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-dev.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'dev'
+    APP_DIR: 'app'
+    ENV_TYPE: 'dev'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.dev.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.dev.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-dev'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.dev.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.dev.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_dev_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_dev_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: false
+    hostToBackup: 'web-mongodb.pan-my-app-dev.svc.cluster.local:27017'
+    pvcToBackup: 'web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_dev_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-dev-web",
+          "ROOT_URL": "https://web.dev.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🛡 audit": {
+        "allow_failure": true,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "web 🧪 test": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "web 🧾 sbom | dev ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "mr": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "web ↩️ Rollback ⚠️ | review ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-my-app-review",
+          },
+          "name": "review/some-commit/web",
+          "url": "https://web.mr1234.review.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-review-mr1234-web" --server="$CL_review_web_KUBE_URL" --certificate-authority <(echo $CL_review_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-review-mr1234-web" --token="$CL_review_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-review-mr1234-web" --cluster="kube-pan-my-app-review-mr1234-web" --user="kube-pan-my-app-review-mr1234-web" --namespace="pan-my-app-review"",
+          "kubectl config use-context "kube-pan-my-app-review-mr1234-web"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback review",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.mr1234.review.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.mr1234.review.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-web",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-review",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_review_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_review_web_MONGODB_ROOT_PASSWORD@mr1234-web-mongodb.pan-my-app-review.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'app'
+    ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.mr1234.review.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.mr1234.review.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-review'
+    KUBE_APP_NAME: 'mr1234-web'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'web.mr1234.review.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.mr1234.review.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_review_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_review_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: false
+    hostToBackup: 'mr1234-web-mongodb.pan-my-app-review.svc.cluster.local:27017'
+    pvcToBackup: 'mr1234-web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_review_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-review-mr1234-web",
+          "ROOT_URL": "https://web.mr1234.review.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 👮 lint": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "web 🔨 app | review ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "webmeteor-build-cache",
+            "paths": [
+              "app/.meteor/local/resolver-result-cache.json",
+              "app/.meteor/local/plugin-cache",
+              "app/.meteor/local/isopacks",
+              "app/.meteor/local/bundler-cache/scanner",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-meteor:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "echo "add healthcheck package"",
+          "meteor add panter:healthroute --allow-superuser",
+          "meteor add qualia:prod-shell --allow-superuser",
+          "TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory",
+          "cp ./__build_info.json ./dist/bundle/programs/server",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "HOST": "web.mr1234.review.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.mr1234.review.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "KUBE_APP_NAME": "mr1234-web",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_NAMESPACE": "pan-my-app-review",
+          "METEOR_DISABLE_OPTIMISTIC_CACHING": "1",
+          "MONGODB_ROOT_PASSWORD": "$CL_review_web_MONGODB_ROOT_PASSWORD",
+          "ROOT_URL": "https://web.mr1234.review.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🔨 docker | review ": {
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "web 🔨 app | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureMeteorDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "METEOR_INSTALL_SCRIPTS": "",
+        },
+      },
+      "web 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": "2 week",
+          "kubernetes": {
+            "namespace": "pan-my-app-review",
+          },
+          "name": "review/some-commit/web",
+          "on_stop": "web 🛑 Stop ⚠️ | review ",
+          "url": "https://web.mr1234.review.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "web 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🧪 test",
+          },
+          {
+            "artifacts": true,
+            "job": "web 🧾 sbom | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-review-mr1234-web" --server="$CL_review_web_KUBE_URL" --certificate-authority <(echo $CL_review_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-review-mr1234-web" --token="$CL_review_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-review-mr1234-web" --cluster="kube-pan-my-app-review-mr1234-web" --user="kube-pan-my-app-review-mr1234-web" --namespace="pan-my-app-review"",
+          "kubectl config use-context "kube-pan-my-app-review-mr1234-web"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://web.mr1234.review.my-app.pan.panter.cloud" "__sbom.json" vex.json || true",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy review",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "review/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.mr1234.review.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.mr1234.review.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-web",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-review",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_review_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_review_web_MONGODB_ROOT_PASSWORD@mr1234-web-mongodb.pan-my-app-review.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'app'
+    ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.mr1234.review.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.mr1234.review.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-review'
+    KUBE_APP_NAME: 'mr1234-web'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'web.mr1234.review.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.mr1234.review.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_review_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_review_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: false
+    hostToBackup: 'mr1234-web-mongodb.pan-my-app-review.svc.cluster.local:27017'
+    pvcToBackup: 'mr1234-web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_review_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-review-mr1234-web",
+          "ROOT_URL": "https://web.mr1234.review.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🛑 Stop ⚠️ | review ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-my-app-review",
+          },
+          "name": "review/some-commit/web",
+          "url": "https://web.mr1234.review.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-review-mr1234-web" --server="$CL_review_web_KUBE_URL" --certificate-authority <(echo $CL_review_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-review-mr1234-web" --token="$CL_review_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-review-mr1234-web" --cluster="kube-pan-my-app-review-mr1234-web" --user="kube-pan-my-app-review-mr1234-web" --namespace="pan-my-app-review"",
+          "kubectl config use-context "kube-pan-my-app-review-mr1234-web"",
+          "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://web.mr1234.review.my-app.pan.panter.cloud" || true",
+        ],
+        "stage": "stop review",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.mr1234.review.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.mr1234.review.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "mr1234-web",
+          "KUBE_APP_NAME_PREFIX": "mr1234-",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-review",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_review_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_review_web_MONGODB_ROOT_PASSWORD@mr1234-web-mongodb.pan-my-app-review.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'review'
+    APP_DIR: 'app'
+    ENV_TYPE: 'review'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.mr1234.review.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.mr1234.review.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-review'
+    KUBE_APP_NAME: 'mr1234-web'
+    KUBE_APP_NAME_PREFIX: 'mr1234-'
+    HOST_CANONICAL: 'web.mr1234.review.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.mr1234.review.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_review_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_review_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: false
+    hostToBackup: 'mr1234-web-mongodb.pan-my-app-review.svc.cluster.local:27017'
+    pvcToBackup: 'mr1234-web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_review_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-review-mr1234-web",
+          "ROOT_URL": "https://web.mr1234.review.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🛡 audit": {
+        "allow_failure": true,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "web 🧪 test": {
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "app",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "web 🧾 sbom | review ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "taggedRelease": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "web ↩️ Rollback ⚠️ | prod ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-my-app-prod",
+          },
+          "name": "prod/web",
+          "url": "https://www.example.com",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-prod-web" --server="$CL_prod_web_KUBE_URL" --certificate-authority <(echo $CL_prod_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-prod-web" --token="$CL_prod_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"",
+          "kubectl config use-context "kube-pan-my-app-prod-web"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback prod",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "www.example.com",
+          "HOST_CANONICAL": "web.prod.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-prod",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_prod_web_MONGODB_ROOT_PASSWORD'
+    MONGODB_REPLICASET_KEY: '$CL_prod_web_MONGODB_REPLICASET_KEY'
+    MONGO_URL: 'mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/app?replicaSet=rs0&authSource=admin'
+    MONGO_OPLOG_URL: 'mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/local?replicaSet=rs0&authSource=admin'
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'app'
+    ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'www.example.com'
+    ROOT_URL: 'https://www.example.com'
+    KUBE_NAMESPACE: 'pan-my-app-prod'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.prod.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+application:
+  host: 'www.example.com'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+  redirects:
+    - host: 'example.com'
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_prod_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_prod_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'premium-rwo'
+    size: '50Gi'
+  backup:
+    enabled: true
+    hostToBackup: 'web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017'
+    pvcToBackup: 'datadir-web-mongodb-1'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'replicaset'
+  replicaCount: 2
+  resources:
+    limits:
+      memory: '8Gi'
+    requests:
+      memory: '8Gi'
+",
+          "MONGODB_REPLICASET_KEY": "$CL_prod_web_MONGODB_REPLICASET_KEY",
+          "MONGODB_ROOT_PASSWORD": "$CL_prod_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-prod-web",
+          "ROOT_URL": "https://www.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+        },
+      },
+      "web ↩️ Rollback ⚠️ | stage ": {
+        "environment": {
+          "action": "access",
+          "kubernetes": {
+            "namespace": "pan-my-app-stage",
+          },
+          "name": "stage/web",
+          "url": "https://web.stage.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-stage-web" --server="$CL_stage_web_KUBE_URL" --certificate-authority <(echo $CL_stage_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-stage-web" --token="$CL_stage_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"",
+          "kubectl config use-context "kube-pan-my-app-stage-web"",
+          "kubernetesRollback",
+        ],
+        "stage": "rollback stage",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.stage.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.stage.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-stage",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_stage_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_stage_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-stage.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'app'
+    ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.stage.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.stage.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-stage'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.stage.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.stage.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_stage_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_stage_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: true
+    hostToBackup: 'web-mongodb.pan-my-app-stage.svc.cluster.local:27017'
+    pvcToBackup: 'web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_stage_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-stage-web",
+          "ROOT_URL": "https://web.stage.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🔨 app | prod ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "webmeteor-build-cache",
+            "paths": [
+              "app/.meteor/local/resolver-result-cache.json",
+              "app/.meteor/local/plugin-cache",
+              "app/.meteor/local/isopacks",
+              "app/.meteor/local/bundler-cache/scanner",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-meteor:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "echo "add healthcheck package"",
+          "meteor add panter:healthroute --allow-superuser",
+          "meteor add qualia:prod-shell --allow-superuser",
+          "TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory",
+          "cp ./__build_info.json ./dist/bundle/programs/server",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "HOST": "www.example.com",
+          "HOST_CANONICAL": "web.prod.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-my-app-prod",
+          "METEOR_DISABLE_OPTIMISTIC_CACHING": "1",
+          "MONGODB_REPLICASET_KEY": "$CL_prod_web_MONGODB_REPLICASET_KEY",
+          "MONGODB_ROOT_PASSWORD": "$CL_prod_web_MONGODB_ROOT_PASSWORD",
+          "ROOT_URL": "https://www.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+        },
+      },
+      "web 🔨 app | stage ": {
+        "artifacts": {
+          "paths": [
+            "app/__build_info.json",
+            "app/dist",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+        },
+        "cache": [
+          {
+            "key": "app-yarn",
+            "paths": [
+              "app/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "app-node-modules",
+            "paths": [
+              "app/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "webmeteor-build-cache",
+            "paths": [
+              "app/.meteor/local/resolver-result-cache.json",
+              "app/.meteor/local/plugin-cache",
+              "app/.meteor/local/isopacks",
+              "app/.meteor/local/bundler-cache/scanner",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-meteor:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "cd app",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "yarn install --immutable",
+          "echo "add healthcheck package"",
+          "meteor add panter:healthroute --allow-superuser",
+          "meteor add qualia:prod-shell --allow-superuser",
+          "TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory",
+          "cp ./__build_info.json ./dist/bundle/programs/server",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "HOST": "web.stage.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.stage.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "2",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_NAMESPACE": "pan-my-app-stage",
+          "METEOR_DISABLE_OPTIMISTIC_CACHING": "1",
+          "MONGODB_ROOT_PASSWORD": "$CL_stage_web_MONGODB_ROOT_PASSWORD",
+          "ROOT_URL": "https://web.stage.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🔨 docker | prod ": {
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "web 🔨 app | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureMeteorDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "METEOR_INSTALL_SCRIPTS": "",
+        },
+      },
+      "web 🔨 docker | stage ": {
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "web 🔨 app | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureMeteorDockerfile",
+          "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "docker version",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:20-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "app",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+          "METEOR_INSTALL_SCRIPTS": "",
+        },
+      },
+      "web 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "environment": {
+          "auto_stop_in": undefined,
+          "kubernetes": {
+            "namespace": "pan-my-app-prod",
+          },
+          "name": "prod/web",
+          "on_stop": "web 🛑 Stop ⚠️ | prod ",
+          "url": "https://www.example.com",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "web 🔨 app | prod ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🔨 docker | prod ",
+          },
+          {
+            "artifacts": true,
+            "job": "web 🧾 sbom | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-prod-web" --server="$CL_prod_web_KUBE_URL" --certificate-authority <(echo $CL_prod_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-prod-web" --token="$CL_prod_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"",
+          "kubectl config use-context "kube-pan-my-app-prod-web"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://www.example.com" "__sbom.json" vex.json || true",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy prod",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "prod/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "www.example.com",
+          "HOST_CANONICAL": "web.prod.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-prod",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_prod_web_MONGODB_ROOT_PASSWORD'
+    MONGODB_REPLICASET_KEY: '$CL_prod_web_MONGODB_REPLICASET_KEY'
+    MONGO_URL: 'mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/app?replicaSet=rs0&authSource=admin'
+    MONGO_OPLOG_URL: 'mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/local?replicaSet=rs0&authSource=admin'
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'app'
+    ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'www.example.com'
+    ROOT_URL: 'https://www.example.com'
+    KUBE_NAMESPACE: 'pan-my-app-prod'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.prod.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+application:
+  host: 'www.example.com'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+  redirects:
+    - host: 'example.com'
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_prod_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_prod_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'premium-rwo'
+    size: '50Gi'
+  backup:
+    enabled: true
+    hostToBackup: 'web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017'
+    pvcToBackup: 'datadir-web-mongodb-1'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'replicaset'
+  replicaCount: 2
+  resources:
+    limits:
+      memory: '8Gi'
+    requests:
+      memory: '8Gi'
+",
+          "MONGODB_REPLICASET_KEY": "$CL_prod_web_MONGODB_REPLICASET_KEY",
+          "MONGODB_ROOT_PASSWORD": "$CL_prod_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-prod-web",
+          "ROOT_URL": "https://www.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+        },
+      },
+      "web 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "environment": {
+          "auto_stop_in": undefined,
+          "kubernetes": {
+            "namespace": "pan-my-app-stage",
+          },
+          "name": "stage/web",
+          "on_stop": "web 🛑 Stop ⚠️ | stage ",
+          "url": "https://web.stage.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "web 🔨 app | stage ",
+          },
+          {
+            "artifacts": false,
+            "job": "web 🔨 docker | stage ",
+          },
+          {
+            "artifacts": true,
+            "job": "web 🧾 sbom | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-stage-web" --server="$CL_stage_web_KUBE_URL" --certificate-authority <(echo $CL_stage_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-stage-web" --token="$CL_stage_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"",
+          "kubectl config use-context "kube-pan-my-app-stage-web"",
+          "kubernetesCreateSecret",
+          "kubernetesDeploy",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://web.stage.my-app.pan.panter.cloud" "__sbom.json" vex.json || true",
+          "echo deployment successful 😻",
+        ],
+        "stage": "deploy stage",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "DOCKER_CACHE_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/caches/web",
+          "DOCKER_IMAGE": "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+          "DOCKER_IMAGE_NAME": "stage/web",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "$CI_REGISTRY",
+          "DOCKER_REGISTRY_IMAGE_PATH": "$CI_REGISTRY_IMAGE",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.stage.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.stage.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-stage",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_stage_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_stage_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-stage.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'app'
+    ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.stage.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.stage.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-stage'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.stage.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.stage.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_stage_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_stage_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: true
+    hostToBackup: 'web-mongodb.pan-my-app-stage.svc.cluster.local:27017'
+    pvcToBackup: 'web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_stage_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-stage-web",
+          "ROOT_URL": "https://web.stage.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🛑 Stop ⚠️ | prod ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-my-app-prod",
+          },
+          "name": "prod/web",
+          "url": "https://www.example.com",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-prod-web" --server="$CL_prod_web_KUBE_URL" --certificate-authority <(echo $CL_prod_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-prod-web" --token="$CL_prod_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"",
+          "kubectl config use-context "kube-pan-my-app-prod-web"",
+          "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://www.example.com" || true",
+        ],
+        "stage": "stop prod",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "www.example.com",
+          "HOST_CANONICAL": "web.prod.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-prod",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_prod_web_MONGODB_ROOT_PASSWORD'
+    MONGODB_REPLICASET_KEY: '$CL_prod_web_MONGODB_REPLICASET_KEY'
+    MONGO_URL: 'mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/app?replicaSet=rs0&authSource=admin'
+    MONGO_OPLOG_URL: 'mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/local?replicaSet=rs0&authSource=admin'
+  public:
+    ENV_SHORT: 'prod'
+    APP_DIR: 'app'
+    ENV_TYPE: 'prod'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'www.example.com'
+    ROOT_URL: 'https://www.example.com'
+    KUBE_NAMESPACE: 'pan-my-app-prod'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.prod.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]'
+application:
+  host: 'www.example.com'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+  redirects:
+    - host: 'example.com'
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_prod_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_prod_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'premium-rwo'
+    size: '50Gi'
+  backup:
+    enabled: true
+    hostToBackup: 'web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017'
+    pvcToBackup: 'datadir-web-mongodb-1'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'replicaset'
+  replicaCount: 2
+  resources:
+    limits:
+      memory: '8Gi'
+    requests:
+      memory: '8Gi'
+",
+          "MONGODB_REPLICASET_KEY": "$CL_prod_web_MONGODB_REPLICASET_KEY",
+          "MONGODB_ROOT_PASSWORD": "$CL_prod_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-prod-web",
+          "ROOT_URL": "https://www.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]",
+        },
+      },
+      "web 🛑 Stop ⚠️ | stage ": {
+        "environment": {
+          "action": "stop",
+          "kubernetes": {
+            "namespace": "pan-my-app-stage",
+          },
+          "name": "stage/web",
+          "url": "https://web.stage.my-app.pan.panter.cloud",
+        },
+        "image": "path/to/docker/kubernetes:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "kubectl config set-cluster "kube-pan-my-app-stage-web" --server="$CL_stage_web_KUBE_URL" --certificate-authority <(echo $CL_stage_web_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-my-app-stage-web" --token="$CL_stage_web_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"",
+          "kubectl config use-context "kube-pan-my-app-stage-web"",
+          "kubernetesDelete",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://web.stage.my-app.pan.panter.cloud" || true",
+        ],
+        "stage": "stop stage",
+        "variables": {
+          "APP_DIR": "app",
+          "BUILD_ID": "some-id",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "COMPONENT_NAME": "web",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GIT_STRATEGY": "none",
+          "HELM_ARGS": "",
+          "HELM_EXPERIMENTAL_OCI": "1",
+          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
+          "HOST": "web.stage.my-app.pan.panter.cloud",
+          "HOST_CANONICAL": "web.stage.my-app.pan.panter.cloud",
+          "KUBERNETES_CPU_LIMIT": "1",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "KUBE_APP_NAME": "web",
+          "KUBE_APP_NAME_PREFIX": "",
+          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-web",
+          "KUBE_NAMESPACE": "pan-my-app-stage",
+          "KUBE_VALUES": "env:
+  secret:
+    MONGODB_ROOT_PASSWORD: '$CL_stage_web_MONGODB_ROOT_PASSWORD'
+    MONGO_URL: 'mongodb://root:$CL_stage_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-stage.svc.cluster.local:27017/app?authSource=admin'
+  public:
+    ENV_SHORT: 'stage'
+    APP_DIR: 'app'
+    ENV_TYPE: 'stage'
+    BUILD_INFO_ID: 'some-id'
+    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+    BUILD_INFO_CURRENT_VERSION: '3.2.1'
+    HOST: 'web.stage.my-app.pan.panter.cloud'
+    ROOT_URL: 'https://web.stage.my-app.pan.panter.cloud'
+    KUBE_NAMESPACE: 'pan-my-app-stage'
+    KUBE_APP_NAME: 'web'
+    KUBE_APP_NAME_PREFIX: ''
+    HOST_CANONICAL: 'web.stage.my-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]'
+application:
+  host: 'web.stage.my-app.pan.panter.cloud'
+  command: 'node main.js'
+  livenessProbe:
+    httpGet:
+      path: '__health'
+  readinessProbe:
+    httpGet:
+      path: '__health'
+  startupProbe:
+    httpGet:
+      path: '__health'
+  worker:
+    enabled: true
+mongodb:
+  enabled: true
+  auth:
+    enabled: true
+    rootPassword: '$CL_stage_web_MONGODB_ROOT_PASSWORD'
+    replicaSetKey: '$CL_stage_web_MONGODB_REPLICASET_KEY'
+  persistence:
+    storageClass: 'standard-rwo'
+  backup:
+    enabled: true
+    hostToBackup: 'web-mongodb.pan-my-app-stage.svc.cluster.local:27017'
+    pvcToBackup: 'web-mongodb'
+    image: 'mrelite/kubectlmongoshell:v1.0'
+    schedule: '0 4 * * *'
+    volumeSnapshotClass: 'snapshotclass'
+  architecture: 'standalone'
+",
+          "MONGODB_ROOT_PASSWORD": "$CL_stage_web_MONGODB_ROOT_PASSWORD",
+          "RELEASE_NAME": "pan-my-app-stage-web",
+          "ROOT_URL": "https://web.stage.my-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","MONGODB_ROOT_PASSWORD"]",
+        },
+      },
+      "web 🧾 sbom | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+      "web 🧾 sbom | stage ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" app",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+}
+`;

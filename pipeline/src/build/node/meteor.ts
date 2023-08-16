@@ -11,6 +11,8 @@ import { createDockerBuildJobDefault } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
+import { sbomDeactivated } from "../../deploy/sbom";
+import { createSbomBuildJob } from "../sbom";
 
 const getMeteorCache = (context: Context): GitlabJobCache[] => [
   {
@@ -71,5 +73,6 @@ export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
       },
       needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
     }),
+    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
   ];
 };
