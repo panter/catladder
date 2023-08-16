@@ -1,14 +1,11 @@
 import { join } from "path";
 import type { Context } from "../../types/context";
 import { ensureArray } from "../../utils";
-import { APP_BUILD_JOB_NAME } from "../base/constants";
-import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJobDefault, requiresDockerBuild } from "../docker";
+import { getDockerBuildDefaultScript, requiresDockerBuild } from "../docker";
 import { isOfBuildType } from "../types";
 
 import type { CatladderJob } from "../../types/jobs";
-import { createSbomBuildJob } from "../sbom";
-import { sbomDeactivated } from "../../deploy/sbom";
+import { createBuildJobs } from "../base";
 
 const RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -24,45 +21,35 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
     throw new Error("deploy config is not custom");
   }
 
-  const appBuildJob: CatladderJob | null =
-    buildConfig.buildCommand !== null
-      ? createBuildJob(context, {
-          image: buildConfig.jobImage,
-          variables: {
-            ...RUNNER_BUILD_VARIABLES,
-          },
-          cache: buildConfig.jobCache,
-          services: buildConfig.jobServices,
-          script: [...(ensureArray(buildConfig.buildCommand) ?? [])],
-          artifacts: {
-            paths: [
-              join(context.componentConfig.dir, "__build_info.json"),
-              join(context.componentConfig.dir, "dist"),
-              ...(buildConfig.artifactsPaths?.map((path) =>
-                join(context.componentConfig.dir, path)
-              ) ?? []),
-            ],
-            expire_in: "1 day",
-          },
-        })
-      : null;
-  return [
-    ...(appBuildJob ? [appBuildJob] : []),
-    ...(requiresDockerBuild(context)
-      ? [
-          createDockerBuildJobDefault(context, {
-            script: [
-              buildConfig.docker?.type === "nginx"
-                ? "ensureNginxDockerfile"
-                : "", // e.g. custom,
-            ].filter(Boolean),
+  return createBuildJobs(context, {
+    appBuild:
+      buildConfig.buildCommand !== null
+        ? {
+            image: buildConfig.jobImage,
+            variables: {
+              ...RUNNER_BUILD_VARIABLES,
+            },
+            cache: buildConfig.jobCache,
+            services: buildConfig.jobServices,
+            script: [...(ensureArray(buildConfig.buildCommand) ?? [])],
+            artifacts: {
+              paths: [
+                join(context.componentConfig.dir, "__build_info.json"),
+                join(context.componentConfig.dir, "dist"),
+                ...(buildConfig.artifactsPaths?.map((path) =>
+                  join(context.componentConfig.dir, path)
+                ) ?? []),
+              ],
+              expire_in: "1 day",
+            },
+          }
+        : undefined,
+    dockerBuild: {
+      script: getDockerBuildDefaultScript(
+        buildConfig.docker?.type === "nginx" ? "ensureNginxDockerfile" : ""
+      ),
 
-            variables: {},
-
-            needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
-          }),
-        ]
-      : []),
-    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
-  ];
+      variables: {},
+    },
+  });
 };

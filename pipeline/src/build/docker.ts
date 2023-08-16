@@ -70,6 +70,8 @@ export const getDockerJobBaseProps = (context: Context) => {
     variables: getDockerBaseVariables(),
   };
 };
+
+export type DockerBuildJobDefinition = Partial<CatladderJob>;
 export const createDockerBuildJobBase = (
   context: Context,
   { script, ...def }: Partial<CatladderJob>
@@ -91,20 +93,14 @@ export const createDockerBuildJobBase = (
 
 export const gitlabDockerLogin =
   "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY";
-export const createDockerBuildJobDefault = (
-  context: Context,
-  { script, ...def }: Partial<CatladderJob>
-): CatladderJob => {
-  return createDockerBuildJobBase(context, {
-    script: [
-      ...(script || []),
-      gitlabDockerLogin,
-      "docker version",
-      "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
-      "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
-      "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
-      "docker push $DOCKER_CACHE_IMAGE",
-    ],
-    ...def,
-  });
-};
+
+export const getDockerBuildDefaultScript = (ensureDockerFileScript?: string) =>
+  [
+    ensureDockerFileScript,
+    gitlabDockerLogin,
+    "docker version",
+    "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
+    "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+    "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+    "docker push $DOCKER_CACHE_IMAGE",
+  ].filter(Boolean);

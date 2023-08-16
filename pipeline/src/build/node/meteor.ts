@@ -5,14 +5,11 @@ import type { Context } from "../../types/context";
 
 import type { CatladderJob } from "../../types/jobs";
 
-import { APP_BUILD_JOB_NAME } from "../base/constants";
-import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJobDefault } from "../docker";
+import { createBuildJobs } from "../base";
+import { getDockerBuildDefaultScript } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
-import { sbomDeactivated } from "../../deploy/sbom";
-import { createSbomBuildJob } from "../sbom";
 
 const getMeteorCache = (context: Context): GitlabJobCache[] => [
   {
@@ -37,42 +34,40 @@ export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
   }
 
   const yarnInstall = getYarnInstall(context);
-  const appBuildJob: CatladderJob | null =
-    buildConfig.buildCommand !== null
-      ? createBuildJob(context, {
-          cache: [...getNodeCache(context), ...getMeteorCache(context)],
-          image: getRunnerImage("jobs-meteor"),
-          variables: {
-            METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
-          },
-          script: [
-            ...yarnInstall,
 
-            'echo "add healthcheck package"',
-            "meteor add panter:healthroute --allow-superuser",
-            "meteor add qualia:prod-shell --allow-superuser",
+  return createBuildJobs(context, {
+    appBuild:
+      buildConfig.buildCommand !== null
+        ? {
+            cache: [...getNodeCache(context), ...getMeteorCache(context)],
+            image: getRunnerImage("jobs-meteor"),
+            variables: {
+              METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
+            },
+            script: [
+              ...yarnInstall,
 
-            'TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory',
+              'echo "add healthcheck package"',
+              "meteor add panter:healthroute --allow-superuser",
+              "meteor add qualia:prod-shell --allow-superuser",
 
-            "cp ./__build_info.json ./dist/bundle/programs/server",
-          ],
-          artifacts: {
-            paths: [
-              context.componentConfig.dir + "/__build_info.json",
-              context.componentConfig.dir + "/dist",
+              'TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory',
+
+              "cp ./__build_info.json ./dist/bundle/programs/server",
             ],
-          },
-        })
-      : null;
-  return [
-    ...(appBuildJob ? [appBuildJob] : []),
-    createDockerBuildJobDefault(context, {
-      script: ["ensureMeteorDockerfile"],
+            artifacts: {
+              paths: [
+                context.componentConfig.dir + "/__build_info.json",
+                context.componentConfig.dir + "/dist",
+              ],
+            },
+          }
+        : undefined,
+    dockerBuild: {
+      script: getDockerBuildDefaultScript("ensureMeteorDockerfile"),
       variables: {
         METEOR_INSTALL_SCRIPTS: buildConfig.installScripts ? "true" : "",
       },
-      needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
-    }),
-    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
-  ];
+    },
+  });
 };

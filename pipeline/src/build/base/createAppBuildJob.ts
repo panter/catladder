@@ -12,9 +12,10 @@ import {
 import { writeBuildInfo } from "./writeBuildInfo";
 import { writeDotEnv } from "./writeDotEnv";
 
-export const createBuildJob = (
+export type AppBuildJobDefinition = Partial<CatladderJob>;
+export const createAppBuildJob = (
   context: Context,
-  { script, variables, ...def }: Partial<CatladderJob>
+  { script, variables, ...def }: AppBuildJobDefinition
 ): CatladderJob => {
   return merge(
     {

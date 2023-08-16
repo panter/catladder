@@ -1,9 +1,8 @@
 import type { Context } from "../..";
-import { isOfBuildType } from "../types";
 import type { CatladderJob } from "../../types/jobs";
-import { createDockerBuildJobBase, gitlabDockerLogin } from "../docker";
-import { sbomDeactivated } from "../../deploy/sbom";
-import { createSbomBuildJob } from "../sbom";
+import { createBuildJobs } from "../base";
+import { gitlabDockerLogin } from "../docker";
+import { isOfBuildType } from "../types";
 
 export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
@@ -17,9 +16,9 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
   const packEnvArgs = Object.entries(cnbConf?.buildVars ?? {})
     .map(([k, v]) => `--env '${k}${v ? `=${v}` : ""}'`)
     .join(" ");
-
-  return [
-    createDockerBuildJobBase(context, {
+  return createBuildJobs(context, {
+    appBuild: undefined,
+    dockerBuild: {
       variables: {
         ...context.environment.jobOnlyVars.build.envVars,
         ...context.componentConfig.build.extraVars,
@@ -38,7 +37,6 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
           cnbConf?.packExtraArgs?.join(" ") ?? ""
         }`,
       ],
-    }),
-    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
-  ];
+    },
+  });
 };

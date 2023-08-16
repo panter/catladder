@@ -1,17 +1,14 @@
-import type { Context } from "../../types/context";
-import { ensureArray } from "../../utils";
-import { APP_BUILD_JOB_NAME } from "../base/constants";
-import { createBuildJob } from "../base/createBuildJob";
-import { createDockerBuildJobDefault, requiresDockerBuild } from "../docker";
 import { join } from "path";
+import { getRunnerImage } from "../../runner";
+import type { Context } from "../../types/context";
+import type { CatladderJob } from "../../types/jobs";
+import { ensureArray } from "../../utils";
+import { createBuildJobs } from "../base";
+import { getDockerBuildDefaultScript, requiresDockerBuild } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
-import type { CatladderJob } from "../../types/jobs";
-import { getRunnerImage } from "../../runner";
-import { createSbomBuildJob } from "../sbom";
-import { sbomDeactivated } from "../../deploy/sbom";
 
 export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
@@ -22,62 +19,54 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
 
   const defaultImage = getRunnerImage("jobs-default");
   const yarnInstall = getYarnInstall(context);
-  const appBuildJob: CatladderJob | null =
-    buildConfig.buildCommand !== null
-      ? createBuildJob(context, {
-          image: buildConfig.jobImage ?? defaultImage,
-          variables: {
-            ...NODE_RUNNER_BUILD_VARIABLES,
-          },
-          cache: [
-            ...(ensureArray(buildConfig.jobCache) ?? []),
-            ...getNodeCache(context),
-            ...getNextCache(context),
-          ],
-          script: [
-            ...yarnInstall,
-            ...(ensureArray(buildConfig.buildCommand) ?? []),
-          ],
-          artifacts: {
-            paths: [
-              join(context.componentConfig.dir, "__build_info.json"),
-              join(context.componentConfig.dir, "dist"),
-              join(context.componentConfig.dir, ".next"),
-              ...(buildConfig.artifactsPaths?.map((path) =>
-                join(context.componentConfig.dir, path)
-              ) ?? []),
-            ],
-            expire_in: "1 day",
-          },
-          jobTags: buildConfig.jobTags,
-        })
-      : null;
-  return [
-    ...(appBuildJob ? [appBuildJob] : []),
-    ...(requiresDockerBuild(context)
-      ? [
-          createDockerBuildJobDefault(context, {
-            script: [
-              buildConfig.type === "node-static" ||
-              buildConfig.type === "storybook"
-                ? "ensureNginxDockerfile"
-                : "ensureNodeDockerfile",
-            ],
-            cache: [...getYarnCache(context, "pull")],
-            variables: {
-              // only required for non static
-              DOCKER_COPY_AND_INSTALL_APP:
-                getDockerAppCopyAndBuildScript(context),
-              DOCKER_COPY_WORKSPACE_FILES:
-                context.packageManagerInfo?.pathsToCopyInDocker
-                  .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
-                  ?.join("\n"),
-            },
 
-            needs: appBuildJob ? [APP_BUILD_JOB_NAME] : [],
-          }),
-        ]
-      : []),
-    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
-  ];
+  return createBuildJobs(context, {
+    appBuild:
+      buildConfig.buildCommand !== null
+        ? {
+            image: buildConfig.jobImage ?? defaultImage,
+            variables: {
+              ...NODE_RUNNER_BUILD_VARIABLES,
+            },
+            cache: [
+              ...(ensureArray(buildConfig.jobCache) ?? []),
+              ...getNodeCache(context),
+              ...getNextCache(context),
+            ],
+            script: [
+              ...yarnInstall,
+              ...(ensureArray(buildConfig.buildCommand) ?? []),
+            ],
+            artifacts: {
+              paths: [
+                join(context.componentConfig.dir, "__build_info.json"),
+                join(context.componentConfig.dir, "dist"),
+                join(context.componentConfig.dir, ".next"),
+                ...(buildConfig.artifactsPaths?.map((path) =>
+                  join(context.componentConfig.dir, path)
+                ) ?? []),
+              ],
+              expire_in: "1 day",
+            },
+            jobTags: buildConfig.jobTags,
+          }
+        : undefined,
+
+    dockerBuild: {
+      script: getDockerBuildDefaultScript(
+        buildConfig.type === "node-static" || buildConfig.type === "storybook"
+          ? "ensureNginxDockerfile"
+          : "ensureNodeDockerfile"
+      ),
+      cache: [...getYarnCache(context, "pull")],
+      variables: {
+        // only required for non static
+        DOCKER_COPY_AND_INSTALL_APP: getDockerAppCopyAndBuildScript(context),
+        DOCKER_COPY_WORKSPACE_FILES:
+          context.packageManagerInfo?.pathsToCopyInDocker
+            .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
+            ?.join("\n"),
+      },
+    },
+  });
 };
