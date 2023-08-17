@@ -1,5 +1,4 @@
 import { dump } from "js-yaml";
-import { getSecretVarNameForContext } from "../..";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
@@ -10,6 +9,7 @@ import {
 } from "../sbom";
 import { isOfDeployType } from "../types";
 import { createKubeValues } from "./kubeValues";
+import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
 
 export const createKubernetesDeployJobs = (
   context: Context
