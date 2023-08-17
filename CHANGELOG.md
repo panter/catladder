@@ -1,3 +1,10 @@
+## [1.112.1](https://git.panter.ch/catladder/catladder/compare/v1.112.0...v1.112.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* build broken ([8462e63](https://git.panter.ch/catladder/catladder/commit/8462e63f792571f6954905e36456aca674295b46))
+
 # [1.112.0](https://git.panter.ch/catladder/catladder/compare/v1.111.5...v1.112.0) (2023-08-16)
 
 
