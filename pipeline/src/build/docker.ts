@@ -3,6 +3,8 @@ import { isOfDeployType } from "../deploy";
 import { getRunnerImage } from "../runner";
 import type { Context } from "../types";
 import type { CatladderJob } from "../types/jobs";
+import { existsSync } from "fs";
+import path from "path";
 
 const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -104,3 +106,6 @@ export const getDockerBuildDefaultScript = (ensureDockerFileScript?: string) =>
     "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
     "docker push $DOCKER_CACHE_IMAGE",
   ].filter(Boolean);
+
+export const hasDockerfile = (context: Context) =>
+  existsSync(path.join(context.componentConfig.dir, "Dockerfile"));

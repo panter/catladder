@@ -1,8 +1,9 @@
+import { rmSync, writeFileSync } from "fs";
 import type { Config } from "../src";
 import { createAllPipelines } from "./__utils__/helpers";
 
 // the image version should match your `.ruby-version`
-const RAILS_TEST_STAGE_IMAGE = "ruby:3.2.1"
+const RAILS_TEST_STAGE_IMAGE = "ruby:3.2.1";
 
 const config: Config = {
   appName: "test-app",
@@ -14,9 +15,7 @@ const config: Config = {
         public: {
           RAILS_ENV: "production",
         },
-        secret: [
-          "SECRET_KEY_BASE",
-        ]
+        secret: ["SECRET_KEY_BASE"],
       },
       build: {
         type: "rails",
@@ -32,6 +31,7 @@ const config: Config = {
         audit: {
           jobImage: RAILS_TEST_STAGE_IMAGE,
         },
+        // only needed if you do not have a Dockerfile
         cnbBuilder: {
           buildVars: { SECRET_KEY_BASE: "dummy-value" },
         },
@@ -57,8 +57,7 @@ const config: Config = {
           jobs: {
             "db-migrate": {
               hook: "post-install,post-upgrade",
-              command:
-                "launcher bundle exec rake db:migrate",
+              command: "launcher bundle exec rake db:migrate",
             },
           },
         },
@@ -70,21 +69,19 @@ const config: Config = {
               jobs: {
                 "db-prepare-seed": {
                   hook: "post-install",
-                  command:
-                    "launcher bundle exec rake db:prepare db:seed",
+                  command: "launcher bundle exec rake db:prepare db:seed",
                 },
                 "db-migrate": {
                   hook: "post-upgrade",
-                  command:
-                    "launcher bundle exec rake db:migrate",
+                  command: "launcher bundle exec rake db:migrate",
                 },
               },
             },
           },
         },
         prod: {
-          host: "my-fancy-website.com"
-        }
+          host: "my-fancy-website.com",
+        },
       },
     },
   },
@@ -92,4 +89,10 @@ const config: Config = {
 
 it("matches snapshot", async () => {
   expect(await createAllPipelines(config)).toMatchSnapshot();
+});
+
+it("matches snapshot with a Dockerfile", async () => {
+  writeFileSync("Dockerfile", "");
+  expect(await createAllPipelines(config)).toMatchSnapshot();
+  rmSync("Dockerfile");
 });

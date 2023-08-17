@@ -1,7 +1,11 @@
 import type { Context } from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { createBuildJobs } from "../base";
-import { gitlabDockerLogin } from "../docker";
+import {
+  getDockerBuildDefaultScript,
+  gitlabDockerLogin,
+  hasDockerfile,
+} from "../docker";
 import { isOfBuildType } from "../types";
 
 export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
@@ -9,6 +13,16 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
   if (!isOfBuildType(buildConfig, "rails")) {
     // should not happen
     throw new Error("build type is not rails");
+  }
+
+  if (hasDockerfile(context)) {
+    return createBuildJobs(context, {
+      appBuild: undefined,
+      dockerBuild: {
+        script: getDockerBuildDefaultScript(),
+        variables: {},
+      },
+    });
   }
 
   const cnbConf = buildConfig.cnbBuilder;

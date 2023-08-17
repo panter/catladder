@@ -201,6 +201,11 @@ export type BuildConfigCustom = Omit<
 
 export type BuildConfigRails = BuildConfigBase & {
   type: "rails";
+  /**
+   * The [Cloud Native Buildpacks](https://buildpacks.io/) builder configuration.
+   *
+   * Only applies when there is no `Dockerfile`.
+   */
   cnbBuilder?: {
     /**
      * The Cloud Native Buildpacks builder image to use.
