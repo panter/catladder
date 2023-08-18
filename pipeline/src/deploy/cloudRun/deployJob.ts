@@ -46,7 +46,7 @@ export const createGoogleCloudRunDeployJobs = (
 
   const fullAppName = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
   const dockerUrl = `${deployConfig.region}-docker.pkg.dev/${deployConfig.projectId}/catladder-deploy/${fullAppName}`;
-  const gcloudImageName = `${dockerUrl}/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG`;
+  const gcloudImageName = `${dockerUrl}/${context.environment.shortName}/${context.componentName}:$DOCKER_IMAGE_TAG`;
 
   const pushImageToArtifactsRegistry = [
     gitlabDockerLogin,
