@@ -21,3 +21,13 @@ export const repeatOnFailure = (
     done
   `;
 };
+
+export const collapseableSection =
+  (name: string, header: string) =>
+  (commands: string[]): string[] => {
+    return [
+      `echo -e "\\e[0Ksection_start:$(date +%s):${name}[collapsed=true]\\r\\e[0K${header}"`,
+      ...commands,
+      `echo -e "\\e[0Ksection_end:$(date +%s):${name}\\r\\e[0K"`,
+    ];
+  };

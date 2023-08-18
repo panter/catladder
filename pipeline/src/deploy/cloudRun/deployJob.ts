@@ -6,7 +6,7 @@ import { getLabels } from "../../context/getLabels";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { allowFailureInScripts } from "../../utils/gitlab";
+import { allowFailureInScripts, collapseableSection } from "../../utils/gitlab";
 import { createDeployementJobs } from "../base";
 import {
   getDependencyTrackDeleteScript,
@@ -57,14 +57,16 @@ export const createGoogleCloudRunDeployJobs = (
   ];
   const gcloudImageName = `${gcloudImagePath.join("/")}:$DOCKER_IMAGE_TAG`;
 
-  const pushImageToArtifactsRegistry = [
+  const pushImageToArtifactsRegistry = collapseableSection(
+    "pushToArtifactRegistry",
+    "pushing image to artifacts registry"
+  )([
     gitlabDockerLogin,
     `gcloud auth configure-docker ${deployConfig.region}-docker.pkg.dev`,
     `docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG`,
     `docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG ${gcloudImageName}`,
     `docker push ${gcloudImageName}`,
-  ];
-
+  ]);
   const allEnvVars = omit(
     context.environment.envVars,
     GCLOUD_DEPLOY_CREDENTIALS_KEY
