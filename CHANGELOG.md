@@ -1,3 +1,10 @@
+# [1.113.0](https://git.panter.ch/catladder/catladder/compare/v1.112.1...v1.113.0) (2023-08-18)
+
+
+### Features
+
+* add new label component-name to resources ([2ce14b2](https://git.panter.ch/catladder/catladder/commit/2ce14b213e65a0d51712db9e536cc59788d4dbd6))
+
 ## [1.112.1](https://git.panter.ch/catladder/catladder/compare/v1.112.0...v1.112.1) (2023-08-17)
 
 
