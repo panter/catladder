@@ -10,6 +10,7 @@ const sanitize = (value?: string) => {
 export const getLabels = (context: Context) => {
   const labels = {
     "customer-name": sanitize(context.fullConfig.customerName),
+    "component-name": sanitize(context.componentName),
     "app-name": sanitize(context.fullConfig.appName),
     "env-type": sanitize(context.environment.envType),
     "env-name": sanitize(context.environment.shortName),
