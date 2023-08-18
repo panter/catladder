@@ -1,3 +1,10 @@
+# [1.114.0](https://git.panter.ch/catladder/catladder/compare/v1.113.1...v1.114.0) (2023-08-18)
+
+
+### Features
+
+* **rails:** support dockerfile builds ([f8d8637](https://git.panter.ch/catladder/catladder/commit/f8d86374db4ebb6dd4c72322b175c6ee7ea4dd10))
+
 ## [1.113.1](https://git.panter.ch/catladder/catladder/compare/v1.113.0...v1.113.1) (2023-08-18)
 
 # [1.113.0](https://git.panter.ch/catladder/catladder/compare/v1.112.1...v1.113.0) (2023-08-18)
