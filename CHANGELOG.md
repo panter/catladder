@@ -1,3 +1,10 @@
+# [1.116.0](https://git.panter.ch/catladder/catladder/compare/v1.115.0...v1.116.0) (2023-08-21)
+
+
+### Features
+
+* **cloudrun:** better log collapsing ([deeb54d](https://git.panter.ch/catladder/catladder/commit/deeb54d7d76390b37f068c5ea3f56ab50b3d337e))
+
 # [1.115.0](https://git.panter.ch/catladder/catladder/compare/v1.114.1...v1.115.0) (2023-08-21)
 
 
