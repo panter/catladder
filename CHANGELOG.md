@@ -1,3 +1,10 @@
+# [1.117.0](https://git.panter.ch/catladder/catladder/compare/v1.116.0...v1.117.0) (2023-08-21)
+
+
+### Features
+
+* **cloud-run:** delete unused images from artifact registry in order to save costs and removes old revisions from cloud run ([30854c6](https://git.panter.ch/catladder/catladder/commit/30854c6a1d937d26dcfce161002422048cef9eed))
+
 # [1.116.0](https://git.panter.ch/catladder/catladder/compare/v1.115.0...v1.116.0) (2023-08-21)
 
 
