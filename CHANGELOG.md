@@ -1,3 +1,10 @@
+# [1.115.0](https://git.panter.ch/catladder/catladder/compare/v1.114.1...v1.115.0) (2023-08-21)
+
+
+### Features
+
+* **cloudrun:** collapse docker image logs ([04ed14d](https://git.panter.ch/catladder/catladder/commit/04ed14d835d65de66d1c95a83702ab86a81c4504))
+
 ## [1.114.1](https://git.panter.ch/catladder/catladder/compare/v1.114.0...v1.114.1) (2023-08-21)
 
 # [1.114.0](https://git.panter.ch/catladder/catladder/compare/v1.113.1...v1.114.0) (2023-08-18)
