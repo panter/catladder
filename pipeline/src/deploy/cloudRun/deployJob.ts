@@ -57,16 +57,13 @@ export const createGoogleCloudRunDeployJobs = (
   ];
   const gcloudImageName = `${gcloudImagePath.join("/")}:$DOCKER_IMAGE_TAG`;
 
-  const pushImageToArtifactsRegistry = collapseableSection(
-    "pushToArtifactRegistry",
-    "pushing image to artifacts registry"
-  )([
+  const pushImageToArtifactsRegistry = [
     gitlabDockerLogin,
     `gcloud auth configure-docker ${deployConfig.region}-docker.pkg.dev`,
     `docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG`,
     `docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG ${gcloudImageName}`,
     `docker push ${gcloudImageName}`,
-  ]);
+  ];
   const allEnvVars = omit(
     context.environment.envVars,
     GCLOUD_DEPLOY_CREDENTIALS_KEY
@@ -228,25 +225,37 @@ export const createGoogleCloudRunDeployJobs = (
     ]);
 
   const deployScripts = [
-    ...gcloudServiceAccountLoginCommands(context),
-    ...setExtraVarsScripts(deployConfig),
-    ...pushImageToArtifactsRegistry,
-    `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
-    ...(deployConfig.cloudSql
-      ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
-      : []),
-    ...getCreateScheduleScripts(),
-    ...getJobCreateScripts(),
-    ...getJobRunScripts("preDeploy"),
+    ...collapseableSection(
+      "prepare",
+      "Prepare..."
+    )([
+      ...gcloudServiceAccountLoginCommands(context),
+      ...setExtraVarsScripts(deployConfig),
+    ]),
+    ...collapseableSection(
+      "pushToArtifactRegistry",
+      "Pushing image to artifacts registry"
+    )(pushImageToArtifactsRegistry),
+    ...collapseableSection(
+      "deploy",
+      "Deploy to cloud run"
+    )([
+      `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
+      ...(deployConfig.cloudSql
+        ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
+        : []),
+      ...getCreateScheduleScripts(),
+      ...getJobCreateScripts(),
+      ...getJobRunScripts("preDeploy"),
 
-    ...(deployConfig.service !== false
-      ? [getServiceDeployScript(deployConfig.service)]
-      : []),
-    ...Object.entries(deployConfig.additionalServices ?? {}).map(
-      ([name, service]) => getServiceDeployScript(service, "-" + name)
-    ),
-    ...getJobRunScripts("postDeploy"),
-
+      ...(deployConfig.service !== false
+        ? [getServiceDeployScript(deployConfig.service)]
+        : []),
+      ...Object.entries(deployConfig.additionalServices ?? {}).map(
+        ([name, service]) => getServiceDeployScript(service, "-" + name)
+      ),
+      ...getJobRunScripts("postDeploy"),
+    ]),
     `docker image rm ${gcloudImageName}`,
     ...getDependencyTrackUploadScript(context),
   ];
