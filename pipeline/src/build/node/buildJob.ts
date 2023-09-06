@@ -4,7 +4,7 @@ import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { createBuildJobs } from "../base";
-import { getDockerBuildDefaultScript, requiresDockerBuild } from "../docker";
+import { getDockerBuildDefaultScript } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
