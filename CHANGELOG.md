@@ -1,3 +1,10 @@
+## [1.117.2](https://git.panter.ch/catladder/catladder/compare/v1.117.1...v1.117.2) (2023-09-06)
+
+
+### Bug Fixes
+
+* yarn workspaces are not copied over recursivly and does not work when name is not same as path name ([777ad52](https://git.panter.ch/catladder/catladder/commit/777ad52c988e9e8f14415d90fad0ca930635f6f7))
+
 ## [1.117.1](https://git.panter.ch/catladder/catladder/compare/v1.117.0...v1.117.1) (2023-08-28)
 
 # [1.117.0](https://git.panter.ch/catladder/catladder/compare/v1.116.0...v1.117.0) (2023-08-21)
