@@ -1,3 +1,15 @@
+# [1.118.0](https://git.panter.ch/catladder/catladder/compare/v1.117.2...v1.118.0) (2023-09-06)
+
+
+### Bug Fixes
+
+* don't include node_modules twice in cache paths ([5282068](https://git.panter.ch/catladder/catladder/commit/52820683614c2dd20f9c3edb8295f72a6d302724))
+
+
+### Features
+
+* **yarn:** also include yarn workspace dependencies dist folders as artifacts ([10d761b](https://git.panter.ch/catladder/catladder/commit/10d761b1b73605e465e069c344f6a3fdc8a274d3))
+
 ## [1.117.2](https://git.panter.ch/catladder/catladder/compare/v1.117.1...v1.117.2) (2023-09-06)
 
 
