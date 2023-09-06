@@ -2,7 +2,11 @@ import { existsSync } from "fs";
 import { join } from "path";
 import { pathEqual } from "path-equal";
 import type { Config, PackageManagerInfo } from "../types";
-import { getWorkspaces, getYarnVersion } from "./yarn/yarnUtils";
+import {
+  getWorkspaces,
+  getYarnVersion,
+  getWorkspaceDependencies,
+} from "./yarn/yarnUtils";
 
 export const getPackageManagerInfo = async (
   config: Config,
@@ -38,13 +42,8 @@ export const getPackageManagerInfo = async (
 
   // get all folders that this workspace depend on
   // we will later copy them into the docker build
-  const workspaceDependencies = currentWorkspace
-    ? ([
-        ...currentWorkspace.workspaceDependencies,
-        ...currentWorkspace.mismatchedWorkspaceDependencies,
-      ]
-        .map((name) => workspaces.find((w) => w.name === name)?.location)
-        .filter(Boolean) as string[])
+  const currentWorkspaceDependencies = currentWorkspace
+    ? getWorkspaceDependencies(currentWorkspace, workspaces)
     : [];
 
   const pathsToCopyInDocker = [
@@ -52,7 +51,7 @@ export const getPackageManagerInfo = async (
     ...(workspacePackageJson ? [workspacePackageJson] : []),
     lockFile,
     ...configFilePaths,
-    ...workspaceDependencies,
+    ...currentWorkspaceDependencies,
   ];
   return {
     type: "yarn",

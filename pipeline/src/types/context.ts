@@ -50,7 +50,7 @@ export type CommitInfo = {
   currentVersion: string;
 };
 
-type Workspace = {
+export type YarnWorkspace = {
   name: string;
   location: string;
   workspaceDependencies: string[];
@@ -59,8 +59,8 @@ type Workspace = {
 export type YarnPackageManagerInfo = {
   type: "yarn";
   version: string;
-  workspaces: Workspace[];
-  currentWorkspace?: Workspace;
+  workspaces: YarnWorkspace[];
+  currentWorkspace?: YarnWorkspace;
   isClassic: boolean;
   componentIsInWorkspace: boolean;
   pathsToCopyInDocker: string[];
