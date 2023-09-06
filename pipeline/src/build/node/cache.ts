@@ -2,6 +2,7 @@ import { join } from "path";
 import slugify from "slugify";
 import type { Context } from "../../types/context";
 import type { GitlabJobCache } from "../../types/gitlab-types";
+import { uniq } from "lodash";
 
 export const getYarnCache = (
   context: Context,
@@ -42,12 +43,12 @@ export const getNodeModulesCache = (
       policy,
       paths: [
         ...(componentIsInWorkspace
-          ? [
+          ? uniq([
               "node_modules",
               ...(context.packageManagerInfo?.workspaces.map((w) =>
                 join(w.location, "node_modules")
               ) ?? []),
-            ]
+            ])
           : [join(context.componentConfig.dir, "node_modules")]),
       ],
     },
