@@ -59,6 +59,7 @@ export const getPackageManagerInfo = async (
     version,
     isClassic,
     currentWorkspace,
+    currentWorkspaceDependencies,
     componentIsInWorkspace,
     pathsToCopyInDocker,
   };

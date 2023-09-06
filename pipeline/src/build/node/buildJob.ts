@@ -39,13 +39,18 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
             ],
             artifacts: {
               paths: [
-                join(context.componentConfig.dir, "__build_info.json"),
-                join(context.componentConfig.dir, "dist"),
-                join(context.componentConfig.dir, ".next"),
+                context.componentConfig.dir,
+                // also copy workspace dependencies in monorepo if packages are shared and they create build artifacts
+                ...(context.packageManagerInfo?.currentWorkspaceDependencies ??
+                  []),
+              ].flatMap((dir) => [
+                join(dir, "__build_info.json"),
+                join(dir, "dist"),
+                join(dir, ".next"),
                 ...(buildConfig.artifactsPaths?.map((path) =>
-                  join(context.componentConfig.dir, path)
+                  join(dir, path)
                 ) ?? []),
-              ],
+              ]),
               expire_in: "1 day",
             },
             jobTags: buildConfig.jobTags,

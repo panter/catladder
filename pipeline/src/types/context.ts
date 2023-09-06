@@ -64,6 +64,7 @@ export type YarnPackageManagerInfo = {
   isClassic: boolean;
   componentIsInWorkspace: boolean;
   pathsToCopyInDocker: string[];
+  currentWorkspaceDependencies: string[];
 };
 
 export type PackageManagerInfo = YarnPackageManagerInfo;
