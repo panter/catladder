@@ -97,9 +97,21 @@ export type DeployConfigCloudRunService = {
   noCpuThrottling?: true;
 
   /**
-   * whether to allow public access (defaults to true)
+   * whether to allow public access without authentification (defaults to true)
    */
   allowUnauthenticated?: boolean;
+
+  /**
+   * whether to expose the service to the internet.
+   *
+   * The options are:
+   * - all: expose to the internet and internal traffic
+   * - internal: only expose to internal traffic
+   * - internal-and-cloud-load-balancing: expose to internal traffic and cloud load balancing
+   *
+   * Defaults to "all"
+   */
+  ingress?: "all" | "internal" | "internal-and-cloud-load-balancing";
 
   /**
    * memory limit. Defaults to 512MB

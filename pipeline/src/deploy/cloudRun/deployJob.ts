@@ -122,6 +122,7 @@ export const createGoogleCloudRunDeployJobs = (
       "cpu-throttling": customConfig?.noCpuThrottling !== true,
       memory: customConfig?.memory,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
+      ingress: customConfig?.ingress ?? "all",
       "cpu-boost": true,
     });
 
