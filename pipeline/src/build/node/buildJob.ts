@@ -52,6 +52,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
                 ) ?? []),
               ]),
               expire_in: "1 day",
+              when: "always",
             },
             jobTags: buildConfig.jobTags,
           }
