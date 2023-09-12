@@ -1,3 +1,11 @@
+# [1.120.0](https://git.panter.ch/catladder/catladder/compare/v1.119.0...v1.120.0) (2023-09-12)
+
+
+### Features
+
+* **cloud-run:** allow to configure ingress ([7ebc968](https://git.panter.ch/catladder/catladder/commit/7ebc9685d67cd5fc4f651f664c3311404b650b68))
+* **meteor:** use latest meteor version ([53480fe](https://git.panter.ch/catladder/catladder/commit/53480fedfe3264c85968f888c8a2515cd464e5f0))
+
 # [1.119.0](https://git.panter.ch/catladder/catladder/compare/v1.118.0...v1.119.0) (2023-09-12)
 
 
