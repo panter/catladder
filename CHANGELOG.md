@@ -1,3 +1,10 @@
+# [1.119.0](https://git.panter.ch/catladder/catladder/compare/v1.118.0...v1.119.0) (2023-09-12)
+
+
+### Features
+
+* always upload build artifacts for node and custom builds ([0d31612](https://git.panter.ch/catladder/catladder/commit/0d316121dfae4fdb46e3224356d33906bf3a99e6))
+
 # [1.118.0](https://git.panter.ch/catladder/catladder/compare/v1.117.2...v1.118.0) (2023-09-06)
 
 
