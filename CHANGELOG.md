@@ -1,3 +1,10 @@
+# [1.121.0](https://git.panter.ch/catladder/catladder/compare/v1.120.0...v1.121.0) (2023-09-13)
+
+
+### Features
+
+* group yarn install in gitlab log ([3d4317e](https://git.panter.ch/catladder/catladder/commit/3d4317e7f52109508759c94fec83c4696b59430e))
+
 # [1.120.0](https://git.panter.ch/catladder/catladder/compare/v1.119.0...v1.120.0) (2023-09-12)
 
 
