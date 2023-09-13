@@ -1,5 +1,6 @@
 import type { Context } from "../../types";
 import { ensureArray } from "../../utils";
+import { collapseableSection } from "../../utils/gitlab";
 
 const YARN_INSTALL_CLASSIC = `yarn install --frozen-lockfile`;
 
@@ -14,10 +15,14 @@ const getYarnInstallCommand = (context: Context) => {
   return `yarn install --immutable`;
 };
 
-export const ensureNodeVersion = (context: Context) => [
-  "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-  "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-];
+export const ensureNodeVersion = (context: Context) =>
+  collapseableSection(
+    "node install",
+    "Ensure node version"
+  )([
+    "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+    "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+  ]);
 
 export const getYarnInstall = (
   context: Context,
@@ -29,13 +34,16 @@ export const getYarnInstall = (
     "postInstall" in context.componentConfig.build
       ? context.componentConfig.build.postInstall
       : null;
-  return [
+  return collapseableSection(
+    "yarn prepare",
+    "Node and yarn install"
+  )([
     ...ensureNodeVersion(context),
     getYarnInstallCommand(context),
     ...(postInstall && !options?.noCustomPostInstall
       ? ensureArray(postInstall) ?? []
       : []),
-  ];
+  ]);
 };
 
 const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
