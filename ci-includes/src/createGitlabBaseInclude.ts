@@ -89,6 +89,9 @@ export const createGitlabBaseInclude = () => {
   return {
     image: getRunnerImage("base-pipeline"),
     stages: ["setup", "deploy", "verify", "release"],
+    variables: {
+      GIT_DEPTH: 1, // no need to clone full history
+    },
     ...jobs,
   };
 };

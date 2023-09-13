@@ -32,6 +32,7 @@ export const createChildPipeline = async <T extends PipelineType>(
       image: getRunnerImage("jobs-default"), // default image
       variables: {
         FF_USE_FASTZIP: "true",
+        GIT_DEPTH: 1, // no need the full depth
       },
       workflow: {
         rules: RULES_ALWAYS,
