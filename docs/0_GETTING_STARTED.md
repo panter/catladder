@@ -1,16 +1,22 @@
 ## Getting started
 
-### Gitlab
+**Note**: *Currently, only GitLab is supported.*
 
-currently only gitlab is supported.
+### Install for a GitLab project
 
-1. create a .gitlab-ci.yml file with this content: `include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml`
-2. its recommended to add a local version of @catladder/cli and @catladder/pipeline as dev dependencies to your project
-3. create a file `catladder.ts` in the root of your repository
+1. Create a `.gitlab-ci.yml` file with this content:  
+```yaml
+include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
+```
+2. It's recommended to add a local version of @catladder/cli and @catladder/pipeline as dev dependencies to your project.
+3. Create the file `catladder.ts` in your repositories root.
 
-## The Config
+## The configuration
 
-`catladder.ts` is the central configuration for your project. You can use typescript to get full advantage of type checking in this configuration (yaml is also supported, but not recommended). It has this structure:
+`catladder.ts` is the central configuration for your project.  
+You can use TypeScript to get full advantage of type checking in this configuration (YAML is also supported, but not recommended).
+
+The configuration's basic structure looks like this:
 
 ```typescript
 
@@ -44,15 +50,14 @@ const config: Config = {
 
 export default config
 
-
-
 ```
 
 ### Components
 
-a `Component` is one subapp/service/piece of your application. E.g. in a typical app with frontend and api, both the frontend and the api would be a `Component` in catladder. Each `Component` usually is one deployment and one Environment in gitlab.
+A `Component` is one subapp/service/piece of your application. E.g. in a typical app with frontend and API, both the frontend and the API would be a `Component` in catladder.  
+Each `Component` is usually one deployment and one Environment in GitLab.
 
-in the catladder Config, you declare `Component`s within `components`, where the key is the component name and the value the `ComponentConfig`.
+In the catladder Config, you declare `Component`s within `components`, where the key is the component name and the value the `ComponentConfig`.
 
 ### ComponentConfig
 
@@ -68,18 +73,18 @@ each `ComponentConfig` has this structure:
 }
 ```
 
-# VARS
+# Environment variables
 
-see [VARS](1_VARS.md)
+See [VARS](1_VARS.md)
 
 # BUILD
 
-see [BUILD](2_BUILD.md)
+See [BUILD](2_BUILD.md)
 
 # DEPLOY
 
-see [DEPLOY](3_DEPLOY.md)
+See [DEPLOY](3_DEPLOY.md)
 
 # TROUBLESHOOT
 
-see [TROUBLESHOOT](4_TROUBLESHOOT.md)
+See [TROUBLESHOOT](4_TROUBLESHOOT.md)

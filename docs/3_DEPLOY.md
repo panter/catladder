@@ -2,12 +2,12 @@
 
 ## Google cloud run
 
-see [CLOUD RUN](./deploy/CLOUD_RUN.md)
+See [CLOUD RUN](./deploy/CLOUD_RUN.md)
 
 ## custom
 
 For custom deploy scripts
 
-## kubernetes
+## Kubernetes
 
-see [kubernetes](./deploy/KUBERNETES.md)
+See [Kubernetes](./deploy/KUBERNETES.md)

@@ -1,4 +1,4 @@
-# VARS
+# Environment variables
 
 Environment variables can be declared on a component like this:
 
@@ -19,28 +19,29 @@ vars: {
 
 ## Where to use env-vars
 
-all vars (including secrets) are currently available both on build-time (in the pipeline) and on run-time (unless its a static deployment)
+All vars (including secrets) are currently available both on build-time (in the pipeline) and on run-time (unless it's a static deployment).
 
 ## predefined variables
 
-- `ROOT_URL`: this is the public url of a component. In review and dev environment, this is normally auto-generated depending on the deploy type
+- `ROOT_URL`: this is the public URL of a component. In review and dev environment, this is normally auto-generated depending on the deployment type
 - `PORT`: the port the app should listen to.
 
-depending on the deploy type, more variables are available
+Depending on the deploy type, more variables are available.
 
 ## managing secrets
 
-secrets are env-vars that should not be checked into the source code.
+Secrets are env-vars that should not be checked into the source code.
 
-_⚠️ secrets are currently stored in gitlab. It may not be suitable for super-high-security cases._
+_⚠️ secrets are currently stored in GitLab. It may not be suitable for super-high-security cases._
 
-if you added a new key to `secrets` or want to change secrets, open a terminal and invoke `yarn catladder` (or just `catladder` if installed globally) and then
+If you added a new key to `secrets` or want to change secrets, open a terminal and invoke `yarn catladder` (or just `catladder` if installed globally) and then
 
 `project-config-secrets` (you can autocomplete in the catladder cli)
 
-this will open up your editor with all env vars in the YAML-format. Save this fill close it and catladder will update the secrets.
+This will open up your editor with all env vars in the YAML-format.  
+Save this fill close it and catladder will update the secrets.
 
-_catladder makes a copy of old values as backup, you can restore those manually in gitlab if needed_
+_catladder makes a copy of old values as backup, you can restore those manually in GitLab if needed_
 
 ## Typescript and process.env
 To get autocompletion in IDE on `process.env`, set `envDTs` to `true` on component:

@@ -2,12 +2,12 @@
 
 TODO
 
-the `kubernetes` deploy-type uses helm to deploy the app to a kubernetes cluster.
+The `kubernetes` deploy-type uses helm to deploy the app to a Kubernetes cluster.
 
-it was the first catladder deploy type, highly opinionated and has many features, but is only recommended for certain types of apps.
+It was the first catladder deploy type, highly opinionated and has many features, but is only recommended for certain types of apps.
 If possible, use serverless deployment types like `google-cloud-run`
 
-## Swiss Cluster Deployments (panter specific)
+## Swiss Cluster Deployments (Panter specific)
 
 ### Requirements
 
@@ -20,15 +20,17 @@ If possible, use serverless deployment types like `google-cloud-run`
 
 You need two files in your repository's root folder: `catladder.ts` and `.gitlab-ci.yml`.
 
-In the `.gitlab-ci.yml` file you can define all the includes you need:
+In the `.gitlab-ci.yml` file, you can define all the includes you need:
 
-```
+```yaml
 include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
 ```
 
-The `catladder.ts` file defines the whole deployment for Kubernetes. Here's a short example file:
+The `catladder.ts` file defines the whole deployment for Kubernetes. 
 
-```
+Here's a short example file:
+
+```ts
 import type {
   Config,
   DeployConfigKubernetesCluster,

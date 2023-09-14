@@ -1,8 +1,9 @@
-# Beeing "CLOUD READY"
+# Being "CLOUD READY"
 
-The future is in MACH-Architecture, which stands for **M**icroservice **A**pi-First **C**loud-Native and **H**eadless. Catladder helps you building MACH-apps without much configuration.
+The future is in MACH-Architecture, which stands for **M**icroservice **A**pi-First **C**loud-Native and **H**eadless.  
+Catladder helps you with building MACH-apps without much configuration.
 
-However classic monolytic apps also can be deployed with catladder and on cloud infrastructure in general.
+However, classic monolytic apps can also be deployed with catladder and on cloud infrastructure in general.
 
 Cloud infrastructure provide good scalability and failover-safety. In order to be compatible with cloud-hosting, you should follow those principles:
 
@@ -10,19 +11,19 @@ Cloud infrastructure provide good scalability and failover-safety. In order to b
 
 Each Service/component of your app should be _stateless_:
 
-- app does rely on disk-volumes --> use cloud storage or s3-buckets instead
-- app does not rely on in-memory sessions --> if you really need shared-session, use something like redis
+- App does rely on disk-volumes → use cloud storage or s3-buckets instead.
+- App does not rely on in-memory sessions → if you really need shared-session, use something like Redis.
 
-### No cpu and background work on web-services
+### No CPU and background work on web-services
 
-a web-service, e.g. an api or SSR-app should not do anything else then answering web-request.
+A web-service, e.g. an API or SSR-app, should not do anything else than answering web-request.  
 Don't run any background-jobs on web-pods. Don't do work that requires a lot of CPU ("CPU-bound").
 
 If you need background works and/or CPU-bound work, use dedicated jobs and workers (see different deploy options).
 
 ### Can be killed and restarted anytime
 
-In cloud hosting instances of your app can come and go. This is to guarantee scalability and failover.
+In cloud hosting, instances of your app can come and go. This is to guarantee scalability and failover.
 
 - Don't do any migrations or other work on startup on web-pods (see also previous section)
 - Non-web-pods that do work should be able to resume work if it was stopped in between
