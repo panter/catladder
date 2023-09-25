@@ -1,3 +1,10 @@
+## [1.121.3](https://git.panter.ch/catladder/catladder/compare/v1.121.2...v1.121.3) (2023-09-25)
+
+
+### Bug Fixes
+
+* **meteor:** does not work for meteor 2.13 ([450889d](https://git.panter.ch/catladder/catladder/commit/450889df935d6ec2f6f81f6539116d7bb783ff4d))
+
 ## [1.121.2](https://git.panter.ch/catladder/catladder/compare/v1.121.1...v1.121.2) (2023-09-25)
 
 ## [1.121.1](https://git.panter.ch/catladder/catladder/compare/v1.121.0...v1.121.1) (2023-09-25)
