@@ -18,6 +18,11 @@ if [ ! -f $APP_DIR/Dockerfile ]; then
         NODE_VERSION_FULL=$(cat $APP_DIR/dist/bundle/.node_version.txt)
         NODE_VERSION=${NODE_VERSION_FULL/v/} # remove v
     fi
+    if [ "$NODE_VERSION" = "14.21.4" ]; then
+        DOCKER_IMAGE="meteor/node:$NODE_VERSION" # meteor maintenance for because of fibers
+    else
+        DOCKER_IMAGE="node:$NODE_VERSION"
+    fi
     INSTALL_SCRIPTS=""
     if [[ $METEOR_INSTALL_SCRIPTS == "true" ]]; then
         read -d '' INSTALL_SCRIPTS <<EOF
@@ -32,7 +37,7 @@ EOF
     fi
 
     cat >$APP_DIR/Dockerfile <<EOF
-FROM node:$NODE_VERSION
+FROM $DOCKER_IMAGE
 
 
 $DOCKERFILE_ADDITIONS
