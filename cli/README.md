@@ -33,3 +33,9 @@ Catladder stores some preferences in `~/.catladder/preferences.yml` in case you 
 ## Contribution
 
 Check the documentation [here](https://git.panter.ch/catladder/catladder/-/tree/main/cli/CONTRIBUTING.md).
+
+### Adding packages in cli
+
+if you add npm libs in cli, make sure to add them as dev-dependencies.
+
+the reason is that we bundle all dependencies in the cli package, so that if you add that to your project, it won't install all @catladder/cli's dependencies.
