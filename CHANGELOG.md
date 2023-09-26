@@ -1,3 +1,15 @@
+## [1.121.4](https://git.panter.ch/catladder/catladder/compare/v1.121.3...v1.121.4) (2023-09-26)
+
+
+### Bug Fixes
+
+* meteor 2.13 with node 14.21.4 not building ([742cb2e](https://git.panter.ch/catladder/catladder/commit/742cb2e653f4928056c52ca1064af68d3354c2c7))
+
+
+### Performance Improvements
+
+* always do a GIT_DEPTH: 1 clone ([6c6259e](https://git.panter.ch/catladder/catladder/commit/6c6259ee7e7eba4dbcadd3edd945b99b280bd705))
+
 ## [1.121.3](https://git.panter.ch/catladder/catladder/compare/v1.121.2...v1.121.3) (2023-09-25)
 
 
