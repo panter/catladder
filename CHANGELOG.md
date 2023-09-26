@@ -1,3 +1,10 @@
+# [1.122.0](https://git.panter.ch/catladder/catladder/compare/v1.121.4...v1.122.0) (2023-09-26)
+
+
+### Features
+
+* **cli:** project-cloud-sql-restore-db command ([c963a07](https://git.panter.ch/catladder/catladder/commit/c963a076405dfecfaba127ade853638d0859332c))
+
 ## [1.121.4](https://git.panter.ch/catladder/catladder/compare/v1.121.3...v1.121.4) (2023-09-26)
 
 
