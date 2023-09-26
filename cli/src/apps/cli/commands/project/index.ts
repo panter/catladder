@@ -25,6 +25,7 @@ import commandTriggerCronjob from "./commandTriggerCronjob";
 
 import commandOpenGrafanaPod from "./commandOpenGrafanaPod";
 import commandSecretsClearBackups from "./commandSecretsClearBackups";
+import commandProjectRestoreDb from "./cloudSql/commandProjectRestoreDb";
 
 export default async (vorpal: Vorpal) => {
   commandSetup(vorpal);
@@ -45,6 +46,7 @@ export default async (vorpal: Vorpal) => {
   commandOpenGrafana(vorpal);
   commandOpenGrafanaPod(vorpal);
   commandCloudSqlProxy(vorpal);
+  commandProjectRestoreDb(vorpal);
   commandOpenGit(vorpal);
   commandOpenEnv(vorpal);
   commandTriggerCronjob(vorpal);

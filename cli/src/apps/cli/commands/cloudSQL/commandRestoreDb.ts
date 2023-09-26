@@ -1,6 +1,5 @@
-import { spawn } from "child-process-promise";
-
 import type Vorpal from "vorpal";
+import { spawnCopyDb } from "../../../../gcloud/cloudSql/copyDb";
 import type { CloudSqlBackgroundProxy } from "../../../../gcloud/cloudSql/startProxy";
 import { startCloudSqlProxyInBackground } from "../../../../gcloud/cloudSql/startProxy";
 
@@ -119,34 +118,17 @@ export default async (vorpal: Vorpal) =>
         return;
       }
 
-      const targetPSQL = (command: string) =>
-        `PGPASSWORD=${targetPassword} psql -p ${targetPort} --host=localhost --user=${targetUsername} -q ${command}`;
-
-      const copyDBScript = `
-      set -e
-     
-    
-
-      dumptmp=$(mktemp /tmp/dump.XXXXXX)
-
-      echo "Dumping file to $dumptmp"
-      pg_dump --dbname=postgres://${sourceUsername}:${sourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
-      echo "dump done"
-      ${targetPSQL(
-        `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`
-      )}
-      ${targetPSQL(`-c 'create database "${targetDbName}"' 1> /dev/null`)}
-          echo "Restoring dump..."
-      ${targetPSQL(`"${targetDbName}" < $dumptmp 1> /dev/null`)}
-  
-
-      echo "Clean up..."
-      set +e
-      rm $dumptmp
-      echo "\n🐱 Done!"
-      `;
       try {
-        await spawn(copyDBScript, [], { shell: "bash", stdio: "inherit" });
+        await spawnCopyDb({
+          targetPassword,
+          targetPort,
+          targetUsername,
+          sourceUsername,
+          sourcePassword,
+          sourcePort,
+          sourceDbName,
+          targetDbName,
+        });
       } finally {
         sourceProxy?.stop();
         targetProxy?.stop();
