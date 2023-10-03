@@ -57,11 +57,11 @@ test:
       - "*/dist"
 
 .docker-build-base:
-  image: docker:20.10
+  image: docker:24
   needs: []
   interruptible: true
   services:
-    - name: docker:20.10-dind
+    - name: docker:24-dind
       command: ["--tls=false"]
 
   stage: build
