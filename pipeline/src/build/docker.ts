@@ -5,6 +5,7 @@ import type { Context } from "../types";
 import type { CatladderJob } from "../types/jobs";
 import { existsSync } from "fs";
 import path from "path";
+import { collapseableSection } from "../utils/gitlab";
 
 const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -99,11 +100,21 @@ export const gitlabDockerLogin =
 export const getDockerBuildDefaultScript = (ensureDockerFileScript?: string) =>
   [
     ensureDockerFileScript,
-    gitlabDockerLogin,
-    "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
-    "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
-    "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
-    "docker push $DOCKER_CACHE_IMAGE",
+    ...collapseableSection("docker-login", "Docker Login")([gitlabDockerLogin]),
+    ...collapseableSection(
+      "docker-build",
+      "Docker build"
+    )([
+      "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
+    ]),
+    ...collapseableSection(
+      "docker-push",
+      "Docker push and tag"
+    )([
+      "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+      "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+      "docker push $DOCKER_CACHE_IMAGE",
+    ]),
   ].filter(Boolean);
 
 export const hasDockerfile = (context: Context) =>

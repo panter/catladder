@@ -71,11 +71,17 @@ exports[`matches snapshot 1`] = `
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
           "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
         ],
         "services": [
           {
@@ -436,11 +442,17 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
           "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
         ],
         "services": [
           {
@@ -859,11 +871,17 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
           "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
         ],
         "services": [
           {
@@ -909,11 +927,17 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
           "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
         ],
         "services": [
           {
