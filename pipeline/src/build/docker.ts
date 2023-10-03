@@ -65,7 +65,7 @@ export const getDockerJobBaseProps = (context: Context) => {
     image: getRunnerImage("docker-build"),
     services: [
       {
-        name: "docker:20-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
+        name: "docker:24.0.6-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
         command: ["--tls=false"],
       },
     ],
