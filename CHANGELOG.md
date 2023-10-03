@@ -1,3 +1,10 @@
+## [1.124.2](https://git.panter.ch/catladder/catladder/compare/v1.124.1...v1.124.2) (2023-10-03)
+
+
+### Bug Fixes
+
+* **chart:** sync up docker image name var ([67111f5](https://git.panter.ch/catladder/catladder/commit/67111f50318c6b1e0fc3ba2d370be0ce59d4f4da))
+
 ## [1.124.1](https://git.panter.ch/catladder/catladder/compare/v1.124.0...v1.124.1) (2023-10-03)
 
 
