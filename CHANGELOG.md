@@ -1,3 +1,10 @@
+## [1.124.1](https://git.panter.ch/catladder/catladder/compare/v1.124.0...v1.124.1) (2023-10-03)
+
+
+### Bug Fixes
+
+* **cloud-run:** remove usage of gitlab container registry ([306bab0](https://git.panter.ch/catladder/catladder/commit/306bab0b4603332e6817ac8db558ebbeaf79f46d))
+
 # [1.124.0](https://git.panter.ch/catladder/catladder/compare/v1.123.1...v1.124.0) (2023-10-03)
 
 
