@@ -1,3 +1,10 @@
+# [1.123.0](https://git.panter.ch/catladder/catladder/compare/v1.122.1...v1.123.0) (2023-10-03)
+
+
+### Features
+
+* update docker ([45e8c78](https://git.panter.ch/catladder/catladder/commit/45e8c78a023de529a162080724c88a323184b3e4))
+
 ## [1.122.1](https://git.panter.ch/catladder/catladder/compare/v1.122.0...v1.122.1) (2023-10-03)
 
 # [1.122.0](https://git.panter.ch/catladder/catladder/compare/v1.121.4...v1.122.0) (2023-09-26)
