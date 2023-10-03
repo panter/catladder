@@ -6,6 +6,12 @@ import type { CatladderJob } from "../types/jobs";
 import { existsSync } from "fs";
 import path from "path";
 import { collapseableSection } from "../utils/gitlab";
+import {
+  getArtifactsRegistryBuildCacheImage,
+  getArtifactsRegistryHost,
+  getArtifactsRegistryImageName,
+} from "../deploy/cloudRun/artifactsRegistry";
+import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
 
 const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -16,13 +22,24 @@ const DOCKER_RUNNER_BUILD_VARIABLES = {
 
 export const getDockerImageVariables = (context: Context) => {
   return {
-    DOCKER_REGISTRY: "$CI_REGISTRY",
-    DOCKER_REGISTRY_IMAGE_PATH: "$CI_REGISTRY_IMAGE",
-    DOCKER_CACHE_IMAGE:
-      "$DOCKER_REGISTRY_IMAGE_PATH/caches/" + context.componentName,
-    DOCKER_IMAGE_NAME:
-      context.environment.shortName + "/" + context.componentName,
-    DOCKER_IMAGE: "$DOCKER_REGISTRY_IMAGE_PATH/$DOCKER_IMAGE_NAME",
+    ...(isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
+      ? {
+          DOCKER_REGISTRY: getArtifactsRegistryHost(context),
+          DOCKER_IMAGE: getArtifactsRegistryImageName(context),
+          DOCKER_CACHE_IMAGE: getArtifactsRegistryBuildCacheImage(context),
+        }
+      : // gitlab registry:
+        {
+          DOCKER_REGISTRY: "$CI_REGISTRY",
+
+          DOCKER_CACHE_IMAGE:
+            "$CI_REGISTRY_IMAGE/caches/" + context.componentName,
+          // ONLY USED IN KUBERNETES
+          DOCKER_IMAGE_NAME:
+            context.environment.shortName + "/" + context.componentName,
+          DOCKER_IMAGE: "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
+        }),
+
     DOCKER_IMAGE_TAG: "$CI_COMMIT_SHA",
   };
 };
@@ -94,13 +111,26 @@ export const createDockerBuildJobBase = (
   );
 };
 
-export const gitlabDockerLogin =
-  "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY";
+export const gitlabDockerLogin = (context: Context) =>
+  isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
+    ? [
+        ...gcloudServiceAccountLoginCommands(context),
+        `gcloud auth configure-docker ${getArtifactsRegistryHost(context)}`,
+      ]
+    : [
+        "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+      ];
 
-export const getDockerBuildDefaultScript = (ensureDockerFileScript?: string) =>
+export const getDockerBuildDefaultScript = (
+  context: Context,
+  ensureDockerFileScript?: string
+) =>
   [
     ensureDockerFileScript,
-    ...collapseableSection("docker-login", "Docker Login")([gitlabDockerLogin]),
+    ...collapseableSection(
+      "docker-login",
+      "Docker Login"
+    )(gitlabDockerLogin(context)),
     ...collapseableSection(
       "docker-build",
       "Docker build"

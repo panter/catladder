@@ -64,7 +64,7 @@ export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
           }
         : undefined,
     dockerBuild: {
-      script: getDockerBuildDefaultScript("ensureMeteorDockerfile"),
+      script: getDockerBuildDefaultScript(context, "ensureMeteorDockerfile"),
       variables: {
         METEOR_INSTALL_SCRIPTS: buildConfig.installScripts ? "true" : "",
       },

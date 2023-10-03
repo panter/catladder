@@ -26,10 +26,7 @@ import {
 } from "./utils/database";
 import { gcloudServiceAccountLoginCommands } from "./utils/gcloudServiceAccountLoginCommands";
 import { getCloudRunJobName } from "./utils/jobName";
-import {
-  getArtifactsRegistryImage,
-  getPushToArtifactsRegistryCommands,
-} from "./artifactsRegistry";
+import { getArtifactsRegistryImage } from "./artifactsRegistry";
 import { getServiceName } from "./utils/getServiceName";
 import { getRemoveOldRevisionsAndImagesCommand } from "./cleanup";
 
@@ -219,10 +216,6 @@ export const createGoogleCloudRunDeployJobs = (
       ...gcloudServiceAccountLoginCommands(context),
       ...setExtraVarsScripts(deployConfig),
     ]),
-    ...collapseableSection(
-      "pushToArtifactRegistry",
-      "Pushing image to artifacts registry"
-    )(getPushToArtifactsRegistryCommands(context)),
     ...collapseableSection(
       "deploy",
       "Deploy to cloud run"

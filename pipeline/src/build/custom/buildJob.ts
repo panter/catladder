@@ -46,6 +46,7 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
         : undefined,
     dockerBuild: {
       script: getDockerBuildDefaultScript(
+        context,
         buildConfig.docker?.type === "nginx" ? "ensureNginxDockerfile" : ""
       ),
 

@@ -41,7 +41,7 @@ helm upgrade --install "$RELEASE_NAME" "$HELM_GITLAB_CHART_NAME" \
     --set global.BUILD_ID="$BUILD_ID" \
     --set image.repository="$CI_REGISTRY_IMAGE" \
     --set image.pullSecret="$KUBE_DOCKER_IMAGE_PULL_SECRET" \
-    --set image.name="$DOCKER_IMAGE_NAME" \
+    --set image.name="$KUBE_DOCKER_IMAGE_NAME" \
     --set image.tag="$DOCKER_IMAGE_TAG" \
     --set image.pullPolicy=IfNotPresent \
     --set application.hostCanonical="$HOST_CANONICAL" \

@@ -60,6 +60,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
 
     dockerBuild: {
       script: getDockerBuildDefaultScript(
+        context,
         buildConfig.type === "node-static" || buildConfig.type === "storybook"
           ? "ensureNginxDockerfile"
           : "ensureNodeDockerfile"

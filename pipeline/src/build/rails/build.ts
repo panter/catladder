@@ -19,7 +19,7 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
     return createBuildJobs(context, {
       appBuild: undefined,
       dockerBuild: {
-        script: getDockerBuildDefaultScript(),
+        script: getDockerBuildDefaultScript(context),
         variables: {},
       },
     });
@@ -39,7 +39,7 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
       },
       // custom script
       script: [
-        gitlabDockerLogin,
+        ...gitlabDockerLogin(context),
         `docker pull $DOCKER_CACHE_IMAGE || true`,
         `wget --output-document=- https://github.com/buildpacks/pack/releases/download/v${cnbConf?.packVersion}/pack-v${cnbConf?.packVersion}-linux.tgz | tar -zx --directory /usr/local/bin pack`,
         `chmod +x /usr/local/bin/pack`,
