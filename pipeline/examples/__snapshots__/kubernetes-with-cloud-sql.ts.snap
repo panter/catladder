@@ -260,7 +260,6 @@ cloudsql:
         "script": [
           "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
@@ -964,7 +963,6 @@ cloudsql:
         "script": [
           "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
@@ -1804,7 +1802,6 @@ cloudsql:
         "script": [
           "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
@@ -1872,7 +1869,6 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "ensureNodeDockerfile",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
-          "docker version",
           "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
           "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
           "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
