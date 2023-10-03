@@ -1,3 +1,10 @@
+# [1.124.0](https://git.panter.ch/catladder/catladder/compare/v1.123.1...v1.124.0) (2023-10-03)
+
+
+### Features
+
+* collapse section in docker build ([4dffbaa](https://git.panter.ch/catladder/catladder/commit/4dffbaad20b1197273cc7d4005dad3a75f038a2a))
+
 ## [1.123.1](https://git.panter.ch/catladder/catladder/compare/v1.123.0...v1.123.1) (2023-10-03)
 
 # [1.123.0](https://git.panter.ch/catladder/catladder/compare/v1.122.1...v1.123.0) (2023-10-03)
