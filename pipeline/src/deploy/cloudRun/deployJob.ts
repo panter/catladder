@@ -30,7 +30,7 @@ import { getArtifactsRegistryImage } from "./artifactsRegistry";
 import { getServiceName } from "./utils/getServiceName";
 import { getRemoveOldRevisionsAndImagesCommand } from "./cleanup";
 
-const setExtraVarsScripts = (deployConfig: DeployConfigCloudRun) => [
+const setGoogleProjectNumberScript = (deployConfig: DeployConfigCloudRun) => [
   `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
   `echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"`,
 ];
@@ -214,7 +214,7 @@ export const createGoogleCloudRunDeployJobs = (
       "Prepare..."
     )([
       ...gcloudServiceAccountLoginCommands(context),
-      ...setExtraVarsScripts(deployConfig),
+      ...setGoogleProjectNumberScript(deployConfig),
     ]),
     ...collapseableSection(
       "deploy",
