@@ -109,9 +109,15 @@ export const createGoogleCloudRunDeployJobs = (
         ? service?.command ?? context.componentConfig.build.startCommand
         : undefined;
 
+    const commandArray = command
+      ? Array.isArray(command)
+        ? command
+        : command.split(" ")
+      : undefined;
+
     const argsString = createArgsString({
       // command as empty string resets it to default (uses the image's entrypoint)
-      command: command ? '"' + command.split(" ").join(",") + '"' : '""',
+      command: commandArray ? '"' + commandArray.join(",") + '"' : '""',
       ...commonDeployArgs,
       "env-vars-file": "____envvars.yaml",
       "min-instances": customConfig?.minInstances ?? 0,

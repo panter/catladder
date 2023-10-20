@@ -78,7 +78,7 @@ export type DeployConfigCloudRunService = {
   /**
    * command / entrypoint, fallsback to buildConfig.startcommand
    */
-  command?: string;
+  command?: string | string[];
 
   /**
    * how many instances to keep around when there are no requests. defaults to 0.
