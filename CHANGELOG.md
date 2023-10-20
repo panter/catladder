@@ -1,3 +1,10 @@
+# [1.125.0](https://git.panter.ch/catladder/catladder/compare/v1.124.4...v1.125.0) (2023-10-20)
+
+
+### Features
+
+* **cloud run:** allow array for start command in service ([6592952](https://git.panter.ch/catladder/catladder/commit/65929522e17f29fb234aeffcf4a7eb73551bca12))
+
 ## [1.124.4](https://git.panter.ch/catladder/catladder/compare/v1.124.3...v1.124.4) (2023-10-19)
 
 ## [1.124.3](https://git.panter.ch/catladder/catladder/compare/v1.124.2...v1.124.3) (2023-10-03)
