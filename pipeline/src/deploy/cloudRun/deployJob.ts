@@ -253,6 +253,7 @@ export const createGoogleCloudRunDeployJobs = (
 
   const stopScripts = [
     ...gcloudServiceAccountLoginCommands(context),
+    ...getJobRunScripts("preStop"),
     ...(deployConfig.service !== false
       ? [`gcloud run services delete ${serviceName} ${commonArgsString}`]
       : []),
@@ -260,6 +261,7 @@ export const createGoogleCloudRunDeployJobs = (
       ([name]) =>
         `gcloud run services delete ${serviceName}-${name} ${commonArgsString}`
     ),
+    ...getJobRunScripts("postStop"),
     ...getDeleteSchedulesScripts(),
     ...getDeleteJobsScripts(),
     ...(deployConfig.cloudSql && deployConfig.cloudSql.deleteDatabaseOnStop

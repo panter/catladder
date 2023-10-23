@@ -151,7 +151,7 @@ export type DeployConfigCloudRunJobWithSchedule =
   };
 
 export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {
-  when: "manual" | "preDeploy" | "postDeploy";
+  when: "manual" | "preDeploy" | "postDeploy" | "preStop" | "postStop";
 };
 
 export type DeployConfigCloudRunJob =
