@@ -123,7 +123,12 @@ export type DeployConfigCloudRunJobBase = {
   /**
    * command
    */
-  command: string;
+  command: string | string[];
+
+  /**
+   * custom image to use. Defaults to the image from the build
+   */
+  image?: string;
 
   /**
    * memory limit of the job, defaults to 51Mi

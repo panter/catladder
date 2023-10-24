@@ -140,9 +140,15 @@ export const createGoogleCloudRunDeployJobs = (
     // lucky, update on the other hand accepts it... so let's just imediatly update it
 
     // also we cannot upsert a job, so we have to create it and catch the error and then update
+
+    const commandArray = Array.isArray(job.command)
+      ? job.command
+      : job.command.split(" ");
+
     const commonDeployArgsString = createArgsString({
-      command: '"' + job.command.split(" ").join(",") + '"',
+      command: '"' + commandArray.join(",") + '"',
       ...commonDeployArgs,
+      image: job.image || commonDeployArgs.image,
       memory: job.memory || "512Mi",
       "task-timeout": job.timeout || "10m",
     });
