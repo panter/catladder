@@ -1,3 +1,17 @@
+# [1.126.0](https://git.panter.ch/catladder/catladder/compare/v1.125.2...v1.126.0) (2023-10-30)
+
+
+### Bug Fixes
+
+* cloud run on-stop may fail to finish as they are deleted ([3c47862](https://git.panter.ch/catladder/catladder/commit/3c47862d34024745c46de0f6a9bf5d668b98aac9))
+
+
+### Features
+
+* **cloud-run:** on-stop jobs ([47096bf](https://git.panter.ch/catladder/catladder/commit/47096bf1347723b9db5b9cbcd15a2714aba6ad0c))
+* custom image for cloud run jobs, allow arrays in command of jobs ([0d0565d](https://git.panter.ch/catladder/catladder/commit/0d0565d806fcf953849afeb7f7accf7f6e207807))
+* shorten review time ([584f159](https://git.panter.ch/catladder/catladder/commit/584f159c4b2a020b1e214357c0eff2838f0f8364))
+
 ## [1.125.2](https://git.panter.ch/catladder/catladder/compare/v1.125.1...v1.125.2) (2023-10-30)
 
 ## [1.125.1](https://git.panter.ch/catladder/catladder/compare/v1.125.0...v1.125.1) (2023-10-30)
