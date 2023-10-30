@@ -26,7 +26,7 @@ export const createDeployJob = (
 
   const autoStop =
     context.environment.envType === "review"
-      ? "2 week"
+      ? "1 week"
       : context.environment.envType === "dev"
       ? "4 weeks"
       : undefined;
