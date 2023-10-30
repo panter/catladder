@@ -99,6 +99,7 @@ Some hints:
   Recommended for bigger projects.
 - Firebase hosting is a cheaper alternative. You can use firebase hosting without actually using all other features of it.  
   However, if you have a static app (E.g. frontend) as well, you might consider it as static hosting.
+- [Cloud Run domain mapping](https://cloud.google.com/run/docs/mapping-custom-domains#run) is the third option but it's not (yet) available in the Zurich region
 
 ### Custom Domains using firebase
 
