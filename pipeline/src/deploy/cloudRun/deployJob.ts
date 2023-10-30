@@ -167,14 +167,22 @@ export const createGoogleCloudRunDeployJobs = (
       .map(({ job, jobName }) => getJobCreateScriptsForJob(jobName, job))
       .flat();
 
-  const getJobRunScriptForJob = (jobName: string) => {
-    return `gcloud beta run jobs execute ${jobName} ${commonArgsString}`;
+  const getJobRunScriptForJob = (jobName: string, wait: boolean) => {
+    return `gcloud beta run jobs execute ${jobName} ${commonArgsString}${
+      wait ? " --wait" : ""
+    }`;
   };
 
   const getJobRunScripts = (when: DeployConfigCloudRunJob["when"]) =>
     jobsWithNames
       .filter(({ job }) => job.when === when)
-      .map(({ jobName }) => getJobRunScriptForJob(jobName));
+      .map(({ jobName }) =>
+        getJobRunScriptForJob(
+          jobName,
+          // wait for completin on stop jobs, since stop will delete the jobs afterwards, so they will fail
+          ["preStop", "postStop"].includes(when)
+        )
+      );
 
   const getCreateScheduleScripts = () => {
     return jobsWithSchedule

@@ -915,7 +915,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ",
           "gcloud auth activate-service-account --key-file="./____keyfile.json"",
           "gcloud run services delete pan-test-app-review-mr1234-api --project=google-project-id --region=europe-west6",
-          "gcloud beta run jobs execute pan-test-app-review-mr1234-api-drop-db --project=google-project-id --region=europe-west6",
+          "gcloud beta run jobs execute pan-test-app-review-mr1234-api-drop-db --project=google-project-id --region=europe-west6 --wait",
           "gcloud beta run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-review-mr1234-api-drop-db --format="value(name)" | xargs -I {} gcloud beta run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6",
           "gcloud beta run jobs delete pan-test-app-review-mr1234-api-drop-db --project=google-project-id --region=europe-west6",
           "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234 --quiet --delete-tags",
