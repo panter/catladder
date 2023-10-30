@@ -126,3 +126,57 @@ Some tips:
 - You can have multiple domains on the same firebase project. This can be used for apps with dedicated frontend and api service and you can also add custom domains for staging
 - no changes are needed in catladder. It will still deploy to cloud run, but firebase will route the traffic to it. You can still use the cloud run url to access your app.
 - Still make sure to set `host` in catladder.ts of your prod environment, so that your services know the url where there are hosted from (ROOT_URL)
+
+## Migration from kubernetes to cloud run
+
+Preparations:
+
+- make sure you have access to the DNS of your domain (see Custom domains chapter)
+- Check the [CLOUD READY](../recipies/CLOUD_READY.md) principles and make sure your app is cloud ready
+- Check whether your app use background workers, cronjobs and one-time jobs to understand the cost structure
+- Be aware of the costs and check whether existing hosting costs are higher or lower than your estimations
+
+Steps:
+
+1. Change the catladder.ts config to use `google-cloud-run` as deploy type. Don't forget to alter all jobs as well.
+2. run `project-setup` in catladderc-li
+3. Push and make sure it works on your review-branch. Test it thouroughly
+4. Merge and create a release. Wait before you deploy to production.
+5. If you have cronjobs and background workers, you need to manually remove them from kubernetes because once you deploy the app to production, the new cronjobs and workers will start to operate as well.
+6. Deploy it to production. Make sure it works correctly by accessing it via the cloud run url. If you have custom domains, you can already set them up, but don't change the DNS yet.
+7. Change the DNS to point the public prod domain to the custom domain (firebase) or load balancer.
+8. Once DNS is propagated (can take up to 24h), you can safely delete the old kubernetes namespace as no traffic should land there anymore.
+
+### Considerations
+
+#### min instances and scaling behaviour
+
+Cloud run scales down to 0 when your app is not used. This is cost efficient, but lead to "cold starts" when someone access your app after a while. A typical node app is not so fast with starting, so cold start is often too long for a user to wait.
+
+Having 0 min instances is therefore a recommended option for all non prod-apps.
+
+For prod-apps, consider setting minInstances to 1. Be aware of the cost implications.
+
+#### Max instances
+
+Cloud run scales up to 100 instances by default. This is a lot and can lead to high costs. Consider setting a max instance limit.
+
+Bursts can happen if you are target of DDOS attacks.
+
+#### Cronjobs and one time jobs
+
+Cronjobs and one time jobs (e.g. migrations) are supported by catladder and cloud-run. They are implemeted by using a cloud run job and setting up a cloud runner, see Jobs and migrations chapter.
+
+If you have a cronjob that runs more often then every 10min, you might consider to use a background worker instead as this is more cost efficient.
+
+#### Background workers
+
+Background workers are supported by catladder and cloud-run, but there are comparably expensive, since you need to always allocate cpu and memory for them.
+
+Check the example [cloud-run-meteor-with-worker](../../pipeline/examples/cloud-run-meteor-with-worker.ts) to see how to set it up.
+
+Consider migrating away from background workers to either cronjobs are asynchronous tasks using Cloud Tasks.
+
+#### MongoDb
+
+we supported mongodb in kubernetes by using a helm chart. This is not supported in cloud run. You can use a managed mongodb service, e.g. mongodb atlas.

@@ -8,6 +8,6 @@ See [CLOUD RUN](./deploy/CLOUD_RUN.md)
 
 For custom deploy scripts
 
-## Kubernetes
+## Kubernetes (deprecated)
 
 See [Kubernetes](./deploy/KUBERNETES.md)
