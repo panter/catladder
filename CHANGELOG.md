@@ -1,3 +1,10 @@
+## [1.126.2](https://git.panter.ch/catladder/catladder/compare/v1.126.1...v1.126.2) (2023-11-02)
+
+
+### Bug Fixes
+
+* base pipeline runs under node 16, so new packageManager features don't work ([21a73c2](https://git.panter.ch/catladder/catladder/commit/21a73c29bfaa7d7002eb4be62efe1fb3584caa93))
+
 ## [1.126.1](https://git.panter.ch/catladder/catladder/compare/v1.126.0...v1.126.1) (2023-11-02)
 
 # [1.126.0](https://git.panter.ch/catladder/catladder/compare/v1.125.2...v1.126.0) (2023-10-30)
