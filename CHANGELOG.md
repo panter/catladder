@@ -1,3 +1,11 @@
+# [1.127.0](https://git.panter.ch/catladder/catladder/compare/v1.126.2...v1.127.0) (2023-11-02)
+
+
+### Features
+
+* Dependency-Track-Uploader to 0.3.0 (Support for Dependency Track 4.9.1) ([e934b57](https://git.panter.ch/catladder/catladder/commit/e934b573a7594b0014037aeceac9039456f5619d))
+* support node 20 ([630eaf1](https://git.panter.ch/catladder/catladder/commit/630eaf1c052917e830782bae1efa390c8d454d00))
+
 ## [1.126.2](https://git.panter.ch/catladder/catladder/compare/v1.126.1...v1.126.2) (2023-11-02)
 
 
