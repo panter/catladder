@@ -1,6 +1,6 @@
 
 
-FROM node:16
+FROM node:18
 
 RUN rm /bin/sh && \
     ln -s /bin/bash /bin/sh && \
@@ -17,6 +17,7 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | b
     /root/.nvm/nvm.sh install 12 && \
     /root/.nvm/nvm.sh install 14 && \
     /root/.nvm/nvm.sh install 16 && \
-    /root/.nvm/nvm.sh install 18 
+    /root/.nvm/nvm.sh install 18 && \
+    /root/.nvm/nvm.sh install 20 
 
 COPY --from=git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1 /dtrackuploader /
