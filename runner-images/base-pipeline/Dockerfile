@@ -1,5 +1,5 @@
 # build context is the root directory
-FROM node:16-alpine
+FROM node:18-alpine
 
 
 # add git. We use it to add some additional infos about the commit
