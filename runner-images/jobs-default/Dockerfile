@@ -7,7 +7,7 @@ RUN rm /bin/sh && \
     mkdir -p /root/.nvm
 
 # set high timeout for yarn, see https://github.com/dhis2/notes/issues/29
-RUN yarn config set network-timeout 600000 -g 
+RUN yarn config set network-timeout 600000 -g
 
 # install nvm && some common node versions
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash && \
@@ -20,4 +20,4 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | b
     /root/.nvm/nvm.sh install 18 && \
     /root/.nvm/nvm.sh install 20 
 
-COPY --from=git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.2.1 /dtrackuploader /
+COPY --from=git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.3.0 /dtrackuploader /
