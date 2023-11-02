@@ -30,13 +30,13 @@ export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<"kubernetes"> = {
       (deployConfigRaw && deployConfigRaw.cluster?.domainCanonical) || // for convenience, we allow clusters to define a canonical domain, because a cluster has a fixed ip and you will usually have a domain pointing to that cluster
       fullConfig.domainCanonical ||
       "panter.cloud";
-    const HOST_CANONICAL = `${componentSlug}.${envInUrl}.${fullConfig.appName}.${fullConfig.customerName}.${domainCanonical}`; // default for kubernetes and rest
+    const HOST_INTERNAL = `${componentSlug}.${envInUrl}.${fullConfig.appName}.${fullConfig.customerName}.${domainCanonical}`; // default for kubernetes and rest
 
     return {
       KUBE_NAMESPACE,
       KUBE_APP_NAME,
       KUBE_APP_NAME_PREFIX,
-      HOST_CANONICAL,
+      HOST_INTERNAL,
     };
   },
 };

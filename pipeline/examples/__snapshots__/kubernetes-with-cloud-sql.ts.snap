@@ -50,6 +50,7 @@ exports[`matches snapshot 1`] = `
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.dev.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -71,11 +72,13 @@ exports[`matches snapshot 1`] = `
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -99,7 +102,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
@@ -222,6 +226,7 @@ cloudsql:
           "ENV_TYPE": "dev",
           "HOST": "api.dev.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -231,7 +236,8 @@ cloudsql:
           "KUBE_NAMESPACE": "pan-test-app-dev",
           "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
@@ -386,6 +392,7 @@ COPY --chown=node:node .yarn /app/.yarn",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.dev.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -407,11 +414,13 @@ COPY --chown=node:node .yarn /app/.yarn",
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -435,7 +444,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
@@ -491,6 +501,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.dev.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -512,11 +523,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.dev.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.dev.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.dev.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -540,7 +553,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-dev-api",
           "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
@@ -757,6 +771,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -778,11 +793,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -806,7 +823,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
@@ -929,6 +947,7 @@ cloudsql:
           "ENV_TYPE": "review",
           "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -938,7 +957,8 @@ cloudsql:
           "KUBE_NAMESPACE": "pan-test-app-review",
           "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
@@ -1093,6 +1113,7 @@ COPY --chown=node:node .yarn /app/.yarn",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1114,11 +1135,13 @@ COPY --chown=node:node .yarn /app/.yarn",
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1142,7 +1165,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
@@ -1198,6 +1222,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1219,11 +1244,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-api'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.mr1234.review.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.mr1234.review.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1247,7 +1274,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-review-mr1234-api",
           "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
@@ -1464,6 +1492,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.prod.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1485,11 +1514,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1513,7 +1544,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
@@ -1562,6 +1594,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.stage.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1583,11 +1616,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -1611,7 +1646,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
@@ -1687,6 +1723,7 @@ cloudsql:
           "ENV_TYPE": "prod",
           "HOST": "api.prod.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -1696,7 +1733,8 @@ cloudsql:
           "KUBE_NAMESPACE": "pan-test-app-prod",
           "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
@@ -1772,6 +1810,7 @@ cloudsql:
           "ENV_TYPE": "stage",
           "HOST": "api.stage.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -1781,7 +1820,8 @@ cloudsql:
           "KUBE_NAMESPACE": "pan-test-app-stage",
           "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
@@ -1996,6 +2036,7 @@ COPY --chown=node:node .yarn /app/.yarn",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.prod.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2017,11 +2058,13 @@ COPY --chown=node:node .yarn /app/.yarn",
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2045,7 +2088,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
@@ -2116,6 +2160,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.stage.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2137,11 +2182,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2165,7 +2212,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
@@ -2221,6 +2269,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.prod.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2242,11 +2291,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.prod.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.prod.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.prod.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2270,7 +2321,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-prod-api",
           "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
@@ -2326,6 +2378,7 @@ cloudsql:
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST": "api.stage.test-app.pan.panter.cloud",
           "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2347,11 +2400,13 @@ cloudsql:
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     HOST: 'api.stage.test-app.pan.panter.cloud'
     ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://api.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'api'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
+    HOST_INTERNAL: 'api.stage.test-app.pan.panter.cloud'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
 application:
   host: 'api.stage.test-app.pan.panter.cloud'
   command: 'yarn start'
@@ -2375,7 +2430,8 @@ cloudsql:
           "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
           "RELEASE_NAME": "pan-test-app-stage-api",
           "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
+          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
           "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },

@@ -62,6 +62,8 @@ export const getEnvironmentVariables = async (
     predefinedVariables = {
       ENV_SHORT: "local",
       ROOT_URL: url,
+      HOST_INTERNAL: host,
+      ROOT_URL_INTERNAL: "http://" + host,
       PORT: port.toString(),
     };
   } else {
@@ -70,11 +72,9 @@ export const getEnvironmentVariables = async (
           environmentContext as never
         )
       : {};
-
-    host =
-      envConfigRaw?.host ??
-      additionalEnvVars.HOST_CANONICAL ??
-      "unknown-host.example.com";
+    const HOST_INTERNAL =
+      additionalEnvVars.HOST_INTERNAL ?? "unknown-host.example.com";
+    host = envConfigRaw?.host ?? HOST_INTERNAL;
     url = `https://${host}`;
 
     predefinedVariables = {
@@ -84,6 +84,8 @@ export const getEnvironmentVariables = async (
         ? {}
         : { HOST: host }),
       ROOT_URL: url,
+      HOST_CANONICAL: HOST_INTERNAL, // legacy
+      ROOT_URL_INTERNAL: "https://" + HOST_INTERNAL,
       ...additionalEnvVars,
     };
   }

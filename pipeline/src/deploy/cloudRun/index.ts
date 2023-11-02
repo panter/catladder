@@ -8,6 +8,7 @@ import { getCloudRunJobName } from "./utils/jobName";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
 
+// FIXME: rename to internalHostSuffix, but this means that project-setup needs to be rerun, so its kindof a breaking change
 export const GCLOUD_RUN_CANONICAL_HOST_SUFFIX =
   "GCLOUD_RUN_canonicalHostSuffix";
 
@@ -71,7 +72,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
   ],
   getAdditionalEnvVars: (ctx) => {
     const { fullName, env, componentName, deployConfigRaw } = ctx;
-    const HOST_CANONICAL =
+    const HOST_INTERNAL =
       fullName.toLowerCase() +
       "-" +
       (process.env[
@@ -93,8 +94,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
         : {};
 
     return {
-      HOST_CANONICAL,
-      ROOT_URL_INTERNAL: `https://${HOST_CANONICAL}`,
+      HOST_INTERNAL,
       ...getCloudSqlVariables(ctx),
       ...jobTriggers,
     };

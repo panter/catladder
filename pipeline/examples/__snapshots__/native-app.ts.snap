@@ -126,12 +126,14 @@ exports[`matches snapshot 1`] = `
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-dev-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | dev ": {
@@ -315,19 +317,23 @@ BUILD_INFO_CURRENT_VERSION: '3.2.1'
 HOST: 'pan-test-app-dev-api-unknown-host.example.com'
 ROOT_URL: 'https://pan-test-app-dev-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-dev-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-dev-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-dev-api-unknown-host.example.com'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-dev-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-dev-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
@@ -589,11 +595,13 @@ BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
 BUILD_INFO_CURRENT_VERSION=3.2.1
 HOST=unknown-host.example.com
 ROOT_URL=https://unknown-host.example.com
+HOST_CANONICAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
 APP_STORE_CONNECT_API_KEY_CONTENT=$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT
 APP_STORE_CONNECT_ISSUER_ID=$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID
 APP_STORE_CONNECT_API_KEY_ID=$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://pan-test-app-dev-api-unknown-host.example.com/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
           "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):node install[collapsed=true]\\r\\e[0KEnsure node version"",
@@ -630,6 +638,7 @@ EOF",
           "ENV_TYPE": "dev",
           "GRAPHQL_URL": "https://pan-test-app-dev-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -637,7 +646,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🚀 Deploy | dev ": {
@@ -719,6 +729,7 @@ EOF",
           "ENV_TYPE": "dev",
           "GRAPHQL_URL": "https://pan-test-app-dev-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -726,7 +737,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🛡 audit": {
@@ -1022,12 +1034,14 @@ EOF",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | review ": {
@@ -1214,19 +1228,23 @@ BUILD_INFO_CURRENT_VERSION: '3.2.1'
 HOST: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
 ROOT_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_review_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
@@ -1491,11 +1509,13 @@ BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
 BUILD_INFO_CURRENT_VERSION=3.2.1
 HOST=unknown-host.example.com
 ROOT_URL=https://unknown-host.example.com
+HOST_CANONICAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
 APP_STORE_CONNECT_API_KEY_CONTENT=$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT
 APP_STORE_CONNECT_ISSUER_ID=$CL_review_app_APP_STORE_CONNECT_ISSUER_ID
 APP_STORE_CONNECT_API_KEY_ID=$CL_review_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
           "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):node install[collapsed=true]\\r\\e[0KEnsure node version"",
@@ -1532,6 +1552,7 @@ EOF",
           "ENV_TYPE": "review",
           "GRAPHQL_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -1539,7 +1560,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🚀 Deploy | review ": {
@@ -1621,6 +1643,7 @@ EOF",
           "ENV_TYPE": "review",
           "GRAPHQL_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1628,7 +1651,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🛡 audit": {
@@ -1877,12 +1901,14 @@ EOF",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-prod-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 app | stage ": {
@@ -1959,12 +1985,14 @@ EOF",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-stage-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | prod ": {
@@ -2210,19 +2238,23 @@ BUILD_INFO_CURRENT_VERSION: '3.2.1'
 HOST: 'pan-test-app-prod-api-unknown-host.example.com'
 ROOT_URL: 'https://pan-test-app-prod-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-prod-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-prod-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-prod-api-unknown-host.example.com'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-prod-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-prod-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🚀 Deploy | stage ": {
@@ -2320,19 +2352,23 @@ BUILD_INFO_CURRENT_VERSION: '3.2.1'
 HOST: 'pan-test-app-stage-api-unknown-host.example.com'
 ROOT_URL: 'https://pan-test-app-stage-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-stage-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-stage-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-stage-api-unknown-host.example.com'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
           "HOST": "pan-test-app-stage-api-unknown-host.example.com",
           "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-stage-api-unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
@@ -2545,11 +2581,13 @@ BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
 BUILD_INFO_CURRENT_VERSION=3.2.1
 HOST=unknown-host.example.com
 ROOT_URL=https://unknown-host.example.com
+HOST_CANONICAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
 APP_STORE_CONNECT_API_KEY_CONTENT=$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT
 APP_STORE_CONNECT_ISSUER_ID=$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID
 APP_STORE_CONNECT_API_KEY_ID=$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://pan-test-app-prod-api-unknown-host.example.com/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
           "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):node install[collapsed=true]\\r\\e[0KEnsure node version"",
@@ -2586,6 +2624,7 @@ EOF",
           "ENV_TYPE": "prod",
           "GRAPHQL_URL": "https://pan-test-app-prod-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -2593,7 +2632,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🔨 app | stage ": {
@@ -2662,11 +2702,13 @@ BUILD_INFO_BUILD_TIME=01-01-2023 12:13:14
 BUILD_INFO_CURRENT_VERSION=3.2.1
 HOST=unknown-host.example.com
 ROOT_URL=https://unknown-host.example.com
+HOST_CANONICAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
 APP_STORE_CONNECT_API_KEY_CONTENT=$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT
 APP_STORE_CONNECT_ISSUER_ID=$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID
 APP_STORE_CONNECT_API_KEY_ID=$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://pan-test-app-stage-api-unknown-host.example.com/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
           "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):node install[collapsed=true]\\r\\e[0KEnsure node version"",
@@ -2703,6 +2745,7 @@ EOF",
           "ENV_TYPE": "stage",
           "GRAPHQL_URL": "https://pan-test-app-stage-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "2",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
@@ -2710,7 +2753,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🚀 Deploy | prod ": {
@@ -2780,6 +2824,7 @@ EOF",
           "ENV_TYPE": "prod",
           "GRAPHQL_URL": "https://pan-test-app-prod-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2787,7 +2832,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🚀 Deploy | stage ": {
@@ -2857,6 +2903,7 @@ EOF",
           "ENV_TYPE": "stage",
           "GRAPHQL_URL": "https://pan-test-app-stage-api-unknown-host.example.com/graphql",
           "HOST": "unknown-host.example.com",
+          "HOST_CANONICAL": "unknown-host.example.com",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2864,7 +2911,8 @@ EOF",
           "LANG": "en_US.UTF-8",
           "LC_A": "L=en_US.UTF-8",
           "ROOT_URL": "https://unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
+          "ROOT_URL_INTERNAL": "https://unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]",
         },
       },
       "app 🧾 sbom | prod ": {

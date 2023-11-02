@@ -49,6 +49,7 @@ exports[`matches snapshot 1`] = `
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -70,12 +71,14 @@ exports[`matches snapshot 1`] = `
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.dev.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.dev.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -107,8 +110,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-dev-app",
           "ROOT_URL": "https://app.dev.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.dev.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_dev_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_dev_app_cloudsqlProxyCredentials",
         },
       },
@@ -265,6 +269,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -286,12 +291,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.dev.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.dev.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -323,8 +330,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-dev-app",
           "ROOT_URL": "https://app.dev.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.dev.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_dev_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_dev_app_cloudsqlProxyCredentials",
         },
       },
@@ -379,6 +387,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -400,12 +409,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.dev.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.dev.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -437,8 +448,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-dev-app",
           "ROOT_URL": "https://app.dev.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.dev.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_dev_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_dev_app_cloudsqlProxyCredentials",
         },
       },
@@ -633,6 +645,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -654,12 +667,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-app'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.mr1234.review.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.mr1234.review.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -694,8 +709,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-review-mr1234-app",
           "ROOT_URL": "https://app.mr1234.review.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.mr1234.review.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_review_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_review_app_cloudsqlProxyCredentials",
         },
       },
@@ -852,6 +868,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -873,12 +890,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-app'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.mr1234.review.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.mr1234.review.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -913,8 +932,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-review-mr1234-app",
           "ROOT_URL": "https://app.mr1234.review.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.mr1234.review.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_review_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_review_app_cloudsqlProxyCredentials",
         },
       },
@@ -969,6 +989,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -990,12 +1011,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-app'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.mr1234.review.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.mr1234.review.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -1030,8 +1053,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-review-mr1234-app",
           "ROOT_URL": "https://app.mr1234.review.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.mr1234.review.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_review_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_review_app_cloudsqlProxyCredentials",
         },
       },
@@ -1226,6 +1250,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1247,12 +1272,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://my-fancy-website.com'
+    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.prod.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'my-fancy-website.com'
   command: '/cnb/process/web'
@@ -1284,8 +1311,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-prod-app",
           "ROOT_URL": "https://my-fancy-website.com",
+          "ROOT_URL_INTERNAL": "https://app.prod.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_prod_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_prod_app_cloudsqlProxyCredentials",
         },
       },
@@ -1333,6 +1361,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1354,12 +1383,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.stage.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.stage.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -1391,8 +1422,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-stage-app",
           "ROOT_URL": "https://app.stage.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.stage.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_stage_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
       },
@@ -1554,6 +1586,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1575,12 +1608,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://my-fancy-website.com'
+    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.prod.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'my-fancy-website.com'
   command: '/cnb/process/web'
@@ -1612,8 +1647,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-prod-app",
           "ROOT_URL": "https://my-fancy-website.com",
+          "ROOT_URL_INTERNAL": "https://app.prod.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_prod_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_prod_app_cloudsqlProxyCredentials",
         },
       },
@@ -1679,6 +1715,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1700,12 +1737,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.stage.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.stage.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -1737,8 +1776,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-stage-app",
           "ROOT_URL": "https://app.stage.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.stage.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_stage_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
       },
@@ -1793,6 +1833,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1814,12 +1855,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://my-fancy-website.com'
+    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.prod.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'my-fancy-website.com'
   command: '/cnb/process/web'
@@ -1851,8 +1894,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-prod-app",
           "ROOT_URL": "https://my-fancy-website.com",
+          "ROOT_URL_INTERNAL": "https://app.prod.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_prod_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_prod_app_cloudsqlProxyCredentials",
         },
       },
@@ -1907,6 +1951,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1928,12 +1973,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.stage.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.stage.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -1965,8 +2012,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-stage-app",
           "ROOT_URL": "https://app.stage.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.stage.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_stage_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
       },
@@ -2138,6 +2186,7 @@ exports[`matches snapshot with a Dockerfile 1`] = `
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2159,12 +2208,14 @@ exports[`matches snapshot with a Dockerfile 1`] = `
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.dev.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.dev.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -2196,8 +2247,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-dev-app",
           "ROOT_URL": "https://app.dev.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.dev.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_dev_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_dev_app_cloudsqlProxyCredentials",
         },
       },
@@ -2359,6 +2411,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2380,12 +2433,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.dev.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.dev.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -2417,8 +2472,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-dev-app",
           "ROOT_URL": "https://app.dev.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.dev.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_dev_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_dev_app_cloudsqlProxyCredentials",
         },
       },
@@ -2473,6 +2529,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.dev.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2494,12 +2551,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.dev.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.dev.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-dev'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.dev.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.dev.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.dev.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -2531,8 +2590,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-dev-app",
           "ROOT_URL": "https://app.dev.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.dev.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_dev_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_dev_app_cloudsqlProxyCredentials",
         },
       },
@@ -2727,6 +2787,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2748,12 +2809,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-app'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.mr1234.review.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.mr1234.review.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -2788,8 +2851,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-review-mr1234-app",
           "ROOT_URL": "https://app.mr1234.review.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.mr1234.review.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_review_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_review_app_cloudsqlProxyCredentials",
         },
       },
@@ -2951,6 +3015,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -2972,12 +3037,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-app'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.mr1234.review.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.mr1234.review.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -3012,8 +3079,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-review-mr1234-app",
           "ROOT_URL": "https://app.mr1234.review.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.mr1234.review.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_review_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_review_app_cloudsqlProxyCredentials",
         },
       },
@@ -3068,6 +3136,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.mr1234.review.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -3089,12 +3158,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.mr1234.review.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-review'
     KUBE_APP_NAME: 'mr1234-app'
     KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_CANONICAL: 'app.mr1234.review.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.mr1234.review.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.mr1234.review.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -3129,8 +3200,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-review-mr1234-app",
           "ROOT_URL": "https://app.mr1234.review.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.mr1234.review.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_review_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_review_app_cloudsqlProxyCredentials",
         },
       },
@@ -3325,6 +3397,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -3346,12 +3419,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://my-fancy-website.com'
+    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.prod.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'my-fancy-website.com'
   command: '/cnb/process/web'
@@ -3383,8 +3458,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-prod-app",
           "ROOT_URL": "https://my-fancy-website.com",
+          "ROOT_URL_INTERNAL": "https://app.prod.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_prod_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_prod_app_cloudsqlProxyCredentials",
         },
       },
@@ -3432,6 +3508,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -3453,12 +3530,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.stage.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.stage.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -3490,8 +3569,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-stage-app",
           "ROOT_URL": "https://app.stage.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.stage.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_stage_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
       },
@@ -3663,6 +3743,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -3684,12 +3765,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://my-fancy-website.com'
+    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.prod.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'my-fancy-website.com'
   command: '/cnb/process/web'
@@ -3721,8 +3804,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-prod-app",
           "ROOT_URL": "https://my-fancy-website.com",
+          "ROOT_URL_INTERNAL": "https://app.prod.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_prod_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_prod_app_cloudsqlProxyCredentials",
         },
       },
@@ -3788,6 +3872,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -3809,12 +3894,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.stage.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.stage.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -3846,8 +3933,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-stage-app",
           "ROOT_URL": "https://app.stage.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.stage.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_stage_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
       },
@@ -3902,6 +3990,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.prod.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -3923,12 +4012,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://my-fancy-website.com'
+    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.prod.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-prod'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.prod.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.prod.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'my-fancy-website.com'
   command: '/cnb/process/web'
@@ -3960,8 +4051,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-prod-app",
           "ROOT_URL": "https://my-fancy-website.com",
+          "ROOT_URL_INTERNAL": "https://app.prod.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_prod_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_prod_app_cloudsqlProxyCredentials",
         },
       },
@@ -4016,6 +4108,7 @@ jobs:
           "HELM_EXPERIMENTAL_OCI": "1",
           "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
           "HOST_CANONICAL": "app.stage.test-app.pan.panter.cloud",
+          "HOST_INTERNAL": "app.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_LIMIT": "1",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -4037,12 +4130,14 @@ jobs:
     BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
     BUILD_INFO_CURRENT_VERSION: '3.2.1'
     ROOT_URL: 'https://app.stage.test-app.pan.panter.cloud'
+    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    ROOT_URL_INTERNAL: 'https://app.stage.test-app.pan.panter.cloud'
     KUBE_NAMESPACE: 'pan-test-app-stage'
     KUBE_APP_NAME: 'app'
     KUBE_APP_NAME_PREFIX: ''
-    HOST_CANONICAL: 'app.stage.test-app.pan.panter.cloud'
+    HOST_INTERNAL: 'app.stage.test-app.pan.panter.cloud'
     RAILS_ENV: 'production'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
+    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]'
 application:
   host: 'app.stage.test-app.pan.panter.cloud'
   command: '/cnb/process/web'
@@ -4074,8 +4169,9 @@ jobs:
           "RAILS_ENV": "production",
           "RELEASE_NAME": "pan-test-app-stage-app",
           "ROOT_URL": "https://app.stage.test-app.pan.panter.cloud",
+          "ROOT_URL_INTERNAL": "https://app.stage.test-app.pan.panter.cloud",
           "SECRET_KEY_BASE": "$CL_stage_app_SECRET_KEY_BASE",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_CANONICAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]",
           "cloudsqlProxyCredentials": "$CL_stage_app_cloudsqlProxyCredentials",
         },
       },

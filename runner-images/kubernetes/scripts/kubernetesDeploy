@@ -3,7 +3,7 @@ set -e
 
 echo "Deploy to kubernetes"
 echo "Release: $RELEASE_NAME"
-echo "URL (canonical): $HOST_CANONICAL"
+echo "URL (canonical): $HOST_INTERNAL"
 
 # this bash-brainfuck simply splits $helmArgs by newline to an array...
 readarray -t helmArgsArray <<<"$HELM_ARGS"
@@ -44,7 +44,7 @@ helm upgrade --install "$RELEASE_NAME" "$HELM_GITLAB_CHART_NAME" \
     --set image.name="$DOCKER_IMAGE_NAME" \
     --set image.tag="$DOCKER_IMAGE_TAG" \
     --set image.pullPolicy=IfNotPresent \
-    --set application.hostCanonical="$HOST_CANONICAL" \
+    --set application.hostCanonical="$HOST_INTERNAL" \
     --set mongodb.fullnameOverride=$KUBE_APP_NAME-mongodb \
     --set mailhog.fullnameOverride=$KUBE_APP_NAME-mailhog \
     --set gitlab.visualReviewEnabled="$GITLAB_VISUAL_REVIEW_ENABLED" \
