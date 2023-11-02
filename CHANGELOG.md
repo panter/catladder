@@ -1,3 +1,11 @@
+# [1.128.0](https://git.panter.ch/catladder/catladder/compare/v1.127.0...v1.128.0) (2023-11-02)
+
+
+### Features
+
+* **cloud-run:** expose ROOT_URL_INTERNAL which always points to the internal cloud-run url ([b1c24b9](https://git.panter.ch/catladder/catladder/commit/b1c24b97dd4be5f9643f282bf4c64d2e0868244e))
+* expose HOST_INTERNAL and ROOT_URL_INTERNAL for all services ([b9921f1](https://git.panter.ch/catladder/catladder/commit/b9921f15a2b5971bfc631905ae41e5714f9c73de))
+
 # [1.127.0](https://git.panter.ch/catladder/catladder/compare/v1.126.2...v1.127.0) (2023-11-02)
 
 
