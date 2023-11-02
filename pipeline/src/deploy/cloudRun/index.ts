@@ -94,6 +94,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
 
     return {
       HOST_CANONICAL,
+      ROOT_URL_INTERNAL: `https://${HOST_CANONICAL}`,
       ...getCloudSqlVariables(ctx),
       ...jobTriggers,
     };
