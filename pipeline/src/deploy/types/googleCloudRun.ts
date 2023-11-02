@@ -165,9 +165,9 @@ export type DeployConfigCloudRunJob =
 
 export type DeployConfigCloudRun = {
   /**
-   * EXPERIMENTAL cloud run deployment.
+   * cloud run deployment.
    *
-   * This will deploy a cloud run service.
+   * This will deploy a cloud run service. You can optionally define one-time and scheduled jobs running on cloud run
    *
    * Requires that cloud run is enabled on the project, as well as cloud run api and artifacts registry.
    */
@@ -187,7 +187,7 @@ export type DeployConfigCloudRun = {
   service?: boolean | DeployConfigCloudRunService;
 
   /**
-   * deploy additional services with different entry pointss
+   * deploy additional services with different entry points. 
    */
   additionalServices?: {
     [name: string]: DeployConfigCloudRunService;
