@@ -57,8 +57,6 @@ export const createGoogleCloudRunDeployJobs = (
     GCLOUD_DEPLOY_CREDENTIALS_KEY
   );
 
-  const labelsString = makeLabelString(getLabels(context));
-
   const commonArgs = {
     project: deployConfig.projectId,
     region: deployConfig.region,
@@ -70,7 +68,6 @@ export const createGoogleCloudRunDeployJobs = (
     "set-cloudsql-instances": deployConfig.cloudSql
       ? deployConfig.cloudSql.instanceConnectionName
       : undefined,
-    labels: labelsString,
   };
 
   const serviceName = getServiceName(context);
@@ -117,11 +114,11 @@ export const createGoogleCloudRunDeployJobs = (
         ? command
         : command.split(" ")
       : undefined;
-
     const argsString = createArgsString({
       // command as empty string resets it to default (uses the image's entrypoint)
       command: commandArray ? '"' + commandArray.join(",") + '"' : '""',
       ...commonDeployArgs,
+      labels: makeLabelString(getLabels(context)),
       "env-vars-file": "____envvars.yaml",
       "min-instances": customConfig?.minInstances ?? 0,
       "max-instances": customConfig?.maxInstances ?? 100,
@@ -151,6 +148,7 @@ export const createGoogleCloudRunDeployJobs = (
     const commonDeployArgsString = createArgsString({
       command: '"' + commandArray.join(",") + '"',
       ...commonDeployArgs,
+      labels: makeLabelString(getLabels(context)),
       image: job.image || commonDeployArgs.image,
       memory: job.memory || "512Mi",
       "task-timeout": job.timeout || "10m",
