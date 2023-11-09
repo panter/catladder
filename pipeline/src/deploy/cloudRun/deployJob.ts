@@ -114,11 +114,15 @@ export const createGoogleCloudRunDeployJobs = (
         ? command
         : command.split(" ")
       : undefined;
+    const fullServiceName = `${serviceName}${nameSuffix ?? ""}`;
     const argsString = createArgsString({
       // command as empty string resets it to default (uses the image's entrypoint)
       command: commandArray ? '"' + commandArray.join(",") + '"' : '""',
       ...commonDeployArgs,
-      labels: makeLabelString(getLabels(context)),
+      labels: makeLabelString({
+        ...getLabels(context),
+        "cloud-run-service-name": fullServiceName,
+      }),
       "env-vars-file": "____envvars.yaml",
       "min-instances": customConfig?.minInstances ?? 0,
       "max-instances": customConfig?.maxInstances ?? 100,
@@ -129,7 +133,7 @@ export const createGoogleCloudRunDeployJobs = (
       "cpu-boost": true,
     });
 
-    return `gcloud run deploy ${serviceName}${nameSuffix ?? ""} ${argsString}`;
+    return `gcloud run deploy ${fullServiceName} ${argsString}`;
   };
 
   const getJobCreateScriptsForJob = (
@@ -148,7 +152,10 @@ export const createGoogleCloudRunDeployJobs = (
     const commonDeployArgsString = createArgsString({
       command: '"' + commandArray.join(",") + '"',
       ...commonDeployArgs,
-      labels: makeLabelString(getLabels(context)),
+      labels: makeLabelString({
+        ...getLabels(context),
+        "cloud-run-job-name": jobName,
+      }),
       image: job.image || commonDeployArgs.image,
       memory: job.memory || "512Mi",
       "task-timeout": job.timeout || "10m",
