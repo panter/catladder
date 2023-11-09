@@ -1,3 +1,10 @@
+# [1.129.0](https://git.panter.ch/catladder/catladder/compare/v1.128.1...v1.129.0) (2023-11-09)
+
+
+### Features
+
+* **cloud-run:** additional labels ([e13689d](https://git.panter.ch/catladder/catladder/commit/e13689dd19ddffb0f65370a2e3ad90ac474ff9ec))
+
 ## [1.128.1](https://git.panter.ch/catladder/catladder/compare/v1.128.0...v1.128.1) (2023-11-09)
 
 
