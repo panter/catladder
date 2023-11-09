@@ -35,6 +35,11 @@ const setGoogleProjectNumberScript = (deployConfig: DeployConfigCloudRun) => [
   `echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"`,
 ];
 
+const makeLabelString = (obj: Record<string, unknown>) =>
+  Object.entries(obj)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(",");
+
 export const createGoogleCloudRunDeployJobs = (
   context: Context
 ): CatladderJob[] => {
@@ -52,9 +57,7 @@ export const createGoogleCloudRunDeployJobs = (
     GCLOUD_DEPLOY_CREDENTIALS_KEY
   );
 
-  const labelsString = Object.entries(getLabels(context))
-    .map(([key, value]) => `${key}=${value}`)
-    .join(",");
+  const labelsString = makeLabelString(getLabels(context));
 
   const commonArgs = {
     project: deployConfig.projectId,
