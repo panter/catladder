@@ -124,7 +124,7 @@ export default async (vorpal: Vorpal) =>
 
         targetUsername = targetEnvVars.DB_USER;
         targetPassword = targetEnvVars.DB_PASSWORD;
-        targetDbName = sourceEnvVars.DB_NAME;
+        targetDbName = targetEnvVars.DB_NAME;
       }
 
       const { shouldContinue } = await this.prompt({
