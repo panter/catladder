@@ -34,16 +34,19 @@ export const getYarnInstall = (
     "postInstall" in context.componentConfig.build
       ? context.componentConfig.build.postInstall
       : null;
-  return collapseableSection(
-    "yarn prepare",
-    "Node and yarn install"
-  )([
+  return [
     ...ensureNodeVersion(context),
-    getYarnInstallCommand(context),
+    ...collapseableSection(
+      "yarn install",
+      "Yarn install"
+    )([getYarnInstallCommand(context)]),
     ...(postInstall && !options?.noCustomPostInstall
-      ? ensureArray(postInstall) ?? []
+      ? collapseableSection(
+          "post install",
+          "Custom post install"
+        )(ensureArray(postInstall) ?? [])
       : []),
-  ]);
+  ];
 };
 
 const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
