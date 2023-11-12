@@ -1,3 +1,10 @@
+## [1.129.1](https://git.panter.ch/catladder/catladder/compare/v1.129.0...v1.129.1) (2023-11-12)
+
+
+### Bug Fixes
+
+* nvm shows warning about unary operator ([8f65e19](https://git.panter.ch/catladder/catladder/commit/8f65e195e784f709dcd0a5af0491899931064f3f))
+
 # [1.129.0](https://git.panter.ch/catladder/catladder/compare/v1.128.1...v1.129.0) (2023-11-09)
 
 
