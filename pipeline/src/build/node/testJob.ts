@@ -4,7 +4,7 @@ import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
-import { getYarnInstall } from "./yarn";
+import { ensureNodeVersion, getYarnInstall } from "./yarn";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
 export const createNodeTestJobs = (context: Context): CatladderJob[] => {
@@ -59,6 +59,7 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
           image: buildConfig.lint?.jobImage ?? defaultImage,
           cache: getNodeCache(context),
           script: [
+            ...ensureNodeVersion(context),
             `cd ${context.componentConfig.dir}`,
             ...yarnInstall,
             ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
@@ -80,6 +81,7 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
           cache: getNodeCache(context),
           script: [
+            ...ensureNodeVersion(context),
             `cd ${context.componentConfig.dir}`,
             ...yarnInstall,
             ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),
