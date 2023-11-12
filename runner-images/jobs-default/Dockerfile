@@ -10,7 +10,7 @@ RUN rm /bin/sh && \
 RUN yarn config set network-timeout 600000 -g
 
 # install nvm && some common node versions
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash && \
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash && \
     source /root/.nvm/nvm.sh && \
     chmod +x /root/.nvm/nvm.sh && \
     /root/.nvm/nvm.sh install 10 && \
