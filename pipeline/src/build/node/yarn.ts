@@ -17,7 +17,7 @@ const getYarnInstallCommand = (context: Context) => {
 
 export const ensureNodeVersion = (context: Context) =>
   collapseableSection(
-    "node install",
+    "nodeinstall",
     "Ensure node version"
   )([
     "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
@@ -37,12 +37,12 @@ export const getYarnInstall = (
   return [
     ...ensureNodeVersion(context),
     ...collapseableSection(
-      "yarn install",
+      "yarninstall",
       "Yarn install"
     )([getYarnInstallCommand(context)]),
     ...(postInstall && !options?.noCustomPostInstall
       ? collapseableSection(
-          "post install",
+          "postinstall",
           "Custom post install"
         )(ensureArray(postInstall) ?? [])
       : []),
