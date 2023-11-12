@@ -1,3 +1,15 @@
+# [1.130.0](https://git.panter.ch/catladder/catladder/compare/v1.129.1...v1.130.0) (2023-11-12)
+
+
+### Bug Fixes
+
+* **node:** nvmrc in the workspace root is not respected in lint and test jobs ([b10392f](https://git.panter.ch/catladder/catladder/commit/b10392f302fc345cfe4b2889f9482397322ff11e))
+
+
+### Features
+
+* **gitlab:** better collapsing ([1597f81](https://git.panter.ch/catladder/catladder/commit/1597f81fa7e67715ca4698b45d73f42b7256c9ac))
+
 ## [1.129.1](https://git.panter.ch/catladder/catladder/compare/v1.129.0...v1.129.1) (2023-11-12)
 
 
