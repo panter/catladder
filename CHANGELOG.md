@@ -1,3 +1,15 @@
+# [1.131.0](https://git.panter.ch/catladder/catladder/compare/v1.130.0...v1.131.0) (2023-11-24)
+
+
+### Bug Fixes
+
+* **gitlab:** collapsible sections do not collapse ([4706a1e](https://git.panter.ch/catladder/catladder/commit/4706a1eff4af45e673affee6bb019f834f584a70))
+
+
+### Features
+
+* **cli:** improve logging of project-config-secrets ([e93edd8](https://git.panter.ch/catladder/catladder/commit/e93edd8501755499292e0d83528ceb43b0b12614))
+
 # [1.130.0](https://git.panter.ch/catladder/catladder/compare/v1.129.1...v1.130.0) (2023-11-12)
 
 
