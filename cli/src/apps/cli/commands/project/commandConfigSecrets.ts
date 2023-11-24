@@ -177,10 +177,12 @@ const doItFor = async (
       }
     }
   }
+  instance.log("");
   instance.log("upserting all variables, please wait...");
   instance.log("");
   for (const [componentName, envs] of Object.entries(envAndComponents)) {
     for (const env of envs) {
+      instance.log("upserting " + env + ":" + componentName + "...\n");
       await upsertAllVariables(
         instance,
         valuesToEdit[componentName][env],
@@ -189,6 +191,7 @@ const doItFor = async (
       );
       instance.log("");
       instance.log("✅ " + env + ":" + componentName);
+      instance.log("--------------------------------\n");
     }
   }
   instance.log("done! 😻");
