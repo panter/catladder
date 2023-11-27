@@ -66,6 +66,7 @@ spec:
           - name: IS_WORKER
             value: "true"
        
+        {{if .Values.application.worker.livenessProbe}}
         livenessProbe:
           httpGet:
 {{ toYaml .Values.application.livenessProbe.httpGet | indent 12 }}
@@ -73,6 +74,7 @@ spec:
           timeoutSeconds: 10
           periodSeconds:  30
           failureThreshold: 100 # dont kill worker pod too early when cpu intensive stuff is done
+        {{- end }}
         ports:
         - containerPort: 8080
           protocol: TCP

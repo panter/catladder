@@ -96,6 +96,10 @@ export type KubernetesWorkerDef = {
   service?: {
     enabled?: boolean;
   };
+  /**
+   * if the same livenessProbe as the application should be used, defaults to `true`
+   */
+  livenessProbe?: boolean;
 };
 
 type KubernetesTolerationExists = {
