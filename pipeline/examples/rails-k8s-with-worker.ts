@@ -52,6 +52,9 @@ const config: Config = {
             worker: {
               enabled: true,
               command: "launcher bundle exec rake jobs:work",
+              // the delayed_job gem does not have a http health endpoint
+              // disable probe to avoid worker restarts
+              livenessProbe: false,
             },
           },
           jobs: {
