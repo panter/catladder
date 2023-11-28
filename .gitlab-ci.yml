@@ -162,6 +162,7 @@ test:
     - .yarn-cache
   needs: ["🔨 packages"]
   stage: deploy
+  retry: 1 # https://github.com/npm/feedback/discussions/796
   script:
     - VERSION=$([ "$CI_COMMIT_TAG" ] && echo "${CI_COMMIT_TAG#'v'}" || echo "0.0.0-$INLINE_PIPELINE_IMAGE_TAG")
     - echo "publish version $VERSION"
