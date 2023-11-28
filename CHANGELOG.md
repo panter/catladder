@@ -1,3 +1,10 @@
+# [1.132.0](https://git.panter.ch/catladder/catladder/compare/v1.131.0...v1.132.0) (2023-11-28)
+
+
+### Features
+
+* **k8s:** allow disabling liveness probe on worker pod ([2b70f10](https://git.panter.ch/catladder/catladder/commit/2b70f10298e3de100965a179254ba20e37526c24))
+
 # [1.131.0](https://git.panter.ch/catladder/catladder/compare/v1.130.0...v1.131.0) (2023-11-24)
 
 
