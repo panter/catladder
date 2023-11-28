@@ -43,7 +43,6 @@ export const createGitlabBaseInclude = () => {
       // small footprint for this job
       variables: {
         KUBERNETES_CPU_REQUEST: "0.5",
-        KUBERNETES_CPU_LIMIT: "0.5",
         KUBERNETES_MEMORY_REQUEST: "200Mi",
         KUBERNETES_MEMORY_LIMIT: "400Mi",
       },

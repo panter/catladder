@@ -15,7 +15,6 @@ import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gclo
 
 const DOCKER_RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
-  KUBERNETES_CPU_LIMIT: "1",
   KUBERNETES_MEMORY_REQUEST: "1Gi",
   KUBERNETES_MEMORY_LIMIT: "2Gi",
 };

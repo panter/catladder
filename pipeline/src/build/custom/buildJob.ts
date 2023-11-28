@@ -9,7 +9,6 @@ import { createBuildJobs } from "../base";
 
 const RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
-  KUBERNETES_CPU_LIMIT: "2",
   KUBERNETES_MEMORY_REQUEST: "2Gi",
   KUBERNETES_MEMORY_LIMIT: "4Gi",
 };
