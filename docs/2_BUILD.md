@@ -29,25 +29,15 @@ This is useful to host static apps (Angular, React, Next.js static exports) on a
 
 ## rails
 
-The `rails` build type is for Ruby on Rails apps.
+The `rails` build type is for Ruby on Rails apps. See the example in `pipeline/examples/rails-k8s-with-worker.ts`.
 
 It creates some very basic test, lint, and audit jobs that most likely need to be customized.
 
-It will build a container thanks to Cloud Native Buildpacks, similar to Heroku. This has the following implications:
-- A Dockerfile is ignored.
+If no `Dockerfile` is present it will build a container with the [Heroku Cloud Native Buildpack Builder](https://github.com/heroku/cnb-builder-images). This has the following implications:
 - No variables are available during build unless explicitly provided with `build.cnbBuilder.buildVars`.
-- The Cloud Native Buildpack creates these default processes, which are available as `<process-type>` commands inside the container:  
-  ```sh
-  TYPE          SHELL COMMAND
-  web (default) bash  bin/rails server -p ${PORT:-5000} -e $RAILS_ENV
-  console       bash  bin/rails console
-  rake          bash  bundle exec rake
-  worker        bash  bundle exec rake jobs:work
-  ```
-
-  Define additional ones in a Procfile like with Heroku.
-
-- All other commands have to be prefixed with `launcher` to run with the correct environment, e.g. `launcher bundle exec rake db:migrate` is the same as using the shorthand `rake db:migrate` defined in the Procfile.
+- The [buildpacks application contract](https://github.com/heroku/buildpacks-ruby#application-contract) specifies by which rules the container is built
+- By default it creates the default launch process `bin/rails server` according to the above application contract. This can be costumized by providing a Heroku-Style `Procfile` in the component directory.
+- All commands have to be prefixed with `launcher` to run with the correct environment, e.g. `launcher bin/rails console`.
 
 
 ## meteor
