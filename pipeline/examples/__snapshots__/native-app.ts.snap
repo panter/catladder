@@ -163,9 +163,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
-          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
           "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
@@ -266,9 +264,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
-          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
@@ -365,9 +361,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "script": [
           "set +e",
-          "echo $CL_dev_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-dev-api --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
@@ -1075,9 +1069,7 @@ EOF",
         "script": [
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
-          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
           "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
@@ -1178,9 +1170,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
-          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
@@ -1280,9 +1270,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "script": [
           "set +e",
-          "echo $CL_review_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-review-mr1234-api --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/mr1234 --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
@@ -2026,9 +2014,7 @@ EOF",
         "script": [
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
-          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
           "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
@@ -2099,9 +2085,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         "script": [
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
-          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
           "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
@@ -2190,9 +2174,7 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
-          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
@@ -2303,9 +2285,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
-          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
@@ -2402,9 +2382,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "script": [
           "set +e",
-          "echo $CL_prod_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-prod-api --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
@@ -2450,9 +2428,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "script": [
           "set +e",
-          "echo $CL_stage_api_GCLOUD_DEPLOY_credentialsKey > ./____keyfile.json
-          ",
-          "gcloud auth activate-service-account --key-file="./____keyfile.json"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-stage-api --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
