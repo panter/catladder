@@ -1,3 +1,10 @@
+## [1.133.3](https://git.panter.ch/catladder/catladder/compare/v1.133.2...v1.133.3) (2023-11-29)
+
+
+### Bug Fixes
+
+* **meteor:** new meteor docker image has no yarn installed ([c829e0e](https://git.panter.ch/catladder/catladder/commit/c829e0ec822110ada02a1ad79e33ff79bebe871e))
+
 ## [1.133.2](https://git.panter.ch/catladder/catladder/compare/v1.133.1...v1.133.2) (2023-11-29)
 
 ## [1.133.1](https://git.panter.ch/catladder/catladder/compare/v1.133.0...v1.133.1) (2023-11-29)
