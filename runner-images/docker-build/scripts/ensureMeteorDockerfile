@@ -39,7 +39,8 @@ EOF
 FROM $DOCKER_IMAGE
 
 # install yarn. new meteor image has no yarn installed
-RUN npm install --global yarn
+# only install if it does not exist
+RUN command -v yarn || npm install --global yarn
 
 
 $DOCKERFILE_ADDITIONS
