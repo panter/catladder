@@ -1,13 +1,15 @@
 ## Getting started
 
-**Note**: *Currently, only GitLab is supported.*
+**Note**: _Currently, only GitLab is supported._
 
 ### Install for a GitLab project
 
-1. Create a `.gitlab-ci.yml` file with this content:  
+1. Create a `.gitlab-ci.yml` file with this content:
+
 ```yaml
 include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
 ```
+
 2. It's recommended to add a local version of @catladder/cli and @catladder/pipeline as dev dependencies to your project.
 3. Create the file `catladder.ts` in your repositories root.
 
@@ -88,3 +90,7 @@ See [DEPLOY](3_DEPLOY.md)
 # TROUBLESHOOT
 
 See [TROUBLESHOOT](4_TROUBLESHOOT.md)
+
+# RECIPIES
+
+See [RECIPIES](5_RECIPIES.md)
