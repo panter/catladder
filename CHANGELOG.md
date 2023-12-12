@@ -1,3 +1,10 @@
+## [1.133.9](https://git.panter.ch/catladder/catladder/compare/v1.133.8...v1.133.9) (2023-12-12)
+
+
+### Bug Fixes
+
+* remove openssl1.1-compat-dev from node, which curently breaks all build ([f76d3f3](https://git.panter.ch/catladder/catladder/commit/f76d3f3149fc923a34302078e22321acd88af1b6))
+
 ## [1.133.8](https://git.panter.ch/catladder/catladder/compare/v1.133.7...v1.133.8) (2023-12-05)
 
 ## [1.133.7](https://git.panter.ch/catladder/catladder/compare/v1.133.6...v1.133.7) (2023-12-01)
