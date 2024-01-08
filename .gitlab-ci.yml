@@ -56,11 +56,11 @@ test:
       - "*/dist"
 
 .docker-build-base:
-  image: docker:24
+  image: docker:24.0.6
   needs: []
   interruptible: true
   services:
-    - name: docker:24-dind
+    - name: docker:24.0.6-dind
       command: ["--tls=false"]
 
   stage: build
