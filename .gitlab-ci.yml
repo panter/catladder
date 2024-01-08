@@ -2,7 +2,6 @@ image: node:16
 variables:
   INLINE_DOCKER_REGISTRY: $CI_REGISTRY_IMAGE
   DOCKER_HOST: tcp://0.0.0.0:2375
-  DOCKER_TLS_CERTDIR: ""
   INLINE_PIPELINE_IMAGE_TAG: "$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA" # we need to add the commit sha because the docker policy currently does not download images if already in cache with the same tag
 
   KUBERNETES_CPU_REQUEST: "0.5"
@@ -56,17 +55,20 @@ test:
       - "*/dist"
 
 .docker-build-base:
-  image: docker:24.0.6
+  image: docker:24
   needs: []
   interruptible: true
   services:
-    - name: docker:24.0.6-dind
+    - name: docker:24-dind
       command: ["--tls=false"]
 
   stage: build
   variables:
     DOCKER_BUILDKIT: "1"
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_VERIFY: 1
+    DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
     IMAGE_NAME: $CI_REGISTRY_IMAGE/$NAME
     CACHE_IMAGE: $CI_REGISTRY_IMAGE/$NAME/cache:cache
     BUILD_CONTEXT: ./runner-images/$NAME
