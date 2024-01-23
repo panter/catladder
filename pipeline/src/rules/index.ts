@@ -41,3 +41,15 @@ export const RULES_RELEASE: GitlabRule[] = [
     when: "manual",
   },
 ];
+
+export const RULES_MANUAL_RELEASE: GitlabRule[] = [
+  RULE_NEVER_ON_RELEASE_COMMIT,
+  {
+    if: RULE_CONDITION_MAIN_BRANCH,
+    when: "manual",
+  },
+  {
+    if: RULE_CONDITION_HOTFIX_BRANCH,
+    when: "manual",
+  },
+];

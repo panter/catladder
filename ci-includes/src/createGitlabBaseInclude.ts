@@ -6,9 +6,7 @@ import {
   RULES_ALWAYS,
   getRunnerImage,
   RULES_RELEASE,
-  RULE_NEVER_ON_RELEASE_COMMIT,
-  RULE_CONDITION_MAIN_BRANCH,
-  RULE_CONDITION_HOTFIX_BRANCH,
+  RULES_MANUAL_RELEASE,
 } from "@catladder/pipeline";
 
 type GitlabJobDefWithTrigger = Omit<GitlabJobDef, "script"> & {
@@ -72,17 +70,7 @@ export const createGitlabBaseInclude = () => {
       image: getRunnerImage("semantic-release"),
       script: ["semanticRelease"],
       needs: [],
-      rules: [
-        RULE_NEVER_ON_RELEASE_COMMIT,
-        {
-          if: RULE_CONDITION_MAIN_BRANCH,
-          when: "manual",
-        },
-        {
-          if: RULE_CONDITION_HOTFIX_BRANCH,
-          when: "manual",
-        },
-      ],
+      rules: RULES_MANUAL_RELEASE,
     },
   };
   return {
