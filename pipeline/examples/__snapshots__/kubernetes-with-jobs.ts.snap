@@ -1311,6 +1311,10 @@ application:
           "when": "never",
         },
         {
+          "if": "$CI_PIPELINE_SOURCE  == "schedule"",
+          "when": "never",
+        },
+        {
           "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
         },
         {
@@ -2619,6 +2623,10 @@ application:
         },
         {
           "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_PIPELINE_SOURCE  == "schedule"",
           "when": "never",
         },
         {
@@ -4642,6 +4650,10 @@ application:
         },
         {
           "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_PIPELINE_SOURCE  == "schedule"",
           "when": "never",
         },
         {

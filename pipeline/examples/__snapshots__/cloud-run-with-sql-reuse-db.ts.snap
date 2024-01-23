@@ -1060,6 +1060,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "when": "never",
         },
         {
+          "if": "$CI_PIPELINE_SOURCE  == "schedule"",
+          "when": "never",
+        },
+        {
           "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
         },
         {
@@ -2156,6 +2160,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
         {
           "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_PIPELINE_SOURCE  == "schedule"",
           "when": "never",
         },
         {
@@ -3677,6 +3685,10 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
         {
           "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_PIPELINE_SOURCE  == "schedule"",
           "when": "never",
         },
         {

@@ -4,11 +4,18 @@ export const RULE_NEVER_ON_RELEASE_COMMIT: GitlabRule = {
   if: "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
   when: "never",
 };
+
+export const RULE_NEVER_ON_SCHEDULE: GitlabRule = {
+  if: '$CI_PIPELINE_SOURCE  == "schedule"',
+  when: "never",
+};
+
 export const RULES_ALWAYS: GitlabRule[] = [
   {
     if: "$CI_COMMIT_TAG",
   },
   RULE_NEVER_ON_RELEASE_COMMIT,
+  RULE_NEVER_ON_SCHEDULE,
   {
     if: "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
   },
@@ -28,6 +35,7 @@ export const RULE_CONDITION_HOTFIX_BRANCH =
 
 export const RULES_RELEASE: GitlabRule[] = [
   RULE_NEVER_ON_RELEASE_COMMIT,
+  RULE_NEVER_ON_SCHEDULE,
   {
     if: RULE_CONDITION_MAIN_BRANCH + ' && $AUTO_RELEASE == "true"',
     when: "on_success",
@@ -44,6 +52,7 @@ export const RULES_RELEASE: GitlabRule[] = [
 
 export const RULES_MANUAL_RELEASE: GitlabRule[] = [
   RULE_NEVER_ON_RELEASE_COMMIT,
+  RULE_NEVER_ON_SCHEDULE,
   {
     if: RULE_CONDITION_MAIN_BRANCH,
     when: "manual",
