@@ -39,7 +39,9 @@ If you added a new key to `secrets` or want to change secrets, open a terminal a
 `project-config-secrets` (you can autocomplete in the catladder cli)
 
 This will open up your editor with all env vars in the YAML-format.  
-Save this fill close it and catladder will update the secrets.
+Save this file close it and catladder will update the secrets.
+
+Editor is selected from your shell's environment variables `$VISUAL`, `$EDITOR` or fallbacks to `code` or `vim`.
 
 _catladder makes a copy of old values as backup, you can restore those manually in GitLab if needed_
 

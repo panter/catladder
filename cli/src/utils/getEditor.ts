@@ -5,7 +5,10 @@ import commandExists from "command-exists-promise";
 let cmd: string;
 export default async () => {
   if (!cmd) {
-    cmd = (await commandExists("code")) ? "code --wait" : "vim";
+    cmd =
+      process.env.VISUAL ??
+      process.env.EDITOR ??
+      ((await commandExists("code")) ? "code --wait" : "vim");
   }
 
   return {
