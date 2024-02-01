@@ -1,3 +1,10 @@
+# [1.134.0](https://git.panter.ch/catladder/catladder/compare/v1.133.11...v1.134.0) (2024-02-01)
+
+
+### Features
+
+* use VISUAL and EDITOR env vars as preferred editor ([c78c1d0](https://git.panter.ch/catladder/catladder/commit/c78c1d0644714342a3fac90d5c68ae0a1791e72d))
+
 ## [1.133.11](https://git.panter.ch/catladder/catladder/compare/v1.133.10...v1.133.11) (2024-01-08)
 
 ## [1.133.10](https://git.panter.ch/catladder/catladder/compare/v1.133.9...v1.133.10) (2024-01-08)
