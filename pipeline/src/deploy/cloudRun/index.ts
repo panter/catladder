@@ -3,7 +3,7 @@ import { getSecretVarName } from "../../context";
 import type { EnvironmentContext } from "../../types/environmentContext";
 import { sanitizeForBashVariable } from "../../utils/gitlab";
 import { getFullDbName } from "../cloudSql/utils";
-import { createGoogleCloudRunDeployJobs } from "./deployJob";
+import { createGoogleCloudRunDeployJobs } from "./createJobs";
 import { getCloudRunJobName } from "./utils/jobName";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
