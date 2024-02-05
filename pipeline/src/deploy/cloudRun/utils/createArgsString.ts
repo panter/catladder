@@ -10,17 +10,21 @@ import { isNil } from "lodash";
  * @param args args record
  * @returns
  */
-export const createArgsString = (
-  args: Record<string, string | number | true | false | undefined>
-) =>
-  Object.entries(args)
-    .filter(([, value]) => !isNil(value))
-    .map(([key, value]) => {
-      if (value === true) {
-        return `--${key}`;
-      } else if (value === false) {
-        return `--no-${key}`;
-      }
-      return `--${key}=${value}`;
-    })
+export const createArgsString = (...args: keyValuesArg[]) =>
+  args
+    .map((argObj) =>
+      Object.entries(argObj)
+        .filter(([, value]) => !isNil(value))
+        .map(([key, value]) => {
+          if (value === true) {
+            return `--${key}`;
+          } else if (value === false) {
+            return `--no-${key}`;
+          }
+          return `--${key}=${value}`;
+        })
+    )
+    .flat()
     .join(" ");
+
+type keyValuesArg = Record<string, string | number | true | false | undefined>;
