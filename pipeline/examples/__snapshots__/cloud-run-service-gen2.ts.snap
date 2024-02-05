@@ -1,0 +1,1839 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`matches snapshot 1`] = `
+{
+  "mainBranch": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🔨 app | dev ": {
+        "artifacts": {
+          "expire_in": "1 day",
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+          "when": "always",
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 docker | dev ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | dev ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🚀 Deploy | dev ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": "4 weeks",
+          "name": "dev/api",
+          "on_stop": "api 🛑 Stop ⚠️ | dev ",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | dev ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --execution-environment=gen2",
+          "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
+          "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api@$version --quiet --delete-tags; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-dev-api-unknown-host.example.com" "__sbom.json" vex.json || true",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "deploy dev",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "dev",
+          "ENV_TYPE": "dev",
+          "ENV_VARS": "ENV_SHORT: 'dev'
+APP_DIR: 'api'
+ENV_TYPE: 'dev'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-dev-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-dev-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-dev-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-dev-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-dev-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-dev-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-dev-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | dev ": {
+        "environment": {
+          "action": "stop",
+          "name": "dev/api",
+          "url": "https://pan-test-app-dev-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud run services delete pan-test-app-dev-api --project=google-project-id --region=europe-west6",
+          "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --quiet --delete-tags",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-dev-api-unknown-host.example.com" || true",
+          "set -e",
+        ],
+        "stage": "stop dev",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧾 sbom | dev ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+      "GIT_DEPTH": 1,
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "mr": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api 👮 lint": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn lint",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🔨 app | review ": {
+        "artifacts": {
+          "expire_in": "1 day",
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+          "when": "always",
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 docker | review ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | review ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🚀 Deploy | review ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": "1 week",
+          "name": "review/some-commit/api",
+          "on_stop": "api 🛑 Stop ⚠️ | review ",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 👮 lint",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🧪 test",
+          },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | review ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🛡 audit",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-review-mr1234-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=pan-test-app-review-mr1234-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --execution-environment=gen2",
+          "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
+          "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-review-mr1234-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234@$version --quiet --delete-tags; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "set +e",
+          "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags",
+          "set -e",
+          "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-review-mr1234-api-unknown-host.example.com" "__sbom.json" vex.json || true",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "deploy review",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "review",
+          "ENV_TYPE": "review",
+          "ENV_VARS": "ENV_SHORT: 'review'
+APP_DIR: 'api'
+ENV_TYPE: 'review'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_review_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | review ": {
+        "environment": {
+          "action": "stop",
+          "name": "review/some-commit/api",
+          "url": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud run services delete pan-test-app-review-mr1234-api --project=google-project-id --region=europe-west6",
+          "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234 --quiet --delete-tags",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "set +e",
+          "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags",
+          "set -e",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-review-mr1234-api-unknown-host.example.com" || true",
+          "set -e",
+        ],
+        "stage": "stop review",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛡 audit": {
+        "allow_failure": true,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "cd api",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧪 test": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "APP_PATH": "api",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "api 🧾 sbom | review ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+      "GIT_DEPTH": 1,
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+  "taggedRelease": {
+    "image": "path/to/docker/jobs-default:the-version",
+    "jobs": {
+      "api 🔨 app | prod ": {
+        "artifacts": {
+          "expire_in": "1 day",
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+          "when": "always",
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 app | stage ": {
+        "artifacts": {
+          "expire_in": "1 day",
+          "paths": [
+            "api/__build_info.json",
+            "api/dist",
+            "api/.next",
+          ],
+          "reports": {
+            "junit": undefined,
+          },
+          "when": "always",
+        },
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-node-modules",
+            "paths": [
+              "api/node_modules",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": "api-next-cache",
+            "paths": [
+              "api/.next/cache/",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd api",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn build",
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🔨 docker | prod ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | prod ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🔨 docker | stage ": {
+        "cache": [
+          {
+            "key": "api-yarn",
+            "paths": [
+              "api/.yarn",
+            ],
+            "policy": "pull",
+          },
+        ],
+        "image": "path/to/docker/docker-build:the-version",
+        "interruptible": true,
+        "needs": [
+          "api 🔨 app | stage ",
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "ensureNodeDockerfile",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud auth configure-docker europe-west6-docker.pkg.dev",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"",
+          "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"",
+          "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
+          "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",
+          "docker push $DOCKER_CACHE_IMAGE",
+          "echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "build",
+        "variables": {
+          "APP_DIR": "api",
+          "DOCKERFILE_ADDITIONS": undefined,
+          "DOCKERFILE_ADDITIONS_END": undefined,
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild",
+          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn",
+          "DOCKER_DIR": ".",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "2Gi",
+          "KUBERNETES_MEMORY_REQUEST": "1Gi",
+        },
+      },
+      "api 🚀 Deploy | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": undefined,
+          "name": "prod/api",
+          "on_stop": "api 🛑 Stop ⚠️ | prod ",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | prod ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | prod ",
+          },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | prod ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --execution-environment=gen2",
+          "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
+          "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api@$version --quiet --delete-tags; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-prod-api-unknown-host.example.com" "__sbom.json" vex.json || true",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "deploy prod",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "prod",
+          "ENV_TYPE": "prod",
+          "ENV_VARS": "ENV_SHORT: 'prod'
+APP_DIR: 'api'
+ENV_TYPE: 'prod'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-prod-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-prod-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-prod-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-prod-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-prod-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-prod-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-prod-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🚀 Deploy | stage ": {
+        "allow_failure": false,
+        "artifacts": {
+          "paths": [
+            "____envvars.yaml",
+          ],
+        },
+        "environment": {
+          "auto_stop_in": undefined,
+          "name": "stage/api",
+          "on_stop": "api 🛑 Stop ⚠️ | stage ",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [
+          {
+            "artifacts": false,
+            "job": "api 🔨 app | stage ",
+          },
+          {
+            "artifacts": false,
+            "job": "api 🔨 docker | stage ",
+          },
+          {
+            "artifacts": true,
+            "job": "api 🧾 sbom | stage ",
+          },
+        ],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "when": "on_success",
+          },
+        ],
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
+          "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")",
+          "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
+          "echo "$ENV_VARS" > ____envvars.yaml",
+          "gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --execution-environment=gen2",
+          "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
+          "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api@$version --quiet --delete-tags; done",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
+          "echo Uploading SBOM to Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://pan-test-app-stage-api-unknown-host.example.com" "__sbom.json" vex.json || true",
+        ],
+        "services": [
+          {
+            "command": [
+              "--tls=false",
+            ],
+            "name": "docker:24.0.6-dind",
+          },
+        ],
+        "stage": "deploy stage",
+        "variables": {
+          "APP_DIR": "api",
+          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
+          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
+          "BUILD_INFO_ID": "some-id",
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "DOCKER_BUILDKIT": "1",
+          "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
+          "DOCKER_DRIVER": "overlay2",
+          "DOCKER_HOST": "tcp://0.0.0.0:2375",
+          "DOCKER_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api",
+          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
+          "DOCKER_REGISTRY": "europe-west6-docker.pkg.dev",
+          "DOCKER_TLS_CERTDIR": "",
+          "ENV_SHORT": "stage",
+          "ENV_TYPE": "stage",
+          "ENV_VARS": "ENV_SHORT: 'stage'
+APP_DIR: 'api'
+ENV_TYPE: 'stage'
+BUILD_INFO_ID: 'some-id'
+BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
+BUILD_INFO_CURRENT_VERSION: '3.2.1'
+HOST: 'pan-test-app-stage-api-unknown-host.example.com'
+ROOT_URL: 'https://pan-test-app-stage-api-unknown-host.example.com'
+HOST_CANONICAL: 'pan-test-app-stage-api-unknown-host.example.com'
+ROOT_URL_INTERNAL: 'https://pan-test-app-stage-api-unknown-host.example.com'
+HOST_INTERNAL: 'pan-test-app-stage-api-unknown-host.example.com'
+GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+",
+          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
+          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
+          "HOST": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_CANONICAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "HOST_INTERNAL": "pan-test-app-stage-api-unknown-host.example.com",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+          "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "ROOT_URL_INTERNAL": "https://pan-test-app-stage-api-unknown-host.example.com",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+        },
+      },
+      "api 🛑 Stop ⚠️ | prod ": {
+        "environment": {
+          "action": "stop",
+          "name": "prod/api",
+          "url": "https://pan-test-app-prod-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud run services delete pan-test-app-prod-api --project=google-project-id --region=europe-west6",
+          "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api --quiet --delete-tags",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-prod-api-unknown-host.example.com" || true",
+          "set -e",
+        ],
+        "stage": "stop prod",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🛑 Stop ⚠️ | stage ": {
+        "environment": {
+          "action": "stop",
+          "name": "stage/api",
+          "url": "https://pan-test-app-stage-api-unknown-host.example.com",
+        },
+        "image": "path/to/docker/gcloud:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "rules": [
+          {
+            "allow_failure": true,
+            "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
+            "when": "on_success",
+          },
+          {
+            "allow_failure": true,
+            "when": "manual",
+          },
+        ],
+        "script": [
+          "set +e",
+          "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
+          "gcloud run services delete pan-test-app-stage-api --project=google-project-id --region=europe-west6",
+          "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --quiet --delete-tags",
+          "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
+          "echo Disabling component in Dependency Track",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://pan-test-app-stage-api-unknown-host.example.com" || true",
+          "set -e",
+        ],
+        "stage": "stop stage",
+        "variables": {
+          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "GIT_STRATEGY": "none",
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "400Mi",
+          "KUBERNETES_MEMORY_REQUEST": "200Mi",
+        },
+      },
+      "api 🧾 sbom | prod ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+      "api 🧾 sbom | stage ": {
+        "allow_failure": true,
+        "artifacts": {
+          "paths": [
+            "__sbom.json",
+          ],
+        },
+        "image": "aquasec/trivy:0.38.3",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
+        ],
+        "stage": "build",
+        "variables": {},
+      },
+    },
+    "stages": [
+      "setup",
+      "setup dev",
+      "setup review",
+      "setup stage",
+      "setup prod",
+      "setup local",
+      "test",
+      "test dev",
+      "test review",
+      "test stage",
+      "test prod",
+      "test local",
+      "build",
+      "build dev",
+      "build review",
+      "build stage",
+      "build prod",
+      "build local",
+      "deploy",
+      "deploy dev",
+      "deploy review",
+      "deploy stage",
+      "deploy prod",
+      "deploy local",
+      "verify",
+      "verify dev",
+      "verify review",
+      "verify stage",
+      "verify prod",
+      "verify local",
+      "rollback",
+      "rollback dev",
+      "rollback review",
+      "rollback stage",
+      "rollback prod",
+      "rollback local",
+      "stop",
+      "stop dev",
+      "stop review",
+      "stop stage",
+      "stop prod",
+      "stop local",
+    ],
+    "variables": {
+      "FF_USE_FASTZIP": "true",
+      "GIT_DEPTH": 1,
+    },
+    "workflow": {
+      "rules": [
+        {
+          "if": "$CI_COMMIT_TAG",
+        },
+        {
+          "if": "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+          "when": "never",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
+        },
+        {
+          "if": "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
+        },
+        {
+          "if": "$CI_MERGE_REQUEST_ID",
+        },
+      ],
+    },
+  },
+}
+`;

@@ -117,6 +117,16 @@ export type DeployConfigCloudRunService = {
    * memory limit. Defaults to 512MB
    */
   memory?: Memory;
+
+  /**
+   *
+   * set the execution environment.
+   *
+   * see https://cloud.google.com/run/docs/about-execution-environments
+   *
+   * defaults to gen1 according to gcloud
+   */
+  executionEnvironment?: "gen2" | "gen1";
 };
 
 export type DeployConfigCloudRunJobBase = {
@@ -187,7 +197,7 @@ export type DeployConfigCloudRun = {
   service?: boolean | DeployConfigCloudRunService;
 
   /**
-   * deploy additional services with different entry points. 
+   * deploy additional services with different entry points.
    */
   additionalServices?: {
     [name: string]: DeployConfigCloudRunService;

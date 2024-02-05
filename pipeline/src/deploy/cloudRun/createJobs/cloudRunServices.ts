@@ -48,6 +48,7 @@ export const getServiceDeployScript = (
     "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
     ingress: customConfig?.ingress ?? "all",
     "cpu-boost": true,
+    "execution-environment": customConfig?.executionEnvironment,
   });
 
   return `${gcloudRunCmd()} deploy ${fullServiceName} ${argsString}`;
