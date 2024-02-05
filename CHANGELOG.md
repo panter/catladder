@@ -1,3 +1,11 @@
+# [1.135.0](https://git.panter.ch/catladder/catladder/compare/v1.134.1...v1.135.0) (2024-02-05)
+
+
+### Features
+
+* **cloud run:** use non beta version for cloud run jobs ([84dc1fb](https://git.panter.ch/catladder/catladder/commit/84dc1fbccdf7f064f711614d471d85ad1c6d894e))
+* **cloud-run:** add support for Cloud Run Gen2 ([c423d99](https://git.panter.ch/catladder/catladder/commit/c423d9911cdac872b64b188ac043b17fad9e112f))
+
 ## [1.134.1](https://git.panter.ch/catladder/catladder/compare/v1.134.0...v1.134.1) (2024-02-05)
 
 # [1.134.0](https://git.panter.ch/catladder/catladder/compare/v1.133.11...v1.134.0) (2024-02-01)
