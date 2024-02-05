@@ -4,10 +4,23 @@ import { isOfDeployType } from "../../types";
 import type { DeployConfigCloudRun } from "../../types/googleCloudRun";
 import { getArtifactsRegistryImage } from "../artifactsRegistry";
 
+export const gcloudCmd = (version?: "beta") => {
+  return version ? `gcloud ${version}` : "gcloud";
+};
+export const gcloudRunCmd = (version?: "beta") => {
+  return `${gcloudCmd(version)} run`;
+};
+
+export const gcloudSchedulerCmd = (version?: "beta") => {
+  return `${gcloudCmd(version)} scheduler`;
+};
+
 export const setGoogleProjectNumberScript = (
   deployConfig: DeployConfigCloudRun
 ) => [
-  `export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe ${deployConfig.projectId} --format="value(projectNumber)")`,
+  `export GCLOUD_PROJECT_NUMBER=$(${gcloudCmd()} projects describe ${
+    deployConfig.projectId
+  } --format="value(projectNumber)")`,
   `echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"`,
 ];
 

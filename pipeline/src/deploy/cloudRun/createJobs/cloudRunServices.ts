@@ -5,6 +5,7 @@ import type { DeployConfigCloudRunService } from "../../types/googleCloudRun";
 import { createArgsString } from "../utils/createArgsString";
 import { getServiceName } from "../utils/getServiceName";
 import {
+  gcloudRunCmd,
   getCommonCloudRunArgs,
   getCommonDeployArgs,
   makeLabelString,
@@ -49,7 +50,7 @@ export const getServiceDeployScript = (
     "cpu-boost": true,
   });
 
-  return `gcloud run deploy ${fullServiceName} ${argsString}`;
+  return `${gcloudRunCmd()} deploy ${fullServiceName} ${argsString}`;
 };
 
 export const getServiceDeleteScript = (
@@ -66,5 +67,7 @@ export const getServiceDeleteScript = (
     ? `${serviceName}-${serviceSuffix}`
     : serviceName;
 
-  return [`gcloud run services delete ${fullServiceName} ${commonArgsString}`];
+  return [
+    `${gcloudRunCmd()} services delete ${fullServiceName} ${commonArgsString}`,
+  ];
 };

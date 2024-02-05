@@ -8,6 +8,8 @@ import type {
 import { createArgsString } from "../utils/createArgsString";
 import { getCloudRunJobName } from "../utils/jobName";
 import {
+  gcloudRunCmd,
+  gcloudSchedulerCmd,
   getCloudRunDeployConfig,
   getCommonCloudRunArgs,
   getCommonDeployArgs,
@@ -23,7 +25,7 @@ const getJobRunScriptForJob = (
   const commonArgs = getCommonCloudRunArgs(context);
 
   const commonArgsString = createArgsString(commonArgs);
-  return `gcloud beta run jobs execute ${jobName} ${commonArgsString}${
+  return `${gcloudRunCmd("beta")} jobs execute ${jobName} ${commonArgsString}${
     wait ? " --wait" : ""
   }`;
 };
@@ -37,7 +39,9 @@ export const getDeleteSchedulesScripts = (context: Context) => {
   });
   return jobsWithSchedule
     .map(({ schedulerName }) => {
-      return [`gcloud scheduler jobs delete ${schedulerName} ${argsString}`];
+      return [
+        `${gcloudSchedulerCmd()} jobs delete ${schedulerName} ${argsString}`,
+      ];
     })
     .flat();
 };
@@ -49,8 +53,12 @@ export const getDeleteJobsScripts = (context: Context) => {
 
   return jobsWithNames.flatMap(({ jobName }) => [
     // first delete all job executions. Otherwise delete might fail if one of those is still running
-    `gcloud beta run jobs executions list ${commonArgsString} --job ${jobName} --format="value(name)" | xargs -I {} gcloud beta run jobs executions delete {}  --quiet ${commonArgsString}`,
-    `gcloud beta run jobs delete ${jobName} ${commonArgsString}`,
+    `${gcloudRunCmd(
+      "beta"
+    )} jobs executions list ${commonArgsString} --job ${jobName} --format="value(name)" | xargs -I {} ${gcloudRunCmd(
+      "beta"
+    )} jobs executions delete {}  --quiet ${commonArgsString}`,
+    `${gcloudRunCmd("beta")} jobs delete ${jobName} ${commonArgsString}`,
   ]);
 };
 
@@ -107,8 +115,12 @@ const getJobCreateScriptsForJob = (
 
   const argsString = `${jobName} ${commonDeployArgsString}`;
   return [
-    ...allowFailureInScripts([`gcloud beta run jobs create ${argsString}`]),
-    `gcloud beta run jobs update ${argsString} --env-vars-file=____envvars.yaml`,
+    ...allowFailureInScripts([
+      `${gcloudRunCmd("beta")} jobs create ${argsString}`,
+    ]),
+    `${gcloudRunCmd(
+      "beta"
+    )} jobs update ${argsString} --env-vars-file=____envvars.yaml`,
   ];
 };
 
@@ -132,9 +144,9 @@ export const getCreateScheduleScripts = (context: Context) => {
       const commonArgs = `http ${schedulerName} ${argsString}`;
       return [
         ...allowFailureInScripts([
-          `gcloud scheduler jobs create ${commonArgs}`,
+          `${gcloudSchedulerCmd()} jobs create ${commonArgs}`,
         ]),
-        `gcloud scheduler jobs update ${commonArgs}`,
+        `${gcloudSchedulerCmd()} jobs update ${commonArgs}`,
       ];
     })
     .flat();
