@@ -25,7 +25,7 @@ const getJobRunScriptForJob = (
   const commonArgs = getCommonCloudRunArgs(context);
 
   const commonArgsString = createArgsString(commonArgs);
-  return `${gcloudRunCmd("beta")} jobs execute ${jobName} ${commonArgsString}${
+  return `${gcloudRunCmd()} jobs execute ${jobName} ${commonArgsString}${
     wait ? " --wait" : ""
   }`;
 };
@@ -53,12 +53,8 @@ export const getDeleteJobsScripts = (context: Context) => {
 
   return jobsWithNames.flatMap(({ jobName }) => [
     // first delete all job executions. Otherwise delete might fail if one of those is still running
-    `${gcloudRunCmd(
-      "beta"
-    )} jobs executions list ${commonArgsString} --job ${jobName} --format="value(name)" | xargs -I {} ${gcloudRunCmd(
-      "beta"
-    )} jobs executions delete {}  --quiet ${commonArgsString}`,
-    `${gcloudRunCmd("beta")} jobs delete ${jobName} ${commonArgsString}`,
+    `${gcloudRunCmd()} jobs executions list ${commonArgsString} --job ${jobName} --format="value(name)" | xargs -I {} ${gcloudRunCmd()} jobs executions delete {}  --quiet ${commonArgsString}`,
+    `${gcloudRunCmd()} jobs delete ${jobName} ${commonArgsString}`,
   ]);
 };
 
@@ -115,12 +111,8 @@ const getJobCreateScriptsForJob = (
 
   const argsString = `${jobName} ${commonDeployArgsString}`;
   return [
-    ...allowFailureInScripts([
-      `${gcloudRunCmd("beta")} jobs create ${argsString}`,
-    ]),
-    `${gcloudRunCmd(
-      "beta"
-    )} jobs update ${argsString} --env-vars-file=____envvars.yaml`,
+    ...allowFailureInScripts([`${gcloudRunCmd()} jobs create ${argsString}`]),
+    `${gcloudRunCmd()} jobs update ${argsString} --env-vars-file=____envvars.yaml`,
   ];
 };
 
