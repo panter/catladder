@@ -41,7 +41,7 @@ If you added a new key to `secrets` or want to change secrets, open a terminal a
 This will open up your editor with all env vars in the YAML-format.  
 Save this file close it and catladder will update the secrets.
 
-Editor is selected from your shell's environment variables `$VISUAL`, `$EDITOR` or fallbacks to `code` or `vim`.
+Editor is selected from your shell's environment variables `$VISUAL`, `$EDITOR` or fallbacks to `code` or `vim`. Careful with `EDITOR=code` - this will not work correctly. The correct way is `EDITOR="code --wait"`.
 
 _catladder makes a copy of old values as backup, you can restore those manually in GitLab if needed_
 
