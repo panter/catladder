@@ -553,6 +553,7 @@ __metadata:
   resolution: "@catladder/cli@workspace:cli"
   dependencies:
     "@catladder/pipeline": 0.0.0
+    "@gitbeaker/rest": ^39.28.0
     "@kubernetes/client-node": ^0.16.2
     "@tsconfig/node14": ^1.0.1
     "@types/common-tags": ^1.8.0
@@ -584,9 +585,11 @@ __metadata:
     prettier: ^2.5.1
     tmp-promise: ^2.0.2
     ts-node: ^10.9.1
+    ts-results-es: ^4.1.0-alpha.1
     typescript: ^4.5.4
     vorpal: ^1.12.0
   bin:
+    catci: ./bin/catci
     catenv: ./bin/catenv
     catladder: ./bin/catladder
   languageName: unknown
@@ -652,6 +655,39 @@ __metadata:
   version: 1.1.2
   resolution: "@gar/promisify@npm:1.1.2"
   checksum: d05081e0887a49c178b75ee3067bd6ee086f73c154d121b854fb2e044e8a89cb1cbb6de3a0dd93a519b80f0531fda68b099dd7256205f7fbb3490324342f2217
+  languageName: node
+  linkType: hard
+
+"@gitbeaker/core@npm:^39.28.0":
+  version: 39.28.0
+  resolution: "@gitbeaker/core@npm:39.28.0"
+  dependencies:
+    "@gitbeaker/requester-utils": ^39.28.0
+    qs: ^6.11.2
+    xcase: ^2.0.1
+  checksum: d66300fa9713344febac857b22340f719a25aed882890445473062e911840d7fe4659bd7e1a2e6a489c84aef6e2a24084ebbf633986cecbba73b0a08ac578d90
+  languageName: node
+  linkType: hard
+
+"@gitbeaker/requester-utils@npm:^39.28.0":
+  version: 39.28.0
+  resolution: "@gitbeaker/requester-utils@npm:39.28.0"
+  dependencies:
+    async-sema: ^3.1.1
+    micromatch: ^4.0.5
+    qs: ^6.11.2
+    xcase: ^2.0.1
+  checksum: f1d1da9ee07a2f7c6c43bddd7d7ee9ec972e086213f979df20a00c11821b989ac18b62631c90fc2aab6195ebb426832a0b8bf5e7cdb34589cd7f054d54b87cb9
+  languageName: node
+  linkType: hard
+
+"@gitbeaker/rest@npm:^39.28.0":
+  version: 39.28.0
+  resolution: "@gitbeaker/rest@npm:39.28.0"
+  dependencies:
+    "@gitbeaker/core": ^39.28.0
+    "@gitbeaker/requester-utils": ^39.28.0
+  checksum: 6f80cc81af90bc77bdf5fece93fffcf86386deaed95ff43b0fded68ea5736188b541c77a837448a488693b9f9de0080da047f2bdadcb2c77df77a4873e33be1e
   languageName: node
   linkType: hard
 
@@ -2154,6 +2190,13 @@ __metadata:
   version: 2.0.0
   resolution: "astral-regex@npm:2.0.0"
   checksum: 876231688c66400473ba505731df37ea436e574dd524520294cc3bbc54ea40334865e01fa0d074d74d036ee874ee7e62f486ea38bc421ee8e6a871c06f011766
+  languageName: node
+  linkType: hard
+
+"async-sema@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "async-sema@npm:3.1.1"
+  checksum: 07b8c51f6cab107417ecdd8126b7a9fe5a75151b7f69fdd420dcc8ee08f9e37c473a217247e894b56e999b088b32e902dbe41637e4e9b594d3f8dfcdddfadc5e
   languageName: node
   linkType: hard
 
@@ -6961,6 +7004,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"qs@npm:^6.11.2":
+  version: 6.11.2
+  resolution: "qs@npm:6.11.2"
+  dependencies:
+    side-channel: ^1.0.4
+  checksum: e812f3c590b2262548647d62f1637b6989cc56656dc960b893fe2098d96e1bd633f36576f4cd7564dfbff9db42e17775884db96d846bebe4f37420d073ecdc0b
+  languageName: node
+  linkType: hard
+
 "qs@npm:^6.6.0":
   version: 6.10.2
   resolution: "qs@npm:6.10.2"
@@ -8044,6 +8096,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ts-results-es@npm:^4.1.0-alpha.1":
+  version: 4.1.0-alpha.1
+  resolution: "ts-results-es@npm:4.1.0-alpha.1"
+  checksum: b02ffdbf9d5b825aa531ffdf21c3a994bb80159f4e9415628a390d81654e4d2ec9c9b9653d207a3c5e0846be5a535ec1298d235992e988d88ece23684fdb4291
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.8.1, tslib@npm:^1.9.3":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -8513,6 +8572,13 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 0c2ffc9a539dd61dd2b00ff6cc5c98a3371e2521011fe23da4b3578bb7ac26cbdf7ca8a68e8e08023c122ae247013216dde2a20c908de415a6bcc87bdef68c87
+  languageName: node
+  linkType: hard
+
+"xcase@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "xcase@npm:2.0.1"
+  checksum: 1d407306593f1049ebb5d3b7b86b0d40b4b108be428cf4d17c57454ef5444c962555c387384c121d83a6bcf7a9b6b04a51cc4b76786bfb0fac8d0a108b5b7ef8
   languageName: node
   linkType: hard
 

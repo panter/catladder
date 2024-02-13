@@ -26,6 +26,7 @@ import commandTriggerCronjob from "./commandTriggerCronjob";
 import commandOpenGrafanaPod from "./commandOpenGrafanaPod";
 import commandSecretsClearBackups from "./commandSecretsClearBackups";
 import commandProjectRestoreDb from "./cloudSql/commandProjectRestoreDb";
+import commandSecurityEvaluate from "./commandSecurityEvaluate";
 
 export default async (vorpal: Vorpal) => {
   commandSetup(vorpal);
@@ -61,4 +62,5 @@ export default async (vorpal: Vorpal) => {
 
   commandGetMyTotalWorktime(vorpal);
   commandMigrateHelm3(vorpal);
+  commandSecurityEvaluate(vorpal);
 };

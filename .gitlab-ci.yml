@@ -123,8 +123,10 @@ test:
   extends:
     - .docker-build-base
 🔨 runner semantic-release:
+  needs: ["🔨 packages"]
   variables:
     NAME: semantic-release
+    BUILD_CONTEXT: .
   extends:
     - .docker-build-base
 🔨 runner gcloud:

@@ -1,11 +1,15 @@
 #!/bin/bash
 set -e
 
+# 0. check and evalaute security audit or create MR with security audit template (and exit 1)
 # 1. create "@semantic-release/changelog"
 # 2. commit it to git (and push)
 # 3. optional: update package.json
 
 # better branches settings: https://github.com/semantic-release/semantic-release/issues/1581
+
+echo "doing security audit check"
+catci security-audit-ci-job ./ $GL_TOKEN $CI_DEFAULT_BRANCH $CI_PROJECT_ID $GITLAB_USER_ID
 
 echo "doing semantic release"
 
