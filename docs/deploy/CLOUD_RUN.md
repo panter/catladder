@@ -128,6 +128,133 @@ Some tips:
 - no changes are needed in catladder. It will still deploy to cloud run, but firebase will route the traffic to it. You can still use the cloud run url to access your app.
 - Still make sure to set `host` in catladder.ts of your prod environment, so that your services know the url where there are hosted from (ROOT_URL)
 
+## Monitoring & Performance
+
+### Traces and logs
+
+Logs are taken automatically by cloud run, so simply log to stdout and stderr is the simplest approach. However you may want to group logs by request, or add additional context to logs. This can be achieved with structured logging and using @google-cloud/logging-winston.
+
+However there are certain pitfalls to be aware of, so best use this example
+
+```ts
+import winston, { format } from "winston";
+import { LoggingWinston, express } from "@google-cloud/logging-winston";
+
+const isRunningOnGoogleCloud =
+  Boolean(process.env.K_SERVICE) || Boolean(process.env.CLOUD_RUN_JOB);
+const googleCloudLogger = new LoggingWinston({
+  redirectToStdout: true,
+  useMessageField: false, // <-- bug https://github.com/googleapis/nodejs-logging-winston/issues/704
+});
+
+const myFormat = format.printf(({ level, message, timestamp, ...rest }) => {
+  return `${timestamp} [${level}] ${message} ${
+    rest ? JSON.stringify(rest) : ""
+  }`;
+});
+
+type Config = {
+  level?: string;
+};
+type Middleware = ReturnType<typeof express.makeMiddleware>;
+export default class LoggerFactory {
+  winstonLogger: winston.Logger;
+
+  constructor(config: Config) {
+    this.winstonLogger = winston.createLogger({
+      level: config.level || "info",
+      transports: isRunningOnGoogleCloud
+        ? [googleCloudLogger]
+        : [
+            new winston.transports.Console({
+              format: format.combine(
+                format.timestamp(),
+                format.colorize(),
+                myFormat
+              ),
+            }),
+          ],
+    });
+  }
+
+  public getLogger() {
+    return this.winstonLogger;
+  }
+
+  public async makeExpressMiddleware(): Promise<Middleware> {
+    // the middleware is a bit stupid and crashes when run locally https://github.com/googleapis/nodejs-logging-winston/issues/813
+    if (isRunningOnGoogleCloud) {
+      return await express.makeMiddleware(this.winstonLogger);
+    } else {
+      return (req, res, next) => {
+        (req as any).log = this.winstonLogger;
+        next();
+      };
+    }
+  }
+}
+```
+
+you can then use the `makeExpressMiddleware` so that each req has a `log` object which is an instance of a winston logger. All those logs will have the same trace as the initial request, so you can group them in google cloud logs
+
+see also https://git.panter.ch/manul/wea/food-2050/-/blob/main/libs/logger/src/index.ts?ref_type=heads
+
+### Tracing
+
+Tracing allows you to see how much time is spent in which part of your app. This is useful to identify bottlenecks and to see how long a request takes.
+
+When traces are enabled some of your requests contain traces and can be either looked at in the google cloud console or the traces explorer.
+
+To enable traces and instrumentation in nodejs apps with graphql and express you can use this example:
+
+```ts
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
+import { registerInstrumentations } from "@opentelemetry/instrumentation";
+import { NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+import {
+  SimpleSpanProcessor,
+  ConsoleSpanExporter,
+  BatchSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+import { GraphQLInstrumentation } from "@opentelemetry/instrumentation-graphql";
+import { TraceExporter } from "@google-cloud/opentelemetry-cloud-trace-exporter";
+
+const provider = new NodeTracerProvider();
+
+// Configure a test exporter to print all traces to the console
+
+if (process.env.TRACES_CONSOLE === "true") {
+  const consoleExporter = new ConsoleSpanExporter();
+  provider.addSpanProcessor(new SimpleSpanProcessor(consoleExporter));
+}
+
+const exporter = new TraceExporter();
+
+// Configure the span processor to batch and send spans to the exporter
+provider.addSpanProcessor(new BatchSpanProcessor(exporter));
+
+// Register the provider to begin tracing
+provider.register();
+
+// Register server-related instrumentation
+registerInstrumentations({
+  instrumentations: [
+    new HttpInstrumentation(),
+    new ExpressInstrumentation(),
+    new GraphQLInstrumentation(),
+  ],
+});
+```
+
+**IMPORTANT**:
+
+there are some pitfalls to be aware of:
+
+- make sure this file is the very first that you import in your server, even before importing any other library
+- bundling the server using esbuild or webpack can lead to issues. Best make sure to not bundle dependencies. In esbuild this can be done using `--packages=external`. Full example: `esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node --keep-names --packages=external`
+- if you still have problems, enable diagnostics: `diag.setLogger(new DiagConsoleLogger(), { logLevel: DiagLogLevel.ALL });` (you can import diag and the stuff from one of the opentelemetry packages)
+
 ## Migration from kubernetes to cloud run
 
 Preparations:
