@@ -8,6 +8,7 @@ import {
   SECURITY_AUDIT_FILE_NAME,
   createSecurityAuditMergeRequest,
 } from "./createSecurityAuditMergeRequest";
+import { Err, Ok, type Result } from "ts-results-es";
 
 const GITLAB_HOST = "https://git.panter.ch";
 
@@ -15,6 +16,17 @@ export default function (vorpal: Vorpal) {
   commandCiJob(vorpal);
   commandEvaluate(vorpal);
   commandCreate(vorpal);
+}
+
+type ActionFunc = (args: Vorpal.Args) => Promise<void>;
+
+function resultAsExitCode(
+  func: (args: Vorpal.Args) => Promise<Result<unknown, unknown>>
+): ActionFunc {
+  return async (args: Vorpal.Args) => {
+    const result = await func(args);
+    process.exitCode = result.isErr() ? 1 : 0;
+  };
 }
 
 async function commandCiJob(vorpal: Vorpal) {
@@ -30,56 +42,55 @@ async function commandCiJob(vorpal: Vorpal) {
 <user-id> gitlab user id that will be assignee of the audit
 `
     )
-    .action(async (args) => {
-      const evaluation = await evaluateSecurityAudit({ path: args.path });
+    .action(
+      resultAsExitCode(async (args) => {
+        const evaluation = await evaluateSecurityAudit({ path: args.path });
 
-      if (evaluation.isErr()) {
-        console.log("could not evaluate security audit document");
-        console.log(
-          "creating new merge request with security audit template..."
-        );
-
-        const { token, mainBranch, projectId, userId } = args;
-        const api = new Gitlab({
-          host: GITLAB_HOST,
-          token,
-        });
-
-        const mr = await createSecurityAuditMergeRequest({
-          api,
-          mainBranch,
-          projectId,
-          userId: parseInt(userId),
-        });
-
-        if (mr.isErr()) {
-          console.error(
-            `could not create merge request with security audit template: ${mr.error}`
+        if (evaluation.isErr()) {
+          console.log("could not evaluate security audit document");
+          console.log(
+            "creating new merge request with security audit template..."
           );
-          process.exitCode = 1;
-          return;
+
+          const { token, mainBranch, projectId, userId } = args;
+          const api = new Gitlab({
+            host: GITLAB_HOST,
+            token,
+          });
+
+          const mr = await createSecurityAuditMergeRequest({
+            api,
+            mainBranch,
+            projectId,
+            userId: parseInt(userId),
+          });
+
+          if (mr.isErr()) {
+            console.error(
+              `could not create merge request with security audit template: ${mr.error}`
+            );
+            return mr;
+          }
+
+          console.log("security audit merge request created successfully");
+          console.log(
+            `please finish the MR by updating SECURITY.md document: ${mr.value.web_url}`
+          );
+          return Err("merge request created" as const);
         }
 
-        console.log("security audit merge request created successfully");
-        console.log(
-          `please finish the MR by updating SECURITY.md document: ${mr.value.web_url}`
-        );
-        process.exitCode = 1;
-        return;
-      }
+        if (evaluation.value.score.answeredTopics === 0) {
+          console.error("audit document has no answered topics");
+          console.error(
+            `please answer security topics in ${SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`
+          );
+          return Err("audit document has no answered topics" as const);
+        }
 
-      if (evaluation.value.score.answeredTopics === 0) {
-        console.error("audit document has no answered topics");
-        console.error(
-          `please answer security topics in ${SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`
-        );
-        process.exitCode = 1;
-        return;
-      }
-
-      process.exitCode = 0;
-      console.log(makeSecurityAuditOverview(evaluation.value));
-    });
+        console.log(makeSecurityAuditOverview(evaluation.value));
+        return Ok({});
+      })
+    );
 }
 
 async function commandEvaluate(vorpal: Vorpal) {
@@ -88,20 +99,22 @@ async function commandEvaluate(vorpal: Vorpal) {
       "security-audit-evaluate <path>",
       "Evaluates security audit document in given <path>"
     )
-    .action(async (args) => {
-      console.log("evaluating security audit document...");
+    .action(
+      resultAsExitCode(async (args) => {
+        console.log("evaluating security audit document...");
 
-      const result = await evaluateSecurityAudit({ path: args.path });
-      if (result.isErr()) {
-        console.error(result.error);
-        console.error(
-          `please make sure the security audit document ${SECURITY_AUDIT_FILE_NAME} is in the repository`
-        );
-        process.exitCode = 1;
-      } else {
-        console.log(makeSecurityAuditOverview(result.value));
-      }
-    });
+        const result = await evaluateSecurityAudit({ path: args.path });
+        if (result.isErr()) {
+          console.error(result.error);
+          console.error(
+            `please make sure the security audit document ${SECURITY_AUDIT_FILE_NAME} is in the repository`
+          );
+        } else {
+          console.log(makeSecurityAuditOverview(result.value));
+        }
+        return result;
+      })
+    );
 }
 
 async function commandCreate(vorpal: Vorpal) {
@@ -116,31 +129,33 @@ async function commandCreate(vorpal: Vorpal) {
 <user-id> gitlab user id that will be assignee of the audit
 `
     )
-    .action(async (args) => {
-      const { token, mainBranch, projectId, userId } = args;
+    .action(
+      resultAsExitCode(async (args) => {
+        const { token, mainBranch, projectId, userId } = args;
 
-      const api = new Gitlab({
-        host: GITLAB_HOST,
-        token,
-      });
+        const api = new Gitlab({
+          host: GITLAB_HOST,
+          token,
+        });
 
-      const result = await createSecurityAuditMergeRequest({
-        api,
-        mainBranch,
-        projectId,
-        userId: parseInt(userId),
-      });
+        const result = await createSecurityAuditMergeRequest({
+          api,
+          mainBranch,
+          projectId,
+          userId: parseInt(userId),
+        });
 
-      if (result.isErr()) {
-        console.error(
-          `could not create security audit merge request: ${result.error}`
-        );
-        process.exitCode = 1;
-      } else {
-        console.log("security audit merge request created successfully");
-        console.log(
-          `please finish the MR by updating SECURITY.md document: ${result.value.web_url}`
-        );
-      }
-    });
+        if (result.isErr()) {
+          console.error(
+            `could not create security audit merge request: ${result.error}`
+          );
+        } else {
+          console.log("security audit merge request created successfully");
+          console.log(
+            `please finish the MR by updating SECURITY.md document: ${result.value.web_url}`
+          );
+        }
+        return result;
+      })
+    );
 }
