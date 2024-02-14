@@ -1,3 +1,10 @@
+## [1.136.3](https://git.panter.ch/catladder/catladder/compare/v1.136.2...v1.136.3) (2024-02-14)
+
+
+### Bug Fixes
+
+* **catci:** allow passing variables starting with dash ([a1365dc](https://git.panter.ch/catladder/catladder/commit/a1365dcf71a78749da2b36523620763c1fc6694c))
+
 ## [1.136.2](https://git.panter.ch/catladder/catladder/compare/v1.136.1...v1.136.2) (2024-02-14)
 
 ## [1.136.1](https://git.panter.ch/catladder/catladder/compare/v1.136.0...v1.136.1) (2024-02-13)
