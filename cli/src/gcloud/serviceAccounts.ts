@@ -69,7 +69,8 @@ const upsertGcloudServiceAccount = async (
   }
 
   return await exec(
-    `gcloud iam service-accounts keys create /dev/stdout --iam-account=${fullIdentifier}`
+    // on some platforms /dev/stdout is not available without the pipe
+    `gcloud iam service-accounts keys create /dev/stdout --iam-account=${fullIdentifier} | cat`
   ).then((o) => o.stdout);
 };
 
