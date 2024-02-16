@@ -1,3 +1,11 @@
+## [1.136.4](https://git.panter.ch/catladder/catladder/compare/v1.136.3...v1.136.4) (2024-02-16)
+
+
+### Bug Fixes
+
+* **cli:** workaround to make stdout device file available on more platforms ([13db1c9](https://git.panter.ch/catladder/catladder/commit/13db1c9eaa9435c1d2141c49675e8c6fdcf53743))
+* **pipeline:** end variable substitution matching on first closing brace ([7a1055b](https://git.panter.ch/catladder/catladder/commit/7a1055b3687e3593feafbad06eba41d8a05f1068))
+
 ## [1.136.3](https://git.panter.ch/catladder/catladder/compare/v1.136.2...v1.136.3) (2024-02-14)
 
 
