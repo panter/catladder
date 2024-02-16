@@ -58,6 +58,7 @@ test:
   image: docker:24
   needs: []
   interruptible: true
+  retry: 2 # ugly hack for https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27384
   services:
     - docker:24.0.6-dind # https://github.com/docker-library/docker/issues/463
 
