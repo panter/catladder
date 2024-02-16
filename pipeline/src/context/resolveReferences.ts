@@ -1,7 +1,7 @@
 import { merge } from "lodash";
 import replaceAsync from "string-replace-async";
 
-const REGEX = /\$\{(([^:]+):)?([^}]+)}/gm;
+const REGEX = /\$\{(([^:}]+):)?([^}]+)}/gm;
 
 export const resolveReferences = async (
   vars: Record<string, string>,
