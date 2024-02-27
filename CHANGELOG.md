@@ -1,3 +1,11 @@
+## [1.136.6](https://git.panter.ch/catladder/catladder/compare/v1.136.5...v1.136.6) (2024-02-27)
+
+
+### Bug Fixes
+
+* .env file do not contain referenced secrets ([281bd5b](https://git.panter.ch/catladder/catladder/commit/281bd5b855658ee944633dcda8c6627a983eba1e))
+* catladder cli can't be run locally without ts-node ([ed4191d](https://git.panter.ch/catladder/catladder/commit/ed4191d10fee48b231b5eec1c2c5e1e05aca79e5))
+
 ## [1.136.5](https://git.panter.ch/catladder/catladder/compare/v1.136.4...v1.136.5) (2024-02-21)
 
 ## [1.136.4](https://git.panter.ch/catladder/catladder/compare/v1.136.3...v1.136.4) (2024-02-16)
