@@ -134,17 +134,15 @@ const resolveSecrets = async (
         .map(([key, value]) => {
           const secretKey = set.secretEnvVarKeys.find((k) => k.key === key);
 
-          if (secretKey) {
-            if (secretKey.hidden) {
-              return null;
-            }
-            for (const variable of allVariablesInGitlab) {
-              value = value.replace(
-                new RegExp("\\$" + variable.key, "g"),
-                variable.value
-              );
-            }
-            return [key, value];
+          if (secretKey?.hidden) {
+            return null;
+          }
+
+          for (const variable of allVariablesInGitlab) {
+            value = value.replace(
+              new RegExp("\\$" + variable.key, "g"),
+              variable.value
+            );
           }
           return [key, value];
         })
