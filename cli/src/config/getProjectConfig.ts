@@ -134,7 +134,7 @@ const resolveSecrets = async (
         .map(([key, value]) => {
           const secretKey = set.secretEnvVarKeys.find((k) => k.key === key);
 
-          if (secretKey?.hidden) {
+          if (secretKey?.hidden || value === undefined) {
             return null;
           }
 
