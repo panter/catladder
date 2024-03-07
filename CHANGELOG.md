@@ -1,3 +1,10 @@
+## [1.136.7](https://git.panter.ch/catladder/catladder/compare/v1.136.6...v1.136.7) (2024-03-07)
+
+
+### Bug Fixes
+
+* project-config-secrets throwing type error ([e41cc8a](https://git.panter.ch/catladder/catladder/commit/e41cc8a16b4f725f919fe236d997c8a72574bf5f))
+
 ## [1.136.6](https://git.panter.ch/catladder/catladder/compare/v1.136.5...v1.136.6) (2024-02-27)
 
 
