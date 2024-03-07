@@ -90,9 +90,7 @@ const getJobCreateScriptsForJob = (
 ) => {
   const commonDeployArgs = getCommonDeployArgs(context);
 
-  // due to some oversight from google, jobs create does not accept `--env-vars-file` 🤦
-  // lucky, update on the other hand accepts it... so let's just imediatly update it
-  // also we cannot upsert a job, so we have to create it and catch the error and then update
+  // we cannot upsert a job, so we have to create it and catch the error and then update
   const commandArray = Array.isArray(job.command)
     ? job.command
     : job.command.split(" ");
@@ -107,12 +105,13 @@ const getJobCreateScriptsForJob = (
     image: job.image || commonDeployArgs.image,
     memory: job.memory || "512Mi",
     "task-timeout": job.timeout || "10m",
+    "env-vars-file": "____envvars.yaml",
   });
 
   const argsString = `${jobName} ${commonDeployArgsString}`;
   return [
     ...allowFailureInScripts([`${gcloudRunCmd()} jobs create ${argsString}`]),
-    `${gcloudRunCmd()} jobs update ${argsString} --env-vars-file=____envvars.yaml`,
+    `${gcloudRunCmd()} jobs update ${argsString}`,
   ];
 };
 
