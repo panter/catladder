@@ -141,7 +141,7 @@ export type DeployConfigCloudRunJobBase = {
   image?: string;
 
   /**
-   * memory limit of the job, defaults to 51Mi
+   * memory limit of the job, defaults to 512Mi
    */
   memory?: `${number}${"M" | "G" | "Mi" | "Gi"}`;
 
