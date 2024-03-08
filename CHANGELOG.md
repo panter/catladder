@@ -1,3 +1,10 @@
+# [1.137.0](https://git.panter.ch/catladder/catladder/compare/v1.136.9...v1.137.0) (2024-03-08)
+
+
+### Features
+
+* **cloud run:** configuration for job parallelism ([32d2142](https://git.panter.ch/catladder/catladder/commit/32d2142339b5750407c61347c0a7cf9ddc7b3164))
+
 ## [1.136.9](https://git.panter.ch/catladder/catladder/compare/v1.136.8...v1.136.9) (2024-03-07)
 
 ## [1.136.8](https://git.panter.ch/catladder/catladder/compare/v1.136.7...v1.136.8) (2024-03-07)
