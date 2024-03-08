@@ -105,6 +105,7 @@ const getJobCreateScriptsForJob = (
     image: job.image || commonDeployArgs.image,
     memory: job.memory || "512Mi",
     "task-timeout": job.timeout || "10m",
+    parallelism: job.parallelism || 1,
     "env-vars-file": "____envvars.yaml",
   });
 

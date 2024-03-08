@@ -151,6 +151,11 @@ export type DeployConfigCloudRunJobBase = {
    * you can specify something like 10m30s
    */
   timeout?: string;
+
+  /**
+   * number of tasks that may run concurrently, defaults to 1
+   */
+  parallelism?: number;
 };
 
 type Minute = string;
