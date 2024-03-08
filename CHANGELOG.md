@@ -1,3 +1,11 @@
+## [1.137.1](https://git.panter.ch/catladder/catladder/compare/v1.137.0...v1.137.1) (2024-03-08)
+
+
+### Bug Fixes
+
+* **cloud run:** disable default retries on cloud run tasks ([4f09f9d](https://git.panter.ch/catladder/catladder/commit/4f09f9d9d507a597c033698585bb59045d10bf92))
+* **cloud run:** make max retry attempts apply to both the task and the schedule ([d788e3a](https://git.panter.ch/catladder/catladder/commit/d788e3a77b023262fdfe8b64446619cba4a54e0b))
+
 # [1.137.0](https://git.panter.ch/catladder/catladder/compare/v1.136.9...v1.137.0) (2024-03-08)
 
 
