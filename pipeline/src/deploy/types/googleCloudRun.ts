@@ -153,6 +153,13 @@ export type DeployConfigCloudRunJobBase = {
   timeout?: string;
 
   /**
+   * Number of retries per failed task, applies to both the cloud schedule and the cloud task
+   *
+   * defaults to 0 (no retries)
+   */
+  maxRetryAttempts?: 0 | 1 | 2 | 3 | 4 | 5;
+
+  /**
    * number of tasks that may run concurrently, defaults to 1
    */
   parallelism?: number;
@@ -167,7 +174,6 @@ export type DeployConfigCloudRunJobWithSchedule =
   DeployConfigCloudRunJobBase & {
     when: "schedule";
     schedule: `${Minute} ${Hour} ${DayOfMonth} ${Month} ${DayOfWeek}`;
-    maxRetryAttempts?: 0 | 1 | 2 | 3 | 4 | 5;
   };
 
 export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {
