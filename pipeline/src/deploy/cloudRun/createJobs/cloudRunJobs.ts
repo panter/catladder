@@ -107,7 +107,7 @@ const getJobCreateScriptsForJob = (
     "task-timeout": job.timeout || "10m",
     parallelism: job.parallelism || 1,
     "env-vars-file": "____envvars.yaml",
-    "max-retry-attempts": 0,
+    "max-retries": 0,
   });
 
   const argsString = `${jobName} ${commonDeployArgsString}`;
