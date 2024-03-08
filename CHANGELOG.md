@@ -1,3 +1,10 @@
+## [1.137.2](https://git.panter.ch/catladder/catladder/compare/v1.137.1...v1.137.2) (2024-03-08)
+
+
+### Bug Fixes
+
+* **cloud run:** task retry syntax ([769c42d](https://git.panter.ch/catladder/catladder/commit/769c42d343e2a18f20ceb4b1274db6f51446ffb4))
+
 ## [1.137.1](https://git.panter.ch/catladder/catladder/compare/v1.137.0...v1.137.1) (2024-03-08)
 
 
