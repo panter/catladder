@@ -1,3 +1,10 @@
+## [1.137.3](https://git.panter.ch/catladder/catladder/compare/v1.137.2...v1.137.3) (2024-03-11)
+
+
+### Bug Fixes
+
+* **rails:** run build inside component directory ([0fb24c4](https://git.panter.ch/catladder/catladder/commit/0fb24c4d8bff9482e8d10781077f51872f0750f9))
+
 ## [1.137.2](https://git.panter.ch/catladder/catladder/compare/v1.137.1...v1.137.2) (2024-03-08)
 
 
