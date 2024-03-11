@@ -160,6 +160,7 @@ jobs:
         },
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "cd .",
           "docker pull $DOCKER_CACHE_IMAGE || true",
           "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
@@ -758,6 +759,7 @@ jobs:
         },
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "cd .",
           "docker pull $DOCKER_CACHE_IMAGE || true",
           "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
@@ -1439,6 +1441,7 @@ jobs:
         },
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "cd .",
           "docker pull $DOCKER_CACHE_IMAGE || true",
           "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",
@@ -1486,6 +1489,7 @@ jobs:
         },
         "script": [
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+          "cd .",
           "docker pull $DOCKER_CACHE_IMAGE || true",
           "wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack",
           "chmod +x /usr/local/bin/pack",

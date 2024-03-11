@@ -40,6 +40,7 @@ export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
       // custom script
       script: [
         ...gitlabDockerLogin(context),
+        `cd ${context.componentConfig.dir}`,
         `docker pull $DOCKER_CACHE_IMAGE || true`,
         `wget --output-document=- https://github.com/buildpacks/pack/releases/download/v${cnbConf?.packVersion}/pack-v${cnbConf?.packVersion}-linux.tgz | tar -zx --directory /usr/local/bin pack`,
         `chmod +x /usr/local/bin/pack`,
