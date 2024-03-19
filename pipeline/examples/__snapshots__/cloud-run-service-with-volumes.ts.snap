@@ -123,6 +123,7 @@ exports[`matches snapshot 1`] = `
           "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run",
           "ENV_SHORT": "dev",
           "ENV_TYPE": "dev",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
@@ -135,7 +136,7 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-dev-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | dev ": {
@@ -270,7 +271,12 @@ COPY --chown=node:node .yarn /app/.yarn",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "set +e",
+          "gcloud run jobs create pan-test-app-dev-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=pan-test-app-dev-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0",
+          "set -e",
+          "gcloud beta run jobs update pan-test-app-dev-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=pan-test-app-dev-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount",
+          "gcloud beta run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount --add-volume=name=myOtherMount,type=cloud-storage,bucket=some-other-bucket,readonly=true --add-volume-mount=volume=myOtherMount,mount-path=/mnt/my-second-mount --execution-environment=gen2",
+          "gcloud run jobs execute pan-test-app-dev-api-migrate --project=google-project-id --region=europe-west6",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
@@ -295,6 +301,7 @@ COPY --chown=node:node .yarn /app/.yarn",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run",
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
           "DOCKER_DRIVER": "overlay2",
@@ -316,8 +323,9 @@ ROOT_URL: 'https://pan-test-app-dev-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-dev-api-unknown-host.example.com'
 ROOT_URL_INTERNAL: 'https://pan-test-app-dev-api-unknown-host.example.com'
 HOST_INTERNAL: 'pan-test-app-dev-api-unknown-host.example.com'
+CLOUD_RUN_JOB_TRIGGER_URL_migrate: 'https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix",
@@ -329,7 +337,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-dev-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-dev-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
@@ -363,6 +371,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-dev-api --project=google-project-id --region=europe-west6",
+          "gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-dev-api-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6",
+          "gcloud run jobs delete pan-test-app-dev-api-migrate --project=google-project-id --region=europe-west6",
           "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --quiet --delete-tags",
           "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
           "echo Disabling component in Dependency Track",
@@ -666,7 +676,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
-          "CLOUD_RUN_JOB_TRIGGER_URL_drop_db": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-review-mr1234-api-drop-db:run",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-review-mr1234-api-migrate:run",
           "ENV_SHORT": "review",
           "ENV_TYPE": "review",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
@@ -679,7 +689,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_drop_db","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | review ": {
@@ -815,10 +825,11 @@ COPY --chown=node:node .yarn /app/.yarn",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
           "echo "$ENV_VARS" > ____envvars.yaml",
           "set +e",
-          "gcloud run jobs create pan-test-app-review-mr1234-api-drop-db --command="/bin/sh,-c,mongosh \\$MONGO_URL --eval 'db.dropDatabase()'" --image=rtsp/mongosh:latest --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=pan-test-app-review-mr1234-api-drop-db --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0",
+          "gcloud run jobs create pan-test-app-review-mr1234-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=pan-test-app-review-mr1234-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0",
           "set -e",
-          "gcloud run jobs update pan-test-app-review-mr1234-api-drop-db --command="/bin/sh,-c,mongosh \\$MONGO_URL --eval 'db.dropDatabase()'" --image=rtsp/mongosh:latest --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=pan-test-app-review-mr1234-api-drop-db --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 ",
-          "gcloud run deploy pan-test-app-review-mr1234-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=pan-test-app-review-mr1234-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "gcloud beta run jobs update pan-test-app-review-mr1234-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=pan-test-app-review-mr1234-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount",
+          "gcloud beta run deploy pan-test-app-review-mr1234-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=pan-test-app-review-mr1234-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount --add-volume=name=myOtherMount,type=cloud-storage,bucket=some-other-bucket,readonly=true --add-volume-mount=volume=myOtherMount,mount-path=/mnt/my-second-mount --execution-environment=gen2",
+          "gcloud run jobs execute pan-test-app-review-mr1234-api-migrate --project=google-project-id --region=europe-west6",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-review-mr1234-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
@@ -846,7 +857,7 @@ COPY --chown=node:node .yarn /app/.yarn",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
-          "CLOUD_RUN_JOB_TRIGGER_URL_drop_db": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-review-mr1234-api-drop-db:run",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-review-mr1234-api-migrate:run",
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
           "DOCKER_DRIVER": "overlay2",
@@ -868,9 +879,9 @@ ROOT_URL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
 ROOT_URL_INTERNAL: 'https://pan-test-app-review-mr1234-api-unknown-host.example.com'
 HOST_INTERNAL: 'pan-test-app-review-mr1234-api-unknown-host.example.com'
-CLOUD_RUN_JOB_TRIGGER_URL_drop_db: 'https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-review-mr1234-api-drop-db:run'
+CLOUD_RUN_JOB_TRIGGER_URL_migrate: 'https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-review-mr1234-api-migrate:run'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_review_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_drop_db","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_review_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix",
@@ -882,7 +893,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_drop_db","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
@@ -916,9 +927,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-review-mr1234-api --project=google-project-id --region=europe-west6",
-          "gcloud run jobs execute pan-test-app-review-mr1234-api-drop-db --project=google-project-id --region=europe-west6 --wait",
-          "gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-review-mr1234-api-drop-db --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6",
-          "gcloud run jobs delete pan-test-app-review-mr1234-api-drop-db --project=google-project-id --region=europe-west6",
+          "gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-review-mr1234-api-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6",
+          "gcloud run jobs delete pan-test-app-review-mr1234-api-migrate --project=google-project-id --region=europe-west6",
           "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/mr1234 --quiet --delete-tags",
           "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
           "set +e",
@@ -1175,6 +1185,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-migrate:run",
           "ENV_SHORT": "prod",
           "ENV_TYPE": "prod",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
@@ -1187,7 +1198,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-prod-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 app | stage ": {
@@ -1258,6 +1269,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run",
           "ENV_SHORT": "stage",
           "ENV_TYPE": "stage",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
@@ -1270,7 +1282,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
           "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-stage-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🔨 docker | prod ": {
@@ -1464,7 +1476,12 @@ COPY --chown=node:node .yarn /app/.yarn",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "set +e",
+          "gcloud run jobs create pan-test-app-prod-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=pan-test-app-prod-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0",
+          "set -e",
+          "gcloud beta run jobs update pan-test-app-prod-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=pan-test-app-prod-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount",
+          "gcloud beta run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount --add-volume=name=myOtherMount,type=cloud-storage,bucket=some-other-bucket,readonly=true --add-volume-mount=volume=myOtherMount,mount-path=/mnt/my-second-mount --execution-environment=gen2",
+          "gcloud run jobs execute pan-test-app-prod-api-migrate --project=google-project-id --region=europe-west6",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
@@ -1489,6 +1506,7 @@ COPY --chown=node:node .yarn /app/.yarn",
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-migrate:run",
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
           "DOCKER_DRIVER": "overlay2",
@@ -1510,8 +1528,9 @@ ROOT_URL: 'https://pan-test-app-prod-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-prod-api-unknown-host.example.com'
 ROOT_URL_INTERNAL: 'https://pan-test-app-prod-api-unknown-host.example.com'
 HOST_INTERNAL: 'pan-test-app-prod-api-unknown-host.example.com'
+CLOUD_RUN_JOB_TRIGGER_URL_migrate: 'https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-migrate:run'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix",
@@ -1523,7 +1542,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-prod-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-prod-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🚀 Deploy | stage ": {
@@ -1575,7 +1594,12 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
           "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "set +e",
+          "gcloud run jobs create pan-test-app-stage-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=pan-test-app-stage-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0",
+          "set -e",
+          "gcloud beta run jobs update pan-test-app-stage-api-migrate --command="migrate" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=pan-test-app-stage-api-migrate --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount",
+          "gcloud beta run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost --add-volume=name=myMount,type=cloud-storage,bucket=my-bucket --add-volume-mount=volume=myMount,mount-path=/mnt/my-mount --add-volume=name=myOtherMount,type=cloud-storage,bucket=some-other-bucket,readonly=true --add-volume-mount=volume=myOtherMount,mount-path=/mnt/my-second-mount --execution-environment=gen2",
+          "gcloud run jobs execute pan-test-app-stage-api-migrate --project=google-project-id --region=europe-west6",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done",
@@ -1600,6 +1624,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "BUILD_INFO_CURRENT_VERSION": "3.2.1",
           "BUILD_INFO_ID": "some-id",
           "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
+          "CLOUD_RUN_JOB_TRIGGER_URL_migrate": "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run",
           "DOCKER_BUILDKIT": "1",
           "DOCKER_CACHE_IMAGE": "europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api",
           "DOCKER_DRIVER": "overlay2",
@@ -1621,8 +1646,9 @@ ROOT_URL: 'https://pan-test-app-stage-api-unknown-host.example.com'
 HOST_CANONICAL: 'pan-test-app-stage-api-unknown-host.example.com'
 ROOT_URL_INTERNAL: 'https://pan-test-app-stage-api-unknown-host.example.com'
 HOST_INTERNAL: 'pan-test-app-stage-api-unknown-host.example.com'
+CLOUD_RUN_JOB_TRIGGER_URL_migrate: 'https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run'
 GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
+_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
 ",
           "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey",
           "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix",
@@ -1634,7 +1660,7 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
           "ROOT_URL": "https://pan-test-app-stage-api-unknown-host.example.com",
           "ROOT_URL_INTERNAL": "https://pan-test-app-stage-api-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
+          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
@@ -1668,6 +1694,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-prod-api --project=google-project-id --region=europe-west6",
+          "gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-prod-api-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6",
+          "gcloud run jobs delete pan-test-app-prod-api-migrate --project=google-project-id --region=europe-west6",
           "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api --quiet --delete-tags",
           "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
           "echo Disabling component in Dependency Track",
@@ -1714,6 +1742,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-stage-api --project=google-project-id --region=europe-west6",
+          "gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-stage-api-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6",
+          "gcloud run jobs delete pan-test-app-stage-api-migrate --project=google-project-id --region=europe-west6",
           "gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --quiet --delete-tags",
           "gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done",
           "echo Disabling component in Dependency Track",

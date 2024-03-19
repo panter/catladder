@@ -16,6 +16,7 @@ import {
   makeLabelString,
 } from "./common";
 import { getLabels } from "../../../context/getLabels";
+import { createVolumeConfig } from "./volumes";
 
 const getJobRunScriptForJob = (
   context: Context,
@@ -90,6 +91,8 @@ const getJobCreateScriptsForJob = (
 ) => {
   const commonDeployArgs = getCommonDeployArgs(context);
 
+  // due to some oversight from google, jobs create does not yet accept `--add-volume` 🤦
+  // lucky, update on the other hand accepts it... so let's just imediatly update it
   // we cannot upsert a job, so we have to create it and catch the error and then update
   const commandArray = Array.isArray(job.command)
     ? job.command
@@ -110,10 +113,16 @@ const getJobCreateScriptsForJob = (
     "max-retries": 0,
   });
 
+  const requiresBeta = job?.volumes && Object.keys(job?.volumes).length > 0;
+
   const argsString = `${jobName} ${commonDeployArgsString}`;
   return [
     ...allowFailureInScripts([`${gcloudRunCmd()} jobs create ${argsString}`]),
-    `${gcloudRunCmd()} jobs update ${argsString}`,
+    `${gcloudRunCmd(
+      requiresBeta ? "beta" : undefined
+    )} jobs update ${argsString} ${createArgsString(
+      ...createVolumeConfig(job?.volumes, "job")
+    )}`,
   ];
 };
 

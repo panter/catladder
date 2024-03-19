@@ -127,7 +127,7 @@ export type DeployConfigCloudRunService = {
    * defaults to gen1 according to gcloud
    */
   executionEnvironment?: "gen2" | "gen1";
-};
+} & DeployConfigCloudRunWithVolumes;
 
 export type DeployConfigCloudRunJobBase = {
   /**
@@ -156,7 +156,7 @@ export type DeployConfigCloudRunJobBase = {
    * number of tasks that may run concurrently, defaults to 1
    */
   parallelism?: number;
-};
+} & DeployConfigCloudRunWithVolumes;
 
 type Minute = string;
 type Hour = string;
@@ -178,6 +178,14 @@ export type DeployConfigCloudRunJobWithSchedule =
 
 export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {
   when: "manual" | "preDeploy" | "postDeploy" | "preStop" | "postStop";
+};
+
+export type DeployConfigCloudRunWithVolumes = {
+  /**
+   * adds volumes to the service. This is an experimental feature and requires beta gcloud.
+   * sets executionEnvironment to gen2 automatically, since that is required
+   */
+  volumes?: DeployConfigCloudRunVolumes;
 };
 
 export type DeployConfigCloudRunJob =
@@ -223,3 +231,15 @@ export type DeployConfigCloudRun = {
    */
   cloudSql?: DeployConfigCloudRunCloudSql | false;
 } & DeployConfigBase;
+
+export type DeployConfigCloudRunVolumes = Record<
+  string,
+  DeployConfigCloudRunVolume
+>;
+
+export type DeployConfigCloudRunVolume = {
+  type: "cloud-storage";
+  bucket: string;
+  mountPath: string;
+  readonly?: boolean;
+};

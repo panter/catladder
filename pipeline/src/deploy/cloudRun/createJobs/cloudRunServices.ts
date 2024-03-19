@@ -10,6 +10,7 @@ import {
   getCommonDeployArgs,
   makeLabelString,
 } from "./common";
+import { createVolumeConfig } from "./volumes";
 
 export const getServiceDeployScript = (
   context: Context,
@@ -32,26 +33,34 @@ export const getServiceDeployScript = (
       : command.split(" ")
     : undefined;
   const fullServiceName = `${serviceName}${nameSuffix ?? ""}`;
-  const argsString = createArgsString({
-    // command as empty string resets it to default (uses the image's entrypoint)
-    command: commandArray ? '"' + commandArray.join(",") + '"' : '""',
-    ...commonDeployArgs,
-    labels: makeLabelString({
-      ...getLabels(context),
-      "cloud-run-service-name": fullServiceName,
-    }),
-    "env-vars-file": "____envvars.yaml",
-    "min-instances": customConfig?.minInstances ?? 0,
-    "max-instances": customConfig?.maxInstances ?? 100,
-    "cpu-throttling": customConfig?.noCpuThrottling !== true,
-    memory: customConfig?.memory,
-    "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
-    ingress: customConfig?.ingress ?? "all",
-    "cpu-boost": true,
-    "execution-environment": customConfig?.executionEnvironment,
-  });
+  const argsString = createArgsString(
+    {
+      // command as empty string resets it to default (uses the image's entrypoint)
+      command: commandArray ? '"' + commandArray.join(",") + '"' : '""',
+      ...commonDeployArgs,
+      labels: makeLabelString({
+        ...getLabels(context),
+        "cloud-run-service-name": fullServiceName,
+      }),
+      "env-vars-file": "____envvars.yaml",
+      "min-instances": customConfig?.minInstances ?? 0,
+      "max-instances": customConfig?.maxInstances ?? 100,
+      "cpu-throttling": customConfig?.noCpuThrottling !== true,
+      memory: customConfig?.memory,
+      "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
+      ingress: customConfig?.ingress ?? "all",
+      "cpu-boost": true,
+      "execution-environment": customConfig?.executionEnvironment,
+    },
+    ...createVolumeConfig(customConfig?.volumes, "service")
+  );
+  // volumes require beta
+  const requiresBeta =
+    customConfig?.volumes && Object.keys(customConfig?.volumes).length > 0;
 
-  return `${gcloudRunCmd()} deploy ${fullServiceName} ${argsString}`;
+  return `${gcloudRunCmd(
+    requiresBeta ? "beta" : undefined
+  )} deploy ${fullServiceName} ${argsString}`;
 };
 
 export const getServiceDeleteScript = (

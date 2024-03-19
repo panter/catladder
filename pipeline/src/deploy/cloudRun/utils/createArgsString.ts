@@ -27,4 +27,7 @@ export const createArgsString = (...args: keyValuesArg[]) =>
     .flat()
     .join(" ");
 
-type keyValuesArg = Record<string, string | number | true | false | undefined>;
+export type keyValuesArg = Record<
+  string,
+  string | number | true | false | undefined
+>;
