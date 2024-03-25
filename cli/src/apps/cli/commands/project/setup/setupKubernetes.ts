@@ -6,7 +6,11 @@ import {
 import type { CommandInstance } from "vorpal";
 import { exec } from "child-process-promise";
 import { connectToCluster } from "../../../../../utils/cluster";
-import { upsertAllVariables } from "../../../../../utils/gitlab";
+import {
+  doGitlabRequest,
+  getProjectInfo,
+  upsertAllVariables,
+} from "../../../../../utils/gitlab";
 import ensureNamespace from "../utils/ensureNamespace";
 
 export const setupKubernetes = async (
@@ -16,6 +20,33 @@ export const setupKubernetes = async (
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
     throw new Error("cannot run setupKubernetes on non-kubernetes deployments");
+  }
+
+  const { id: projectId } = await getProjectInfo(instance);
+  const deploy_tokens = await doGitlabRequest(
+    instance,
+    `projects/${projectId}/deploy_tokens`
+  );
+
+  if (
+    !deploy_tokens.find(
+      (v: { name: string }) => v.name === "gitlab-deploy-token"
+    )
+  ) {
+    instance.log(
+      "I will setup the 'GitLab Deploy Token', so Kubernetes can pull images from this project."
+    );
+
+    await doGitlabRequest(
+      instance,
+      `projects/${projectId}/deploy_tokens`,
+      {
+        id: projectId,
+        name: "gitlab-deploy-token",
+        scopes: ["read_registry"],
+      },
+      "POST"
+    );
   }
 
   const fullName = getFullKubernetesClusterName(deployConfig.cluster);

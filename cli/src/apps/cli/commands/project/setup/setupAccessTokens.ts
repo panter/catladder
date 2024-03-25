@@ -55,30 +55,4 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
       "POST"
     );
   }
-
-  const deploy_tokens = await doGitlabRequest(
-    instance,
-    `projects/${projectId}/deploy_tokens`
-  );
-
-  if (
-    !deploy_tokens.find(
-      (v: { name: string }) => v.name === "gitlab-deploy-token"
-    )
-  ) {
-    instance.log(
-      "I will setup the 'GitLab Deploy Token', so Kubernetes can pull images from this project."
-    );
-
-    await doGitlabRequest(
-      instance,
-      `projects/${projectId}/deploy_tokens`,
-      {
-        id: projectId,
-        name: "gitlab-deploy-token",
-        scopes: ["read_registry"],
-      },
-      "POST"
-    );
-  }
 };
