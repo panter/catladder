@@ -98,6 +98,7 @@ Some hints:
 - Google's load balancer is powerful, but expensive in comparison (at least 20 CHF per month).  
   Recommended for bigger projects.
 - Firebase hosting is a cheaper alternative. You can use firebase hosting without actually using all other features of it.  
+  Only the the specially-named `__session` cookie is permitted to pass through to the execution of your app (see [docs](https://firebase.google.com/docs/hosting/manage-cache#using_cookies)).
   However, if you have a static app (E.g. frontend) as well, you might consider it as static hosting.
 - [Cloud Run domain mapping](https://cloud.google.com/run/docs/mapping-custom-domains#run) is the third option but it's not (yet) available in the Zurich region
 
