@@ -133,6 +133,9 @@ Some tips:
 
 ### Traces and logs
 
+_Complexity of these topics is thoroughly described in the documentation [logging](https://www.notion.so/panterch/Logging-c13f3e36d3794ce79cc02258bc6ba07f) and [tracing](https://www.notion.so/panterch/Tracing-a7a7a774f32e4044bb65e73fffd13fa9) with more 
+information and examples. See subpages in Notion._
+
 Logs are taken automatically by cloud run, so simply log to stdout and stderr is the simplest approach. However you may want to group logs by request, or add additional context to logs. This can be achieved with structured logging and using @google-cloud/logging-winston.
 
 However there are certain pitfalls to be aware of, so best use this example
