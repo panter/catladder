@@ -1,3 +1,10 @@
+# [1.139.0](https://git.panter.ch/catladder/catladder/compare/v1.138.1...v1.139.0) (2024-04-19)
+
+
+### Features
+
+* dotenv can now be enabled for local dev only ([ace9276](https://git.panter.ch/catladder/catladder/commit/ace927600ece0167bf8f0b82012a3a78160de9ba))
+
 ## [1.138.1](https://git.panter.ch/catladder/catladder/compare/v1.138.0...v1.138.1) (2024-03-26)
 
 # [1.138.0](https://git.panter.ch/catladder/catladder/compare/v1.137.3...v1.138.0) (2024-03-19)
