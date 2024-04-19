@@ -34,7 +34,9 @@ export const createAppBuildJob = (
       },
 
       script: [
-        ...(context.componentConfig.dotEnv ? writeDotEnv(context) : []),
+        ...(context.componentConfig.dotEnv === true // don't build when set to `local`
+          ? writeDotEnv(context)
+          : []),
         ...writeBuildInfo(context),
         ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.componentConfig.dir}`,

@@ -4,6 +4,7 @@ import type { DeployConfig } from "../deploy/types";
 import type { CatladderJob } from "./jobs";
 import type { Context } from "./context";
 import type { PartialDeep } from "./utils";
+import { load } from "js-yaml";
 export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
 
 /**
@@ -146,13 +147,23 @@ export type ComponentConfig<C extends ConfigProps = never> = {
   customJobs?: CatladderJob[] | ((context: Context) => CatladderJob[]);
 
   /**
-   * experimental. whether to create a .env localy and during build jobs
+   * whether to create a .env
    *
    * Be careful, this will overwrite any existing .env file!
+   *
+   * if set to true it will create .env locally and during build.
+   * Be careful: the .env file usually ends up in the build artifacts.
+   * Use this for apps and clients where env does not contain any secrets
+   *
+   *
+   * if set to "local" it will only create .env file locally.
+   * Use this in combination with @dotenvx/dotenvx or node 20 to start apps locally with .env files
+   * During build and runtime, it relies on the env vars set in the environment
+   *
    */
-  dotEnv?: boolean;
+  dotEnv?: boolean | "local";
   /**
-   * experimental. whether to create a env.d.ts localy and during build jobs
+   * whether to create a env.d.ts localy and during build jobs
    *
    * Be careful, this will overwrite any existing env.d.ts file!
    */
