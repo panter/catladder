@@ -1,3 +1,10 @@
+## [1.139.3](https://git.panter.ch/catladder/catladder/compare/v1.139.2...v1.139.3) (2024-04-29)
+
+
+### Bug Fixes
+
+* **cloud run:** allow increasing minimum cpus for higher memory limits ([3ff798e](https://git.panter.ch/catladder/catladder/commit/3ff798eafdce88fae71214b796f8e74972a3913e))
+
 ## [1.139.2](https://git.panter.ch/catladder/catladder/compare/v1.139.1...v1.139.2) (2024-04-22)
 
 ## [1.139.1](https://git.panter.ch/catladder/catladder/compare/v1.139.0...v1.139.1) (2024-04-19)
