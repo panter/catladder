@@ -16,7 +16,10 @@ const config: Config = {
 
         service: {
           // defaults to 512Mi
-          memory: "1024Mi",
+          memory: "8Gi",
+          // increasing memory might also require increasing cpu limit
+          // see cloud run documentation for details
+          cpu: 2,
         },
       },
     },

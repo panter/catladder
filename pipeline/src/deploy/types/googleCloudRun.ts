@@ -74,6 +74,7 @@ export type DeployConfigCloudRunCloudSql = {
 };
 
 type Memory = `${number}${"M" | "G" | "Mi" | "Gi"}`;
+type Cpu = 1 | 2 | 4 | 6 | 8;
 export type DeployConfigCloudRunService = {
   /**
    * command / entrypoint, fallsback to buildConfig.startcommand
@@ -114,6 +115,11 @@ export type DeployConfigCloudRunService = {
   ingress?: "all" | "internal" | "internal-and-cloud-load-balancing";
 
   /**
+   * CPU limit.
+   */
+  cpu?: Cpu;
+
+  /**
    * memory limit. Defaults to 512MB
    */
   memory?: Memory;
@@ -139,6 +145,11 @@ export type DeployConfigCloudRunJobBase = {
    * custom image to use. Defaults to the image from the build
    */
   image?: string;
+
+  /**
+   * CPU limit of the job.
+   */
+  cpu?: Cpu;
 
   /**
    * memory limit of the job, defaults to 512Mi

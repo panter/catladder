@@ -46,6 +46,7 @@ export const getServiceDeployScript = (
       "min-instances": customConfig?.minInstances ?? 0,
       "max-instances": customConfig?.maxInstances ?? 100,
       "cpu-throttling": customConfig?.noCpuThrottling !== true,
+      cpu: customConfig?.cpu,
       memory: customConfig?.memory,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
       ingress: customConfig?.ingress ?? "all",

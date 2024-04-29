@@ -106,6 +106,7 @@ const getJobCreateScriptsForJob = (
       "cloud-run-job-name": jobName,
     }),
     image: job.image || commonDeployArgs.image,
+    cpu: job?.cpu,
     memory: job.memory || "512Mi",
     "task-timeout": job.timeout || "10m",
     parallelism: job.parallelism || 1,
