@@ -140,6 +140,15 @@ export type DeployConfigCloudRunService = {
   memory?: Memory;
 
   /**
+   * timeout of the service, defaults to 5 minutes.
+   *
+   * you can specify something like 10m30s. if its just a number, it will be interpreted as seconds
+   *
+   * max supported is 60min
+   */
+  timeout?: string;
+
+  /**
    *
    * set the execution environment.
    *

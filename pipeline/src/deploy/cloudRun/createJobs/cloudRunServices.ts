@@ -49,6 +49,7 @@ export const getServiceDeployScript = (
       "cpu-throttling": customConfig?.noCpuThrottling !== true,
       cpu: customConfig?.cpu,
       memory: customConfig?.memory,
+      timeout: customConfig?.timeout,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
       ingress: customConfig?.ingress ?? "all",
       "cpu-boost": true,
