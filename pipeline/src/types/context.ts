@@ -32,7 +32,7 @@ export type Environment = {
 
   gitlabEnvironment: {
     name: string;
-    url: string;
+    url?: string;
   };
   shortName: string;
   slugPrefix: string;

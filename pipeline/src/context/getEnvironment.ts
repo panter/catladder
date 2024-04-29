@@ -1,3 +1,4 @@
+import { isOfDeployType } from "../deploy";
 import type { Config } from "../types/config";
 
 import type { CommitInfo, Environment } from "../types/context";
@@ -25,14 +26,20 @@ export const getEnvironment = async (
   );
 
   const envType = envContext.envType;
+  const deployConfig = config.components[componentName].deploy;
+
+  const gitlabEnvironment = {
+    name: envContext.gitlabEnvironmentName,
+    ...(!isOfDeployType(deployConfig, "google-cloudrun") ||
+    deployConfig.service !== false
+      ? { url: variables.url }
+      : {}),
+  };
 
   return {
     envType,
 
-    gitlabEnvironment: {
-      name: envContext.gitlabEnvironmentName,
-      url: variables.url,
-    },
+    gitlabEnvironment,
     fullName: envContext.fullName,
     slugPrefix: envContext.environmentSlugPrefix,
     slug: envContext.environmentSlug,
