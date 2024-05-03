@@ -10,8 +10,10 @@
 include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
 ```
 
-2. It's recommended to add a local version of @catladder/cli and @catladder/pipeline as dev dependencies to your project.
+2. It's recommended to add a local version of `@catladder/cli` and `@catladder/pipeline` as dev dependencies to your project.
 3. Create the file `catladder.ts` in your repositories root.
+4. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
+5. Authenticate gcloud CLI with `gcloud auth login`
 
 ## The configuration
 
@@ -28,7 +30,7 @@ import type { Config } from '@catladder/pipeline'
 const config: Config = {
 
    appName: "my-first-app",
-   customerName: "pan",
+   customerName: "pan", // copy three letters from controllr project (e.g. pan, wea, wpa, sss, ...)
    components: {
       www: {
         dir: "frontend"
@@ -71,7 +73,7 @@ each `ComponentConfig` has this structure:
   vars: {}, // environment variables and secrets (see following chapter)
   build: {}, // the configuration how the app is built
   deploy: {}, // configures how the app will be deployed
-  envs: {}, // customize each environment, e.g. configure different variables and deployment for production
+  env: {}, // customize each environment, e.g. configure different variables and deployment for production
 }
 ```
 
@@ -91,9 +93,9 @@ See [DEPLOY](3_DEPLOY.md)
 
 See [TROUBLESHOOT](4_TROUBLESHOOT.md)
 
-# RECIPIES
+# RECIPES
 
-See [RECIPIES](5_RECIPIES.md)
+See [RECIPES](5_RECIPIES.md)
 
 # SECURITY AUDIT
 

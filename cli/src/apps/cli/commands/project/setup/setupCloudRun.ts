@@ -24,7 +24,7 @@ export const setupCloudRun = async (
 
   // enable services
 
-  instance.log("enable required servies...");
+  instance.log("enable required services...");
   await enableGCloudServices(
     [
       "run.googleapis.com",
