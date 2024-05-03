@@ -1,3 +1,10 @@
+## [1.139.5](https://git.panter.ch/catladder/catladder/compare/v1.139.4...v1.139.5) (2024-05-03)
+
+
+### Bug Fixes
+
+* **cloud run:** no gitlab environment url when there is no service ([7c848b0](https://git.panter.ch/catladder/catladder/commit/7c848b0b509937a930323143371df6e61d66d345))
+
 ## [1.139.4](https://git.panter.ch/catladder/catladder/compare/v1.139.3...v1.139.4) (2024-05-03)
 
 ## [1.139.3](https://git.panter.ch/catladder/catladder/compare/v1.139.2...v1.139.3) (2024-04-29)
