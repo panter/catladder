@@ -97,6 +97,12 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
       HOST_INTERNAL,
       ...getCloudSqlVariables(ctx),
       ...jobTriggers,
+      DEPLOY_CLOUD_RUN_PROJECT_ID: deployConfigRaw
+        ? deployConfigRaw.projectId
+        : undefined,
+      DEPLOY_CLOUD_RUN_REGION: deployConfigRaw
+        ? deployConfigRaw.region
+        : undefined,
     };
   },
 };
