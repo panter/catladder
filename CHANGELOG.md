@@ -1,3 +1,10 @@
+# [1.140.0](https://git.panter.ch/catladder/catladder/compare/v1.139.5...v1.140.0) (2024-05-27)
+
+
+### Features
+
+* **cloud run:** expose DEPLOY_CLOUD_RUN_PROJECT_ID and DEPLOY_CLOUD_RUN_REGION as env vars ([3159816](https://git.panter.ch/catladder/catladder/commit/315981618fdc08c2fa919389c0a9d0e50cd2c720))
+
 ## [1.139.5](https://git.panter.ch/catladder/catladder/compare/v1.139.4...v1.139.5) (2024-05-03)
 
 
