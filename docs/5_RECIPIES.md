@@ -2,22 +2,6 @@
 
 see also [Examples](../pipeline/examples/)
 
-## use pupeteer in node apps
-
-add this to your catladder.ts
-
-```typescript
-
-build: {
-    type: "node",
-
-    docker: {
-        additionsBegin: [
-        `ENV PUPPETEER_EXECUTABLE_PATH="/usr/bin/chromium-browser"\
-            PUPPETEER_SKIP_CHROMIUM_DOWNLOAD="true"`,
-        "RUN apk add chromium",
-        ],
-    },
-},
-
-```
+- [beeing "cloud ready"](./recipies/CLOUD_READY.md)
+- [using pupeteer in node apps](./recipies/PUPETEER.md)
+- [service-to-service communication in google cloud](./recipies/GOOGLE_CLOUD_SERVICE_TO_SERVICE.md)
