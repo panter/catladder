@@ -1,3 +1,10 @@
+# [1.141.0](https://git.panter.ch/catladder/catladder/compare/v1.140.2...v1.141.0) (2024-06-05)
+
+
+### Features
+
+* **pipeline:** do not create pipeline from schedules ([2e3a88f](https://git.panter.ch/catladder/catladder/commit/2e3a88fa649a3ce4ab0a8a7eb2c2569ba97707ca))
+
 ## [1.140.2](https://git.panter.ch/catladder/catladder/compare/v1.140.1...v1.140.2) (2024-05-29)
 
 ## [1.140.1](https://git.panter.ch/catladder/catladder/compare/v1.140.0...v1.140.1) (2024-05-29)
