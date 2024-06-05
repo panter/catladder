@@ -43,9 +43,16 @@ export type BuildConfigBase = {
   /**
    * additional env vars for the buid jobs
    *
-   * @deprecated use jobVars
+   * @deprecated use jobVars or runnerVariables
    */
   extraVars?: Record<string, string>;
+
+  /**
+   * additional vars only for the runner.
+   * Also if you use services: that require env vars, you need to set them here.
+   *
+   */
+  runnerVariables?: Record<string, string>;
   /**
    * define the build command
    */

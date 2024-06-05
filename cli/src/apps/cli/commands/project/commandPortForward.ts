@@ -50,7 +50,7 @@ const cloudRunPortForward = async (cmd: CommandInstance, context: Context) => {
   }
 
   const { fullName } = context.environment;
-  let serviceName = fullName;
+  let serviceName: string = fullName.toString();
   if (context.environment.envType === "review") {
     const { mr } = await cmd.prompt({
       type: "number",
@@ -59,7 +59,9 @@ const cloudRunPortForward = async (cmd: CommandInstance, context: Context) => {
       message: "Which mr 🤔 ",
     });
     // poor mans solution
-    serviceName = serviceName.replace("-review-", "-review-mr" + mr + "-");
+    serviceName = serviceName
+      .toString()
+      .replace("-review-", "-review-mr" + mr + "-");
   }
 
   const { projectId, region } = context.componentConfig.deploy;

@@ -15,7 +15,7 @@ import { writeDotEnv } from "./writeDotEnv";
 export type AppBuildJobDefinition = Partial<CatladderJob>;
 export const createAppBuildJob = (
   context: Context,
-  { script, variables, ...def }: AppBuildJobDefinition
+  { script, variables, runnerVariables, ...def }: AppBuildJobDefinition
 ): CatladderJob => {
   return merge(
     {
@@ -26,11 +26,15 @@ export const createAppBuildJob = (
       needs: [],
       cache: [],
       variables: {
-        ...RUNNER_BUILD_RESOURCE_VARIABLES,
         ...(variables ?? {}),
         ...context.environment.envVars,
         ...context.environment.jobOnlyVars.build.envVars,
         ...(context.componentConfig.build.extraVars ?? {}),
+      },
+      runnerVariables: {
+        ...RUNNER_BUILD_RESOURCE_VARIABLES,
+        ...(runnerVariables ?? {}),
+        ...(context.componentConfig.build.runnerVariables ?? {}),
       },
 
       script: [

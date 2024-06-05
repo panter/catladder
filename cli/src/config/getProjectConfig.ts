@@ -53,7 +53,11 @@ export const getPipelineContextByChoice = async (
   componentName: string
 ) => {
   const config = await getProjectConfig();
-  return await createContext(config, componentName, env);
+  return await createContext({
+    config,
+    componentName,
+    env,
+  });
 };
 export const getAllComponentsWithAllEnvsFlat = async (): Promise<
   Array<{ env: string; componentName: string }>
@@ -96,7 +100,7 @@ export const getAllPipelineContexts = async () => {
 export const getEnvironment = async (env: string, componentName: string) => {
   const config = await getProjectConfig();
 
-  return _getEnvironment(config, componentName, env);
+  return _getEnvironment({ config, componentName, env });
 };
 
 export const getGitlabVar = async (
@@ -126,10 +130,9 @@ const resolveSecrets = async (
           }
 
           for (const variable of allVariablesInGitlab) {
-            value = value.replace(
-              new RegExp("\\$" + variable.key, "g"),
-              variable.value
-            );
+            value = value
+              .toString()
+              .replace(new RegExp("\\$" + variable.key, "g"), variable.value);
           }
           return [key, value];
         })

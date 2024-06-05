@@ -7,11 +7,6 @@ jest
   .spyOn(global.Date.prototype, "toISOString")
   .mockReturnValue("01-01-2023 12:13:14");
 
-jest.mock("../pipeline/src/pipeline/commitInfo/getBuildId", () => ({
-  getBuildId: () => "some-id",
-  getCurrentVersionString: () => "3.2.1",
-}));
-
 jest.mock("../pipeline/src/pipeline/yarn/yarnUtils", () => ({
   getYarnVersion: () => "3",
   getWorkspaces: () => [],

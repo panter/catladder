@@ -70,7 +70,6 @@ export const createKubeValues = (context: Context) => {
 
   // we remove the application config because it can be just the value `false` which is a convenience feature, but not supported in the helm chart
   // we only merge the rest of the values in
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { application, jobs, cronjobs, ...rest } = values ?? {};
 
   const env = createKubeEnv(context);

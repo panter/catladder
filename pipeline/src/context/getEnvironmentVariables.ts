@@ -1,67 +1,86 @@
 import { merge } from "lodash";
 import { DEPLOY_TYPES } from "../deploy";
 import type {
-  CommitInfo,
   Context,
   EnvironmentEnvVarPart as EnvironmentVariables,
 } from "../types";
-import type { Config, DevLocalEnvConfig } from "../types/config";
+import type { DevLocalEnvConfig } from "../types/config";
 
+import type { CreateContextContext, UnspecifiedEnvVars } from "..";
+import type { StringOrBashExpression } from "../bash/BashExpression";
+import { getBashVariable, joinBashExpressions } from "../bash/BashExpression";
+import type { EnvironmentContext } from "../types/environmentContext";
+import { getBuildInfoVariables } from "./getBuildInfoVariables";
 import { getEnvironmentContext } from "./getEnvironmentContext";
 import {
   resolveReferences,
   translateLegacyFromComponents,
 } from "./resolveReferences";
+import { transformJobOnlyVars } from "./transformJobOnlyVars";
 import {
-  stringListToSecreteEnvVarList,
   makeSecretEnvVarMapping,
+  stringListToSecreteEnvVarList,
   stringifyValues,
 } from "./utils/envVars";
-import { transformJobOnlyVars } from "./transformJobOnlyVars";
 
 export type SecretEnvVar = {
   key: string;
   // hidden env vars are not shown in config-secrets
   hidden?: boolean;
 };
+
+const getBasePredefinedVariables = (ctx: EnvironmentContext<any, any>) => {
+  return {
+    ENV_SHORT: ctx.env,
+    APP_DIR: ctx.envConfigRaw.dir,
+    ENV_TYPE: ctx.envType,
+    ...(ctx.envType !== "local" ? getBuildInfoVariables(ctx) : {}),
+  };
+};
+
+type BasePredefinedVariables = ReturnType<typeof getBasePredefinedVariables>;
+
+// we export so that we have later nice autocomplete
+export type PredefinedVariables = BasePredefinedVariables & {
+  /**
+   * undefined in rails, Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
+   */
+  HOST?: StringOrBashExpression;
+  ROOT_URL: StringOrBashExpression;
+  HOST_INTERNAL: StringOrBashExpression;
+  ROOT_URL_INTERNAL: StringOrBashExpression;
+};
+
 export const getEnvironmentVariables = async (
-  config: Config,
-  componentName: string,
-  env: string,
-  commitInfo?: CommitInfo,
+  ctx: CreateContextContext,
   alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
 ): Promise<EnvironmentVariables> => {
-  const environmentContext = getEnvironmentContext(
-    config,
-    env,
-    componentName,
-    commitInfo
-  );
+  const environmentContext = getEnvironmentContext(ctx);
 
+  const { config, env, componentName } = ctx;
   const { envConfigRaw, deployConfigRaw, buildConfigRaw, envType } =
     environmentContext;
 
-  const basePredefinedVariables = {
-    ENV_SHORT: env,
-    APP_DIR: envConfigRaw.dir,
-    ENV_TYPE: envType,
-    BUILD_INFO_ID: commitInfo?.buildId,
-    BUILD_INFO_BUILD_TIME: commitInfo?.buildTime,
-    BUILD_INFO_CURRENT_VERSION: commitInfo?.currentVersion,
-  };
+  const basePredefinedVariables =
+    getBasePredefinedVariables(environmentContext);
 
-  let predefinedVariables: Record<string, string | undefined>;
-  let host: string;
-  let url: string;
+  let predefinedVariables: PredefinedVariables & UnspecifiedEnvVars;
+  let host: StringOrBashExpression;
+  let url: StringOrBashExpression;
 
   if (envType === "local") {
     const devLocalConfig: DevLocalEnvConfig = envConfigRaw;
     const port = devLocalConfig.port ?? 3000;
-    host = "localhost:" + port;
+    host = "localhost:" + port.toString();
     url = "http://" + host;
     predefinedVariables = {
+      ...basePredefinedVariables,
       ENV_SHORT: "local",
       ROOT_URL: url,
+      // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
+      ...(config.components[componentName].build.type === "rails"
+        ? {}
+        : { HOST: host }),
       HOST_INTERNAL: host,
       ROOT_URL_INTERNAL: "http://" + host,
       PORT: port.toString(),
@@ -72,10 +91,12 @@ export const getEnvironmentVariables = async (
           environmentContext as never
         )
       : {};
+
     const HOST_INTERNAL =
       additionalEnvVars.HOST_INTERNAL ?? "unknown-host.example.com";
+
     host = envConfigRaw?.host ?? HOST_INTERNAL;
-    url = `https://${host}`;
+    url = joinBashExpressions(["https://", host]);
 
     predefinedVariables = {
       ...basePredefinedVariables,
@@ -84,8 +105,10 @@ export const getEnvironmentVariables = async (
         ? {}
         : { HOST: host }),
       ROOT_URL: url,
-      HOST_CANONICAL: HOST_INTERNAL, // legacy
-      ROOT_URL_INTERNAL: "https://" + HOST_INTERNAL,
+      HOST_INTERNAL,
+      /**@deprecated */
+      HOST_CANONICAL: HOST_INTERNAL, // legacy alias for HOST_INTERNAL
+      ROOT_URL_INTERNAL: joinBashExpressions(["https://", HOST_INTERNAL]),
       ...additionalEnvVars,
     };
   }
@@ -124,20 +147,20 @@ export const getEnvironmentVariables = async (
     ...publicEnvVarsRawSanitized,
   });
 
-  const envVars = await resolveReferences(
+  const envVars = (await resolveReferences(
     envVarsRaw,
     async (otherComponentName, alreadyVisited) => {
       const { envVars: otherEnvVars } = await getEnvironmentVariables(
-        config,
-        otherComponentName,
-        env,
-        commitInfo,
+        {
+          ...ctx,
+          componentName: otherComponentName,
+        },
         alreadyVisited
       );
       return otherEnvVars;
     },
     alreadyVisited
-  );
+  )) as typeof envVarsRaw;
 
   return {
     envVars,
@@ -168,7 +191,9 @@ export const getSecretVarName = (
   key: string
 ) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
 
-const addIndexVar = (vars: Record<string, unknown>) => ({
+const addIndexVar = <V extends Record<string, unknown>>(
+  vars: V
+): V & { _ALL_ENV_VAR_KEYS: string } => ({
   ...vars,
   _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),
 });

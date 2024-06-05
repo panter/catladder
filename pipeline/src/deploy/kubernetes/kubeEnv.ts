@@ -1,7 +1,9 @@
+import type { StringOrBashExpression } from "../../bash/BashExpression";
 import type { Context } from "../../types";
 import { isOfDeployType } from "../types";
 
-const shouldGoIntoSecrets = (key: string, value: string) => {
+const shouldGoIntoSecrets = (key: string, value: string | undefined) => {
+  if (!value) return false;
   if (String(value)?.includes("$CL_")) {
     return true;
   }
@@ -21,20 +23,20 @@ export const createKubeEnv = (context: Context) => {
   const allEnvVars = context.environment.envVars;
 
   const env = Object.entries(allEnvVars).reduce<{
-    secret: Record<string, string>;
-    public: Record<string, string>;
+    secret: Record<string, StringOrBashExpression>;
+    public: Record<string, StringOrBashExpression>;
   }>(
     (acc, [key, value]) => {
-      if (shouldGoIntoSecrets(key, value)) {
+      if (shouldGoIntoSecrets(key, value?.toString())) {
         acc.secret = {
           ...acc.secret,
-          [key]: value,
+          [key]: value ?? "",
         };
         return acc;
       }
       acc.public = {
         ...acc.public,
-        [key]: value,
+        [key]: value ?? "",
       };
       return acc;
     },

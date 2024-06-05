@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import { spawn } from "child-process-promise";
 import commandExists from "command-exists-promise";
 

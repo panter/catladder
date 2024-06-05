@@ -1,5 +1,5 @@
 import { writeFileSync } from "fs";
-import { dump } from "js-yaml";
+import { stringify } from "yaml";
 import { readConfigSync } from "./config";
 import { PIPELINE_IMAGE_TAG } from "./constants";
 import { createChildPipeline } from "./pipeline";
@@ -38,7 +38,7 @@ if (trigger) {
   createChildPipeline("gitlab", trigger, config).then(
     ({ jobs, ...mainPipeline }) => {
       // need to spread out the jobs
-      writeFileSync(`__pipeline.yml`, dump({ ...jobs, ...mainPipeline }), {
+      writeFileSync(`__pipeline.yml`, stringify({ ...jobs, ...mainPipeline }), {
         encoding: "utf-8",
       });
     }

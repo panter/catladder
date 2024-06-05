@@ -15,7 +15,13 @@ export const DEPLOY_JOB_NAME = "🚀 Deploy";
 
 export type DeployJobDefinition = Pick<
   CatladderJob,
-  "script" | "variables" | "image" | "cache" | "artifacts" | "services"
+  | "script"
+  | "variables"
+  | "image"
+  | "cache"
+  | "artifacts"
+  | "services"
+  | "runnerVariables"
 >;
 export const createDeployJob = (
   context: Context,
@@ -89,7 +95,6 @@ export const createDeployJob = (
     allow_failure: whenDeploy === "manual" ? true : false,
     stage: "deploy",
     variables: {
-      ...DEPLOY_RUNNER_VARIABLES,
       ...context.environment.envVars,
       ...(hasDocker ? getDockerImageVariables(context) : {}),
       ...context.environment.jobOnlyVars.deploy.envVars,
@@ -98,15 +103,19 @@ export const createDeployJob = (
         : {}),
       ...jobDefinition.variables,
     },
-    environment: {
-      ...context.environment.gitlabEnvironment,
-      ...(isStoppable
-        ? {
-            on_stop: STOP_JOB_NAME,
-            auto_stop_in: autoStop,
-          }
+    runnerVariables: {
+      ...DEPLOY_RUNNER_VARIABLES,
+      ...(jobDefinition.runnerVariables ?? {}),
+      ...(context.componentConfig.deploy
+        ? context.componentConfig.deploy.runnerVariables ?? {}
         : {}),
     },
+    environment: isStoppable
+      ? {
+          on_stop: STOP_JOB_NAME,
+          auto_stop_in: autoStop,
+        }
+      : undefined,
     jobTags: context.componentConfig.deploy
       ? context.componentConfig.deploy.jobTags
       : undefined,

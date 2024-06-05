@@ -6,10 +6,15 @@ exports[`matches snapshot 1`] = `
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
       "api ↩️ Rollback ⚠️ | dev ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "access",
           "name": "dev/api",
-          "url": "https://api.dev.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -28,82 +33,45 @@ exports[`matches snapshot 1`] = `
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="dev"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="dev"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-dev"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-dev-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
           "kubectl config use-context "kube-pan-test-app-dev-api"",
           "kubernetesRollback",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.dev.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "rollback dev",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.dev.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-dev",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_dev_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_dev_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'dev'
-    APP_DIR: 'api'
-    ENV_TYPE: 'dev'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.dev.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.dev.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-dev'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.dev.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_dev_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-dev-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-dev-api",
-          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
       "api 👮 lint": {
@@ -134,6 +102,9 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="api"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -150,7 +121,6 @@ cloudsql:
         ],
         "stage": "test",
         "variables": {
-          "APP_PATH": "api",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
@@ -203,7 +173,26 @@ cloudsql:
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="dev"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="dev"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-dev"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -220,26 +209,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
-          "HOST": "api.dev.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_NAMESPACE": "pan-test-app-dev",
-          "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
-          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
       "api 🔨 docker | dev ": {
@@ -265,6 +237,22 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="api"",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="dev/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild"",
+          "export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
@@ -288,25 +276,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production && yarn rebuild",
-          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "dev/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -315,11 +287,16 @@ COPY --chown=node:node .yarn /app/.yarn",
       },
       "api 🚀 Deploy | dev ": {
         "allow_failure": false,
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "auto_stop_in": "4 weeks",
           "name": "dev/api",
           "on_stop": "api 🛑 Stop ⚠️ | dev ",
-          "url": "https://api.dev.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -362,97 +339,136 @@ COPY --chown=node:node .yarn /app/.yarn",
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="dev"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="dev"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-dev"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="dev/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export RELEASE_NAME="pan-test-app-dev-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
           "kubectl config use-context "kube-pan-test-app-dev-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"",
+          "cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+$(printf %s "$CL_dev_api_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+    cloudsqlProxyCredentials: |-
+$(printf %s "$CL_dev_api_cloudsqlProxyCredentials" | sed 's/^/      /')
+  public:
+    ENV_SHORT: |-
+      dev
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      dev
+    BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+    BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+    HOST: |-
+      api.dev.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://api.dev.test-app.pan.panter.cloud
+    HOST_INTERNAL: |-
+      api.dev.test-app.pan.panter.cloud
+    HOST_CANONICAL: |-
+      api.dev.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://api.dev.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-dev
+    KUBE_APP_NAME: |-
+      api
+    KUBE_APP_NAME_PREFIX: ""
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    api.dev.test-app.pan.panter.cloud
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_dev_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-dev-api
+  type: |-
+    unmanaged
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
           "echo Uploading SBOM to Dependency Track",
           "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.dev.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.dev.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "deploy dev",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "dev/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.dev.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-dev",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_dev_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_dev_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'dev'
-    APP_DIR: 'api'
-    ENV_TYPE: 'dev'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.dev.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.dev.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-dev'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.dev.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_dev_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-dev-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-dev-api",
-          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
           "name": "dev/api",
-          "url": "https://api.dev.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -476,6 +492,32 @@ cloudsql:
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="dev"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="dev"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.dev.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-dev"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-dev-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"",
@@ -483,77 +525,14 @@ cloudsql:
           "kubernetesDelete",
           "echo Disabling component in Dependency Track",
           "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.dev.test-app.pan.panter.cloud" || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.dev.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "stop dev",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.dev.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.dev.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.dev.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-dev",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_dev_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_dev_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'dev'
-    APP_DIR: 'api'
-    ENV_TYPE: 'dev'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.dev.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.dev.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.dev.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.dev.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-dev'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.dev.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.dev.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_dev_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-dev-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_dev_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-dev-api",
-          "ROOT_URL": "https://api.dev.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.dev.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_dev_api_cloudsqlProxyCredentials",
         },
       },
       "api 🛡 audit": {
@@ -569,12 +548,14 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="api"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "cd api",
           "yarn npm audit --environment production",
         ],
         "stage": "test",
         "variables": {
-          "APP_PATH": "api",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
@@ -608,6 +589,9 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="api"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -624,7 +608,6 @@ cloudsql:
         ],
         "stage": "test",
         "variables": {
-          "APP_PATH": "api",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
@@ -648,6 +631,8 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
         "stage": "build",
@@ -731,10 +716,15 @@ cloudsql:
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
       "api ↩️ Rollback ⚠️ | review ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "access",
-          "name": "review/some-commit/api",
-          "url": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "name": "review/$CI_COMMIT_REF_NAME/api",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -753,82 +743,45 @@ cloudsql:
           },
         ],
         "script": [
-          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
-          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-api" --token="$CL_review_api_KUBE_TOKEN"",
-          "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
-          "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="review"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="review"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-review"",
+          "export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"",
+          "export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --token="$CL_review_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
           "kubernetesRollback",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "rollback review",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "mr1234-api",
-          "KUBE_APP_NAME_PREFIX": "mr1234-",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-review",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_review_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_review_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'review'
-    APP_DIR: 'api'
-    ENV_TYPE: 'review'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-review'
-    KUBE_APP_NAME: 'mr1234-api'
-    KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_INTERNAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.mr1234.review.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_review_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-review-mr1234-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-review-mr1234-api",
-          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
       "api 👮 lint": {
@@ -859,6 +812,9 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="api"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -875,7 +831,6 @@ cloudsql:
         ],
         "stage": "test",
         "variables": {
-          "APP_PATH": "api",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
@@ -928,7 +883,26 @@ cloudsql:
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="review"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="review"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-review"",
+          "export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"",
+          "export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -945,26 +919,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
-          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "KUBE_APP_NAME": "mr1234-api",
-          "KUBE_APP_NAME_PREFIX": "mr1234-",
-          "KUBE_NAMESPACE": "pan-test-app-review",
-          "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
-          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
       "api 🔨 docker | review ": {
@@ -990,6 +947,22 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="api"",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="review/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild"",
+          "export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
@@ -1013,25 +986,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production && yarn rebuild",
-          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "review/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -1040,11 +997,16 @@ COPY --chown=node:node .yarn /app/.yarn",
       },
       "api 🚀 Deploy | review ": {
         "allow_failure": false,
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "auto_stop_in": "1 week",
-          "name": "review/some-commit/api",
+          "name": "review/$CI_COMMIT_REF_NAME/api",
           "on_stop": "api 🛑 Stop ⚠️ | review ",
-          "url": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -1087,97 +1049,137 @@ COPY --chown=node:node .yarn /app/.yarn",
           },
         ],
         "script": [
-          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
-          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-api" --token="$CL_review_api_KUBE_TOKEN"",
-          "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
-          "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="review"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="review"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-review"",
+          "export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"",
+          "export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="review/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --token="$CL_review_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"",
+          "cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+$(printf %s "$CL_review_api_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+    cloudsqlProxyCredentials: |-
+$(printf %s "$CL_review_api_cloudsqlProxyCredentials" | sed 's/^/      /')
+  public:
+    ENV_SHORT: |-
+      review
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      review
+    BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+    BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+    HOST: |-
+$(printf %s "api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+    ROOT_URL: |-
+$(printf %s "https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+    HOST_INTERNAL: |-
+$(printf %s "api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+    HOST_CANONICAL: |-
+$(printf %s "api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+    ROOT_URL_INTERNAL: |-
+$(printf %s "https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+    KUBE_NAMESPACE: |-
+      pan-test-app-review
+    KUBE_APP_NAME: |-
+$(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | sed 's/^/      /')
+    KUBE_APP_NAME_PREFIX: |-
+$(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed 's/^/      /')
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+$(printf %s "api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/    /')
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_review_api_cloudsqlProxyCredentials
+  fullDbName: |-
+$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | sed 's/^/    /')
+  type: |-
+    unmanaged
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
           "echo Uploading SBOM to Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.mr1234.review.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "deploy review",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "review/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "mr1234-api",
-          "KUBE_APP_NAME_PREFIX": "mr1234-",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-review",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_review_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_review_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'review'
-    APP_DIR: 'api'
-    ENV_TYPE: 'review'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-review'
-    KUBE_APP_NAME: 'mr1234-api'
-    KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_INTERNAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.mr1234.review.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_review_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-review-mr1234-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-review-mr1234-api",
-          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
-          "name": "review/some-commit/api",
-          "url": "https://api.mr1234.review.test-app.pan.panter.cloud",
+          "name": "review/$CI_COMMIT_REF_NAME/api",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -1201,84 +1203,47 @@ cloudsql:
           },
         ],
         "script": [
-          "kubectl config set-cluster "kube-pan-test-app-review-mr1234-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
-          "kubectl config set-credentials "kube-pan-test-app-review-mr1234-api" --token="$CL_review_api_KUBE_TOKEN"",
-          "kubectl config set-context "kube-pan-test-app-review-mr1234-api" --cluster="kube-pan-test-app-review-mr1234-api" --user="kube-pan-test-app-review-mr1234-api" --namespace="pan-test-app-review"",
-          "kubectl config use-context "kube-pan-test-app-review-mr1234-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="review"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="review"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-review"",
+          "export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"",
+          "export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
+          "kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --token="$CL_review_api_KUBE_TOKEN"",
+          "kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --namespace="pan-test-app-review"",
+          "kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
           "kubernetesDelete",
           "echo Disabling component in Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.mr1234.review.test-app.pan.panter.cloud" || true",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "stop review",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.mr1234.review.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.mr1234.review.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "mr1234-api",
-          "KUBE_APP_NAME_PREFIX": "mr1234-",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-review",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_review_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_review_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'review'
-    APP_DIR: 'api'
-    ENV_TYPE: 'review'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.mr1234.review.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.mr1234.review.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-review'
-    KUBE_APP_NAME: 'mr1234-api'
-    KUBE_APP_NAME_PREFIX: 'mr1234-'
-    HOST_INTERNAL: 'api.mr1234.review.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.mr1234.review.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_review_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-review-mr1234-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_review_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-review-mr1234-api",
-          "ROOT_URL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.mr1234.review.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_review_api_cloudsqlProxyCredentials",
         },
       },
       "api 🛡 audit": {
@@ -1294,12 +1259,14 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="api"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "cd api",
           "yarn npm audit --environment production",
         ],
         "stage": "test",
         "variables": {
-          "APP_PATH": "api",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
@@ -1333,6 +1300,9 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="api"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -1349,7 +1319,6 @@ cloudsql:
         ],
         "stage": "test",
         "variables": {
-          "APP_PATH": "api",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
@@ -1373,6 +1342,8 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
         "stage": "build",
@@ -1456,10 +1427,15 @@ cloudsql:
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
       "api ↩️ Rollback ⚠️ | prod ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "access",
           "name": "prod/api",
-          "url": "https://api.prod.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -1478,89 +1454,57 @@ cloudsql:
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="prod"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="prod"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-prod"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-prod-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
           "kubectl config use-context "kube-pan-test-app-prod-api"",
           "kubernetesRollback",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.prod.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "rollback prod",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "prod",
-          "ENV_TYPE": "prod",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.prod.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-prod",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_prod_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_prod_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'prod'
-    APP_DIR: 'api'
-    ENV_TYPE: 'prod'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.prod.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.prod.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-prod'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.prod.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_prod_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-prod-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-prod-api",
-          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
       "api ↩️ Rollback ⚠️ | stage ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "access",
           "name": "stage/api",
-          "url": "https://api.stage.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -1579,82 +1523,45 @@ cloudsql:
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="stage"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="stage"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-stage"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-stage-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
           "kubectl config use-context "kube-pan-test-app-stage-api"",
           "kubernetesRollback",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.stage.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "rollback stage",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "stage",
-          "ENV_TYPE": "stage",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.stage.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-stage",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_stage_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_stage_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'stage'
-    APP_DIR: 'api'
-    ENV_TYPE: 'stage'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.stage.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.stage.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-stage'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.stage.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_stage_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-stage-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-stage-api",
-          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
       "api 🔨 app | prod ": {
@@ -1704,7 +1611,26 @@ cloudsql:
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="prod"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="prod"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-prod"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -1721,26 +1647,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "ENV_SHORT": "prod",
-          "ENV_TYPE": "prod",
-          "HOST": "api.prod.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_NAMESPACE": "pan-test-app-prod",
-          "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
-          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
       "api 🔨 app | stage ": {
@@ -1790,7 +1699,26 @@ cloudsql:
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="stage"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="stage"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-stage"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -1807,26 +1735,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "ENV_SHORT": "stage",
-          "ENV_TYPE": "stage",
-          "HOST": "api.stage.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_NAMESPACE": "pan-test-app-stage",
-          "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
-          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
       "api 🔨 docker | prod ": {
@@ -1852,6 +1763,22 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="api"",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="prod/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild"",
+          "export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
@@ -1875,25 +1802,9 @@ cloudsql:
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production && yarn rebuild",
-          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "prod/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -1923,6 +1834,22 @@ COPY --chown=node:node .yarn /app/.yarn",
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="api"",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="stage/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production && yarn rebuild"",
+          "export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "ensureNodeDockerfile",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
@@ -1946,25 +1873,9 @@ COPY --chown=node:node .yarn /app/.yarn",
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": "api",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_COPY_AND_INSTALL_APP": "COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production && yarn rebuild",
-          "DOCKER_COPY_WORKSPACE_FILES": "COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "stage/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -1973,11 +1884,16 @@ COPY --chown=node:node .yarn /app/.yarn",
       },
       "api 🚀 Deploy | prod ": {
         "allow_failure": true,
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "auto_stop_in": undefined,
           "name": "prod/api",
           "on_stop": "api 🛑 Stop ⚠️ | prod ",
-          "url": "https://api.prod.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -2008,99 +1924,138 @@ COPY --chown=node:node .yarn /app/.yarn",
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="prod"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="prod"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-prod"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="prod/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export RELEASE_NAME="pan-test-app-prod-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
           "kubectl config use-context "kube-pan-test-app-prod-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"",
+          "cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+$(printf %s "$CL_prod_api_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+    cloudsqlProxyCredentials: |-
+$(printf %s "$CL_prod_api_cloudsqlProxyCredentials" | sed 's/^/      /')
+  public:
+    ENV_SHORT: |-
+      prod
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      prod
+    BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+    BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+    HOST: |-
+      api.prod.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://api.prod.test-app.pan.panter.cloud
+    HOST_INTERNAL: |-
+      api.prod.test-app.pan.panter.cloud
+    HOST_CANONICAL: |-
+      api.prod.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://api.prod.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-prod
+    KUBE_APP_NAME: |-
+      api
+    KUBE_APP_NAME_PREFIX: ""
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    api.prod.test-app.pan.panter.cloud
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_prod_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-prod-api
+  type: |-
+    unmanaged
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
           "echo Uploading SBOM to Dependency Track",
           "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.prod.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.prod.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "deploy prod",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "prod/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
-          "ENV_SHORT": "prod",
-          "ENV_TYPE": "prod",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.prod.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-prod",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_prod_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_prod_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'prod'
-    APP_DIR: 'api'
-    ENV_TYPE: 'prod'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.prod.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.prod.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-prod'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.prod.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_prod_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-prod-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-prod-api",
-          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
       "api 🚀 Deploy | stage ": {
         "allow_failure": false,
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "auto_stop_in": undefined,
           "name": "stage/api",
           "on_stop": "api 🛑 Stop ⚠️ | stage ",
-          "url": "https://api.stage.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -2131,97 +2086,136 @@ cloudsql:
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="stage"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="stage"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-stage"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export DOCKER_REGISTRY="$CI_REGISTRY"",
+          "export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/api"",
+          "export DOCKER_IMAGE_NAME="stage/api"",
+          "export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export RELEASE_NAME="pan-test-app-stage-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
           "kubectl config use-context "kube-pan-test-app-stage-api"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"",
+          "cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+$(printf %s "$CL_stage_api_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+    cloudsqlProxyCredentials: |-
+$(printf %s "$CL_stage_api_cloudsqlProxyCredentials" | sed 's/^/      /')
+  public:
+    ENV_SHORT: |-
+      stage
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      stage
+    BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+    BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+    HOST: |-
+      api.stage.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://api.stage.test-app.pan.panter.cloud
+    HOST_INTERNAL: |-
+      api.stage.test-app.pan.panter.cloud
+    HOST_CANONICAL: |-
+      api.stage.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://api.stage.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-stage
+    KUBE_APP_NAME: |-
+      api
+    KUBE_APP_NAME_PREFIX: ""
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    api.stage.test-app.pan.panter.cloud
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_stage_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-stage-api
+  type: |-
+    unmanaged
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"",
           "kubernetesCreateSecret",
           "kubernetesDeploy",
           "echo Uploading SBOM to Dependency Track",
           "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://api.stage.test-app.pan.panter.cloud" "__sbom.json" vex.json || true",
           "echo deployment successful 😻",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.stage.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "deploy stage",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "DOCKER_CACHE_IMAGE": "$CI_REGISTRY_IMAGE/caches/api",
-          "DOCKER_IMAGE": "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
-          "DOCKER_IMAGE_NAME": "stage/api",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "$CI_REGISTRY",
-          "ENV_SHORT": "stage",
-          "ENV_TYPE": "stage",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.stage.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-stage",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_stage_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_stage_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'stage'
-    APP_DIR: 'api'
-    ENV_TYPE: 'stage'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.stage.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.stage.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-stage'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.stage.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_stage_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-stage-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-stage-api",
-          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
           "name": "prod/api",
-          "url": "https://api.prod.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -2245,6 +2239,32 @@ cloudsql:
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="prod"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="prod"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.prod.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-prod"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-prod-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"",
@@ -2252,84 +2272,26 @@ cloudsql:
           "kubernetesDelete",
           "echo Disabling component in Dependency Track",
           "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.prod.test-app.pan.panter.cloud" || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.prod.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "stop prod",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "prod",
-          "ENV_TYPE": "prod",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.prod.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.prod.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.prod.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-prod",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_prod_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_prod_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'prod'
-    APP_DIR: 'api'
-    ENV_TYPE: 'prod'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.prod.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.prod.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.prod.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.prod.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-prod'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.prod.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.prod.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_prod_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-prod-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_prod_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-prod-api",
-          "ROOT_URL": "https://api.prod.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.prod.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_prod_api_cloudsqlProxyCredentials",
         },
       },
       "api 🛑 Stop ⚠️ | stage ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
           "name": "stage/api",
-          "url": "https://api.stage.test-app.pan.panter.cloud",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/kubernetes:the-version",
         "interruptible": true,
@@ -2353,6 +2315,32 @@ cloudsql:
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="stage"",
+          "export APP_DIR="api"",
+          "export ENV_TYPE="stage"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
+          "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
+          "export HOST_CANONICAL="api.stage.test-app.pan.panter.cloud"",
+          "export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"",
+          "export KUBE_NAMESPACE="pan-test-app-stage"",
+          "export KUBE_APP_NAME="api"",
+          "export KUBE_APP_NAME_PREFIX=""",
+          "export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"",
+          "export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"",
+          "export RELEASE_NAME="pan-test-app-stage-api"",
+          "export HELM_EXPERIMENTAL_OCI="1"",
+          "export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"",
+          "export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"",
+          "export HELM_ARGS=""",
+          "export COMPONENT_NAME="api"",
+          "export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true",
           "kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"",
           "kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"",
@@ -2360,77 +2348,14 @@ cloudsql:
           "kubernetesDelete",
           "echo Disabling component in Dependency Track",
           "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://api.stage.test-app.pan.panter.cloud" || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://api.stage.test-app.pan.panter.cloud" >> gitlab_environment.env",
         ],
         "stage": "stop stage",
         "variables": {
-          "APP_DIR": "api",
-          "BUILD_ID": "some-id",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "COMPONENT_NAME": "api",
-          "ENV_SHORT": "stage",
-          "ENV_TYPE": "stage",
           "GIT_STRATEGY": "none",
-          "HELM_ARGS": "",
-          "HELM_EXPERIMENTAL_OCI": "1",
-          "HELM_GITLAB_CHART_NAME": "/helm-charts/the-panter-chart",
-          "HOST": "api.stage.test-app.pan.panter.cloud",
-          "HOST_CANONICAL": "api.stage.test-app.pan.panter.cloud",
-          "HOST_INTERNAL": "api.stage.test-app.pan.panter.cloud",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "KUBE_APP_NAME": "api",
-          "KUBE_APP_NAME_PREFIX": "",
-          "KUBE_DOCKER_IMAGE_PULL_SECRET": "gitlab-registry-api",
-          "KUBE_NAMESPACE": "pan-test-app-stage",
-          "KUBE_VALUES": "env:
-  secret:
-    POSTGRESQL_PASSWORD: '$CL_stage_api_POSTGRESQL_PASSWORD'
-    cloudsqlProxyCredentials: '$CL_stage_api_cloudsqlProxyCredentials'
-  public:
-    ENV_SHORT: 'stage'
-    APP_DIR: 'api'
-    ENV_TYPE: 'stage'
-    BUILD_INFO_ID: 'some-id'
-    BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-    BUILD_INFO_CURRENT_VERSION: '3.2.1'
-    HOST: 'api.stage.test-app.pan.panter.cloud'
-    ROOT_URL: 'https://api.stage.test-app.pan.panter.cloud'
-    HOST_CANONICAL: 'api.stage.test-app.pan.panter.cloud'
-    ROOT_URL_INTERNAL: 'https://api.stage.test-app.pan.panter.cloud'
-    KUBE_NAMESPACE: 'pan-test-app-stage'
-    KUBE_APP_NAME: 'api'
-    KUBE_APP_NAME_PREFIX: ''
-    HOST_INTERNAL: 'api.stage.test-app.pan.panter.cloud'
-    _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]'
-application:
-  host: 'api.stage.test-app.pan.panter.cloud'
-  command: 'yarn start'
-  livenessProbe:
-    httpGet:
-      path: '__health'
-  readinessProbe:
-    httpGet:
-      path: '__health'
-  startupProbe:
-    httpGet:
-      path: '__health'
-cloudsql:
-  enabled: true
-  dbUser: 'postgres'
-  instanceConnectionName: 'myproject:europe-west6:instance-name'
-  proxyCredentials: '$CL_stage_api_cloudsqlProxyCredentials'
-  fullDbName: 'pan-test-app-stage-api'
-  type: 'unmanaged'
-",
-          "POSTGRESQL_PASSWORD": "$CL_stage_api_POSTGRESQL_PASSWORD",
-          "RELEASE_NAME": "pan-test-app-stage-api",
-          "ROOT_URL": "https://api.stage.test-app.pan.panter.cloud",
-          "ROOT_URL_INTERNAL": "https://api.stage.test-app.pan.panter.cloud",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","HOST_INTERNAL","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]",
-          "cloudsqlProxyCredentials": "$CL_stage_api_cloudsqlProxyCredentials",
         },
       },
       "api 🧾 sbom | prod ": {
@@ -2451,6 +2376,8 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
         "stage": "build",
@@ -2474,6 +2401,8 @@ cloudsql:
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "trivy fs --quiet --format cyclonedx --output "__sbom.json" api",
         ],
         "stage": "build",

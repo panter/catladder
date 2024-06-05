@@ -1,4 +1,4 @@
-import { dump } from "js-yaml";
+import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
 import { getRunnerImage } from "../../runner";
 import type { Context } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
@@ -9,8 +9,11 @@ import {
 } from "../sbom";
 import { isOfDeployType } from "../types";
 import { createKubeValues } from "./kubeValues";
-import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
 
+import { writeBashYamlToFileScript } from "../../bash/bashYaml";
+import { collapseableSection } from "../../utils/gitlab";
+
+const ALL_VALUES_FILE = "__all_values.yml";
 export const createKubernetesDeployJobs = (
   context: Context
 ): CatladderJob[] => {
@@ -23,19 +26,24 @@ export const createKubernetesDeployJobs = (
     throw new Error("deploy config is not kubernetes");
   }
 
-  const kubeValues = createKubeValues(context);
-  const shared: Pick<CatladderJob, "image" | "variables"> = {
+  const shared: Pick<CatladderJob, "image" | "variables" | "artifacts"> = {
     image: getRunnerImage("kubernetes"),
+    ...(deployConfig.debug
+      ? {
+          artifacts: {
+            paths: [
+              ALL_VALUES_FILE, // debug
+            ],
+            when: "always",
+          },
+        }
+      : {}),
     variables: {
       ...context.environment.envVars,
       RELEASE_NAME: context.environment.fullName,
       HELM_EXPERIMENTAL_OCI: "1",
       KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
-      KUBE_VALUES: dump(kubeValues, {
-        lineWidth: -1,
-        quotingType: "'",
-        forceQuotes: true,
-      }),
+
       HELM_GITLAB_CHART_NAME:
         deployConfig.chartName ?? "/helm-charts/the-panter-chart",
       HELM_ARGS: [
@@ -43,7 +51,8 @@ export const createKubernetesDeployJobs = (
         ...(deployConfig.additionalHelmArgs ?? []),
       ].join(" "),
       COMPONENT_NAME: context.componentName,
-      BUILD_ID: context.commitInfo?.buildId,
+      /** @deprecated */
+      BUILD_ID: context.environment.envVars.BUILD_INFO_BUILD_ID,
     },
   };
 
@@ -69,6 +78,12 @@ export const createKubernetesDeployJobs = (
       ...shared,
       script: [
         ...connectContext,
+        ...collapseableSection(
+          "writeallvalues",
+          "Write " + ALL_VALUES_FILE + " for helm deployment"
+        )(
+          writeBashYamlToFileScript(createKubeValues(context), ALL_VALUES_FILE)
+        ),
         "kubernetesCreateSecret",
         "kubernetesDeploy",
         ...getDependencyTrackUploadScript(context),

@@ -18,5 +18,5 @@ export default async (vorpal: Vorpal) =>
       const environment = await getEnvironment(env, componentName);
       const url = environment.url;
 
-      open(url);
+      open(url.toString());
     });

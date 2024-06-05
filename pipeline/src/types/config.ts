@@ -4,7 +4,6 @@ import type { DeployConfig } from "../deploy/types";
 import type { CatladderJob } from "./jobs";
 import type { Context } from "./context";
 import type { PartialDeep } from "./utils";
-import { load } from "js-yaml";
 export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
 
 /**
@@ -61,6 +60,7 @@ export type EnvVars = {
    * You can reuse vars from other components in the same project using ${componentName:variableName}
    * EXAMPLE: A_VAR: "the other var is ${api:OTHER_VAR}"
    */
+
   public?: Record<string, any>;
   /**
    * secret env vars. These vars can be managed with catladder/cli

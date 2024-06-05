@@ -1,10 +1,15 @@
+import type { UnspecifiedEnvVars } from "..";
+import type {
+  BashExpression,
+  StringOrBashExpression,
+} from "../bash/BashExpression";
 import type {
   Artifacts,
-  GitlabEnvironment,
   GitlabJobCache,
   GitlabRule,
   GitlabJobImage,
   GitlabJobDef,
+  GitlabEnvironment,
 } from "./gitlab-types";
 
 export const BASE_STAGES = [
@@ -21,6 +26,12 @@ export type BaseStage = typeof BASE_STAGES[number];
 export type CatladderJobNeed =
   | string
   | { job: string; artifacts: boolean; componentName?: string };
+
+export type CatladderJobEnvironmentConfig = {
+  action?: GitlabEnvironment["action"];
+  on_stop?: GitlabEnvironment["on_stop"];
+  auto_stop_in?: string;
+};
 export type CatladderJob<S = BaseStage> = {
   /**
    * the name of the job (without any env or app prefix and suffix)
@@ -91,14 +102,24 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * variables to pass
    */
-  variables: GitlabJobDef["variables"];
+  variables: UnspecifiedEnvVars | undefined;
+
+  /**
+   * additional vars only for the runner.
+   * Also if you use services: that require env vars, you need to set them here.
+   *
+   */
+  runnerVariables?: Record<string, string>;
 
   /**
    * whether failures are allowed
    */
   allow_failure?: boolean;
 
-  environment?: GitlabEnvironment;
+  /**
+   * gitlab environment config, subject to change
+   */
+  environment?: CatladderJobEnvironmentConfig;
 
   rules?: GitlabRule[];
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import type Vorpal from "vorpal";
 import type { CommandInstance } from "vorpal";
 import { clearBackups } from "../../../../utils/gitlab";

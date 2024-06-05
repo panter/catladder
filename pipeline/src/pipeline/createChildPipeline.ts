@@ -6,19 +6,23 @@ import { createGitlabJobs } from "./gitlab/createGitlabJobs";
 import { createGitlabPipelineFromStagesAndJobs } from "./gitlab/createGitlabPipeline";
 
 export const createChildPipeline = async <T extends PipelineType>(
-  type: T,
+  pipelineType: T,
   trigger: PipelineTrigger,
   config: Config
 ): Promise<Pipeline<T>> => {
-  const jobs = await createAllJobs(config, trigger);
+  const jobs = await createAllJobs({
+    config,
+    trigger,
+    pipelineType,
+  });
   const stages = getPipelineStages(config);
 
-  if (type === "gitlab") {
+  if (pipelineType === "gitlab") {
     const gitlabJobs = await createGitlabJobs(jobs);
     return createGitlabPipelineFromStagesAndJobs(
       stages,
       gitlabJobs
     ) as Pipeline<T>;
   }
-  throw new Error(`${type} is not supported`);
+  throw new Error(`${pipelineType} is not supported`);
 };

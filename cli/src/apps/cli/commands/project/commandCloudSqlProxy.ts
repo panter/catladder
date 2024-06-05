@@ -95,7 +95,7 @@ const getProxyInfoForKubernetes = async (
 
   const DB_PASSWORD = envVars?.DB_PASSWORD || envVars?.POSTGRESQL_PASSWORD;
 
-  const DB_NAME = cloudSqlValues.cloudsql.fullDbName;
+  const DB_NAME = cloudSqlValues.cloudsql.fullDbName.toString();
 
   const instanceName = cloudSqlValues.cloudsql.instanceConnectionName;
 
@@ -127,7 +127,7 @@ const getProxyInfoForCloudRun = async (
   const DB_PASSWORD = envVars?.DB_PASSWORD;
   const DB_USER = envVars?.DB_USER;
 
-  const DB_NAME = context.environment.envVars.DB_NAME;
+  const DB_NAME = context.environment.envVars.DB_NAME.toString();
 
   return {
     instanceName:

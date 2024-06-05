@@ -1,3 +1,4 @@
+import { isNil } from "lodash";
 import type { Context } from "../../types";
 
 /**
@@ -10,7 +11,11 @@ export const writeDotEnv = (context: Context) => {
 
   // make key=value and sanitize multiline
   const keyValueString = Object.entries(envVars)
-    .map(([key, value]) => `${key}=${value.replaceAll("\n", "\\n")}`)
+    // filter out null and undefined values
+    .filter(([, value]) => !isNil(value))
+    .map(
+      ([key, value]) => `${key}=${value?.toString().replaceAll("\n", "\\n")}`
+    )
     .join("\n");
 
   return [

@@ -4,7 +4,8 @@ import { ensureArray, notNil } from "../../utils";
 
 export const createRailsTestJobs = (context: Context): CatladderJob[] => {
   // don't run tests after release
-  if (context.commitInfo?.trigger === "taggedRelease") {
+  // TODO: this will be replaced by using rules
+  if (context.trigger === "taggedRelease") {
     return [];
   }
 

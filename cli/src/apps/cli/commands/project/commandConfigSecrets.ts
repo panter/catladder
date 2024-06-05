@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import { getSecretVarName } from "@catladder/pipeline";
 import { stripIndents } from "common-tags";
 import { difference } from "lodash";

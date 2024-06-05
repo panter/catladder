@@ -1,3 +1,5 @@
+import type { StringOrBashExpression } from "../../bash/BashExpression";
+import { joinBashExpressions } from "../../bash/BashExpression";
 import type { Context } from "../../types/context";
 import { allowFailureInScripts } from "../../utils/gitlab";
 import { isOfDeployType } from "../types";
@@ -46,11 +48,11 @@ export const getArtifactsRegistryImageName = (
     context.environment.shortName,
     context.componentName,
 
-    ...(context.environment.envType === "review" && !lecacyReviewImageName
-      ? [context.commitInfo?.reviewSlug]
+    ...(context.environment.reviewSlug && !lecacyReviewImageName
+      ? [context.environment.reviewSlug]
       : []),
   ];
-  return gcloudImagePath.join("/");
+  return joinBashExpressions(gcloudImagePath, "/");
 };
 
 export const getArtifactsRegistryBuildCacheImage = (context: Context) => {
@@ -63,7 +65,10 @@ export const getArtifactsRegistryBuildCacheImage = (context: Context) => {
 export const getArtifactsRegistryImage = (context: Context) =>
   `${getArtifactsRegistryImageName(context)}:$DOCKER_IMAGE_TAG`;
 
-const getDeleteImageCommands = (fullImageName: string, keepNewest = 0) => {
+const getDeleteImageCommands = (
+  fullImageName: StringOrBashExpression,
+  keepNewest = 0
+) => {
   if (keepNewest === 0) {
     // no need to list tags, we delete the whole thing
     return [

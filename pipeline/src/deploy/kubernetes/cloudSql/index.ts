@@ -1,3 +1,4 @@
+import type { StringOrBashExpression } from "../../../bash/BashExpression";
 import { getSecretVarNameForContext } from "../../../context";
 import type { Context } from "../../../types";
 import { getFullDbName } from "../../cloudSql/utils";
@@ -15,7 +16,7 @@ type CloudSqlValues = {
   proxyCredentials: string;
 
   instanceConnectionName: string;
-  fullDbName: string;
+  fullDbName: StringOrBashExpression;
   dbUser: string;
 };
 export const createKubernetesCloudsqlBaseValues = (
@@ -48,7 +49,7 @@ export const createKubernetesCloudsqlBaseValues = (
         dbUser: "postgres",
         instanceConnectionName,
         proxyCredentials,
-        fullDbName: context.environment.envVars.KUBE_APP_NAME,
+        fullDbName: context.environment.envVars.KUBE_APP_NAME ?? "",
       },
     };
   } else if (config.type === "unmanaged") {

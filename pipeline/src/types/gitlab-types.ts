@@ -8,9 +8,7 @@ import type {
 export { Retry, Image as GitlabJobImage } from "./gitlab-ci-yml";
 
 // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
-export interface Artifacts extends Omit<GitlabCiArtifacts, "paths"> {
-  paths: string[];
-}
+export type Artifacts = GitlabCiArtifacts;
 export type GitlabJobCache = Cache;
 export type GitlabRule = Exclude<Rules, null>[number];
 export type GitlabEnvironment = Omit<

@@ -1,4 +1,5 @@
 import { isNil } from "lodash";
+import type { BashExpression } from "../../../bash/BashExpression";
 
 /**
  * creates arguments string:
@@ -29,5 +30,5 @@ export const createArgsString = (...args: keyValuesArg[]) =>
 
 export type keyValuesArg = Record<
   string,
-  string | number | true | false | undefined
+  string | number | true | false | undefined | BashExpression
 >;

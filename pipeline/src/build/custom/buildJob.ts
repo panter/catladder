@@ -1,7 +1,7 @@
 import { join } from "path";
 import type { Context } from "../../types/context";
 import { ensureArray } from "../../utils";
-import { getDockerBuildDefaultScript, requiresDockerBuild } from "../docker";
+import { getDockerBuildDefaultScript } from "../docker";
 import { isOfBuildType } from "../types";
 
 import type { CatladderJob } from "../../types/jobs";
@@ -25,9 +25,7 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
       buildConfig.buildCommand !== null
         ? {
             image: buildConfig.jobImage,
-            variables: {
-              ...RUNNER_BUILD_VARIABLES,
-            },
+            runnerVariables: RUNNER_BUILD_VARIABLES,
             cache: buildConfig.jobCache,
             services: buildConfig.jobServices,
             script: [...(ensureArray(buildConfig.buildCommand) ?? [])],

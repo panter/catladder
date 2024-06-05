@@ -30,15 +30,13 @@ if [[ ${ENV_SHORT} == "review" ]]; then
 
 fi
 
-echo "$KUBE_VALUES" >__all_values.yml
-
 echo "doing helm upgrade"
 helm upgrade --install "$RELEASE_NAME" "$HELM_GITLAB_CHART_NAME" \
     --timeout="30m0s" \
     --set global.appName="$KUBE_APP_NAME" \
     --set global.appPrefix="$KUBE_APP_NAME_PREFIX" \
     --set global.ENV_SHORT="$ENV_SHORT" \
-    --set global.BUILD_ID="$BUILD_ID" \
+    --set global.BUILD_ID="$BUILD_INFO_ID" \
     --set image.repository="$CI_REGISTRY_IMAGE" \
     --set image.pullSecret="$KUBE_DOCKER_IMAGE_PULL_SECRET" \
     --set image.name="$DOCKER_IMAGE_NAME" \

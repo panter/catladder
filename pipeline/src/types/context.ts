@@ -1,18 +1,28 @@
-import type { SecretEnvVar } from "../context";
+import type { StringOrBashExpression } from "../bash/BashExpression";
+import type { PredefinedVariables, SecretEnvVar } from "../context";
 import type {
   PipelineTrigger,
   ComponentConfig,
   Config,
   EnvType,
 } from "./config";
+import type { BaseStage, CatladderJob } from "./jobs";
+import type { PipelineType } from "./pipeline";
 
-export type EnvironmentEnvVars = {
-  envVars: Record<string, string>;
+export type UnspecifiedEnvVars = Record<
+  string,
+  StringOrBashExpression | undefined | null
+>;
+
+export type EnvironmentEnvVars<
+  V extends UnspecifiedEnvVars = UnspecifiedEnvVars
+> = {
+  envVars: V & UnspecifiedEnvVars;
   secretEnvVarKeys: SecretEnvVar[];
 };
 export type EnvironmentEnvVarPart = {
-  host: string;
-  url: string;
+  host: StringOrBashExpression;
+  url: StringOrBashExpression;
 
   /**
    * vars that only are injected in certain jobs, but not elsewhere
@@ -21,34 +31,32 @@ export type EnvironmentEnvVarPart = {
     deploy: EnvironmentEnvVars;
     build: EnvironmentEnvVars;
   };
-} & EnvironmentEnvVars;
+} & EnvironmentEnvVars<PredefinedVariables>;
+// FIXME: align with EnvironmentContext
 export type Environment = {
-  host: string;
-  url: string;
+  host: StringOrBashExpression;
+  url: StringOrBashExpression;
   /**
    * the full name of the app. We use this as RELEASE_NAME in kubernetes and the service name in google cloud run
    */
-  fullName: string;
+  fullName: StringOrBashExpression;
 
-  gitlabEnvironment: {
-    name: string;
-    url?: string;
-  };
   shortName: string;
-  slugPrefix: string;
-  slug: string;
+  /**
+   * the environment slug without component name.
+   */
+  slugPrefix: StringOrBashExpression;
+  /**
+   * the review slug, if it is a review app, null otherwise
+   */
+  reviewSlug: StringOrBashExpression | null;
+  /**
+   * the full environment slug, including the componentName
+   */
+  slug: StringOrBashExpression;
 
   envType: EnvType;
 } & EnvironmentEnvVarPart;
-
-export type CommitInfo = {
-  refName: string;
-  reviewSlug: string;
-  buildTime: string;
-  buildId: string;
-  trigger: PipelineTrigger;
-  currentVersion: string;
-};
 
 export type YarnWorkspace = {
   name: string;
@@ -72,7 +80,6 @@ export type PackageManagerInfo = YarnPackageManagerInfo;
 export type ContextBeforeConfig = {
   componentName: string;
   fullConfig: Config;
-  commitInfo?: CommitInfo;
   packageManagerInfo?: PackageManagerInfo;
 };
 export type Context = {
@@ -80,6 +87,12 @@ export type Context = {
   componentConfig: ComponentConfig;
   fullConfig: Config;
   environment: Environment;
-  commitInfo?: CommitInfo;
+
+  trigger?: PipelineTrigger;
+  pipelineType?: PipelineType;
   packageManagerInfo?: PackageManagerInfo;
+};
+
+export type CatladderJobWithContext<S = BaseStage> = CatladderJob<S> & {
+  context: Context;
 };

@@ -25,9 +25,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
       buildConfig.buildCommand !== null
         ? {
             image: buildConfig.jobImage ?? defaultImage,
-            variables: {
-              ...NODE_RUNNER_BUILD_VARIABLES,
-            },
+            runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
             cache: [
               ...(ensureArray(buildConfig.jobCache) ?? []),
               ...getNodeCache(context),

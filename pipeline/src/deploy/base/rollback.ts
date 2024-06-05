@@ -6,7 +6,7 @@ export const ROLLBACK_JOB_NAME = "↩️ Rollback ⚠️";
 
 export type RollbackJobDefinition = Pick<
   CatladderJob,
-  "script" | "variables" | "image"
+  "script" | "variables" | "runnerVariables" | "image"
 >;
 export const createRollbackJob = (
   context: Context,
@@ -24,14 +24,16 @@ export const createRollbackJob = (
       },
     ],
     variables: {
-      ...DEPLOY_RUNNER_VARIABLES,
       ...context.environment.jobOnlyVars.deploy.envVars,
-      GIT_STRATEGY: "none",
       ...jobDefinition.variables,
+    },
+    runnerVariables: {
+      ...DEPLOY_RUNNER_VARIABLES,
+      GIT_STRATEGY: "none",
+      ...(jobDefinition.runnerVariables ?? {}),
     },
     stage: "rollback",
     environment: {
-      ...context.environment.gitlabEnvironment,
       action: "access",
     },
 

@@ -1,17 +1,29 @@
 import { getAllEnvsByTrigger } from "../config";
-import type { Config, PipelineTrigger } from "../types";
-import type { CatladderJob } from "../types/jobs";
+import type {
+  CatladderJobWithContext,
+  Config,
+  PipelineTrigger,
+  PipelineType,
+} from "../types";
 import { createJobsForComponent } from "./createJobsForComponent";
 
 export type AllCatladderJobs = {
   [componentName: string]: {
-    [env: string]: Array<CatladderJob>;
+    [env: string]: Array<CatladderJobWithContext>;
   };
 };
-export const createAllJobs = async (
-  config: Config,
-  trigger: PipelineTrigger
-): Promise<AllCatladderJobs> => {
+
+export type AllJobsContext = {
+  config: Config;
+  trigger: PipelineTrigger;
+  pipelineType: PipelineType;
+};
+
+export const createAllJobs = async ({
+  config,
+  trigger,
+  pipelineType,
+}: AllJobsContext): Promise<AllCatladderJobs> => {
   return Object.fromEntries(
     await Promise.all(
       Object.keys(config.components).map(async (componentName) => {
@@ -22,12 +34,14 @@ export const createAllJobs = async (
             await Promise.all(
               envs.map(async (env) => [
                 env,
-                await createJobsForComponent(
+
+                await createJobsForComponent({
                   config,
                   componentName,
                   env,
-                  trigger
-                ),
+                  trigger,
+                  pipelineType,
+                }),
               ])
             )
           ),

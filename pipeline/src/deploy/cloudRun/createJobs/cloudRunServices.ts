@@ -10,6 +10,7 @@ import {
   getCommonDeployArgs,
   makeLabelString,
 } from "./common";
+import { ENV_VARS_FILENAME } from "./constants";
 import { createVolumeConfig } from "./volumes";
 
 export const getServiceDeployScript = (
@@ -32,7 +33,7 @@ export const getServiceDeployScript = (
       ? command
       : command.split(" ")
     : undefined;
-  const fullServiceName = `${serviceName}${nameSuffix ?? ""}`;
+  const fullServiceName = serviceName.concat(nameSuffix ?? "");
   const argsString = createArgsString(
     {
       // command as empty string resets it to default (uses the image's entrypoint)
@@ -42,7 +43,7 @@ export const getServiceDeployScript = (
         ...getLabels(context),
         "cloud-run-service-name": fullServiceName,
       }),
-      "env-vars-file": "____envvars.yaml",
+      "env-vars-file": ENV_VARS_FILENAME,
       "min-instances": customConfig?.minInstances ?? 0,
       "max-instances": customConfig?.maxInstances ?? 100,
       "cpu-throttling": customConfig?.noCpuThrottling !== true,

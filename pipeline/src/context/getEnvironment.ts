@@ -1,47 +1,24 @@
-import { isOfDeployType } from "../deploy";
-import type { Config } from "../types/config";
+import type { CreateContextContext } from "..";
 
-import type { CommitInfo, Environment } from "../types/context";
+import type { Environment } from "../types/context";
 import { getEnvironmentContext } from "./getEnvironmentContext";
 import { getEnvironmentVariables } from "./getEnvironmentVariables";
 
 export const getEnvironment = async (
-  config: Config,
-  componentName: string,
-  env: string,
-  commitInfo?: CommitInfo
+  ctx: CreateContextContext
 ): Promise<Environment> => {
-  const variables = await getEnvironmentVariables(
-    config,
-    componentName,
-    env,
-    commitInfo
-  );
+  const { env } = ctx;
+  const variables = await getEnvironmentVariables(ctx);
 
-  const envContext = getEnvironmentContext(
-    config,
-    env,
-    componentName,
-    commitInfo
-  );
+  const envContext = getEnvironmentContext(ctx);
 
   const envType = envContext.envType;
-  const deployConfig = config.components[componentName].deploy;
-
-  const gitlabEnvironment = {
-    name: envContext.gitlabEnvironmentName,
-    ...(!isOfDeployType(deployConfig, "google-cloudrun") ||
-    deployConfig.service !== false
-      ? { url: variables.url }
-      : {}),
-  };
 
   return {
     envType,
-
-    gitlabEnvironment,
     fullName: envContext.fullName,
     slugPrefix: envContext.environmentSlugPrefix,
+    reviewSlug: envContext.reviewSlug,
     slug: envContext.environmentSlug,
     shortName: env,
     ...variables,

@@ -1,8 +1,9 @@
+import type { StringOrBashExpression } from "../bash/BashExpression";
 import type { BuildConfigGeneric, BuildConfigType } from "../build";
 import type { DeployConfigGeneric } from "../deploy";
 import type { DeployConfigType } from "../deploy";
 import type { Config, EnvConfigWithComponent, EnvType } from "./config";
-import type { CommitInfo } from "./context";
+import type { PipelineType } from "./pipeline";
 
 export type EnvironmentContext<
   B extends BuildConfigType,
@@ -11,23 +12,28 @@ export type EnvironmentContext<
   envConfigRaw: EnvConfigWithComponent;
   buildConfigRaw: false | BuildConfigGeneric<B>;
   deployConfigRaw: false | DeployConfigGeneric<D>;
-  commitInfo?: CommitInfo;
+
   env: string;
   envType: EnvType;
   componentName: string;
-  fullName: string;
+  fullName: StringOrBashExpression;
   /**
    * the environment slug without component name.
    */
-  environmentSlugPrefix: string;
+  environmentSlugPrefix: StringOrBashExpression;
+  /**
+   * the review slug, if it is a review app, null otherwise
+   */
+  reviewSlug: StringOrBashExpression | null;
   /**
    * the full environment slug, including the componentName
    */
-  environmentSlug: string;
-  gitlabEnvironmentName: string;
+  environmentSlug: StringOrBashExpression;
 
   /**
    * the full catladder config
    */
   fullConfig: Config;
+
+  pipelineType?: PipelineType;
 };

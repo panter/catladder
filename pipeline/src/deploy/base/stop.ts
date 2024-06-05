@@ -6,7 +6,7 @@ export const STOP_JOB_NAME = "🛑 Stop ⚠️";
 
 export type StopJobDefinition = Pick<
   CatladderJob,
-  "script" | "variables" | "image"
+  "script" | "variables" | "image" | "runnerVariables"
 >;
 export const createStopJob = (
   context: Context,
@@ -29,14 +29,16 @@ export const createStopJob = (
       },
     ],
     variables: {
-      ...DEPLOY_RUNNER_VARIABLES,
       ...context.environment.jobOnlyVars.deploy.envVars,
-      GIT_STRATEGY: "none",
       ...jobDefinition.variables,
+    },
+    runnerVariables: {
+      ...DEPLOY_RUNNER_VARIABLES,
+      GIT_STRATEGY: "none",
+      ...jobDefinition.runnerVariables,
     },
     stage: "stop",
     environment: {
-      ...context.environment.gitlabEnvironment,
       action: "stop",
     },
     script: jobDefinition.script,

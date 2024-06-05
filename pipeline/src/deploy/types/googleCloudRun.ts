@@ -256,6 +256,8 @@ export type DeployConfigCloudRun = {
    * add cloudSql
    */
   cloudSql?: DeployConfigCloudRunCloudSql | false;
+
+  debug?: boolean;
 } & DeployConfigBase;
 
 export type DeployConfigCloudRunVolumes = Record<

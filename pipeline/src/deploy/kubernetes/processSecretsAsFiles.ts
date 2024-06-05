@@ -1,10 +1,11 @@
 import { omit } from "lodash";
 import type { DeployConfigKubernetesValues } from "../types";
+import type { StringOrBashExpression } from "../../bash/BashExpression";
 
 export const processSecretsAsFiles = <
   T extends {
     env: {
-      secret: Record<string, string>;
+      secret: Record<string, StringOrBashExpression>;
     };
   } & DeployConfigKubernetesValues
 >(

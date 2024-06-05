@@ -1,6 +1,6 @@
 import { existsSync, readFileSync } from "fs";
 import { register } from "ts-node";
-import { load } from "js-yaml";
+import { parse } from "yaml";
 import type { Config } from "../types";
 
 // allows us to load ts files
@@ -33,14 +33,13 @@ export const readConfigSync = (
       return {
         path: filePath,
         ext: found,
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
         config: requireUncached(filePath).default,
       };
     } else {
       return {
         path: filePath,
         ext: found,
-        config: load(readFileSync(filePath, { encoding: "utf-8" })) as Config,
+        config: parse(readFileSync(filePath, { encoding: "utf-8" })) as Config,
       };
     }
   }

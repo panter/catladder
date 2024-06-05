@@ -9,7 +9,8 @@ import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
 export const createNodeTestJobs = (context: Context): CatladderJob[] => {
   // don't run tests after release
-  if (context.commitInfo?.trigger === "taggedRelease") {
+  // TODO: this will be replaced by using rules
+  if (context.trigger === "taggedRelease") {
     return [];
   }
 
@@ -18,10 +19,10 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,
-      ...NODE_RUNNER_BUILD_VARIABLES,
       ...context.environment.jobOnlyVars.build.envVars,
       ...(buildConfig.extraVars ?? {}),
     },
+    runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
     stage: "test",
     needs: [],
     envMode: "none",

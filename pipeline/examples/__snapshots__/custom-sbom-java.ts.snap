@@ -28,7 +28,25 @@ exports[`matches snapshot 1`] = `
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > ./__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="dev"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="dev"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -39,25 +57,9 @@ exports[`matches snapshot 1`] = `
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-dev-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-dev-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-dev-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-dev-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-dev-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🔨 docker | dev ": {
@@ -74,6 +76,14 @@ exports[`matches snapshot 1`] = `
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="."",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
@@ -97,17 +107,9 @@ exports[`matches snapshot 1`] = `
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -117,15 +119,15 @@ exports[`matches snapshot 1`] = `
       "app 🚀 Deploy | dev ": {
         "allow_failure": false,
         "artifacts": {
-          "paths": [
-            "____envvars.yaml",
-          ],
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
         },
         "environment": {
           "auto_stop_in": "4 weeks",
           "name": "dev/app",
           "on_stop": "app 🛑 Stop ⚠️ | dev ",
-          "url": "https://pan-test-app-dev-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -156,13 +158,71 @@ exports[`matches snapshot 1`] = `
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="dev"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="dev"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_app_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"",
+          "cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  dev
+APP_DIR: |-
+  .
+ENV_TYPE: |-
+  dev
+BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/  /')
+HOST: |-
+$(printf %s "$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL: |-
+$(printf %s "https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_INTERNAL: |-
+$(printf %s "$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_CANONICAL: |-
+$(printf %s "$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL_INTERNAL: |-
+$(printf %s "https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  asdf
+DEPLOY_CLOUD_RUN_REGION: |-
+  asia-east1
+GCLOUD_RUN_canonicalHostSuffix: |-
+$(printf %s "$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-dev-app --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=app,app-name=test-app,env-type=dev,env-name=dev,build-type=custom,cloud-run-service-name=pan-test-app-dev-app --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
@@ -171,69 +231,26 @@ exports[`matches snapshot 1`] = `
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
           "echo Uploading SBOM to Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://pan-test-app-dev-app-unknown-host.example.com" "__sbom.json" vex.json || true",
-        ],
-        "services": [
-          {
-            "command": [
-              "--tls=false",
-            ],
-            "name": "docker:24.0.6-dind",
-          },
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "deploy dev",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DRIVER": "overlay2",
-          "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
-          "DOCKER_TLS_CERTDIR": "",
-          "ENV_SHORT": "dev",
-          "ENV_TYPE": "dev",
-          "ENV_VARS": "ENV_SHORT: 'dev'
-APP_DIR: '.'
-ENV_TYPE: 'dev'
-BUILD_INFO_ID: 'some-id'
-BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-BUILD_INFO_CURRENT_VERSION: '3.2.1'
-HOST: 'pan-test-app-dev-app-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-dev-app-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-dev-app-unknown-host.example.com'
-ROOT_URL_INTERNAL: 'https://pan-test-app-dev-app-unknown-host.example.com'
-HOST_INTERNAL: 'pan-test-app-dev-app-unknown-host.example.com'
-DEPLOY_CLOUD_RUN_PROJECT_ID: 'asdf'
-DEPLOY_CLOUD_RUN_REGION: 'asia-east1'
-GCLOUD_RUN_canonicalHostSuffix: '$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
-",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_dev_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-dev-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-dev-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-dev-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "ROOT_URL": "https://pan-test-app-dev-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-dev-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🛑 Stop ⚠️ | dev ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
           "name": "dev/app",
-          "url": "https://pan-test-app-dev-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -257,18 +274,21 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_dev_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-dev-app --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "echo Disabling component in Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://pan-test-app-dev-app-unknown-host.example.com" || true",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true",
           "set -e",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app-$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "stop dev",
         "variables": {
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "GIT_STRATEGY": "none",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -293,6 +313,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "mvn org.cyclonedx:cyclonedx-maven-plugin:2.7.4:makeBom",
           "mv target/bom.json __sbom.json",
         ],
@@ -399,7 +421,25 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > ./__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="review"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="review"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_review_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_review_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -410,25 +450,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-review-mr1234-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🔨 docker | review ": {
@@ -445,6 +469,14 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="."",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_review_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
@@ -468,17 +500,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/mr1234",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -488,15 +512,15 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
       "app 🚀 Deploy | review ": {
         "allow_failure": false,
         "artifacts": {
-          "paths": [
-            "____envvars.yaml",
-          ],
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
         },
         "environment": {
           "auto_stop_in": "1 week",
-          "name": "review/some-commit/app",
+          "name": "review/$CI_COMMIT_REF_NAME/app",
           "on_stop": "app 🛑 Stop ⚠️ | review ",
-          "url": "https://pan-test-app-review-mr1234-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -527,87 +551,102 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="review"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="review"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_review_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_review_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_review_app_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"",
+          "cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  review
+APP_DIR: |-
+  .
+ENV_TYPE: |-
+  review
+BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/  /')
+HOST: |-
+$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL: |-
+$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_INTERNAL: |-
+$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_CANONICAL: |-
+$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL_INTERNAL: |-
+$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  asdf
+DEPLOY_CLOUD_RUN_REGION: |-
+  asia-east1
+GCLOUD_RUN_canonicalHostSuffix: |-
+$(printf %s "$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "echo "$ENV_VARS" > ____envvars.yaml",
-          "gcloud run deploy pan-test-app-review-mr1234-app --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/mr1234:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=app,app-name=test-app,env-type=review,env-name=review,build-type=custom,cloud-run-service-name=pan-test-app-review-mr1234-app --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=app,app-name=test-app,env-type=review,env-name=review,build-type=custom,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
-          "gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-review-mr1234-app --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done",
-          "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/mr1234 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/mr1234@$version --quiet --delete-tags; done",
+          "gcloud run revisions list --project=asdf --region=asia-east1 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done",
+          "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "set +e",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app --quiet --delete-tags",
           "set -e",
           "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
           "echo Uploading SBOM to Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://pan-test-app-review-mr1234-app-unknown-host.example.com" "__sbom.json" vex.json || true",
-        ],
-        "services": [
-          {
-            "command": [
-              "--tls=false",
-            ],
-            "name": "docker:24.0.6-dind",
-          },
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "deploy review",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DRIVER": "overlay2",
-          "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/mr1234",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
-          "DOCKER_TLS_CERTDIR": "",
-          "ENV_SHORT": "review",
-          "ENV_TYPE": "review",
-          "ENV_VARS": "ENV_SHORT: 'review'
-APP_DIR: '.'
-ENV_TYPE: 'review'
-BUILD_INFO_ID: 'some-id'
-BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-BUILD_INFO_CURRENT_VERSION: '3.2.1'
-HOST: 'pan-test-app-review-mr1234-app-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-review-mr1234-app-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-review-mr1234-app-unknown-host.example.com'
-ROOT_URL_INTERNAL: 'https://pan-test-app-review-mr1234-app-unknown-host.example.com'
-HOST_INTERNAL: 'pan-test-app-review-mr1234-app-unknown-host.example.com'
-DEPLOY_CLOUD_RUN_PROJECT_ID: 'asdf'
-DEPLOY_CLOUD_RUN_REGION: 'asia-east1'
-GCLOUD_RUN_canonicalHostSuffix: '$CL_review_app_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
-",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_review_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_review_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-review-mr1234-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "ROOT_URL": "https://pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-review-mr1234-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🛑 Stop ⚠️ | review ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
-          "name": "review/some-commit/app",
-          "url": "https://pan-test-app-review-mr1234-app-unknown-host.example.com",
+          "name": "review/$CI_COMMIT_REF_NAME/app",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -631,21 +670,24 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_review_app_GCLOUD_DEPLOY_credentialsKey")",
-          "gcloud run services delete pan-test-app-review-mr1234-app --project=asdf --region=asia-east1",
-          "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/mr1234 --quiet --delete-tags",
+          "gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --project=asdf --region=asia-east1",
+          "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "set +e",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app --quiet --delete-tags",
           "set -e",
           "echo Disabling component in Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://pan-test-app-review-mr1234-app-unknown-host.example.com" || true",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true",
           "set -e",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app-$CL_review_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "stop review",
         "variables": {
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "GIT_STRATEGY": "none",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -670,6 +712,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "mvn org.cyclonedx:cyclonedx-maven-plugin:2.7.4:makeBom",
           "mv target/bom.json __sbom.json",
         ],
@@ -776,7 +820,25 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > ./__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="prod"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="prod"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -787,25 +849,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "ENV_SHORT": "prod",
-          "ENV_TYPE": "prod",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-prod-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-prod-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-prod-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-prod-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-prod-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🔨 app | stage ": {
@@ -831,7 +877,25 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
-          "echo '{"id":"some-id","time":"01-01-2023 12:13:14"}' > ./__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="stage"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="stage"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -842,25 +906,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "ENV_SHORT": "stage",
-          "ENV_TYPE": "stage",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-stage-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-stage-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-stage-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "4Gi",
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
-          "ROOT_URL": "https://pan-test-app-stage-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-stage-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🔨 docker | prod ": {
@@ -877,6 +925,14 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="."",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
@@ -900,17 +956,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -931,6 +979,14 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_DIR="."",
+          "export DOCKER_DIR="."",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud auth configure-docker asia-east1-docker.pkg.dev",
@@ -954,17 +1010,9 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         ],
         "stage": "build",
         "variables": {
-          "APP_DIR": ".",
-          "DOCKERFILE_ADDITIONS": undefined,
-          "DOCKERFILE_ADDITIONS_END": undefined,
           "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DIR": ".",
           "DOCKER_DRIVER": "overlay2",
           "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
           "DOCKER_TLS_CERTDIR": "",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "2Gi",
@@ -974,15 +1022,15 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
       "app 🚀 Deploy | prod ": {
         "allow_failure": true,
         "artifacts": {
-          "paths": [
-            "____envvars.yaml",
-          ],
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
         },
         "environment": {
           "auto_stop_in": undefined,
           "name": "prod/app",
           "on_stop": "app 🛑 Stop ⚠️ | prod ",
-          "url": "https://pan-test-app-prod-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1013,13 +1061,71 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="prod"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="prod"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_app_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"",
+          "cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  prod
+APP_DIR: |-
+  .
+ENV_TYPE: |-
+  prod
+BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/  /')
+HOST: |-
+$(printf %s "$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL: |-
+$(printf %s "https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_INTERNAL: |-
+$(printf %s "$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_CANONICAL: |-
+$(printf %s "$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL_INTERNAL: |-
+$(printf %s "https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  asdf
+DEPLOY_CLOUD_RUN_REGION: |-
+  asia-east1
+GCLOUD_RUN_canonicalHostSuffix: |-
+$(printf %s "$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-prod-app --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=app,app-name=test-app,env-type=prod,env-name=prod,build-type=custom,cloud-run-service-name=pan-test-app-prod-app --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
@@ -1028,76 +1134,28 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
           "echo Uploading SBOM to Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://pan-test-app-prod-app-unknown-host.example.com" "__sbom.json" vex.json || true",
-        ],
-        "services": [
-          {
-            "command": [
-              "--tls=false",
-            ],
-            "name": "docker:24.0.6-dind",
-          },
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "deploy prod",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DRIVER": "overlay2",
-          "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
-          "DOCKER_TLS_CERTDIR": "",
-          "ENV_SHORT": "prod",
-          "ENV_TYPE": "prod",
-          "ENV_VARS": "ENV_SHORT: 'prod'
-APP_DIR: '.'
-ENV_TYPE: 'prod'
-BUILD_INFO_ID: 'some-id'
-BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-BUILD_INFO_CURRENT_VERSION: '3.2.1'
-HOST: 'pan-test-app-prod-app-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-prod-app-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-prod-app-unknown-host.example.com'
-ROOT_URL_INTERNAL: 'https://pan-test-app-prod-app-unknown-host.example.com'
-HOST_INTERNAL: 'pan-test-app-prod-app-unknown-host.example.com'
-DEPLOY_CLOUD_RUN_PROJECT_ID: 'asdf'
-DEPLOY_CLOUD_RUN_REGION: 'asia-east1'
-GCLOUD_RUN_canonicalHostSuffix: '$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
-",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_prod_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-prod-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-prod-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-prod-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "ROOT_URL": "https://pan-test-app-prod-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-prod-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🚀 Deploy | stage ": {
         "allow_failure": false,
         "artifacts": {
-          "paths": [
-            "____envvars.yaml",
-          ],
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
         },
         "environment": {
           "auto_stop_in": undefined,
           "name": "stage/app",
           "on_stop": "app 🛑 Stop ⚠️ | stage ",
-          "url": "https://pan-test-app-stage-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1128,13 +1186,71 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export ENV_SHORT="stage"",
+          "export APP_DIR="."",
+          "export ENV_TYPE="stage"",
+          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
+          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export HOST="$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL="https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_INTERNAL="$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export HOST_CANONICAL="$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
+          "export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"",
+          "export DEPLOY_CLOUD_RUN_REGION="asia-east1"",
+          "export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app_GCLOUD_DEPLOY_credentialsKey"",
+          "export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix"",
+          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
+          "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
+          "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app"",
+          "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
+          "export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_app_GCLOUD_DEPLOY_credentialsKey")",
           "export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe asdf --format="value(projectNumber)")",
           "echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"",
           "echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"",
+          "cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  stage
+APP_DIR: |-
+  .
+ENV_TYPE: |-
+  stage
+BUILD_INFO_BUILD_ID: |-
+$(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+$(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+BUILD_INFO_CURRENT_VERSION: |-
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/  /')
+HOST: |-
+$(printf %s "$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL: |-
+$(printf %s "https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_INTERNAL: |-
+$(printf %s "$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+HOST_CANONICAL: |-
+$(printf %s "$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+ROOT_URL_INTERNAL: |-
+$(printf %s "https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  asdf
+DEPLOY_CLOUD_RUN_REGION: |-
+  asia-east1
+GCLOUD_RUN_canonicalHostSuffix: |-
+$(printf %s "$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+",
+          "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "echo "$ENV_VARS" > ____envvars.yaml",
           "gcloud run deploy pan-test-app-stage-app --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=app,app-name=test-app,env-type=stage,env-name=stage,build-type=custom,cloud-run-service-name=pan-test-app-stage-app --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
@@ -1143,69 +1259,26 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"",
           "echo Uploading SBOM to Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://pan-test-app-stage-app-unknown-host.example.com" "__sbom.json" vex.json || true",
-        ],
-        "services": [
-          {
-            "command": [
-              "--tls=false",
-            ],
-            "name": "docker:24.0.6-dind",
-          },
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "deploy stage",
         "variables": {
-          "APP_DIR": ".",
-          "BUILD_INFO_BUILD_TIME": "01-01-2023 12:13:14",
-          "BUILD_INFO_CURRENT_VERSION": "3.2.1",
-          "BUILD_INFO_ID": "some-id",
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
-          "DEPLOY_CLOUD_RUN_PROJECT_ID": "asdf",
-          "DEPLOY_CLOUD_RUN_REGION": "asia-east1",
-          "DOCKER_BUILDKIT": "1",
-          "DOCKER_CACHE_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app",
-          "DOCKER_DRIVER": "overlay2",
-          "DOCKER_HOST": "tcp://0.0.0.0:2375",
-          "DOCKER_IMAGE": "asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app",
-          "DOCKER_IMAGE_TAG": "$CI_COMMIT_SHA",
-          "DOCKER_REGISTRY": "asia-east1-docker.pkg.dev",
-          "DOCKER_TLS_CERTDIR": "",
-          "ENV_SHORT": "stage",
-          "ENV_TYPE": "stage",
-          "ENV_VARS": "ENV_SHORT: 'stage'
-APP_DIR: '.'
-ENV_TYPE: 'stage'
-BUILD_INFO_ID: 'some-id'
-BUILD_INFO_BUILD_TIME: '01-01-2023 12:13:14'
-BUILD_INFO_CURRENT_VERSION: '3.2.1'
-HOST: 'pan-test-app-stage-app-unknown-host.example.com'
-ROOT_URL: 'https://pan-test-app-stage-app-unknown-host.example.com'
-HOST_CANONICAL: 'pan-test-app-stage-app-unknown-host.example.com'
-ROOT_URL_INTERNAL: 'https://pan-test-app-stage-app-unknown-host.example.com'
-HOST_INTERNAL: 'pan-test-app-stage-app-unknown-host.example.com'
-DEPLOY_CLOUD_RUN_PROJECT_ID: 'asdf'
-DEPLOY_CLOUD_RUN_REGION: 'asia-east1'
-GCLOUD_RUN_canonicalHostSuffix: '$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix'
-_ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]'
-",
-          "GCLOUD_DEPLOY_credentialsKey": "$CL_stage_app_GCLOUD_DEPLOY_credentialsKey",
-          "GCLOUD_RUN_canonicalHostSuffix": "$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix",
-          "HOST": "pan-test-app-stage-app-unknown-host.example.com",
-          "HOST_CANONICAL": "pan-test-app-stage-app-unknown-host.example.com",
-          "HOST_INTERNAL": "pan-test-app-stage-app-unknown-host.example.com",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
-          "ROOT_URL": "https://pan-test-app-stage-app-unknown-host.example.com",
-          "ROOT_URL_INTERNAL": "https://pan-test-app-stage-app-unknown-host.example.com",
-          "_ALL_ENV_VAR_KEYS": "["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_CANONICAL","ROOT_URL_INTERNAL","HOST_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]",
         },
       },
       "app 🛑 Stop ⚠️ | prod ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
           "name": "prod/app",
-          "url": "https://pan-test-app-prod-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1229,18 +1302,21 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_prod_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-prod-app --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "echo Disabling component in Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://pan-test-app-prod-app-unknown-host.example.com" || true",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true",
           "set -e",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app-$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "stop prod",
         "variables": {
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "GIT_STRATEGY": "none",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1248,10 +1324,15 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
         },
       },
       "app 🛑 Stop ⚠️ | stage ": {
+        "artifacts": {
+          "reports": {
+            "dotenv": "gitlab_environment.env",
+          },
+        },
         "environment": {
           "action": "stop",
           "name": "stage/app",
-          "url": "https://pan-test-app-stage-app-unknown-host.example.com",
+          "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
         "interruptible": true,
@@ -1275,18 +1356,21 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           },
         ],
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export CLOUDSDK_CORE_DISABLE_PROMPTS="1"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "set +e",
           "gcloud auth activate-service-account --key-file=<(echo "$CL_stage_app_GCLOUD_DEPLOY_credentialsKey")",
           "gcloud run services delete pan-test-app-stage-app --project=asdf --region=asia-east1",
           "gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app --quiet --delete-tags",
           "gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done",
           "echo Disabling component in Dependency Track",
-          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://pan-test-app-stage-app-unknown-host.example.com" || true",
+          "/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true",
           "set -e",
+          "echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app-$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env",
         ],
         "stage": "stop stage",
         "variables": {
-          "CLOUDSDK_CORE_DISABLE_PROMPTS": "1",
           "GIT_STRATEGY": "none",
           "KUBERNETES_CPU_REQUEST": "0.5",
           "KUBERNETES_MEMORY_LIMIT": "400Mi",
@@ -1311,6 +1395,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "mvn org.cyclonedx:cyclonedx-maven-plugin:2.7.4:makeBom",
           "mv target/bom.json __sbom.json",
         ],
@@ -1335,6 +1421,8 @@ _ALL_ENV_VAR_KEYS: '["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_ID","BUILD_INF
           ],
         },
         "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "mvn org.cyclonedx:cyclonedx-maven-plugin:2.7.4:makeBom",
           "mv target/bom.json __sbom.json",
         ],

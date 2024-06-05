@@ -1,3 +1,4 @@
+import { BashExpression } from "../../bash/BashExpression";
 import type { Context } from "../../types";
 import { ensureArray } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
@@ -53,11 +54,13 @@ const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
 
 export const getDockerAppCopyAndBuildScript = (context: Context) => {
   if (context.packageManagerInfo?.isClassic) {
-    return `
+    return new BashExpression(
+      `
 RUN ${YARN_INSTALL_CLASSIC} --production --ignore-scripts
 ${DOCKER_COPY_FILES}
 RUN ${YARN_INSTALL_CLASSIC} --production 
-    `.trim();
+    `.trim()
+    );
   }
 
   // yarn >= 4 ships with build in plugins, see https://github.com/yarnpkg/berry/pull/4253
@@ -71,10 +74,12 @@ RUN ${YARN_INSTALL_CLASSIC} --production
 
   // copy first everything and then install
   // rebuild first does not work as it will run postinstall and that might require files in the app
-  return `
+  return new BashExpression(
+    `
 ${DOCKER_COPY_FILES}
 ${maybeAddWorkspaceToolsCommand}
 RUN ${YARN_BERRY_PROD_REBUILD}
 
-    `.trim();
+    `.trim()
+  );
 };

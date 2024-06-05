@@ -1,16 +1,23 @@
-import { isObject } from "lodash";
+import { isObject, merge } from "lodash";
+import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { BASE_RETRY } from "../../defaults";
-import type { GitlabJobDef } from "../../types";
+import type {
+  CatladderJobWithContext,
+  Context,
+  GitlabJobDef,
+} from "../../types";
 import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
-import type { AllCatladderJobs } from "../createAllJobs";
 import { notNil } from "../../utils";
+import { collapseableSection } from "../../utils/gitlab";
+import type { AllCatladderJobs } from "../createAllJobs";
 
 export type AllGitlabJobs = Record<string, GitlabJobDef>;
 
-const removeUndefined = <T extends Record<string, unknown>>(obj: T): T =>
+export const GITLAB_ENVIRONMENT_URL_VARIABLE = "CL_GITLAB_ENVIRONMENT_URL";
+const removeUndefined = (obj: GitlabJobDef): GitlabJobDef =>
   Object.fromEntries(
     Object.entries(obj).filter(([, value]) => value !== undefined)
-  ) as T;
+  ) as GitlabJobDef;
 const getFullJobName = (
   name: string,
   componentName: string,
@@ -47,6 +54,7 @@ export const makeGitlabJob = (
   componentName: string,
   env: string,
   {
+    environment,
     envMode,
     needsStages,
     needsOtherComponent,
@@ -54,8 +62,11 @@ export const makeGitlabJob = (
     needs,
     jobTags,
     script,
+    context,
+    variables,
+    runnerVariables,
     ...job
-  }: CatladderJob<string>,
+  }: CatladderJobWithContext<string>,
   allJobs: AllCatladderJobs
 ): [fullName: string, job: GitlabJobDef] => {
   const stage = envMode === "stagePerEnv" ? `${job.stage} ${env}` : job.stage;
@@ -106,29 +117,124 @@ export const makeGitlabJob = (
     envMode !== "none" ? env : undefined
   );
 
-  const gitlabJob: GitlabJobDef = removeUndefined({
-    ...job,
-    script: script?.filter(notNil),
-    tags: jobTags,
-    stage,
-    environment: job.environment?.on_stop
-      ? {
-          ...job.environment,
-          on_stop: getFullReferencedJobName(
-            job.environment.on_stop,
-            componentName,
-            env,
-            allJobs
-          ),
-        }
-      : job.environment,
-    // sort in a predictable manner for snapshot tests
-    needs: deduplicatedGitlabNeeds,
-    retry: BASE_RETRY,
-    interruptible: true,
-  });
+  // backwards compatibility, some may still use KUBERNETES_CPU_REQUEST, KUBERNETES_MEMORY_REQUEST, etc. in variables.
+  // those should now be set in the runnerVariables as they don't work in the variables key of the catladder job, becuase those get injected
+  const PIPELINE_RUNNER_VARIABLES = [
+    "KUBERNETES_CPU_REQUEST",
+    "KUBERNETES_MEMORY_REQUEST",
+    "KUBERNETES_CPU_LIMIT",
+    "KUBERNETES_MEMORY_LIMIT",
+  ];
+  // remove those from variables and add them to runnerVariables
+
+  const varsInjectScripts = collapseableSection(
+    "injectvars",
+    "Injecting variables"
+  )([
+    ...getInjectVarsScript(
+      // remove legacy variables
+      Object.fromEntries(
+        Object.entries(variables ?? {}).filter(
+          ([key]) => !PIPELINE_RUNNER_VARIABLES.includes(key)
+        )
+      )
+    ),
+  ]);
+
+  const legacyRunnerVariables = Object.fromEntries(
+    Object.entries(variables ?? {}).filter(([key]) =>
+      PIPELINE_RUNNER_VARIABLES.includes(key)
+    )
+  );
+
+  if (Object.keys(legacyRunnerVariables).length > 0) {
+    console.warn(
+      `Legacy variables detected in ${fullJobName}: ${Object.keys(
+        legacyRunnerVariables
+      ).join(", ")}. Please move them to the runnerVariables key.`
+    );
+  }
+
+  const modified = addGitlabEnvironment(
+    context,
+    environment,
+    {
+      ...job,
+      variables: {
+        ...legacyRunnerVariables,
+        ...runnerVariables,
+      },
+      script: [...varsInjectScripts, ...(script?.filter(notNil) ?? [])],
+      tags: jobTags,
+      stage,
+
+      // sort in a predictable manner for snapshot tests
+      needs: deduplicatedGitlabNeeds,
+      retry: BASE_RETRY,
+      interruptible: true,
+    },
+    componentName,
+    env,
+    allJobs
+  );
+
+  const gitlabJob: GitlabJobDef = removeUndefined(modified);
 
   return [fullJobName, gitlabJob];
+};
+
+const addGitlabEnvironment = (
+  context: Context,
+  environment: CatladderJob["environment"],
+  job: GitlabJobDef,
+  componentName: string,
+  env: string, // TODO: we could actually pull this from contxt
+  allJobs: AllCatladderJobs
+): GitlabJobDef => {
+  if (!environment) {
+    return job;
+  }
+  const { url, envType } = context.environment;
+  const { on_stop, ...restEnvironment } = environment;
+  // those can be dynamic, so we therefore have to do this: https://docs.gitlab.com/ee/ci/environments/#set-a-dynamic-environment-url
+
+  const dotEnvFile = "gitlab_environment.env";
+
+  const scriptToAdd = [
+    `echo "${GITLAB_ENVIRONMENT_URL_VARIABLE}=${url}" >> ${dotEnvFile}`,
+  ];
+
+  // this is NOT a bashVariable since it NEEDS to be used as a string in gitlab
+  const gitlabEnvironmentName =
+    envType === "review"
+      ? `${env}/$CI_COMMIT_REF_NAME/${componentName}` // FIXME: should be replaced with mr name as well
+      : `${env}/${componentName}`;
+
+  return {
+    ...job,
+    environment: {
+      name: gitlabEnvironmentName,
+      url: `$${GITLAB_ENVIRONMENT_URL_VARIABLE}`,
+      ...(on_stop
+        ? {
+            on_stop: getFullReferencedJobName(
+              on_stop,
+              componentName,
+              env,
+              allJobs
+            ),
+          }
+        : {}),
+      ...restEnvironment,
+    },
+    artifacts: merge(job.artifacts ?? {}, {
+      reports: {
+        dotenv: `${dotEnvFile}`,
+      },
+    }),
+
+    script: [...(job.script ?? []), ...scriptToAdd],
+  };
 };
 
 export const createGitlabJobs = async (

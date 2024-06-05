@@ -1,8 +1,9 @@
 
 FROM alpine:3.15
 
-# add bash
-RUN apk add --no-cache bash curl
+# add bash curl and git
+RUN apk add --no-cache bash curl git
+
 
 # kubernetes & helm
 ENV KUBERNETES_VERSION 1.19.14

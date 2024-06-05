@@ -1,6 +1,7 @@
 import { isObject } from "lodash";
 import type { SecretEnvVar } from "../getEnvironmentVariables";
 import { getSecretVarName } from "../getEnvironmentVariables";
+import { getBashVariable } from "../../bash/BashExpression";
 
 export const stringifyValues = (obj: Record<string, unknown>) =>
   Object.fromEntries(
@@ -20,7 +21,7 @@ export const makeSecretEnvVarMapping = (
   return Object.fromEntries(
     secretEnvVars.map(({ key }) => [
       key,
-      `$${getSecretVarName(env, componentName, key)}`,
+      getBashVariable(getSecretVarName(env, componentName, key)),
     ])
   );
 };

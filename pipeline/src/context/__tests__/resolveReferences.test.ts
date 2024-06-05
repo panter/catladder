@@ -1,8 +1,13 @@
+import type { BashExpression } from "../../bash/BashExpression";
 import {
   resolveReferences,
   translateLegacyFromComponents,
 } from "../resolveReferences";
 
+const unpackBashExpressions = (obj: Record<string, string | BashExpression>) =>
+  Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [key, value.toString()])
+  );
 describe("resolveReferences", () => {
   it("replaces occurences of ${componentName:VARIABLE_NAME}", async () => {
     const variables = {
@@ -21,7 +26,7 @@ describe("resolveReferences", () => {
       return otherVariables[componentName];
     });
 
-    expect(result).toEqual({
+    expect(unpackBashExpressions(result)).toEqual({
       a: "hello world",
       b: "a replaced value looks like this: 'foo from api', nice!",
     });
@@ -34,7 +39,7 @@ describe("resolveReferences", () => {
     };
     const result = await resolveReferences(variables);
 
-    expect(result).toEqual({
+    expect(unpackBashExpressions(result)).toEqual({
       FOO: "hello world",
       BAR: "this: hello world!",
     });
@@ -54,7 +59,7 @@ describe("resolveReferences", () => {
       return otherVariables[componentName];
     });
 
-    expect(result).toEqual({
+    expect(unpackBashExpressions(result)).toEqual({
       FOO: "hello from foo from api",
       BAR: "this: hello from foo from api!",
     });
@@ -70,7 +75,7 @@ describe("resolveReferences", () => {
       return otherVariables[componentName];
     });
 
-    expect(result).toEqual({
+    expect(unpackBashExpressions(result)).toEqual({
       a: "hello world",
       b: "a not found value looks like this: '${api:FOO}'",
     });
@@ -92,7 +97,7 @@ describe("resolveReferences", () => {
       return otherVariables[componentName];
     });
 
-    expect(result).toEqual({
+    expect(unpackBashExpressions(result)).toEqual({
       a: "value is hi, foo from api!",
     });
   });
@@ -113,7 +118,7 @@ describe("resolveReferences", () => {
       return otherVariables[componentName];
     });
 
-    expect(result).toEqual({
+    expect(unpackBashExpressions(result)).toEqual({
       a: "value is frontend api ${frontend:FOO}!",
     });
   });

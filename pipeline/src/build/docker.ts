@@ -13,7 +13,7 @@ import {
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
 
-const DOCKER_RUNNER_BUILD_VARIABLES = {
+const DOCKER_BUILD_RUNNER_REQUESTS = {
   KUBERNETES_CPU_REQUEST: "0.5",
   KUBERNETES_MEMORY_REQUEST: "1Gi",
   KUBERNETES_MEMORY_LIMIT: "2Gi",
@@ -52,7 +52,8 @@ export const requiresDockerBuild = ({
   isOfDeployType(deploy, "kubernetes", "google-cloudrun", "dockerTag") ||
   (isOfDeployType(deploy, "custom") && deploy.requiresDocker);
 
-const getDockerBaseVariables = () => ({
+// those need to be runner variables
+const getDockerBuildRunnerVariables = () => ({
   DOCKER_HOST: "tcp://0.0.0.0:2375",
   DOCKER_TLS_CERTDIR: "",
   DOCKER_DRIVER: "overlay2",
@@ -61,15 +62,12 @@ const getDockerBaseVariables = () => ({
 
 export const getDockerBuildVariables = (context: Context) => {
   return {
-    ...DOCKER_RUNNER_BUILD_VARIABLES,
     DOCKERFILE_ADDITIONS:
       context.componentConfig.build.docker?.additionsBegin?.join("\n"),
     DOCKERFILE_ADDITIONS_END:
       context.componentConfig.build.docker?.additionsEnd?.join("\n"),
     APP_DIR: context.componentConfig.dir,
-
     DOCKER_DIR: ".", // relative to componentdir
-    ...getDockerBaseVariables(),
 
     ...getDockerImageVariables(context),
   };
@@ -77,7 +75,12 @@ export const getDockerBuildVariables = (context: Context) => {
 
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
 
-export const getDockerJobBaseProps = (context: Context) => {
+export const getDockerJobBaseProps = (
+  context: Context
+): Pick<
+  CatladderJob,
+  "image" | "services" | "variables" | "runnerVariables"
+> => {
   return {
     image: getRunnerImage("docker-build"),
     services: [
@@ -86,7 +89,8 @@ export const getDockerJobBaseProps = (context: Context) => {
         command: ["--tls=false"],
       },
     ],
-    variables: getDockerBaseVariables(),
+    variables: {},
+    runnerVariables: getDockerBuildRunnerVariables(),
   };
 };
 
@@ -105,6 +109,10 @@ export const createDockerBuildJobBase = (
     },
     {
       variables: getDockerBuildVariables(context),
+      runnerVariables: {
+        ...DOCKER_BUILD_RUNNER_REQUESTS,
+        ...getDockerBuildRunnerVariables(),
+      },
     },
     def
   );

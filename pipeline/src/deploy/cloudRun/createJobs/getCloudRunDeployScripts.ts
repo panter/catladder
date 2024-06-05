@@ -1,4 +1,5 @@
-import type { Context } from "../../../types/context";
+import { isNil, omit } from "lodash";
+import type { Context, UnspecifiedEnvVars } from "../../../types/context";
 import { collapseableSection } from "../../../utils/gitlab";
 import { getDependencyTrackUploadScript } from "../../sbom";
 
@@ -15,9 +16,22 @@ import {
   getCloudRunDeployConfig,
   setGoogleProjectNumberScript,
 } from "./common";
+import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from "..";
+import type { StringOrBashExpression } from "../../../bash/BashExpression";
+import { BashExpression, bashEscape } from "../../../bash/BashExpression";
+import { ENV_VARS_FILENAME } from "./constants";
+import {
+  writeBashYamlToFileScript,
+  yamlBashString,
+} from "../../../bash/bashYaml";
 
 export function getCloudRunDeployScripts(context: Context) {
   const deployConfig = getCloudRunDeployConfig(context);
+  const allEnvVars = omit(
+    context.environment.envVars,
+    GCLOUD_DEPLOY_CREDENTIALS_KEY
+  );
+
   return [
     ...collapseableSection(
       "prepare",
@@ -27,10 +41,14 @@ export function getCloudRunDeployScripts(context: Context) {
       ...setGoogleProjectNumberScript(deployConfig),
     ]),
     ...collapseableSection(
+      "writeenvvars",
+      "Write env vars to file"
+    )(writeBashYamlToFileScript(allEnvVars, ENV_VARS_FILENAME)),
+
+    ...collapseableSection(
       "deploy",
       "Deploy to cloud run"
     )([
-      `echo "$ENV_VARS" > ____envvars.yaml`, // TODO: split secrets out
       ...(deployConfig.cloudSql
         ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
         : []),

@@ -2,8 +2,9 @@ import { BUILD_TYPES } from "../build";
 import type { BuildConfig, BuildConfigType } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
 import type { DeployConfig, DeployConfigType } from "../deploy/types";
-import type { Config } from "../types/config";
-import type { CommitInfo, Context, PackageManagerInfo } from "../types/context";
+import type { PipelineType } from "../types";
+import type { Config, PipelineTrigger } from "../types/config";
+import type { Context, PackageManagerInfo } from "../types/context";
 import type { PartialDeep } from "../types/utils";
 import { mergeWithMergingArrays } from "../utils";
 import { getEnvironment } from "./getEnvironment";
@@ -12,25 +13,25 @@ import { getEnvironmentContext } from "./getEnvironmentContext";
 export * from "./getEnvironment";
 export * from "./getEnvironmentVariables";
 
+export type CreateContextContext = {
+  config: Config;
+  componentName: string;
+  env: string;
+  pipelineType?: PipelineType;
+  trigger?: PipelineTrigger;
+  packageManagerInfo?: PackageManagerInfo;
+};
+
 export const createContext = async (
-  config: Config,
-  componentName: string,
-  env: string,
-  commitInfo?: CommitInfo,
-  packageManagerInfo?: PackageManagerInfo
+  ctx: CreateContextContext
 ): Promise<Context> => {
-  if (!/^[a-z0-9-]+$/.test(componentName)) {
+  if (!/^[a-z0-9-]+$/.test(ctx.componentName)) {
     throw new Error(
       "componentName may only contain lower case letters, numbers and -"
     );
   }
 
-  const envContext = getEnvironmentContext(
-    config,
-    env,
-    componentName,
-    commitInfo
-  );
+  const envContext = getEnvironmentContext(ctx);
 
   const componentConfigWithoutDefaults = envContext.envConfigRaw;
   const defaults: {
@@ -42,10 +43,9 @@ export const createContext = async (
           BUILD_TYPES[
             componentConfigWithoutDefaults.build.type as BuildConfigType
           ].defaults(envContext),
-        deploy:
-          DEPLOY_TYPES[
-            componentConfigWithoutDefaults.deploy.type as DeployConfigType
-          ].defaults(envContext),
+        deploy: DEPLOY_TYPES[
+          componentConfigWithoutDefaults.deploy.type as DeployConfigType
+        ].defaults(envContext as any),
       }
     : {
         build: {},
@@ -57,11 +57,12 @@ export const createContext = async (
   );
 
   return {
-    fullConfig: config,
+    fullConfig: ctx.config,
     componentConfig,
-    componentName,
-    environment: await getEnvironment(config, componentName, env, commitInfo),
-    commitInfo,
-    packageManagerInfo,
+    componentName: ctx.componentName,
+    environment: await getEnvironment(ctx),
+    packageManagerInfo: ctx.packageManagerInfo,
+    pipelineType: ctx.pipelineType,
+    trigger: ctx.trigger,
   };
 };

@@ -1,11 +1,10 @@
 import { isFunction } from "lodash";
 import { BUILD_TYPES } from "../build";
+import type { CreateContextContext } from "../context";
 import { createContext } from "../context";
 import { DEPLOY_TYPES } from "../deploy";
-import type { Config, PipelineTrigger } from "../types/config";
-import type { CommitInfo, Context } from "../types/context";
+import type { CatladderJobWithContext, Context } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
-import { getBaseCommitInfo } from "./commitInfo/getCommitInfo";
 import { getPackageManagerInfo } from "./packageManager";
 
 const injectDefaultVarsInCustomJobs = (
@@ -39,25 +38,18 @@ const createRawJobs = (context: Context): CatladderJob[] => {
   const customJobs = getCustomJobs(context);
   return [...buildJobs, ...deployJobs, ...customJobs];
 };
+
 export const createJobsForComponent = async (
-  config: Config,
-  componentName: string,
-  env: string,
-  trigger: PipelineTrigger
-): Promise<Array<CatladderJob>> => {
-  const commitInfo: CommitInfo = {
-    ...(await getBaseCommitInfo()),
-    trigger,
-  };
-
-  const packageManagerInfo = await getPackageManagerInfo(config, componentName);
-
-  const context = await createContext(
-    config,
-    componentName,
-    env,
-    commitInfo,
-    packageManagerInfo
+  contextContext: Omit<CreateContextContext, "packageManagerInfo">
+): Promise<Array<CatladderJobWithContext>> => {
+  const packageManagerInfo = await getPackageManagerInfo(
+    contextContext.config,
+    contextContext.componentName
   );
-  return createRawJobs(context);
+
+  const context = await createContext({
+    ...contextContext,
+    packageManagerInfo,
+  });
+  return createRawJobs(context).map((job) => ({ ...job, context }));
 };

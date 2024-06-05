@@ -1,6 +1,3 @@
-import { merge } from "lodash";
-
-import { getDockerJobBaseProps } from "../../../build/docker";
 import { getRunnerImage } from "../../../runner";
 import type { Context } from "../../../types/context";
 import type { CatladderJob } from "../../../types/jobs";
@@ -8,7 +5,7 @@ import { allowFailureInScripts } from "../../../utils/gitlab";
 import { createDeployementJobs } from "../../base";
 
 import { isOfDeployType } from "../../types";
-import { getDeployJobVariables } from "./variables";
+import { ENV_VARS_FILENAME } from "./constants";
 import { getCloudRunDeployScripts } from "./getCloudRunDeployScripts";
 import { getCloudRunStopScripts } from "./getCloudRunStopScripts";
 
@@ -28,12 +25,24 @@ export const createGoogleCloudRunDeployJobs = (
   const stopScripts = getCloudRunStopScripts(context);
 
   return createDeployementJobs(context, {
-    deploy: merge(getDockerJobBaseProps(context), {
-      artifacts: { paths: ["____envvars.yaml"] },
-      variables: getDeployJobVariables(context),
+    deploy: {
+      variables: {
+        CLOUDSDK_CORE_DISABLE_PROMPTS: "1",
+      },
+      ...(deployConfig.debug
+        ? {
+            artifacts: {
+              paths: [
+                ENV_VARS_FILENAME, // debug
+              ],
+              when: "always",
+            },
+          }
+        : {}),
+
       image: getRunnerImage("gcloud"),
       script: deployScripts,
-    }),
+    },
     stop: {
       image: getRunnerImage("gcloud"),
       variables: {

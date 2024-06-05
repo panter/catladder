@@ -1,4 +1,5 @@
 import type { SecretEnvVar } from "..";
+import type { BashExpression } from "../bash/BashExpression";
 import type { Context } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
@@ -23,7 +24,7 @@ export type DeployTypeDefinition<T extends DeployConfigType> = {
   ) => SecretEnvVar[];
   getAdditionalEnvVars: (
     envContext: EnvironmentContext<any, T>
-  ) => Record<string, string | undefined | null>;
+  ) => Record<string, string | BashExpression | undefined | null>;
 };
 export type DeployTypes = {
   [T in DeployConfigType]: DeployTypeDefinition<T>;

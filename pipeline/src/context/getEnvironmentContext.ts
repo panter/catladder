@@ -1,44 +1,40 @@
-import type { Config, EnvConfigWithComponent } from "../types/config";
+import type { CreateContextContext } from "..";
+import type { StringOrBashExpression } from "../bash/BashExpression";
+import { joinBashExpressions } from "../bash/BashExpression";
 
-import type { CommitInfo } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import { getEnvConfig } from "./getEnvConfig";
 import { getEnvType } from "./getEnvType";
+import { getReviewSlug } from "./getReviewSlug";
 
 const getEnvironmentSlugPrefix = (
-  envConfig: EnvConfigWithComponent,
   env: string,
-  commitInfo?: CommitInfo
-) => {
-  const envType = getEnvType(env, envConfig);
-
-  return envType === "review" && commitInfo
-    ? `${env}-${commitInfo.reviewSlug}`
-    : `${env}`;
+  reviewSlug: StringOrBashExpression | null
+): StringOrBashExpression => {
+  if (reviewSlug) {
+    return joinBashExpressions([env, reviewSlug], "-");
+  }
+  return env;
 };
 
-export const getEnvironmentContext = (
-  config: Config,
-  env: string,
-  componentName: string,
-  commitInfo?: CommitInfo
-): EnvironmentContext<any, any> => {
+export const getEnvironmentContext = ({
+  env,
+  componentName,
+  config,
+  pipelineType,
+}: CreateContextContext): EnvironmentContext<any, any> => {
   const envConfigRaw = getEnvConfig(config, componentName, env);
   const envType = getEnvType(env, envConfigRaw);
+  const reviewSlug = getReviewSlug(envConfigRaw, env, pipelineType);
 
-  const environmentSlugPrefix = getEnvironmentSlugPrefix(
-    envConfigRaw,
-    env,
-    commitInfo
+  const environmentSlugPrefix = getEnvironmentSlugPrefix(env, reviewSlug);
+
+  const environmentSlug = environmentSlugPrefix.concat(`-${componentName}`);
+
+  const fullName = joinBashExpressions(
+    [config.customerName, config.appName, environmentSlug],
+    "-"
   );
-
-  const environmentSlug = `${environmentSlugPrefix}-${componentName}`;
-  const gitlabEnvironmentName =
-    envType === "review" && commitInfo
-      ? `${env}/${commitInfo.refName}/${componentName}`
-      : `${env}/${componentName}`;
-
-  const fullName = `${config.customerName}-${config.appName}-${environmentSlug}`;
 
   return {
     envConfigRaw,
@@ -46,10 +42,10 @@ export const getEnvironmentContext = (
     buildConfigRaw: envConfigRaw.build,
     environmentSlugPrefix,
     environmentSlug,
-    gitlabEnvironmentName,
+    reviewSlug,
+    pipelineType,
     fullName,
     envType,
-    commitInfo,
     componentName,
     env,
     fullConfig: config,

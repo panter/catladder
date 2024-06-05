@@ -13,7 +13,8 @@ const RUNNER_CUSTOM_TEST_VARIABLES = {
 
 export const createCustomTestJobs = (context: Context): CatladderJob[] => {
   // don't run tests after release
-  if (context.commitInfo?.trigger === "taggedRelease") {
+  // TODO: this will be replaced by using rules
+  if (context.trigger === "taggedRelease") {
     return [];
   }
 
@@ -26,10 +27,10 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
       APP_PATH: context.componentConfig.dir,
-      ...RUNNER_CUSTOM_TEST_VARIABLES,
       ...context.environment.jobOnlyVars.build.envVars,
       ...(buildConfig.extraVars ?? {}),
     },
+    runnerVariables: RUNNER_CUSTOM_TEST_VARIABLES,
     services: buildConfig.jobServices,
     cache: buildConfig.jobCache,
     stage: "test",

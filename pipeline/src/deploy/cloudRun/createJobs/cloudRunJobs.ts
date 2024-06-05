@@ -17,16 +17,21 @@ import {
 } from "./common";
 import { getLabels } from "../../../context/getLabels";
 import { createVolumeConfig } from "./volumes";
+import type {
+  BashExpression,
+  StringOrBashExpression,
+} from "../../../bash/BashExpression";
+import { ENV_VARS_FILENAME } from "./constants";
 
 const getJobRunScriptForJob = (
   context: Context,
-  jobName: string,
+  jobName: StringOrBashExpression,
   wait: boolean
 ) => {
   const commonArgs = getCommonCloudRunArgs(context);
 
   const commonArgsString = createArgsString(commonArgs);
-  return `${gcloudRunCmd()} jobs execute ${jobName} ${commonArgsString}${
+  return `${gcloudRunCmd()} jobs execute ${jobName.toString()} ${commonArgsString}${
     wait ? " --wait" : ""
   }`;
 };
@@ -86,7 +91,7 @@ export const getJobCreateScripts = (context: Context) => {
 
 const getJobCreateScriptsForJob = (
   context: Context,
-  jobName: string,
+  jobName: StringOrBashExpression,
   job: DeployConfigCloudRunJob
 ) => {
   const commonDeployArgs = getCommonDeployArgs(context);
@@ -103,14 +108,14 @@ const getJobCreateScriptsForJob = (
     ...commonDeployArgs,
     labels: makeLabelString({
       ...getLabels(context),
-      "cloud-run-job-name": jobName,
+      "cloud-run-job-name": jobName.toString(),
     }),
     image: job.image || commonDeployArgs.image,
     cpu: job?.cpu,
     memory: job.memory || "512Mi",
     "task-timeout": job.timeout || "10m",
     parallelism: job.parallelism || 1,
-    "env-vars-file": "____envvars.yaml",
+    "env-vars-file": ENV_VARS_FILENAME,
     "max-retries": 0,
   });
 
@@ -163,14 +168,14 @@ const getCloudRunJobsWithSchedule = (context: Context) => {
       (
         entry
       ): entry is {
-        jobName: string;
+        jobName: BashExpression;
         job: DeployConfigCloudRunJobWithSchedule;
       } => entry.job.when === "schedule"
     )
     .map(({ job, jobName }) => ({
       job,
       jobName,
-      schedulerName: jobName + "-scheduler",
+      schedulerName: jobName.concat("-scheduler"),
     }));
 };
 

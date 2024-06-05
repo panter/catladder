@@ -31,6 +31,12 @@ export type DeployConfigBase = {
    * @deprecated use deploy.jobVars for deploy job specific variables
    */
   extraVars?: Record<string, string>;
+  /**
+   * additional vars only for the runner.
+   * Also if you use services: that require env vars, you need to set them here.
+   *
+   */
+  runnerVariables?: Record<string, string>;
 };
 
 export type AllowUnknownProps<T extends Record<string, unknown>> = T &

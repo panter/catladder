@@ -1,4 +1,4 @@
-import type { EnvironmentEnvVars } from "..";
+import type { SecretEnvVar, UnspecifiedEnvVars } from "..";
 import type { EnvVars } from "../types/config";
 import {
   makeSecretEnvVarMapping,
@@ -17,7 +17,10 @@ export const transformJobOnlyVars = async (
   env: string,
   componentName: string,
   vars: EnvVars | null
-): Promise<EnvironmentEnvVars> => {
+): Promise<{
+  envVars: UnspecifiedEnvVars;
+  secretEnvVarKeys: SecretEnvVar[];
+}> => {
   if (!vars) {
     return {
       envVars: {},

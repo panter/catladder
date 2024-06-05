@@ -1,4 +1,9 @@
 import type { DeployTypeDefinition } from "..";
+import {
+  BashExpression,
+  getBashVariable,
+  joinBashExpressions,
+} from "../../bash/BashExpression";
 import { getSecretVarName } from "../../context";
 import type { EnvironmentContext } from "../../types/environmentContext";
 import { sanitizeForBashVariable } from "../../utils/gitlab";
@@ -78,13 +83,16 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
   ],
   getAdditionalEnvVars: (ctx) => {
     const { fullName, env, componentName, deployConfigRaw } = ctx;
-    const HOST_INTERNAL =
-      fullName.toLowerCase() +
-      "-" +
-      (process.env[
-        getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
-      ] ?? "unknown-host.example.com");
 
+    const HOST_INTERNAL = joinBashExpressions(
+      [
+        fullName,
+        getBashVariable(
+          getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
+        ),
+      ],
+      "-"
+    ).toLowerCase();
     const jobTriggers =
       deployConfigRaw && deployConfigRaw.jobs
         ? Object.fromEntries(
