@@ -1,3 +1,10 @@
+# [1.142.0](https://git.panter.ch/catladder/catladder/compare/v1.141.1...v1.142.0) (2024-06-07)
+
+
+### Features
+
+* **cloud run:** make database url configurable for different libraries ([842b2cf](https://git.panter.ch/catladder/catladder/commit/842b2cfa0c265f01e79a5927f921a0b7a3c45f43))
+
 ## [1.141.1](https://git.panter.ch/catladder/catladder/compare/v1.141.0...v1.141.1) (2024-06-06)
 
 # [1.141.0](https://git.panter.ch/catladder/catladder/compare/v1.140.2...v1.141.0) (2024-06-05)
