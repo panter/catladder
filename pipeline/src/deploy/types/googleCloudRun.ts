@@ -63,6 +63,21 @@ export type DeployConfigCloudRunCloudSql = {
   deleteDatabaseOnStop?: boolean;
 
   /**
+   * format of the `DATABASE_URL` environment variable
+   *
+   * the options are:
+   * - prisma: adds [required but ignored hostname](https://www.prisma.io/docs/orm/overview/databases/postgresql#connecting-via-sockets):
+   *   `postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME`
+   * - rails: percent-encodes the socket in the host part
+   *   `postgresql://$DB_USER:$DB_PASSWORD@%2Fcloudsql%2FprojectId%3Aregion%3Ainstancename/$DB_NAME?`
+   * - jdbc: for use with Google Cloud SQL Connector for Java
+   *   `jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD`
+   *
+   * defaults to prisma
+   */
+  dbConnectionStringFormat?: "prisma" | "rails" | "jdbc";
+
+  /**
    * add additional query params to the database connection string
    */
   dbAdditionalQueryParams?: Record<string, string | number> & {
