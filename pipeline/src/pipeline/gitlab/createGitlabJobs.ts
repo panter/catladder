@@ -5,7 +5,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import type { AllCatladderJobs } from "../createAllJobs";
 import { notNil } from "../../utils";
 
-type AllGitlabJobs = Record<string, GitlabJobDef>;
+export type AllGitlabJobs = Record<string, GitlabJobDef>;
 
 const removeUndefined = <T extends Record<string, unknown>>(obj: T): T =>
   Object.fromEntries(
