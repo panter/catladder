@@ -17,15 +17,12 @@ export const createStopJob = (
     image: jobDefinition.image,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
     needs: [], // can be executed even if the deploy job failed
+    allow_failure: true,
+    when: "manual", // stop is always manual
     rules: [
       {
         if: "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/", // automatic on hotfix branches
         when: "on_success",
-        allow_failure: true,
-      },
-      {
-        when: "manual",
-        allow_failure: true,
       },
     ],
     variables: {

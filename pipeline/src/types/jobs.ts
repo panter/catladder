@@ -121,6 +121,10 @@ export type CatladderJob<S = BaseStage> = {
    */
   environment?: CatladderJobEnvironmentConfig;
 
+  /** */
+
+  when?: GitlabRule["when"];
+
   rules?: GitlabRule[];
 
   /**

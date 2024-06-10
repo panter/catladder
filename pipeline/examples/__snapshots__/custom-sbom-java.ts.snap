@@ -242,6 +242,7 @@ EOF
         },
       },
       "app 🛑 Stop ⚠️ | dev ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -264,12 +265,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -368,7 +367,7 @@ EOF
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [
@@ -638,6 +637,7 @@ EOF
         },
       },
       "app 🛑 Stop ⚠️ | review ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -660,12 +660,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -767,7 +765,7 @@ EOF
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [
@@ -1270,6 +1268,7 @@ EOF
         },
       },
       "app 🛑 Stop ⚠️ | prod ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1292,12 +1291,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1324,6 +1321,7 @@ EOF
         },
       },
       "app 🛑 Stop ⚠️ | stage ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1346,12 +1344,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1476,7 +1472,7 @@ EOF
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [

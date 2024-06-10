@@ -1,4 +1,4 @@
-import type { Config } from "@catladder/pipeline";
+import { writeGeneratedFile, type Config } from "@catladder/pipeline";
 import { writeFile } from "fs-extra";
 import { join } from "path";
 import { getEnvVarsResolved } from "../../config/getProjectConfig";
@@ -35,10 +35,8 @@ export const writeDotEnvFiles = async (config: Config, choice?: Choice) => {
     const filePath = join(componentDir, ".env");
     // many .dotenv don't like multiline values, so we sanitize them here
     const variablesSanitized = sanitizeMultiLine(variables);
-    await writeFile(
-      filePath,
-      "# automatically created by catladder. Do not modify!\n\n" +
-        makeKeyValueString(variablesSanitized)
-    );
+    await writeGeneratedFile(filePath, makeKeyValueString(variablesSanitized), {
+      commentChar: "#",
+    });
   }
 };

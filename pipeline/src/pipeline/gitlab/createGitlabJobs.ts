@@ -5,13 +5,19 @@ import type {
   CatladderJobWithContext,
   Context,
   GitlabJobDef,
+  GitlabRule,
 } from "../../types";
 import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import type { AllCatladderJobs } from "../createAllJobs";
 
-export type AllGitlabJobs = Record<string, GitlabJobDef>;
+export type AllGitlabJobs = {
+  name: string;
+  gitlabJob: GitlabJobDef;
+  componentName: string;
+  env: string;
+}[];
 
 export const GITLAB_ENVIRONMENT_URL_VARIABLE = "CL_GITLAB_ENVIRONMENT_URL";
 const removeUndefined = (obj: GitlabJobDef): GitlabJobDef =>
@@ -65,9 +71,11 @@ export const makeGitlabJob = (
     context,
     variables,
     runnerVariables,
+    when,
     ...job
   }: CatladderJobWithContext<string>,
-  allJobs: AllCatladderJobs
+  allJobs: AllCatladderJobs,
+  baseRules?: GitlabRule[]
 ): [fullName: string, job: GitlabJobDef] => {
   const stage = envMode === "stagePerEnv" ? `${job.stage} ${env}` : job.stage;
 
@@ -154,12 +162,23 @@ export const makeGitlabJob = (
       ).join(", ")}. Please move them to the runnerVariables key.`
     );
   }
-
+  const rules = [
+    ...(job.rules ?? []),
+    ...(baseRules
+      ? baseRules.map((rule) => ({
+          when: when,
+          ...rule,
+        }))
+      : when
+      ? [{ when }]
+      : []),
+  ];
   const modified = addGitlabEnvironment(
     context,
     environment,
     {
       ...job,
+      rules: rules.length > 0 ? rules : undefined,
       variables: {
         ...legacyRunnerVariables,
         ...runnerVariables,
@@ -238,31 +257,29 @@ const addGitlabEnvironment = (
 };
 
 export const createGitlabJobs = async (
-  allJobs: AllCatladderJobs
+  allJobs: AllCatladderJobs,
+  baseRules?: GitlabRule[]
 ): Promise<AllGitlabJobs> => {
-  return Object.keys(allJobs).reduce((accForComponents, componentName) => {
+  return Object.keys(allJobs).flatMap((componentName) => {
     const componentJobs = allJobs[componentName];
-    return {
-      ...accForComponents,
-      ...Object.keys(componentJobs).reduce((accForEnvs, env) => {
-        const jobs = componentJobs[env];
+    return Object.keys(componentJobs).flatMap((env) => {
+      const jobs = componentJobs[env];
 
+      return jobs.flatMap((job) => {
+        const [fullJobName, gitlabJob] = makeGitlabJob(
+          componentName,
+          env,
+          job,
+          allJobs,
+          baseRules
+        );
         return {
-          ...accForEnvs,
-          ...jobs.reduce((accForJobs, job) => {
-            const [fullJobName, gitlabJob] = makeGitlabJob(
-              componentName,
-              env,
-              job,
-              allJobs
-            );
-            return {
-              ...accForJobs,
-              [fullJobName]: gitlabJob,
-            };
-          }, {} as AllGitlabJobs),
+          name: fullJobName,
+          gitlabJob,
+          componentName,
+          env,
         };
-      }, {} as AllGitlabJobs),
-    };
-  }, {} as AllGitlabJobs);
+      });
+    });
+  });
 };

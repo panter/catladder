@@ -6,6 +6,7 @@ exports[`matches snapshot 1`] = `
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
       "api ↩️ Rollback ⚠️ | dev ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -28,7 +29,6 @@ exports[`matches snapshot 1`] = `
         },
         "rules": [
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -486,6 +486,7 @@ EOF
         },
       },
       "api 🛑 Stop ⚠️ | dev ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -508,12 +509,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -711,7 +710,7 @@ EOF
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [
@@ -742,6 +741,7 @@ EOF
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
       "api ↩️ Rollback ⚠️ | review ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -764,7 +764,6 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1223,6 +1222,7 @@ EOF
         },
       },
       "api 🛑 Stop ⚠️ | review ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1245,12 +1245,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1448,7 +1446,7 @@ EOF
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [
@@ -1479,6 +1477,7 @@ EOF
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
       "api ↩️ Rollback ⚠️ | prod ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1501,7 +1500,6 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1548,6 +1546,7 @@ EOF
         },
       },
       "api ↩️ Rollback ⚠️ | stage ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1570,7 +1569,6 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -2311,6 +2309,7 @@ EOF
         },
       },
       "api 🛑 Stop ⚠️ | prod ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -2333,12 +2332,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -2387,6 +2384,7 @@ EOF
         },
       },
       "api 🛑 Stop ⚠️ | stage ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -2409,12 +2407,10 @@ EOF
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -2559,7 +2555,7 @@ EOF
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [

@@ -83,15 +83,8 @@ export const createDeployJob = (
         artifacts: false,
       },
     ], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
-    rules: [
-      whenDeploy === "auto"
-        ? {
-            when: "on_success",
-          }
-        : {
-            when: "manual",
-          },
-    ],
+    when: whenDeploy === "auto" ? "on_success" : "manual",
+
     allow_failure: whenDeploy === "manual" ? true : false,
     stage: "deploy",
     variables: {

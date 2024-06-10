@@ -59,7 +59,7 @@
     "test": "yarn run lint",
     "build": "yarn build:compile && yarn build:bundle",
     "build:bundle": "./scripts/bundle",
-    "build:compile": "yarn tsc",
+    "build:compile": "yarn tsc && yarn tsc-alias",
     "build:watch": "yarn tsc -w"
   },
   "bin": {
@@ -67,6 +67,8 @@
     "catenv": "./bin/catenv",
     "catladder": "./bin/catladder"
   },
+  "types": "dist/cli/src/index.d.ts",
+  "main": "dist/cli/src/index.js",
   "engines": {
     "node": ">=12.0.0"
   },
@@ -74,7 +76,6 @@
     "ts-node": "^10.9.1"
   },
   "devDependencies": {
-    "@catladder/pipeline": "0.0.0",
     "@gitbeaker/rest": "^39.28.0",
     "@kubernetes/client-node": "^0.16.2",
     "@tsconfig/node14": "^1.0.1",
@@ -104,6 +105,7 @@
     "prettier": "^2.5.1",
     "tmp-promise": "^2.0.2",
     "ts-results-es": "^4.1.0-alpha.1",
+    "tsc-alias": "^1.8.10",
     "typescript": "^5.4.5",
     "vorpal": "^1.12.0",
     "yaml": "^2.4.5"

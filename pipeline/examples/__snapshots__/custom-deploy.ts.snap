@@ -300,6 +300,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
       },
       "www 🛑 Stop ⚠️ | dev ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -322,12 +323,10 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -498,7 +497,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [
@@ -823,6 +822,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
       },
       "www 🛑 Stop ⚠️ | review ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -845,12 +845,10 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1021,7 +1019,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [
@@ -1512,6 +1510,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
       },
       "www 🛑 Stop ⚠️ | prod ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1534,12 +1533,10 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1561,6 +1558,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
       },
       "www 🛑 Stop ⚠️ | stage ": {
+        "allow_failure": true,
         "artifacts": {
           "reports": {
             "dotenv": "gitlab_environment.env",
@@ -1583,12 +1581,10 @@ COPY --chown=node:node .yarn /app/.yarn"",
         },
         "rules": [
           {
-            "allow_failure": true,
             "if": "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/",
             "when": "on_success",
           },
           {
-            "allow_failure": true,
             "when": "manual",
           },
         ],
@@ -1706,7 +1702,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
     ],
     "variables": {
       "FF_USE_FASTZIP": "true",
-      "GIT_DEPTH": 1,
+      "GIT_DEPTH": "1",
     },
     "workflow": {
       "rules": [

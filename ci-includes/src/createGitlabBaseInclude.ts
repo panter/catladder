@@ -5,8 +5,7 @@ import type { GitlabJobDef } from "@catladder/pipeline";
 import {
   RULES_ALWAYS,
   getRunnerImage,
-  RULES_RELEASE,
-  RULES_MANUAL_RELEASE,
+  getGitlabReleaseJobs,
 } from "@catladder/pipeline";
 
 type GitlabJobDefWithTrigger = Omit<GitlabJobDef, "script"> & {
@@ -33,7 +32,7 @@ export const createGitlabBaseInclude = () => {
         // so we cheat and just copy the folder into node_modules
         "mkdir -p node_modules/@catladder",
         "cp -r /packages/pipeline/ node_modules/@catladder/pipeline",
-        "catladder-gitlab", // global command
+        "catladder-gitlab childpipeline", // global command
       ],
       artifacts: {
         paths: ["__pipeline.yml"],
@@ -59,25 +58,13 @@ export const createGitlabBaseInclude = () => {
         ],
       },
     },
-    ["create release"]: {
-      stage: "release",
-      image: getRunnerImage("semantic-release"),
-      script: ["semanticRelease"],
-      rules: RULES_RELEASE,
-    },
-    ["⚠️ force create release"]: {
-      stage: "release",
-      image: getRunnerImage("semantic-release"),
-      script: ["semanticRelease"],
-      needs: [],
-      rules: RULES_MANUAL_RELEASE,
-    },
+    ...getGitlabReleaseJobs(),
   };
   return {
     image: getRunnerImage("base-pipeline"),
     stages: ["setup", "deploy", "verify", "release"],
     variables: {
-      GIT_DEPTH: 1, // no need to clone full history
+      GIT_DEPTH: "1", // no need to clone full history
     },
     ...jobs,
   };

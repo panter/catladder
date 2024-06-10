@@ -43,7 +43,6 @@ export const createKubernetesDeployJobs = (
       RELEASE_NAME: context.environment.fullName,
       HELM_EXPERIMENTAL_OCI: "1",
       KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
-
       HELM_GITLAB_CHART_NAME:
         deployConfig.chartName ?? "/helm-charts/the-panter-chart",
       HELM_ARGS: [

@@ -4,6 +4,7 @@ import type { DeployConfig } from "../deploy/types";
 import type { CatladderJob } from "./jobs";
 import type { Context } from "./context";
 import type { PartialDeep } from "./utils";
+import type { PipelineType } from "..";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -181,6 +182,8 @@ export type ConfigProps = {
 };
 
 export type Config<C extends ConfigProps = never> = {
+  pipelineType?: PipelineType;
+
   /**
    * name of the customer or group
    */

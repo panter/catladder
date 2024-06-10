@@ -1,20 +1,12 @@
-import { writeFileSync } from "fs";
-import { stringify } from "yaml";
 import { readConfigSync } from "./config";
-import { createChildPipeline } from "./pipeline";
-import { getPipelineTriggerForGitlabChildPipeline } from "./pipeline/gitlab/getPipelineTriggerForGitlabChildPipeline";
+import { generatePipelineFiles } from "./pipeline/generatePipelineFiles";
+import type { PipelineMode } from "./types";
 
-const trigger = getPipelineTriggerForGitlabChildPipeline();
+const mode = process.argv[2] || "local";
 
 const config = readConfigSync()?.config;
 if (!config) {
   throw new Error("no catladder config found");
 }
-createChildPipeline("gitlab", trigger, config).then(
-  ({ jobs, ...mainPipeline }) => {
-    // need to spread out the jobs
-    writeFileSync(`__pipeline.yml`, stringify({ ...jobs, ...mainPipeline }), {
-      encoding: "utf-8",
-    });
-  }
-);
+
+generatePipelineFiles(config, "gitlab", mode as PipelineMode<"gitlab">);

@@ -12,7 +12,7 @@ export const getDatabaseDeleteScript = (
   if (!deployConfig.cloudSql || !deployConfig.cloudSql.deleteDatabaseOnStop) {
     throw new Error("not possible");
   }
-  const { DB_NAME } = context.environment.envVars ?? {};
+  const DB_NAME = context.environment.envVars["DB_NAME"];
 
   if (!DB_NAME) {
     throw new Error("error: env vars did not specify DB_NAME");
@@ -42,7 +42,7 @@ export const getDatabaseCreateScript = (
     throw new Error("not possible");
   }
 
-  const { DB_NAME } = context.environment.envVars ?? {};
+  const DB_NAME = context.environment.envVars["DB_NAME"];
 
   if (!DB_NAME) {
     throw new Error("error: env vars did not specify DB_NAME");

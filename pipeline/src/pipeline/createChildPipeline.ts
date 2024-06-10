@@ -1,9 +1,11 @@
+import { RULES_ALWAYS } from "../rules";
+
 import type { Pipeline, PipelineType } from "../types";
 import type { Config, PipelineTrigger } from "../types/config";
 import { createAllJobs } from "./createAllJobs";
 import { getPipelineStages } from "./getPipelineStages";
 import { createGitlabJobs } from "./gitlab/createGitlabJobs";
-import { createGitlabPipelineFromStagesAndJobs } from "./gitlab/createGitlabPipeline";
+import { createGitlabPipelineWithDefaults } from "./gitlab/createGitlabPipeline";
 
 export const createChildPipeline = async <T extends PipelineType>(
   pipelineType: T,
@@ -19,10 +21,15 @@ export const createChildPipeline = async <T extends PipelineType>(
 
   if (pipelineType === "gitlab") {
     const gitlabJobs = await createGitlabJobs(jobs);
-    return createGitlabPipelineFromStagesAndJobs(
+    return createGitlabPipelineWithDefaults({
+      workflow: {
+        rules: RULES_ALWAYS,
+      },
       stages,
-      gitlabJobs
-    ) as Pipeline<T>;
+      jobs: Object.fromEntries(
+        gitlabJobs.map(({ gitlabJob, name }) => [name, gitlabJob])
+      ),
+    }) as Pipeline<T>;
   }
   throw new Error(`${pipelineType} is not supported`);
 };

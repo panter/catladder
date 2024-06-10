@@ -10,7 +10,10 @@ export { Retry, Image as GitlabJobImage } from "./gitlab-ci-yml";
 // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
 export type Artifacts = GitlabCiArtifacts;
 export type GitlabJobCache = Cache;
-export type GitlabRule = Exclude<Rules, null>[number];
+export type GitlabRule = Exclude<
+  Exclude<Rules, null>[number],
+  string | string[] // we only use the object version
+>;
 export type GitlabEnvironment = Omit<
   Exclude<JobTemplate["environment"], undefined | string>,
   "deployment_tier"

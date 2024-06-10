@@ -4,6 +4,31 @@
 
 ### Install for a GitLab project
 
+#### Local mode
+
+1. install catladder CLI: `yarn add @catladder/cli`
+2. Create the file `catladder.ts` in your repositories root.
+3. set `pipelineType: "gitlab",` in your `catladder.ts`
+4. setup `direnv`. Add the following to your `.envrc`:
+
+```bash
+layout node # allows for local installations of catladder-cli
+# if catladder is available, invoke that
+echo "using catenv"
+watch_file catladder*
+
+eval "$(catenv-dev)" # eval is needed if you rely on exported env vars. If you rely only on .env files, you don't need to eval it
+```
+
+This will now upsert the gitlab-ci.yml file whenever something in catladder.ts changes and cd into that directory.
+
+check that file into git.
+
+5. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
+6. Authenticate gcloud CLI with `gcloud auth login`
+
+#### Childpipeline mode (classic)
+
 1. Create a `.gitlab-ci.yml` file with this content:
 
 ```yaml
@@ -100,4 +125,3 @@ See [RECIPES](5_RECIPIES.md)
 # SECURITY AUDIT
 
 See [SECURITY AUDIT](6_SECURITY_AUDIT.md)
-

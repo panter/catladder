@@ -1,22 +1,24 @@
-import { RULES_ALWAYS } from "../../rules";
 import { getRunnerImage } from "../../runner";
 import type { Pipeline } from "../../types";
-import type { AllGitlabJobs } from "./createGitlabJobs";
 
-export function createGitlabPipelineFromStagesAndJobs(
-  stages: string[],
-  gitlabJobs: AllGitlabJobs
-): Pipeline<"gitlab"> {
+type PickRequired<T, K extends keyof T> = Required<Pick<T, K>> & Omit<T, K>;
+
+export const createGitlabPipelineWithDefaults = ({
+  image,
+  variables,
+  ...config
+}: PickRequired<
+  Partial<Pipeline<"gitlab">>,
+  "stages" | "jobs"
+>): Pipeline<"gitlab"> => {
   return {
-    image: getRunnerImage("jobs-default"), // default image
+    image: image ?? getRunnerImage("jobs-default"), // default image
     variables: {
       FF_USE_FASTZIP: "true",
-      GIT_DEPTH: 1, // no need the full depth
+      GIT_DEPTH: "1", // no need the full depth
+      ...(variables ?? {}),
     },
-    workflow: {
-      rules: RULES_ALWAYS,
-    },
-    stages,
-    jobs: gitlabJobs,
+
+    ...config,
   };
-}
+};

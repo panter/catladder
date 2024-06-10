@@ -2,16 +2,19 @@
   "compilerOptions": {
     "lib": ["es2021", "DOM"],
     "module": "CommonJS",
-
+    "downlevelIteration": true,
     "declaration": true,
-    "noImplicitAny": true,
+
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "dist",
     "strict": false,
     "incremental": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@catladder/pipeline": ["../pipeline/src/index.ts"]
+    }
   },
   "include": ["./src/**/*"]
 }
