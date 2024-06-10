@@ -4,7 +4,13 @@ import type { DeployConfig } from "../deploy/types";
 import type { CatladderJob } from "./jobs";
 import type { Context } from "./context";
 import type { PartialDeep } from "./utils";
-export type PipelineTrigger = "mainBranch" | "mr" | "taggedRelease";
+
+export const ALL_PIPELINE_TRIGGERS = [
+  "mainBranch",
+  "mr",
+  "taggedRelease",
+] as const;
+export type PipelineTrigger = typeof ALL_PIPELINE_TRIGGERS[number];
 
 /**
  * all env types with their trigger.

@@ -1,59 +1,20 @@
 import { writeFileSync } from "fs";
 import { stringify } from "yaml";
 import { readConfigSync } from "./config";
-import { PIPELINE_IMAGE_TAG } from "./constants";
 import { createChildPipeline } from "./pipeline";
-import type { PipelineTrigger } from "./types";
+import { getPipelineTriggerForGitlabChildPipeline } from "./pipeline/gitlab/getPipelineTriggerForGitlabChildPipeline";
 
-const {
-  CI_MERGE_REQUEST_ID,
-  CI_COMMIT_TAG,
-  CI_COMMIT_BRANCH,
-  CI_DEFAULT_BRANCH,
-} = process.env;
+const trigger = getPipelineTriggerForGitlabChildPipeline();
 
-const isDefaultBranch =
-  Boolean(CI_DEFAULT_BRANCH) && CI_COMMIT_BRANCH === CI_DEFAULT_BRANCH;
-const isHotfixBranch = CI_COMMIT_BRANCH
-  ? /^[0-9]+\.([0-9]+|x)\.x$/.test(CI_COMMIT_BRANCH)
-  : false;
-const isMergeRequest = Boolean(CI_MERGE_REQUEST_ID);
-const isTaggedRelease = Boolean(CI_COMMIT_TAG);
-
-console.info(`catladder version ${PIPELINE_IMAGE_TAG}`);
-
-const trigger: PipelineTrigger | null =
-  isMergeRequest || isHotfixBranch
-    ? "mr"
-    : isDefaultBranch
-    ? "mainBranch"
-    : isTaggedRelease
-    ? "taggedRelease"
-    : null;
-if (trigger) {
-  const config = readConfigSync()?.config;
-  if (!config) {
-    throw new Error("no catladder config found");
-  }
-  createChildPipeline("gitlab", trigger, config).then(
-    ({ jobs, ...mainPipeline }) => {
-      // need to spread out the jobs
-      writeFileSync(`__pipeline.yml`, stringify({ ...jobs, ...mainPipeline }), {
-        encoding: "utf-8",
-      });
-    }
-  );
-} else {
-  throw new Error(
-    "no matching trigger: " +
-      JSON.stringify(
-        {
-          isMergeRequest,
-          isDefaultBranch,
-          isTaggedRelease,
-        },
-        null,
-        2
-      )
-  );
+const config = readConfigSync()?.config;
+if (!config) {
+  throw new Error("no catladder config found");
 }
+createChildPipeline("gitlab", trigger, config).then(
+  ({ jobs, ...mainPipeline }) => {
+    // need to spread out the jobs
+    writeFileSync(`__pipeline.yml`, stringify({ ...jobs, ...mainPipeline }), {
+      encoding: "utf-8",
+    });
+  }
+);
