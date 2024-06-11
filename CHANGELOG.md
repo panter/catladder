@@ -1,3 +1,10 @@
+## [1.142.2](https://git.panter.ch/catladder/catladder/compare/v1.142.1...v1.142.2) (2024-06-11)
+
+
+### Bug Fixes
+
+* version number not displayed correctly in cli ([50277fb](https://git.panter.ch/catladder/catladder/commit/50277fbb3f7ec1dcc11fb2b31dac8b3e6c39bd1c))
+
 ## [1.142.1](https://git.panter.ch/catladder/catladder/compare/v1.142.0...v1.142.1) (2024-06-10)
 
 # [1.142.0](https://git.panter.ch/catladder/catladder/compare/v1.141.1...v1.142.0) (2024-06-07)
