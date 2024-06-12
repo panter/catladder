@@ -1,3 +1,10 @@
+# [1.144.0](https://git.panter.ch/catladder/catladder/compare/v1.143.0...v1.144.0) (2024-06-12)
+
+
+### Features
+
+* new welcome message ([6a2bca8](https://git.panter.ch/catladder/catladder/commit/6a2bca87ee90dc5f1e02855d1c1cd16f6d2fde50))
+
 # [1.143.0](https://git.panter.ch/catladder/catladder/compare/v1.142.2...v1.143.0) (2024-06-12)
 
 
