@@ -3,7 +3,6 @@ import type Vorpal from "vorpal";
 import { getk8sApi } from "../../../../k8sApi";
 import { getCurrentContext } from "../../../../utils/cluster";
 import { logError } from "../../../../utils/log";
-import { syncBitwarden } from "../../../../utils/passwordstore";
 import {
   getAllRunningPortForwards,
   stopPortForward,
@@ -46,11 +45,6 @@ export default async (vorpal: Vorpal) => {
 
       this.log(res.body.items.map((n) => n.metadata.name).join("\n"));
     });
-
-  vorpal.command("bw-sync", "force sync bitwarden").action(async function () {
-    await syncBitwarden(true);
-    this.log("done");
-  });
 
   vorpal
     .command("kube-list-pods <namespace>", "list all pods of namespace")

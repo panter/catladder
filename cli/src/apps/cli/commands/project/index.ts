@@ -9,7 +9,6 @@ import commandGetMyTotalWorktime from "./commandGetMyTotalWorktime";
 import commandGetShell from "./commandGetShell";
 import commandGitlabCi from "./commandGitlabCi";
 import commandSetup from "./commandSetup";
-//import commandInitProject from "./commandInitProject.old";
 import commandListPods from "./commandListPods";
 import commandMigrateHelm3 from "./commandMigrateHelm3";
 import commandNamespace from "./commandNamespace";

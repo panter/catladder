@@ -1,5 +1,4 @@
 import type Vorpal from "vorpal";
-//import commandInitProject from "./commandInitProject.old";
 
 import commandRestoreDb from "./commandRestoreDb";
 
