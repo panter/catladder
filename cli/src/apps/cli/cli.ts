@@ -10,11 +10,14 @@ import theStuffThatReallyMatters from "./commands/theStuffThatReallyMatters";
 
 import { verify } from "./verify";
 import { showProjectBanner } from "./commands/project/utils/showProjectBanner";
+import { boxWithAsci } from "../../utils/boxWithAscii";
 
 export default async () => {
   const vorpal = new Vorpal();
 
-  const welcomeMessage = `catladder 2022 😻 version ${packageInfos.version}`;
+  const welcomeMessage = boxWithAsci(
+    `catladder 😻 v${packageInfos.version} ✨`
+  );
 
   vorpal
     .delimiter("catladder $") // emoji messes with cursor :-( https://github.com/dthree/vorpal/issues/332
