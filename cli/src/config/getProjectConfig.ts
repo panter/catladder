@@ -11,7 +11,7 @@ import type { CommandInstance } from "vorpal";
 import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
 
 import { getGitRoot } from "../utils/projects";
-import { readYaml } from "../utils/files";
+
 import { watch } from "fs";
 
 export { parseChoice } from "./parseChoice";
@@ -40,19 +40,6 @@ export const getProjectConfig = async () => {
     await reloadConfigAndObserve();
   }
   return currentConfig as Config;
-};
-
-export const getGitlabCiFilePath = async () => {
-  const gitRoot = await getGitRoot();
-  return gitRoot + "/.gitlab-ci.yml";
-};
-export const getGitlabCi = async <T = Record<string, any>>() => {
-  try {
-    return readYaml(await getGitlabCiFilePath()) as Promise<T>;
-  } catch (e) {
-    // ignore
-    return null;
-  }
 };
 
 export const getProjectComponents = async () => {

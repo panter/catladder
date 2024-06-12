@@ -1,5 +1,5 @@
 import { withFile } from "tmp-promise";
-import { dump, load } from "js-yaml";
+import { parse, stringify } from "yaml";
 
 import { readFile, writeFile } from "fs-extra";
 import getEditor from "./getEditor";
@@ -15,14 +15,15 @@ export const editAsFile = async <T>(
 
 `
     : "\n";
-  const asString = fullPreamble + dump(inObject, { noRefs: true });
+  const asString =
+    fullPreamble + stringify(inObject, { aliasDuplicateObjects: false });
   let newContent: T;
 
   await withFile(
     async ({ path: tmpFilePath }) => {
       await writeFile(tmpFilePath, asString);
       await (await getEditor()).open(tmpFilePath);
-      newContent = load((await readFile(tmpFilePath)).toString("utf-8")) as T;
+      newContent = parse((await readFile(tmpFilePath)).toString("utf-8")) as T;
     },
     { postfix: ".yml" }
   );

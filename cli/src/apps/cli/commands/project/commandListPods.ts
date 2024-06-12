@@ -1,4 +1,4 @@
-import { dump } from "js-yaml";
+import { stringify } from "yaml";
 import { pick } from "lodash";
 import type Vorpal from "vorpal";
 import { getProjectPods } from "../../../../kubernetes";
@@ -13,6 +13,8 @@ export default async (vorpal: Vorpal) =>
       await ensureCluster.call(this, envComponent);
       const pods = await getProjectPods(envComponent);
       this.log(
-        dump(pods.map((p) => pick(p, ["metadata.name", "status.startTime"])))
+        stringify(
+          pods.map((p) => pick(p, ["metadata.name", "status.startTime"]))
+        )
       );
     });

@@ -1,10 +1,10 @@
 import { mkdirSync, writeFileSync } from "fs";
 import { createGitlabBaseInclude } from "./createGitlabBaseInclude";
-import { dump } from "js-yaml";
+import { stringify } from "yaml";
 
 const baseInclude = createGitlabBaseInclude();
 
 mkdirSync("./dist/includes", { recursive: true });
-writeFileSync("./dist/includes/gitlab-ci.yml", dump(baseInclude), {
+writeFileSync("./dist/includes/gitlab-ci.yml", stringify(baseInclude), {
   encoding: "utf-8",
 });
