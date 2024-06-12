@@ -1,3 +1,10 @@
+# [1.143.0](https://git.panter.ch/catladder/catladder/compare/v1.142.2...v1.143.0) (2024-06-12)
+
+
+### Features
+
+* remove old migration scripts ([81a23fa](https://git.panter.ch/catladder/catladder/commit/81a23fae4dedf983f51fb2dc707fb69311fe8485))
+
 ## [1.142.2](https://git.panter.ch/catladder/catladder/compare/v1.142.1...v1.142.2) (2024-06-11)
 
 
