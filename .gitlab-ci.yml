@@ -79,6 +79,11 @@ test:
     - docker push $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG
     - docker tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG $CACHE_IMAGE
     - docker push $CACHE_IMAGE
+    # when is a release (has tag), also push as latest
+    - if [ -n "$CI_COMMIT_TAG" ]; then
+      docker tag $IMAGE_NAME:$INLINE_PIPELINE_IMAGE_TAG $IMAGE_NAME:latest;
+      docker push $IMAGE_NAME:latest;
+      fi
 
 🔨 runner base-pipeline:
   needs: ["🔨 packages"]
