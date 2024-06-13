@@ -1,3 +1,11 @@
+# [1.145.0](https://git.panter.ch/catladder/catladder/compare/v1.144.1...v1.145.0) (2024-06-13)
+
+
+### Features
+
+* allow to create pipeline locally ([dce682b](https://git.panter.ch/catladder/catladder/commit/dce682b5c3540e62127c5e3c58f06b5922cc8aee))
+* new variable handling ([9474444](https://git.panter.ch/catladder/catladder/commit/9474444cba2ecf16d45e730eccf3669cb903bb7f))
+
 ## [1.144.1](https://git.panter.ch/catladder/catladder/compare/v1.144.0...v1.144.1) (2024-06-13)
 
 # [1.144.0](https://git.panter.ch/catladder/catladder/compare/v1.143.0...v1.144.0) (2024-06-12)
