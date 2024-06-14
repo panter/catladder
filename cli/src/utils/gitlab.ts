@@ -114,20 +114,36 @@ type GitlabVariable = {
   environment_scope: string;
 };
 export const getAllVariables = memoizee(
-  async (vorpal: CommandInstance | null): Promise<Array<GitlabVariable>> => {
+  async (
+    vorpal: CommandInstance | null,
+    n = 5, // how many requests to do in parallel, 5 seems a good value for many projects, ideally we would do one request in parallel per component
+  ): Promise<Array<GitlabVariable>> => {
     const { id } = await getProjectInfo(vorpal);
+
     let all: Array<GitlabVariable> = [];
-    let result: Array<GitlabVariable>;
+    let result: Array<Array<GitlabVariable>> = [];
     let page = 1;
+
     do {
-      result = await doGitlabRequest(
-        vorpal,
-        // 100 is max page size
-        `projects/${id}/variables?per_page=100&page=${page}`,
-      );
-      page++;
-      all = [...all, ...result];
-    } while (result?.length > 0);
+      // Create an array of promises for N pages
+      const promises = Array.from({ length: n }, (_, i) => {
+        return doGitlabRequest(
+          vorpal,
+          `projects/${id}/variables?per_page=100&page=${page + i}`,
+        );
+      });
+
+      // Wait for all promises to resolve
+      result = await Promise.all(promises);
+
+      // Increment the page by N
+      page += n;
+
+      // Flatten the result array and add it to 'all'
+      all = [...all, ...result.flat()];
+      // Continue only if the last page had results
+    } while (result.length > 0 && result[result.length - 1].length > 0);
+
     return all;
   },
   { promise: true },

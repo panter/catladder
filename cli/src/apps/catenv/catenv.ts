@@ -11,13 +11,14 @@ export default async (choice?: Choice) => {
     return;
   }
 
-  if (config.pipelineType) {
-    await generatePipelineFiles(config, config.pipelineType, "local");
-  }
+  await Promise.all([
+    config.pipelineType
+      ? generatePipelineFiles(config, config.pipelineType, "local")
+      : undefined,
+    writeDotEnvFiles(config, choice),
 
-  await writeDotEnvFiles(config, choice);
+    writeDTsFiles(config, choice),
 
-  await writeDTsFiles(config, choice);
-
-  await printVariables(config, choice);
+    printVariables(config, choice),
+  ]);
 };
