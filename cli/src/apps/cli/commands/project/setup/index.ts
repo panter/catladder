@@ -25,7 +25,7 @@ export const setupProject = async (instance: CommandInstance) => {
     await projectConfigSecrets(instance);
   } else {
     instance.log(
-      "👆 don't forget to config secret using `project-config-secrets`"
+      "👆 don't forget to config secret using `project-config-secrets`",
     );
   }
   instance.log("");

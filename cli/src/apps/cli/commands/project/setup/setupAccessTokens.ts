@@ -3,9 +3,8 @@ import type { CommandInstance } from "vorpal";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 
 export const setupAccessTokens = async (instance: CommandInstance) => {
-  const { id: projectId, web_url: projectWebUrl } = await getProjectInfo(
-    instance
-  );
+  const { id: projectId, web_url: projectWebUrl } =
+    await getProjectInfo(instance);
   try {
     await doGitlabRequest(instance, `projects/${projectId}/variables/GL_TOKEN`);
   } catch (e) {
@@ -15,10 +14,10 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
     // not found
 
     instance.log(
-      "I need add a GL_TOKEN to the project, so that semantic release will work\n"
+      "I need add a GL_TOKEN to the project, so that semantic release will work\n",
     );
     instance.log(
-      "👉 Please please create a project access token in gitlab and copy its value into clipboard\n\n - name: something like 'semantic-release'\n - expires: leave empty\n - role: maintainer - scopes: api, read_repository"
+      "👉 Please please create a project access token in gitlab and copy its value into clipboard\n\n - name: something like 'semantic-release'\n - expires: leave empty\n - role: maintainer - scopes: api, read_repository",
     );
     instance.log("\n");
 
@@ -52,7 +51,7 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
         value: GL_TOKEN,
         masked: true,
       },
-      "POST"
+      "POST",
     );
   }
 };

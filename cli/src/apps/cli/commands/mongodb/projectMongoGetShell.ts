@@ -12,15 +12,14 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-mongo-get-shell <envComponent>",
-      "get a shell to a mongodb in the environment"
+      "get a shell to a mongodb in the environment",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
       await ensureCluster.call(this, envComponent);
       const namespace = await getProjectNamespace(envComponent);
-      const podNames = await getProjectMongodbAllPodsSortedWithLabel(
-        envComponent
-      );
+      const podNames =
+        await getProjectMongodbAllPodsSortedWithLabel(envComponent);
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;

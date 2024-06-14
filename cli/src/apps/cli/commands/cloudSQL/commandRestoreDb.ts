@@ -7,7 +7,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "cloud-sql-restore-db",
-      "restore a db from one source to another target"
+      "restore a db from one source to another target",
     )
     .action(async function restoreDb() {
       const { sourceInstance } = await this.prompt({

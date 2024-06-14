@@ -7,7 +7,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-pause <envComponent>",
-      "halts all running pods (scales to 0)"
+      "halts all running pods (scales to 0)",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {

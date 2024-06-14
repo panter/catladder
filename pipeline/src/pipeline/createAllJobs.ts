@@ -42,11 +42,11 @@ export const createAllJobs = async ({
                   trigger,
                   pipelineType,
                 }),
-              ])
-            )
+              ]),
+            ),
           ),
         ];
-      })
-    )
+      }),
+    ),
   );
 };

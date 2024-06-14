@@ -14,7 +14,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-cloud-sql-restore-db",
-      "restores a project db from one source to another target"
+      "restores a project db from one source to another target",
     )
     .action(async function restoreDb() {
       const envs = await envAndComponents();
@@ -31,13 +31,13 @@ export default async (vorpal: Vorpal) =>
 
       const sourceContext = await getPipelineContextByChoice(
         sourceEnv,
-        sourceComponent
+        sourceComponent,
       );
 
       const sourceEnvVars = await getEnvVarsResolved(
         this,
         sourceContext.environment.shortName,
-        sourceContext.componentName
+        sourceContext.componentName,
       );
 
       let sourceProxy: CloudSqlBackgroundProxy;
@@ -94,13 +94,13 @@ export default async (vorpal: Vorpal) =>
 
       const targetContext = await getPipelineContextByChoice(
         targetEnv,
-        targetComponent
+        targetComponent,
       );
 
       const targetEnvVars = await getEnvVarsResolved(
         this,
         targetContext.environment.shortName,
-        targetContext.componentName
+        targetContext.componentName,
       );
 
       if (targetEnv === "local") {
@@ -141,7 +141,7 @@ export default async (vorpal: Vorpal) =>
 
       if (targetContext.environment.envType === "prod") {
         this.log(
-          `\n🚨 You are overriding a production environment. Please type in ${targetEnvVars.CLOUD_SQL_INSTANCE_CONNECTION_NAME} to continue\n\n`
+          `\n🚨 You are overriding a production environment. Please type in ${targetEnvVars.CLOUD_SQL_INSTANCE_CONNECTION_NAME} to continue\n\n`,
         );
         const { confirmInstance } = await this.prompt({
           type: "input",

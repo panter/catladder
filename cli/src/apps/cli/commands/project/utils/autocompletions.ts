@@ -17,7 +17,7 @@ export const envAndComponents = async () => {
 
   return allEnvAndcomponents.reduce<string[]>(
     (acc, { env, componentName }) => [...acc, env + ":" + componentName],
-    []
+    [],
   );
 };
 

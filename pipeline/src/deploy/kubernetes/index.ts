@@ -37,7 +37,7 @@ export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<"kubernetes"> = {
         fullConfig.customerName,
         domainCanonical,
       ],
-      "."
+      ".",
     ); // default for kubernetes and rest
     return {
       KUBE_NAMESPACE,

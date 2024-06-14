@@ -50,7 +50,7 @@ export const getProjectComponents = async () => {
 
 export const getPipelineContextByChoice = async (
   env: string,
-  componentName: string
+  componentName: string,
 ) => {
   const config = await getProjectConfig();
   return await createContext({
@@ -67,7 +67,7 @@ export const getAllComponentsWithAllEnvsFlat = async (): Promise<
     return [];
   }
   return Object.keys(config.components).flatMap((componentName) =>
-    getAllEnvs(config, componentName).map((env) => ({ env, componentName }))
+    getAllEnvs(config, componentName).map((env) => ({ env, componentName })),
   );
 };
 
@@ -83,7 +83,7 @@ export const getAllComponentsWithAllEnvsHierarchical = async (): Promise<{
     Object.keys(config.components).map((componentName) => [
       componentName,
       getAllEnvs(config, componentName),
-    ])
+    ]),
   );
 };
 
@@ -92,8 +92,8 @@ export const getAllPipelineContexts = async () => {
     (await getAllComponentsWithAllEnvsFlat())
       .filter((c) => c.env !== "local")
       .map(({ env, componentName }) =>
-        getPipelineContextByChoice(env, componentName)
-      )
+        getPipelineContextByChoice(env, componentName),
+      ),
   );
 };
 
@@ -107,7 +107,7 @@ export const getGitlabVar = async (
   vorpal: CommandInstance,
   env: string,
   componentName: string,
-  variableName: string
+  variableName: string,
 ) => {
   const rawVariableName = getSecretVarName(env, componentName, variableName);
   return await getVariableValueByRawName(vorpal, rawVariableName);
@@ -115,7 +115,7 @@ export const getGitlabVar = async (
 
 const resolveSecrets = async (
   vorpal: CommandInstance | null,
-  varSets: EnvironmentEnvVars[]
+  varSets: EnvironmentEnvVars[],
 ): Promise<Record<string, string>> => {
   const allVariablesInGitlab = await getAllVariables(vorpal);
 
@@ -136,15 +136,15 @@ const resolveSecrets = async (
           }
           return [key, value];
         })
-        .filter(Boolean)
-    )
+        .filter(Boolean),
+    ),
   );
 };
 
 export const getEnvVarsResolved = async (
   vorpal: CommandInstance | null,
   env: string,
-  componentName: string | null
+  componentName: string | null,
 ) => {
   if (!componentName) {
     return {};
@@ -173,7 +173,7 @@ export const getEnvVarsResolved = async (
 export const getJobOnlyEnvVarsResolved = async (
   vorpal: CommandInstance,
   env: string,
-  componentName: string
+  componentName: string,
 ) => {
   try {
     const envionment = await getEnvironment(env, componentName);

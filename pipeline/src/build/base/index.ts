@@ -13,7 +13,7 @@ export const createBuildJobs = (
   definitions: {
     appBuild?: AppBuildJobDefinition;
     dockerBuild: DockerBuildJobDefinition;
-  }
+  },
 ): CatladderJob[] => {
   return [
     ...(definitions.appBuild

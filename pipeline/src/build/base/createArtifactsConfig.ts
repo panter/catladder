@@ -6,7 +6,7 @@ import type { OptionalArtifacts } from "../custom/testJob";
 export const createArtifactsConfig = (
   rootPath: string,
   artifactsReports?: BuildConfigArtifactsReports,
-  artifacts?: Artifacts
+  artifacts?: Artifacts,
 ): OptionalArtifacts =>
   artifactsReports || artifacts
     ? {
@@ -26,7 +26,7 @@ export const createArtifactsConfig = (
               .filter(Array.isArray)
               .reduce(
                 (acc, curr) => [...acc, ...curr.map((p) => join(rootPath, p))],
-                []
+                [],
               ),
           },
         },

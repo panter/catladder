@@ -10,14 +10,14 @@ import { getEnvType } from "./getEnvType";
 const REVIEW_SLUG: BashExpressionPerPipelineType = {
   default: "unknown-review-slug",
   gitlab: new BashExpression(
-    `$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })`
+    `$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })`,
   ),
 };
 
 export const getReviewSlug = (
   envConfig: EnvConfigWithComponent,
   env: string,
-  pipelineType?: PipelineType
+  pipelineType?: PipelineType,
 ): StringOrBashExpression | null => {
   const envType = getEnvType(env, envConfig);
   if (envType === "review") {

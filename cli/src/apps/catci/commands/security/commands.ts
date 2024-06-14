@@ -21,7 +21,7 @@ export default function (vorpal: Vorpal) {
 type ActionFunc = (args: Vorpal.Args) => Promise<void>;
 
 function resultAsExitCode(
-  func: (args: Vorpal.Args) => Promise<Result<unknown, unknown>>
+  func: (args: Vorpal.Args) => Promise<Result<unknown, unknown>>,
 ): ActionFunc {
   return async (args: Vorpal.Args) => {
     const result = await func(args);
@@ -40,7 +40,7 @@ async function commandCiJob(vorpal: Vorpal) {
 <main-branch> main branch name
 <project-id> project id to create security audit for
 <user-id> gitlab user id that will be assignee of the audit
-`
+`,
     )
     .action(
       resultAsExitCode(async (args) => {
@@ -49,7 +49,7 @@ async function commandCiJob(vorpal: Vorpal) {
         if (evaluation.isErr()) {
           console.log("could not evaluate security audit document");
           console.log(
-            "creating new merge request with security audit template..."
+            "creating new merge request with security audit template...",
           );
 
           const { token, mainBranch, projectId, userId } = args;
@@ -67,14 +67,14 @@ async function commandCiJob(vorpal: Vorpal) {
 
           if (mr.isErr()) {
             console.error(
-              `could not create merge request with security audit template: ${mr.error}`
+              `could not create merge request with security audit template: ${mr.error}`,
             );
             return mr;
           }
 
           console.log("security audit merge request created successfully");
           console.log(
-            `please finish the MR by updating SECURITY.md document: ${mr.value.web_url}`
+            `please finish the MR by updating SECURITY.md document: ${mr.value.web_url}`,
           );
           return Err("merge request created" as const);
         }
@@ -82,14 +82,14 @@ async function commandCiJob(vorpal: Vorpal) {
         if (evaluation.value.score.answeredTopics === 0) {
           console.error("audit document has no answered topics");
           console.error(
-            `please answer security topics in ${SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`
+            `please answer security topics in ${SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`,
           );
           return Err("audit document has no answered topics" as const);
         }
 
         console.log(makeSecurityAuditOverview(evaluation.value));
         return Ok({});
-      })
+      }),
     );
 }
 
@@ -97,7 +97,7 @@ async function commandEvaluate(vorpal: Vorpal) {
   vorpal
     .command(
       "security-audit-evaluate <path>",
-      "Evaluates security audit document in given <path>"
+      "Evaluates security audit document in given <path>",
     )
     .action(
       resultAsExitCode(async (args) => {
@@ -107,13 +107,13 @@ async function commandEvaluate(vorpal: Vorpal) {
         if (result.isErr()) {
           console.error(result.error);
           console.error(
-            `please make sure the security audit document ${SECURITY_AUDIT_FILE_NAME} is in the repository`
+            `please make sure the security audit document ${SECURITY_AUDIT_FILE_NAME} is in the repository`,
           );
         } else {
           console.log(makeSecurityAuditOverview(result.value));
         }
         return result;
-      })
+      }),
     );
 }
 
@@ -127,7 +127,7 @@ async function commandCreate(vorpal: Vorpal) {
 <main-branch> main branch name
 <project-id> project id to create security audit for
 <user-id> gitlab user id that will be assignee of the audit
-`
+`,
     )
     .action(
       resultAsExitCode(async (args) => {
@@ -147,15 +147,15 @@ async function commandCreate(vorpal: Vorpal) {
 
         if (result.isErr()) {
           console.error(
-            `could not create security audit merge request: ${result.error}`
+            `could not create security audit merge request: ${result.error}`,
           );
         } else {
           console.log("security audit merge request created successfully");
           console.log(
-            `please finish the MR by updating SECURITY.md document: ${result.value.web_url}`
+            `please finish the MR by updating SECURITY.md document: ${result.value.web_url}`,
           );
         }
         return result;
-      })
+      }),
     );
 }

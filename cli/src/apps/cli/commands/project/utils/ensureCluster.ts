@@ -17,13 +17,13 @@ export default async function (envComponent: string) {
     throw new Error("can't ensure cluster for non-kubernetes deployments");
   }
   const cluster = getFullKubernetesClusterName(
-    context.componentConfig.deploy.cluster
+    context.componentConfig.deploy.cluster,
   );
   const connectedClusterName = await getCurrentConnectedClusterName();
 
   if (cluster !== connectedClusterName) {
     this.log(
-      `you are currently connected to cluster '${connectedClusterName}'`
+      `you are currently connected to cluster '${connectedClusterName}'`,
     );
     this.log(`but the project requires cluster '${cluster}'`);
     const { shouldContinue } = await this.prompt({

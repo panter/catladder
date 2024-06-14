@@ -14,7 +14,7 @@ function requireUncached(module: string) {
 }
 
 export const readConfigSync = (
-  directory: string = process.cwd()
+  directory: string = process.cwd(),
 ): { config: Config; path: string; ext: string } | null => {
   register({
     cwd: directory,
@@ -25,7 +25,7 @@ export const readConfigSync = (
   });
 
   const found = ["ts", "js", "yml", "yaml"].find((extension) =>
-    existsSync(fullPath(directory, extension))
+    existsSync(fullPath(directory, extension)),
   );
   if (found) {
     const filePath = fullPath(directory, found);

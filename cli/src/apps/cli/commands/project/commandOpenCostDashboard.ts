@@ -15,7 +15,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-check-costs <envComponent>",
-      "Shows you how much you're spending"
+      "Shows you how much you're spending",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
@@ -26,7 +26,7 @@ export default async (vorpal: Vorpal) =>
         "deployment/kubecost-cost-analyzer",
         GRAFANA_PROXY_LOCAL_PORT,
         GRAFANA_PROXY_TARGET_PORT,
-        "kubecost"
+        "kubecost",
       );
       open(url);
     });

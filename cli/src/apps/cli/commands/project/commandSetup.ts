@@ -5,7 +5,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-setup",
-      "Initializes all environments and creates requires resources, service accounts, etc."
+      "Initializes all environments and creates requires resources, service accounts, etc.",
     )
     .action(async function () {
       await setupProject(this);

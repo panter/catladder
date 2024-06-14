@@ -5,7 +5,7 @@ import { getEnvironmentContext } from "./getEnvironmentContext";
 import { getEnvironmentVariables } from "./getEnvironmentVariables";
 
 export const getEnvironment = async (
-  ctx: CreateContextContext
+  ctx: CreateContextContext,
 ): Promise<Environment> => {
   const { env } = ctx;
   const variables = await getEnvironmentVariables(ctx);

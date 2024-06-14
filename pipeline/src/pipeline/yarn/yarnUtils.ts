@@ -14,7 +14,7 @@ export const getYarnVersion = memoizee(
   async () => {
     return await execOrFail("yarn --version", "");
   },
-  { promise: true }
+  { promise: true },
 );
 // export for mocking
 export const getWorkspaces = memoizee(
@@ -23,23 +23,23 @@ export const getWorkspaces = memoizee(
       ? Object.values(
           JSON.parse(
             JSON.parse(await execOrFail("yarn workspaces --json info", "{}"))
-              ?.data ?? "{}"
-          )
+              ?.data ?? "{}",
+          ),
         )
       : JSON.parse(
           `[${(await execOrFail("yarn workspaces list --json --verbose", ""))
             .trim()
             .split("\n")
-            .join(",")}]`
+            .join(",")}]`,
         );
   },
-  { promise: true }
+  { promise: true },
 );
 
 // recursivly get all workspace dependencies
 export const getWorkspaceDependencies = (
   ws: YarnWorkspace,
-  allWorkspaces: YarnWorkspace[]
+  allWorkspaces: YarnWorkspace[],
 ): string[] => {
   return ws
     ? ([...ws.workspaceDependencies, ...ws.mismatchedWorkspaceDependencies]
@@ -47,7 +47,7 @@ export const getWorkspaceDependencies = (
           // we have to do this recursivly
 
           const otherWorkspace = allWorkspaces.find(
-            (w) => w.location === location
+            (w) => w.location === location,
           );
 
           if (otherWorkspace) {

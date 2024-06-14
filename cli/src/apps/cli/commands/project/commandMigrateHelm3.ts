@@ -16,12 +16,12 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-migrate-helm3 <envComponent>",
-      "Do manual step for helm2 to helm3 migration"
+      "Do manual step for helm2 to helm3 migration",
     )
     .autocomplete(
       (await envAndComponents()).filter(
-        (e) => !e.startsWith("local") && !e.startsWith("review")
-      )
+        (e) => !e.startsWith("local") && !e.startsWith("review"),
+      ),
     )
     .action(async function ({ envComponent }) {
       try {
@@ -34,10 +34,10 @@ export default async (vorpal: Vorpal) =>
         }
         try {
           await exec(
-            "helm plugin install https://github.com/helm/helm-2to3.git"
+            "helm plugin install https://github.com/helm/helm-2to3.git",
           );
           this.log(
-            "successfully installed plugin https://github.com/helm/helm-2to3.git"
+            "successfully installed plugin https://github.com/helm/helm-2to3.git",
           );
         } catch (e) {
           // ignore
@@ -51,7 +51,7 @@ export default async (vorpal: Vorpal) =>
         this.log("migrating now... 😼. This may take a moment");
         this.log("");
         const r = await exec(
-          `helm 2to3 convert --delete-v2-releases ${releaseName}`
+          `helm 2to3 convert --delete-v2-releases ${releaseName}`,
         );
         this.log(r);
       } catch (e) {

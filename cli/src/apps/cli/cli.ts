@@ -16,7 +16,7 @@ export default async () => {
   const vorpal = new Vorpal();
 
   const welcomeMessage = boxWithAsci(
-    `catladder 😻 v${packageInfos.version} ✨`
+    `catladder 😻 v${packageInfos.version} ✨`,
   );
 
   vorpal

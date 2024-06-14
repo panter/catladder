@@ -18,7 +18,7 @@ const getMeteorCache = (context: Context): GitlabJobCache[] => [
     paths: [
       join(
         context.componentConfig.dir,
-        ".meteor/local/resolver-result-cache.json"
+        ".meteor/local/resolver-result-cache.json",
       ),
       join(context.componentConfig.dir, ".meteor/local/plugin-cache"),
       join(context.componentConfig.dir, ".meteor/local/isopacks"),

@@ -7,9 +7,9 @@ export const processSecretsAsFiles = <
     env: {
       secret: Record<string, StringOrBashExpression>;
     };
-  } & DeployConfigKubernetesValues
+  } & DeployConfigKubernetesValues,
 >(
-  values: T
+  values: T,
 ): T => {
   if (!values.secretsAsFile || values.secretsAsFile.length === 0) {
     return values;
@@ -27,7 +27,7 @@ export const processSecretsAsFiles = <
           values.secretsAsFile.map((key) => [
             key + "_content",
             values.env.secret[key],
-          ])
+          ]),
         ),
       },
     },

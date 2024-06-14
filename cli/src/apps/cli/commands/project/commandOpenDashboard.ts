@@ -13,7 +13,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-open-dashboard <envComponent>",
-      "open an apps dashboard (kubernetes or cloudrun)"
+      "open an apps dashboard (kubernetes or cloudrun)",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {

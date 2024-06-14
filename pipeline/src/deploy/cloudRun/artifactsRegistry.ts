@@ -36,7 +36,7 @@ export const getArtifactsRegistryDockerUrl = (context: Context) => {
  */
 export const getArtifactsRegistryImageName = (
   context: Context,
-  lecacyReviewImageName = false
+  lecacyReviewImageName = false,
 ) => {
   if (lecacyReviewImageName && context.environment.envType !== "review") {
     throw new Error("lecacyReviewImageName is only allowed for review app");
@@ -67,7 +67,7 @@ export const getArtifactsRegistryImage = (context: Context) =>
 
 const getDeleteImageCommands = (
   fullImageName: StringOrBashExpression,
-  keepNewest = 0
+  keepNewest = 0,
 ) => {
   if (keepNewest === 0) {
     // no need to list tags, we delete the whole thing
@@ -80,7 +80,7 @@ const getDeleteImageCommands = (
 
   const listImagesToDeletecommand = removeFirstLinesFromCommandOutput(
     listAllImagesCommand,
-    keepNewest
+    keepNewest,
   );
   const deleteImageCommand = `gcloud artifacts docker images delete ${fullImageName}@$version --quiet --delete-tags`;
 
@@ -119,8 +119,8 @@ export const getDeleteUnusedImagesCommands = (context: Context, keep = 0) => {
       ? allowFailureInScripts(
           getDeleteImageCommands(
             getArtifactsRegistryImageName(context, true),
-            0
-          )
+            0,
+          ),
         )
       : []),
   ];

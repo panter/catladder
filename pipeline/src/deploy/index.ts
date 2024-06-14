@@ -17,13 +17,13 @@ export * from "./utils";
 export type DeployTypeDefinition<T extends DeployConfigType> = {
   jobs: (context: Context) => CatladderJob[];
   defaults: (
-    envContext: EnvironmentContext<any, T>
+    envContext: EnvironmentContext<any, T>,
   ) => PartialDeep<DeployConfigGeneric<T>>;
   additionalSecretKeys: (
-    envContext: EnvironmentContext<any, T>
+    envContext: EnvironmentContext<any, T>,
   ) => SecretEnvVar[];
   getAdditionalEnvVars: (
-    envContext: EnvironmentContext<any, T>
+    envContext: EnvironmentContext<any, T>,
   ) => Record<string, string | BashExpression | undefined | null>;
 };
 export type DeployTypes = {

@@ -10,7 +10,7 @@ export const createDeployementJobs = (
     deploy: DeployJobDefinition;
     stop?: StopJobDefinition;
     rollback?: RollbackJobDefinition;
-  }
+  },
 ): CatladderJob[] => {
   return [
     createDeployJob(context, definitions.deploy),

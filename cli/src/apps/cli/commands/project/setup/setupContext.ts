@@ -7,11 +7,11 @@ import { setupKubernetes } from "./setupKubernetes";
 
 export const setupContext = async (
   instance: CommandInstance,
-  context: Context
+  context: Context,
 ) => {
   instance.log("");
   instance.log(
-    "=================================================================================="
+    "==================================================================================",
   );
 
   instance.log(
@@ -19,7 +19,7 @@ export const setupContext = async (
       context.environment.shortName +
       ":" +
       context.componentName +
-      "..."
+      "...",
   );
   instance.log("");
   if (isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
@@ -37,7 +37,7 @@ export const setupContext = async (
       context.environment.shortName +
       ":" +
       context.componentName +
-      " done!"
+      " done!",
   );
 
   instance.log("");

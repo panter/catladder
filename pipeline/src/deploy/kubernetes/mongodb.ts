@@ -19,7 +19,7 @@ const getMongodbReplicasetHost = (context: Context, index: number) => {
   const fullAppname = context.environment.envVars.KUBE_APP_NAME;
   return getMongodbHost(
     context,
-    `${fullAppname}-mongodb-${index}.${fullAppname}-mongodb-headless`
+    `${fullAppname}-mongodb-${index}.${fullAppname}-mongodb-headless`,
   );
 };
 const createMongodbUrl = (context: Context, dbName: string) => {

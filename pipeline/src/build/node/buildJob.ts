@@ -46,7 +46,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
                 join(dir, "dist"),
                 join(dir, ".next"),
                 ...(buildConfig.artifactsPaths?.map((path) =>
-                  join(dir, path)
+                  join(dir, path),
                 ) ?? []),
               ]),
               expire_in: "1 day",
@@ -61,7 +61,7 @@ export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
         context,
         buildConfig.type === "node-static" || buildConfig.type === "storybook"
           ? "ensureNginxDockerfile"
-          : "ensureNodeDockerfile"
+          : "ensureNodeDockerfile",
       ),
       cache: [...getYarnCache(context, "pull")],
       variables: {

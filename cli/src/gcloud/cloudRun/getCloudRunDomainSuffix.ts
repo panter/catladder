@@ -20,7 +20,7 @@ export const getCloudRunDomainSuffix = async (config: DeployConfigCloudRun) => {
   const dummyServiceName = "cl-dummy-service-delete-me";
 
   const existingServices = await exec(
-    `gcloud run services list --format=json  --project="${config.projectId}"  --region=${config.region} --limit=1`
+    `gcloud run services list --format=json  --project="${config.projectId}"  --region=${config.region} --limit=1`,
   ).then((r) => JSON.parse(r.stdout));
 
   if (existingServices.length > 0) {
@@ -28,7 +28,7 @@ export const getCloudRunDomainSuffix = async (config: DeployConfigCloudRun) => {
   }
 
   const result = await exec(
-    `gcloud run deploy ${dummyServiceName} --region=${config.region} --allow-unauthenticated --project ${config.projectId} --image=us-docker.pkg.dev/cloudrun/container/hello --format=json`
+    `gcloud run deploy ${dummyServiceName} --region=${config.region} --allow-unauthenticated --project ${config.projectId} --image=us-docker.pkg.dev/cloudrun/container/hello --format=json`,
   ).then((r) => JSON.parse(r.stdout));
 
   return await getSuffixFromService(result);

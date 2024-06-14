@@ -14,7 +14,7 @@ export type BuildTypes = {
   [type in BuildConfigType]: {
     jobs: (context: Context) => CatladderJob[];
     defaults: (
-      envContext: EnvironmentContext<BuildConfigType, any>
+      envContext: EnvironmentContext<BuildConfigType, any>,
     ) => Partial<Extract<BuildConfig, { type: type }>>;
   };
 };

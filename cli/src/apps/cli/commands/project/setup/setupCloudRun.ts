@@ -14,7 +14,7 @@ import { upsertAllVariables } from "../../../../../utils/gitlab";
 
 export const setupCloudRun = async (
   instance: CommandInstance,
-  context: Context
+  context: Context,
 ) => {
   if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
     throw new Error("deploy config is not of type 'google-cloudrun'");
@@ -35,7 +35,7 @@ export const setupCloudRun = async (
         ? ["sqladmin.googleapis.com", "sql-component.googleapis.com"]
         : []),
     ],
-    config
+    config,
   );
   instance.log("upsert artifacts registry...");
   await upsertGcloudArtifactsRegistry(config);
@@ -58,7 +58,7 @@ export const setupCloudRun = async (
         ...(config.cloudSql ? ["roles/cloudsql.admin"] : []),
       ],
     },
-    GCLOUD_DEPLOY_CREDENTIALS_KEY
+    GCLOUD_DEPLOY_CREDENTIALS_KEY,
   );
 
   // gcloud run automatically gives us a hostname
@@ -66,7 +66,7 @@ export const setupCloudRun = async (
   // so we get this through some magic and add this as a ci/cd variable
   // the pipeline than can use this to construct the canonical host
   instance.log(
-    "get service domain suffix... that might take a while initially"
+    "get service domain suffix... that might take a while initially",
   );
   const suffix = await getCloudRunDomainSuffix(config);
   instance.log("domain suffix: " + suffix);
@@ -79,6 +79,6 @@ export const setupCloudRun = async (
     context.environment.shortName,
     context.componentName,
     false, // backup
-    false // masked
+    false, // masked
   );
 };

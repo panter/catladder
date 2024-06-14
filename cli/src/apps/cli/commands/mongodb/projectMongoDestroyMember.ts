@@ -10,22 +10,22 @@ import { getMongoDbPodsWithReplInfo } from "./utils";
 const removeFinalizer = async (
   namespace: string,
   type: "pod" | "pv" | "pvc",
-  name: string
+  name: string,
 ) =>
   exec(
-    `kubectl patch --namespace ${namespace} ${type} ${name} -p '{"metadata":{"finalizers":null}}'`
+    `kubectl patch --namespace ${namespace} ${type} ${name} -p '{"metadata":{"finalizers":null}}'`,
   );
 
 const deleteResource = async (
   namespace: string,
   type: "pod" | "pv" | "pvc",
-  name: string
+  name: string,
 ) => exec(`kubectl delete --namespace ${namespace} ${type} ${name}`);
 
 const removeFinalizerAndDelete = async (
   namespace: string,
   type: "pod" | "pv" | "pvc",
-  name: string
+  name: string,
 ) => {
   return Promise.all([
     removeFinalizer(namespace, type, name),
@@ -36,29 +36,29 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-mongo-destroy-member <envComponent>",
-      "DESTROY a member of a replicaset in order to reinitialize it"
+      "DESTROY a member of a replicaset in order to reinitialize it",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
       await ensureCluster.call(this, envComponent);
       this.log(
-        "this command tries to delete a (secondary) member of the replicaset, it's persistent volume claim (pvc) and the volume"
+        "this command tries to delete a (secondary) member of the replicaset, it's persistent volume claim (pvc) and the volume",
       );
       this.log("");
       this.log(
-        "this is useful, if you update the stateful set with new volume configuration (different size or storage class)"
+        "this is useful, if you update the stateful set with new volume configuration (different size or storage class)",
       );
       this.log("");
       this.log(
-        "Kubernetes will usually recreate the missing member with the updated config and mongodb will start synchronizing the new member."
+        "Kubernetes will usually recreate the missing member with the updated config and mongodb will start synchronizing the new member.",
       );
       this.log("");
       this.log(
-        "This works without downtime, but should be done when load on the db is low. Also it has not been tested with large dbs (> 10gi)"
+        "This works without downtime, but should be done when load on the db is low. Also it has not been tested with large dbs (> 10gi)",
       );
       this.log("");
       this.log(
-        "Deleting the volume and claim often stuck, just wait or cancel and restart."
+        "Deleting the volume and claim often stuck, just wait or cancel and restart.",
       );
       this.log("");
       const { understood } = await this.prompt({
@@ -96,7 +96,7 @@ export default async (vorpal: Vorpal) =>
       ).podName;
 
       const thePvc = pvcs.find(
-        (pvc) => pvc.metadata.name === `datadir-${podName}`
+        (pvc) => pvc.metadata.name === `datadir-${podName}`,
       );
       if (!thePvc) {
         logError(this, `sorry, no pvc found for ${podName}`);

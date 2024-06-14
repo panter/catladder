@@ -15,15 +15,14 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-mongo-port-forward <envComponent>",
-      "port foward to a mongodb"
+      "port foward to a mongodb",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
       await ensureCluster.call(this, envComponent);
       const namespace = await getProjectNamespace(envComponent);
-      const podNames = await getProjectMongodbAllPodsSortedWithLabel(
-        envComponent
-      );
+      const podNames =
+        await getProjectMongodbAllPodsSortedWithLabel(envComponent);
       if (podNames.length === 0) {
         logError(this, "sorry, no pods found");
         return;

@@ -9,6 +9,6 @@ export const createAllPipelines = async (config: Config) =>
       ALL_TRIGGERS.map(async (trigger) => [
         trigger,
         await createChildPipeline("gitlab", trigger, config),
-      ])
-    )
+      ]),
+    ),
   );

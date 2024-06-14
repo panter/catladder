@@ -9,7 +9,7 @@ export const getProjectPods = async (envComponent: string) => {
 
   const { componentName } = parseChoice(envComponent);
   return res.body.items.filter((item) =>
-    componentName ? item.metadata?.name?.includes(componentName + "-") : true
+    componentName ? item.metadata?.name?.includes(componentName + "-") : true,
   );
 };
 

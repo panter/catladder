@@ -42,7 +42,7 @@ export const getGitlabToken = async (vorpal: CommandInstance | null) => {
   if (!(await hasGitlabToken())) {
     if (!vorpal) {
       console.error(
-        "⚠️ gitlab token missing, please run catladder to set it up"
+        "⚠️ gitlab token missing, please run catladder to set it up",
       );
       process.exit(1);
     }
@@ -56,7 +56,7 @@ export const doGitlabRequest = async <T = any>(
   vorpal: CommandInstance | null,
   path: string,
   data: any = undefined,
-  method: Method = "GET"
+  method: Method = "GET",
 ): Promise<T> => {
   const rootToken = await getGitlabToken(vorpal);
 
@@ -84,23 +84,23 @@ export const doGitlabRequest = async <T = any>(
   throw new Error(
     `Could not send request to gitlab api ${path}: ${result.status} "${
       result.statusText
-    }".\nResponse: ${JSON.stringify(await result.json(), null, 2)}`
+    }".\nResponse: ${JSON.stringify(await result.json(), null, 2)}`,
   );
 };
 
 export const getProjectInfo = async (
-  vorpal: CommandInstance | null
+  vorpal: CommandInstance | null,
 ): Promise<{ id: string; web_url: string }> => {
   const gitRemoteOriginUrl = (
     await exec("git config --get remote.origin.url")
   ).stdout.trim();
   const projectPath =
     /(https:\/\/|git@)git\.panter\.ch[:/]([^.]*)(\.git)?/g.exec(
-      gitRemoteOriginUrl
+      gitRemoteOriginUrl,
     );
   const project = await doGitlabRequest(
     vorpal,
-    `projects/${encodeURIComponent(projectPath[2])}`
+    `projects/${encodeURIComponent(projectPath[2])}`,
   );
   return project;
 };
@@ -123,19 +123,19 @@ export const getAllVariables = memoizee(
       result = await doGitlabRequest(
         vorpal,
         // 100 is max page size
-        `projects/${id}/variables?per_page=100&page=${page}`
+        `projects/${id}/variables?per_page=100&page=${page}`,
       );
       page++;
       all = [...all, ...result];
     } while (result?.length > 0);
     return all;
   },
-  { promise: true }
+  { promise: true },
 );
 
 export const getVariableValueByRawName = async (
   vorpal: CommandInstance,
-  rawName: string
+  rawName: string,
 ) => {
   const allVariables = await getAllVariables(vorpal);
   return allVariables.find((v) => v.key === rawName)?.value;
@@ -150,7 +150,7 @@ const createVariable = async (
   key: string,
   value: string,
   masked = true,
-  environment_scope = "*"
+  environment_scope = "*",
 ) => {
   return await doGitlabRequest(
     vorpal,
@@ -161,7 +161,7 @@ const createVariable = async (
       masked: masked && isMaskable(value),
       environment_scope,
     },
-    "POST"
+    "POST",
   );
 };
 
@@ -170,7 +170,7 @@ const updateVariable = async (
   projectId: string,
   key: string,
   value: string,
-  masked = true
+  masked = true,
 ) => {
   return await doGitlabRequest(
     vorpal,
@@ -179,20 +179,20 @@ const updateVariable = async (
       value,
       masked: masked && isMaskable(value),
     },
-    "PUT"
+    "PUT",
   );
 };
 
 const deleteVariable = async (
   vorpal: CommandInstance,
   projectId: string,
-  key: string
+  key: string,
 ) => {
   return await doGitlabRequest(
     vorpal,
     `projects/${projectId}/variables/${key}`,
     undefined,
-    "DELETE"
+    "DELETE",
   );
 };
 
@@ -233,7 +233,7 @@ const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
       }
 
       return acc;
-    }, {})
+    }, {}),
   );
   return allVariables;
 };
@@ -260,7 +260,7 @@ export const upsertAllVariables = async (
   env: string,
   componentName: string,
   backup = true,
-  masked = true // FIXME: would be better to have this per variable
+  masked = true, // FIXME: would be better to have this per variable
 ): Promise<void> => {
   const { id } = await getProjectInfo(vorpal);
 
@@ -286,7 +286,7 @@ export const upsertAllVariables = async (
             getBackupKey(fullKey, new Date().getTime()),
             oldValue,
             masked,
-            "_backup"
+            "_backup",
           );
         }
       } else {

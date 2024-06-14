@@ -7,7 +7,7 @@ export const upsertGcloudArtifactsRegistry = async (config: {
 }) => {
   try {
     await exec(
-      `gcloud artifacts repositories create catladder-deploy --project="${config.projectId}" --repository-format=docker --location=${config.region}`
+      `gcloud artifacts repositories create catladder-deploy --project="${config.projectId}" --repository-format=docker --location=${config.region}`,
     );
   } catch (e) {
     // probably already exists

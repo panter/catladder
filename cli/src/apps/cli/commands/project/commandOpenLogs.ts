@@ -10,7 +10,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-open-logs <envComponent>",
-      "open google cloud logs (stackdriver logs)"
+      "open google cloud logs (stackdriver logs)",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {

@@ -6,7 +6,7 @@ import { uniq } from "lodash";
 
 export const getYarnCache = (
   context: Context,
-  policy = "pull-push"
+  policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
     context.packageManagerInfo?.componentIsInWorkspace;
@@ -27,7 +27,7 @@ export const getYarnCache = (
 
 export const getNodeModulesCache = (
   context: Context,
-  policy = "pull-push"
+  policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
     context.packageManagerInfo?.componentIsInWorkspace;
@@ -46,7 +46,7 @@ export const getNodeModulesCache = (
           ? uniq([
               "node_modules",
               ...(context.packageManagerInfo?.workspaces.map((w) =>
-                join(w.location, "node_modules")
+                join(w.location, "node_modules"),
               ) ?? []),
             ])
           : [join(context.componentConfig.dir, "node_modules")]),
@@ -56,7 +56,7 @@ export const getNodeModulesCache = (
 };
 export const getNodeCache = (
   context: Context,
-  policy = "pull-push"
+  policy = "pull-push",
 ): GitlabJobCache[] => {
   return [
     ...getYarnCache(context, policy),

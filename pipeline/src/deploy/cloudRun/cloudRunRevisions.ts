@@ -9,7 +9,7 @@ const getListRevisionsCommand = (
   args: {
     filter?: string;
     format: string;
-  }
+  },
 ) => {
   const serviceName = getServiceName(context);
   const deployConfig = context.componentConfig.deploy;
@@ -35,7 +35,7 @@ const getListRevisionsCommand = (
 
 export const getDeleteUnusedRevisionsCommands = (
   context: Context,
-  keep: number
+  keep: number,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
@@ -54,7 +54,7 @@ export const getDeleteUnusedRevisionsCommands = (
   // this removes the newest `revisionsToKeep` images
   const listRevisionsToDeleteCmd = removeFirstLinesFromCommandOutput(
     listAllInactiveRevisionsCmd,
-    keep
+    keep,
   );
   const deleteRevisionCmd = `gcloud run revisions delete ${createArgsString({
     project: deployConfig.projectId,

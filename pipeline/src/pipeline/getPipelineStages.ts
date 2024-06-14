@@ -16,7 +16,7 @@ export function getPipelineStages(config: Config) {
       baseStage,
       ...allEnvs.map((e) => `${baseStage} ${e}`),
     ],
-    []
+    [],
   );
   return stages;
 }

@@ -17,7 +17,7 @@ const getAllNamespaces = memoizee(
     const res = await k8sApi.listNamespace();
     return res.body.items;
   },
-  { maxAge: 30000, promise: true }
+  { maxAge: 30000, promise: true },
 );
 
 export const getAllNamespacesNames = async () => {
@@ -65,7 +65,7 @@ export default async (vorpal: Vorpal) => {
   vorpal
     .command(
       "kube-get-shell <namespace>",
-      "get a shell to a pod in the environment"
+      "get a shell to a pod in the environment",
     )
     .autocomplete(namespaceAutoCompletion)
     .action(async function ({ namespace }) {

@@ -11,7 +11,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-get-shell <envComponent>",
-      "get a shell to a pod in the environment"
+      "get a shell to a pod in the environment",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {

@@ -48,7 +48,7 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         ...createArtifactsConfig(
           context.componentConfig.dir,
           buildConfig.audit?.artifactsReports,
-          buildConfig.audit?.artifacts
+          buildConfig.audit?.artifacts,
         ),
       }
     : null;
@@ -63,7 +63,7 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         ...createArtifactsConfig(
           context.componentConfig.dir,
           buildConfig.lint?.artifactsReports,
-          buildConfig.lint?.artifacts
+          buildConfig.lint?.artifacts,
         ),
       }
     : null;
@@ -77,7 +77,7 @@ export const createCustomTestJobs = (context: Context): CatladderJob[] => {
         ...createArtifactsConfig(
           context.componentConfig.dir,
           buildConfig.test?.artifactsReports,
-          buildConfig.test?.artifacts
+          buildConfig.test?.artifacts,
         ),
       }
     : null;

@@ -5,7 +5,7 @@ import { mergeWithMergingArrays } from "../utils";
 export const getEnvConfig = (
   config: Config,
   componentName: string,
-  env: string
+  env: string,
 ): EnvConfigWithComponent => {
   const defaultConfig = config.components[componentName];
   if (!defaultConfig) {

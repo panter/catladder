@@ -26,7 +26,7 @@ import { ENV_VARS_FILENAME } from "./constants";
 const getJobRunScriptForJob = (
   context: Context,
   jobName: StringOrBashExpression,
-  wait: boolean
+  wait: boolean,
 ) => {
   const commonArgs = getCommonCloudRunArgs(context);
 
@@ -66,7 +66,7 @@ export const getDeleteJobsScripts = (context: Context) => {
 
 export const getJobRunScripts = (
   context: Context,
-  when: DeployConfigCloudRunJob["when"]
+  when: DeployConfigCloudRunJob["when"],
 ) => {
   const jobsWithNames = getCloudRunJobsWithNames(context);
   return jobsWithNames
@@ -76,8 +76,8 @@ export const getJobRunScripts = (
         context,
         jobName,
         // wait for completin on stop jobs, since stop will delete the jobs afterwards, so they will fail
-        ["preStop", "postStop"].includes(when)
-      )
+        ["preStop", "postStop"].includes(when),
+      ),
     );
 };
 
@@ -92,7 +92,7 @@ export const getJobCreateScripts = (context: Context) => {
 const getJobCreateScriptsForJob = (
   context: Context,
   jobName: StringOrBashExpression,
-  job: DeployConfigCloudRunJob
+  job: DeployConfigCloudRunJob,
 ) => {
   const commonDeployArgs = getCommonDeployArgs(context);
 
@@ -125,9 +125,9 @@ const getJobCreateScriptsForJob = (
   return [
     ...allowFailureInScripts([`${gcloudRunCmd()} jobs create ${argsString}`]),
     `${gcloudRunCmd(
-      requiresBeta ? "beta" : undefined
+      requiresBeta ? "beta" : undefined,
     )} jobs update ${argsString} ${createArgsString(
-      ...createVolumeConfig(job?.volumes, "job")
+      ...createVolumeConfig(job?.volumes, "job"),
     )}`,
   ];
 };
@@ -166,11 +166,11 @@ const getCloudRunJobsWithSchedule = (context: Context) => {
   return jobsWithNames
     .filter(
       (
-        entry
+        entry,
       ): entry is {
         jobName: BashExpression;
         job: DeployConfigCloudRunJobWithSchedule;
-      } => entry.job.when === "schedule"
+      } => entry.job.when === "schedule",
     )
     .map(({ job, jobName }) => ({
       job,
@@ -188,7 +188,7 @@ const getCloudRunJobsWithNames = (context: Context) => {
   const jobsWithNames = Object.entries(deployConfig.jobs ?? {})
     // filter out disabled jobs
     .filter((entry): entry is [string, DeployConfigCloudRunJob] =>
-      Boolean(entry[1])
+      Boolean(entry[1]),
     )
     .map(([name, job]) => ({
       jobName: getFullJobName(name),

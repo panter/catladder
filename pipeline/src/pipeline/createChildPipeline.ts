@@ -10,7 +10,7 @@ import { createGitlabPipelineWithDefaults } from "./gitlab/createGitlabPipeline"
 export const createChildPipeline = async <T extends PipelineType>(
   pipelineType: T,
   trigger: PipelineTrigger,
-  config: Config
+  config: Config,
 ): Promise<Pipeline<T>> => {
   const jobs = await createAllJobs({
     config,
@@ -27,7 +27,7 @@ export const createChildPipeline = async <T extends PipelineType>(
       },
       stages,
       jobs: Object.fromEntries(
-        gitlabJobs.map(({ gitlabJob, name }) => [name, gitlabJob])
+        gitlabJobs.map(({ gitlabJob, name }) => [name, gitlabJob]),
       ),
     }) as Pipeline<T>;
   }

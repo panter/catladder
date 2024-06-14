@@ -5,7 +5,7 @@ import { openGoogleCloudDashboard } from "../openDashboard";
 
 export const openGoogleCloudRunDashboard = async (
   instance: CommandInstance,
-  context: Context
+  context: Context,
 ) => {
   if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
     throw new Error("deploy type is not google-cloudrun ");
@@ -17,6 +17,6 @@ export const openGoogleCloudRunDashboard = async (
     `run/detail/${region}/${fullName}/metrics`,
     {
       project: projectId,
-    }
+    },
   );
 };

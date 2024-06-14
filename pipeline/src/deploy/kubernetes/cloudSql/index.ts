@@ -20,7 +20,7 @@ type CloudSqlValues = {
   dbUser: string;
 };
 export const createKubernetesCloudsqlBaseValues = (
-  context: Context
+  context: Context,
 ): {
   cloudsql: CloudSqlValues;
 } => {
@@ -36,7 +36,7 @@ export const createKubernetesCloudsqlBaseValues = (
 
   const proxyCredentials = `$${getSecretVarNameForContext(
     context,
-    "cloudsqlProxyCredentials"
+    "cloudsqlProxyCredentials",
   )}`;
   if (config?.type !== "unmanaged") {
     const instanceConnectionName = `${config.projectId ?? "skynet-164509"}:${
@@ -63,7 +63,7 @@ export const createKubernetesCloudsqlBaseValues = (
           config,
           context.fullConfig,
           context.environment.slugPrefix,
-          context.componentName
+          context.componentName,
         ),
       },
     };

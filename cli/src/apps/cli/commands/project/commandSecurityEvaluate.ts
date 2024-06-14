@@ -9,7 +9,7 @@ export default async (vorpal: Vorpal) => {
   vorpal
     .command(
       "project-security-evaluate",
-      "evaluate project's security audit document"
+      "evaluate project's security audit document",
     )
     .action(async function () {
       const gitRoot = await getGitRoot();
@@ -17,7 +17,7 @@ export default async (vorpal: Vorpal) => {
       if (result.isErr()) {
         console.error(
           "Could not evaluate security audit document:",
-          result.error
+          result.error,
         );
       } else {
         console.log(makeSecurityAuditOverview(result.value));

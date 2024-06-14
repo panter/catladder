@@ -21,7 +21,7 @@ export const BASE_STAGES = [
   "rollback",
   "stop",
 ] as const;
-export type BaseStage = typeof BASE_STAGES[number];
+export type BaseStage = (typeof BASE_STAGES)[number];
 
 export type CatladderJobNeed =
   | string

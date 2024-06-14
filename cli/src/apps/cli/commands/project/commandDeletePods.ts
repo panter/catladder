@@ -27,7 +27,7 @@ export default async (vorpal: Vorpal) =>
       });
 
       this.log(
-        "the following pods will be DELETED 🙀 (and therefore restarted 😸)"
+        "the following pods will be DELETED 🙀 (and therefore restarted 😸)",
       );
       this.log("");
       selectedPodNames.forEach((n: string) => this.log(n));

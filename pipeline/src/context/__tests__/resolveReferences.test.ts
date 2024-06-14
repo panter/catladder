@@ -6,7 +6,7 @@ import {
 
 const unpackBashExpressions = (obj: Record<string, string | BashExpression>) =>
   Object.fromEntries(
-    Object.entries(obj).map(([key, value]) => [key, value.toString()])
+    Object.entries(obj).map(([key, value]) => [key, value.toString()]),
   );
 describe("resolveReferences", () => {
   it("replaces occurences of ${componentName:VARIABLE_NAME}", async () => {

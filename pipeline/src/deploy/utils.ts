@@ -3,7 +3,7 @@ import type { DeployConfigKubernetesCluster } from "./types";
 import { isOfDeployType } from "./types";
 
 export const getFullKubernetesClusterName = (
-  cluster: DeployConfigKubernetesCluster
+  cluster: DeployConfigKubernetesCluster,
 ) => {
   if (cluster.type === "gcloud") {
     return `gke_${cluster.projectId}_${cluster.region}_${cluster.name}`;
@@ -12,7 +12,7 @@ export const getFullKubernetesClusterName = (
 
 export const getKubernetesNamespace = (
   config: Pick<Config, "customerName" | "appName">,
-  env: string
+  env: string,
 ) => {
   return `${config.customerName}-${config.appName}-${env}`;
 };

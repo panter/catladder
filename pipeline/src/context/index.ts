@@ -23,11 +23,11 @@ export type CreateContextContext = {
 };
 
 export const createContext = async (
-  ctx: CreateContextContext
+  ctx: CreateContextContext,
 ): Promise<Context> => {
   if (!/^[a-z0-9-]+$/.test(ctx.componentName)) {
     throw new Error(
-      "componentName may only contain lower case letters, numbers and -"
+      "componentName may only contain lower case letters, numbers and -",
     );
   }
 
@@ -53,7 +53,7 @@ export const createContext = async (
       };
   const componentConfig = mergeWithMergingArrays(
     defaults,
-    componentConfigWithoutDefaults
+    componentConfigWithoutDefaults,
   );
 
   return {

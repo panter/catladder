@@ -11,7 +11,7 @@ export const repeatOnFailure = (
   command: string,
   options: {
     pauseInSeconds: number;
-  }
+  },
 ): string => {
   return `
     until ${command}

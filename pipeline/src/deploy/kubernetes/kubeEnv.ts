@@ -43,7 +43,7 @@ export const createKubeEnv = (context: Context) => {
     {
       secret: {},
       public: {},
-    }
+    },
   );
 
   return env;

@@ -5,7 +5,7 @@ import type { Choice, Variables } from "./types";
 export const getComponentFullPath = (
   gitRoot: string,
   config: Config,
-  componentName: string
+  componentName: string,
 ) => {
   return join(gitRoot, config.components[componentName].dir);
 };
@@ -13,13 +13,13 @@ const getCurrentComponentName = async (config: Config) => {
   const gitRoot = await getGitRoot();
   const currentDir = process.cwd();
   return Object.keys(config.components).find((c) =>
-    currentDir.startsWith(getComponentFullPath(gitRoot, config, c))
+    currentDir.startsWith(getComponentFullPath(gitRoot, config, c)),
   );
 };
 
 export const getCurrentComponentAndEnvFromChoice = async (
   config: Config,
-  choice?: Choice
+  choice?: Choice,
 ) => {
   const env = choice?.env ?? "local";
   const currentComponent =
@@ -41,7 +41,7 @@ export const sanitizeMultiLine = (variables: Variables) => {
     Object.entries(variables).map(([key, value]) => [
       key,
       value.replaceAll("\n", "\\n"),
-    ])
+    ]),
   );
 };
 

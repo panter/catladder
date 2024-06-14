@@ -40,7 +40,7 @@ const promptJob = async (vorpal: CommandInstance, projectId: any, ctx: any) => {
 
   const jobsToName = (jo: any[]) =>
     jo.map(
-      (j: any) => `${j.ref}-${j.name}-${j.user.username}-${j.status}-${j.id}`
+      (j: any) => `${j.ref}-${j.name}-${j.user.username}-${j.status}-${j.id}`,
     );
 
   const preferredJobs = jobs.filter((j: any) => j.commit.id === commitId);
@@ -84,13 +84,13 @@ export default async (vorpal: Vorpal) => {
       while (!finished) {
         const trace = await exec(
           `curl -s --header "PRIVATE-TOKEN: ${await getGitlabToken(
-            this
-          )}" "https://git.panter.ch/api/v4/projects/${projectId}/jobs/${id}/trace"`
+            this,
+          )}" "https://git.panter.ch/api/v4/projects/${projectId}/jobs/${id}/trace"`,
         );
 
         const job = await doGitlabRequest(
           this,
-          `projects/${projectId}/jobs/${id}`
+          `projects/${projectId}/jobs/${id}`,
         );
 
         if (trace.stdout) {

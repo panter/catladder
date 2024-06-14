@@ -26,14 +26,14 @@ export class BashExpression {
    */
   public concat(...values: Array<string | BashExpression>): BashExpression {
     return new BashExpression(
-      this.toString().concat(...values.map((v) => v.toString()))
+      this.toString().concat(...values.map((v) => v.toString())),
     );
   }
 
   public transformWithCommand(command: string): BashExpression {
     return new BashExpression(
       // see https://stackoverflow.com/a/2264537
-      `$(printf %s "${this.toString()}" | ${command})`
+      `$(printf %s "${this.toString()}" | ${command})`,
     );
   }
 }
@@ -53,14 +53,14 @@ export const getBashVariable = (name: string) => new BashExpression(`$${name}`);
  */
 export const joinBashExpressions = (
   parts: Array<StringOrBashExpression>,
-  joiner = ""
+  joiner = "",
 ): StringOrBashExpression => {
   const anyIsBashExpression = parts.some((p) => p instanceof BashExpression);
   if (anyIsBashExpression) {
     return new BashExpression(
       parts
         .map((p) => (p instanceof BashExpression ? p.toString() : p))
-        .join(joiner)
+        .join(joiner),
     );
   } else {
     return parts.join(joiner);

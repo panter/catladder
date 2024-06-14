@@ -16,7 +16,7 @@ import {
 export const transformJobOnlyVars = async (
   env: string,
   componentName: string,
-  vars: EnvVars | null
+  vars: EnvVars | null,
 ): Promise<{
   envVars: UnspecifiedEnvVars;
   secretEnvVarKeys: SecretEnvVar[];

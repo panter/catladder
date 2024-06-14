@@ -6,7 +6,7 @@ import { getPipelineTriggerForGitlabChildPipeline } from "./gitlab/getPipelineTr
 export async function generatePipelineFiles<T extends PipelineType>(
   config: Config,
   pipelineType: T,
-  mode: PipelineMode<T>
+  mode: PipelineMode<T>,
 ) {
   if (mode === "childpipeline") {
     const trigger = getPipelineTriggerForGitlabChildPipeline();
@@ -14,14 +14,14 @@ export async function generatePipelineFiles<T extends PipelineType>(
     const { jobs, ...mainPipeline } = await createChildPipeline(
       pipelineType,
       trigger,
-      config
+      config,
     );
     // need to spread out the jobs, forgot why
     await writeYamlfile(`__pipeline.yml`, { ...jobs, ...mainPipeline });
   } else {
     const { jobs, ...mainPipeline } = await createMainPipeline(
       pipelineType,
-      config
+      config,
     );
     // need to spread out the jobs, forgot why
     await writeYamlfile(`.gitlab-ci.yml`, { ...jobs, ...mainPipeline });

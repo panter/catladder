@@ -25,6 +25,6 @@ export function makeSecurityAuditOverview(evaluation: SecurityEvaluation) {
  📢 Answered topics: ${evaluation.score.answeredTopics}
  ❔ Unknown topics: ${evaluation.score.unknownTopics}
  📊 Rating: ${ratingToEmo(evaluation.score.rating)} ${
-    evaluation.score.rating
-  }/100`;
+   evaluation.score.rating
+ }/100`;
 }

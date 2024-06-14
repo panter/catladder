@@ -34,7 +34,7 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
                 join(context.componentConfig.dir, "__build_info.json"),
                 join(context.componentConfig.dir, "dist"),
                 ...(buildConfig.artifactsPaths?.map((path) =>
-                  join(context.componentConfig.dir, path)
+                  join(context.componentConfig.dir, path),
                 ) ?? []),
               ],
               expire_in: "1 day",
@@ -44,7 +44,7 @@ export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
     dockerBuild: {
       script: getDockerBuildDefaultScript(
         context,
-        buildConfig.docker?.type === "nginx" ? "ensureNginxDockerfile" : ""
+        buildConfig.docker?.type === "nginx" ? "ensureNginxDockerfile" : "",
       ),
 
       variables: {},

@@ -37,21 +37,21 @@ const resolveJson = (v: Vars) =>
                 } catch (e) {
                   return [key, value];
                 }
-              })
+              }),
             ),
-          ])
+          ]),
         ),
       ];
-    })
+    }),
   );
 
 const getSecretEnvVarKeysToConfigure = async (
   env: string,
-  componentName: string
+  componentName: string,
 ) => {
   const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment(
     env,
-    componentName
+    componentName,
   );
   return [
     ...jobOnlyVars.build.secretEnvVarKeys,
@@ -64,18 +64,18 @@ const getSecretEnvVarKeysToConfigure = async (
 const getEnvVarsToEdit = async (
   instance: CommandInstance,
   env: string,
-  componentName: string
+  componentName: string,
 ) => {
   const secretEnvVarKeys = await getSecretEnvVarKeysToConfigure(
     env,
-    componentName
+    componentName,
   );
 
   const normalEnvVars = await getEnvVarsResolved(instance, env, componentName);
   const jobOnlyEnvVars = await getJobOnlyEnvVarsResolved(
     instance,
     env,
-    componentName
+    componentName,
   );
   const allEnvVars = {
     ...normalEnvVars,
@@ -88,14 +88,14 @@ const getEnvVarsToEdit = async (
       const variableIsNotSet =
         value === "$" + getSecretVarName(env, componentName, key);
       return [key, variableIsNotSet ? "🚨 FILL ME" : value];
-    })
+    }),
   );
 };
 const doItFor = async (
   instance: CommandInstance,
   envAndComponents: {
     [componentName: string]: string[];
-  }
+  },
 ) => {
   let valuesToEdit: Vars = Object.fromEntries(
     await Promise.all(
@@ -106,11 +106,11 @@ const doItFor = async (
             envs.map(async (env) => [
               env,
               await getEnvVarsToEdit(instance, env, componentName),
-            ])
-          )
+            ]),
+          ),
         ),
-      ])
-    )
+      ]),
+    ),
   );
   let hasErrors = true;
   while (hasErrors) {
@@ -121,11 +121,11 @@ const doItFor = async (
 
         ${Object.entries(envAndComponents)
           .map(
-            ([componentName, envs]) => `- ${componentName}: ${envs.join(", ")}`
+            ([componentName, envs]) => `- ${componentName}: ${envs.join(", ")}`,
           )
           .join("\n")}
 
-        `
+        `,
     );
     // check for errors
     hasErrors = false;
@@ -137,7 +137,7 @@ const doItFor = async (
         // check whether newValues have the exact number of keys
         const secretEnvVarKeys = await getSecretEnvVarKeysToConfigure(
           env,
-          componentName
+          componentName,
         );
 
         const extranous = difference(usedKeys, secretEnvVarKeys);
@@ -146,7 +146,7 @@ const doItFor = async (
         if (extranous.length > 0 || missing.length > 0) {
           instance.log("");
           instance.log(
-            `😿 Oh no! There is something wrong with "${componentName}"`
+            `😿 Oh no! There is something wrong with "${componentName}"`,
           );
           instance.log("");
           if (extranous.length > 0) {
@@ -186,7 +186,7 @@ const doItFor = async (
         instance,
         valuesToEdit[componentName][env],
         env,
-        componentName
+        componentName,
       );
       instance.log("");
       instance.log("✅ " + env + ":" + componentName);
@@ -199,7 +199,7 @@ const doItFor = async (
 
 export const projectConfigSecrets = async (
   vorpal: CommandInstance,
-  envComponent?: string
+  envComponent?: string,
 ) => {
   if (!envComponent) {
     const allEnvAndcomponents = await getAllComponentsWithAllEnvsHierarchical();
@@ -212,7 +212,7 @@ export const projectConfigSecrets = async (
       const components = await getProjectComponents();
       await doItFor(
         vorpal,
-        Object.fromEntries(components.map((c) => [c, [env]]))
+        Object.fromEntries(components.map((c) => [c, [env]])),
       );
     }
     if (componentName) {
@@ -227,7 +227,7 @@ export default async (vorpal: Vorpal) => {
   vorpal
     .command(
       "project-config-secrets [envComponent]",
-      "setup/update secrets stored in pass"
+      "setup/update secrets stored in pass",
     )
     .autocomplete(await allEnvsAndAllComponents())
     .action(async function ({ envComponent }) {

@@ -13,13 +13,13 @@ describe("createArtifactsConfig", () => {
           coverage_report: { coverage_format: "cobertura", path: "some" },
           terraform: "something",
         },
-      })
+      }),
     ).toMatchSnapshot();
   });
 
   it("returns junit parts of artifactsReports", () => {
     expect(
-      createArtifactsConfig(".", { junit: ["report.xml"] })
+      createArtifactsConfig(".", { junit: ["report.xml"] }),
     ).toMatchSnapshot();
   });
 
@@ -33,7 +33,7 @@ describe("createArtifactsConfig", () => {
           junit: "full-report.xml",
           terraform: "something",
         },
-      }
+      },
     );
     expect(result).toMatchSnapshot();
     expect(result?.artifacts?.reports?.junit).toHaveLength(2);

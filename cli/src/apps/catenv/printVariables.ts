@@ -10,7 +10,7 @@ import {
 const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
   const { env, currentComponent } = await getCurrentComponentAndEnvFromChoice(
     config,
-    choice
+    choice,
   );
 
   if (currentComponent) {
@@ -39,11 +39,11 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
             Object.entries(subappvars).map(([key, value]) => [
               `${sanitizeEnvVarName(componentName.toUpperCase())}_${key}`,
               value,
-            ])
+            ]),
           ),
         };
       },
-      Promise.resolve({} as Record<string, string>)
+      Promise.resolve({} as Record<string, string>),
     );
   }
 };

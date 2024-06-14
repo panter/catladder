@@ -5,7 +5,7 @@ import { allEnvsAndAllComponents } from "./utils/autocompletions";
 
 export const projectSecretsClearBackups = async (
   vorpal: CommandInstance,
-  keep = 3
+  keep = 3,
 ) => {
   await clearBackups(vorpal, keep);
 };

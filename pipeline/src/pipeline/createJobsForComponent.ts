@@ -9,7 +9,7 @@ import { getPackageManagerInfo } from "./packageManager";
 
 const injectDefaultVarsInCustomJobs = (
   context: Context,
-  jobs: CatladderJob[]
+  jobs: CatladderJob[],
 ) =>
   jobs.map(({ variables, ...job }) => ({
     variables: {
@@ -40,11 +40,11 @@ const createRawJobs = (context: Context): CatladderJob[] => {
 };
 
 export const createJobsForComponent = async (
-  contextContext: Omit<CreateContextContext, "packageManagerInfo">
+  contextContext: Omit<CreateContextContext, "packageManagerInfo">,
 ): Promise<Array<CatladderJobWithContext>> => {
   const packageManagerInfo = await getPackageManagerInfo(
     contextContext.config,
-    contextContext.componentName
+    contextContext.componentName,
   );
 
   const context = await createContext({

@@ -8,7 +8,7 @@ export const stringifyValues = (obj: Record<string, unknown>) =>
     Object.entries(obj).map(([key, value]) => [
       key,
       isObject(value) ? JSON.stringify(value) : `${value}`,
-    ])
+    ]),
   );
 
 export const stringListToSecreteEnvVarList = (keys: string[]): SecretEnvVar[] =>
@@ -16,12 +16,12 @@ export const stringListToSecreteEnvVarList = (keys: string[]): SecretEnvVar[] =>
 export const makeSecretEnvVarMapping = (
   env: string,
   componentName: string,
-  secretEnvVars: SecretEnvVar[]
+  secretEnvVars: SecretEnvVar[],
 ) => {
   return Object.fromEntries(
     secretEnvVars.map(({ key }) => [
       key,
       getBashVariable(getSecretVarName(env, componentName, key)),
-    ])
+    ]),
   );
 };

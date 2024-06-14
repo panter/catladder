@@ -10,7 +10,7 @@ import {
 
 export const getPackageManagerInfo = async (
   config: Config,
-  componentName: string
+  componentName: string,
 ): Promise<PackageManagerInfo> => {
   // currently only supports yarn
   const version = await getYarnVersion();
@@ -20,7 +20,7 @@ export const getPackageManagerInfo = async (
   const component = config.components[componentName];
   const workspaces = await getWorkspaces(isClassic);
   const currentWorkspace = workspaces.find((w) =>
-    pathEqual(component.dir, w.location)
+    pathEqual(component.dir, w.location),
   );
   const componentIsInWorkspace = Boolean(currentWorkspace);
   const workspaceRoot = "."; // currently we assume the root folder, later on we might support nested workspaces

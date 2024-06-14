@@ -16,7 +16,7 @@ export const gcloudSchedulerCmd = (version?: "beta") => {
 };
 
 export const setGoogleProjectNumberScript = (
-  deployConfig: DeployConfigCloudRun
+  deployConfig: DeployConfigCloudRun,
 ) => [
   `export GCLOUD_PROJECT_NUMBER=$(${gcloudCmd()} projects describe ${
     deployConfig.projectId

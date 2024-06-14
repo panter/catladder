@@ -15,7 +15,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-open-grafana-pod <envComponent>",
-      "open Grafana dashboard for a specific pod"
+      "open Grafana dashboard for a specific pod",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {
@@ -37,7 +37,7 @@ export default async (vorpal: Vorpal) =>
         "deployment/kubecost-cost-analyzer",
         GRAFANA_PROXY_LOCAL_PORT,
         GRAFANA_PROXY_TARGET_PORT,
-        "kubecost"
+        "kubecost",
       );
       open(url);
     });

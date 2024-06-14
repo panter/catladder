@@ -16,7 +16,7 @@ import { createVolumeConfig } from "./volumes";
 export const getServiceDeployScript = (
   context: Context,
   service: DeployConfigCloudRunService | true | undefined,
-  nameSuffix?: string
+  nameSuffix?: string,
 ) => {
   const commonDeployArgs = getCommonDeployArgs(context);
 
@@ -54,20 +54,20 @@ export const getServiceDeployScript = (
       "cpu-boost": true,
       "execution-environment": customConfig?.executionEnvironment,
     },
-    ...createVolumeConfig(customConfig?.volumes, "service")
+    ...createVolumeConfig(customConfig?.volumes, "service"),
   );
   // volumes require beta
   const requiresBeta =
     customConfig?.volumes && Object.keys(customConfig?.volumes).length > 0;
 
   return `${gcloudRunCmd(
-    requiresBeta ? "beta" : undefined
+    requiresBeta ? "beta" : undefined,
   )} deploy ${fullServiceName} ${argsString}`;
 };
 
 export const getServiceDeleteScript = (
   context: Context,
-  serviceSuffix?: string
+  serviceSuffix?: string,
 ) => {
   const commonArgs = getCommonCloudRunArgs(context);
 

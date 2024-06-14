@@ -20,7 +20,7 @@ import { getGitlabReleaseJobs } from "./gitlab/gitlabReleaseJobs";
 
 export const createMainPipeline = async <T extends PipelineType>(
   pipelineType: T,
-  config: Config
+  config: Config,
 ): Promise<Pipeline<T>> => {
   const stages = getPipelineStages(config);
 
@@ -32,9 +32,9 @@ export const createMainPipeline = async <T extends PipelineType>(
         async (trigger) =>
           await createGitlabJobs(
             await createAllJobs({ config, trigger, pipelineType }),
-            getGitlabRulesForTrigger(trigger)
-          )
-      )
+            getGitlabRulesForTrigger(trigger),
+          ),
+      ),
     );
 
     const allJobs = allJobsPerTrigger
@@ -48,20 +48,23 @@ export const createMainPipeline = async <T extends PipelineType>(
         return aIndex - bIndex;
       })
 
-      .reduce((acc, { gitlabJob, name }) => {
-        // merge jobs, if a job is already there, merge the rules
-        // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
-        if (acc[name]) {
-          acc[name].rules = [
-            ...(acc[name].rules ?? []),
-            ...(gitlabJob.rules ?? []),
-          ];
-        } else {
-          acc[name] = gitlabJob;
-        }
+      .reduce(
+        (acc, { gitlabJob, name }) => {
+          // merge jobs, if a job is already there, merge the rules
+          // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
+          if (acc[name]) {
+            acc[name].rules = [
+              ...(acc[name].rules ?? []),
+              ...(gitlabJob.rules ?? []),
+            ];
+          } else {
+            acc[name] = gitlabJob;
+          }
 
-        return acc;
-      }, {} as { [key: string]: GitlabJobDef });
+          return acc;
+        },
+        {} as { [key: string]: GitlabJobDef },
+      );
 
     return createGitlabPipelineWithDefaults({
       stages: [...stages, "release"],

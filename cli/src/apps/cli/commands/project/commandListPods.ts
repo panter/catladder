@@ -14,7 +14,7 @@ export default async (vorpal: Vorpal) =>
       const pods = await getProjectPods(envComponent);
       this.log(
         stringify(
-          pods.map((p) => pick(p, ["metadata.name", "status.startTime"]))
-        )
+          pods.map((p) => pick(p, ["metadata.name", "status.startTime"])),
+        ),
       );
     });

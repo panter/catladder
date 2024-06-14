@@ -34,7 +34,7 @@ const addPortForward = (name: string, portForward: PortForward) => {
 
 export const startPortForwardCommand = async (
   name: string,
-  command: string
+  command: string,
 ) => {
   // stop if already there
   await stopPortForward(name);

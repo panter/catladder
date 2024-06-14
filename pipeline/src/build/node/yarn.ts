@@ -19,7 +19,7 @@ const getYarnInstallCommand = (context: Context) => {
 export const ensureNodeVersion = (context: Context) =>
   collapseableSection(
     "nodeinstall",
-    "Ensure node version"
+    "Ensure node version",
   )([
     "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
     "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -29,7 +29,7 @@ export const getYarnInstall = (
   context: Context,
   options?: {
     noCustomPostInstall: boolean;
-  }
+  },
 ) => {
   const postInstall =
     "postInstall" in context.componentConfig.build
@@ -39,12 +39,12 @@ export const getYarnInstall = (
     ...ensureNodeVersion(context),
     ...collapseableSection(
       "yarninstall",
-      "Yarn install"
+      "Yarn install",
     )([getYarnInstallCommand(context)]),
     ...(postInstall && !options?.noCustomPostInstall
       ? collapseableSection(
           "postinstall",
-          "Custom post install"
+          "Custom post install",
         )(ensureArray(postInstall) ?? [])
       : []),
   ];
@@ -59,14 +59,14 @@ export const getDockerAppCopyAndBuildScript = (context: Context) => {
 RUN ${YARN_INSTALL_CLASSIC} --production --ignore-scripts
 ${DOCKER_COPY_FILES}
 RUN ${YARN_INSTALL_CLASSIC} --production 
-    `.trim()
+    `.trim(),
     );
   }
 
   // yarn >= 4 ships with build in plugins, see https://github.com/yarnpkg/berry/pull/4253
   // trying to import those fail on this version
   const doesNotShipWithBuiltInPlugins = ["2", "3"].some((v) =>
-    context.packageManagerInfo?.version.startsWith(v)
+    context.packageManagerInfo?.version.startsWith(v),
   );
   const maybeAddWorkspaceToolsCommand = doesNotShipWithBuiltInPlugins
     ? "RUN yarn plugin import workspace-tools"
@@ -80,6 +80,6 @@ ${DOCKER_COPY_FILES}
 ${maybeAddWorkspaceToolsCommand}
 RUN ${YARN_BERRY_PROD_REBUILD}
 
-    `.trim()
+    `.trim(),
   );
 };

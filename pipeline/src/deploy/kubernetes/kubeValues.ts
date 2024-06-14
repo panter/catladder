@@ -15,7 +15,7 @@ import { processSecretsAsFiles } from "./processSecretsAsFiles";
 
 const createAppConfig = (
   context: Context,
-  application: DeployConfigKubernetesValues["application"]
+  application: DeployConfigKubernetesValues["application"],
 ): DeployConfigKubernetesValues["application"] => {
   if (application === false) {
     return {
@@ -45,14 +45,14 @@ const createAppConfig = (
         },
       },
     }, // default
-    rest // merge rest in
+    rest, // merge rest in
   );
 };
 
 const removeFalsy = <T>(record?: Record<string, false | T>) => {
   if (!record) return undefined;
   return Object.fromEntries(
-    Object.entries(record).filter(([, value]) => value !== false)
+    Object.entries(record).filter(([, value]) => value !== false),
   );
 };
 
@@ -84,7 +84,7 @@ export const createKubeValues = (context: Context) => {
       : {},
     deployConfig.values?.mongodb?.enabled
       ? createMongodbBaseConfig(context)
-      : {}
+      : {},
   );
 
   const kubeValues = processSecretsAsFiles(
@@ -93,7 +93,7 @@ export const createKubeValues = (context: Context) => {
       cronjobs: removeFalsy(cronjobs),
 
       ...rest,
-    })
+    }),
   );
 
   return kubeValues;

@@ -15,7 +15,7 @@ export type UnspecifiedEnvVars = Record<
 >;
 
 export type EnvironmentEnvVars<
-  V extends UnspecifiedEnvVars = UnspecifiedEnvVars
+  V extends UnspecifiedEnvVars = UnspecifiedEnvVars,
 > = {
   envVars: V & UnspecifiedEnvVars;
   secretEnvVarKeys: SecretEnvVar[];

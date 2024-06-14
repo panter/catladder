@@ -8,7 +8,7 @@ export default async function replaceAsync(
   replacer: (
     substring: string,
     ...args: any[]
-  ) => Promise<string | BashExpression>
+  ) => Promise<string | BashExpression>,
 ) {
   const wasBashExpression = string instanceof BashExpression;
   try {
@@ -24,12 +24,12 @@ export default async function replaceAsync(
         const result = replacer.apply(undefined, args);
         values.push(result);
         return "";
-      }
+      },
     );
     const resolvedValues = await Promise.all(values);
 
     const containsBashExpression = resolvedValues.some(
-      (value) => value instanceof BashExpression
+      (value) => value instanceof BashExpression,
     );
 
     const result = String.prototype.replace.call(
@@ -37,7 +37,7 @@ export default async function replaceAsync(
       searchValue,
       function () {
         return resolvedValues.shift()?.toString() ?? "";
-      }
+      },
     );
     if (wasBashExpression || containsBashExpression) {
       return new BashExpression(result);

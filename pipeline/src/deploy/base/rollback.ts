@@ -10,7 +10,7 @@ export type RollbackJobDefinition = Pick<
 >;
 export const createRollbackJob = (
   context: Context,
-  jobDefinition: RollbackJobDefinition
+  jobDefinition: RollbackJobDefinition,
 ): CatladderJob => {
   return {
     name: ROLLBACK_JOB_NAME,

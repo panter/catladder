@@ -10,7 +10,7 @@ import { getCloudRunDeployScripts } from "./getCloudRunDeployScripts";
 import { getCloudRunStopScripts } from "./getCloudRunStopScripts";
 
 export const createGoogleCloudRunDeployJobs = (
-  context: Context
+  context: Context,
 ): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {

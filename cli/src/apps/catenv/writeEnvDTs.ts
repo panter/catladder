@@ -11,7 +11,7 @@ import {
 export const writeDTsFiles = async (config: Config, choice?: Choice) => {
   const { env, currentComponent } = await getCurrentComponentAndEnvFromChoice(
     config,
-    choice
+    choice,
   );
 
   const componentsWithEnabledEnvDTsWrite = Object.entries(config.components)
@@ -39,7 +39,7 @@ export const writeDTsFiles = async (config: Config, choice?: Choice) => {
 
 async function getEnvsForDTs(
   env: string,
-  componentName: string
+  componentName: string,
 ): Promise<string[]> {
   const environment = await getEnvironment(env, componentName);
   const allEnvKeys = Object.keys(environment.envVars);
@@ -47,7 +47,7 @@ async function getEnvsForDTs(
     environment.secretEnvVarKeys
       .filter((s) => s.hidden)
       .map((s) => s.key)
-      .concat(["_ALL_ENV_VAR_KEYS"])
+      .concat(["_ALL_ENV_VAR_KEYS"]),
   );
   const dTsEnvKeys = allEnvKeys.filter((k) => !hiddenEnvKeys.has(k));
 

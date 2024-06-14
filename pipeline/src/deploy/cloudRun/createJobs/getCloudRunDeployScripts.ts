@@ -29,25 +29,25 @@ export function getCloudRunDeployScripts(context: Context) {
   const deployConfig = getCloudRunDeployConfig(context);
   const allEnvVars = omit(
     context.environment.envVars,
-    GCLOUD_DEPLOY_CREDENTIALS_KEY
+    GCLOUD_DEPLOY_CREDENTIALS_KEY,
   );
 
   return [
     ...collapseableSection(
       "prepare",
-      "Prepare..."
+      "Prepare...",
     )([
       ...gcloudServiceAccountLoginCommands(context),
       ...setGoogleProjectNumberScript(deployConfig),
     ]),
     ...collapseableSection(
       "writeenvvars",
-      "Write env vars to file"
+      "Write env vars to file",
     )(writeBashYamlToFileScript(allEnvVars, ENV_VARS_FILENAME)),
 
     ...collapseableSection(
       "deploy",
-      "Deploy to cloud run"
+      "Deploy to cloud run",
     )([
       ...(deployConfig.cloudSql
         ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
@@ -61,15 +61,15 @@ export function getCloudRunDeployScripts(context: Context) {
         : []),
       ...Object.entries(deployConfig.additionalServices ?? {}).map(
         ([name, service]) =>
-          getServiceDeployScript(context, service, "-" + name)
+          getServiceDeployScript(context, service, "-" + name),
       ),
       ...getJobRunScripts(context, "postDeploy"),
     ]),
     ...collapseableSection(
       "cleanup",
-      "Cleanup"
+      "Cleanup",
     )(
-      getRemoveOldRevisionsAndImagesCommand(context, "postDeploy") // we cleanup inactive images both on deploy and stop
+      getRemoveOldRevisionsAndImagesCommand(context, "postDeploy"), // we cleanup inactive images both on deploy and stop
     ),
     ...getDependencyTrackUploadScript(context),
   ];

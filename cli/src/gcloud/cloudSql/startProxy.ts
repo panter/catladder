@@ -19,10 +19,10 @@ const getProxyCommandSpawnArgs = async ({
   const commandString = (await commandExists("cloud-sql-proxy"))
     ? `cloud-sql-proxy --port ${localPort} ${instanceName}`
     : (await commandExists(
-        "cloud_sql_proxy" // v1
-      ))
-    ? `cloud_sql_proxy -instances ${instanceName}=tcp:${localPort}`
-    : null;
+          "cloud_sql_proxy", // v1
+        ))
+      ? `cloud_sql_proxy -instances ${instanceName}=tcp:${localPort}`
+      : null;
   if (!commandString) {
     throw new Error(ERROR_NOT_INSTALLED);
   }
@@ -32,7 +32,7 @@ const getProxyCommandSpawnArgs = async ({
 };
 
 export const startCloudSqlProxyInCurrentShell = async (
-  opts: CloudSqlProxyOptions
+  opts: CloudSqlProxyOptions,
 ) => {
   const { cmd, args } = await getProxyCommandSpawnArgs(opts);
 
@@ -43,7 +43,7 @@ export const startCloudSqlProxyInCurrentShell = async (
 };
 
 export const startCloudSqlProxyInBackground = async (
-  opts: CloudSqlProxyOptions
+  opts: CloudSqlProxyOptions,
 ): Promise<CloudSqlBackgroundProxy> => {
   const { cmd, args } = await getProxyCommandSpawnArgs(opts);
 
@@ -57,7 +57,7 @@ export const startCloudSqlProxyInBackground = async (
         echo -n "."
       done 2>/dev/null`,
     [],
-    { shell: "bash" }
+    { shell: "bash" },
   );
   const stop = () => {
     proxyPromise.catch(() => {

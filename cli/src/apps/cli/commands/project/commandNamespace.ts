@@ -6,7 +6,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-namespace <envComponent>",
-      "show namespace of local project"
+      "show namespace of local project",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {

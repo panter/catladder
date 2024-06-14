@@ -5,6 +5,6 @@ import type { Context } from "../../../types";
 export const gcloudServiceAccountLoginCommands = (context: Context) => [
   `gcloud auth activate-service-account --key-file=<(echo "$${getSecretVarNameForContext(
     context,
-    GCLOUD_DEPLOY_CREDENTIALS_KEY
+    GCLOUD_DEPLOY_CREDENTIALS_KEY,
   )}")`,
 ];

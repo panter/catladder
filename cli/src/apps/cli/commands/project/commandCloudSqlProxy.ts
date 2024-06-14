@@ -35,7 +35,7 @@ export default async (vorpal: Vorpal) =>
 
       if (env === "review") {
         vorpal.log(
-          "⚠️ connection string does not include mr information on review environments"
+          "⚠️ connection string does not include mr information on review environments",
         );
       }
       if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
@@ -63,11 +63,11 @@ export default async (vorpal: Vorpal) =>
       this.log("connection strings:");
       this.log("");
       this.log(
-        `DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`
+        `DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@localhost:${localPort}/${DB_NAME}?schema=public`,
       );
       this.log("");
       this.log(
-        `DATABASE_JDBC_URL=jdbc:postgresql://localhost:${localPort}/${DB_NAME}?schema=public&user=${DB_USER}&password=${DB_PASSWORD}`
+        `DATABASE_JDBC_URL=jdbc:postgresql://localhost:${localPort}/${DB_NAME}?schema=public&user=${DB_USER}&password=${DB_PASSWORD}`,
       );
       this.log("");
 
@@ -79,7 +79,7 @@ export default async (vorpal: Vorpal) =>
 
 const getProxyInfoForKubernetes = async (
   vorpal: CommandInstance,
-  context: Context
+  context: Context,
 ): Promise<ProxyInfo> => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("unsupported");
@@ -88,7 +88,7 @@ const getProxyInfoForKubernetes = async (
   const envVars = await getEnvVarsResolved(
     vorpal,
     context.environment.shortName,
-    context.componentName
+    context.componentName,
   );
   // bit hacky, would be nicer if we would also declare this through env vars
   const cloudSqlValues = createKubernetesCloudsqlBaseValues(context);
@@ -109,7 +109,7 @@ const getProxyInfoForKubernetes = async (
 
 const getProxyInfoForCloudRun = async (
   vorpal: CommandInstance,
-  context: Context
+  context: Context,
 ): Promise<ProxyInfo> => {
   if (
     !isOfDeployType(context.componentConfig.deploy, "google-cloudrun") ||
@@ -121,7 +121,7 @@ const getProxyInfoForCloudRun = async (
   const envVars = await getEnvVarsResolved(
     vorpal,
     context.environment.shortName,
-    context.componentName
+    context.componentName,
   );
 
   const DB_PASSWORD = envVars?.DB_PASSWORD;

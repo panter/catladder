@@ -53,7 +53,7 @@ export type PredefinedVariables = BasePredefinedVariables & {
 
 export const getEnvironmentVariables = async (
   ctx: CreateContextContext,
-  alreadyVisited: Record<string, Record<string, boolean>> = {} // to prevent endless loop
+  alreadyVisited: Record<string, Record<string, boolean>> = {}, // to prevent endless loop
 ): Promise<EnvironmentVariables> => {
   const environmentContext = getEnvironmentContext(ctx);
 
@@ -88,7 +88,7 @@ export const getEnvironmentVariables = async (
   } else {
     const additionalEnvVars = deployConfigRaw
       ? DEPLOY_TYPES[deployConfigRaw.type].getAdditionalEnvVars(
-          environmentContext as never
+          environmentContext as never,
         )
       : {};
 
@@ -116,7 +116,7 @@ export const getEnvironmentVariables = async (
 
   const additionalSecretKeys = deployConfigRaw
     ? DEPLOY_TYPES[deployConfigRaw.type].additionalSecretKeys(
-        environmentContext as never
+        environmentContext as never,
       )
     : [];
 
@@ -127,18 +127,18 @@ export const getEnvironmentVariables = async (
   const secretEnvVars = makeSecretEnvVarMapping(
     env,
     componentName,
-    secretEnvVarKeys
+    secretEnvVarKeys,
   );
   // this is deprecated, we now support: $componentname:FOO
   const legacyFromComponents = envConfigRaw.vars?.fromComponents ?? {};
   const publicEnvVarsRawWithLegacyFromComponents = merge(
     {},
     translateLegacyFromComponents(legacyFromComponents),
-    publicEnvVarsRaw
+    publicEnvVarsRaw,
   );
 
   const publicEnvVarsRawSanitized = stringifyValues(
-    publicEnvVarsRawWithLegacyFromComponents
+    publicEnvVarsRawWithLegacyFromComponents,
   );
 
   const envVarsRaw = addIndexVar({
@@ -155,11 +155,11 @@ export const getEnvironmentVariables = async (
           ...ctx,
           componentName: otherComponentName,
         },
-        alreadyVisited
+        alreadyVisited,
       );
       return otherEnvVars;
     },
-    alreadyVisited
+    alreadyVisited,
   )) as typeof envVarsRaw;
 
   return {
@@ -169,12 +169,12 @@ export const getEnvironmentVariables = async (
       build: await transformJobOnlyVars(
         env,
         componentName,
-        (buildConfigRaw && buildConfigRaw.jobVars) || null
+        (buildConfigRaw && buildConfigRaw.jobVars) || null,
       ),
       deploy: await transformJobOnlyVars(
         env,
         componentName,
-        (deployConfigRaw && deployConfigRaw.jobVars) || null
+        (deployConfigRaw && deployConfigRaw.jobVars) || null,
       ),
     },
 
@@ -188,11 +188,11 @@ const sanitizeForEnVar = (s: string) => s.replace(/-/g, "_");
 export const getSecretVarName = (
   env: string,
   componentName: string,
-  key: string
+  key: string,
 ) => `CL_${sanitizeForEnVar(env)}_${sanitizeForEnVar(componentName)}_${key}`; // remove dash from component name
 
 const addIndexVar = <V extends Record<string, unknown>>(
-  vars: V
+  vars: V,
 ): V & { _ALL_ENV_VAR_KEYS: string } => ({
   ...vars,
   _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),

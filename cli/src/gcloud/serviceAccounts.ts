@@ -23,7 +23,7 @@ type ServiceAccount = {
 };
 const upsertGcloudServiceAccount = async (
   context: Context,
-  account: ServiceAccount
+  account: ServiceAccount,
 ): Promise<string> => {
   const { projectId, name, displayName, roles, description } = account;
 
@@ -45,13 +45,13 @@ const upsertGcloudServiceAccount = async (
 
   if (!existing) {
     await exec(
-      `gcloud iam service-accounts create ${fullName} --display-name="${fullDisplayName}" --project="${projectId}"  --description="${description}"`
+      `gcloud iam service-accounts create ${fullName} --display-name="${fullDisplayName}" --project="${projectId}"  --description="${description}"`,
     );
   }
   const memberName = `serviceAccount:${fullIdentifier}`;
   for (const role of roles) {
     await exec(
-      `gcloud projects add-iam-policy-binding ${projectId} --member=${memberName} --role=${role} `
+      `gcloud projects add-iam-policy-binding ${projectId} --member=${memberName} --role=${role} `,
     );
   }
 
@@ -59,18 +59,18 @@ const upsertGcloudServiceAccount = async (
 
   // delete first all keys
   const keys = await exec(
-    `gcloud iam service-accounts keys list --iam-account=${fullIdentifier} --managed-by=user --format=json`
+    `gcloud iam service-accounts keys list --iam-account=${fullIdentifier} --managed-by=user --format=json`,
   ).then((o) => JSON.parse(o.stdout));
 
   for (const key of keys) {
     await exec(
-      `gcloud iam service-accounts keys delete ${key.name} --quiet --iam-account=${fullIdentifier}`
+      `gcloud iam service-accounts keys delete ${key.name} --quiet --iam-account=${fullIdentifier}`,
     );
   }
 
   return await exec(
     // on some platforms /dev/stdout is not available without the pipe
-    `gcloud iam service-accounts keys create /dev/stdout --iam-account=${fullIdentifier} | cat`
+    `gcloud iam service-accounts keys create /dev/stdout --iam-account=${fullIdentifier} | cat`,
   ).then((o) => o.stdout);
 };
 
@@ -78,7 +78,7 @@ export const upsertGcloudServiceAccountAndSaveSecret = async (
   instance: CommandInstance,
   context: Context,
   account: ServiceAccount,
-  secretName: string
+  secretName: string,
 ): Promise<void> => {
   instance.log("upserting service account " + account.name + "...");
   const key = await upsertGcloudServiceAccount(context, account);
@@ -89,7 +89,7 @@ export const upsertGcloudServiceAccountAndSaveSecret = async (
       [secretName]: key,
     },
     context.environment.shortName,
-    context.componentName
+    context.componentName,
   );
   instance.log("done!");
 };

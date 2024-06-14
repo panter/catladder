@@ -1,7 +1,7 @@
 export const logError = (
   cmd: any,
   message: string,
-  additionalMessage?: any
+  additionalMessage?: any,
 ) => {
   cmd.log("");
   cmd.log(`[ERROR] 🙀 :${message}`);

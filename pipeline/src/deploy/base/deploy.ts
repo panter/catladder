@@ -25,7 +25,7 @@ export type DeployJobDefinition = Pick<
 >;
 export const createDeployJob = (
   context: Context,
-  jobDefinition: DeployJobDefinition
+  jobDefinition: DeployJobDefinition,
 ): CatladderJob => {
   const hasDocker = requiresDockerBuild(context);
   const isStoppable = contextIsStoppable(context);
@@ -34,8 +34,8 @@ export const createDeployJob = (
     context.environment.envType === "review"
       ? "1 week"
       : context.environment.envType === "dev"
-      ? "4 weeks"
-      : undefined;
+        ? "4 weeks"
+        : undefined;
 
   // if auto or manual is configured explicitly, use that
   const whenDeployDefined =
@@ -47,8 +47,8 @@ export const createDeployJob = (
     context.environment.envType !== "prod"
       ? "auto" // is not stage, auto deploy
       : context.componentConfig.env?.stage === false
-      ? "auto" // is prod, but no staging, auto deploy
-      : "manual"; // manually deploy
+        ? "auto" // is prod, but no staging, auto deploy
+        : "manual"; // manually deploy
   const whenDeploy = whenDeployDefined ? whenDeployDefined : whenDeployDefault;
 
   return {

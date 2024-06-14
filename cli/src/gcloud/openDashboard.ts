@@ -4,7 +4,7 @@ import open from "open";
 export const openGoogleCloudDashboard = async (
   instance: CommandInstance,
   path: string,
-  params: Record<string, string>
+  params: Record<string, string>,
 ) => {
   const url = new URL("https://console.cloud.google.com/");
   url.pathname = path;

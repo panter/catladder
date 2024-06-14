@@ -11,7 +11,7 @@ export const ALL_PIPELINE_TRIGGERS = [
   "mr",
   "taggedRelease",
 ] as const;
-export type PipelineTrigger = typeof ALL_PIPELINE_TRIGGERS[number];
+export type PipelineTrigger = (typeof ALL_PIPELINE_TRIGGERS)[number];
 
 /**
  * all env types with their trigger.
@@ -43,7 +43,7 @@ export const ENV_TYPES = {
 export const getEnvTypesByTrigger = (trigger: PipelineTrigger) =>
   Object.entries(ENV_TYPES)
     .filter(([, e]) =>
-      (e.triggers as readonly PipelineTrigger[]).includes(trigger)
+      (e.triggers as readonly PipelineTrigger[]).includes(trigger),
     )
     .map(([e]) => e as EnvType);
 

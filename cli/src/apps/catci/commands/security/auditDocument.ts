@@ -22,7 +22,7 @@ const rows = [
     t.description,
     "",
     t.more,
-  ])
+  ]),
 );
 
 function makeTable(rows: string[][]) {
@@ -33,7 +33,7 @@ ${makeRow(rows[0], colWidths, " ")}
 ${makeRow(
   rows[0].map(() => ""),
   colWidths,
-  "-"
+  "-",
 )}
 ${rows
   .slice(1)
@@ -45,7 +45,7 @@ ${rows
 function calculateColumnWidths(rows: string[][]) {
   const columnCount = rows[0].length;
   return Array.from({ length: columnCount }, (_, i) => i).map((columnIndex) =>
-    Math.max(...rows.map((row) => row[columnIndex].length))
+    Math.max(...rows.map((row) => row[columnIndex].length)),
   );
 }
 
@@ -115,7 +115,7 @@ export function evaluateDocument(document: string): SecurityEvaluation {
       !isUnknown &&
       !answer.includes(checkPlaceholder) &&
       !responsibles.some((responsible) =>
-        responsible.includes(responsiblePlaceholder)
+        responsible.includes(responsiblePlaceholder),
       );
     const isSecured = !isUnknown && isAnswered && answer.includes(checkYes);
 

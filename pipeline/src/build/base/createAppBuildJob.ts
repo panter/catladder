@@ -15,7 +15,7 @@ import { writeDotEnv } from "./writeDotEnv";
 export type AppBuildJobDefinition = Partial<CatladderJob>;
 export const createAppBuildJob = (
   context: Context,
-  { script, variables, runnerVariables, ...def }: AppBuildJobDefinition
+  { script, variables, runnerVariables, ...def }: AppBuildJobDefinition,
 ): CatladderJob => {
   return merge(
     {
@@ -50,11 +50,11 @@ export const createAppBuildJob = (
         paths: [join(context.componentConfig.dir, "__build_info.json")],
         reports: {
           junit: context.componentConfig.build.artifactsReports?.junit?.map(
-            (p) => join(context.componentConfig.dir, p)
+            (p) => join(context.componentConfig.dir, p),
           ),
         },
       },
     },
-    def
+    def,
   );
 };

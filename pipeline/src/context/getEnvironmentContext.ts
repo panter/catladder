@@ -9,7 +9,7 @@ import { getReviewSlug } from "./getReviewSlug";
 
 const getEnvironmentSlugPrefix = (
   env: string,
-  reviewSlug: StringOrBashExpression | null
+  reviewSlug: StringOrBashExpression | null,
 ): StringOrBashExpression => {
   if (reviewSlug) {
     return joinBashExpressions([env, reviewSlug], "-");
@@ -33,7 +33,7 @@ export const getEnvironmentContext = ({
 
   const fullName = joinBashExpressions(
     [config.customerName, config.appName, environmentSlug],
-    "-"
+    "-",
   );
 
   return {

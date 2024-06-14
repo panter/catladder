@@ -14,7 +14,7 @@ export const writeDotEnv = (context: Context) => {
     // filter out null and undefined values
     .filter(([, value]) => !isNil(value))
     .map(
-      ([key, value]) => `${key}=${value?.toString().replaceAll("\n", "\\n")}`
+      ([key, value]) => `${key}=${value?.toString().replaceAll("\n", "\\n")}`,
     )
     .join("\n");
 

@@ -12,7 +12,7 @@ export const getFullDbName = (
     | DeployConfigKubernetesValuesCloudSQLUnmanaged,
   fullConfig: Config<never>,
   environmentSlugPrefix: StringOrBashExpression,
-  componentName: string
+  componentName: string,
 ) => {
   return joinBashExpressions(
     [
@@ -21,6 +21,6 @@ export const getFullDbName = (
       environmentSlugPrefix,
       cloudSqlConfig.dbBaseName ?? componentName,
     ].flatMap((part) => (part ? [part] : [])),
-    "-"
+    "-",
   );
 };

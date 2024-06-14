@@ -8,7 +8,7 @@ const typeOutputPath = join(rootPath, "src/types/gitlab-ci-yml.ts");
 
 export const generateFromCurrentSchema = async () => {
   const response = await fetch(
-    "https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json"
+    "https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json",
   );
   const gitLabCiJsonSchema = await response.json();
   const schema = await compile(gitLabCiJsonSchema, "GitlabCiYml", {
@@ -40,7 +40,7 @@ export const generateFromCurrentSchema = async () => {
   const sanitizedSchenma = schema.replace(
     // eslint-disable-next-line no-useless-escape
     /export interface HttpsGitlabComGitlabCiYml \{\n[ a-zA-Z0-9?$:;\n_!"\{\}\/*@\[\],.|\(\)]*\[k\: string\]: Job;\n\}/m,
-    ""
+    "",
   );
   if (existsSync(typeOutputPath)) {
     await rm(typeOutputPath);

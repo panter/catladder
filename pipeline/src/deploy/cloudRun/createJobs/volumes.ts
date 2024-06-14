@@ -3,7 +3,7 @@ import type { keyValuesArg } from "../utils/createArgsString";
 
 export const createVolumeConfig = (
   volumes: DeployConfigCloudRunVolumes | undefined,
-  type: "service" | "job"
+  type: "service" | "job",
 ): keyValuesArg[] => {
   if (!volumes) {
     return [];
@@ -16,7 +16,7 @@ export const createVolumeConfig = (
           readonly ? ",readonly=true" : ""
         }`,
         "add-volume-mount": `volume=${volumeName},mount-path=${mountPath}`,
-      })
+      }),
     ),
     type === "service" ? { "execution-environment": "gen2" } : {},
   ];

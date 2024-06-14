@@ -20,7 +20,7 @@ describe("createCustomTestJobs", () => {
   it("throws error when not build type custom", () => {
     componentConfig.build.type = "node";
     expect(() => createCustomTestJobs(baseContext)).toThrowError(
-      "deploy config is not custom"
+      "deploy config is not custom",
     );
     componentConfig.build.type = "custom";
   });

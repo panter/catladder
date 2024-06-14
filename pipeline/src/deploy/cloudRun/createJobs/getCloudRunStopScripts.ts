@@ -19,7 +19,7 @@ export function getCloudRunStopScripts(context: Context) {
     ...getJobRunScripts(context, "preStop"),
     ...(deployConfig.service !== false ? getServiceDeleteScript(context) : []),
     ...Object.entries(deployConfig.additionalServices ?? {}).flatMap(([name]) =>
-      getServiceDeleteScript(context, name)
+      getServiceDeleteScript(context, name),
     ),
     ...getJobRunScripts(context, "postStop"),
     ...getDeleteSchedulesScripts(context),

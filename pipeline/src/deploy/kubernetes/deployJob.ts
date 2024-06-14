@@ -15,7 +15,7 @@ import { collapseableSection } from "../../utils/gitlab";
 
 const ALL_VALUES_FILE = "__all_values.yml";
 export const createKubernetesDeployJobs = (
-  context: Context
+  context: Context,
 ): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
@@ -59,14 +59,14 @@ export const createKubernetesDeployJobs = (
   const connectContext = [
     `kubectl config set-cluster "${clusterName}" --server="$${getSecretVarNameForContext(
       context,
-      "KUBE_URL"
+      "KUBE_URL",
     )}" --certificate-authority <(echo $${getSecretVarNameForContext(
       context,
-      "KUBE_CA_PEM"
+      "KUBE_CA_PEM",
     )} | base64 -d) --embed-certs=true`,
     `kubectl config set-credentials "${clusterName}" --token="$${getSecretVarNameForContext(
       context,
-      "KUBE_TOKEN"
+      "KUBE_TOKEN",
     )}"`,
     `kubectl config set-context "${clusterName}" --cluster="${clusterName}" --user="${clusterName}" --namespace="${context.environment.envVars.KUBE_NAMESPACE}"`,
     `kubectl config use-context "${clusterName}"`,
@@ -79,9 +79,9 @@ export const createKubernetesDeployJobs = (
         ...connectContext,
         ...collapseableSection(
           "writeallvalues",
-          "Write " + ALL_VALUES_FILE + " for helm deployment"
+          "Write " + ALL_VALUES_FILE + " for helm deployment",
         )(
-          writeBashYamlToFileScript(createKubeValues(context), ALL_VALUES_FILE)
+          writeBashYamlToFileScript(createKubeValues(context), ALL_VALUES_FILE),
         ),
         "kubernetesCreateSecret",
         "kubernetesDeploy",

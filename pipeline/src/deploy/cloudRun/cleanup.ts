@@ -4,7 +4,7 @@ import { getDeleteUnusedRevisionsCommands } from "./cloudRunRevisions";
 
 export const getRemoveOldRevisionsAndImagesCommand = (
   context: Context,
-  when: "postDeploy" | "onStop"
+  when: "postDeploy" | "onStop",
 ) => {
   if (when === "onStop") {
     // service is already deleted, so we don't need to delete old revisions, just delete all images
@@ -19,11 +19,11 @@ export const getRemoveOldRevisionsAndImagesCommand = (
 
   const deleteOldRevisionsCommands = getDeleteUnusedRevisionsCommands(
     context,
-    revisionsToKeep
+    revisionsToKeep,
   );
   const deleteOldImagesCommands = getDeleteUnusedImagesCommands(
     context,
-    imagesToKeep
+    imagesToKeep,
   );
 
   return [...deleteOldRevisionsCommands, ...deleteOldImagesCommands];

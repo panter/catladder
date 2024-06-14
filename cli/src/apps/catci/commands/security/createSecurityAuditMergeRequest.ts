@@ -27,7 +27,7 @@ export async function createSecurityAuditMergeRequest({
         state: "opened",
         wip: "yes",
         labels: "security-audit",
-      })
+      }),
     )
   ).mapErr(() => `could not search for existing merge requests` as const);
   if (mrs.isErr()) return mrs;
@@ -35,11 +35,11 @@ export async function createSecurityAuditMergeRequest({
   const existingMr = mrs.value[0];
   if (existingMr)
     return Err(
-      `open merge request with security audit already exists: ${existingMr.web_url}`
+      `open merge request with security audit already exists: ${existingMr.web_url}`,
     );
 
   const auditTemplate = Result.wrap(() => makeTemplate()).mapErr(
-    () => "could not make security audit template document" as const
+    () => "could not make security audit template document" as const,
   );
   if (auditTemplate.isErr()) return auditTemplate;
 
@@ -48,8 +48,8 @@ export async function createSecurityAuditMergeRequest({
       api.Branches.create(
         projectId,
         makeDatedBranchName("chore/security-audit"),
-        mainBranch
-      )
+        mainBranch,
+      ),
     )
   ).mapErr((e) => {
     console.log(e);
@@ -70,8 +70,8 @@ export async function createSecurityAuditMergeRequest({
             content: auditTemplate.value,
             encoding: "text",
           },
-        ]
-      )
+        ],
+      ),
     )
   ).mapErr(() => "could not create commit" as const);
   if (commit.isErr()) return commit;
@@ -89,8 +89,8 @@ export async function createSecurityAuditMergeRequest({
           squash: true,
           labels: "security-audit",
           removeSourceBranch: true,
-        }
-      )
+        },
+      ),
     )
   ).mapErr(() => "could not create merge request" as const);
 

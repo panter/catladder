@@ -14,7 +14,7 @@ import {
 export const writeDotEnvFiles = async (config: Config, choice?: Choice) => {
   const { env, currentComponent } = await getCurrentComponentAndEnvFromChoice(
     config,
-    choice
+    choice,
   );
 
   const componentsWithEnabledDotEnvWrite = Object.entries(config.components)

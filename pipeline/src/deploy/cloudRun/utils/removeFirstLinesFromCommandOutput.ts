@@ -8,5 +8,5 @@
  */
 export const removeFirstLinesFromCommandOutput = (
   cmd: string,
-  removeFirstN: number
+  removeFirstN: number,
 ) => (removeFirstN === 0 ? cmd : `${cmd} | tail -n +${removeFirstN + 1}`);

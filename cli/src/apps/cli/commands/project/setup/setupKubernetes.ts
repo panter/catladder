@@ -15,7 +15,7 @@ import ensureNamespace from "../utils/ensureNamespace";
 
 export const setupKubernetes = async (
   instance: CommandInstance,
-  context: Context
+  context: Context,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
@@ -25,16 +25,16 @@ export const setupKubernetes = async (
   const { id: projectId } = await getProjectInfo(instance);
   const deploy_tokens = await doGitlabRequest(
     instance,
-    `projects/${projectId}/deploy_tokens`
+    `projects/${projectId}/deploy_tokens`,
   );
 
   if (
     !deploy_tokens.find(
-      (v: { name: string }) => v.name === "gitlab-deploy-token"
+      (v: { name: string }) => v.name === "gitlab-deploy-token",
     )
   ) {
     instance.log(
-      "I will setup the 'GitLab Deploy Token', so Kubernetes can pull images from this project."
+      "I will setup the 'GitLab Deploy Token', so Kubernetes can pull images from this project.",
     );
 
     await doGitlabRequest(
@@ -45,7 +45,7 @@ export const setupKubernetes = async (
         name: "gitlab-deploy-token",
         scopes: ["read_registry"],
       },
-      "POST"
+      "POST",
     );
   }
 
@@ -65,26 +65,26 @@ export const setupKubernetes = async (
   instance.log("ensuring service accounts...");
   const serviceAccountName = `cl-${context.componentName}-deploy`;
   const KUBE_URL = await exec(
-    `TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`
+    `TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`,
   ).then((s) => s.stdout.trim());
 
   // first upsert service acount in the ns
   try {
     await exec(
-      `kubectl delete serviceaccount --namespace ${namespace} ${serviceAccountName}`
+      `kubectl delete serviceaccount --namespace ${namespace} ${serviceAccountName}`,
     );
     await exec(
-      `kubectl delete rolebinding --namespace ${namespace} ${serviceAccountName}`
+      `kubectl delete rolebinding --namespace ${namespace} ${serviceAccountName}`,
     );
     await exec(
-      `kubectl delete role --namespace ${namespace} ${serviceAccountName}`
+      `kubectl delete role --namespace ${namespace} ${serviceAccountName}`,
     );
   } catch (e) {
     // ignore
   }
 
   await exec(
-    `kubectl create serviceaccount --namespace ${namespace} ${serviceAccountName}`
+    `kubectl create serviceaccount --namespace ${namespace} ${serviceAccountName}`,
   );
 
   // upsert role in the ns
@@ -132,10 +132,10 @@ EOF
   `);
 
   const KUBE_CA_PEM = await exec(
-    `kubectl get secret ${secretName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`
+    `kubectl get secret ${secretName} --namespace ${namespace} -o jsonpath="{['data']['ca\\.crt']}"`,
   ).then((c) => c.stdout.trim());
   const KUBE_TOKEN = await exec(
-    `kubectl get secret ${secretName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`
+    `kubectl get secret ${secretName} --namespace ${namespace} -o jsonpath="{['data']['token']}" | base64 --decode`,
   ).then((c) => c.stdout.trim());
 
   const vars = {
@@ -151,7 +151,7 @@ EOF
         missing.map((m) => m[0]).join(", ") +
         ". Check whether your local kubectl is still working for '" +
         fullName +
-        "'"
+        "'",
     );
   }
 
@@ -165,7 +165,7 @@ EOF
     vars,
     context.environment.shortName,
     context.componentName,
-    false // no backup
+    false, // no backup
   );
   instance.log("done!");
 };

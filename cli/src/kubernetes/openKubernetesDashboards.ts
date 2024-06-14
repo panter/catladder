@@ -5,7 +5,7 @@ import { openGoogleCloudDashboard } from "../gcloud/openDashboard";
 
 export const openGoogleCloudLogs = async (
   instance: CommandInstance,
-  context: Context
+  context: Context,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
@@ -31,7 +31,7 @@ export const openGoogleCloudLogs = async (
 
 export const openGoogleCloudKubernetesDashboard = async (
   instance: CommandInstance,
-  context: Context
+  context: Context,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {

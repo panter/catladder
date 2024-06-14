@@ -7,7 +7,7 @@ import type { PipelineType } from "./pipeline";
 
 export type EnvironmentContext<
   B extends BuildConfigType,
-  D extends DeployConfigType
+  D extends DeployConfigType,
 > = {
   envConfigRaw: EnvConfigWithComponent;
   buildConfigRaw: false | BuildConfigGeneric<B>;

@@ -5,7 +5,7 @@ declare module "child-process-promise" {
     cmd: string,
     options?: {
       env?: Record<string, string>;
-    }
+    },
   ): Promise<{
     stdout: string;
   }>;
@@ -19,7 +19,7 @@ declare module "child-process-promise" {
 
   function spawn(
     cmd: string,
-    options?: SpawnOptions
+    options?: SpawnOptions,
   ): Promise<{
     stdout: string;
   }>;
@@ -27,7 +27,7 @@ declare module "child-process-promise" {
   function spawn(
     cmd: string,
     args: string[],
-    options?: SpawnOptions
+    options?: SpawnOptions,
   ): Promise<unknown> & {
     childProcess: {
       stdout: ReadStream;

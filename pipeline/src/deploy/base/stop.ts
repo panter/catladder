@@ -10,7 +10,7 @@ export type StopJobDefinition = Pick<
 >;
 export const createStopJob = (
   context: Context,
-  jobDefinition: StopJobDefinition
+  jobDefinition: StopJobDefinition,
 ): CatladderJob => {
   return {
     name: STOP_JOB_NAME,

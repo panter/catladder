@@ -23,10 +23,10 @@ export function getPipelineTriggerForGitlabChildPipeline() {
     isMergeRequest || isHotfixBranch
       ? "mr"
       : isDefaultBranch
-      ? "mainBranch"
-      : isTaggedRelease
-      ? "taggedRelease"
-      : null;
+        ? "mainBranch"
+        : isTaggedRelease
+          ? "taggedRelease"
+          : null;
 
   if (!trigger) {
     throw new Error(
@@ -38,8 +38,8 @@ export function getPipelineTriggerForGitlabChildPipeline() {
             isTaggedRelease,
           },
           null,
-          2
-        )
+          2,
+        ),
     );
   }
   return trigger;

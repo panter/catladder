@@ -76,7 +76,7 @@ export const getDockerBuildVariables = (context: Context) => {
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
 
 export const getDockerJobBaseProps = (
-  context: Context
+  context: Context,
 ): Pick<
   CatladderJob,
   "image" | "services" | "variables" | "runnerVariables"
@@ -97,7 +97,7 @@ export const getDockerJobBaseProps = (
 export type DockerBuildJobDefinition = Partial<CatladderJob>;
 export const createDockerBuildJobBase = (
   context: Context,
-  { script, ...def }: Partial<CatladderJob>
+  { script, ...def }: Partial<CatladderJob>,
 ): CatladderJob => {
   return merge(
     {
@@ -114,7 +114,7 @@ export const createDockerBuildJobBase = (
         ...getDockerBuildRunnerVariables(),
       },
     },
-    def
+    def,
   );
 };
 
@@ -130,23 +130,23 @@ export const gitlabDockerLogin = (context: Context) =>
 
 export const getDockerBuildDefaultScript = (
   context: Context,
-  ensureDockerFileScript?: string
+  ensureDockerFileScript?: string,
 ) =>
   [
     ensureDockerFileScript,
     ...collapseableSection(
       "docker-login",
-      "Docker Login"
+      "Docker Login",
     )(gitlabDockerLogin(context)),
     ...collapseableSection(
       "docker-build",
-      "Docker build"
+      "Docker build",
     )([
       "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
     ]),
     ...collapseableSection(
       "docker-push",
-      "Docker push and tag"
+      "Docker push and tag",
     )([
       "docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG",
       "docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE",

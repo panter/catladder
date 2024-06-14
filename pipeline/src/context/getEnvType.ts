@@ -5,7 +5,7 @@ export const getEnvType = (
   env: string,
   envConfig: {
     type?: EnvType;
-  }
+  },
 ): EnvType => {
   if (envConfig.type) return envConfig.type;
 

@@ -9,7 +9,7 @@ export type BashExpressionPerPipelineType = {
 
 export const getBashExpressionPerPipelineType = (
   definition: BashExpressionPerPipelineType,
-  pipelineType?: PipelineType
+  pipelineType?: PipelineType,
 ) => {
   if (!pipelineType) return definition.default;
   return definition[pipelineType] || definition.default;

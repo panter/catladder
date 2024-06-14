@@ -13,6 +13,6 @@ export default async (vorpal: Vorpal) =>
       const { env, componentName } = parseChoice(envComponent);
       const envvars = await getEnvVarsResolved(this, env, componentName);
       Object.keys(envvars).forEach((key) =>
-        this.log(`${key}: ${envvars[key]}`)
+        this.log(`${key}: ${envvars[key]}`),
       );
     });

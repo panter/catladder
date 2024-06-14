@@ -7,7 +7,7 @@ export default async (vorpal: Vorpal) =>
   vorpal
     .command(
       "project-delete <envComponent>",
-      "deletes a environment of a project (it deletes the namespace)"
+      "deletes a environment of a project (it deletes the namespace)",
     )
     .autocomplete(await envAndComponents())
     .action(async function ({ envComponent }) {

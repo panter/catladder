@@ -23,7 +23,7 @@ export const createArgsString = (...args: keyValuesArg[]) =>
             return `--no-${key}`;
           }
           return `--${key}=${value}`;
-        })
+        }),
     )
     .flat()
     .join(" ");

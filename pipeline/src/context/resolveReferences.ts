@@ -12,9 +12,9 @@ export const resolveReferences = async (
   vars: Record<string, string | BashExpression | undefined | null>,
   getOtherVariables?: (
     componentName: string,
-    alreadyVisited: Record<string, Record<string, boolean>>
+    alreadyVisited: Record<string, Record<string, boolean>>,
   ) => Promise<UnspecifiedEnvVars>,
-  alreadyVisitedBase: Record<string, Record<string, boolean>> = {}
+  alreadyVisitedBase: Record<string, Record<string, boolean>> = {},
 ) => {
   /**
    *
@@ -22,7 +22,10 @@ export const resolveReferences = async (
    */
   const replaceSingleValue = async (
     value: string | BashExpression,
-    alreadyVisited: Record<string, Record<string, boolean>> = alreadyVisitedBase
+    alreadyVisited: Record<
+      string,
+      Record<string, boolean>
+    > = alreadyVisitedBase,
   ): Promise<string | BashExpression> => {
     if (REGEX.test(value.toString())) {
       // we consider variables that got references in it  BashExpressions, because the replacement may be one
@@ -41,7 +44,7 @@ export const resolveReferences = async (
           });
           const result = componentName
             ? (await getOtherVariables?.(componentName, newAlreadyVisited).then(
-                (r) => r?.[variableName]
+                (r) => r?.[variableName],
               )) ?? null
             : vars[variableName]; // is self reference
 
@@ -51,7 +54,7 @@ export const resolveReferences = async (
               : match;
 
           return replaced;
-        }
+        },
       );
     } else {
       return value;
@@ -71,13 +74,13 @@ export const resolveReferences = async (
             ? await replaceSingleValue(value)
             : null,
         ];
-      })
-    )
+      }),
+    ),
   ) as Record<string, BashExpression>;
 };
 
 export const translateLegacyFromComponents = (
-  fromComponents: Record<string, Record<string, string>>
+  fromComponents: Record<string, Record<string, string>>,
 ) => {
   return Object.fromEntries(
     Object.entries(fromComponents).flatMap(([componentName, variables]) => {
@@ -85,6 +88,6 @@ export const translateLegacyFromComponents = (
         ourName,
         "${" + componentName + ":" + otherName + "}",
       ]);
-    })
+    }),
   );
 };

@@ -33,11 +33,11 @@ const getCloudSqlVariables = ({
       deployConfigRaw.cloudSql,
       fullConfig,
       environmentSlugPrefix,
-      componentName
+      componentName,
     );
 
     const additionalQueryParamsString = Object.entries(
-      deployConfigRaw.cloudSql.dbAdditionalQueryParams ?? {}
+      deployConfigRaw.cloudSql.dbAdditionalQueryParams ?? {},
     )
       .map(([key, value]) => `&${key}=${value}`)
       .join("");
@@ -49,7 +49,7 @@ const getCloudSqlVariables = ({
       DB_USER: deployConfigRaw.cloudSql.dbUser ?? "postgres",
       DB_PASSWORD: "$" + getSecretVarName(env, componentName, "DB_PASSWORD"),
       DATABASE_URL: `${getDatabaseConnectionString(
-        deployConfigRaw.cloudSql
+        deployConfigRaw.cloudSql,
       )}${additionalQueryParamsString}`,
       DATABASE_JDBC_URL: DATABASE_JDBC_URL,
     };
@@ -88,10 +88,14 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
       [
         fullName,
         getBashVariable(
-          getSecretVarName(env, componentName, GCLOUD_RUN_CANONICAL_HOST_SUFFIX)
+          getSecretVarName(
+            env,
+            componentName,
+            GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+          ),
         ),
       ],
-      "-"
+      "-",
     ).toLowerCase();
     const jobTriggers =
       deployConfigRaw && deployConfigRaw.jobs
@@ -103,7 +107,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
               }-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${
                 deployConfigRaw.projectId
               }/jobs/${getCloudRunJobName(fullName, name)}:run`,
-            ])
+            ]),
           )
         : {};
 

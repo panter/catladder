@@ -41,7 +41,7 @@ const createCopyDbScript = ({
       pg_dump --dbname=postgres://${sourceUsername}:${sourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
       echo "dump done"
       ${targetPSQL(
-        `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`
+        `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`,
       )}
       ${targetPSQL(`-c 'create database "${targetDbName}"' 1> /dev/null`)}
           echo "Restoring dump..."

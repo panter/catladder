@@ -4,12 +4,12 @@ export const startKubePortForward = async (
   podname: string,
   localPort: number,
   remotePort: number,
-  namespace: string
+  namespace: string,
 ) => {
   const name = `kube/${namespace}/${podname}/${localPort}:${remotePort}`;
 
   await startPortForwardCommand(
     name,
-    `kubectl port-forward ${podname} ${localPort}:${remotePort} -n ${namespace}`
+    `kubectl port-forward ${podname} ${localPort}:${remotePort} -n ${namespace}`,
   );
 };
