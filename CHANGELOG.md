@@ -1,3 +1,10 @@
+# [1.146.0](https://git.panter.ch/catladder/catladder/compare/v1.145.0...v1.146.0) (2024-06-14)
+
+
+### Features
+
+* **cli:** speed up catenv ([905a5c2](https://git.panter.ch/catladder/catladder/commit/905a5c25d80e70295fd7dc6fd56bce4297a53514))
+
 # [1.145.0](https://git.panter.ch/catladder/catladder/compare/v1.144.1...v1.145.0) (2024-06-13)
 
 
