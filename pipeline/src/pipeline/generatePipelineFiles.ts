@@ -11,19 +11,28 @@ export async function generatePipelineFiles<T extends PipelineType>(
   if (mode === "childpipeline") {
     const trigger = getPipelineTriggerForGitlabChildPipeline();
 
-    const { jobs, ...mainPipeline } = await createChildPipeline(
-      pipelineType,
-      trigger,
-      config,
-    );
+    const { jobs, image, stages, variables, workflow, ...mainPipeline } =
+      await createChildPipeline(pipelineType, trigger, config);
     // need to spread out the jobs, forgot why
-    await writeYamlfile(`__pipeline.yml`, { ...jobs, ...mainPipeline });
+    await writeYamlfile(`__pipeline.yml`, {
+      image,
+      stages,
+      variables,
+      workflow,
+      ...mainPipeline,
+      ...jobs,
+    });
   } else {
-    const { jobs, ...mainPipeline } = await createMainPipeline(
-      pipelineType,
-      config,
-    );
+    const { jobs, image, stages, variables, workflow, ...mainPipeline } =
+      await createMainPipeline(pipelineType, config);
     // need to spread out the jobs, forgot why
-    await writeYamlfile(`.gitlab-ci.yml`, { ...jobs, ...mainPipeline });
+    await writeYamlfile(`.gitlab-ci.yml`, {
+      image,
+      stages,
+      variables,
+      workflow,
+      ...mainPipeline,
+      ...jobs,
+    });
   }
 }
