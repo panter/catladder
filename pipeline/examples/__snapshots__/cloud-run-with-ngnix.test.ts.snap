@@ -62,6 +62,7 @@ exports[`matches snapshot for cloud-run-with-ngnix 1`] = `
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
+            "app/.next",
             "app/dist",
           ],
           "reports": {
@@ -333,7 +334,7 @@ EOF
 ",
           "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "gcloud run deploy pan-test-app-dev-api --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node-static,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "gcloud run deploy pan-test-app-dev-api --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done",
@@ -637,6 +638,7 @@ EOF
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
+            "app/.next",
             "app/dist",
           ],
           "reports": {
@@ -908,7 +910,7 @@ EOF
 ",
           "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node-static,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=asdf --region=asia-east1 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done",
@@ -1166,6 +1168,7 @@ EOF
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
+            "app/.next",
             "app/dist",
           ],
           "reports": {
@@ -1252,6 +1255,7 @@ EOF
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
+            "app/.next",
             "app/dist",
           ],
           "reports": {
@@ -1582,7 +1586,7 @@ EOF
 ",
           "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "gcloud run deploy pan-test-app-prod-api --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node-static,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "gcloud run deploy pan-test-app-prod-api --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done",
@@ -1707,7 +1711,7 @@ EOF
 ",
           "echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"",
-          "gcloud run deploy pan-test-app-stage-api --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node-static,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
+          "gcloud run deploy pan-test-app-stage-api --command="" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost",
           "echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"",
           "gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done",

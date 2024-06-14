@@ -7,7 +7,15 @@ const config: Config = {
     api: {
       dir: "app",
       build: {
-        type: "storybook",
+        type: "node",
+        buildCommand: "yarn build-storybook --quiet -o ./dist",
+        startCommand: "",
+        docker: {
+          type: "nginx",
+        },
+        test: false,
+        lint: false,
+        audit: false,
       },
       deploy: {
         type: "google-cloudrun",

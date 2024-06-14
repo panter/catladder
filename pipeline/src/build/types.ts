@@ -114,6 +114,9 @@ export type BuildConfigNode = {
 } & BuildConfigNodeBase;
 
 export type BuildConfigNodeStatic = BuildConfigNodeBase & {
+  /**
+   * @deprecated use type: "node" and docker: { type: "nginx" } instead
+   */
   type: "node-static";
   startCommand?: never;
   docker?: Omit<BuildConfigDockerBuiltInNgninx, "type"> | BuildConfigDocker;
@@ -271,6 +274,9 @@ export type BuildConfigRails = BuildConfigBase & {
 };
 
 export type BuildConfigStorybook = BuildConfigNodeBase & {
+  /**
+   * @deprecated use type: "node" and docker: { type: "nginx" } instead
+   */
   type: "storybook";
   startCommand?: never;
 };

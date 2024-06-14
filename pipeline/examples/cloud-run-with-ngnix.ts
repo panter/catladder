@@ -7,7 +7,11 @@ const config: Config = {
     api: {
       dir: "app",
       build: {
-        type: "node-static",
+        type: "node",
+        startCommand: "",
+        docker: {
+          type: "nginx",
+        },
       },
       deploy: {
         type: "google-cloudrun",
