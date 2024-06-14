@@ -59,28 +59,6 @@ export type BuildConfigBase = {
   buildCommand?: string | string[] | null;
 
   /**
-   * customize docker build
-   */
-  docker?: {
-    /**
-     * Custom Dockerfile lines integrated in the generated Dockerfile before the standard build steps.
-     *
-     * - [runner-images/docker-build/scripts/ensureNodeDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile)
-     * - [runner-images/docker-build/scripts/ensureNginxDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile)
-     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile)
-     */
-    additionsBegin?: string[];
-    /**
-     * Custom Dockerfile lines integrated in the generated Dockerfile after the standard build steps.
-     *
-     * - [runner-images/docker-build/scripts/ensureNodeDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNodeDockerfile)
-     * - [runner-images/docker-build/scripts/ensureNginxDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureNginxDockerfile)
-     * - [runner-images/docker-build/scripts/ensureMeteorDockerfile](https://git.panter.ch/catladder/catladder/-/tree/main/runner-images/docker-build/scripts/ensureMeteorDockerfile)
-     */
-    additionsEnd?: string[];
-  };
-
-  /**
    * customize lint, set false to disable
    */
   lint?: false | TestJobCustom;
@@ -132,11 +110,13 @@ export type BuildConfigNodeBase = BuildConfigBase & {
 
 export type BuildConfigNode = {
   type: "node";
+  docker?: Omit<BuildConfigDockerBuiltInNode, "type"> | BuildConfigDocker;
 } & BuildConfigNodeBase;
 
 export type BuildConfigNodeStatic = BuildConfigNodeBase & {
   type: "node-static";
   startCommand?: never;
+  docker?: Omit<BuildConfigDockerBuiltInNgninx, "type"> | BuildConfigDocker;
 };
 
 export type BuildConfigMeteor = BuildConfigNodeBase & {
@@ -146,23 +126,58 @@ export type BuildConfigMeteor = BuildConfigNodeBase & {
    * This is only required if you have custom scripts in your image
    */
   installScripts?: boolean;
+  docker?: Omit<BuildConfigDockerBuiltInMeteor, "type"> | BuildConfigDocker;
 };
 
-export type BuildConfigCustomDocker = BuildConfigBase["docker"] &
-  (
-    | {
-        /**
-         * use the built-in nginx image for simple static apps
-         */
-        type: "nginx";
-      }
-    | {
-        /**
-         * custom docker build, expect that a Dockerfile in your directory
-         */
-        type: "custom";
-      }
-  );
+type BuildConfigDockerWithAdditions = {
+  /**
+   * Custom Dockerfile lines integrated in the generated Dockerfile before the standard build steps.
+   *
+   */
+  additionsBegin?: string[];
+  /**
+   * Custom Dockerfile lines integrated in the generated Dockerfile after the standard build steps.
+   *
+   */
+  additionsEnd?: string[];
+};
+
+type BuildConfigDockerBuiltInNode = {
+  type: "node";
+} & BuildConfigDockerWithAdditions;
+
+type BuildConfigDockerBuiltInMeteor = {
+  type: "meteor";
+} & BuildConfigDockerWithAdditions;
+
+type BuildConfigDockerBuiltInNgninx = {
+  /**
+   * use the built-in nginx image for simple static apps
+   */
+  type: "nginx";
+} & BuildConfigDockerWithAdditions;
+type BuildConfigDockerBuiltIn =
+  | BuildConfigDockerBuiltInNgninx
+  | BuildConfigDockerBuiltInNode
+  | BuildConfigDockerBuiltInMeteor;
+
+type BuildConfigDockerCustom = {
+  /**
+   * custom docker build, expect that a Dockerfile in your directory
+   */
+  type: "custom";
+};
+
+export type BuildConfigDocker =
+  | BuildConfigDockerBuiltIn
+  | BuildConfigDockerCustom;
+
+/**
+ * @deprecated this type is no longer used. Use {@link BuildConfigDocker} instead.
+ */
+export type BuildConfigCustomDocker =
+  | BuildConfigDockerCustom
+  | BuildConfigDockerBuiltInNgninx;
 
 export type BuildConfigCustom = Omit<
   BuildConfigBase,
@@ -175,7 +190,7 @@ export type BuildConfigCustom = Omit<
    */
   jobServices?: Services;
 
-  docker: BuildConfigCustomDocker;
+  docker: BuildConfigDocker;
 
   /**
    * custom lint, disabled when not set

@@ -6,7 +6,7 @@ import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 
 import { createBuildJobs } from "../base";
-import { getDockerBuildDefaultScript } from "../docker";
+import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
@@ -63,7 +63,7 @@ export const createMeteorBuildJobs = (
           }
         : undefined,
     dockerBuild: {
-      script: getDockerBuildDefaultScript(context, "ensureMeteorDockerfile"),
+      script: getDockerBuildScriptWithBuiltInDockerFile(context, "meteor"),
       variables: {
         METEOR_INSTALL_SCRIPTS: buildConfig.installScripts ? "true" : "",
       },

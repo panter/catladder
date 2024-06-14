@@ -1,17 +1,18 @@
-import { merge } from "lodash";
-import { isOfDeployType } from "../deploy";
-import { getRunnerImage } from "../runner";
-import type { ComponentContext } from "../types";
-import type { CatladderJob } from "../types/jobs";
 import { existsSync } from "fs";
+import { merge } from "lodash";
 import path from "path";
-import { collapseableSection } from "../utils/gitlab";
+import type { BuildConfig, BuildConfigDocker } from ".";
+import { isOfDeployType } from "../deploy";
 import {
   getArtifactsRegistryBuildCacheImage,
   getArtifactsRegistryHost,
   getArtifactsRegistryImageName,
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
+import { getRunnerImage } from "../runner";
+import type { ComponentContext } from "../types";
+import type { CatladderJob } from "../types/jobs";
+import { collapseableSection } from "../utils/gitlab";
 
 const DOCKER_BUILD_RUNNER_REQUESTS = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -69,12 +70,24 @@ const getDockerBuildRunnerVariables = () => ({
   DOCKER_BUILDKIT: "1", // see https://docs.docker.com/develop/develop-images/build_enhancements/
 });
 
-export const getDockerBuildVariables = (context: ComponentContext) => {
+const getDockerAdditions = (build: BuildConfig) => {
+  if (!("docker" in build)) return {};
+  if (!build.docker) return {};
+
   return {
     DOCKERFILE_ADDITIONS:
-      context.build.config.docker?.additionsBegin?.join("\n"),
+      "additionsBegin" in build.docker
+        ? build.docker.additionsBegin?.join("\n")
+        : undefined,
     DOCKERFILE_ADDITIONS_END:
-      context.build.config.docker?.additionsEnd?.join("\n"),
+      "additionsEnd" in build.docker
+        ? build.docker.additionsEnd?.join("\n")
+        : undefined,
+  };
+};
+export const getDockerBuildVariables = (context: ComponentContext) => {
+  return {
+    ...getDockerAdditions(context.build.config),
     APP_DIR: context.build.dir,
     DOCKER_DIR: ".", // relative to componentdir
 
@@ -135,12 +148,36 @@ export const gitlabDockerLogin = (context: ComponentContext) =>
         "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
       ];
 
+const BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS = {
+  meteor: "ensureMeteorDockerfile",
+  node: "ensureNodeDockerfile",
+  nginx: "ensureNginxDockerfile",
+  custom: null,
+} satisfies {
+  [type in BuildConfigDocker["type"]]: string | null;
+};
+
+export const getDockerBuildScriptWithBuiltInDockerFile = (
+  context: ComponentContext,
+  defaultType?: BuildConfigDocker["type"],
+) => {
+  const type =
+    "docker" in context.componentConfig.build &&
+    context.componentConfig.build.docker &&
+    "type" in context.componentConfig.build.docker
+      ? context.componentConfig.build.docker?.type
+      : defaultType;
+  return getDockerBuildDefaultScript(
+    context,
+    type ? BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS[type] : null,
+  );
+};
 export const getDockerBuildDefaultScript = (
   context: ComponentContext,
-  ensureDockerFileScript?: string,
+  ensureDockerFileScript?: string | null,
 ) =>
   [
-    ensureDockerFileScript,
+    ensureDockerFileScript ?? undefined,
     ...collapseableSection(
       "docker-login",
       "Docker Login",

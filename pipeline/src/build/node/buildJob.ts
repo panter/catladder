@@ -4,7 +4,7 @@ import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { createBuildJobs } from "../base";
-import { getDockerBuildDefaultScript } from "../docker";
+import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
@@ -59,11 +59,11 @@ export const createNodeBuildJobs = (
         : undefined,
 
     dockerBuild: {
-      script: getDockerBuildDefaultScript(
+      script: getDockerBuildScriptWithBuiltInDockerFile(
         context,
         buildConfig.type === "node-static" || buildConfig.type === "storybook"
-          ? "ensureNginxDockerfile"
-          : "ensureNodeDockerfile",
+          ? "nginx"
+          : "node",
       ),
       cache: [...getYarnCache(context.build, "pull")],
       variables: {

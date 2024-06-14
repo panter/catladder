@@ -1,7 +1,7 @@
 import { join } from "path";
 import type { ComponentContext } from "../../types/context";
 import { ensureArray } from "../../utils";
-import { getDockerBuildDefaultScript } from "../docker";
+import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 
 import type { CatladderJob } from "../../types/jobs";
@@ -44,10 +44,7 @@ export const createCustomBuildJobs = (
           }
         : undefined,
     dockerBuild: {
-      script: getDockerBuildDefaultScript(
-        context,
-        buildConfig.docker?.type === "nginx" ? "ensureNginxDockerfile" : "",
-      ),
+      script: getDockerBuildScriptWithBuiltInDockerFile(context),
 
       variables: {},
     },
