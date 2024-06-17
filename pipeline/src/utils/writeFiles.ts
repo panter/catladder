@@ -33,8 +33,21 @@ export const writeGeneratedFile = async (
   );
 };
 
+type StringifyOptions = Exclude<
+  Parameters<typeof stringify>[2],
+  null | undefined | string | number
+>;
+export const yamlStringifyOptions: StringifyOptions = {
+  // prevents colapsing long command statements into multiple lines
+  lineWidth: 0,
+  // represent multi line commands as single line json strings
+  doubleQuotedAsJSON: true,
+  // Better readability when bash commands most often use double quotes
+  singleQuote: true,
+};
+
 export const writeYamlfile = async (path: string, data: any) => {
-  await writeGeneratedFile(path, stringify(data), {
+  await writeGeneratedFile(path, stringify(data, yamlStringifyOptions), {
     commentChar: "#",
   });
 };
