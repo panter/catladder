@@ -1,10 +1,10 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import { getKubernetesNamespace } from "@catladder/pipeline";
 import type { V1ObjectMeta } from "@kubernetes/client-node";
 import { V1Namespace } from "@kubernetes/client-node";
 import { getk8sApi } from "../../../../../k8sApi";
 
-export default async function (context: Context) {
+export default async function (context: ComponentContext) {
   const namespace = getKubernetesNamespace(
     context.fullConfig,
     context.environment.shortName,

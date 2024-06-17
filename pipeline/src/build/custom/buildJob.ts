@@ -1,5 +1,5 @@
 import { join } from "path";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import { ensureArray } from "../../utils";
 import { getDockerBuildDefaultScript } from "../docker";
 import { isOfBuildType } from "../types";
@@ -13,7 +13,9 @@ const RUNNER_BUILD_VARIABLES = {
   KUBERNETES_MEMORY_LIMIT: "4Gi",
 };
 
-export const createCustomBuildJobs = (context: Context): CatladderJob[] => {
+export const createCustomBuildJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
 
   if (!isOfBuildType(buildConfig, "custom")) {

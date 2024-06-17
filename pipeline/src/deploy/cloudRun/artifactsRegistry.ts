@@ -1,13 +1,13 @@
 import type { StringOrBashExpression } from "../../bash/BashExpression";
 import { joinBashExpressions } from "../../bash/BashExpression";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import { allowFailureInScripts } from "../../utils/gitlab";
 import { isOfDeployType } from "../types";
 import { removeFirstLinesFromCommandOutput } from "./utils/removeFirstLinesFromCommandOutput";
 
 export const getArtifactsRegistryHost = ({
   componentConfig: { deploy },
-}: Context) => {
+}: ComponentContext) => {
   if (!isOfDeployType(deploy, "google-cloudrun")) {
     // should not happen
     throw new Error("deploy config is wrong");
@@ -15,7 +15,7 @@ export const getArtifactsRegistryHost = ({
   return `${deploy.region}-docker.pkg.dev`;
 };
 
-export const getArtifactsRegistryDockerUrl = (context: Context) => {
+export const getArtifactsRegistryDockerUrl = (context: ComponentContext) => {
   const deployConfig = context.componentConfig.deploy;
 
   if (!isOfDeployType(deployConfig, "google-cloudrun")) {
@@ -35,7 +35,7 @@ export const getArtifactsRegistryDockerUrl = (context: Context) => {
  * lecacyReviewImageName is only temporary. In old versions the images had no reviewslug in review apps, which makes cleanup harder. We delete all those images now, but need the path
  */
 export const getArtifactsRegistryImageName = (
-  context: Context,
+  context: ComponentContext,
   lecacyReviewImageName = false,
 ) => {
   if (lecacyReviewImageName && context.environment.envType !== "review") {
@@ -55,14 +55,16 @@ export const getArtifactsRegistryImageName = (
   return joinBashExpressions(gcloudImagePath, "/");
 };
 
-export const getArtifactsRegistryBuildCacheImage = (context: Context) => {
+export const getArtifactsRegistryBuildCacheImage = (
+  context: ComponentContext,
+) => {
   const dockerUrl = getArtifactsRegistryDockerUrl(context);
   // does not include env, so that after merge, you might get more cache hits (review-->dev)
   const gcloudImagePath = [dockerUrl, "caches", context.componentName];
   return gcloudImagePath.join("/");
 };
 
-export const getArtifactsRegistryImage = (context: Context) =>
+export const getArtifactsRegistryImage = (context: ComponentContext) =>
   `${getArtifactsRegistryImageName(context)}:$DOCKER_IMAGE_TAG`;
 
 const getDeleteImageCommands = (
@@ -96,7 +98,10 @@ const getDeleteImageCommands = (
  * @param keep how many of the newest images to keep
  * @returns
  */
-export const getDeleteUnusedImagesCommands = (context: Context, keep = 0) => {
+export const getDeleteUnusedImagesCommands = (
+  context: ComponentContext,
+  keep = 0,
+) => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
     return [];

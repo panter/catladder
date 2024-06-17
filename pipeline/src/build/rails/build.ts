@@ -1,4 +1,4 @@
-import type { Context } from "../..";
+import type { ComponentContext } from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { createBuildJobs } from "../base";
 import {
@@ -8,7 +8,9 @@ import {
 } from "../docker";
 import { isOfBuildType } from "../types";
 
-export const createRailsBuildJobs = (context: Context): CatladderJob[] => {
+export const createRailsBuildJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
   if (!isOfBuildType(buildConfig, "rails")) {
     // should not happen

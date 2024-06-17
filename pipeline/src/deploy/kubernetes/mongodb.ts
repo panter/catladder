@@ -1,28 +1,28 @@
 import { range } from "lodash";
 import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import { isOfDeployType } from "../types";
 
-const getCredentialString = (context: Context) =>
+const getCredentialString = (context: ComponentContext) =>
   `root:$${getSecretVarNameForContext(context, "MONGODB_ROOT_PASSWORD")}@`;
-const getMongodbHost = (context: Context, name: string) => {
+const getMongodbHost = (context: ComponentContext, name: string) => {
   const namespace = context.environment.envVars.KUBE_NAMESPACE;
   return `${name}.${namespace}.svc.cluster.local:27017`;
 };
 
-const getMongodbStandaloneHost = (context: Context) => {
+const getMongodbStandaloneHost = (context: ComponentContext) => {
   const fullAppname = context.environment.envVars.KUBE_APP_NAME;
   return getMongodbHost(context, `${fullAppname}-mongodb`);
 };
 
-const getMongodbReplicasetHost = (context: Context, index: number) => {
+const getMongodbReplicasetHost = (context: ComponentContext, index: number) => {
   const fullAppname = context.environment.envVars.KUBE_APP_NAME;
   return getMongodbHost(
     context,
     `${fullAppname}-mongodb-${index}.${fullAppname}-mongodb-headless`,
   );
 };
-const createMongodbUrl = (context: Context, dbName: string) => {
+const createMongodbUrl = (context: ComponentContext, dbName: string) => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("can only createMongodbUrl on supported deploys");
   }
@@ -46,7 +46,7 @@ const createMongodbUrl = (context: Context, dbName: string) => {
     queryParams ? `?${queryParams}` : ""
   }`;
 };
-const createMongoBackupDefaultConfig = (context: Context) => {
+const createMongoBackupDefaultConfig = (context: ComponentContext) => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("can only create mongodb base config on supported deploys");
   }
@@ -83,7 +83,7 @@ const createMongoBackupDefaultConfig = (context: Context) => {
     volumeSnapshotClass: "snapshotclass",
   };
 };
-export const createMongodbBaseConfig = (context: Context) => {
+export const createMongodbBaseConfig = (context: ComponentContext) => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("can only create mongodb base config on supported deploys");
   }

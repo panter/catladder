@@ -1,6 +1,6 @@
 import { join } from "path";
 import { getRunnerImage } from "../../runner";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { createBuildJobs } from "../base";
@@ -10,7 +10,9 @@ import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 
-export const createNodeBuildJobs = (context: Context): CatladderJob[] => {
+export const createNodeBuildJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
 
   if (!isOfBuildType(buildConfig, "node", "node-static", "storybook")) {

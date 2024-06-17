@@ -4,7 +4,7 @@ import { DEPLOY_TYPES } from "../deploy";
 import type { DeployConfig, DeployConfigType } from "../deploy/types";
 import type { PipelineType } from "../types";
 import type { Config, PipelineTrigger } from "../types/config";
-import type { Context, PackageManagerInfo } from "../types/context";
+import type { ComponentContext, PackageManagerInfo } from "../types/context";
 import type { PartialDeep } from "../types/utils";
 import { mergeWithMergingArrays } from "../utils";
 import { getEnvironment } from "./getEnvironment";
@@ -24,7 +24,7 @@ export type CreateContextContext = {
 
 export const createContext = async (
   ctx: CreateContextContext,
-): Promise<Context> => {
+): Promise<ComponentContext> => {
   if (!/^[a-z0-9-]+$/.test(ctx.componentName)) {
     throw new Error(
       "componentName may only contain lower case letters, numbers and -",

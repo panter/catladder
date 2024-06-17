@@ -1,5 +1,5 @@
 import { getRunnerImage } from "../../runner";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { getNodeCache } from "./cache";
@@ -7,7 +7,9 @@ import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { ensureNodeVersion, getYarnInstall } from "./yarn";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
-export const createNodeTestJobs = (context: Context): CatladderJob[] => {
+export const createNodeTestJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   // don't run tests after release
   // TODO: this will be replaced by using rules
   if (context.trigger === "taggedRelease") {
@@ -15,6 +17,7 @@ export const createNodeTestJobs = (context: Context): CatladderJob[] => {
   }
 
   const buildConfig = context.componentConfig.build;
+
   const defaultImage = getRunnerImage("jobs-default");
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {

@@ -1,9 +1,9 @@
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import { getDeleteUnusedImagesCommands } from "./artifactsRegistry";
 import { getDeleteUnusedRevisionsCommands } from "./cloudRunRevisions";
 
 export const getRemoveOldRevisionsAndImagesCommand = (
-  context: Context,
+  context: ComponentContext,
   when: "postDeploy" | "onStop",
 ) => {
   if (when === "onStop") {

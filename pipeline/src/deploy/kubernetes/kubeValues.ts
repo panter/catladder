@@ -1,6 +1,6 @@
 import { merge } from "lodash";
 
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import { mergeWithMergingArrays } from "../../utils";
 import type { DeployConfigKubernetesValues } from "../types";
 import { isOfDeployType } from "../types";
@@ -14,7 +14,7 @@ import { createMongodbBaseConfig } from "./mongodb";
 import { processSecretsAsFiles } from "./processSecretsAsFiles";
 
 const createAppConfig = (
-  context: Context,
+  context: ComponentContext,
   application: DeployConfigKubernetesValues["application"],
 ): DeployConfigKubernetesValues["application"] => {
   if (application === false) {
@@ -56,7 +56,7 @@ const removeFalsy = <T>(record?: Record<string, false | T>) => {
   );
 };
 
-export const createKubeValues = (context: Context) => {
+export const createKubeValues = (context: ComponentContext) => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
     return [];

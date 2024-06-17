@@ -3,12 +3,16 @@ import { BUILD_TYPES } from "../build";
 import type { CreateContextContext } from "../context";
 import { createContext } from "../context";
 import { DEPLOY_TYPES } from "../deploy";
-import type { CatladderJobWithContext, Context } from "../types/context";
+import type {
+  CatladderJobWithContext,
+  ComponentContext,
+  Context,
+} from "../types/context";
 import type { CatladderJob } from "../types/jobs";
 import { getPackageManagerInfo } from "./packageManager";
 
 const injectDefaultVarsInCustomJobs = (
-  context: Context,
+  context: ComponentContext,
   jobs: CatladderJob[],
 ) =>
   jobs.map(({ variables, ...job }) => ({
@@ -18,7 +22,7 @@ const injectDefaultVarsInCustomJobs = (
     },
     ...job,
   }));
-const getCustomJobs = (context: Context) => {
+const getCustomJobs = (context: ComponentContext) => {
   if (!context.componentConfig.customJobs) {
     return [];
   }

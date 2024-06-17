@@ -1,7 +1,7 @@
 import { merge } from "lodash";
 import { isOfDeployType } from "../deploy";
 import { getRunnerImage } from "../runner";
-import type { Context } from "../types";
+import type { ComponentContext } from "../types";
 import type { CatladderJob } from "../types/jobs";
 import { existsSync } from "fs";
 import path from "path";
@@ -19,7 +19,7 @@ const DOCKER_BUILD_RUNNER_REQUESTS = {
   KUBERNETES_MEMORY_LIMIT: "2Gi",
 };
 
-export const getDockerImageVariables = (context: Context) => {
+export const getDockerImageVariables = (context: ComponentContext) => {
   return {
     ...(isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
       ? {
@@ -48,7 +48,7 @@ export const getDockerImageVariables = (context: Context) => {
  */
 export const requiresDockerBuild = ({
   componentConfig: { deploy },
-}: Context): boolean =>
+}: ComponentContext): boolean =>
   isOfDeployType(deploy, "kubernetes", "google-cloudrun", "dockerTag") ||
   (isOfDeployType(deploy, "custom") && deploy.requiresDocker);
 
@@ -60,7 +60,7 @@ const getDockerBuildRunnerVariables = () => ({
   DOCKER_BUILDKIT: "1", // see https://docs.docker.com/develop/develop-images/build_enhancements/
 });
 
-export const getDockerBuildVariables = (context: Context) => {
+export const getDockerBuildVariables = (context: ComponentContext) => {
   return {
     DOCKERFILE_ADDITIONS:
       context.componentConfig.build.docker?.additionsBegin?.join("\n"),
@@ -76,7 +76,7 @@ export const getDockerBuildVariables = (context: Context) => {
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
 
 export const getDockerJobBaseProps = (
-  context: Context,
+  context: ComponentContext,
 ): Pick<
   CatladderJob,
   "image" | "services" | "variables" | "runnerVariables"
@@ -96,7 +96,7 @@ export const getDockerJobBaseProps = (
 
 export type DockerBuildJobDefinition = Partial<CatladderJob>;
 export const createDockerBuildJobBase = (
-  context: Context,
+  context: ComponentContext,
   { script, ...def }: Partial<CatladderJob>,
 ): CatladderJob => {
   return merge(
@@ -118,7 +118,7 @@ export const createDockerBuildJobBase = (
   );
 };
 
-export const gitlabDockerLogin = (context: Context) =>
+export const gitlabDockerLogin = (context: ComponentContext) =>
   isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
     ? [
         ...gcloudServiceAccountLoginCommands(context),
@@ -129,7 +129,7 @@ export const gitlabDockerLogin = (context: Context) =>
       ];
 
 export const getDockerBuildDefaultScript = (
-  context: Context,
+  context: ComponentContext,
   ensureDockerFileScript?: string,
 ) =>
   [
@@ -154,5 +154,5 @@ export const getDockerBuildDefaultScript = (
     ]),
   ].filter(Boolean);
 
-export const hasDockerfile = (context: Context) =>
+export const hasDockerfile = (context: ComponentContext) =>
   existsSync(path.join(context.componentConfig.dir, "Dockerfile"));

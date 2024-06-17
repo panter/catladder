@@ -1,4 +1,4 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 
 import { exec } from "child-process-promise";
 import { createHmac } from "crypto";
@@ -22,7 +22,7 @@ type ServiceAccount = {
   description: string;
 };
 const upsertGcloudServiceAccount = async (
-  context: Context,
+  context: ComponentContext,
   account: ServiceAccount,
 ): Promise<string> => {
   const { projectId, name, displayName, roles, description } = account;
@@ -76,7 +76,7 @@ const upsertGcloudServiceAccount = async (
 
 export const upsertGcloudServiceAccountAndSaveSecret = async (
   instance: CommandInstance,
-  context: Context,
+  context: ComponentContext,
   account: ServiceAccount,
   secretName: string,
 ): Promise<void> => {

@@ -1,11 +1,11 @@
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createDeployJob, type DeployJobDefinition } from "./deploy";
 import { createRollbackJob, type RollbackJobDefinition } from "./rollback";
 import { createStopJob, type StopJobDefinition } from "./stop";
 
 export const createDeployementJobs = (
-  context: Context,
+  context: ComponentContext,
   definitions: {
     deploy: DeployJobDefinition;
     stop?: StopJobDefinition;

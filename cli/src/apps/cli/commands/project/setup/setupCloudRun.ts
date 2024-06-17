@@ -1,4 +1,4 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import {
   GCLOUD_DEPLOY_CREDENTIALS_KEY,
   GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
@@ -14,7 +14,7 @@ import { upsertAllVariables } from "../../../../../utils/gitlab";
 
 export const setupCloudRun = async (
   instance: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ) => {
   if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
     throw new Error("deploy config is not of type 'google-cloudrun'");

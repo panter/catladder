@@ -82,7 +82,7 @@ export type ContextBeforeConfig = {
   fullConfig: Config;
   packageManagerInfo?: PackageManagerInfo;
 };
-export type Context = {
+export type ComponentContext = {
   componentName: string;
   componentConfig: ComponentConfig;
   fullConfig: Config;
@@ -93,6 +93,11 @@ export type Context = {
   packageManagerInfo?: PackageManagerInfo;
 };
 
+/**
+ * @deprecated use ComponentContext instead
+ */
+export type Context = ComponentContext;
+
 export type CatladderJobWithContext<S = BaseStage> = CatladderJob<S> & {
-  context: Context;
+  context: ComponentContext;
 };

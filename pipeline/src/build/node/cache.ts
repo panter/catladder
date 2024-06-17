@@ -1,11 +1,11 @@
 import { join } from "path";
 import slugify from "slugify";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { GitlabJobCache } from "../../types/gitlab-types";
 import { uniq } from "lodash";
 
 export const getYarnCache = (
-  context: Context,
+  context: ComponentContext,
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
@@ -26,7 +26,7 @@ export const getYarnCache = (
 };
 
 export const getNodeModulesCache = (
-  context: Context,
+  context: ComponentContext,
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
@@ -55,7 +55,7 @@ export const getNodeModulesCache = (
   ];
 };
 export const getNodeCache = (
-  context: Context,
+  context: ComponentContext,
   policy = "pull-push",
 ): GitlabJobCache[] => {
   return [
@@ -64,7 +64,7 @@ export const getNodeCache = (
   ];
 };
 
-export const getNextCache = (context: Context): GitlabJobCache[] => [
+export const getNextCache = (context: ComponentContext): GitlabJobCache[] => [
   {
     key: context.componentName + "-next-cache",
     policy: "pull-push",

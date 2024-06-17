@@ -3,7 +3,7 @@ import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { BASE_RETRY } from "../../defaults";
 import type {
   CatladderJobWithContext,
-  Context,
+  ComponentContext,
   GitlabJobDef,
   GitlabRule,
 } from "../../types";
@@ -203,7 +203,7 @@ export const makeGitlabJob = (
 };
 
 const addGitlabEnvironment = (
-  context: Context,
+  context: ComponentContext,
   environment: CatladderJob["environment"],
   job: GitlabJobDef,
   componentName: string,

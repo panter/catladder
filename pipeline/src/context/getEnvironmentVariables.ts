@@ -1,7 +1,7 @@
 import { merge } from "lodash";
 import { DEPLOY_TYPES } from "../deploy";
 import type {
-  Context,
+  ComponentContext,
   EnvironmentEnvVarPart as EnvironmentVariables,
 } from "../types";
 import type { DevLocalEnvConfig } from "../types/config";
@@ -198,5 +198,8 @@ const addIndexVar = <V extends Record<string, unknown>>(
   _ALL_ENV_VAR_KEYS: JSON.stringify(Object.keys(vars)),
 });
 
-export const getSecretVarNameForContext = (context: Context, key: string) =>
+export const getSecretVarNameForContext = (
+  context: ComponentContext,
+  key: string,
+) =>
   getSecretVarName(context.environment.shortName, context.componentName, key);

@@ -1,6 +1,6 @@
 import { getYarnInstall } from "../../build/node/yarn";
 import { getRunnerImage } from "../../runner";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createDeployementJobs } from "../base";
 import {
@@ -9,7 +9,9 @@ import {
 } from "../sbom";
 import { isOfDeployType } from "../types";
 
-export const createCustomDeployJobs = (context: Context): CatladderJob[] => {
+export const createCustomDeployJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
     return [];

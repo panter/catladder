@@ -1,5 +1,8 @@
 import { isNil, omit } from "lodash";
-import type { Context, UnspecifiedEnvVars } from "../../../types/context";
+import type {
+  ComponentContext,
+  UnspecifiedEnvVars,
+} from "../../../types/context";
 import { collapseableSection } from "../../../utils/gitlab";
 import { getDependencyTrackUploadScript } from "../../sbom";
 
@@ -25,7 +28,7 @@ import {
   yamlBashString,
 } from "../../../bash/bashYaml";
 
-export function getCloudRunDeployScripts(context: Context) {
+export function getCloudRunDeployScripts(context: ComponentContext) {
   const deployConfig = getCloudRunDeployConfig(context);
   const allEnvVars = omit(
     context.environment.envVars,

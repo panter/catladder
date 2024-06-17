@@ -1,12 +1,12 @@
 import { isNil } from "lodash";
-import type { Context } from "../../types";
+import type { ComponentContext } from "../../types";
 
 /**
  * writes a .env file in the components folder
  * @param context
  * @returns
  */
-export const writeDotEnv = (context: Context) => {
+export const writeDotEnv = (context: ComponentContext) => {
   const envVars = context.environment.envVars;
 
   // make key=value and sanitize multiline

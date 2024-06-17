@@ -1,5 +1,5 @@
 import { sbomDeactivated } from "../../deploy/sbom";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import type { DockerBuildJobDefinition } from "../docker";
 import { createDockerBuildJobBase, requiresDockerBuild } from "../docker";
@@ -9,7 +9,7 @@ import type { AppBuildJobDefinition } from "./createAppBuildJob";
 import { createAppBuildJob } from "./createAppBuildJob";
 
 export const createBuildJobs = (
-  context: Context,
+  context: ComponentContext,
   definitions: {
     appBuild?: AppBuildJobDefinition;
     dockerBuild: DockerBuildJobDefinition;

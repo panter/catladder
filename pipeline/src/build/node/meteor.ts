@@ -1,7 +1,7 @@
 import { join } from "path";
 import { getRunnerImage } from "../../runner";
 import type { GitlabJobCache } from "../../types";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 
 import type { CatladderJob } from "../../types/jobs";
 
@@ -11,7 +11,7 @@ import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
 
-const getMeteorCache = (context: Context): GitlabJobCache[] => [
+const getMeteorCache = (context: ComponentContext): GitlabJobCache[] => [
   {
     key: context.componentName + "meteor-build-cache",
     policy: "pull-push",
@@ -26,7 +26,9 @@ const getMeteorCache = (context: Context): GitlabJobCache[] => [
     ],
   },
 ];
-export const createMeteorBuildJobs = (context: Context): CatladderJob[] => {
+export const createMeteorBuildJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   const buildConfig = context.componentConfig.build;
 
   if (!isOfBuildType(buildConfig, "meteor")) {

@@ -2,7 +2,7 @@ import type { BuildConfig } from "../build/types";
 import type { DeployConfig } from "../deploy/types";
 
 import type { CatladderJob } from "./jobs";
-import type { Context } from "./context";
+import type { ComponentContext } from "./context";
 import type { PartialDeep } from "./utils";
 import type { PipelineType } from "..";
 
@@ -151,7 +151,7 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * to let us know about why you need to use custom jobs.
    * This feedback will help us to generalize use cases
    */
-  customJobs?: CatladderJob[] | ((context: Context) => CatladderJob[]);
+  customJobs?: CatladderJob[] | ((context: ComponentContext) => CatladderJob[]);
 
   /**
    * whether to create a .env

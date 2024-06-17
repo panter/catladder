@@ -1,10 +1,10 @@
 import type { StringOrBashExpression } from "../../../bash/BashExpression";
 import { getSecretVarNameForContext } from "../../../context";
-import type { Context } from "../../../types";
+import type { ComponentContext } from "../../../types";
 import { getFullDbName } from "../../cloudSql/utils";
 import { isOfDeployType } from "../../types";
 
-export const hasKubernetesCloudSQL = (context: Context) => {
+export const hasKubernetesCloudSQL = (context: ComponentContext) => {
   if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     return context.componentConfig.deploy.values?.cloudsql?.enabled;
   }
@@ -20,7 +20,7 @@ type CloudSqlValues = {
   dbUser: string;
 };
 export const createKubernetesCloudsqlBaseValues = (
-  context: Context,
+  context: ComponentContext,
 ): {
   cloudsql: CloudSqlValues;
 } => {

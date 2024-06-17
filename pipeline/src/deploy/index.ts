@@ -1,6 +1,6 @@
 import type { SecretEnvVar } from "..";
 import type { BashExpression } from "../bash/BashExpression";
-import type { Context } from "../types/context";
+import type { ComponentContext } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
 import type { PartialDeep } from "../types/utils";
@@ -15,7 +15,7 @@ export * from "./types";
 export * from "./utils";
 
 export type DeployTypeDefinition<T extends DeployConfigType> = {
-  jobs: (context: Context) => CatladderJob[];
+  jobs: (context: ComponentContext) => CatladderJob[];
   defaults: (
     envContext: EnvironmentContext<any, T>,
   ) => PartialDeep<DeployConfigGeneric<T>>;

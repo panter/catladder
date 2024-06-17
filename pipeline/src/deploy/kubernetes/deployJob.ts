@@ -1,6 +1,6 @@
 import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
 import { getRunnerImage } from "../../runner";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createDeployementJobs } from "../base";
 import {
@@ -15,7 +15,7 @@ import { collapseableSection } from "../../utils/gitlab";
 
 const ALL_VALUES_FILE = "__all_values.yml";
 export const createKubernetesDeployJobs = (
-  context: Context,
+  context: ComponentContext,
 ): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {

@@ -1,6 +1,6 @@
 import { merge } from "lodash";
 import { join } from "path";
-import type { Context } from "../..";
+import type { ComponentContext } from "../..";
 import { getRunnerImage } from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
@@ -14,7 +14,7 @@ import { writeDotEnv } from "./writeDotEnv";
 
 export type AppBuildJobDefinition = Partial<CatladderJob>;
 export const createAppBuildJob = (
-  context: Context,
+  context: ComponentContext,
   { script, variables, runnerVariables, ...def }: AppBuildJobDefinition,
 ): CatladderJob => {
   return merge(

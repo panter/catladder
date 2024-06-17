@@ -1,5 +1,5 @@
 import slugify from "slugify";
-import type { Context } from "../types";
+import type { ComponentContext } from "../types";
 
 const sanitize = (value?: string) => {
   if (!value) return value;
@@ -7,7 +7,7 @@ const sanitize = (value?: string) => {
   // slugify should do the job
   return slugify(value).toLowerCase();
 };
-export const getLabels = (context: Context) => {
+export const getLabels = (context: ComponentContext) => {
   const labels = {
     "customer-name": sanitize(context.fullConfig.customerName),
     "component-name": sanitize(context.componentName),

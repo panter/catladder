@@ -1,11 +1,11 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import type { CommandInstance } from "vorpal";
 import { openGoogleCloudDashboard } from "../openDashboard";
 
 export const openGoogleCloudRunDashboard = async (
   instance: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ) => {
   if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
     throw new Error("deploy type is not google-cloudrun ");

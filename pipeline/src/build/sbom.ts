@@ -1,11 +1,11 @@
-import type { Context } from "../types/context";
+import type { ComponentContext } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
 import { ensureArray } from "../utils";
 
 export const SBOM_BUILD_JOB_NAME = "🧾 sbom";
 export const SBOM_FILE = "__sbom.json";
 
-export const createSbomBuildJob = (context: Context): CatladderJob => {
+export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
   const buildConfig = context.componentConfig.build;
 
   const defaultImage = "aquasec/trivy:0.38.3";

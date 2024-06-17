@@ -1,4 +1,4 @@
-import type { Context } from "../../../types/context";
+import type { ComponentContext } from "../../../types/context";
 import { getDependencyTrackDeleteScript } from "../../sbom";
 
 import { getRemoveOldRevisionsAndImagesCommand } from "../cleanup";
@@ -12,7 +12,7 @@ import {
 import { getServiceDeleteScript } from "./cloudRunServices";
 import { getCloudRunDeployConfig } from "./common";
 
-export function getCloudRunStopScripts(context: Context) {
+export function getCloudRunStopScripts(context: ComponentContext) {
   const deployConfig = getCloudRunDeployConfig(context);
   return [
     ...gcloudServiceAccountLoginCommands(context),

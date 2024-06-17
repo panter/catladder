@@ -1,11 +1,11 @@
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import { isOfDeployType } from "../types";
 import { createArgsString } from "./utils/createArgsString";
 import { getServiceName } from "./utils/getServiceName";
 import { removeFirstLinesFromCommandOutput } from "./utils/removeFirstLinesFromCommandOutput";
 
 const getListRevisionsCommand = (
-  context: Context,
+  context: ComponentContext,
   args: {
     filter?: string;
     format: string;
@@ -34,7 +34,7 @@ const getListRevisionsCommand = (
 };
 
 export const getDeleteUnusedRevisionsCommands = (
-  context: Context,
+  context: ComponentContext,
   keep: number,
 ) => {
   const deployConfig = context.componentConfig.deploy;

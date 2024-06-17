@@ -1,4 +1,4 @@
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { isOfBuildType } from "../types";
@@ -11,7 +11,9 @@ const RUNNER_CUSTOM_TEST_VARIABLES = {
   KUBERNETES_MEMORY_LIMIT: "4Gi",
 };
 
-export const createCustomTestJobs = (context: Context): CatladderJob[] => {
+export const createCustomTestJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   // don't run tests after release
   // TODO: this will be replaced by using rules
   if (context.trigger === "taggedRelease") {

@@ -1,4 +1,4 @@
-import type { Context } from "../../../types/context";
+import type { ComponentContext } from "../../../types/context";
 import { allowFailureInScripts } from "../../../utils/gitlab";
 
 import type {
@@ -24,7 +24,7 @@ import type {
 import { ENV_VARS_FILENAME } from "./constants";
 
 const getJobRunScriptForJob = (
-  context: Context,
+  context: ComponentContext,
   jobName: StringOrBashExpression,
   wait: boolean,
 ) => {
@@ -36,7 +36,7 @@ const getJobRunScriptForJob = (
   }`;
 };
 
-export const getDeleteSchedulesScripts = (context: Context) => {
+export const getDeleteSchedulesScripts = (context: ComponentContext) => {
   const deployConfig = getCloudRunDeployConfig(context);
   const jobsWithSchedule = getCloudRunJobsWithSchedule(context);
   const argsString = createArgsString({
@@ -52,7 +52,7 @@ export const getDeleteSchedulesScripts = (context: Context) => {
     .flat();
 };
 
-export const getDeleteJobsScripts = (context: Context) => {
+export const getDeleteJobsScripts = (context: ComponentContext) => {
   const commonArgs = getCommonCloudRunArgs(context);
   const commonArgsString = createArgsString(commonArgs);
   const jobsWithNames = getCloudRunJobsWithNames(context);
@@ -65,7 +65,7 @@ export const getDeleteJobsScripts = (context: Context) => {
 };
 
 export const getJobRunScripts = (
-  context: Context,
+  context: ComponentContext,
   when: DeployConfigCloudRunJob["when"],
 ) => {
   const jobsWithNames = getCloudRunJobsWithNames(context);
@@ -81,7 +81,7 @@ export const getJobRunScripts = (
     );
 };
 
-export const getJobCreateScripts = (context: Context) => {
+export const getJobCreateScripts = (context: ComponentContext) => {
   const jobsWithNames = getCloudRunJobsWithNames(context);
 
   return jobsWithNames
@@ -90,7 +90,7 @@ export const getJobCreateScripts = (context: Context) => {
 };
 
 const getJobCreateScriptsForJob = (
-  context: Context,
+  context: ComponentContext,
   jobName: StringOrBashExpression,
   job: DeployConfigCloudRunJob,
 ) => {
@@ -132,7 +132,7 @@ const getJobCreateScriptsForJob = (
   ];
 };
 
-export const getCreateScheduleScripts = (context: Context) => {
+export const getCreateScheduleScripts = (context: ComponentContext) => {
   const jobsWithSchedule = getCloudRunJobsWithSchedule(context);
   const deployConfig = getCloudRunDeployConfig(context);
 
@@ -160,7 +160,7 @@ export const getCreateScheduleScripts = (context: Context) => {
     .flat();
 };
 
-const getCloudRunJobsWithSchedule = (context: Context) => {
+const getCloudRunJobsWithSchedule = (context: ComponentContext) => {
   const jobsWithNames = getCloudRunJobsWithNames(context);
 
   return jobsWithNames
@@ -179,7 +179,7 @@ const getCloudRunJobsWithSchedule = (context: Context) => {
     }));
 };
 
-const getCloudRunJobsWithNames = (context: Context) => {
+const getCloudRunJobsWithNames = (context: ComponentContext) => {
   const deployConfig = getCloudRunDeployConfig(context);
 
   const getFullJobName = (name: string) =>

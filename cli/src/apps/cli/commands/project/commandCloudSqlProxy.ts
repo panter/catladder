@@ -1,4 +1,4 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import {
   createKubernetesCloudsqlBaseValues,
   isOfDeployType,
@@ -79,7 +79,7 @@ export default async (vorpal: Vorpal) =>
 
 const getProxyInfoForKubernetes = async (
   vorpal: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ): Promise<ProxyInfo> => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     throw new Error("unsupported");
@@ -109,7 +109,7 @@ const getProxyInfoForKubernetes = async (
 
 const getProxyInfoForCloudRun = async (
   vorpal: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ): Promise<ProxyInfo> => {
   if (
     !isOfDeployType(context.componentConfig.deploy, "google-cloudrun") ||

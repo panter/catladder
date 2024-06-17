@@ -1,5 +1,5 @@
 import { BashExpression } from "../../bash/BashExpression";
-import type { Context } from "../../types";
+import type { ComponentContext } from "../../types";
 import { ensureArray } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 
@@ -8,7 +8,7 @@ const YARN_INSTALL_CLASSIC = `yarn install --frozen-lockfile`;
 // FIXME: check why and when rebuild is needed
 const YARN_BERRY_PROD_REBUILD = `yarn workspaces focus --production && yarn rebuild`;
 
-const getYarnInstallCommand = (context: Context) => {
+const getYarnInstallCommand = (context: ComponentContext) => {
   if (context.packageManagerInfo?.isClassic) {
     return YARN_INSTALL_CLASSIC;
   }
@@ -16,7 +16,7 @@ const getYarnInstallCommand = (context: Context) => {
   return `yarn install --immutable`;
 };
 
-export const ensureNodeVersion = (context: Context) =>
+export const ensureNodeVersion = (context: ComponentContext) =>
   collapseableSection(
     "nodeinstall",
     "Ensure node version",
@@ -26,7 +26,7 @@ export const ensureNodeVersion = (context: Context) =>
   ]);
 
 export const getYarnInstall = (
-  context: Context,
+  context: ComponentContext,
   options?: {
     noCustomPostInstall: boolean;
   },
@@ -52,7 +52,7 @@ export const getYarnInstall = (
 
 const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
 
-export const getDockerAppCopyAndBuildScript = (context: Context) => {
+export const getDockerAppCopyAndBuildScript = (context: ComponentContext) => {
   if (context.packageManagerInfo?.isClassic) {
     return new BashExpression(
       `

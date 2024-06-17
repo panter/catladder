@@ -1,4 +1,4 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import {
   getFullKubernetesClusterName,
   isOfDeployType,
@@ -15,7 +15,7 @@ import ensureNamespace from "../utils/ensureNamespace";
 
 export const setupKubernetes = async (
   instance: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {

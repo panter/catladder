@@ -1,11 +1,11 @@
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import type { CommandInstance } from "vorpal";
 import { openGoogleCloudDashboard } from "../gcloud/openDashboard";
 
 export const openGoogleCloudLogs = async (
   instance: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {

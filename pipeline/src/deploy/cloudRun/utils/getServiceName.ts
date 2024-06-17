@@ -1,3 +1,3 @@
-import type { Context } from "../../../types/context";
-export const getServiceName = (context: Context) =>
+import type { ComponentContext } from "../../../types/context";
+export const getServiceName = (context: ComponentContext) =>
   context.environment.fullName.toLowerCase();

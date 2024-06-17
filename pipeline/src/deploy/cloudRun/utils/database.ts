@@ -1,4 +1,4 @@
-import type { Context } from "../../../types";
+import type { ComponentContext } from "../../../types";
 import { allowFailureInScripts, repeatOnFailure } from "../../../utils/gitlab";
 import type {
   DeployConfigCloudRun,
@@ -6,7 +6,7 @@ import type {
 } from "../../types";
 
 export const getDatabaseDeleteScript = (
-  context: Context,
+  context: ComponentContext,
   deployConfig: DeployConfigCloudRun,
 ): string[] => {
   if (!deployConfig.cloudSql || !deployConfig.cloudSql.deleteDatabaseOnStop) {
@@ -35,7 +35,7 @@ export const getDatabaseDeleteScript = (
 };
 
 export const getDatabaseCreateScript = (
-  context: Context,
+  context: ComponentContext,
   deployConfig: DeployConfigCloudRun,
 ): string[] => {
   if (!deployConfig.cloudSql) {

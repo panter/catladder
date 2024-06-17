@@ -1,4 +1,4 @@
-import type { Config, Context } from "../types";
+import type { Config, ComponentContext } from "../types";
 import type { DeployConfigKubernetesCluster } from "./types";
 import { isOfDeployType } from "./types";
 
@@ -17,7 +17,7 @@ export const getKubernetesNamespace = (
   return `${config.customerName}-${config.appName}-${env}`;
 };
 
-export const contextIsStoppable = (context: Context) => {
+export const contextIsStoppable = (context: ComponentContext) => {
   const deployConfig = context.componentConfig.deploy;
   if (isOfDeployType(deployConfig, "kubernetes")) {
     return true;

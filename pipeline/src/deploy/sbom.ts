@@ -1,11 +1,13 @@
-import type { Context } from "../types/context";
+import type { ComponentContext } from "../types/context";
 import { SBOM_FILE } from "../build/sbom";
 
-export const sbomDeactivated = (context: Context) =>
+export const sbomDeactivated = (context: ComponentContext) =>
   context.componentConfig.build.type === "custom" &&
   context.componentConfig.build.sbom === false;
 
-export const getDependencyTrackUploadScript = (context: Context): string[] => {
+export const getDependencyTrackUploadScript = (
+  context: ComponentContext,
+): string[] => {
   return sbomDeactivated(context)
     ? []
     : [
@@ -14,7 +16,9 @@ export const getDependencyTrackUploadScript = (context: Context): string[] => {
       ];
 };
 
-export const getDependencyTrackDeleteScript = (context: Context): string[] => {
+export const getDependencyTrackDeleteScript = (
+  context: ComponentContext,
+): string[] => {
   return sbomDeactivated(context)
     ? []
     : [

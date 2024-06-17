@@ -1,5 +1,5 @@
 import { getLabels } from "../../../context/getLabels";
-import type { Context } from "../../../types/context";
+import type { ComponentContext } from "../../../types/context";
 
 import type { DeployConfigCloudRunService } from "../../types/googleCloudRun";
 import { createArgsString } from "../utils/createArgsString";
@@ -14,7 +14,7 @@ import { ENV_VARS_FILENAME } from "./constants";
 import { createVolumeConfig } from "./volumes";
 
 export const getServiceDeployScript = (
-  context: Context,
+  context: ComponentContext,
   service: DeployConfigCloudRunService | true | undefined,
   nameSuffix?: string,
 ) => {
@@ -66,7 +66,7 @@ export const getServiceDeployScript = (
 };
 
 export const getServiceDeleteScript = (
-  context: Context,
+  context: ComponentContext,
   serviceSuffix?: string,
 ) => {
   const commonArgs = getCommonCloudRunArgs(context);

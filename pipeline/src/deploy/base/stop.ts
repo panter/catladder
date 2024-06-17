@@ -1,4 +1,4 @@
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 
 import { DEPLOY_RUNNER_VARIABLES } from "./variables";
@@ -9,7 +9,7 @@ export type StopJobDefinition = Pick<
   "script" | "variables" | "image" | "runnerVariables"
 >;
 export const createStopJob = (
-  context: Context,
+  context: ComponentContext,
   jobDefinition: StopJobDefinition,
 ): CatladderJob => {
   return {

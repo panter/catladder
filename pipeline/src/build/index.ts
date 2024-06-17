@@ -1,4 +1,4 @@
-import type { Context } from "../types/context";
+import type { ComponentContext } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 
 import type { CatladderJob } from "../types/jobs";
@@ -12,7 +12,7 @@ export * from "./node";
 
 export type BuildTypes = {
   [type in BuildConfigType]: {
-    jobs: (context: Context) => CatladderJob[];
+    jobs: (context: ComponentContext) => CatladderJob[];
     defaults: (
       envContext: EnvironmentContext<BuildConfigType, any>,
     ) => Partial<Extract<BuildConfig, { type: type }>>;

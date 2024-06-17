@@ -8,7 +8,7 @@ import ensureCluster from "./utils/ensureCluster";
 import type { CommandInstance } from "vorpal";
 import { parseChoice } from "../../../../config/parseChoice";
 import { getPipelineContextByChoice } from "../../../../config/getProjectConfig";
-import type { Context } from "@catladder/pipeline";
+import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import { startPortForwardCommand } from "../../../../utils/portForwards";
 import open from "open";
@@ -44,7 +44,10 @@ const kubePortForward = async (cmd: CommandInstance, envComponent: string) => {
   return startKubePortForward(podName, localPort, remotePort, namespace);
 };
 
-const cloudRunPortForward = async (cmd: CommandInstance, context: Context) => {
+const cloudRunPortForward = async (
+  cmd: CommandInstance,
+  context: ComponentContext,
+) => {
   if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
     throw new Error("not cloud run");
   }

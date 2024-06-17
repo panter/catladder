@@ -1,5 +1,5 @@
 import { getRunnerImage } from "../../../runner";
-import type { Context } from "../../../types/context";
+import type { ComponentContext } from "../../../types/context";
 import type { CatladderJob } from "../../../types/jobs";
 import { allowFailureInScripts } from "../../../utils/gitlab";
 import { createDeployementJobs } from "../../base";
@@ -10,7 +10,7 @@ import { getCloudRunDeployScripts } from "./getCloudRunDeployScripts";
 import { getCloudRunStopScripts } from "./getCloudRunStopScripts";
 
 export const createGoogleCloudRunDeployJobs = (
-  context: Context,
+  context: ComponentContext,
 ): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {

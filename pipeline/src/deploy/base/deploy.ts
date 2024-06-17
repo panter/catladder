@@ -3,7 +3,7 @@ import {
   requiresDockerBuild,
 } from "../../build/docker";
 import { SBOM_BUILD_JOB_NAME } from "../../build/sbom";
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { sbomDeactivated } from "../sbom";
 import { contextIsStoppable } from "../utils";
@@ -24,7 +24,7 @@ export type DeployJobDefinition = Pick<
   | "runnerVariables"
 >;
 export const createDeployJob = (
-  context: Context,
+  context: ComponentContext,
   jobDefinition: DeployJobDefinition,
 ): CatladderJob => {
   const hasDocker = requiresDockerBuild(context);

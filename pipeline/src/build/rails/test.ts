@@ -1,8 +1,10 @@
-import type { Context } from "../..";
+import type { ComponentContext } from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 
-export const createRailsTestJobs = (context: Context): CatladderJob[] => {
+export const createRailsTestJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   // don't run tests after release
   // TODO: this will be replaced by using rules
   if (context.trigger === "taggedRelease") {

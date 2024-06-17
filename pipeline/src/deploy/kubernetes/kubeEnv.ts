@@ -1,5 +1,5 @@
 import type { StringOrBashExpression } from "../../bash/BashExpression";
-import type { Context } from "../../types";
+import type { ComponentContext } from "../../types";
 import { isOfDeployType } from "../types";
 
 const shouldGoIntoSecrets = (key: string, value: string | undefined) => {
@@ -14,7 +14,7 @@ const shouldGoIntoSecrets = (key: string, value: string | undefined) => {
  * separate by secrets and public.
  * we evalulate the actual values later, but want to store the secrets in kubernetes secrets
  */
-export const createKubeEnv = (context: Context) => {
+export const createKubeEnv = (context: ComponentContext) => {
   if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
     // should not happen
     throw new Error("deploy config is not kubernetes");

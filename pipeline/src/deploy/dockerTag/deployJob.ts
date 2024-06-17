@@ -1,11 +1,13 @@
 import { getDockerJobBaseProps, gitlabDockerLogin } from "../../build/docker";
 
-import type { Context } from "../../types/context";
+import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createDeployementJobs } from "../base";
 import { isOfDeployType } from "../types";
 
-export const createDockerTagDeployJobs = (context: Context): CatladderJob[] => {
+export const createDockerTagDeployJobs = (
+  context: ComponentContext,
+): CatladderJob[] => {
   const deployConfig = context.componentConfig.deploy;
   if (deployConfig === false) {
     return [];
