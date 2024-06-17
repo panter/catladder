@@ -71,3 +71,8 @@ export const createComponentContext = async (
     trigger: ctx.trigger,
   };
 };
+
+/**
+ * @deprecated use createComponentContext instead
+ */
+export const createContext = createComponentContext;
