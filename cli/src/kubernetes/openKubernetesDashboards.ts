@@ -31,7 +31,7 @@ export const openGoogleCloudLogs = async (
 
 export const openGoogleCloudKubernetesDashboard = async (
   instance: CommandInstance,
-  context: Context,
+  context: ComponentContext,
 ) => {
   const deployConfig = context.componentConfig.deploy;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
