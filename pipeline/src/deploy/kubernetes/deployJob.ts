@@ -17,10 +17,7 @@ const ALL_VALUES_FILE = "__all_values.yml";
 export const createKubernetesDeployJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const deployConfig = context.componentConfig.deploy;
-  if (deployConfig === false) {
-    return [];
-  }
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
     // should not happen
     throw new Error("deploy config is not kubernetes");

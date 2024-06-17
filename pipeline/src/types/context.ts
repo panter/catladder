@@ -1,6 +1,7 @@
 import type { StringOrBashExpression } from "../bash/BashExpression";
 import type { BuildConfig } from "../build";
 import type { PredefinedVariables, SecretEnvVar } from "../context";
+import type { DeployConfig } from "../deploy";
 import type {
   PipelineTrigger,
   ComponentConfig,
@@ -89,10 +90,22 @@ export type BuildContext = {
   packageManagerInfo?: PackageManagerInfo;
   config: BuildConfig;
 };
+
+export type DeployContext = {
+  config: DeployConfig;
+};
 export type ComponentContext = {
   componentName: string;
+
+  /**
+   * the merged component config.
+   *
+   * use build.config and deploy.config instead if you need something from there
+   *
+   */
   componentConfig: ComponentConfig;
-  buildContext: BuildContext;
+  build: BuildContext;
+  deploy?: DeployContext | null;
   fullConfig: Config;
   environment: Environment;
 
@@ -102,6 +115,8 @@ export type ComponentContext = {
    * @deprecated use buildContext.packageManagerInfo instead
    */
   packageManagerInfo?: PackageManagerInfo;
+
+  customJobs?: CatladderJob[];
 };
 
 /**

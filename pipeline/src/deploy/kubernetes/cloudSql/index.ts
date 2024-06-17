@@ -5,8 +5,10 @@ import { getFullDbName } from "../../cloudSql/utils";
 import { isOfDeployType } from "../../types";
 
 export const hasKubernetesCloudSQL = (context: ComponentContext) => {
-  if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
-    return context.componentConfig.deploy.values?.cloudsql?.enabled;
+  const deployConfig = context.deploy?.config;
+
+  if (isOfDeployType(deployConfig, "kubernetes")) {
+    return deployConfig.values?.cloudsql?.enabled;
   }
   return false;
 };
@@ -24,11 +26,12 @@ export const createKubernetesCloudsqlBaseValues = (
 ): {
   cloudsql: CloudSqlValues;
 } => {
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  const deployConfig = context.deploy?.config;
+  if (!isOfDeployType(deployConfig, "kubernetes")) {
     throw new Error("cannot get cloud sql config");
   }
 
-  const config = context.componentConfig.deploy.values?.cloudsql;
+  const config = deployConfig.values?.cloudsql;
 
   if (!config) {
     throw new Error("cannot get cloud sql config");

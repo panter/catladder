@@ -25,7 +25,7 @@ export const getServiceDeployScript = (
   const customConfig = service !== true ? service : undefined;
   const command =
     service !== true
-      ? service?.command ?? context.componentConfig.build.startCommand
+      ? service?.command ?? context.build.config.startCommand
       : undefined;
 
   const commandArray = command

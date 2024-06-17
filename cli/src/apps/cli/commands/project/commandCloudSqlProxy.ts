@@ -38,11 +38,9 @@ export default async (vorpal: Vorpal) =>
           "⚠️ connection string does not include mr information on review environments",
         );
       }
-      if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+      if (isOfDeployType(context.deploy?.config, "kubernetes")) {
         proxyInfo = await getProxyInfoForKubernetes(this, context);
-      } else if (
-        isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
-      ) {
+      } else if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
         proxyInfo = await getProxyInfoForCloudRun(this, context);
       } else {
         throw new Error("unsupported environment");
@@ -81,7 +79,7 @@ const getProxyInfoForKubernetes = async (
   vorpal: CommandInstance,
   context: ComponentContext,
 ): Promise<ProxyInfo> => {
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     throw new Error("unsupported");
   }
 
@@ -112,8 +110,8 @@ const getProxyInfoForCloudRun = async (
   context: ComponentContext,
 ): Promise<ProxyInfo> => {
   if (
-    !isOfDeployType(context.componentConfig.deploy, "google-cloudrun") ||
-    !context.componentConfig.deploy.cloudSql
+    !isOfDeployType(context.deploy?.config, "google-cloudrun") ||
+    !context.deploy?.config.cloudSql
   ) {
     throw new Error("unsupported");
   }
@@ -130,8 +128,7 @@ const getProxyInfoForCloudRun = async (
   const DB_NAME = context.environment.envVars.DB_NAME.toString();
 
   return {
-    instanceName:
-      context.componentConfig.deploy.cloudSql.instanceConnectionName,
+    instanceName: context.deploy?.config.cloudSql.instanceConnectionName,
     DB_PASSWORD,
     DB_NAME,
     DB_USER,

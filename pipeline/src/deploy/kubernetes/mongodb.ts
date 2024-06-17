@@ -23,10 +23,10 @@ const getMongodbReplicasetHost = (context: ComponentContext, index: number) => {
   );
 };
 const createMongodbUrl = (context: ComponentContext, dbName: string) => {
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     throw new Error("can only createMongodbUrl on supported deploys");
   }
-  const mongodbConfig = context.componentConfig.deploy.values?.mongodb;
+  const mongodbConfig = context.deploy?.config.values?.mongodb;
 
   let queryParams: string | undefined = undefined;
 
@@ -47,10 +47,10 @@ const createMongodbUrl = (context: ComponentContext, dbName: string) => {
   }`;
 };
 const createMongoBackupDefaultConfig = (context: ComponentContext) => {
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     throw new Error("can only create mongodb base config on supported deploys");
   }
-  const mongodbConfig = context.componentConfig.deploy.values?.mongodb;
+  const mongodbConfig = context.deploy?.config.values?.mongodb;
   const fullAppName = context.environment.envVars.KUBE_APP_NAME;
   const backupEnabled = ["prod", "stage"].includes(context.environment.envType);
 
@@ -84,10 +84,10 @@ const createMongoBackupDefaultConfig = (context: ComponentContext) => {
   };
 };
 export const createMongodbBaseConfig = (context: ComponentContext) => {
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     throw new Error("can only create mongodb base config on supported deploys");
   }
-  const mongodbConfig = context.componentConfig.deploy.values?.mongodb;
+  const mongodbConfig = context.deploy?.config.values?.mongodb;
 
   return {
     mongodb: {

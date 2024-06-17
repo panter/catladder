@@ -16,35 +16,29 @@ const getMeteorCache = (context: ComponentContext): GitlabJobCache[] => [
     key: context.componentName + "meteor-build-cache",
     policy: "pull-push",
     paths: [
-      join(
-        context.componentConfig.dir,
-        ".meteor/local/resolver-result-cache.json",
-      ),
-      join(context.componentConfig.dir, ".meteor/local/plugin-cache"),
-      join(context.componentConfig.dir, ".meteor/local/isopacks"),
-      join(context.componentConfig.dir, ".meteor/local/bundler-cache/scanner"),
+      join(context.build.dir, ".meteor/local/resolver-result-cache.json"),
+      join(context.build.dir, ".meteor/local/plugin-cache"),
+      join(context.build.dir, ".meteor/local/isopacks"),
+      join(context.build.dir, ".meteor/local/bundler-cache/scanner"),
     ],
   },
 ];
 export const createMeteorBuildJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   if (!isOfBuildType(buildConfig, "meteor")) {
     throw new Error("deploy config is not meteor");
   }
 
-  const yarnInstall = getYarnInstall(context.buildContext);
+  const yarnInstall = getYarnInstall(context.build);
 
   return createBuildJobs(context, {
     appBuild:
       buildConfig.buildCommand !== null
         ? {
-            cache: [
-              ...getNodeCache(context.buildContext),
-              ...getMeteorCache(context),
-            ],
+            cache: [...getNodeCache(context.build), ...getMeteorCache(context)],
             image: getRunnerImage("jobs-meteor"),
             variables: {
               METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
@@ -62,8 +56,8 @@ export const createMeteorBuildJobs = (
             ],
             artifacts: {
               paths: [
-                context.componentConfig.dir + "/__build_info.json",
-                context.componentConfig.dir + "/dist",
+                context.build.dir + "/__build_info.json",
+                context.build.dir + "/dist",
               ],
             },
           }

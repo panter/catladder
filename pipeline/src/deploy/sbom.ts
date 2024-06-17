@@ -2,8 +2,7 @@ import type { ComponentContext } from "../types/context";
 import { SBOM_FILE } from "../build/sbom";
 
 export const sbomDeactivated = (context: ComponentContext) =>
-  context.componentConfig.build.type === "custom" &&
-  context.componentConfig.build.sbom === false;
+  context.build.config.type === "custom" && context.build.config.sbom === false;
 
 export const getDependencyTrackUploadScript = (
   context: ComponentContext,

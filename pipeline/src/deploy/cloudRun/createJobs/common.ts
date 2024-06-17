@@ -1,4 +1,4 @@
-import type { ComponentContext } from "../../../types/context";
+import type { Context } from "../../../types/context";
 
 import { isOfDeployType } from "../../types";
 import type { DeployConfigCloudRun } from "../../types/googleCloudRun";
@@ -29,8 +29,8 @@ export const makeLabelString = (obj: Record<string, unknown>) =>
     .map(([key, value]) => `${key}=${value}`)
     .join(",");
 
-export const getCloudRunDeployConfig = (context: ComponentContext) => {
-  const deployConfig = context.componentConfig.deploy;
+export const getCloudRunDeployConfig = (context: Context) => {
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "google-cloudrun")) {
     // should not happen
     throw new Error("deploy config is wrong");
@@ -38,7 +38,7 @@ export const getCloudRunDeployConfig = (context: ComponentContext) => {
   return deployConfig;
 };
 
-export function getCommonCloudRunArgs(context: ComponentContext) {
+export function getCommonCloudRunArgs(context: Context) {
   const deployConfig = getCloudRunDeployConfig(context);
   return {
     project: deployConfig.projectId,
@@ -46,7 +46,7 @@ export function getCommonCloudRunArgs(context: ComponentContext) {
   };
 }
 
-export function getCommonDeployArgs(context: ComponentContext) {
+export function getCommonDeployArgs(context: Context) {
   const commonArgs = getCommonCloudRunArgs(context);
   const deployConfig = getCloudRunDeployConfig(context);
   return {

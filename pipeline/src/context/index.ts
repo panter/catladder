@@ -1,3 +1,4 @@
+import { isFunction } from "lodash";
 import { BUILD_TYPES } from "../build";
 import type { BuildConfig, BuildConfigType } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";
@@ -56,19 +57,34 @@ export const createComponentContext = async (
     componentConfigWithoutDefaults,
   );
 
-  return {
+  const environment = await getEnvironment(ctx);
+  const { deploy, build, customJobs, dir } = componentConfig;
+  const context: Omit<ComponentContext, "customJobs"> = {
     fullConfig: ctx.config,
     componentConfig,
-    buildContext: {
-      dir: componentConfig.dir,
+
+    build: {
+      dir: dir,
       packageManagerInfo: ctx.packageManagerInfo,
-      config: componentConfig.build,
+      config: build,
     },
+    deploy: deploy
+      ? {
+          config: deploy,
+        }
+      : null,
     componentName: ctx.componentName,
-    environment: await getEnvironment(ctx),
+    environment,
     packageManagerInfo: ctx.packageManagerInfo,
     pipelineType: ctx.pipelineType,
     trigger: ctx.trigger,
+  };
+  const resolvedCustomJobs = isFunction(customJobs)
+    ? customJobs(context)
+    : customJobs;
+  return {
+    ...context,
+    customJobs: resolvedCustomJobs,
   };
 };
 

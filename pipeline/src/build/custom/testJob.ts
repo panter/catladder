@@ -20,7 +20,7 @@ export const createCustomTestJobs = (
     return [];
   }
 
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   if (!isOfBuildType(buildConfig, "custom")) {
     throw new Error("deploy config is not custom");
@@ -28,7 +28,7 @@ export const createCustomTestJobs = (
 
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
-      APP_PATH: context.componentConfig.dir,
+      APP_PATH: context.build.dir,
       ...context.environment.jobOnlyVars.build.envVars,
       ...(buildConfig.extraVars ?? {}),
     },
@@ -48,7 +48,7 @@ export const createCustomTestJobs = (
         script: [...(ensureArray(buildConfig.audit?.command) ?? [])],
         allow_failure: true,
         ...createArtifactsConfig(
-          context.componentConfig.dir,
+          context.build.dir,
           buildConfig.audit?.artifactsReports,
           buildConfig.audit?.artifacts,
         ),
@@ -63,7 +63,7 @@ export const createCustomTestJobs = (
         image: buildConfig.lint?.jobImage ?? buildConfig.jobImage,
         script: [...(ensureArray(buildConfig.lint?.command) ?? [])],
         ...createArtifactsConfig(
-          context.componentConfig.dir,
+          context.build.dir,
           buildConfig.lint?.artifactsReports,
           buildConfig.lint?.artifacts,
         ),
@@ -77,7 +77,7 @@ export const createCustomTestJobs = (
         image: buildConfig.test?.jobImage ?? buildConfig.jobImage,
         script: [...(ensureArray(buildConfig.test?.command) ?? [])],
         ...createArtifactsConfig(
-          context.componentConfig.dir,
+          context.build.dir,
           buildConfig.test?.artifactsReports,
           buildConfig.test?.artifacts,
         ),

@@ -29,12 +29,12 @@ export const createAppBuildJob = (
         ...(variables ?? {}),
         ...context.environment.envVars,
         ...context.environment.jobOnlyVars.build.envVars,
-        ...(context.componentConfig.build.extraVars ?? {}),
+        ...(context.build.config.extraVars ?? {}),
       },
       runnerVariables: {
         ...RUNNER_BUILD_RESOURCE_VARIABLES,
         ...(runnerVariables ?? {}),
-        ...(context.componentConfig.build.runnerVariables ?? {}),
+        ...(context.build.config.runnerVariables ?? {}),
       },
 
       script: [
@@ -42,15 +42,15 @@ export const createAppBuildJob = (
           ? writeDotEnv(context)
           : []),
         ...writeBuildInfo(context),
-        ...ensureNodeVersion(context.buildContext), // in pure node repos, we might want to have the nvmrc file in top-level
-        `cd ${context.componentConfig.dir}`,
+        ...ensureNodeVersion(context.build), // in pure node repos, we might want to have the nvmrc file in top-level
+        `cd ${context.build.dir}`,
         ...(ensureArray(script) ?? []),
       ],
       artifacts: {
-        paths: [join(context.componentConfig.dir, "__build_info.json")],
+        paths: [join(context.build.dir, "__build_info.json")],
         reports: {
-          junit: context.componentConfig.build.artifactsReports?.junit?.map(
-            (p) => join(context.componentConfig.dir, p),
+          junit: context.build.config.artifactsReports?.junit?.map((p) =>
+            join(context.build.dir, p),
           ),
         },
       },

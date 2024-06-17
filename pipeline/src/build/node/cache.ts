@@ -68,6 +68,6 @@ export const getNextCache = (context: ComponentContext): GitlabJobCache[] => [
   {
     key: context.componentName + "-next-cache",
     policy: "pull-push",
-    paths: [context.componentConfig.dir + "/.next/cache/"],
+    paths: [context.build.dir + "/.next/cache/"],
   },
 ];

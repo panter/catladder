@@ -11,7 +11,7 @@ import { isOfBuildType } from "../types";
 export const createRailsBuildJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
   if (!isOfBuildType(buildConfig, "rails")) {
     // should not happen
     throw new Error("build type is not rails");
@@ -37,12 +37,12 @@ export const createRailsBuildJobs = (
     dockerBuild: {
       variables: {
         ...context.environment.jobOnlyVars.build.envVars,
-        ...context.componentConfig.build.extraVars,
+        ...context.build.config.extraVars,
       },
       // custom script
       script: [
         ...gitlabDockerLogin(context),
-        `cd ${context.componentConfig.dir}`,
+        `cd ${context.build.dir}`,
         `docker pull $DOCKER_CACHE_IMAGE || true`,
         `wget --output-document=- https://github.com/buildpacks/pack/releases/download/v${cnbConf?.packVersion}/pack-v${cnbConf?.packVersion}-linux.tgz | tar -zx --directory /usr/local/bin pack`,
         `chmod +x /usr/local/bin/pack`,

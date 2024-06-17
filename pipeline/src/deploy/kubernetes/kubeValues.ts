@@ -28,7 +28,7 @@ const createAppConfig = (
   return mergeWithMergingArrays(
     {
       host: context.environment.host,
-      command: command ?? context.componentConfig.build.startCommand,
+      command: command ?? context.build.config.startCommand,
       livenessProbe: {
         httpGet: {
           path: healthRoute ?? "__health",
@@ -57,8 +57,8 @@ const removeFalsy = <T>(record?: Record<string, false | T>) => {
 };
 
 export const createKubeValues = (context: ComponentContext) => {
-  const deployConfig = context.componentConfig.deploy;
-  if (deployConfig === false) {
+  const deployConfig = context.deploy?.config;
+  if (!deployConfig) {
     return [];
   }
   if (!isOfDeployType(deployConfig, "kubernetes")) {

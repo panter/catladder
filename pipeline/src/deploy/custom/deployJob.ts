@@ -12,16 +12,14 @@ import { isOfDeployType } from "../types";
 export const createCustomDeployJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const deployConfig = context.componentConfig.deploy;
-  if (deployConfig === false) {
-    return [];
-  }
+  const deployConfig = context.deploy?.config;
+
   if (!isOfDeployType(deployConfig, "custom")) {
     // should not happen
     throw new Error("deploy config is not custom");
   }
   // FIXME: custom deploy currently assumes yarn-based project
-  const yarnInstall = getYarnInstall(context.buildContext, {
+  const yarnInstall = getYarnInstall(context.build, {
     noCustomPostInstall: true,
   });
   return createDeployementJobs(context, {
@@ -29,7 +27,7 @@ export const createCustomDeployJobs = (
       image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
       cache: deployConfig.jobCache ?? [],
       script: [
-        `cd ${context.componentConfig.dir}`,
+        `cd ${context.build.dir}`,
         ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
         ...deployConfig.script,
         ...getDependencyTrackUploadScript(context),

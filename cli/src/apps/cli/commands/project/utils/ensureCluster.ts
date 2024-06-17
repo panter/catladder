@@ -13,12 +13,10 @@ import {
 export default async function (envComponent: string) {
   const { env, componentName } = parseChoice(envComponent);
   const context = await getPipelineContextByChoice(env, componentName);
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     throw new Error("can't ensure cluster for non-kubernetes deployments");
   }
-  const cluster = getFullKubernetesClusterName(
-    context.componentConfig.deploy.cluster,
-  );
+  const cluster = getFullKubernetesClusterName(context.deploy?.config.cluster);
   const connectedClusterName = await getCurrentConnectedClusterName();
 
   if (cluster !== connectedClusterName) {

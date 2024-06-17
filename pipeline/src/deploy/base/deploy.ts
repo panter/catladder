@@ -37,11 +37,11 @@ export const createDeployJob = (
         ? "4 weeks"
         : undefined;
 
+  const deployConfig = context.deploy?.config;
+
   // if auto or manual is configured explicitly, use that
   const whenDeployDefined =
-    context.componentConfig.deploy && context.componentConfig.deploy.when
-      ? context.componentConfig.deploy.when
-      : undefined;
+    deployConfig && deployConfig.when ? deployConfig.when : undefined;
   // otherwise auto deploy if env is not prod. If its prod, deploy automatically if stage is disabled
   const whenDeployDefault =
     context.environment.envType !== "prod"
@@ -64,8 +64,8 @@ export const createDeployJob = (
       ...(sbomDeactivated(context)
         ? []
         : [{ job: SBOM_BUILD_JOB_NAME, artifacts: true }]),
-      ...(context.componentConfig.deploy
-        ? context.componentConfig.deploy.waitFor?.map((c) => ({
+      ...(deployConfig
+        ? deployConfig.waitFor?.map((c) => ({
             componentName: c,
             job: DEPLOY_JOB_NAME,
             artifacts: false,
@@ -91,17 +91,13 @@ export const createDeployJob = (
       ...context.environment.envVars,
       ...(hasDocker ? getDockerImageVariables(context) : {}),
       ...context.environment.jobOnlyVars.deploy.envVars,
-      ...(context.componentConfig.deploy
-        ? context.componentConfig.deploy.extraVars ?? {}
-        : {}),
+      ...(deployConfig ? deployConfig.extraVars ?? {} : {}),
       ...jobDefinition.variables,
     },
     runnerVariables: {
       ...DEPLOY_RUNNER_VARIABLES,
       ...(jobDefinition.runnerVariables ?? {}),
-      ...(context.componentConfig.deploy
-        ? context.componentConfig.deploy.runnerVariables ?? {}
-        : {}),
+      ...(deployConfig ? deployConfig.runnerVariables ?? {} : {}),
     },
     environment: isStoppable
       ? {
@@ -109,8 +105,6 @@ export const createDeployJob = (
           auto_stop_in: autoStop,
         }
       : undefined,
-    jobTags: context.componentConfig.deploy
-      ? context.componentConfig.deploy.jobTags
-      : undefined,
+    jobTags: deployConfig ? deployConfig.jobTags : undefined,
   };
 };

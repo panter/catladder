@@ -8,10 +8,7 @@ import { isOfDeployType } from "../types";
 export const createDockerTagDeployJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const deployConfig = context.componentConfig.deploy;
-  if (deployConfig === false) {
-    return [];
-  }
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "dockerTag")) {
     // should not happen
     throw new Error("deploy config is not dockerTag");
@@ -19,7 +16,7 @@ export const createDockerTagDeployJobs = (
   const tag = deployConfig.tag;
   return createDeployementJobs(context, {
     deploy: {
-      ...getDockerJobBaseProps(context),
+      ...getDockerJobBaseProps(),
       script: [
         ...gitlabDockerLogin(context),
         `docker pull $DOCKER_IMAGE:$DOCKER_IMAGE_TAG`,

@@ -16,12 +16,12 @@ export const createNodeTestJobs = (
     return [];
   }
 
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   const defaultImage = getRunnerImage("jobs-default");
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
-      APP_PATH: context.componentConfig.dir,
+      APP_PATH: context.build.dir,
       ...context.environment.jobOnlyVars.build.envVars,
       ...(buildConfig.extraVars ?? {}),
     },
@@ -30,7 +30,7 @@ export const createNodeTestJobs = (
     needs: [],
     envMode: "none",
   };
-  const yarnInstall = getYarnInstall(context.buildContext);
+  const yarnInstall = getYarnInstall(context.build);
   const auditJob: CatladderJob | null =
     buildConfig.audit !== false
       ? {
@@ -39,16 +39,16 @@ export const createNodeTestJobs = (
           image: buildConfig.audit?.jobImage ?? defaultImage,
           cache: undefined, // audit does not need yarn install and no cache
           script: [
-            `cd ${context.componentConfig.dir}`,
+            `cd ${context.build.dir}`,
             ...(ensureArray(buildConfig.audit?.command) ?? [
-              context.buildContext.packageManagerInfo?.isClassic
+              context.build.packageManagerInfo?.isClassic
                 ? "yarn audit"
                 : "yarn npm audit --environment production", // yarn 2
             ]),
           ],
           allow_failure: true,
           ...createArtifactsConfig(
-            context.componentConfig.dir,
+            context.build.dir,
             buildConfig.audit?.artifactsReports,
             buildConfig.audit?.artifacts,
           ),
@@ -61,15 +61,15 @@ export const createNodeTestJobs = (
           name: "👮 lint",
           ...base,
           image: buildConfig.lint?.jobImage ?? defaultImage,
-          cache: getNodeCache(context.buildContext),
+          cache: getNodeCache(context.build),
           script: [
-            ...ensureNodeVersion(context.buildContext),
-            `cd ${context.componentConfig.dir}`,
+            ...ensureNodeVersion(context.build),
+            `cd ${context.build.dir}`,
             ...yarnInstall,
             ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
           ],
           ...createArtifactsConfig(
-            context.componentConfig.dir,
+            context.build.dir,
             buildConfig.lint?.artifactsReports,
             buildConfig.lint?.artifacts,
           ),
@@ -83,15 +83,15 @@ export const createNodeTestJobs = (
           ...base,
           image:
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
-          cache: getNodeCache(context.buildContext),
+          cache: getNodeCache(context.build),
           script: [
-            ...ensureNodeVersion(context.buildContext),
-            `cd ${context.componentConfig.dir}`,
+            ...ensureNodeVersion(context.build),
+            `cd ${context.build.dir}`,
             ...yarnInstall,
             ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),
           ],
           ...createArtifactsConfig(
-            context.componentConfig.dir,
+            context.build.dir,
             buildConfig.test?.artifactsReports,
             buildConfig.test?.artifacts,
           ),

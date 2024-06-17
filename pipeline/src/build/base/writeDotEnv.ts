@@ -19,7 +19,7 @@ export const writeDotEnv = (context: ComponentContext) => {
     .join("\n");
 
   return [
-    `cat <<EOF > ${context.componentConfig.dir}/.env
+    `cat <<EOF > ${context.build.dir}/.env
 ${keyValueString}
 EOF`,
   ];

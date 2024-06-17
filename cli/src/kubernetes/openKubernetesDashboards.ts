@@ -7,7 +7,7 @@ export const openGoogleCloudLogs = async (
   instance: CommandInstance,
   context: ComponentContext,
 ) => {
-  const deployConfig = context.componentConfig.deploy;
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
     throw new Error("context is not of type kubernetes");
   }
@@ -33,7 +33,7 @@ export const openGoogleCloudKubernetesDashboard = async (
   instance: CommandInstance,
   context: ComponentContext,
 ) => {
-  const deployConfig = context.componentConfig.deploy;
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
     throw new Error("context is not of type kubernetes");
   }

@@ -20,8 +20,9 @@ const DOCKER_BUILD_RUNNER_REQUESTS = {
 };
 
 export const getDockerImageVariables = (context: ComponentContext) => {
+  const deployConfig = context.deploy?.config;
   return {
-    ...(isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
+    ...(isOfDeployType(deployConfig, "google-cloudrun")
       ? {
           DOCKER_REGISTRY: getArtifactsRegistryHost(context),
           DOCKER_IMAGE: getArtifactsRegistryImageName(context),
@@ -46,11 +47,19 @@ export const getDockerImageVariables = (context: ComponentContext) => {
 /**
  * Weather the context requires a docker build
  */
-export const requiresDockerBuild = ({
-  componentConfig: { deploy },
-}: ComponentContext): boolean =>
-  isOfDeployType(deploy, "kubernetes", "google-cloudrun", "dockerTag") ||
-  (isOfDeployType(deploy, "custom") && deploy.requiresDocker);
+export const requiresDockerBuild = (context: ComponentContext): boolean => {
+  const deployConfig = context.deploy?.config;
+
+  return (
+    isOfDeployType(
+      deployConfig,
+      "kubernetes",
+      "google-cloudrun",
+      "dockerTag",
+    ) ||
+    (isOfDeployType(deployConfig, "custom") && deployConfig.requiresDocker)
+  );
+};
 
 // those need to be runner variables
 const getDockerBuildRunnerVariables = () => ({
@@ -63,10 +72,10 @@ const getDockerBuildRunnerVariables = () => ({
 export const getDockerBuildVariables = (context: ComponentContext) => {
   return {
     DOCKERFILE_ADDITIONS:
-      context.componentConfig.build.docker?.additionsBegin?.join("\n"),
+      context.build.config.docker?.additionsBegin?.join("\n"),
     DOCKERFILE_ADDITIONS_END:
-      context.componentConfig.build.docker?.additionsEnd?.join("\n"),
-    APP_DIR: context.componentConfig.dir,
+      context.build.config.docker?.additionsEnd?.join("\n"),
+    APP_DIR: context.build.dir,
     DOCKER_DIR: ".", // relative to componentdir
 
     ...getDockerImageVariables(context),
@@ -75,9 +84,7 @@ export const getDockerBuildVariables = (context: ComponentContext) => {
 
 export const DOCKER_BUILD_JOB_NAME = "🔨 docker";
 
-export const getDockerJobBaseProps = (
-  context: ComponentContext,
-): Pick<
+export const getDockerJobBaseProps = (): Pick<
   CatladderJob,
   "image" | "services" | "variables" | "runnerVariables"
 > => {
@@ -104,7 +111,7 @@ export const createDockerBuildJobBase = (
       name: DOCKER_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
-      ...getDockerJobBaseProps(context),
+      ...getDockerJobBaseProps(),
       script: script || [],
     },
     {
@@ -119,7 +126,7 @@ export const createDockerBuildJobBase = (
 };
 
 export const gitlabDockerLogin = (context: ComponentContext) =>
-  isOfDeployType(context.componentConfig.deploy, "google-cloudrun")
+  context.deploy && isOfDeployType(context.deploy.config, "google-cloudrun")
     ? [
         ...gcloudServiceAccountLoginCommands(context),
         `gcloud auth configure-docker ${getArtifactsRegistryHost(context)}`,
@@ -155,4 +162,4 @@ export const getDockerBuildDefaultScript = (
   ].filter(Boolean);
 
 export const hasDockerfile = (context: ComponentContext) =>
-  existsSync(path.join(context.componentConfig.dir, "Dockerfile"));
+  existsSync(path.join(context.build.dir, "Dockerfile"));

@@ -16,11 +16,11 @@ export const setupCloudRun = async (
   instance: CommandInstance,
   context: ComponentContext,
 ) => {
-  if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+  if (!isOfDeployType(context.deploy?.config, "google-cloudrun")) {
     throw new Error("deploy config is not of type 'google-cloudrun'");
   }
 
-  const config = context.componentConfig.deploy;
+  const config = context.deploy?.config;
 
   // enable services
 

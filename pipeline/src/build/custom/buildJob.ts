@@ -16,7 +16,7 @@ const RUNNER_BUILD_VARIABLES = {
 export const createCustomBuildJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   if (!isOfBuildType(buildConfig, "custom")) {
     throw new Error("deploy config is not custom");
@@ -33,10 +33,10 @@ export const createCustomBuildJobs = (
             script: [...(ensureArray(buildConfig.buildCommand) ?? [])],
             artifacts: {
               paths: [
-                join(context.componentConfig.dir, "__build_info.json"),
-                join(context.componentConfig.dir, "dist"),
+                join(context.build.dir, "__build_info.json"),
+                join(context.build.dir, "dist"),
                 ...(buildConfig.artifactsPaths?.map((path) =>
-                  join(context.componentConfig.dir, path),
+                  join(context.build.dir, path),
                 ) ?? []),
               ],
               expire_in: "1 day",

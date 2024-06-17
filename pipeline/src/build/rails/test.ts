@@ -11,7 +11,7 @@ export const createRailsTestJobs = (
     return [];
   }
 
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
@@ -45,7 +45,7 @@ export const createRailsTestJobs = (
           image:
             buildConfig.audit?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
-            `cd ${context.componentConfig.dir}`,
+            `cd ${context.build.dir}`,
             ...(ensureArray(buildConfig.audit?.command) ?? [
               "gem install bundler-audit",
               "bundle audit check",
@@ -65,7 +65,7 @@ export const createRailsTestJobs = (
           image:
             buildConfig.lint?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
-            `cd ${context.componentConfig.dir}`,
+            `cd ${context.build.dir}`,
             ...bundlerInstall,
             ...(ensureArray(buildConfig.lint?.command) ?? [
               "bundle exec rubocop",
@@ -83,7 +83,7 @@ export const createRailsTestJobs = (
           image:
             buildConfig.test?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
-            `cd ${context.componentConfig.dir}`,
+            `cd ${context.build.dir}`,
             ...bundlerInstall,
             ...(ensureArray(buildConfig.test?.command) ?? [
               "bundle exec rspec",

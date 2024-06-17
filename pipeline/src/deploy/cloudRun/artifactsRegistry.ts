@@ -5,18 +5,16 @@ import { allowFailureInScripts } from "../../utils/gitlab";
 import { isOfDeployType } from "../types";
 import { removeFirstLinesFromCommandOutput } from "./utils/removeFirstLinesFromCommandOutput";
 
-export const getArtifactsRegistryHost = ({
-  componentConfig: { deploy },
-}: ComponentContext) => {
-  if (!isOfDeployType(deploy, "google-cloudrun")) {
+export const getArtifactsRegistryHost = (context: ComponentContext) => {
+  if (!isOfDeployType(context.deploy?.config, "google-cloudrun")) {
     // should not happen
     throw new Error("deploy config is wrong");
   }
-  return `${deploy.region}-docker.pkg.dev`;
+  return `${context.deploy.config.region}-docker.pkg.dev`;
 };
 
 export const getArtifactsRegistryDockerUrl = (context: ComponentContext) => {
-  const deployConfig = context.componentConfig.deploy;
+  const deployConfig = context.deploy?.config;
 
   if (!isOfDeployType(deployConfig, "google-cloudrun")) {
     // should not happen
@@ -102,10 +100,7 @@ export const getDeleteUnusedImagesCommands = (
   context: ComponentContext,
   keep = 0,
 ) => {
-  const deployConfig = context.componentConfig.deploy;
-  if (deployConfig === false) {
-    return [];
-  }
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "google-cloudrun")) {
     // should not happen
     throw new Error("deploy config is wrong");

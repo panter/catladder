@@ -13,14 +13,14 @@ import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 export const createNodeBuildJobs = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   if (!isOfBuildType(buildConfig, "node", "node-static", "storybook")) {
     throw new Error("deploy config is not node, node-static or storybook");
   }
 
   const defaultImage = getRunnerImage("jobs-default");
-  const yarnInstall = getYarnInstall(context.buildContext);
+  const yarnInstall = getYarnInstall(context.build);
 
   return createBuildJobs(context, {
     appBuild:
@@ -30,7 +30,7 @@ export const createNodeBuildJobs = (
             runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
             cache: [
               ...(ensureArray(buildConfig.jobCache) ?? []),
-              ...getNodeCache(context.buildContext),
+              ...getNodeCache(context.build),
               ...getNextCache(context),
             ],
             script: [
@@ -39,9 +39,9 @@ export const createNodeBuildJobs = (
             ],
             artifacts: {
               paths: [
-                context.componentConfig.dir,
+                context.build.dir,
                 // also copy workspace dependencies in monorepo if packages are shared and they create build artifacts
-                ...(context.buildContext.packageManagerInfo
+                ...(context.build.packageManagerInfo
                   ?.currentWorkspaceDependencies ?? []),
               ].flatMap((dir) => [
                 join(dir, "__build_info.json"),
@@ -65,14 +65,14 @@ export const createNodeBuildJobs = (
           ? "ensureNginxDockerfile"
           : "ensureNodeDockerfile",
       ),
-      cache: [...getYarnCache(context.buildContext, "pull")],
+      cache: [...getYarnCache(context.build, "pull")],
       variables: {
         // only required for non static
         DOCKER_COPY_AND_INSTALL_APP: getDockerAppCopyAndBuildScript(
-          context.buildContext,
+          context.build,
         ),
         DOCKER_COPY_WORKSPACE_FILES:
-          context.buildContext.packageManagerInfo?.pathsToCopyInDocker
+          context.build.packageManagerInfo?.pathsToCopyInDocker
             .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
             ?.join("\n"),
       },

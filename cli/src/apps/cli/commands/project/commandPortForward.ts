@@ -48,7 +48,7 @@ const cloudRunPortForward = async (
   cmd: CommandInstance,
   context: ComponentContext,
 ) => {
-  if (!isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+  if (!isOfDeployType(context.deploy?.config, "google-cloudrun")) {
     throw new Error("not cloud run");
   }
 
@@ -67,7 +67,7 @@ const cloudRunPortForward = async (
       .replace("-review-", "-review-mr" + mr + "-");
   }
 
-  const { projectId, region } = context.componentConfig.deploy;
+  const { projectId, region } = context.deploy.config;
 
   const command = `gcloud beta run services proxy ${serviceName} --project ${projectId} --region ${region}`;
 
@@ -82,10 +82,10 @@ export default async (vorpal: Vorpal) =>
       const { env, componentName } = parseChoice(envComponent);
       const context = await getPipelineContextByChoice(env, componentName);
 
-      if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+      if (isOfDeployType(context.deploy?.config, "kubernetes")) {
         await kubePortForward(this, envComponent);
       }
-      if (isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+      if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
         await cloudRunPortForward(this, context);
       }
     });

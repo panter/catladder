@@ -151,7 +151,9 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * to let us know about why you need to use custom jobs.
    * This feedback will help us to generalize use cases
    */
-  customJobs?: CatladderJob[] | ((context: ComponentContext) => CatladderJob[]);
+  customJobs?:
+    | CatladderJob[]
+    | ((context: Omit<ComponentContext, "customJobs">) => CatladderJob[]);
 
   /**
    * whether to create a .env

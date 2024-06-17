@@ -2,11 +2,6 @@ import type { ComponentContext } from "../../..";
 import { createCustomTestJobs } from "../testJob";
 
 describe("createCustomTestJobs", () => {
-  const componentConfig: ComponentContext["componentConfig"] = {
-    dir: ".",
-    build: { type: "custom", docker: { type: "custom" }, jobImage: "" },
-    deploy: {},
-  } as ComponentContext["componentConfig"];
   const baseContext: ComponentContext = {
     componentName: "testComponent",
     environment: {
@@ -14,15 +9,17 @@ describe("createCustomTestJobs", () => {
         build: {},
       },
     },
-    componentConfig,
+    build: {
+      config: { type: "custom", docker: { type: "custom" }, jobImage: "" },
+    },
   } as ComponentContext;
 
   it("throws error when not build type custom", () => {
-    componentConfig.build.type = "node";
+    baseContext.build.config.type = "node";
     expect(() => createCustomTestJobs(baseContext)).toThrowError(
       "deploy config is not custom",
     );
-    componentConfig.build.type = "custom";
+    baseContext.build.config.type = "custom";
   });
 
   it("returns empty array if no audit, lint, and test definition", () => {

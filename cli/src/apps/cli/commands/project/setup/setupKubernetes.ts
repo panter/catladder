@@ -17,7 +17,7 @@ export const setupKubernetes = async (
   instance: CommandInstance,
   context: ComponentContext,
 ) => {
-  const deployConfig = context.componentConfig.deploy;
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "kubernetes")) {
     throw new Error("cannot run setupKubernetes on non-kubernetes deployments");
   }

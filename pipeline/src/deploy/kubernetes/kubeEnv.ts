@@ -15,7 +15,7 @@ const shouldGoIntoSecrets = (key: string, value: string | undefined) => {
  * we evalulate the actual values later, but want to store the secrets in kubernetes secrets
  */
 export const createKubeEnv = (context: ComponentContext) => {
-  if (!isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+  if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     // should not happen
     throw new Error("deploy config is not kubernetes");
   }

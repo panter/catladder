@@ -23,21 +23,17 @@ const injectDefaultVarsInCustomJobs = (
     ...job,
   }));
 const getCustomJobs = (context: ComponentContext) => {
-  if (!context.componentConfig.customJobs) {
+  if (!context.customJobs) {
     return [];
   }
-  const rawJobs = isFunction(context.componentConfig.customJobs)
-    ? context.componentConfig.customJobs(context)
-    : context.componentConfig.customJobs;
+  const rawJobs = context.customJobs;
   return injectDefaultVarsInCustomJobs(context, rawJobs);
 };
 const createRawJobs = (context: Context): CatladderJob[] => {
-  const buildJobs =
-    BUILD_TYPES[context.componentConfig.build.type].jobs(context);
-  const deployJobs =
-    context.componentConfig.deploy !== false
-      ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
-      : [];
+  const buildJobs = BUILD_TYPES[context.build.config.type].jobs(context);
+  const deployJobs = context.deploy?.config
+    ? DEPLOY_TYPES[context.deploy?.config.type].jobs(context)
+    : [];
 
   const customJobs = getCustomJobs(context);
   return [...buildJobs, ...deployJobs, ...customJobs];

@@ -6,14 +6,14 @@ export const SBOM_BUILD_JOB_NAME = "🧾 sbom";
 export const SBOM_FILE = "__sbom.json";
 
 export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
-  const buildConfig = context.componentConfig.build;
+  const buildConfig = context.build.config;
 
   const defaultImage = "aquasec/trivy:0.38.3";
   const defaultScript = [
     `trivy fs --quiet --format cyclonedx --output "${SBOM_FILE}" ${
-      context.buildContext.packageManagerInfo?.componentIsInWorkspace
+      context.build.packageManagerInfo?.componentIsInWorkspace
         ? "."
-        : context.buildContext.dir
+        : context.build.dir
     }`,
   ];
 

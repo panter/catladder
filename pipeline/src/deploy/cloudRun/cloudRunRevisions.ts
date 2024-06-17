@@ -12,7 +12,8 @@ const getListRevisionsCommand = (
   },
 ) => {
   const serviceName = getServiceName(context);
-  const deployConfig = context.componentConfig.deploy;
+
+  const deployConfig = context.deploy?.config;
 
   if (!deployConfig || !isOfDeployType(deployConfig, "google-cloudrun")) {
     // should not happen
@@ -37,10 +38,7 @@ export const getDeleteUnusedRevisionsCommands = (
   context: ComponentContext,
   keep: number,
 ) => {
-  const deployConfig = context.componentConfig.deploy;
-  if (deployConfig === false) {
-    return [];
-  }
+  const deployConfig = context.deploy?.config;
   if (!isOfDeployType(deployConfig, "google-cloudrun")) {
     // should not happen
     throw new Error("deploy config is wrong");

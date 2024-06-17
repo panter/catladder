@@ -22,11 +22,11 @@ export const setupContext = async (
       "...",
   );
   instance.log("");
-  if (isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+  if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
     await setupCloudRun(instance, context);
   }
 
-  const deployConfig = context.componentConfig.deploy;
+  const deployConfig = context.deploy?.config;
   if (isOfDeployType(deployConfig, "kubernetes")) {
     await setupKubernetes(instance, context);
   }

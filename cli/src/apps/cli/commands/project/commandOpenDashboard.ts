@@ -19,10 +19,10 @@ export default async (vorpal: Vorpal) =>
     .action(async function ({ envComponent }) {
       const { env, componentName } = parseChoice(envComponent);
       const context = await getPipelineContextByChoice(env, componentName);
-      if (isOfDeployType(context.componentConfig.deploy, "kubernetes")) {
+      if (isOfDeployType(context.deploy?.config, "kubernetes")) {
         await openGoogleCloudKubernetesDashboard(this, context);
       }
-      if (isOfDeployType(context.componentConfig.deploy, "google-cloudrun")) {
+      if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
         await openGoogleCloudRunDashboard(this, context);
       }
     });

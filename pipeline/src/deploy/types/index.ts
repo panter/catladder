@@ -21,8 +21,8 @@ export type DeployConfigGeneric<T extends DeployConfigType> = Extract<
 >;
 
 export const isOfDeployType = <T extends Array<DeployConfigType>>(
-  t: DeployConfig | false,
+  t: DeployConfig | false | null | undefined,
   ...types: T
 ): t is Extract<DeployConfig, { type: T[number] }> => {
-  return t && types.includes(t.type);
+  return t && types.includes(t.type) ? true : false;
 };
