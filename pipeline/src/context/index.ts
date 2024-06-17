@@ -13,7 +13,7 @@ import { getEnvironmentContext } from "./getEnvironmentContext";
 export * from "./getEnvironment";
 export * from "./getEnvironmentVariables";
 
-export type CreateContextContext = {
+export type CreateComponentContextContext = {
   config: Config;
   componentName: string;
   env: string;
@@ -22,8 +22,8 @@ export type CreateContextContext = {
   packageManagerInfo?: PackageManagerInfo;
 };
 
-export const createContext = async (
-  ctx: CreateContextContext,
+export const createComponentContext = async (
+  ctx: CreateComponentContextContext,
 ): Promise<ComponentContext> => {
   if (!/^[a-z0-9-]+$/.test(ctx.componentName)) {
     throw new Error(

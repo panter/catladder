@@ -6,7 +6,7 @@ import type {
 } from "../types";
 import type { DevLocalEnvConfig } from "../types/config";
 
-import type { CreateContextContext, UnspecifiedEnvVars } from "..";
+import type { CreateComponentContextContext, UnspecifiedEnvVars } from "..";
 import type { StringOrBashExpression } from "../bash/BashExpression";
 import { getBashVariable, joinBashExpressions } from "../bash/BashExpression";
 import type { EnvironmentContext } from "../types/environmentContext";
@@ -52,7 +52,7 @@ export type PredefinedVariables = BasePredefinedVariables & {
 };
 
 export const getEnvironmentVariables = async (
-  ctx: CreateContextContext,
+  ctx: CreateComponentContextContext,
   alreadyVisited: Record<string, Record<string, boolean>> = {}, // to prevent endless loop
 ): Promise<EnvironmentVariables> => {
   const environmentContext = getEnvironmentContext(ctx);

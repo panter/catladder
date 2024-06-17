@@ -1,7 +1,7 @@
 import { isFunction } from "lodash";
 import { BUILD_TYPES } from "../build";
-import type { CreateContextContext } from "../context";
-import { createContext } from "../context";
+import type { CreateComponentContextContext } from "../context";
+import { createComponentContext } from "../context";
 import { DEPLOY_TYPES } from "../deploy";
 import type {
   CatladderJobWithContext,
@@ -44,14 +44,14 @@ const createRawJobs = (context: Context): CatladderJob[] => {
 };
 
 export const createJobsForComponent = async (
-  contextContext: Omit<CreateContextContext, "packageManagerInfo">,
+  contextContext: Omit<CreateComponentContextContext, "packageManagerInfo">,
 ): Promise<Array<CatladderJobWithContext>> => {
   const packageManagerInfo = await getPackageManagerInfo(
     contextContext.config,
     contextContext.componentName,
   );
 
-  const context = await createContext({
+  const context = await createComponentContext({
     ...contextContext,
     packageManagerInfo,
   });

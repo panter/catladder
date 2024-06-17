@@ -1,4 +1,4 @@
-import type { CreateContextContext } from "..";
+import type { CreateComponentContextContext } from "..";
 import type { StringOrBashExpression } from "../bash/BashExpression";
 import { joinBashExpressions } from "../bash/BashExpression";
 
@@ -22,7 +22,7 @@ export const getEnvironmentContext = ({
   componentName,
   config,
   pipelineType,
-}: CreateContextContext): EnvironmentContext<any, any> => {
+}: CreateComponentContextContext): EnvironmentContext<any, any> => {
   const envConfigRaw = getEnvConfig(config, componentName, env);
   const envType = getEnvType(env, envConfigRaw);
   const reviewSlug = getReviewSlug(envConfigRaw, env, pipelineType);

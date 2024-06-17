@@ -1,11 +1,11 @@
-import type { CreateContextContext } from "..";
+import type { CreateComponentContextContext } from "..";
 
 import type { Environment } from "../types/context";
 import { getEnvironmentContext } from "./getEnvironmentContext";
 import { getEnvironmentVariables } from "./getEnvironmentVariables";
 
 export const getEnvironment = async (
-  ctx: CreateContextContext,
+  ctx: CreateComponentContextContext,
 ): Promise<Environment> => {
   const { env } = ctx;
   const variables = await getEnvironmentVariables(ctx);
