@@ -1,3 +1,11 @@
+## [1.146.2](https://git.panter.ch/catladder/catladder/compare/v1.146.1...v1.146.2) (2024-06-17)
+
+
+### Bug Fixes
+
+* build broken ([085e963](https://git.panter.ch/catladder/catladder/commit/085e963ce7efc38d1d233483b99e8d66ca237a51))
+* readd missing export ([36ad281](https://git.panter.ch/catladder/catladder/commit/36ad281c7ae3833bf18fdfa28eb0b967d8602179))
+
 ## [1.146.1](https://git.panter.ch/catladder/catladder/compare/v1.146.0...v1.146.1) (2024-06-14)
 
 # [1.146.0](https://git.panter.ch/catladder/catladder/compare/v1.145.0...v1.146.0) (2024-06-14)
