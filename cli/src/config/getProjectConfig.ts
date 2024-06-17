@@ -3,7 +3,7 @@ import {
   readConfigSync,
   getAllEnvs,
   getEnvironment as _getEnvironment,
-  createContext,
+  createComponentContext,
   getSecretVarName,
 } from "@catladder/pipeline";
 
@@ -53,7 +53,7 @@ export const getPipelineContextByChoice = async (
   componentName: string,
 ) => {
   const config = await getProjectConfig();
-  return await createContext({
+  return await createComponentContext({
     config,
     componentName,
     env,
