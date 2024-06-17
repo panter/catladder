@@ -11,6 +11,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import type { AllCatladderJobs } from "../createAllJobs";
+import { removeUndefined } from "../../utils/removeUndefined";
 
 export type AllGitlabJobs = {
   name: string;
@@ -20,10 +21,6 @@ export type AllGitlabJobs = {
 }[];
 
 export const GITLAB_ENVIRONMENT_URL_VARIABLE = "CL_GITLAB_ENVIRONMENT_URL";
-const removeUndefined = (obj: GitlabJobDef): GitlabJobDef =>
-  Object.fromEntries(
-    Object.entries(obj).filter(([, value]) => value !== undefined),
-  ) as GitlabJobDef;
 const getFullJobName = (
   name: string,
   componentName: string,
@@ -197,9 +194,7 @@ export const makeGitlabJob = (
     allJobs,
   );
 
-  const gitlabJob: GitlabJobDef = removeUndefined(modified);
-
-  return [fullJobName, gitlabJob];
+  return [fullJobName, removeUndefined(modified)];
 };
 
 const addGitlabEnvironment = (
