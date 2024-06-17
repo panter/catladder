@@ -1,3 +1,10 @@
+# [1.148.0](https://git.panter.ch/catladder/catladder/compare/v1.147.0...v1.148.0) (2024-06-17)
+
+
+### Features
+
+* **removeUndefined:** make function multi-purpose with generic type ([c48e1ec](https://git.panter.ch/catladder/catladder/commit/c48e1eceb9341cd8cbf818ca949486973df29d18))
+
 # [1.147.0](https://git.panter.ch/catladder/catladder/compare/v1.146.2...v1.147.0) (2024-06-17)
 
 
