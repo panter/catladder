@@ -1,4 +1,5 @@
 import type { StringOrBashExpression } from "../bash/BashExpression";
+import type { BuildConfig } from "../build";
 import type { PredefinedVariables, SecretEnvVar } from "../context";
 import type {
   PipelineTrigger,
@@ -82,14 +83,24 @@ export type ContextBeforeConfig = {
   fullConfig: Config;
   packageManagerInfo?: PackageManagerInfo;
 };
+
+export type BuildContext = {
+  dir: string;
+  packageManagerInfo?: PackageManagerInfo;
+  config: BuildConfig;
+};
 export type ComponentContext = {
   componentName: string;
   componentConfig: ComponentConfig;
+  buildContext: BuildContext;
   fullConfig: Config;
   environment: Environment;
 
   trigger?: PipelineTrigger;
   pipelineType?: PipelineType;
+  /**
+   * @deprecated use buildContext.packageManagerInfo instead
+   */
   packageManagerInfo?: PackageManagerInfo;
 };
 

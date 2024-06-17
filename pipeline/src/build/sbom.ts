@@ -11,9 +11,9 @@ export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
   const defaultImage = "aquasec/trivy:0.38.3";
   const defaultScript = [
     `trivy fs --quiet --format cyclonedx --output "${SBOM_FILE}" ${
-      context.packageManagerInfo?.componentIsInWorkspace
+      context.buildContext.packageManagerInfo?.componentIsInWorkspace
         ? "."
-        : context.componentConfig.dir
+        : context.buildContext.dir
     }`,
   ];
 

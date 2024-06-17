@@ -59,6 +59,11 @@ export const createComponentContext = async (
   return {
     fullConfig: ctx.config,
     componentConfig,
+    buildContext: {
+      dir: componentConfig.dir,
+      packageManagerInfo: ctx.packageManagerInfo,
+      config: componentConfig.build,
+    },
     componentName: ctx.componentName,
     environment: await getEnvironment(ctx),
     packageManagerInfo: ctx.packageManagerInfo,
