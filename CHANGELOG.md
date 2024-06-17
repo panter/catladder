@@ -1,3 +1,10 @@
+## [1.148.1](https://git.panter.ch/catladder/catladder/compare/v1.148.0...v1.148.1) (2024-06-17)
+
+
+### Bug Fixes
+
+* **pipeline:** echo statement of unquoted string ([7971bbe](https://git.panter.ch/catladder/catladder/commit/7971bbe74ef2f0a47b09739130a3eef82ab41b9f))
+
 # [1.148.0](https://git.panter.ch/catladder/catladder/compare/v1.147.0...v1.148.0) (2024-06-17)
 
 
