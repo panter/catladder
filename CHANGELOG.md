@@ -1,3 +1,10 @@
+# [1.147.0](https://git.panter.ch/catladder/catladder/compare/v1.146.2...v1.147.0) (2024-06-17)
+
+
+### Features
+
+* improve docker config ([45f6e73](https://git.panter.ch/catladder/catladder/commit/45f6e733016c5d49ae2b3943226df911c7b9e85f))
+
 ## [1.146.2](https://git.panter.ch/catladder/catladder/compare/v1.146.1...v1.146.2) (2024-06-17)
 
 
