@@ -10,7 +10,7 @@ export const getDependencyTrackUploadScript = (
   return sbomDeactivated(context)
     ? []
     : [
-        "echo Uploading SBOM to Dependency Track",
+        "echo 'Uploading SBOM to Dependency Track'",
         `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.componentName}" "${context.environment.url}" "${SBOM_FILE}" vex.json || true`,
       ];
 };
@@ -21,7 +21,7 @@ export const getDependencyTrackDeleteScript = (
   return sbomDeactivated(context)
     ? []
     : [
-        "echo Disabling component in Dependency Track",
+        "echo 'Disabling component in Dependency Track'",
         `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.componentName}" "${context.environment.url}" || true`,
       ];
 };

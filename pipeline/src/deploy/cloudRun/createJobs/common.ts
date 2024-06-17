@@ -21,7 +21,7 @@ export const setGoogleProjectNumberScript = (
   `export GCLOUD_PROJECT_NUMBER=$(${gcloudCmd()} projects describe ${
     deployConfig.projectId
   } --format="value(projectNumber)")`,
-  `echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"`,
+  'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"',
 ];
 
 export const makeLabelString = (obj: Record<string, unknown>) =>
