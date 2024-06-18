@@ -10,7 +10,10 @@ import {
   RUNNER_BUILD_RESOURCE_VARIABLES,
 } from "./constants";
 import { writeBuildInfo } from "./writeBuildInfo";
-import { writeDotEnv } from "./writeDotEnv";
+import {
+  componentContextNeedsBuildTimeDotEnv,
+  writeDotEnv,
+} from "./writeDotEnv";
 
 export type AppBuildJobDefinition = Partial<CatladderJob>;
 export const createAppBuildJob = (
@@ -38,7 +41,7 @@ export const createAppBuildJob = (
       },
 
       script: [
-        ...(context.componentConfig.dotEnv === true // don't build when set to `local`
+        ...(componentContextNeedsBuildTimeDotEnv(context)
           ? writeDotEnv(context)
           : []),
         ...writeBuildInfo(context),

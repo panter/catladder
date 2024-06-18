@@ -24,3 +24,9 @@ ${keyValueString}
 EOF`,
   ];
 };
+
+export const componentContextNeedsBuildTimeDotEnv = (
+  context: ComponentContext,
+) => {
+  return context.componentConfig.dotEnv === true; // don't build when set to `local`
+};
