@@ -21,41 +21,36 @@ export type AllJobsContext = {
   pipelineType: PipelineType;
 };
 
-type AllComponentContext = {
-  [componentName: string]: {
-    [env: string]: ComponentContext;
-  };
-};
-
 const createAllComponentContext = async ({
   config,
   trigger,
   pipelineType,
-}: AllJobsContext): Promise<AllComponentContext> => {
-  return Object.fromEntries(
-    await Promise.all(
-      Object.keys(config.components).map(async (componentName) => {
-        const envs = getAllEnvsByTrigger(config, componentName, trigger);
-        return [
+}: AllJobsContext): Promise<
+  Array<{
+    env: string;
+    componentName: string;
+    context: ComponentContext;
+  }>
+> => {
+  return await Promise.all(
+    Object.keys(config.components).flatMap((componentName) => {
+      const envs = getAllEnvsByTrigger(config, componentName, trigger);
+      return envs.map(async (env) => {
+        const context = await createComponentContext({
+          config,
           componentName,
-          Object.fromEntries(
-            await Promise.all(
-              envs.map(async (env) => {
-                const context = await createComponentContext({
-                  config,
-                  componentName,
-                  env,
-                  trigger,
-                  pipelineType,
-                });
+          env,
+          trigger,
+          pipelineType,
+        });
 
-                return [env, context];
-              }),
-            ),
-          ),
-        ];
-      }),
-    ),
+        return {
+          env,
+          componentName,
+          context,
+        };
+      });
+    }),
   );
 };
 
@@ -70,18 +65,17 @@ export const createAllJobs = async ({
     pipelineType,
   });
 
-  return Object.fromEntries(
-    Object.entries(allComponentContext).map(([componentName, envs]) => [
-      componentName,
-      Object.fromEntries(
-        Object.entries(envs).map(([env, context]) => [
-          env,
-          createJobsForComponentContext(context).map((job) => ({
-            ...job,
-            context,
-          })),
-        ]),
-      ),
-    ]),
-  );
+  return allComponentContext.reduce((acc, { componentName, env, context }) => {
+    if (!acc[componentName]) {
+      acc[componentName] = {};
+    }
+    acc[componentName][env] = createJobsForComponentContext(context).map(
+      (job) => ({
+        ...job,
+        context,
+      }),
+    );
+
+    return acc;
+  }, {} as AllCatladderJobs);
 };
