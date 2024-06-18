@@ -97,6 +97,7 @@ export type DeployContext = {
 };
 export type ComponentContext = {
   componentName: string;
+  env: string;
 
   /**
    * the merged component config.

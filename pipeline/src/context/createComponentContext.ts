@@ -64,6 +64,7 @@ export const createComponentContext = async (
   const context: Omit<ComponentContext, "customJobs"> = {
     fullConfig: ctx.config,
     componentConfig,
+    env: ctx.env,
 
     build: {
       dir: dir,
