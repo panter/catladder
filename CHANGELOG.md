@@ -1,3 +1,10 @@
+# [1.150.0](https://git.panter.ch/catladder/catladder/compare/v1.149.4...v1.150.0) (2024-06-18)
+
+
+### Features
+
+* **cloud run:** support setting a timeout for the service ([d9bfb4f](https://git.panter.ch/catladder/catladder/commit/d9bfb4f584b09b32bea925a95f9a600162e0a9df))
+
 ## [1.149.4](https://git.panter.ch/catladder/catladder/compare/v1.149.3...v1.149.4) (2024-06-18)
 
 ## [1.149.3](https://git.panter.ch/catladder/catladder/compare/v1.149.2...v1.149.3) (2024-06-18)
