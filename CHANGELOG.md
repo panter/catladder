@@ -1,3 +1,10 @@
+## [1.149.1](https://git.panter.ch/catladder/catladder/compare/v1.149.0...v1.149.1) (2024-06-18)
+
+
+### Bug Fixes
+
+* project-setup does not work when component name is too long ([74b7952](https://git.panter.ch/catladder/catladder/commit/74b7952cb068157e772effb2bce41a8115edc0d6))
+
 # [1.149.0](https://git.panter.ch/catladder/catladder/compare/v1.148.1...v1.149.0) (2024-06-18)
 
 
