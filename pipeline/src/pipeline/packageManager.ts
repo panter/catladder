@@ -1,17 +1,17 @@
 import { existsSync } from "fs";
 import { join } from "path";
 import { pathEqual } from "path-equal";
-import type { Config, PackageManagerInfo } from "../types";
+import type { Config, PackageManagerInfoComponent } from "../types";
 import {
   getWorkspaces,
   getYarnVersion,
   getWorkspaceDependencies,
 } from "./yarn/yarnUtils";
 
-export const getPackageManagerInfo = async (
+export const getPackageManagerInfoForComponent = async (
   config: Config,
   componentName: string,
-): Promise<PackageManagerInfo> => {
+): Promise<PackageManagerInfoComponent> => {
   // currently only supports yarn
   const version = await getYarnVersion();
   if (!version) throw new Error("could not get yarn version");

@@ -66,7 +66,7 @@ export type YarnWorkspace = {
   workspaceDependencies: string[];
   mismatchedWorkspaceDependencies: string[];
 };
-export type YarnPackageManagerInfo = {
+export type YarnPackageManagerInfoComponent = {
   type: "yarn";
   version: string;
   workspaces: YarnWorkspace[];
@@ -77,20 +77,21 @@ export type YarnPackageManagerInfo = {
   currentWorkspaceDependencies: string[];
 };
 
-export type PackageManagerInfo = YarnPackageManagerInfo;
+export type PackageManagerInfoComponent = YarnPackageManagerInfoComponent;
 
 export type ContextBeforeConfig = {
   componentName: string;
   fullConfig: Config;
-  packageManagerInfo?: PackageManagerInfo;
+  packageManagerInfo?: PackageManagerInfoComponent;
 };
 
-export type BuildContext = {
+export type BuildContextComponent = {
   dir: string;
-  packageManagerInfo: PackageManagerInfo;
+  packageManagerInfo: PackageManagerInfoComponent;
   config: BuildConfig;
 };
 
+export type BuildContext = BuildContextComponent;
 export type DeployContext = {
   config: DeployConfig;
 };
@@ -104,7 +105,7 @@ export type ComponentContext = {
    *
    */
   componentConfig: ComponentConfig;
-  build: BuildContext;
+  build: BuildContextComponent;
   deploy?: DeployContext | null;
   fullConfig: Config;
   environment: Environment;
@@ -114,7 +115,7 @@ export type ComponentContext = {
   /**
    * @deprecated use buildContext.packageManagerInfo instead
    */
-  packageManagerInfo: PackageManagerInfo;
+  packageManagerInfo: PackageManagerInfoComponent;
 
   customJobs?: CatladderJob[];
 };

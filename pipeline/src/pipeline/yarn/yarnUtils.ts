@@ -1,6 +1,6 @@
 import { exec } from "child-process-promise";
 import memoizee from "memoizee";
-import type { PackageManagerInfo, YarnWorkspace } from "../../types";
+import type { PackageManagerInfoComponent, YarnWorkspace } from "../../types";
 
 const execOrFail = async (cmd: string, onFail: string): Promise<string> => {
   try {
@@ -18,7 +18,7 @@ export const getYarnVersion = memoizee(
 );
 // export for mocking
 export const getWorkspaces = memoizee(
-  async (isClassic: boolean): Promise<PackageManagerInfo["workspaces"]> => {
+  async (isClassic: boolean): Promise<Array<YarnWorkspace>> => {
     return isClassic
       ? Object.values(
           JSON.parse(

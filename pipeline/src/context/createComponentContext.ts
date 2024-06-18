@@ -10,7 +10,7 @@ import type { PartialDeep } from "../types/utils";
 import { mergeWithMergingArrays } from "../utils";
 import { getEnvironment } from "./getEnvironment";
 import { getEnvironmentContext } from "./getEnvironmentContext";
-import { getPackageManagerInfo } from "../pipeline/packageManager";
+import { getPackageManagerInfoForComponent } from "../pipeline/packageManager";
 
 export type CreateComponentContextContext = {
   config: Config;
@@ -29,7 +29,7 @@ export const createComponentContext = async (
     );
   }
 
-  const packageManagerInfo = await getPackageManagerInfo(
+  const packageManagerInfo = await getPackageManagerInfoForComponent(
     ctx.config,
     ctx.componentName,
   );
