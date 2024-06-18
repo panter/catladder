@@ -38,7 +38,7 @@ const createRawJobs = (context: Context): CatladderJob[] => {
 };
 
 export const createJobsForComponent = async (
-  contextContext: Omit<CreateComponentContextContext, "packageManagerInfo">,
+  contextContext: CreateComponentContextContext,
 ): Promise<Array<CatladderJobWithContext>> => {
   const context = await createComponentContext(contextContext);
   return createRawJobs(context).map((job) => ({ ...job, context }));
