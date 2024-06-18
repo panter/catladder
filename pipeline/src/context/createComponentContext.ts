@@ -34,8 +34,6 @@ export const createComponentContext = async (
     ctx.componentName,
   );
 
-  //console.log({ packageManagerInfo });
-
   const envContext = getEnvironmentContext(ctx);
 
   const componentConfigWithoutDefaults = envContext.envConfigRaw;
