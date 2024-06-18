@@ -16,7 +16,7 @@ const BUILD_ID: BashExpressionPerPipelineType = {
 const CURRENT_VERSION: BashExpressionPerPipelineType = {
   default: new BashExpression(
     // because we do shallow fetch, we need to ask the origin
-    `$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")`,
+    `$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")`,
   ),
 };
 
