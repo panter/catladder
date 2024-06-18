@@ -42,7 +42,7 @@ export const createNodeBuildJobs = (
                 context.build.dir,
                 // also copy workspace dependencies in monorepo if packages are shared and they create build artifacts
                 ...(context.build.packageManagerInfo
-                  ?.currentWorkspaceDependencies ?? []),
+                  .currentWorkspaceDependencies ?? []),
               ].flatMap((dir) => [
                 join(dir, "__build_info.json"),
                 join(dir, "dist"),
@@ -72,7 +72,7 @@ export const createNodeBuildJobs = (
           context.build,
         ),
         DOCKER_COPY_WORKSPACE_FILES:
-          context.build.packageManagerInfo?.pathsToCopyInDocker
+          context.build.packageManagerInfo.pathsToCopyInDocker
             .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
             ?.join("\n"),
       },

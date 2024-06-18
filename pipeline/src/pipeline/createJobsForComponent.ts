@@ -1,4 +1,3 @@
-import { isFunction } from "lodash";
 import { BUILD_TYPES } from "../build";
 import type { CreateComponentContextContext } from "../context";
 import { createComponentContext } from "../context";
@@ -9,7 +8,6 @@ import type {
   Context,
 } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
-import { getPackageManagerInfo } from "./packageManager";
 
 const injectDefaultVarsInCustomJobs = (
   context: ComponentContext,
@@ -42,14 +40,6 @@ const createRawJobs = (context: Context): CatladderJob[] => {
 export const createJobsForComponent = async (
   contextContext: Omit<CreateComponentContextContext, "packageManagerInfo">,
 ): Promise<Array<CatladderJobWithContext>> => {
-  const packageManagerInfo = await getPackageManagerInfo(
-    contextContext.config,
-    contextContext.componentName,
-  );
-
-  const context = await createComponentContext({
-    ...contextContext,
-    packageManagerInfo,
-  });
+  const context = await createComponentContext(contextContext);
   return createRawJobs(context).map((job) => ({ ...job, context }));
 };

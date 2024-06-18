@@ -21,6 +21,9 @@ let currentConfig: Config | null = null;
 // reload the config on change
 const reloadConfigAndObserve = async () => {
   const gitRoot = await getGitRoot();
+  if (!gitRoot) {
+    return;
+  }
   const result = readConfigSync(gitRoot);
   if (!result) {
     // can't do anything, there is no config

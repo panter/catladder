@@ -5,11 +5,12 @@ import { DEPLOY_TYPES } from "../deploy";
 import type { DeployConfig, DeployConfigType } from "../deploy/types";
 import type { PipelineType } from "../types";
 import type { Config, PipelineTrigger } from "../types/config";
-import type { ComponentContext, PackageManagerInfo } from "../types/context";
+import type { ComponentContext } from "../types/context";
 import type { PartialDeep } from "../types/utils";
 import { mergeWithMergingArrays } from "../utils";
 import { getEnvironment } from "./getEnvironment";
 import { getEnvironmentContext } from "./getEnvironmentContext";
+import { getPackageManagerInfo } from "../pipeline/packageManager";
 
 export type CreateComponentContextContext = {
   config: Config;
@@ -17,7 +18,6 @@ export type CreateComponentContextContext = {
   env: string;
   pipelineType?: PipelineType;
   trigger?: PipelineTrigger;
-  packageManagerInfo?: PackageManagerInfo;
 };
 
 export const createComponentContext = async (
@@ -28,6 +28,13 @@ export const createComponentContext = async (
       "componentName may only contain lower case letters, numbers and -",
     );
   }
+
+  const packageManagerInfo = await getPackageManagerInfo(
+    ctx.config,
+    ctx.componentName,
+  );
+
+  //console.log({ packageManagerInfo });
 
   const envContext = getEnvironmentContext(ctx);
 
@@ -62,7 +69,7 @@ export const createComponentContext = async (
 
     build: {
       dir: dir,
-      packageManagerInfo: ctx.packageManagerInfo,
+      packageManagerInfo: packageManagerInfo,
       config: build,
     },
     deploy: deploy
@@ -72,7 +79,7 @@ export const createComponentContext = async (
       : null,
     componentName: ctx.componentName,
     environment,
-    packageManagerInfo: ctx.packageManagerInfo,
+    packageManagerInfo: packageManagerInfo,
     pipelineType: ctx.pipelineType,
     trigger: ctx.trigger,
   };

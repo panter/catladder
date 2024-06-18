@@ -9,7 +9,7 @@ export const getYarnCache = (
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
-    context.packageManagerInfo?.componentIsInWorkspace;
+    context.packageManagerInfo.componentIsInWorkspace;
   return [
     componentIsInWorkspace
       ? {
@@ -30,7 +30,7 @@ export const getNodeModulesCache = (
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
-    context.packageManagerInfo?.componentIsInWorkspace;
+    context.packageManagerInfo.componentIsInWorkspace;
 
   // We intentionally do not use the contents of yarn.lock as a cache key, as yarn install should always guarantee that the files are updated, but it can still use part of the cache if not all packages are up-to-date.
   // It would slow down all pipelines whenever one adds a new dependency as it will need to download all node_modules again.
@@ -45,7 +45,7 @@ export const getNodeModulesCache = (
         ...(componentIsInWorkspace
           ? uniq([
               "node_modules",
-              ...(context.packageManagerInfo?.workspaces.map((w) =>
+              ...(context.packageManagerInfo.workspaces.map((w) =>
                 join(w.location, "node_modules"),
               ) ?? []),
             ])

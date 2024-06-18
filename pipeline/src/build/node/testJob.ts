@@ -41,7 +41,7 @@ export const createNodeTestJobs = (
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArray(buildConfig.audit?.command) ?? [
-              context.build.packageManagerInfo?.isClassic
+              context.build.packageManagerInfo.isClassic
                 ? "yarn audit"
                 : "yarn npm audit --environment production", // yarn 2
             ]),

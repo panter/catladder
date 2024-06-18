@@ -4,8 +4,13 @@ import { getProjectConfig, parseChoice } from "../../config/getProjectConfig";
 import { readFileOrError } from "../files";
 import { exec } from "child-process-promise";
 
-export const getGitRoot = async (): Promise<string> => {
-  return (await exec(`git rev-parse --show-toplevel`)).stdout.trim();
+export const getGitRoot = async (): Promise<string | null> => {
+  try {
+    return (await exec(`git rev-parse --show-toplevel`)).stdout.trim();
+  } catch (e) {
+    // not a git repo
+    return null;
+  }
 };
 
 export const getRootGitlabCiFile = async () => {

@@ -87,7 +87,7 @@ export type ContextBeforeConfig = {
 
 export type BuildContext = {
   dir: string;
-  packageManagerInfo?: PackageManagerInfo;
+  packageManagerInfo: PackageManagerInfo;
   config: BuildConfig;
 };
 
@@ -114,7 +114,7 @@ export type ComponentContext = {
   /**
    * @deprecated use buildContext.packageManagerInfo instead
    */
-  packageManagerInfo?: PackageManagerInfo;
+  packageManagerInfo: PackageManagerInfo;
 
   customJobs?: CatladderJob[];
 };
