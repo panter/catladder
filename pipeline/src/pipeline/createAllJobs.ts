@@ -2,6 +2,7 @@ import { getAllEnvsByTrigger } from "../config";
 import { createComponentContext } from "../context";
 import type {
   CatladderJobWithContext,
+  ComponentContext,
   Config,
   PipelineTrigger,
   PipelineType,
@@ -20,11 +21,17 @@ export type AllJobsContext = {
   pipelineType: PipelineType;
 };
 
-export const createAllJobs = async ({
+type AllComponentContext = {
+  [componentName: string]: {
+    [env: string]: ComponentContext;
+  };
+};
+
+const createAllComponentContext = async ({
   config,
   trigger,
   pipelineType,
-}: AllJobsContext): Promise<AllCatladderJobs> => {
+}: AllJobsContext): Promise<AllComponentContext> => {
   return Object.fromEntries(
     await Promise.all(
       Object.keys(config.components).map(async (componentName) => {
@@ -42,18 +49,39 @@ export const createAllJobs = async ({
                   pipelineType,
                 });
 
-                return [
-                  env,
-                  createJobsForComponentContext(context).map((job) => ({
-                    ...job,
-                    context,
-                  })),
-                ];
+                return [env, context];
               }),
             ),
           ),
         ];
       }),
     ),
+  );
+};
+
+export const createAllJobs = async ({
+  config,
+  trigger,
+  pipelineType,
+}: AllJobsContext): Promise<AllCatladderJobs> => {
+  const allComponentContext = await createAllComponentContext({
+    config,
+    trigger,
+    pipelineType,
+  });
+
+  return Object.fromEntries(
+    Object.entries(allComponentContext).map(([componentName, envs]) => [
+      componentName,
+      Object.fromEntries(
+        Object.entries(envs).map(([env, context]) => [
+          env,
+          createJobsForComponentContext(context).map((job) => ({
+            ...job,
+            context,
+          })),
+        ]),
+      ),
+    ]),
   );
 };
