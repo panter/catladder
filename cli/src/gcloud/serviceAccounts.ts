@@ -28,14 +28,32 @@ const upsertGcloudServiceAccount = async (
   const { projectId, name, displayName, roles, description } = account;
 
   // name has limit of 30
-  const namePrefix = `${name}-`;
-  const nameSuffix = `-${context.environment.shortName}-${context.componentName}`;
-  const nameMiddleLength = 30 - namePrefix.length - nameSuffix.length;
-  const nameMiddle = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
+  const namePrefix = `${name}`;
+  const nameSuffixRaw = `${context.environment.shortName}-${context.componentName}`;
+  const nameMiddleRaw = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
+  const MAX_LENGTH = 30;
+  const NUM_SEPARATORS = 2;
 
-  const middle = hashIfNessecary(nameMiddle, nameMiddleLength);
+  // we want to first hash middle, then suffix
+  // if for middle we have at least 1 char left, its ok, so we don't hash nameSuffix, otherwise we need to hash that as well
 
-  const fullName = `${namePrefix}${middle}${nameSuffix}`;
+  const middleMaxLength =
+    MAX_LENGTH - namePrefix.length - nameSuffixRaw.length - NUM_SEPARATORS;
+
+  let nameMiddle: string;
+  let nameSuffix: string;
+  if (middleMaxLength < 1) {
+    nameMiddle = hashIfNessecary(nameMiddleRaw, 1);
+    nameSuffix = hashIfNessecary(
+      nameSuffixRaw,
+      MAX_LENGTH - namePrefix.length - 1 - NUM_SEPARATORS,
+    );
+  } else {
+    nameMiddle = hashIfNessecary(nameMiddleRaw, middleMaxLength);
+    nameSuffix = nameSuffixRaw;
+  }
+
+  const fullName = `${namePrefix}-${nameMiddle}-${nameSuffix}`;
 
   const fullDisplayName = `${context.fullConfig.customerName}-${context.fullConfig.appName} ${context.environment.shortName}:${context.componentName} | ${displayName}`;
 
