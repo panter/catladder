@@ -1,23 +1,17 @@
 import { isObject, merge } from "lodash";
 import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { BASE_RETRY } from "../../defaults";
-import type {
-  CatladderJobWithContext,
-  ComponentContext,
-  GitlabJobDef,
-  GitlabRule,
-} from "../../types";
+import type { ComponentContext, GitlabJobDef, GitlabRule } from "../../types";
 import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
-import type { AllCatladderJobs } from "../createAllJobs";
 import { removeUndefined } from "../../utils/removeUndefined";
+import type { AllCatladderJobs } from "../createAllJobs";
 
 export type AllGitlabJobs = {
   name: string;
   gitlabJob: GitlabJobDef;
-  componentName: string;
-  env: string;
+  context: ComponentContext;
 }[];
 
 export const GITLAB_ENVIRONMENT_URL_VARIABLE = "CL_GITLAB_ENVIRONMENT_URL";
@@ -38,9 +32,12 @@ const getFullReferencedJobName = (
   env: string,
   allJobs: AllCatladderJobs,
 ) => {
-  const referencedJob = allJobs[componentName]?.[env]?.find(
-    (j) => j.name === referencedJobName,
-  );
+  const referencedJob = allJobs
+    .find(
+      (j) => j.context.componentName === componentName && j.context.env === env,
+    )
+    ?.jobs?.find((j) => j.name === referencedJobName);
+
   if (!referencedJob) {
     throw new Error(
       `unknown job referenced: '${referencedJobName}' from '${env}:${componentName}'`,
@@ -54,8 +51,7 @@ const getJobName = (need: CatladderJobNeed) =>
   isObject(need) ? need.job : need;
 
 export const makeGitlabJob = (
-  componentName: string,
-  env: string,
+  context: ComponentContext,
   {
     environment,
     envMode,
@@ -65,21 +61,28 @@ export const makeGitlabJob = (
     needs,
     jobTags,
     script,
-    context,
+
     variables,
     runnerVariables,
     when,
     ...job
-  }: CatladderJobWithContext<string>,
+  }: CatladderJob<string>,
   allJobs: AllCatladderJobs,
   baseRules?: GitlabRule[],
 ): [fullName: string, job: GitlabJobDef] => {
-  const stage = envMode === "stagePerEnv" ? `${job.stage} ${env}` : job.stage;
+  const stage =
+    envMode === "stagePerEnv" ? `${job.stage} ${context.env}` : job.stage;
 
   const needsFromStages: CatladderJob["needs"] = needsStages?.flatMap((n) => {
-    const referencedComponentName = componentName;
+    const referencedComponentName = context.componentName;
     const allJobNamesFromThatStage =
-      allJobs[referencedComponentName]?.[env]
+      allJobs
+        .filter(
+          (j) =>
+            j.context.componentName === referencedComponentName &&
+            j.context.env === context.env,
+        )
+        .flatMap((j) => j.jobs)
         ?.filter((j) => j.stage === n.stage)
         ?.map((j) => j.name) ?? [];
 
@@ -102,13 +105,18 @@ export const makeGitlabJob = (
         ? {
             job: getFullReferencedJobName(
               n.job,
-              n.componentName ?? componentName,
-              env,
+              n.componentName ?? context.componentName,
+              context.env,
               allJobs,
             ),
             artifacts: n.artifacts,
           }
-        : getFullReferencedJobName(n, componentName, env, allJobs),
+        : getFullReferencedJobName(
+            n,
+            context.componentName,
+            context.env,
+            allJobs,
+          ),
     ) // sort in a predictable manner for snapshot tests
     .sort((a, b) => getJobName(a).localeCompare(getJobName(b)));
 
@@ -118,8 +126,8 @@ export const makeGitlabJob = (
 
   const fullJobName = getFullJobName(
     name,
-    componentName,
-    envMode !== "none" ? env : undefined,
+    context.componentName,
+    envMode !== "none" ? context.env : undefined,
   );
 
   // backwards compatibility, some may still use KUBERNETES_CPU_REQUEST, KUBERNETES_MEMORY_REQUEST, etc. in variables.
@@ -189,8 +197,8 @@ export const makeGitlabJob = (
       retry: BASE_RETRY,
       interruptible: true,
     },
-    componentName,
-    env,
+    context.componentName,
+    context.env,
     allJobs,
   );
 
@@ -255,26 +263,19 @@ export const createGitlabJobs = async (
   allJobs: AllCatladderJobs,
   baseRules?: GitlabRule[],
 ): Promise<AllGitlabJobs> => {
-  return Object.keys(allJobs).flatMap((componentName) => {
-    const componentJobs = allJobs[componentName];
-    return Object.keys(componentJobs).flatMap((env) => {
-      const jobs = componentJobs[env];
-
-      return jobs.flatMap((job) => {
-        const [fullJobName, gitlabJob] = makeGitlabJob(
-          componentName,
-          env,
-          job,
-          allJobs,
-          baseRules,
-        );
-        return {
-          name: fullJobName,
-          gitlabJob,
-          componentName,
-          env,
-        };
-      });
+  return allJobs.flatMap(({ context, jobs }) => {
+    return jobs.map((job) => {
+      const [fullJobName, gitlabJob] = makeGitlabJob(
+        context,
+        job,
+        allJobs,
+        baseRules,
+      );
+      return {
+        name: fullJobName,
+        gitlabJob,
+        context,
+      };
     });
   });
 };

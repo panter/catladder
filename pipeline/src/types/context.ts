@@ -120,7 +120,3 @@ export type ComponentContext = {
 };
 
 export type Context = ComponentContext;
-
-export type CatladderJobWithContext<S = BaseStage> = CatladderJob<S> & {
-  context: ComponentContext;
-};

@@ -43,8 +43,12 @@ export const createMainPipeline = async <T extends PipelineType>(
       // this is purely for better readability in git diffs when you add new components
       .sort((a, b) => {
         const componentNames = Object.keys(config.components);
-        const aIndex = componentNames.findIndex((c) => c === a.componentName);
-        const bIndex = componentNames.findIndex((c) => c === b.componentName);
+        const aIndex = componentNames.findIndex(
+          (c) => c === a.context.componentName,
+        );
+        const bIndex = componentNames.findIndex(
+          (c) => c === b.context.componentName,
+        );
         return aIndex - bIndex;
       })
 

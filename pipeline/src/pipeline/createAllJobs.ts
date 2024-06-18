@@ -1,19 +1,18 @@
 import { getAllEnvsByTrigger } from "../config";
 import { createComponentContext } from "../context";
 import type {
-  CatladderJobWithContext,
   ComponentContext,
   Config,
   PipelineTrigger,
   PipelineType,
 } from "../types";
+import type { CatladderJob } from "../types/jobs";
 import { createJobsForComponentContext } from "./createJobsForComponent";
 
-export type AllCatladderJobs = {
-  [componentName: string]: {
-    [env: string]: Array<CatladderJobWithContext>;
-  };
-};
+export type AllCatladderJobs = Array<{
+  context: ComponentContext;
+  jobs: Array<CatladderJob>;
+}>;
 
 export type AllJobsContext = {
   config: Config;
@@ -65,17 +64,8 @@ export const createAllJobs = async ({
     pipelineType,
   });
 
-  return allComponentContext.reduce((acc, { componentName, env, context }) => {
-    if (!acc[componentName]) {
-      acc[componentName] = {};
-    }
-    acc[componentName][env] = createJobsForComponentContext(context).map(
-      (job) => ({
-        ...job,
-        context,
-      }),
-    );
-
-    return acc;
-  }, {} as AllCatladderJobs);
+  return allComponentContext.map(({ context }) => ({
+    context,
+    jobs: createJobsForComponentContext(context),
+  }));
 };
