@@ -39,7 +39,7 @@ exports[`matches snapshot 1`] = `
           "export ENV_TYPE="dev"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.dev.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
@@ -177,7 +177,7 @@ exports[`matches snapshot 1`] = `
           "export ENV_TYPE="dev"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.dev.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
@@ -341,7 +341,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "export ENV_TYPE="dev"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.dev.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
@@ -384,7 +384,7 @@ $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/
     BUILD_INFO_BUILD_TIME: |-
 $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
     BUILD_INFO_CURRENT_VERSION: |-
-$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
     HOST: |-
       api.dev.test-app.pan.panter.cloud
     ROOT_URL: |-
@@ -494,7 +494,7 @@ EOF
           "export ENV_TYPE="dev"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.dev.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.dev.test-app.pan.panter.cloud"",
@@ -743,7 +743,7 @@ EOF
           "export ENV_TYPE="review"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
@@ -881,7 +881,7 @@ EOF
           "export ENV_TYPE="review"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
@@ -1045,7 +1045,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "export ENV_TYPE="review"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
@@ -1088,7 +1088,7 @@ $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/
     BUILD_INFO_BUILD_TIME: |-
 $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
     BUILD_INFO_CURRENT_VERSION: |-
-$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
     HOST: |-
 $(printf %s "api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
     ROOT_URL: |-
@@ -1199,7 +1199,7 @@ EOF
           "export ENV_TYPE="review"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"",
@@ -1448,7 +1448,7 @@ EOF
           "export ENV_TYPE="prod"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.prod.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
@@ -1515,7 +1515,7 @@ EOF
           "export ENV_TYPE="stage"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.stage.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
@@ -1601,7 +1601,7 @@ EOF
           "export ENV_TYPE="prod"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.prod.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
@@ -1687,7 +1687,7 @@ EOF
           "export ENV_TYPE="stage"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.stage.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
@@ -1910,7 +1910,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "export ENV_TYPE="prod"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.prod.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
@@ -1953,7 +1953,7 @@ $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/
     BUILD_INFO_BUILD_TIME: |-
 $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
     BUILD_INFO_CURRENT_VERSION: |-
-$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
     HOST: |-
       api.prod.test-app.pan.panter.cloud
     ROOT_URL: |-
@@ -2073,7 +2073,7 @@ EOF
           "export ENV_TYPE="stage"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.stage.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
@@ -2116,7 +2116,7 @@ $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/
     BUILD_INFO_BUILD_TIME: |-
 $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
     BUILD_INFO_CURRENT_VERSION: |-
-$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")" | sed 's/^/      /')
+$(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
     HOST: |-
       api.stage.test-app.pan.panter.cloud
     ROOT_URL: |-
@@ -2226,7 +2226,7 @@ EOF
           "export ENV_TYPE="prod"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.prod.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.prod.test-app.pan.panter.cloud"",
@@ -2299,7 +2299,7 @@ EOF
           "export ENV_TYPE="stage"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\///'); [ -z "$tag" ] && echo "v0.0.0" || echo "$tag")"",
+          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
           "export HOST="api.stage.test-app.pan.panter.cloud"",
           "export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"",
           "export HOST_INTERNAL="api.stage.test-app.pan.panter.cloud"",
