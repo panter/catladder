@@ -4,9 +4,7 @@ import { parseChoice } from "./config/parseChoice";
 
 const choice = process.argv[2] ? parseChoice(process.argv[2]) : null;
 
-const now = performance.now();
 catenv(choice).then(() => {
-  console.log("catenv", performance.now() - now);
   // we have to exit manually, because we have some file watches
   process.exit();
 });
