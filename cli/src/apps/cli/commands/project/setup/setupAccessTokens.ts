@@ -1,54 +1,60 @@
-import open from "open";
 import type { CommandInstance } from "vorpal";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 
+const TOKEN_NAME = "semantic-release";
+
 export const setupAccessTokens = async (instance: CommandInstance) => {
-  const { id: projectId, web_url: projectWebUrl } =
-    await getProjectInfo(instance);
+  const { id: projectId } = await getProjectInfo(instance);
+
+  const projectTokens = await doGitlabRequest(
+    instance,
+    `projects/${projectId}/access_tokens`,
+  );
+  const token = projectTokens.find(
+    (t) => t.name === TOKEN_NAME && t.active === true,
+  );
+  const expires_at = new Date(Date.now() + (365 - 1) * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10);
+
+  const newToken = token
+    ? await doGitlabRequest(
+        instance,
+        `projects/${projectId}/access_tokens/${token.id}/rotate`,
+        { expires_at },
+        "POST",
+      )
+    : await doGitlabRequest(
+        instance,
+        `projects/${projectId}/access_tokens`,
+        {
+          name: TOKEN_NAME,
+          scopes: ["api", "read_repository"],
+          access_level: 40, // Maintainer
+          expires_at,
+        },
+        "POST",
+      );
+
   try {
     await doGitlabRequest(instance, `projects/${projectId}/variables/GL_TOKEN`);
+    await doGitlabRequest(
+      instance,
+      `projects/${projectId}/variables/GL_TOKEN`,
+      { value: newToken.token },
+      "PUT",
+    );
   } catch (e) {
     if (e.message !== "not found") {
       throw e;
     }
     // not found
-
-    instance.log(
-      "I need add a GL_TOKEN to the project, so that semantic release will work\n",
-    );
-    instance.log(
-      "👉 Please please create a project access token in gitlab and copy its value into clipboard\n\n - name: something like 'semantic-release'\n - expires: leave empty\n - role: maintainer - scopes: api, read_repository",
-    );
-    instance.log("\n");
-
-    const { understood } = await instance.prompt({
-      default: true,
-      message: "Understood and open gitlab now? 🤔",
-      name: "understood",
-      type: "confirm",
-    });
-    if (!understood) {
-      instance.log("continuing anyway...");
-    }
-    open(`${projectWebUrl}/-/settings/access_tokens`);
-
-    instance.log("\n");
-
-    instance.log("Enter your copied token now: ");
-
-    instance.log("\n");
-    const { GL_TOKEN } = await instance.prompt({
-      type: "password",
-      name: "GL_TOKEN",
-      message: "Access Token: ",
-    });
-
     await doGitlabRequest(
       instance,
       `projects/${projectId}/variables`,
       {
         key: "GL_TOKEN",
-        value: GL_TOKEN,
+        value: newToken.token,
         masked: true,
       },
       "POST",
