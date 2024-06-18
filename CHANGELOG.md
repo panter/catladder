@@ -1,3 +1,17 @@
+# [1.149.0](https://git.panter.ch/catladder/catladder/compare/v1.148.1...v1.149.0) (2024-06-18)
+
+
+### Bug Fixes
+
+* BUILD_INFO_CURRENT_VERSION contains an unexpected v in front of the version number ([071efcd](https://git.panter.ch/catladder/catladder/commit/071efcd6c11d33762292b625a45683e38ce32b8d))
+* **pipeline:** getPipelineStages() creates no stages for local env ([42a9fea](https://git.panter.ch/catladder/catladder/commit/42a9feaf4f864021807c8ee78ede854a771d362c))
+* update snapshots ([39d452d](https://git.panter.ch/catladder/catladder/commit/39d452d63dad9ba6559a55d9bc0e86dfa6a422b7))
+
+
+### Features
+
+* **pipeline:** less automatically collapsed lines in yaml output ([049e2ce](https://git.panter.ch/catladder/catladder/commit/049e2ce6216d21d44f8b9fd123c270dc1b53895e))
+
 ## [1.148.1](https://git.panter.ch/catladder/catladder/compare/v1.148.0...v1.148.1) (2024-06-17)
 
 
