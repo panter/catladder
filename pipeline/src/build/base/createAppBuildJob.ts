@@ -45,7 +45,7 @@ export const createAppBuildJob = (
           ? writeDotEnv(context)
           : []),
         ...writeBuildInfo(context),
-        ...ensureNodeVersion(context.build), // in pure node repos, we might want to have the nvmrc file in top-level
+        ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.build.dir}`,
         ...(ensureArray(script) ?? []),
       ],

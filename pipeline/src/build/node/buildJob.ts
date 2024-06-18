@@ -20,7 +20,7 @@ export const createNodeBuildJobs = (
   }
 
   const defaultImage = getRunnerImage("jobs-default");
-  const yarnInstall = getYarnInstall(context.build);
+  const yarnInstall = getYarnInstall(context);
 
   return createBuildJobs(context, {
     appBuild:
@@ -30,7 +30,7 @@ export const createNodeBuildJobs = (
             runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
             cache: [
               ...(ensureArray(buildConfig.jobCache) ?? []),
-              ...getNodeCache(context.build),
+              ...getNodeCache(context),
               ...getNextCache(context),
             ],
             script: [
@@ -41,8 +41,8 @@ export const createNodeBuildJobs = (
               paths: [
                 context.build.dir,
                 // also copy workspace dependencies in monorepo if packages are shared and they create build artifacts
-                ...(context.build.packageManagerInfo
-                  .currentWorkspaceDependencies ?? []),
+                ...(context.packageManagerInfo.currentWorkspaceDependencies ??
+                  []),
               ].flatMap((dir) => [
                 join(dir, "__build_info.json"),
                 join(dir, "dist"),
@@ -65,14 +65,12 @@ export const createNodeBuildJobs = (
           ? "nginx"
           : "node",
       ),
-      cache: [...getYarnCache(context.build, "pull")],
+      cache: [...getYarnCache(context, "pull")],
       variables: {
         // only required for non static
-        DOCKER_COPY_AND_INSTALL_APP: getDockerAppCopyAndBuildScript(
-          context.build,
-        ),
+        DOCKER_COPY_AND_INSTALL_APP: getDockerAppCopyAndBuildScript(context),
         DOCKER_COPY_WORKSPACE_FILES:
-          context.build.packageManagerInfo.pathsToCopyInDocker
+          context.packageManagerInfo.pathsToCopyInDocker
             .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
             ?.join("\n"),
       },

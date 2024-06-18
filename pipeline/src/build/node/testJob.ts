@@ -30,7 +30,7 @@ export const createNodeTestJobs = (
     needs: [],
     envMode: "none",
   };
-  const yarnInstall = getYarnInstall(context.build);
+  const yarnInstall = getYarnInstall(context);
   const auditJob: CatladderJob | null =
     buildConfig.audit !== false
       ? {
@@ -41,7 +41,7 @@ export const createNodeTestJobs = (
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArray(buildConfig.audit?.command) ?? [
-              context.build.packageManagerInfo.isClassic
+              context.packageManagerInfo.isClassic
                 ? "yarn audit"
                 : "yarn npm audit --environment production", // yarn 2
             ]),
@@ -61,9 +61,9 @@ export const createNodeTestJobs = (
           name: "👮 lint",
           ...base,
           image: buildConfig.lint?.jobImage ?? defaultImage,
-          cache: getNodeCache(context.build),
+          cache: getNodeCache(context),
           script: [
-            ...ensureNodeVersion(context.build),
+            ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
             ...yarnInstall,
             ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
@@ -83,9 +83,9 @@ export const createNodeTestJobs = (
           ...base,
           image:
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
-          cache: getNodeCache(context.build),
+          cache: getNodeCache(context),
           script: [
-            ...ensureNodeVersion(context.build),
+            ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
             ...yarnInstall,
             ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),

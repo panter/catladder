@@ -19,7 +19,7 @@ export const createCustomDeployJobs = (
     throw new Error("deploy config is not custom");
   }
   // FIXME: custom deploy currently assumes yarn-based project
-  const yarnInstall = getYarnInstall(context.build, {
+  const yarnInstall = getYarnInstall(context, {
     noCustomPostInstall: true,
   });
   return createDeployementJobs(context, {

@@ -1,11 +1,11 @@
+import { uniq } from "lodash";
 import { join } from "path";
 import slugify from "slugify";
-import type { BuildContext, ComponentContext } from "../../types/context";
+import type { ComponentContext, Context } from "../../types/context";
 import type { GitlabJobCache } from "../../types/gitlab-types";
-import { uniq } from "lodash";
 
 export const getYarnCache = (
-  context: BuildContext,
+  context: Context,
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
@@ -18,15 +18,15 @@ export const getYarnCache = (
           paths: [".yarn"],
         }
       : {
-          key: slugify(context.dir) + "-yarn",
+          key: slugify(context.build.dir) + "-yarn",
           policy,
-          paths: [join(context.dir, ".yarn")],
+          paths: [join(context.build.dir, ".yarn")],
         },
   ];
 };
 
 export const getNodeModulesCache = (
-  context: BuildContext,
+  context: Context,
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
@@ -39,7 +39,7 @@ export const getNodeModulesCache = (
       // if component is in a shared workspace, use workspace cache. use individual cache else
       key: componentIsInWorkspace
         ? "node-modules-workspace"
-        : slugify(context.dir) + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
+        : slugify(context.build.dir) + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
       policy,
       paths: [
         ...(componentIsInWorkspace
@@ -49,13 +49,13 @@ export const getNodeModulesCache = (
                 join(w.location, "node_modules"),
               ) ?? []),
             ])
-          : [join(context.dir, "node_modules")]),
+          : [join(context.build.dir, "node_modules")]),
       ],
     },
   ];
 };
 export const getNodeCache = (
-  context: BuildContext,
+  context: Context,
   policy = "pull-push",
 ): GitlabJobCache[] => {
   return [

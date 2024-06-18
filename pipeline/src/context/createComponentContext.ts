@@ -67,7 +67,6 @@ export const createComponentContext = async (
 
     build: {
       dir: dir,
-      packageManagerInfo: packageManagerInfo,
       config: build,
     },
     deploy: deploy

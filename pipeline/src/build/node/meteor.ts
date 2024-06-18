@@ -32,13 +32,13 @@ export const createMeteorBuildJobs = (
     throw new Error("deploy config is not meteor");
   }
 
-  const yarnInstall = getYarnInstall(context.build);
+  const yarnInstall = getYarnInstall(context);
 
   return createBuildJobs(context, {
     appBuild:
       buildConfig.buildCommand !== null
         ? {
-            cache: [...getNodeCache(context.build), ...getMeteorCache(context)],
+            cache: [...getNodeCache(context), ...getMeteorCache(context)],
             image: getRunnerImage("jobs-meteor"),
             variables: {
               METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
