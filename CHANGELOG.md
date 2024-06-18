@@ -1,3 +1,10 @@
+## [1.150.3](https://git.panter.ch/catladder/catladder/compare/v1.150.2...v1.150.3) (2024-06-18)
+
+
+### Bug Fixes
+
+* remove log ([85a0b1a](https://git.panter.ch/catladder/catladder/commit/85a0b1ad85a30fbc575e585b93632137303d9e28))
+
 ## [1.150.2](https://git.panter.ch/catladder/catladder/compare/v1.150.1...v1.150.2) (2024-06-18)
 
 ## [1.150.1](https://git.panter.ch/catladder/catladder/compare/v1.150.0...v1.150.1) (2024-06-18)
