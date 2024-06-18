@@ -66,7 +66,7 @@ export const createKubernetesCloudsqlBaseValues = (
           config,
           context.fullConfig,
           context.environment.slugPrefix,
-          context.componentName,
+          context.name,
         ),
       },
     };

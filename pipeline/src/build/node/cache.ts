@@ -1,7 +1,7 @@
 import { uniq } from "lodash";
 import { join } from "path";
 import slugify from "slugify";
-import type { ComponentContext, Context } from "../../types/context";
+import type { Context } from "../../types/context";
 import type { GitlabJobCache } from "../../types/gitlab-types";
 
 export const getYarnCache = (
@@ -9,6 +9,7 @@ export const getYarnCache = (
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
+    context.type === "component" &&
     context.packageManagerInfo.componentIsInWorkspace;
   return [
     componentIsInWorkspace
@@ -30,6 +31,7 @@ export const getNodeModulesCache = (
   policy = "pull-push",
 ): GitlabJobCache[] => {
   const componentIsInWorkspace =
+    context.type === "component" &&
     context.packageManagerInfo.componentIsInWorkspace;
 
   // We intentionally do not use the contents of yarn.lock as a cache key, as yarn install should always guarantee that the files are updated, but it can still use part of the cache if not all packages are up-to-date.
@@ -64,10 +66,17 @@ export const getNodeCache = (
   ];
 };
 
-export const getNextCache = (context: ComponentContext): GitlabJobCache[] => [
-  {
-    key: context.componentName + "-next-cache",
-    policy: "pull-push",
-    paths: [context.build.dir + "/.next/cache/"],
-  },
-];
+export const getNextCache = (context: Context): GitlabJobCache[] => {
+  const key = context.name + "-next-cache";
+  const paths = context.build
+    .getComponentDirs("direct")
+    .map((c) => join(c, ".next/cache"));
+
+  return [
+    {
+      key,
+      policy: "pull-push",
+      paths,
+    },
+  ];
+};

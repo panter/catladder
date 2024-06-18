@@ -1,10 +1,12 @@
-import type { ComponentContext } from "../../types/context";
+import type { ComponentContext, WorkspaceContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createNodeBuildJobs } from "./buildJob";
 import { createMeteorBuildJobs } from "./meteor";
 import { createNodeTestJobs } from "./testJob";
 
-export const createNodeJobs = (context: ComponentContext): CatladderJob[] => {
+export const createNodeJobs = (
+  context: ComponentContext | WorkspaceContext,
+): CatladderJob[] => {
   return [...createNodeTestJobs(context), ...createNodeBuildJobs(context)];
 };
 

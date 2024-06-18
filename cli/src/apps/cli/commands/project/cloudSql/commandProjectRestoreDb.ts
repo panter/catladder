@@ -37,7 +37,7 @@ export default async (vorpal: Vorpal) =>
       const sourceEnvVars = await getEnvVarsResolved(
         this,
         sourceContext.env,
-        sourceContext.componentName,
+        sourceContext.name,
       );
 
       let sourceProxy: CloudSqlBackgroundProxy;
@@ -100,7 +100,7 @@ export default async (vorpal: Vorpal) =>
       const targetEnvVars = await getEnvVarsResolved(
         this,
         targetContext.env,
-        targetContext.componentName,
+        targetContext.name,
       );
 
       if (targetEnv === "local") {

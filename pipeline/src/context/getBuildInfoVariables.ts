@@ -1,6 +1,7 @@
 import { BashExpression } from "../bash/BashExpression";
 import type { BashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import { getBashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
+import type { BuildConfig } from "../build";
 import type { EnvironmentContext } from "../types/environmentContext";
 
 const BUILD_TIME: BashExpressionPerPipelineType = {
@@ -20,7 +21,7 @@ const CURRENT_VERSION: BashExpressionPerPipelineType = {
   ),
 };
 
-export const getBuildInfoVariables = (ctx: EnvironmentContext<any, any>) => {
+export const getBuildInfoVariables = (ctx: EnvironmentContext) => {
   const { pipelineType } = ctx;
 
   return {

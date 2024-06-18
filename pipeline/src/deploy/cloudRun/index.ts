@@ -1,9 +1,9 @@
-import type { DeployTypeDefinition } from "..";
+import type { DeployConfigCloudRun, DeployTypeDefinition } from "..";
 import {
-  BashExpression,
   getBashVariable,
   joinBashExpressions,
 } from "../../bash/BashExpression";
+import type { BuildConfig } from "../../build";
 import { getSecretVarName } from "../../context";
 import type { EnvironmentContext } from "../../types/environmentContext";
 import { sanitizeForBashVariable } from "../../utils/gitlab";
@@ -27,7 +27,7 @@ const getCloudSqlVariables = ({
   env,
   componentName,
   fullConfig,
-}: EnvironmentContext<any, "google-cloudrun">) => {
+}: EnvironmentContext<BuildConfig, DeployConfigCloudRun>) => {
   if (deployConfigRaw && deployConfigRaw.cloudSql) {
     const DB_NAME = getFullDbName(
       deployConfigRaw.cloudSql,
@@ -56,71 +56,72 @@ const getCloudSqlVariables = ({
   }
   return {};
 };
-export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<"google-cloudrun"> = {
-  jobs: createGoogleCloudRunDeployJobs,
-  defaults: ({ deployConfigRaw, envType }) => {
-    if (deployConfigRaw && deployConfigRaw.cloudSql) {
-      return {
-        cloudSql: {
-          deleteDatabaseOnStop: envType === "review",
-        },
-      };
-    }
-    return {};
-  },
-  additionalSecretKeys: (ctx) => [
-    {
-      key: GCLOUD_DEPLOY_CREDENTIALS_KEY,
-      hidden: true,
+export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> =
+  {
+    jobs: createGoogleCloudRunDeployJobs,
+    defaults: ({ deployConfigRaw, envType }) => {
+      if (deployConfigRaw && deployConfigRaw.cloudSql) {
+        return {
+          cloudSql: {
+            deleteDatabaseOnStop: envType === "review",
+          },
+        };
+      }
+      return {};
     },
-    {
-      key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
-      hidden: true,
-    },
-    ...(ctx.deployConfigRaw && ctx.deployConfigRaw.cloudSql
-      ? [{ key: "DB_PASSWORD" }]
-      : []),
-  ],
-  getAdditionalEnvVars: (ctx) => {
-    const { fullName, env, componentName, deployConfigRaw } = ctx;
+    additionalSecretKeys: (ctx) => [
+      {
+        key: GCLOUD_DEPLOY_CREDENTIALS_KEY,
+        hidden: true,
+      },
+      {
+        key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+        hidden: true,
+      },
+      ...(ctx.deployConfigRaw && ctx.deployConfigRaw.cloudSql
+        ? [{ key: "DB_PASSWORD" }]
+        : []),
+    ],
+    getAdditionalEnvVars: (ctx) => {
+      const { fullName, env, componentName, deployConfigRaw } = ctx;
 
-    const HOST_INTERNAL = joinBashExpressions(
-      [
-        fullName,
-        getBashVariable(
-          getSecretVarName(
-            env,
-            componentName,
-            GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+      const HOST_INTERNAL = joinBashExpressions(
+        [
+          fullName,
+          getBashVariable(
+            getSecretVarName(
+              env,
+              componentName,
+              GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+            ),
           ),
-        ),
-      ],
-      "-",
-    ).toLowerCase();
-    const jobTriggers =
-      deployConfigRaw && deployConfigRaw.jobs
-        ? Object.fromEntries(
-            Object.entries(deployConfigRaw.jobs).map(([name, job]) => [
-              "CLOUD_RUN_JOB_TRIGGER_URL_" + sanitizeForBashVariable(name),
-              `https://${
-                deployConfigRaw.region
-              }-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${
-                deployConfigRaw.projectId
-              }/jobs/${getCloudRunJobName(fullName, name)}:run`,
-            ]),
-          )
-        : {};
+        ],
+        "-",
+      ).toLowerCase();
+      const jobTriggers =
+        deployConfigRaw && deployConfigRaw.jobs
+          ? Object.fromEntries(
+              Object.entries(deployConfigRaw.jobs).map(([name, job]) => [
+                "CLOUD_RUN_JOB_TRIGGER_URL_" + sanitizeForBashVariable(name),
+                `https://${
+                  deployConfigRaw.region
+                }-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${
+                  deployConfigRaw.projectId
+                }/jobs/${getCloudRunJobName(fullName, name)}:run`,
+              ]),
+            )
+          : {};
 
-    return {
-      HOST_INTERNAL,
-      ...getCloudSqlVariables(ctx),
-      ...jobTriggers,
-      DEPLOY_CLOUD_RUN_PROJECT_ID: deployConfigRaw
-        ? deployConfigRaw.projectId
-        : undefined,
-      DEPLOY_CLOUD_RUN_REGION: deployConfigRaw
-        ? deployConfigRaw.region
-        : undefined,
-    };
-  },
-};
+      return {
+        HOST_INTERNAL,
+        ...getCloudSqlVariables(ctx),
+        ...jobTriggers,
+        DEPLOY_CLOUD_RUN_PROJECT_ID: deployConfigRaw
+          ? deployConfigRaw.projectId
+          : undefined,
+        DEPLOY_CLOUD_RUN_REGION: deployConfigRaw
+          ? deployConfigRaw.region
+          : undefined,
+      };
+    },
+  };

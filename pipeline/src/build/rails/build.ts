@@ -1,6 +1,11 @@
-import type { ComponentContext } from "../..";
+import {
+  componentContextIsStandaloneBuild,
+  type BuildConfigRails,
+  type BuildContextStandalone,
+  type ComponentContext,
+} from "../..";
 import type { CatladderJob } from "../../types/jobs";
-import { createBuildJobs } from "../base";
+import { createComponentBuildJobs } from "../base";
 import {
   getDockerBuildDefaultScript,
   gitlabDockerLogin,
@@ -17,8 +22,13 @@ export const createRailsBuildJobs = (
     throw new Error("build type is not rails");
   }
 
+  // if its not a standalone build, we don't need to run tests
+  if (!componentContextIsStandaloneBuild(context)) {
+    throw new Error("workspace builds are not supported for rails apps");
+  }
+
   if (hasDockerfile(context)) {
-    return createBuildJobs(context, {
+    return createComponentBuildJobs(context, {
       appBuild: undefined,
       dockerBuild: {
         script: getDockerBuildDefaultScript(context),
@@ -32,7 +42,7 @@ export const createRailsBuildJobs = (
   const packEnvArgs = Object.entries(cnbConf?.buildVars ?? {})
     .map(([k, v]) => `--env '${k}${v ? `=${v}` : ""}'`)
     .join(" ");
-  return createBuildJobs(context, {
+  return createComponentBuildJobs(context, {
     appBuild: undefined,
     dockerBuild: {
       variables: {

@@ -1,8 +1,13 @@
-import type { ComponentContext } from "../types/context";
 import { SBOM_FILE } from "../build/sbom";
+import {
+  componentContextIsStandaloneBuild,
+  type ComponentContext,
+} from "../types/context";
 
 export const sbomDeactivated = (context: ComponentContext) =>
-  context.build.config.type === "custom" && context.build.config.sbom === false;
+  componentContextIsStandaloneBuild(context) &&
+  context.build.config.type === "custom" &&
+  context.build.config.sbom === false;
 
 export const getDependencyTrackUploadScript = (
   context: ComponentContext,
@@ -11,7 +16,7 @@ export const getDependencyTrackUploadScript = (
     ? []
     : [
         "echo 'Uploading SBOM to Dependency Track'",
-        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.componentName}" "${context.environment.url}" "${SBOM_FILE}" vex.json || true`,
+        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.name}" "${context.environment.url}" "${SBOM_FILE}" vex.json || true`,
       ];
 };
 
@@ -22,6 +27,6 @@ export const getDependencyTrackDeleteScript = (
     ? []
     : [
         "echo 'Disabling component in Dependency Track'",
-        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.componentName}" "${context.environment.url}" || true`,
+        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.name}" "${context.environment.url}" || true`,
       ];
 };

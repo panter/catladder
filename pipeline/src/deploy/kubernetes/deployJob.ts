@@ -39,14 +39,14 @@ export const createKubernetesDeployJobs = (
       ...context.environment.envVars,
       RELEASE_NAME: context.environment.fullName,
       HELM_EXPERIMENTAL_OCI: "1",
-      KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.componentName}`,
+      KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.name}`,
       HELM_GITLAB_CHART_NAME:
         deployConfig.chartName ?? "/helm-charts/the-panter-chart",
       HELM_ARGS: [
         ...(deployConfig.debug ? ["--debug"] : []),
         ...(deployConfig.additionalHelmArgs ?? []),
       ].join(" "),
-      COMPONENT_NAME: context.componentName,
+      COMPONENT_NAME: context.name,
       /** @deprecated */
       BUILD_ID: context.environment.envVars.BUILD_INFO_BUILD_ID,
     },

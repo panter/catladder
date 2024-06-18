@@ -8,7 +8,8 @@ import type { DevLocalEnvConfig } from "../types/config";
 
 import type { CreateComponentContextContext, UnspecifiedEnvVars } from "..";
 import type { StringOrBashExpression } from "../bash/BashExpression";
-import { getBashVariable, joinBashExpressions } from "../bash/BashExpression";
+import { joinBashExpressions } from "../bash/BashExpression";
+import { isStandaloneBuildConfig } from "../build/types";
 import type { EnvironmentContext } from "../types/environmentContext";
 import { getBuildInfoVariables } from "./getBuildInfoVariables";
 import { getEnvironmentContext } from "./getEnvironmentContext";
@@ -29,7 +30,7 @@ export type SecretEnvVar = {
   hidden?: boolean;
 };
 
-const getBasePredefinedVariables = (ctx: EnvironmentContext<any, any>) => {
+const getBasePredefinedVariables = (ctx: EnvironmentContext) => {
   return {
     ENV_SHORT: ctx.env,
     APP_DIR: ctx.envConfigRaw.dir,
@@ -78,7 +79,8 @@ export const getEnvironmentVariables = async (
       ENV_SHORT: "local",
       ROOT_URL: url,
       // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
-      ...(config.components[componentName].build.type === "rails"
+      ...(isStandaloneBuildConfig(buildConfigRaw) &&
+      buildConfigRaw.type === "rails"
         ? {}
         : { HOST: host }),
       HOST_INTERNAL: host,
@@ -101,7 +103,8 @@ export const getEnvironmentVariables = async (
     predefinedVariables = {
       ...basePredefinedVariables,
       // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
-      ...(config.components[componentName].build.type === "rails"
+      ...(isStandaloneBuildConfig(buildConfigRaw) &&
+      buildConfigRaw.type === "rails"
         ? {}
         : { HOST: host }),
       ROOT_URL: url,
@@ -169,7 +172,10 @@ export const getEnvironmentVariables = async (
       build: await transformJobOnlyVars(
         env,
         componentName,
-        (buildConfigRaw && buildConfigRaw.jobVars) || null,
+        (buildConfigRaw &&
+          isStandaloneBuildConfig(buildConfigRaw) &&
+          buildConfigRaw.jobVars) ||
+          null,
       ),
       deploy: await transformJobOnlyVars(
         env,
@@ -201,4 +207,4 @@ const addIndexVar = <V extends Record<string, unknown>>(
 export const getSecretVarNameForContext = (
   context: ComponentContext,
   key: string,
-) => getSecretVarName(context.env, context.componentName, key);
+) => getSecretVarName(context.env, context.name, key);

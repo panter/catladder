@@ -1,0 +1,56 @@
+import {
+  WORKSPACE_BUILD_TYPES,
+  type Config,
+  type PipelineTrigger,
+  type PipelineType,
+  type WorkspaceContext,
+} from "..";
+import { getPackageManagerInfoBase } from "../pipeline/packageManager";
+import { mergeWithMergingArrays } from "../utils";
+import { uniq } from "lodash";
+
+export async function createWorkspaceContext({
+  env,
+  components,
+  workspaceName,
+  config,
+  pipelineType,
+  trigger,
+}: {
+  env: string;
+  components: WorkspaceContext["components"];
+  workspaceName: string;
+  config: Config;
+  pipelineType: PipelineType;
+  trigger: PipelineTrigger;
+}): Promise<WorkspaceContext> {
+  const workspaceConfigRaw = config.builds?.[workspaceName];
+  if (!workspaceConfigRaw) {
+    throw new Error(`Workspace ${workspaceName} not found in config`);
+  }
+
+  const defaults = WORKSPACE_BUILD_TYPES[workspaceConfigRaw.type].defaults();
+
+  const workspaceConfig = mergeWithMergingArrays(defaults, workspaceConfigRaw);
+  return {
+    name: workspaceName,
+    pipelineType,
+    trigger,
+    type: "workspace",
+
+    workspaceConfig,
+
+    env,
+    components,
+    fullConfig: config,
+    packageManagerInfo: await getPackageManagerInfoBase(),
+    build: {
+      type: "workspace",
+      dir: workspaceConfig.dir ?? ".",
+      getComponentDirs: (mode) =>
+        uniq(components.flatMap((c) => c.build.getComponentDirs(mode))),
+      buildType: workspaceConfig.type,
+      config: workspaceConfig,
+    },
+  };
+}

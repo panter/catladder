@@ -1,11 +1,10 @@
-import { join } from "path";
 import type { ComponentContext } from "../../types/context";
 import { ensureArray } from "../../utils";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 
 import type { CatladderJob } from "../../types/jobs";
-import { createBuildJobs } from "../base";
+import { createComponentBuildJobs } from "../base";
 
 const RUNNER_BUILD_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.5",
@@ -22,7 +21,7 @@ export const createCustomBuildJobs = (
     throw new Error("deploy config is not custom");
   }
 
-  return createBuildJobs(context, {
+  return createComponentBuildJobs(context, {
     appBuild:
       buildConfig.buildCommand !== null
         ? {
@@ -31,16 +30,6 @@ export const createCustomBuildJobs = (
             cache: buildConfig.jobCache,
             services: buildConfig.jobServices,
             script: [...(ensureArray(buildConfig.buildCommand) ?? [])],
-            artifacts: {
-              paths: [
-                join(context.build.dir, "__build_info.json"),
-                join(context.build.dir, "dist"),
-                ...(buildConfig.artifactsPaths?.map((path) =>
-                  join(context.build.dir, path),
-                ) ?? []),
-              ],
-              expire_in: "1 day",
-            },
           }
         : undefined,
     dockerBuild: {

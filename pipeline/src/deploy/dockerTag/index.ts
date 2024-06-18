@@ -1,9 +1,10 @@
-import type { DeployTypeDefinition } from "..";
+import type { DeployConfigDockerTag, DeployTypeDefinition } from "..";
 import { createDockerTagDeployJobs } from "./deployJob";
 
-export const DOCKER_TAG_DEPLOY_TYPE: DeployTypeDefinition<"dockerTag"> = {
-  jobs: createDockerTagDeployJobs,
-  defaults: () => ({}),
-  additionalSecretKeys: () => [],
-  getAdditionalEnvVars: () => ({}),
-};
+export const DOCKER_TAG_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigDockerTag> =
+  {
+    jobs: createDockerTagDeployJobs,
+    defaults: () => ({}),
+    additionalSecretKeys: () => [],
+    getAdditionalEnvVars: () => ({}),
+  };

@@ -1,17 +1,16 @@
 import type { StringOrBashExpression } from "../bash/BashExpression";
-import type { BuildConfigGeneric, BuildConfigType } from "../build";
-import type { DeployConfigGeneric } from "../deploy";
-import type { DeployConfigType } from "../deploy";
+import type { BuildConfig } from "../build";
+import type { DeployConfig } from "../deploy";
 import type { Config, EnvConfigWithComponent, EnvType } from "./config";
 import type { PipelineType } from "./pipeline";
 
 export type EnvironmentContext<
-  B extends BuildConfigType,
-  D extends DeployConfigType,
+  B extends BuildConfig = BuildConfig,
+  D extends DeployConfig = DeployConfig,
 > = {
   envConfigRaw: EnvConfigWithComponent;
-  buildConfigRaw: false | BuildConfigGeneric<B>;
-  deployConfigRaw: false | DeployConfigGeneric<D>;
+  buildConfigRaw: false | B;
+  deployConfigRaw: false | D;
 
   env: string;
   envType: EnvType;

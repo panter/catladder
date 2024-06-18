@@ -33,10 +33,9 @@ export const getDockerImageVariables = (context: ComponentContext) => {
         {
           DOCKER_REGISTRY: "$CI_REGISTRY",
 
-          DOCKER_CACHE_IMAGE:
-            "$CI_REGISTRY_IMAGE/caches/" + context.componentName,
+          DOCKER_CACHE_IMAGE: "$CI_REGISTRY_IMAGE/caches/" + context.name,
           // ONLY USED IN KUBERNETES
-          DOCKER_IMAGE_NAME: context.env + "/" + context.componentName,
+          DOCKER_IMAGE_NAME: context.env + "/" + context.name,
           DOCKER_IMAGE: "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
         }),
 
@@ -161,10 +160,10 @@ export const getDockerBuildScriptWithBuiltInDockerFile = (
   defaultType?: BuildConfigDocker["type"],
 ) => {
   const type =
-    "docker" in context.componentConfig.build &&
-    context.componentConfig.build.docker &&
-    "type" in context.componentConfig.build.docker
-      ? context.componentConfig.build.docker?.type
+    "docker" in context.build.config &&
+    context.build.config.docker &&
+    "type" in context.build.config.docker
+      ? context.build.config.docker?.type
       : defaultType;
   return getDockerBuildDefaultScript(
     context,

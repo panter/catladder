@@ -1,4 +1,7 @@
-import type { ComponentContext } from "../..";
+import {
+  componentContextIsStandaloneBuild,
+  type ComponentContext,
+} from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 
@@ -8,6 +11,11 @@ export const createRailsTestJobs = (
   // don't run tests after release
   // TODO: this will be replaced by using rules
   if (context.trigger === "taggedRelease") {
+    return [];
+  }
+
+  // if its not a standalone build, we don't need to run tests
+  if (!componentContextIsStandaloneBuild(context)) {
     return [];
   }
 

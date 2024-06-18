@@ -1,7 +1,11 @@
 import { existsSync } from "fs";
 import { join } from "path";
 import { pathEqual } from "path-equal";
-import type { Config, PackageManagerInfoComponent } from "../types";
+import type {
+  Config,
+  PackageManagerInfoBase,
+  PackageManagerInfoComponent,
+} from "../types";
 import {
   getWorkspaces,
   getYarnVersion,
@@ -12,13 +16,11 @@ export const getPackageManagerInfoForComponent = async (
   config: Config,
   componentName: string,
 ): Promise<PackageManagerInfoComponent> => {
+  const baseInfo = await getPackageManagerInfoBase();
+  const { workspaces } = baseInfo;
   // currently only supports yarn
-  const version = await getYarnVersion();
-  if (!version) throw new Error("could not get yarn version");
-  const isClassic = version.startsWith("1");
 
   const component = config.components[componentName];
-  const workspaces = await getWorkspaces(isClassic);
   const currentWorkspace = workspaces.find((w) =>
     pathEqual(component.dir, w.location),
   );
@@ -54,13 +56,27 @@ export const getPackageManagerInfoForComponent = async (
     ...currentWorkspaceDependencies,
   ];
   return {
-    type: "yarn",
-    workspaces,
-    version,
-    isClassic,
+    ...baseInfo,
     currentWorkspace,
     currentWorkspaceDependencies,
     componentIsInWorkspace,
     pathsToCopyInDocker,
   };
 };
+// TODO: memoizee
+export const getPackageManagerInfoBase =
+  async (): Promise<PackageManagerInfoBase> => {
+    // currently only supports yarn
+    const version = await getYarnVersion();
+    if (!version) throw new Error("could not get yarn version");
+    const isClassic = version.startsWith("1");
+
+    const workspaces = await getWorkspaces(isClassic);
+
+    return {
+      type: "yarn",
+      workspaces,
+      version,
+      isClassic,
+    };
+  };

@@ -4,7 +4,7 @@ import type { DeployConfig } from "../deploy/types";
 import type { CatladderJob } from "./jobs";
 import type { ComponentContext } from "./context";
 import type { PartialDeep } from "./utils";
-import type { PipelineType } from "..";
+import type { PipelineType, WorkspaceBuildConfig } from "..";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -200,6 +200,9 @@ export type Config<C extends ConfigProps = never> = {
    *
    */
   domainCanonical?: string;
+
+  // shared workspace Builds
+  builds?: Record<string, WorkspaceBuildConfig>;
   /**
    * components (sub apps)
    */

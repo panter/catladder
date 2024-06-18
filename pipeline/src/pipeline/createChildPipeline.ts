@@ -17,6 +17,7 @@ export const createChildPipeline = async <T extends PipelineType>(
     trigger,
     pipelineType,
   });
+
   const stages = getPipelineStages(config);
 
   if (pipelineType === "gitlab") {

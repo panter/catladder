@@ -1,5 +1,6 @@
 import { isNil } from "lodash";
 import type { ComponentContext } from "../../types";
+import { collapseableSection } from "../../utils/gitlab";
 
 /**
  * writes a .env file in the components folder
@@ -18,11 +19,14 @@ export const writeDotEnv = (context: ComponentContext) => {
     )
     .join("\n");
 
-  return [
+  return collapseableSection(
+    "write-dotenv-" + context.name,
+    "write dot env",
+  )([
     `cat <<EOF > ${context.build.dir}/.env
 ${keyValueString}
 EOF`,
-  ];
+  ]);
 };
 
 export const componentContextNeedsBuildTimeDotEnv = (

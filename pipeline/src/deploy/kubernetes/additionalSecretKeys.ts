@@ -1,8 +1,10 @@
+import type { BuildConfig } from "../../build";
 import type { EnvironmentContext } from "../../types/environmentContext";
+import type { DeployConfigKubernetes } from "../types";
 
 export const additionalKubernetesSecretKeys = ({
   deployConfigRaw,
-}: EnvironmentContext<any, "kubernetes">) => {
+}: EnvironmentContext<BuildConfig, DeployConfigKubernetes>) => {
   if (!deployConfigRaw) {
     return [];
   }

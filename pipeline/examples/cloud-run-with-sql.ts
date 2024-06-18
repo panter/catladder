@@ -3,11 +3,17 @@ import { createAllPipelines } from "./__utils__/helpers";
 const config: Config = {
   appName: "test-app",
   customerName: "pan",
+  builds: {
+    myWorkspace: {
+      type: "node",
+    },
+  },
   components: {
     api: {
+      dotEnv: true,
       dir: "api",
       build: {
-        type: "node",
+        from: "myWorkspace",
       },
       deploy: {
         type: "google-cloudrun",
@@ -39,9 +45,10 @@ const config: Config = {
       },
     },
     www: {
+      dotEnv: true,
       dir: "www",
       build: {
-        type: "node",
+        from: "myWorkspace",
       },
       deploy: {
         type: "google-cloudrun",

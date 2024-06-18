@@ -1,3 +1,4 @@
+import { isStandaloneBuildConfig } from ".";
 import type { ComponentContext } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
 import { ensureArray } from "../utils";
@@ -18,12 +19,16 @@ export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
   ];
 
   const image =
-    buildConfig.type === "custom" && buildConfig.sbom !== false
+    isStandaloneBuildConfig(buildConfig) &&
+    buildConfig.type === "custom" &&
+    buildConfig.sbom !== false
       ? buildConfig.sbom?.jobImage ?? defaultImage
       : defaultImage;
 
   const script =
-    buildConfig.type === "custom" && buildConfig.sbom !== false
+    isStandaloneBuildConfig(buildConfig) &&
+    buildConfig.type === "custom" &&
+    buildConfig.sbom !== false
       ? ensureArray(buildConfig.sbom?.command) ?? defaultScript
       : defaultScript;
 

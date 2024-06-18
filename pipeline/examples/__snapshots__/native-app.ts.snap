@@ -62,8 +62,8 @@ exports[`matches snapshot 1`] = `
           "expire_in": "1 day",
           "paths": [
             "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -88,7 +88,7 @@ exports[`matches snapshot 1`] = `
           {
             "key": "api-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -570,8 +570,8 @@ EOF
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
-            "app/dist",
             "app/.next",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -606,7 +606,7 @@ EOF
           {
             "key": "app-next-cache",
             "paths": [
-              "app/.next/cache/",
+              "app/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -642,6 +642,7 @@ EOF
           "export LC_A="L=en_US.UTF-8"",
           "export LANG="en_US.UTF-8"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-app[collapsed=true]\\r\\e[0Kwrite dot env"",
           "cat <<EOF > app/.env
 ENV_SHORT=dev
 APP_DIR=app
@@ -660,6 +661,7 @@ APP_STORE_CONNECT_API_KEY_ID=$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"",
           "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
@@ -1012,8 +1014,8 @@ EOF",
           "expire_in": "1 day",
           "paths": [
             "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -1038,7 +1040,7 @@ EOF",
           {
             "key": "api-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -1526,8 +1528,8 @@ EOF
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
-            "app/dist",
             "app/.next",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -1562,7 +1564,7 @@ EOF
           {
             "key": "app-next-cache",
             "paths": [
-              "app/.next/cache/",
+              "app/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -1598,6 +1600,7 @@ EOF
           "export LC_A="L=en_US.UTF-8"",
           "export LANG="en_US.UTF-8"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-app[collapsed=true]\\r\\e[0Kwrite dot env"",
           "cat <<EOF > app/.env
 ENV_SHORT=review
 APP_DIR=app
@@ -1616,6 +1619,7 @@ APP_STORE_CONNECT_API_KEY_ID=$CL_review_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"",
           "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
@@ -1916,8 +1920,8 @@ EOF",
           "expire_in": "1 day",
           "paths": [
             "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -1942,7 +1946,7 @@ EOF",
           {
             "key": "api-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -2003,8 +2007,8 @@ EOF",
           "expire_in": "1 day",
           "paths": [
             "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -2029,7 +2033,7 @@ EOF",
           {
             "key": "api-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -2641,8 +2645,8 @@ EOF
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
-            "app/dist",
             "app/.next",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -2677,7 +2681,7 @@ EOF
           {
             "key": "app-next-cache",
             "paths": [
-              "app/.next/cache/",
+              "app/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -2713,6 +2717,7 @@ EOF
           "export LC_A="L=en_US.UTF-8"",
           "export LANG="en_US.UTF-8"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-app[collapsed=true]\\r\\e[0Kwrite dot env"",
           "cat <<EOF > app/.env
 ENV_SHORT=prod
 APP_DIR=app
@@ -2731,6 +2736,7 @@ APP_STORE_CONNECT_API_KEY_ID=$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"",
           "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
@@ -2768,8 +2774,8 @@ EOF",
           "expire_in": "1 day",
           "paths": [
             "app/__build_info.json",
-            "app/dist",
             "app/.next",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -2804,7 +2810,7 @@ EOF",
           {
             "key": "app-next-cache",
             "paths": [
-              "app/.next/cache/",
+              "app/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -2840,6 +2846,7 @@ EOF",
           "export LC_A="L=en_US.UTF-8"",
           "export LANG="en_US.UTF-8"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-app[collapsed=true]\\r\\e[0Kwrite dot env"",
           "cat <<EOF > app/.env
 ENV_SHORT=stage
 APP_DIR=app
@@ -2858,6 +2865,7 @@ APP_STORE_CONNECT_API_KEY_ID=$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID
 GRAPHQL_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
 EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"",
           "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",

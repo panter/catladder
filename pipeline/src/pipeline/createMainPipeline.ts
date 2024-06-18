@@ -5,11 +5,13 @@ import {
   RULE_NEVER_ON_RELEASE_COMMIT,
 } from "../rules";
 import type {
+  ComponentContext,
   GitlabJobDef,
   GitlabRule,
   Pipeline,
   PipelineTrigger,
   PipelineType,
+  WorkspaceContext,
 } from "../types";
 import { ALL_PIPELINE_TRIGGERS, type Config } from "../types/config";
 import { createAllJobs } from "./createAllJobs";
@@ -35,40 +37,53 @@ export const createMainPipeline = async <T extends PipelineType>(
             getGitlabRulesForTrigger(trigger),
           ),
       ),
-    );
+    ).then((j) => j.flat());
 
-    const allJobs = allJobsPerTrigger
-      .flat()
+    const allWorkspaceJobs = allJobsPerTrigger
+      .filter((j) => j.context.type === "workspace") // sort by componentName in the same order as they appear in the config
+      // this is purely for better readability in git diffs when you add new components
+      .sort((a, b) => {
+        const workspaceNames = Object.keys(config.builds ?? {});
+        const aIndex = workspaceNames.findIndex(
+          (c) => c === (a.context as WorkspaceContext).name,
+        );
+        const bIndex = workspaceNames.findIndex(
+          (c) => c === (b.context as WorkspaceContext).name,
+        );
+        return aIndex - bIndex;
+      });
+
+    const allComponentJobs = allJobsPerTrigger
+      .filter((j) => j.context.type === "component")
       // sort by componentName in the same order as they appear in the config
       // this is purely for better readability in git diffs when you add new components
       .sort((a, b) => {
         const componentNames = Object.keys(config.components);
         const aIndex = componentNames.findIndex(
-          (c) => c === a.context.componentName,
+          (c) => c === (a.context as ComponentContext).name,
         );
         const bIndex = componentNames.findIndex(
-          (c) => c === b.context.componentName,
+          (c) => c === (b.context as ComponentContext).name,
         );
         return aIndex - bIndex;
-      })
+      });
+    const allJobs = [...allWorkspaceJobs, ...allComponentJobs].reduce(
+      (acc, { gitlabJob, name }) => {
+        // merge jobs, if a job is already there, merge the rules
+        // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
+        if (acc[name]) {
+          acc[name].rules = [
+            ...(acc[name].rules ?? []),
+            ...(gitlabJob.rules ?? []),
+          ];
+        } else {
+          acc[name] = gitlabJob;
+        }
 
-      .reduce(
-        (acc, { gitlabJob, name }) => {
-          // merge jobs, if a job is already there, merge the rules
-          // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
-          if (acc[name]) {
-            acc[name].rules = [
-              ...(acc[name].rules ?? []),
-              ...(gitlabJob.rules ?? []),
-            ];
-          } else {
-            acc[name] = gitlabJob;
-          }
-
-          return acc;
-        },
-        {} as { [key: string]: GitlabJobDef },
-      );
+        return acc;
+      },
+      {} as { [key: string]: GitlabJobDef },
+    );
 
     return createGitlabPipelineWithDefaults({
       stages: [...stages, "release"],

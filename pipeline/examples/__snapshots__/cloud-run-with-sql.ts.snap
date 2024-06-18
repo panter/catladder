@@ -5,19 +5,19 @@ exports[`matches snapshot 1`] = `
   "mainBranch": {
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
-      "api 👮 lint": {
+      "🔸 myWorkspace 👮 lint": {
         "cache": [
           {
-            "key": "api-yarn",
+            "key": ".-yarn",
             "paths": [
-              "api/.yarn",
+              ".yarn",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-node-modules",
+            "key": ".-node-modules",
             "paths": [
-              "api/node_modules",
+              "node_modules",
             ],
             "policy": "pull-push",
           },
@@ -34,13 +34,13 @@ exports[`matches snapshot 1`] = `
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="api"",
+          "export APP_PATH="."",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
+          "cd .",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -57,38 +57,42 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🔨 app | dev ": {
+      "🔸 myWorkspace 🔨 app | dev ": {
         "artifacts": {
+          "exclude": [
+            "api/.env",
+            "www/.env",
+          ],
           "expire_in": "1 day",
           "paths": [
-            "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
+            "www/.next",
+            "www/dist",
           ],
-          "reports": {
-            "junit": undefined,
-          },
+          "reports": {},
           "when": "always",
         },
         "cache": [
           {
-            "key": "api-yarn",
+            "key": ".-yarn",
             "paths": [
-              "api/.yarn",
+              ".yarn",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-node-modules",
+            "key": ".-node-modules",
             "paths": [
-              "api/node_modules",
+              "node_modules",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-next-cache",
+            "key": "myWorkspace-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
+              "www/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -105,37 +109,61 @@ exports[`matches snapshot 1`] = `
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="dev"",
-          "export APP_DIR="api"",
-          "export ENV_TYPE="dev"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"",
-          "export DB_NAME="pan-test-app-dev-api"",
-          "export DB_USER="my-user"",
-          "export DB_PASSWORD="$CL_dev_api_DB_PASSWORD"",
-          "export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"",
-          "export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_migration="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migration:run"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > api/.env
+ENV_SHORT=dev
+APP_DIR=api
+ENV_TYPE=dev
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
+DB_NAME=pan-test-app-dev-api
+DB_USER=my-user
+DB_PASSWORD=$CL_dev_api_DB_PASSWORD
+DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+CLOUD_RUN_JOB_TRIGGER_URL_migration=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migration:run
+CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_dev_api_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > www/.env
+ENV_SHORT=dev
+APP_DIR=www
+ENV_TYPE=dev
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_dev_www_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix
+API_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
+          "cd .",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -152,7 +180,85 @@ exports[`matches snapshot 1`] = `
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🔨 docker | dev ": {
+      "🔸 myWorkspace 🛡 audit": {
+        "allow_failure": true,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="."",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "cd .",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "🔸 myWorkspace 🧪 test": {
+        "cache": [
+          {
+            "key": ".-yarn",
+            "paths": [
+              ".yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": ".-node-modules",
+            "paths": [
+              "node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="."",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd .",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "🔹 api 🔨 docker | dev ": {
         "cache": [
           {
             "key": "api-yarn",
@@ -165,7 +271,10 @@ exports[`matches snapshot 1`] = `
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "api 🔨 app | dev ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | dev ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -223,7 +332,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "api 🚀 Deploy | dev ": {
+      "🔹 api 🚀 Deploy | dev ": {
         "allow_failure": false,
         "artifacts": {
           "reports": {
@@ -233,7 +342,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "environment": {
           "auto_stop_in": "4 weeks",
           "name": "dev/api",
-          "on_stop": "api 🛑 Stop ⚠️ | dev ",
+          "on_stop": "🔹 api 🛑 Stop ⚠️ | dev ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -241,27 +350,23 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "needs": [
           {
             "artifacts": false,
-            "job": "api 👮 lint",
+            "job": "🔸 myWorkspace 👮 lint",
           },
           {
             "artifacts": false,
-            "job": "api 🔨 app | dev ",
+            "job": "🔸 myWorkspace 🧪 test",
           },
           {
             "artifacts": false,
-            "job": "api 🔨 docker | dev ",
+            "job": "🔸 myWorkspace 🛡 audit",
           },
           {
             "artifacts": false,
-            "job": "api 🧪 test",
+            "job": "🔹 api 🔨 docker | dev ",
           },
           {
             "artifacts": true,
-            "job": "api 🧾 sbom | dev ",
-          },
-          {
-            "artifacts": false,
-            "job": "api 🛡 audit",
+            "job": "🔹 api 🧾 sbom | dev ",
           },
         ],
         "retry": {
@@ -401,7 +506,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🛑 Stop ⚠️ | dev ": {
+      "🔹 api 🛑 Stop ⚠️ | dev ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -459,85 +564,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🛡 audit": {
-        "allow_failure": true,
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="api"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "cd api",
-          "yarn npm audit --environment production",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "api 🧪 test": {
-        "cache": [
-          {
-            "key": "api-yarn",
-            "paths": [
-              "api/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "api-node-modules",
-            "paths": [
-              "api/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-testing-chrome:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="api"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn test",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "api 🧾 sbom | dev ": {
+      "🔹 api 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -562,147 +589,7 @@ EOF
         "stage": "build",
         "variables": {},
       },
-      "www 👮 lint": {
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="www"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn lint",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🔨 app | dev ": {
-        "artifacts": {
-          "expire_in": "1 day",
-          "paths": [
-            "www/__build_info.json",
-            "www/dist",
-            "www/.next",
-          ],
-          "reports": {
-            "junit": undefined,
-          },
-          "when": "always",
-        },
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-next-cache",
-            "paths": [
-              "www/.next/cache/",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="dev"",
-          "export APP_DIR="www"",
-          "export ENV_TYPE="dev"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix"",
-          "export API_URL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"API_URL\\"]"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn build",
-        ],
-        "stage": "build",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🔨 docker | dev ": {
+      "🔹 www 🔨 docker | dev ": {
         "cache": [
           {
             "key": "www-yarn",
@@ -715,7 +602,10 @@ EOF
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | dev ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | dev ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -773,7 +663,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "www 🚀 Deploy | dev ": {
+      "🔹 www 🚀 Deploy | dev ": {
         "allow_failure": false,
         "artifacts": {
           "reports": {
@@ -783,7 +673,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "environment": {
           "auto_stop_in": "4 weeks",
           "name": "dev/www",
-          "on_stop": "www 🛑 Stop ⚠️ | dev ",
+          "on_stop": "🔹 www 🛑 Stop ⚠️ | dev ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -791,27 +681,23 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "needs": [
           {
             "artifacts": false,
-            "job": "www 👮 lint",
+            "job": "🔸 myWorkspace 👮 lint",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 app | dev ",
+            "job": "🔸 myWorkspace 🧪 test",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 docker | dev ",
+            "job": "🔸 myWorkspace 🛡 audit",
           },
           {
             "artifacts": false,
-            "job": "www 🧪 test",
+            "job": "🔹 www 🔨 docker | dev ",
           },
           {
             "artifacts": true,
-            "job": "www 🧾 sbom | dev ",
-          },
-          {
-            "artifacts": false,
-            "job": "www 🛡 audit",
+            "job": "🔹 www 🧾 sbom | dev ",
           },
         ],
         "retry": {
@@ -913,7 +799,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛑 Stop ⚠️ | dev ": {
+      "🔹 www 🛑 Stop ⚠️ | dev ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -966,85 +852,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛡 audit": {
-        "allow_failure": true,
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="www"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "cd www",
-          "yarn npm audit --environment production",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🧪 test": {
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-testing-chrome:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="www"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn test",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🧾 sbom | dev ": {
+      "🔹 www 🧾 sbom | dev ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -1139,19 +947,19 @@ EOF
   "mr": {
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
-      "api 👮 lint": {
+      "🔸 myWorkspace 👮 lint": {
         "cache": [
           {
-            "key": "api-yarn",
+            "key": ".-yarn",
             "paths": [
-              "api/.yarn",
+              ".yarn",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-node-modules",
+            "key": ".-node-modules",
             "paths": [
-              "api/node_modules",
+              "node_modules",
             ],
             "policy": "pull-push",
           },
@@ -1168,13 +976,13 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="api"",
+          "export APP_PATH="."",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
+          "cd .",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -1191,38 +999,42 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🔨 app | review ": {
+      "🔸 myWorkspace 🔨 app | review ": {
         "artifacts": {
+          "exclude": [
+            "api/.env",
+            "www/.env",
+          ],
           "expire_in": "1 day",
           "paths": [
-            "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
+            "www/.next",
+            "www/dist",
           ],
-          "reports": {
-            "junit": undefined,
-          },
+          "reports": {},
           "when": "always",
         },
         "cache": [
           {
-            "key": "api-yarn",
+            "key": ".-yarn",
             "paths": [
-              "api/.yarn",
+              ".yarn",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-node-modules",
+            "key": ".-node-modules",
             "paths": [
-              "api/node_modules",
+              "node_modules",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-next-cache",
+            "key": "myWorkspace-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
+              "www/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -1239,37 +1051,61 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="review"",
-          "export APP_DIR="api"",
-          "export ENV_TYPE="review"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"",
-          "export DB_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"",
-          "export DB_USER="my-user"",
-          "export DB_PASSWORD="$CL_review_api_DB_PASSWORD"",
-          "export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"",
-          "export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_migration="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-migration:run"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-send-reminders:run"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > api/.env
+ENV_SHORT=review
+APP_DIR=api
+ENV_TYPE=review
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
+DB_NAME=pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api
+DB_USER=my-user
+DB_PASSWORD=$CL_review_api_DB_PASSWORD
+DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+CLOUD_RUN_JOB_TRIGGER_URL_migration=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migration:run
+CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders:run
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_review_api_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_review_api_GCLOUD_RUN_canonicalHostSuffix
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > www/.env
+ENV_SHORT=review
+APP_DIR=www
+ENV_TYPE=review
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_review_www_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_review_www_GCLOUD_RUN_canonicalHostSuffix
+API_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
+          "cd .",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -1286,7 +1122,85 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🔨 docker | review ": {
+      "🔸 myWorkspace 🛡 audit": {
+        "allow_failure": true,
+        "image": "path/to/docker/jobs-default:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="."",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "cd .",
+          "yarn npm audit --environment production",
+        ],
+        "stage": "test",
+        "variables": {
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "🔸 myWorkspace 🧪 test": {
+        "cache": [
+          {
+            "key": ".-yarn",
+            "paths": [
+              ".yarn",
+            ],
+            "policy": "pull-push",
+          },
+          {
+            "key": ".-node-modules",
+            "paths": [
+              "node_modules",
+            ],
+            "policy": "pull-push",
+          },
+        ],
+        "image": "path/to/docker/jobs-testing-chrome:the-version",
+        "interruptible": true,
+        "needs": [],
+        "retry": {
+          "max": 2,
+          "when": [
+            "runner_system_failure",
+            "stuck_or_timeout_failure",
+          ],
+        },
+        "script": [
+          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
+          "export APP_PATH="."",
+          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "cd .",
+          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
+          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
+          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
+          "yarn install --immutable",
+          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
+          "yarn test",
+        ],
+        "stage": "test",
+        "variables": {
+          "KUBERNETES_CPU_REQUEST": "0.5",
+          "KUBERNETES_MEMORY_LIMIT": "4Gi",
+          "KUBERNETES_MEMORY_REQUEST": "2Gi",
+        },
+      },
+      "🔹 api 🔨 docker | review ": {
         "cache": [
           {
             "key": "api-yarn",
@@ -1299,7 +1213,10 @@ EOF
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "api 🔨 app | review ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | review ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1357,7 +1274,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "api 🚀 Deploy | review ": {
+      "🔹 api 🚀 Deploy | review ": {
         "allow_failure": false,
         "artifacts": {
           "reports": {
@@ -1367,7 +1284,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "environment": {
           "auto_stop_in": "1 week",
           "name": "review/$CI_COMMIT_REF_NAME/api",
-          "on_stop": "api 🛑 Stop ⚠️ | review ",
+          "on_stop": "🔹 api 🛑 Stop ⚠️ | review ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -1375,27 +1292,23 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "needs": [
           {
             "artifacts": false,
-            "job": "api 👮 lint",
+            "job": "🔸 myWorkspace 👮 lint",
           },
           {
             "artifacts": false,
-            "job": "api 🔨 app | review ",
+            "job": "🔸 myWorkspace 🧪 test",
           },
           {
             "artifacts": false,
-            "job": "api 🔨 docker | review ",
+            "job": "🔸 myWorkspace 🛡 audit",
           },
           {
             "artifacts": false,
-            "job": "api 🧪 test",
+            "job": "🔹 api 🔨 docker | review ",
           },
           {
             "artifacts": true,
-            "job": "api 🧾 sbom | review ",
-          },
-          {
-            "artifacts": false,
-            "job": "api 🛡 audit",
+            "job": "🔹 api 🧾 sbom | review ",
           },
         ],
         "retry": {
@@ -1538,7 +1451,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🛑 Stop ⚠️ | review ": {
+      "🔹 api 🛑 Stop ⚠️ | review ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -1608,85 +1521,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🛡 audit": {
-        "allow_failure": true,
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="api"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "cd api",
-          "yarn npm audit --environment production",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "api 🧪 test": {
-        "cache": [
-          {
-            "key": "api-yarn",
-            "paths": [
-              "api/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "api-node-modules",
-            "paths": [
-              "api/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-testing-chrome:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="api"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn test",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "api 🧾 sbom | review ": {
+      "🔹 api 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -1711,147 +1546,7 @@ EOF
         "stage": "build",
         "variables": {},
       },
-      "www 👮 lint": {
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="www"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn lint",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🔨 app | review ": {
-        "artifacts": {
-          "expire_in": "1 day",
-          "paths": [
-            "www/__build_info.json",
-            "www/dist",
-            "www/.next",
-          ],
-          "reports": {
-            "junit": undefined,
-          },
-          "when": "always",
-        },
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-next-cache",
-            "paths": [
-              "www/.next/cache/",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="review"",
-          "export APP_DIR="www"",
-          "export ENV_TYPE="review"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_review_www_GCLOUD_RUN_canonicalHostSuffix"",
-          "export API_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"API_URL\\"]"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn build",
-        ],
-        "stage": "build",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🔨 docker | review ": {
+      "🔹 www 🔨 docker | review ": {
         "cache": [
           {
             "key": "www-yarn",
@@ -1864,7 +1559,10 @@ EOF
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | review ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | review ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -1922,7 +1620,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "www 🚀 Deploy | review ": {
+      "🔹 www 🚀 Deploy | review ": {
         "allow_failure": false,
         "artifacts": {
           "reports": {
@@ -1932,7 +1630,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "environment": {
           "auto_stop_in": "1 week",
           "name": "review/$CI_COMMIT_REF_NAME/www",
-          "on_stop": "www 🛑 Stop ⚠️ | review ",
+          "on_stop": "🔹 www 🛑 Stop ⚠️ | review ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -1940,27 +1638,23 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "needs": [
           {
             "artifacts": false,
-            "job": "www 👮 lint",
+            "job": "🔸 myWorkspace 👮 lint",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 app | review ",
+            "job": "🔸 myWorkspace 🧪 test",
           },
           {
             "artifacts": false,
-            "job": "www 🔨 docker | review ",
+            "job": "🔸 myWorkspace 🛡 audit",
           },
           {
             "artifacts": false,
-            "job": "www 🧪 test",
+            "job": "🔹 www 🔨 docker | review ",
           },
           {
             "artifacts": true,
-            "job": "www 🧾 sbom | review ",
-          },
-          {
-            "artifacts": false,
-            "job": "www 🛡 audit",
+            "job": "🔹 www 🧾 sbom | review ",
           },
         ],
         "retry": {
@@ -2065,7 +1759,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛑 Stop ⚠️ | review ": {
+      "🔹 www 🛑 Stop ⚠️ | review ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -2121,85 +1815,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛡 audit": {
-        "allow_failure": true,
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="www"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "cd www",
-          "yarn npm audit --environment production",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🧪 test": {
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-testing-chrome:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_PATH="www"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn test",
-        ],
-        "stage": "test",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🧾 sbom | review ": {
+      "🔹 www 🧾 sbom | review ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -2294,38 +1910,42 @@ EOF
   "taggedRelease": {
     "image": "path/to/docker/jobs-default:the-version",
     "jobs": {
-      "api 🔨 app | prod ": {
+      "🔸 myWorkspace 🔨 app | prod ": {
         "artifacts": {
+          "exclude": [
+            "api/.env",
+            "www/.env",
+          ],
           "expire_in": "1 day",
           "paths": [
-            "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
+            "www/.next",
+            "www/dist",
           ],
-          "reports": {
-            "junit": undefined,
-          },
+          "reports": {},
           "when": "always",
         },
         "cache": [
           {
-            "key": "api-yarn",
+            "key": ".-yarn",
             "paths": [
-              "api/.yarn",
+              ".yarn",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-node-modules",
+            "key": ".-node-modules",
             "paths": [
-              "api/node_modules",
+              "node_modules",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-next-cache",
+            "key": "myWorkspace-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
+              "www/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -2342,37 +1962,61 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="prod"",
-          "export APP_DIR="api"",
-          "export ENV_TYPE="prod"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"",
-          "export DB_NAME="pan-test-app-prod-api"",
-          "export DB_USER="my-user"",
-          "export DB_PASSWORD="$CL_prod_api_DB_PASSWORD"",
-          "export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"",
-          "export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_migration="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-migration:run"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-send-reminders:run"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > api/.env
+ENV_SHORT=prod
+APP_DIR=api
+ENV_TYPE=prod
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
+DB_NAME=pan-test-app-prod-api
+DB_USER=my-user
+DB_PASSWORD=$CL_prod_api_DB_PASSWORD
+DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+CLOUD_RUN_JOB_TRIGGER_URL_migration=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-migration:run
+CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-send-reminders:run
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_prod_api_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > www/.env
+ENV_SHORT=prod
+APP_DIR=www
+ENV_TYPE=prod
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_prod_www_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix
+API_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
+          "cd .",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -2389,38 +2033,42 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🔨 app | stage ": {
+      "🔸 myWorkspace 🔨 app | stage ": {
         "artifacts": {
+          "exclude": [
+            "api/.env",
+            "www/.env",
+          ],
           "expire_in": "1 day",
           "paths": [
-            "api/__build_info.json",
-            "api/dist",
             "api/.next",
+            "api/dist",
+            "www/.next",
+            "www/dist",
           ],
-          "reports": {
-            "junit": undefined,
-          },
+          "reports": {},
           "when": "always",
         },
         "cache": [
           {
-            "key": "api-yarn",
+            "key": ".-yarn",
             "paths": [
-              "api/.yarn",
+              ".yarn",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-node-modules",
+            "key": ".-node-modules",
             "paths": [
-              "api/node_modules",
+              "node_modules",
             ],
             "policy": "pull-push",
           },
           {
-            "key": "api-next-cache",
+            "key": "myWorkspace-next-cache",
             "paths": [
-              "api/.next/cache/",
+              "api/.next/cache",
+              "www/.next/cache",
             ],
             "policy": "pull-push",
           },
@@ -2437,37 +2085,61 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="stage"",
-          "export APP_DIR="api"",
-          "export ENV_TYPE="stage"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"",
-          "export DB_NAME="pan-test-app-stage-api"",
-          "export DB_USER="my-user"",
-          "export DB_PASSWORD="$CL_stage_api_DB_PASSWORD"",
-          "export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"",
-          "export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_migration="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migration:run"",
-          "export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migration\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > api/.env
+ENV_SHORT=stage
+APP_DIR=api
+ENV_TYPE=stage
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
+DB_NAME=pan-test-app-stage-api
+DB_USER=my-user
+DB_PASSWORD=$CL_stage_api_DB_PASSWORD
+DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+CLOUD_RUN_JOB_TRIGGER_URL_migration=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migration:run
+CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_stage_api_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migration","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"",
+          "echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"",
+          "cat <<EOF > www/.env
+ENV_SHORT=stage
+APP_DIR=www
+ENV_TYPE=stage
+BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
+BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
+BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
+HOST=$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL=https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_INTERNAL=$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+HOST_CANONICAL=$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+DEPLOY_CLOUD_RUN_REGION=europe-west6
+GCLOUD_DEPLOY_credentialsKey=$CL_stage_www_GCLOUD_DEPLOY_credentialsKey
+GCLOUD_RUN_canonicalHostSuffix=$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix
+API_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
+EOF",
+          "echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd api",
+          "cd .",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
@@ -2484,7 +2156,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "2Gi",
         },
       },
-      "api 🔨 docker | prod ": {
+      "🔹 api 🔨 docker | prod ": {
         "cache": [
           {
             "key": "api-yarn",
@@ -2497,7 +2169,10 @@ EOF
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "api 🔨 app | prod ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -2555,7 +2230,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "api 🔨 docker | stage ": {
+      "🔹 api 🔨 docker | stage ": {
         "cache": [
           {
             "key": "api-yarn",
@@ -2568,7 +2243,10 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "api 🔨 app | stage ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -2626,7 +2304,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "api 🚀 Deploy | prod ": {
+      "🔹 api 🚀 Deploy | prod ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -2636,7 +2314,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "environment": {
           "auto_stop_in": undefined,
           "name": "prod/api",
-          "on_stop": "api 🛑 Stop ⚠️ | prod ",
+          "on_stop": "🔹 api 🛑 Stop ⚠️ | prod ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -2644,15 +2322,11 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "needs": [
           {
             "artifacts": false,
-            "job": "api 🔨 app | prod ",
-          },
-          {
-            "artifacts": false,
-            "job": "api 🔨 docker | prod ",
+            "job": "🔹 api 🔨 docker | prod ",
           },
           {
             "artifacts": true,
-            "job": "api 🧾 sbom | prod ",
+            "job": "🔹 api 🧾 sbom | prod ",
           },
         ],
         "retry": {
@@ -2792,7 +2466,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🚀 Deploy | stage ": {
+      "🔹 api 🚀 Deploy | stage ": {
         "allow_failure": false,
         "artifacts": {
           "reports": {
@@ -2802,7 +2476,7 @@ EOF
         "environment": {
           "auto_stop_in": undefined,
           "name": "stage/api",
-          "on_stop": "api 🛑 Stop ⚠️ | stage ",
+          "on_stop": "🔹 api 🛑 Stop ⚠️ | stage ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -2810,15 +2484,11 @@ EOF
         "needs": [
           {
             "artifacts": false,
-            "job": "api 🔨 app | stage ",
-          },
-          {
-            "artifacts": false,
-            "job": "api 🔨 docker | stage ",
+            "job": "🔹 api 🔨 docker | stage ",
           },
           {
             "artifacts": true,
-            "job": "api 🧾 sbom | stage ",
+            "job": "🔹 api 🧾 sbom | stage ",
           },
         ],
         "retry": {
@@ -2958,7 +2628,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🛑 Stop ⚠️ | prod ": {
+      "🔹 api 🛑 Stop ⚠️ | prod ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -3016,7 +2686,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🛑 Stop ⚠️ | stage ": {
+      "🔹 api 🛑 Stop ⚠️ | stage ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -3074,7 +2744,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "api 🧾 sbom | prod ": {
+      "🔹 api 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -3099,7 +2769,7 @@ EOF
         "stage": "build",
         "variables": {},
       },
-      "api 🧾 sbom | stage ": {
+      "🔹 api 🧾 sbom | stage ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -3124,183 +2794,7 @@ EOF
         "stage": "build",
         "variables": {},
       },
-      "www 🔨 app | prod ": {
-        "artifacts": {
-          "expire_in": "1 day",
-          "paths": [
-            "www/__build_info.json",
-            "www/dist",
-            "www/.next",
-          ],
-          "reports": {
-            "junit": undefined,
-          },
-          "when": "always",
-        },
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-next-cache",
-            "paths": [
-              "www/.next/cache/",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="prod"",
-          "export APP_DIR="www"",
-          "export ENV_TYPE="prod"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix"",
-          "export API_URL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"API_URL\\"]"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn build",
-        ],
-        "stage": "build",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🔨 app | stage ": {
-        "artifacts": {
-          "expire_in": "1 day",
-          "paths": [
-            "www/__build_info.json",
-            "www/dist",
-            "www/.next",
-          ],
-          "reports": {
-            "junit": undefined,
-          },
-          "when": "always",
-        },
-        "cache": [
-          {
-            "key": "www-yarn",
-            "paths": [
-              "www/.yarn",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-node-modules",
-            "paths": [
-              "www/node_modules",
-            ],
-            "policy": "pull-push",
-          },
-          {
-            "key": "www-next-cache",
-            "paths": [
-              "www/.next/cache/",
-            ],
-            "policy": "pull-push",
-          },
-        ],
-        "image": "path/to/docker/jobs-default:the-version",
-        "interruptible": true,
-        "needs": [],
-        "retry": {
-          "max": 2,
-          "when": [
-            "runner_system_failure",
-            "stuck_or_timeout_failure",
-          ],
-        },
-        "script": [
-          "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export ENV_SHORT="stage"",
-          "export APP_DIR="www"",
-          "export ENV_TYPE="stage"",
-          "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
-          "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
-          "export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"",
-          "export HOST="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL="https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_INTERNAL="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export HOST_CANONICAL="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"",
-          "export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"",
-          "export DEPLOY_CLOUD_RUN_REGION="europe-west6"",
-          "export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"",
-          "export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix"",
-          "export API_URL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"",
-          "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"API_URL\\"]"",
-          "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd www",
-          "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
-          "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
-          "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
-          "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"",
-          "yarn install --immutable",
-          "echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"",
-          "yarn build",
-        ],
-        "stage": "build",
-        "variables": {
-          "KUBERNETES_CPU_REQUEST": "0.5",
-          "KUBERNETES_MEMORY_LIMIT": "4Gi",
-          "KUBERNETES_MEMORY_REQUEST": "2Gi",
-        },
-      },
-      "www 🔨 docker | prod ": {
+      "🔹 www 🔨 docker | prod ": {
         "cache": [
           {
             "key": "www-yarn",
@@ -3313,7 +2807,10 @@ EOF
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | prod ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | prod ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -3371,7 +2868,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "www 🔨 docker | stage ": {
+      "🔹 www 🔨 docker | stage ": {
         "cache": [
           {
             "key": "www-yarn",
@@ -3384,7 +2881,10 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "image": "path/to/docker/docker-build:the-version",
         "interruptible": true,
         "needs": [
-          "www 🔨 app | stage ",
+          {
+            "artifacts": true,
+            "job": "🔸 myWorkspace 🔨 app | stage ",
+          },
         ],
         "retry": {
           "max": 2,
@@ -3442,7 +2942,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
           "KUBERNETES_MEMORY_REQUEST": "1Gi",
         },
       },
-      "www 🚀 Deploy | prod ": {
+      "🔹 www 🚀 Deploy | prod ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -3452,7 +2952,7 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "environment": {
           "auto_stop_in": undefined,
           "name": "prod/www",
-          "on_stop": "www 🛑 Stop ⚠️ | prod ",
+          "on_stop": "🔹 www 🛑 Stop ⚠️ | prod ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -3460,15 +2960,11 @@ COPY --chown=node:node .yarn /app/.yarn"",
         "needs": [
           {
             "artifacts": false,
-            "job": "www 🔨 app | prod ",
-          },
-          {
-            "artifacts": false,
-            "job": "www 🔨 docker | prod ",
+            "job": "🔹 www 🔨 docker | prod ",
           },
           {
             "artifacts": true,
-            "job": "www 🧾 sbom | prod ",
+            "job": "🔹 www 🧾 sbom | prod ",
           },
         ],
         "retry": {
@@ -3570,7 +3066,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🚀 Deploy | stage ": {
+      "🔹 www 🚀 Deploy | stage ": {
         "allow_failure": false,
         "artifacts": {
           "reports": {
@@ -3580,7 +3076,7 @@ EOF
         "environment": {
           "auto_stop_in": undefined,
           "name": "stage/www",
-          "on_stop": "www 🛑 Stop ⚠️ | stage ",
+          "on_stop": "🔹 www 🛑 Stop ⚠️ | stage ",
           "url": "$CL_GITLAB_ENVIRONMENT_URL",
         },
         "image": "path/to/docker/gcloud:the-version",
@@ -3588,15 +3084,11 @@ EOF
         "needs": [
           {
             "artifacts": false,
-            "job": "www 🔨 app | stage ",
-          },
-          {
-            "artifacts": false,
-            "job": "www 🔨 docker | stage ",
+            "job": "🔹 www 🔨 docker | stage ",
           },
           {
             "artifacts": true,
-            "job": "www 🧾 sbom | stage ",
+            "job": "🔹 www 🧾 sbom | stage ",
           },
         ],
         "retry": {
@@ -3698,7 +3190,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛑 Stop ⚠️ | prod ": {
+      "🔹 www 🛑 Stop ⚠️ | prod ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -3751,7 +3243,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🛑 Stop ⚠️ | stage ": {
+      "🔹 www 🛑 Stop ⚠️ | stage ": {
         "allow_failure": true,
         "artifacts": {
           "reports": {
@@ -3804,7 +3296,7 @@ EOF
           "KUBERNETES_MEMORY_REQUEST": "200Mi",
         },
       },
-      "www 🧾 sbom | prod ": {
+      "🔹 www 🧾 sbom | prod ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [
@@ -3829,7 +3321,7 @@ EOF
         "stage": "build",
         "variables": {},
       },
-      "www 🧾 sbom | stage ": {
+      "🔹 www 🧾 sbom | stage ": {
         "allow_failure": true,
         "artifacts": {
           "paths": [

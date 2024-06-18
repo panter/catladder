@@ -83,11 +83,7 @@ const getProxyInfoForKubernetes = async (
     throw new Error("unsupported");
   }
 
-  const envVars = await getEnvVarsResolved(
-    vorpal,
-    context.env,
-    context.componentName,
-  );
+  const envVars = await getEnvVarsResolved(vorpal, context.env, context.name);
   // bit hacky, would be nicer if we would also declare this through env vars
   const cloudSqlValues = createKubernetesCloudsqlBaseValues(context);
 
@@ -116,11 +112,7 @@ const getProxyInfoForCloudRun = async (
     throw new Error("unsupported");
   }
 
-  const envVars = await getEnvVarsResolved(
-    vorpal,
-    context.env,
-    context.componentName,
-  );
+  const envVars = await getEnvVarsResolved(vorpal, context.env, context.name);
 
   const DB_PASSWORD = envVars?.DB_PASSWORD;
   const DB_USER = envVars?.DB_USER;

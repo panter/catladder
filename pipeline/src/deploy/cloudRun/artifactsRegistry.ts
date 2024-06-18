@@ -44,8 +44,7 @@ export const getArtifactsRegistryImageName = (
   const gcloudImagePath = [
     dockerUrl,
     context.env,
-    context.componentName,
-
+    context.name,
     ...(context.environment.reviewSlug && !lecacyReviewImageName
       ? [context.environment.reviewSlug]
       : []),
@@ -58,7 +57,7 @@ export const getArtifactsRegistryBuildCacheImage = (
 ) => {
   const dockerUrl = getArtifactsRegistryDockerUrl(context);
   // does not include env, so that after merge, you might get more cache hits (review-->dev)
-  const gcloudImagePath = [dockerUrl, "caches", context.componentName];
+  const gcloudImagePath = [dockerUrl, "caches", context.name];
   return gcloudImagePath.join("/");
 };
 

@@ -63,7 +63,7 @@ export const setupKubernetes = async (
   // we name the service account and the role and the role binding with the same name
   // we currently create one per component to better separate them
   instance.log("ensuring service accounts...");
-  const serviceAccountName = `cl-${context.componentName}-deploy`;
+  const serviceAccountName = `cl-${context.name}-deploy`;
   const KUBE_URL = await exec(
     `TERM=dumb kubectl cluster-info | grep -E 'Kubernetes master|Kubernetes control plane' | awk '/http/ {print $NF}'`,
   ).then((s) => s.stdout.trim());
@@ -164,7 +164,7 @@ EOF
     instance,
     vars,
     context.env,
-    context.componentName,
+    context.name,
     false, // no backup
   );
   instance.log("done!");

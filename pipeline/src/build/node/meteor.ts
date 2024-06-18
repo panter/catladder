@@ -5,7 +5,7 @@ import type { ComponentContext } from "../../types/context";
 
 import type { CatladderJob } from "../../types/jobs";
 
-import { createBuildJobs } from "../base";
+import { createComponentBuildJobs } from "../base";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
@@ -13,7 +13,7 @@ import { getYarnInstall } from "./yarn";
 
 const getMeteorCache = (context: ComponentContext): GitlabJobCache[] => [
   {
-    key: context.componentName + "meteor-build-cache",
+    key: context.name + "meteor-build-cache",
     policy: "pull-push",
     paths: [
       join(context.build.dir, ".meteor/local/resolver-result-cache.json"),
@@ -34,7 +34,7 @@ export const createMeteorBuildJobs = (
 
   const yarnInstall = getYarnInstall(context);
 
-  return createBuildJobs(context, {
+  return createComponentBuildJobs(context, {
     appBuild:
       buildConfig.buildCommand !== null
         ? {
@@ -54,12 +54,6 @@ export const createMeteorBuildJobs = (
 
               "cp ./__build_info.json ./dist/bundle/programs/server",
             ],
-            artifacts: {
-              paths: [
-                context.build.dir + "/__build_info.json",
-                context.build.dir + "/dist",
-              ],
-            },
           }
         : undefined,
     dockerBuild: {

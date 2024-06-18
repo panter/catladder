@@ -129,6 +129,12 @@ export type BuildConfigMeteor = BuildConfigNodeBase & {
   docker?: Omit<BuildConfigDockerBuiltInMeteor, "type"> | BuildConfigDocker;
 };
 
+export type BuildConfigNodeLike =
+  | BuildConfigNode
+  | BuildConfigNodeStatic
+  | BuildConfigStorybook
+  | BuildConfigMeteor;
+
 type BuildConfigDockerWithAdditions = {
   /**
    * Custom Dockerfile lines integrated in the generated Dockerfile before the standard build steps.
@@ -261,7 +267,18 @@ export type BuildConfigStorybook = BuildConfigNodeBase & {
   type: "storybook";
   startCommand?: never;
 };
-export type BuildConfig =
+
+export type BuildConfigFromWorkspace = {
+  from: string;
+  docker?: BuildConfigDocker;
+  startCommand?: string;
+  /**
+   * additional paths for artifacts,
+   * by default "dist" and ".next" are allways included
+   */
+  artifactsPaths?: string[];
+};
+export type BuildConfigStandalone =
   | BuildConfigNode
   | BuildConfigNodeStatic
   | BuildConfigStorybook
@@ -269,16 +286,63 @@ export type BuildConfig =
   | BuildConfigCustom
   | BuildConfigRails;
 
-export type BuildConfigType = BuildConfig["type"];
+export type BuildConfig = BuildConfigFromWorkspace | BuildConfigStandalone;
 
-export type BuildConfigGeneric<T extends BuildConfigType> = Extract<
+export type BuildConfigStandaloneType = BuildConfigStandalone["type"];
+
+export type BuildConfigGeneric<T extends BuildConfigStandaloneType> = Extract<
   BuildConfig,
   { type: T }
 >;
 
-export const isOfBuildType = <T extends Array<BuildConfigType>>(
+export const isStandaloneBuildConfig = (
+  t: BuildConfig | false,
+): t is BuildConfigStandalone => {
+  if (!t) return false;
+  return !("from" in t);
+};
+
+export const isOfBuildType = <T extends Array<BuildConfigStandaloneType>>(
   t: BuildConfig,
   ...types: T
 ): t is Extract<BuildConfig, { type: T[number] }> => {
+  if (!isStandaloneBuildConfig(t)) return false;
   return types.includes(t.type);
 };
+
+export type WorkspaceBuildConfigBase = {
+  dir?: string;
+  /**
+   * customize lint, set false to disable
+   */
+  lint?: false | TestJobCustom;
+
+  /**
+   * customize test, set false to disable
+   */
+  test?: false | TestJobCustom;
+
+  /**
+   * customize audit, set false to disable
+   */
+  audit?: false | TestJobCustom;
+  /**
+   * additional vars only for the runner.
+   * Also if you use services: that require env vars, you need to set them here.
+   *
+   */
+  runnerVariables?: Record<string, string>;
+
+  /**
+   * additional CI/CD artifacts reports,
+   * use to display information in merge requests, pipeline views and security dashboards.
+   */
+  artifactsReports?: BuildConfigArtifactsReports;
+};
+
+export type WorkspaceBuildConfigNode = {
+  type: "node";
+  buildCommand?: string | string[];
+} & WorkspaceBuildConfigBase;
+
+export type WorkspaceBuildConfig = WorkspaceBuildConfigNode;

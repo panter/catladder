@@ -14,17 +14,7 @@ export default async function (context: ComponentContext) {
       appName: context.fullConfig.appName,
       environment: context.env,
       components: Object.keys(context.fullConfig.components).join("_"), // limited chars available...
-      buildTypes: Object.values(context.fullConfig.components)
-        .map((config) => config.build.type)
-        .join("_"), // limited chars available...
-      ...Object.fromEntries(
-        Object.entries(context.fullConfig.components).map(
-          ([componentName, config]) => [
-            "buildType_" + componentName,
-            config.build.type,
-          ],
-        ),
-      ),
+
       ...(context.fullConfig.meta?.labels ?? {}),
     },
   };

@@ -3,8 +3,11 @@ import {
   requiresDockerBuild,
 } from "../../build/docker";
 import { SBOM_BUILD_JOB_NAME } from "../../build/sbom";
-import type { ComponentContext } from "../../types/context";
-import type { CatladderJob } from "../../types/jobs";
+import {
+  componentContextHasWorkspaceBuild,
+  type ComponentContext,
+} from "../../types/context";
+import type { BaseStage, CatladderJob } from "../../types/jobs";
 import { sbomDeactivated } from "../sbom";
 import { contextIsStoppable } from "../utils";
 import { STOP_JOB_NAME } from "./stop";
@@ -74,15 +77,38 @@ export const createDeployJob = (
     ],
     // we don't want to deploy when there is a broken test
     needsStages: [
-      {
-        stage: "build",
-        artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
-      },
+      ...(componentContextHasWorkspaceBuild(context)
+        ? hasDocker // docker build is per component,
+          ? [
+              // we don't need artifacts, but have to wait for the component build
+              {
+                stage: "build" as BaseStage,
+                artifacts: false,
+              },
+            ]
+          : [
+              {
+                // pick build artifacts from workspace build
+                stage: "build" as BaseStage,
+                artifacts: true,
+                workspaceName: context.build.workspaceName,
+              },
+            ]
+        : [
+            {
+              stage: "build" as BaseStage,
+              artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
+            },
+          ]),
       {
         stage: "test",
         artifacts: false,
+        // use test from workspace build
+        workspaceName: componentContextHasWorkspaceBuild(context)
+          ? context.build.workspaceName
+          : undefined,
       },
-    ], // workaround for https://gitlab.com/gitlab-org/gitlab/-/issues/220758
+    ],
     when: whenDeploy === "auto" ? "on_success" : "manual",
 
     allow_failure: whenDeploy === "manual" ? true : false,

@@ -14,9 +14,7 @@ export const setupContext = async (
     "==================================================================================",
   );
 
-  instance.log(
-    "🐱 🔧 setting up " + context.env + ":" + context.componentName + "...",
-  );
+  instance.log("🐱 🔧 setting up " + context.env + ":" + context.name + "...");
   instance.log("");
   if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
     await setupCloudRun(instance, context);
@@ -28,7 +26,7 @@ export const setupContext = async (
   }
 
   instance.log("");
-  instance.log("✅ " + context.env + ":" + context.componentName + " done!");
+  instance.log("✅ " + context.env + ":" + context.name + " done!");
 
   instance.log("");
 };

@@ -1,9 +1,13 @@
 import { merge } from "lodash";
-import { join } from "path";
-import type { ComponentContext } from "../..";
+import type {
+  BuildContextStandalone,
+  ComponentContext,
+  WorkspaceContext,
+} from "../..";
 import { getRunnerImage } from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
+import { createBuildJobArtifacts } from "../artifacts/createBuildJobArtifact";
 import { ensureNodeVersion } from "../node/yarn";
 import {
   APP_BUILD_JOB_NAME,
@@ -15,9 +19,9 @@ import {
   writeDotEnv,
 } from "./writeDotEnv";
 
-export type AppBuildJobDefinition = Partial<CatladderJob>;
+export type AppBuildJobDefinition = Partial<Omit<CatladderJob, "artifacts">>;
 export const createAppBuildJob = (
-  context: ComponentContext,
+  context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
   { script, variables, runnerVariables, ...def }: AppBuildJobDefinition,
 ): CatladderJob => {
   return merge(
@@ -30,9 +34,13 @@ export const createAppBuildJob = (
       cache: [],
       variables: {
         ...(variables ?? {}),
-        ...context.environment.envVars,
-        ...context.environment.jobOnlyVars.build.envVars,
-        ...(context.build.config.extraVars ?? {}),
+        ...(context.type === "component"
+          ? {
+              ...context.environment.envVars,
+              ...context.environment.jobOnlyVars.build.envVars,
+              ...(context.build.config.extraVars ?? {}),
+            }
+          : {}),
       },
       runnerVariables: {
         ...RUNNER_BUILD_RESOURCE_VARIABLES,
@@ -41,25 +49,21 @@ export const createAppBuildJob = (
       },
 
       script: [
-        ...(componentContextNeedsBuildTimeDotEnv(context)
-          ? writeDotEnv(context)
-          : []),
-        ...writeBuildInfo(context),
+        ...(context.type === "component"
+          ? componentContextNeedsBuildTimeDotEnv(context)
+            ? writeDotEnv(context)
+            : []
+          : context.type === "workspace"
+            ? context.components
+                .filter((c) => componentContextNeedsBuildTimeDotEnv(c))
+                .flatMap((c) => writeDotEnv(c))
+            : []),
+        ...(context.type === "component" ? writeBuildInfo(context) : []),
         ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.build.dir}`,
         ...(ensureArray(script) ?? []),
       ],
-      artifacts: {
-        paths: [join(context.build.dir, "__build_info.json")],
-        ...(componentContextNeedsBuildTimeDotEnv(context)
-          ? { exclude: [join(context.build.dir, ".env")] }
-          : {}),
-        reports: {
-          junit: context.build.config.artifactsReports?.junit?.map((p) =>
-            join(context.build.dir, p),
-          ),
-        },
-      },
+      artifacts: createBuildJobArtifacts(context),
     },
     def,
   );

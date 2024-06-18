@@ -1,35 +1,49 @@
 import { getRunnerImage } from "../../runner";
-import type { ComponentContext } from "../../types/context";
+import type { WorkspaceContext } from "../../types/context";
+import {
+  componentContextIsStandaloneBuild,
+  type ComponentContext,
+} from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
+import { createArtifactsConfig } from "../base/createArtifactsConfig";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { ensureNodeVersion, getYarnInstall } from "./yarn";
-import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
 export const createNodeTestJobs = (
-  context: ComponentContext,
+  context: ComponentContext | WorkspaceContext,
 ): CatladderJob[] => {
   // don't run tests after release
   // TODO: this will be replaced by using rules
   if (context.trigger === "taggedRelease") {
     return [];
   }
-
-  const buildConfig = context.build.config;
+  // if its not a standalone build, we don't need to run tests
+  if (
+    context.type === "component" &&
+    !componentContextIsStandaloneBuild(context)
+  ) {
+    return [];
+  }
 
   const defaultImage = getRunnerImage("jobs-default");
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
       APP_PATH: context.build.dir,
-      ...context.environment.jobOnlyVars.build.envVars,
-      ...(buildConfig.extraVars ?? {}),
+      ...(context.type === "component"
+        ? {
+            ...context.environment.jobOnlyVars.build.envVars,
+            ...(context.build.config.extraVars ?? {}),
+          }
+        : {}),
     },
     runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
     stage: "test",
     needs: [],
     envMode: "none",
   };
+  const buildConfig = context.build.config;
   const yarnInstall = getYarnInstall(context);
   const auditJob: CatladderJob | null =
     buildConfig.audit !== false

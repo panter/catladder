@@ -25,7 +25,8 @@ export type BaseStage = (typeof BASE_STAGES)[number];
 
 export type CatladderJobNeed =
   | string
-  | { job: string; artifacts: boolean; componentName?: string };
+  | { job: string; artifacts: boolean; componentName?: string }
+  | { job: string; artifacts: boolean; workspaceName: string };
 
 export type CatladderJobEnvironmentConfig = {
   action?: GitlabEnvironment["action"];
@@ -61,6 +62,7 @@ export type CatladderJob<S = BaseStage> = {
   needsStages?: {
     stage: S;
     artifacts?: boolean;
+    workspaceName?: string;
   }[];
 
   /**

@@ -1,9 +1,9 @@
-import type { ComponentContext } from "../../..";
+import type { BuildContextStandalone, ComponentContext } from "../../..";
 import { createCustomTestJobs } from "../testJob";
 
 describe("createCustomTestJobs", () => {
-  const baseContext: ComponentContext = {
-    componentName: "testComponent",
+  const baseContext: ComponentContext<BuildContextStandalone> = {
+    name: "testComponent",
     environment: {
       jobOnlyVars: {
         build: {},
@@ -12,7 +12,7 @@ describe("createCustomTestJobs", () => {
     build: {
       config: { type: "custom", docker: { type: "custom" }, jobImage: "" },
     },
-  } as ComponentContext;
+  } as ComponentContext<BuildContextStandalone>;
 
   it("throws error when not build type custom", () => {
     baseContext.build.config.type = "node";

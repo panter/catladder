@@ -24,10 +24,11 @@ const getCustomJobs = (context: ComponentContext) => {
 export const createJobsForComponentContext = (
   context: ComponentContext,
 ): CatladderJob[] => {
-  const buildJobs = BUILD_TYPES[context.build.config.type].jobs(context);
-  const deployJobs = context.deploy?.config
-    ? DEPLOY_TYPES[context.deploy?.config.type].jobs(context)
-    : [];
+  const buildJobs = BUILD_TYPES[context.build.buildType].jobs(context);
+  const deployJobs =
+    context.componentConfig.deploy !== false
+      ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
+      : [];
 
   const customJobs = getCustomJobs(context);
   return [...buildJobs, ...deployJobs, ...customJobs];

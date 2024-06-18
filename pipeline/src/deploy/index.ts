@@ -1,4 +1,4 @@
-import type { SecretEnvVar } from "..";
+import type { BuildConfig, SecretEnvVar } from "..";
 import type { BashExpression } from "../bash/BashExpression";
 import type { ComponentContext } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
@@ -8,26 +8,28 @@ import { GCLOUD_RUN_DEPLOY_TYPE } from "./cloudRun";
 import { CUSTOM_DEPLOY_TYPE } from "./custom";
 import { DOCKER_TAG_DEPLOY_TYPE } from "./dockerTag";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
-import type { DeployConfigGeneric, DeployConfigType } from "./types";
+import type {
+  DeployConfig,
+  DeployConfigGeneric,
+  DeployConfigType,
+} from "./types";
 export * from "./cloudRun";
 export * from "./kubernetes";
 export * from "./types";
 export * from "./utils";
 
-export type DeployTypeDefinition<T extends DeployConfigType> = {
+export type DeployTypeDefinition<D extends DeployConfig> = {
   jobs: (context: ComponentContext) => CatladderJob[];
-  defaults: (
-    envContext: EnvironmentContext<any, T>,
-  ) => PartialDeep<DeployConfigGeneric<T>>;
+  defaults: (envContext: EnvironmentContext<BuildConfig, D>) => PartialDeep<D>;
   additionalSecretKeys: (
-    envContext: EnvironmentContext<any, T>,
+    envContext: EnvironmentContext<BuildConfig, D>,
   ) => SecretEnvVar[];
   getAdditionalEnvVars: (
-    envContext: EnvironmentContext<any, T>,
+    envContext: EnvironmentContext<BuildConfig, D>,
   ) => Record<string, string | BashExpression | undefined | null>;
 };
 export type DeployTypes = {
-  [T in DeployConfigType]: DeployTypeDefinition<T>;
+  [T in DeployConfigType]: DeployTypeDefinition<DeployConfigGeneric<T>>;
 };
 
 export const DEPLOY_TYPES: DeployTypes = {
