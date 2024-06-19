@@ -1,3 +1,11 @@
+# [1.151.0](https://git.panter.ch/catladder/catladder/compare/v1.150.3...v1.151.0) (2024-06-19)
+
+
+### Features
+
+* **cli:** add project-renew-token command ([4fa518c](https://git.panter.ch/catladder/catladder/commit/4fa518cc39a03223b8b34bc5ca2ffc3d30d415bc))
+* **cli:** ensure fresh gl_token on project setup ([b79f6de](https://git.panter.ch/catladder/catladder/commit/b79f6de50186ed956f9adc1ae264ec68a33248d4))
+
 ## [1.150.3](https://git.panter.ch/catladder/catladder/compare/v1.150.2...v1.150.3) (2024-06-18)
 
 
