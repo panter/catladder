@@ -2,7 +2,7 @@ import { RULES_MANUAL_RELEASE, RULES_RELEASE } from "../../rules";
 import { getRunnerImage } from "../../runner";
 
 const EXPIRED_TOKEN_HELP =
-  "echo '👉 The project access token might have expired - run `project-setup` in catladder CLI to fix.'";
+  "echo '👉 The project access token might be invald - run `project-renew-token` in catladder CLI to fix.'";
 
 export const getGitlabReleaseJobs = () => {
   return {

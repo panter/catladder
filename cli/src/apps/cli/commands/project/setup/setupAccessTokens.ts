@@ -60,4 +60,8 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
       "POST",
     );
   }
+
+  instance.log(
+    "Token configured for semantic release. Renew me again in a year!",
+  );
 };

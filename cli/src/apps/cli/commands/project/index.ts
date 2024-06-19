@@ -9,6 +9,7 @@ import commandGetMyTotalWorktime from "./commandGetMyTotalWorktime";
 import commandGetShell from "./commandGetShell";
 import commandGitlabCi from "./commandGitlabCi";
 import commandSetup from "./commandSetup";
+import commandRenewToken from "./commandRenewToken";
 import commandListPods from "./commandListPods";
 import commandMigrateHelm3 from "./commandMigrateHelm3";
 import commandNamespace from "./commandNamespace";
@@ -29,6 +30,7 @@ import commandSecurityEvaluate from "./commandSecurityEvaluate";
 
 export default async (vorpal: Vorpal) => {
   commandSetup(vorpal);
+  commandRenewToken(vorpal);
 
   commandEnvVars(vorpal);
 
