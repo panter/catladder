@@ -1,3 +1,10 @@
+# [1.154.0](https://git.panter.ch/catladder/catladder/compare/v1.153.1...v1.154.0) (2024-06-25)
+
+
+### Features
+
+* workspace builds support ([718a0ca](https://git.panter.ch/catladder/catladder/commit/718a0caac206cec4094a17e323b478a3985fb38d))
+
 ## [1.153.1](https://git.panter.ch/catladder/catladder/compare/v1.153.0...v1.153.1) (2024-06-25)
 
 # [1.153.0](https://git.panter.ch/catladder/catladder/compare/v1.152.0...v1.153.0) (2024-06-25)
