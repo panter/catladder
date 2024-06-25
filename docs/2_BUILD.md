@@ -72,7 +72,7 @@ This may speed up the build process if multiple components share the same build 
 - there should be a command in the root package.json that builds all artifacts for all components. This is usually a `yarn build` command.
 - similarly there should be a `yarn test` and `yarn lint` command in the root package.json.
 - the build command should create the artifacts in a `dist` directory in each component's directory (identical to standalone builds)
-- if a component requires env vars during built, you have to set `dotEnv: true` (not `local`!) on that component
+- if a component requires env vars during build, you have to set `dotEnv: true` (not `local`!) on that component
 
 ### Configuration
 
