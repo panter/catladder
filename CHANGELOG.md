@@ -1,3 +1,10 @@
+# [1.153.0](https://git.panter.ch/catladder/catladder/compare/v1.152.0...v1.153.0) (2024-06-25)
+
+
+### Features
+
+* prevent .env files to end up in job artifacts ([0d4bfa0](https://git.panter.ch/catladder/catladder/commit/0d4bfa0c7e6b620e9830dfbcb3b09d0165cdde76))
+
 # [1.152.0](https://git.panter.ch/catladder/catladder/compare/v1.151.0...v1.152.0) (2024-06-25)
 
 
