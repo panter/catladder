@@ -43,7 +43,7 @@ export const getArtifactsRegistryImageName = (
   const dockerUrl = getArtifactsRegistryDockerUrl(context);
   const gcloudImagePath = [
     dockerUrl,
-    context.environment.shortName,
+    context.env,
     context.componentName,
 
     ...(context.environment.reviewSlug && !lecacyReviewImageName

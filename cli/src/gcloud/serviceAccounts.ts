@@ -29,7 +29,7 @@ const upsertGcloudServiceAccount = async (
 
   // name has limit of 30
   const namePrefix = `${name}`;
-  const nameSuffixRaw = `${context.environment.shortName}-${context.componentName}`;
+  const nameSuffixRaw = `${context.env}-${context.componentName}`;
   const nameMiddleRaw = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
   const MAX_LENGTH = 30;
   const NUM_SEPARATORS = 2;
@@ -55,7 +55,7 @@ const upsertGcloudServiceAccount = async (
 
   const fullName = `${namePrefix}-${nameMiddle}-${nameSuffix}`;
 
-  const fullDisplayName = `${context.fullConfig.customerName}-${context.fullConfig.appName} ${context.environment.shortName}:${context.componentName} | ${displayName}`;
+  const fullDisplayName = `${context.fullConfig.customerName}-${context.fullConfig.appName} ${context.env}:${context.componentName} | ${displayName}`;
 
   const fullIdentifier = `${fullName}@${projectId}.iam.gserviceaccount.com`;
 
@@ -106,7 +106,7 @@ export const upsertGcloudServiceAccountAndSaveSecret = async (
     {
       [secretName]: key,
     },
-    context.environment.shortName,
+    context.env,
     context.componentName,
   );
   instance.log("done!");

@@ -201,5 +201,4 @@ const addIndexVar = <V extends Record<string, unknown>>(
 export const getSecretVarNameForContext = (
   context: ComponentContext,
   key: string,
-) =>
-  getSecretVarName(context.environment.shortName, context.componentName, key);
+) => getSecretVarName(context.env, context.componentName, key);

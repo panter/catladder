@@ -36,8 +36,7 @@ export const getDockerImageVariables = (context: ComponentContext) => {
           DOCKER_CACHE_IMAGE:
             "$CI_REGISTRY_IMAGE/caches/" + context.componentName,
           // ONLY USED IN KUBERNETES
-          DOCKER_IMAGE_NAME:
-            context.environment.shortName + "/" + context.componentName,
+          DOCKER_IMAGE_NAME: context.env + "/" + context.componentName,
           DOCKER_IMAGE: "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
         }),
 

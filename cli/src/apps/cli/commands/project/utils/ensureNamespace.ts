@@ -5,17 +5,14 @@ import { V1Namespace } from "@kubernetes/client-node";
 import { getk8sApi } from "../../../../../k8sApi";
 
 export default async function (context: ComponentContext) {
-  const namespace = getKubernetesNamespace(
-    context.fullConfig,
-    context.environment.shortName,
-  );
+  const namespace = getKubernetesNamespace(context.fullConfig, context.env);
   const namespaceBody = new V1Namespace();
   const metadata: V1ObjectMeta = {
     name: namespace,
     labels: {
       customerName: context.fullConfig.customerName,
       appName: context.fullConfig.appName,
-      environment: context.environment.shortName,
+      environment: context.env,
       components: Object.keys(context.fullConfig.components).join("_"), // limited chars available...
       buildTypes: Object.values(context.fullConfig.components)
         .map((config) => config.build.type)

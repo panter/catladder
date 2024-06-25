@@ -76,7 +76,7 @@ export const setupCloudRun = async (
     {
       [GCLOUD_RUN_CANONICAL_HOST_SUFFIX]: suffix,
     },
-    context.environment.shortName,
+    context.env,
     context.componentName,
     false, // backup
     false, // masked

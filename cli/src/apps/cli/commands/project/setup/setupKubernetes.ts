@@ -163,7 +163,7 @@ EOF
   await upsertAllVariables(
     instance,
     vars,
-    context.environment.shortName,
+    context.env,
     context.componentName,
     false, // no backup
   );

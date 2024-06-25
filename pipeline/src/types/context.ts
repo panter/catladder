@@ -42,7 +42,9 @@ export type Environment = {
    * the full name of the app. We use this as RELEASE_NAME in kubernetes and the service name in google cloud run
    */
   fullName: StringOrBashExpression;
-
+  /**
+   * @deprecated this is the same as context.env, use that instead
+   */
   shortName: string;
   /**
    * the environment slug without component name.

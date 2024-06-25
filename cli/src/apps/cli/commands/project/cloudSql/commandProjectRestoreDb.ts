@@ -36,7 +36,7 @@ export default async (vorpal: Vorpal) =>
 
       const sourceEnvVars = await getEnvVarsResolved(
         this,
-        sourceContext.environment.shortName,
+        sourceContext.env,
         sourceContext.componentName,
       );
 
@@ -99,7 +99,7 @@ export default async (vorpal: Vorpal) =>
 
       const targetEnvVars = await getEnvVarsResolved(
         this,
-        targetContext.environment.shortName,
+        targetContext.env,
         targetContext.componentName,
       );
 

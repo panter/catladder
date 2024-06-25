@@ -85,7 +85,7 @@ const getProxyInfoForKubernetes = async (
 
   const envVars = await getEnvVarsResolved(
     vorpal,
-    context.environment.shortName,
+    context.env,
     context.componentName,
   );
   // bit hacky, would be nicer if we would also declare this through env vars
@@ -118,7 +118,7 @@ const getProxyInfoForCloudRun = async (
 
   const envVars = await getEnvVarsResolved(
     vorpal,
-    context.environment.shortName,
+    context.env,
     context.componentName,
   );
 
