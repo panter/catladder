@@ -29,7 +29,9 @@ const config: Config = {
       env: {
         local: {},
         review: {},
-        dev: false, stage: false, prod: false,
+        dev: false,
+        stage: false,
+        prod: false,
       },
     },
     api: {}, // Api component config ...
@@ -41,13 +43,13 @@ const config: Config = {
 
 All variables (including secrets) are currently available both on build-time (in the pipeline) and on run-time (unless it's a static deployment).
 
-Locally, you can use `catenv` to get the env-vars in your ***local*** environment. See section on [env-vars in local development][env-vars-section].
+Locally, you can use `catenv` to get the env-vars in your **_local_** environment. See section on [env-vars in local development][env-vars-section].
 
 It is also possible to generate `.env` files automatically on local development and during build. See the section on [.env files][env-files-section].
 
 ## Predefined variables
 
-- **ROOT_URL**: This is the public URL of a component. In ***review*** and ***dev*** environment, this is normally auto-generated depending on the deployment type
+- **ROOT_URL**: This is the public URL of a component. In **_review_** and **_dev_** environment, this is normally auto-generated depending on the deployment type
 - **PORT**: The port the app should listen to.
 
 Depending on the deploy type[^deploy-type], more variables are available.
@@ -78,7 +80,7 @@ catladder $ project-config-secrets
 
 ```
 
-> *The catladder shell supports tab completion, and you can call `help` at any time.*
+> _The catladder shell supports tab completion, and you can call `help` at any time._
 
 This will open up your editor with all environment variables in the YAML format.  
 Save this file, close it, and catladder will update the secrets.
@@ -110,9 +112,10 @@ catladder $
 The editor is selected from your shell's environment variables `$VISUAL` or `$EDITOR`, or falls back to `code` or `vim`. Be careful with `EDITOR=code` - **this will not work correctly**.  
 The correct way is `EDITOR="code --wait"`.
 
-> *catladder makes a copy of old values as a backup; you can restore those manually in GitLab if needed.*
+> _catladder makes a copy of old values as a backup; you can restore those manually in GitLab if needed._
 
 ## catenv - Env-vars in local development
+
 [catenv-section]: #catenv-env-vars-in-local-development
 
 The `catenv` command can do the following when executed:
@@ -131,7 +134,6 @@ Install [@catladder/cli][catladder-cli-npm] in your project, if you don't have t
 ```sh
 $ yarn add -D @catladder/cli
 ```
-
 
 It's recommended to use [direnv][direnv] to automatically update the catladder environment in your shell with catenv when changes occur in your configuration.
 For this, you need to [install direnv first][direnv-install].
@@ -166,24 +168,26 @@ There are two modes that can be configured per component in `catladder.ts`:
 - [Injecting environment variables in the shell][inject-env-vars-section] (legacy)
 
 #### .env files
+
 [env-files-section]: #env-files
 
-To use `.env` files, set `dotEnv: "local"` on the component in your `catladder.ts` file:
+To use `.env` files, set `dotEnv: true` on the component in your `catladder.ts` file:
 
 ```ts
 // ...
   components: {
     api: {
-      dotEnv: "local", // <--
+      dotEnv: true, // <--
       envDTs: true, // not mandatory, but recommended, see below
       dir: "api",
 ```
 
-If you also need `.env` files in the build, set `dotEnv: true` on the component instead.  
-This will create `.env` files both locally and during build.  
-This is typically required for native apps (e.g. react-native).
+There are two options for `dotEnv`:
 
-> **⚠️ Don't set `dotEnv: true` if you only need `.env` files locally, otherwise it may accidentally include secrets in the build artifacts.**
+- true: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
+- "local": creates a .env file only locally
+
+.env files will never be included in the build artifacts as they may contain secrets.
 
 ##### Using .env files
 
@@ -199,6 +203,7 @@ When `dotEnv` is set to `"local"`, `catenv` will create `.env` files in the comp
 [dotenv]: https://github.com/motdotla/dotenv "Loads environment variables from .env for nodejs projects."
 
 #### Injecting env-vars in the shell
+
 [inject-env-vars-section]: #injecting-env-vars-in-the-shell
 
 By default, `catenv` executes `export VARNAME` statements to the shell.  
@@ -209,6 +214,7 @@ This is the legacy method to inject env-vars into the local shell.
 - It is therefore recommended to migrate to `.env` files.
 
 #### Typescript and process.env
+
 [envDTs-section]: #typescript-and-processenv
 
 To get autocompletion in your IDE for `process.env`, set `envDTs` to `true` on the component:
@@ -225,11 +231,12 @@ To get autocompletion in your IDE for `process.env`, set `envDTs` to `true` on t
 This will make `catenv` generate an `env.d.ts` file with type definitions for `process.env`.
 
 #### Local GitLab-CI pipeline generation
+
 [local-gitlab-ci-section]: #local-gitlab-ci-pipeline-generation
 
 Since catladder 1.145.0, you can generate a `.gitlab-ci.yml` config file locally and commit it with git.
 
-> *By default, catladder starts a GitLab-CI job that will generate a `__pipeline.yml` each time the CI pipeline starts, and run this pipeline then as a child pipeline.*
+> _By default, catladder starts a GitLab-CI job that will generate a `__pipeline.yml` each time the CI pipeline starts, and run this pipeline then as a child pipeline._
 
 ##### Migrate project to local GitLab pipeline
 
@@ -246,12 +253,12 @@ You need to fix the imports of [@catladder/pipeline][catladder-pipeline-npm] to 
 Additionally, you need to set the `pipelineType`.
 
 ```ts
-import type { Config } from '@catladder/cli';
+import type { Config } from "@catladder/cli";
 
 const config: Config = {
-  appName: 'my-app',
-  appName: 'dem',
-  pipelineType: 'gitlab',
+  appName: "my-app",
+  appName: "dem",
+  pipelineType: "gitlab",
   components: {
     // Your components config ...
   },

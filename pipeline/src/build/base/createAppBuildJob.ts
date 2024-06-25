@@ -51,6 +51,9 @@ export const createAppBuildJob = (
       ],
       artifacts: {
         paths: [join(context.build.dir, "__build_info.json")],
+        ...(componentContextNeedsBuildTimeDotEnv(context)
+          ? { exclude: [join(context.build.dir, ".env")] }
+          : {}),
         reports: {
           junit: context.build.config.artifactsReports?.junit?.map((p) =>
             join(context.build.dir, p),
