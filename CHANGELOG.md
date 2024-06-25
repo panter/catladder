@@ -1,3 +1,10 @@
+# [1.152.0](https://git.panter.ch/catladder/catladder/compare/v1.151.0...v1.152.0) (2024-06-25)
+
+
+### Features
+
+* **cli:** catenv returns usage message and doc link on --help ([acb3bf6](https://git.panter.ch/catladder/catladder/commit/acb3bf6b3126d68af380e3ea7e4c461bc3df098d))
+
 # [1.151.0](https://git.panter.ch/catladder/catladder/compare/v1.150.3...v1.151.0) (2024-06-19)
 
 
