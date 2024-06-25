@@ -115,3 +115,10 @@ const config: Config = {
 ```
 
 Components that use those shared builds set the build property to ` from: "<workspace-name>"` like in the example above.
+
+### Remarks
+
+- you can still have components with standalone builds in the same project
+- you can have multiple workspace builds in the same pipeline (if you really want...)
+- if a component requires env var during build, you have to use `dotEnv: true` as mentioned above. The workspace build job will create a .env in each component that has `dotEnv: true` set before running the build command.
+-
