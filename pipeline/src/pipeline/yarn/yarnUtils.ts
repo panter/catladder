@@ -1,6 +1,7 @@
 import { exec } from "child-process-promise";
 import memoizee from "memoizee";
-import type { PackageManagerInfoComponent, YarnWorkspace } from "../../types";
+import type { YarnWorkspace } from "../../types";
+import { jsonParseOrThrow } from "../../utils/jsonParse";
 
 const execOrFail = async (cmd: string, onFail: string): Promise<string> => {
   try {
@@ -16,17 +17,19 @@ export const getYarnVersion = memoizee(
   },
   { promise: true },
 );
+
 // export for mocking
 export const getWorkspaces = memoizee(
   async (isClassic: boolean): Promise<Array<YarnWorkspace>> => {
     return isClassic
       ? Object.values(
-          JSON.parse(
-            JSON.parse(await execOrFail("yarn workspaces --json info", "{}"))
-              ?.data ?? "{}",
+          jsonParseOrThrow(
+            jsonParseOrThrow(
+              await execOrFail("yarn workspaces --json info", "{}"),
+            )?.data ?? "{}",
           ),
         )
-      : JSON.parse(
+      : jsonParseOrThrow(
           `[${(await execOrFail("yarn workspaces list --json --verbose", ""))
             .trim()
             .split("\n")
