@@ -1,3 +1,10 @@
+## [1.156.2](https://git.panter.ch/catladder/catladder/compare/v1.156.1...v1.156.2) (2024-06-27)
+
+
+### Bug Fixes
+
+* cache and artifacts are huge in gitlab ([6dcede6](https://git.panter.ch/catladder/catladder/commit/6dcede6c54406273523deb18eaa83f65135353c3))
+
 ## [1.156.1](https://git.panter.ch/catladder/catladder/compare/v1.156.0...v1.156.1) (2024-06-27)
 
 
