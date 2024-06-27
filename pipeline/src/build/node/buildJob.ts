@@ -62,9 +62,6 @@ export const createNodeBuildJobDefinition = (
       ...(ensureArray(buildConfig.jobCache) ?? []),
       ...getNodeCache(context),
       ...getNextCache(context),
-      ...(context.type === "workspace"
-        ? getWorkspaceDefaultCaches(context)
-        : []),
     ],
     script: [...yarnInstall, ...(ensureArray(buildConfig.buildCommand) ?? [])],
     jobTags: buildConfig.jobTags,

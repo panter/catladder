@@ -63,6 +63,7 @@ export const getNodeCache = (
   return [
     ...getYarnCache(context, policy),
     ...getNodeModulesCache(context, policy),
+    ...(context.type === "workspace" ? getWorkspaceDefaultCaches(context) : []),
   ];
 };
 

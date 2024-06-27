@@ -38,6 +38,7 @@ export const createNodeTestJobs = (
           }
         : {}),
     },
+
     runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
     stage: "test",
     needs: [],
