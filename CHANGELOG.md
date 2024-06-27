@@ -1,3 +1,10 @@
+# [1.156.0](https://git.panter.ch/catladder/catladder/compare/v1.155.0...v1.156.0) (2024-06-27)
+
+
+### Features
+
+* add turbo cache to all workspace jobs in node ([53ba248](https://git.panter.ch/catladder/catladder/commit/53ba248112e56e00dc513c3ef604f78562640819))
+
 # [1.155.0](https://git.panter.ch/catladder/catladder/compare/v1.154.3...v1.155.0) (2024-06-27)
 
 
