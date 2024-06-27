@@ -1,7 +1,7 @@
 import { uniq } from "lodash";
 import { join } from "path";
 import slugify from "slugify";
-import type { Context } from "../../types/context";
+import type { Context, WorkspaceContext } from "../../types/context";
 import type { GitlabJobCache } from "../../types/gitlab-types";
 
 export const getYarnCache = (
@@ -77,6 +77,19 @@ export const getNextCache = (context: Context): GitlabJobCache[] => {
       key,
       policy: "pull-push",
       paths,
+    },
+  ];
+};
+
+export const getWorkspaceDefaultCaches = (
+  context: WorkspaceContext,
+): GitlabJobCache[] => {
+  return [
+    {
+      // turbo repo
+      key: context.name + "-turbo",
+      policy: "pull-push",
+      paths: [join(context.build.dir, ".turbo")],
     },
   ];
 };

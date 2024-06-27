@@ -15,7 +15,12 @@ import type { DockerBuildJobDefinition } from "../docker";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import type { BuildConfigDocker } from "../types";
 import { isOfBuildType } from "../types";
-import { getNextCache, getNodeCache, getYarnCache } from "./cache";
+import {
+  getNextCache,
+  getNodeCache,
+  getWorkspaceDefaultCaches,
+  getYarnCache,
+} from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 
@@ -57,6 +62,9 @@ export const createNodeBuildJobDefinition = (
       ...(ensureArray(buildConfig.jobCache) ?? []),
       ...getNodeCache(context),
       ...getNextCache(context),
+      ...(context.type === "workspace"
+        ? getWorkspaceDefaultCaches(context)
+        : []),
     ],
     script: [...yarnInstall, ...(ensureArray(buildConfig.buildCommand) ?? [])],
     jobTags: buildConfig.jobTags,
