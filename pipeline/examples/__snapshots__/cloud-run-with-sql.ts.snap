@@ -122,9 +122,6 @@ exports[`matches snapshot 1`] = `
 ENV_SHORT=dev
 APP_DIR=api
 ENV_TYPE=dev
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -150,9 +147,6 @@ EOF",
 ENV_SHORT=dev
 APP_DIR=www
 ENV_TYPE=dev
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -1071,9 +1065,6 @@ EOF
 ENV_SHORT=review
 APP_DIR=api
 ENV_TYPE=review
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -1099,9 +1090,6 @@ EOF",
 ENV_SHORT=review
 APP_DIR=www
 ENV_TYPE=review
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -1989,9 +1977,6 @@ EOF
 ENV_SHORT=prod
 APP_DIR=api
 ENV_TYPE=prod
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -2017,9 +2002,6 @@ EOF",
 ENV_SHORT=prod
 APP_DIR=www
 ENV_TYPE=prod
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -2119,9 +2101,6 @@ EOF",
 ENV_SHORT=stage
 APP_DIR=api
 ENV_TYPE=stage
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
@@ -2147,9 +2126,6 @@ EOF",
 ENV_SHORT=stage
 APP_DIR=www
 ENV_TYPE=stage
-BUILD_INFO_BUILD_ID=$(git describe --tags 2>/dev/null || git rev-parse HEAD)
-BUILD_INFO_BUILD_TIME=$CI_JOB_STARTED_AT
-BUILD_INFO_CURRENT_VERSION=$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")
 HOST=$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 ROOT_URL=https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
 HOST_INTERNAL=$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')

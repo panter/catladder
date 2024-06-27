@@ -1,6 +1,7 @@
 import { isNil } from "lodash";
 import type { ComponentContext } from "../../types";
 import { collapseableSection } from "../../utils/gitlab";
+import { ALL_BUILD_VARIABLES } from "../../context/getBuildInfoVariables";
 
 /**
  * writes a .env file in the components folder
@@ -14,6 +15,9 @@ export const writeDotEnv = (context: ComponentContext) => {
   const keyValueString = Object.entries(envVars)
     // filter out null and undefined values
     .filter(([, value]) => !isNil(value))
+    // filter out build variables, since they may interfer with caching like turbo
+    // build variables are rarely used anyway and we may treat them differently in the future
+    .filter(([key]) => !ALL_BUILD_VARIABLES.includes(key))
     .map(
       ([key, value]) => `${key}=${value?.toString().replaceAll("\n", "\\n")}`,
     )

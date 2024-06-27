@@ -23,6 +23,7 @@ const BUILD_VARIABLES = {
   [key: string]: BashExpressionPerPipelineType;
 };
 
+export const ALL_BUILD_VARIABLES = Object.keys(BUILD_VARIABLES);
 export const getBuildInfoVariables = (ctx: EnvironmentContext) => {
   const { pipelineType } = ctx;
 
