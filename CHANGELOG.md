@@ -1,3 +1,10 @@
+## [1.156.3](https://git.panter.ch/catladder/catladder/compare/v1.156.2...v1.156.3) (2024-06-28)
+
+
+### Performance Improvements
+
+* optimize resources to better fit availalbe runners ([fac9d5c](https://git.panter.ch/catladder/catladder/commit/fac9d5cf0c0f071075839a8544e551b3b384680c))
+
 ## [1.156.2](https://git.panter.ch/catladder/catladder/compare/v1.156.1...v1.156.2) (2024-06-27)
 
 
