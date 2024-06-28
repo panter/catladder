@@ -6,8 +6,8 @@ import type { Artifacts } from "../../types";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
 
 const RUNNER_CUSTOM_TEST_VARIABLES = {
-  KUBERNETES_CPU_REQUEST: "0.5",
-  KUBERNETES_MEMORY_REQUEST: "2Gi",
+  KUBERNETES_CPU_REQUEST: "0.45",
+  KUBERNETES_MEMORY_REQUEST: "1Gi",
   KUBERNETES_MEMORY_LIMIT: "4Gi",
 };
 

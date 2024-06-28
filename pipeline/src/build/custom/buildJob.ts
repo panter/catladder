@@ -7,8 +7,8 @@ import type { CatladderJob } from "../../types/jobs";
 import { createComponentBuildJobs } from "../base";
 
 const RUNNER_BUILD_VARIABLES = {
-  KUBERNETES_CPU_REQUEST: "0.5",
-  KUBERNETES_MEMORY_REQUEST: "2Gi",
+  KUBERNETES_CPU_REQUEST: "0.45",
+  KUBERNETES_MEMORY_REQUEST: "1Gi",
   KUBERNETES_MEMORY_LIMIT: "4Gi",
 };
 
