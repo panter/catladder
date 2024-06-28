@@ -121,4 +121,31 @@ Components that use those shared builds set the build property to ` from: "<work
 - you can still have components with standalone builds in the same project
 - you can have multiple workspace builds in the same pipeline (if you really want...)
 - if a component requires env var during build, you have to use `dotEnv: true` as mentioned above. The workspace build job will create a .env in each component that has `dotEnv: true` set before running the build command.
--
+
+### Turbo Repo
+
+turbo repo is supported out of the box in workspace builds. You can install and use it as usual. The .turbo path gets automatically cached.
+
+If your build relies on **.env** make sure to include .env in the cache settings:
+
+```json
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "dist/**"],
+      "inputs": ["$TURBO_DEFAULT$", ".env"]
+    },
+    "lint": {},
+    "test": {}
+  }
+}
+```
+
+see also https://turbo.build/repo/docs/crafting-your-repository/using-environment-variables#handling-env-files
