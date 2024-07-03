@@ -81,18 +81,7 @@ spec:
             name: {{ template "fullname" $context }}-{{$volume.name}}
         {{- end }}
 
-      # deprecated
-      {{if .Values.application.leaderElector.enabled}}
-      - name: leader-elector
-        image: "k8s.gcr.io/leader-elector:0.5"
-        args:
-        - --election={{ template "fullname" $context }}-election
-        - --http=0.0.0.0:4040
-        - --election-namespace={{ .Release.Namespace }}
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 4040
-      {{end}}
+     
       {{if .Values.cloudsql.enabled}}
       - {{- include "cloudSqlContainer" $context | nindent 8 }}
       {{- end }} 
