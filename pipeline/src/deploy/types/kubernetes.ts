@@ -358,13 +358,6 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
   mapServiceUrlToEnv?: {
     [envVar: string]: string;
   };
-  /**
-   * Mount secrets as files in the filesystem.
-   * These secrets are still available as env vars, but will contain the path of the file instead
-   *
-   * @deprecated this will be removed in the future, because its very niche and not used
-   */
-  secretsAsFile?: string[];
 }>;
 
 export type DeployConfigKubernetes = {

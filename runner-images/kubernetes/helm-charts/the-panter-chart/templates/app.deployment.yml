@@ -75,11 +75,7 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         volumeMounts: 
-        # deprecated
-        {{if gt (len .Values.secretsAsFile) 0 }}
-          - name: secrets
-            mountPath: /secrets
-        {{end}}
+       
         {{- range $key, $volume := .Values.application.volumes }}
           - mountPath: {{$volume.mountPath}}
             name: {{ template "fullname" $context }}-{{$volume.name}}
@@ -101,16 +97,7 @@ spec:
       - {{- include "cloudSqlContainer" $context | nindent 8 }}
       {{- end }} 
       volumes:
-      {{if gt (len .Values.secretsAsFile) 0 }}
-        - name: secrets
-          secret:
-            secretName: {{ template "fullname" $ }}-app-secrets
-            items:
-        {{- range $index, $varName := .Values.secretsAsFile }}
-            - key: "{{$varName}}_content" # we needed suffixed the var with _content, because there is a problem with kubernetes, when shadowing variables like this
-              path: "{{$varName}}"
-        {{end}}
-      {{end}}
+     
       {{if .Values.cloudsql.enabled}}
         - name: tmp-pod # required for a hack
           emptyDir: {}

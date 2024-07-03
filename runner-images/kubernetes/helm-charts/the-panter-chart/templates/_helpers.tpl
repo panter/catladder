@@ -194,10 +194,6 @@ env:
           connector: mongo
           uri: $(MONGO_URL)
   {{- end -}}
-  {{- range $index, $varName := .Values.secretsAsFile }}  # expose mounted secrets as variable that contain the path of the secret
-  - name: "{{$varName}}"
-    value: "/secrets/{{ $varName }}"
-  {{- end -}}
 {{- end -}}
 
 

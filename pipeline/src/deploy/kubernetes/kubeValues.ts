@@ -11,7 +11,6 @@ import {
 
 import { createKubeEnv } from "./kubeEnv";
 import { createMongodbBaseConfig } from "./mongodb";
-import { processSecretsAsFiles } from "./processSecretsAsFiles";
 
 const createAppConfig = (
   context: ComponentContext,
@@ -87,14 +86,12 @@ export const createKubeValues = (context: ComponentContext) => {
       : {},
   );
 
-  const kubeValues = processSecretsAsFiles(
-    mergeWithMergingArrays(defaultKubeValues, {
-      jobs: removeFalsy(jobs),
-      cronjobs: removeFalsy(cronjobs),
+  const kubeValues = mergeWithMergingArrays(defaultKubeValues, {
+    jobs: removeFalsy(jobs),
+    cronjobs: removeFalsy(cronjobs),
 
-      ...rest,
-    }),
-  );
+    ...rest,
+  });
 
   return kubeValues;
 };
