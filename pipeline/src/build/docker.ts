@@ -87,7 +87,13 @@ export const getDockerBuildVariables = (context: ComponentContext) => {
   return {
     ...getDockerAdditions(context.build.config),
     APP_DIR: context.build.dir,
-    DOCKER_DIR: ".", // relative to componentdir
+    DOCKER_BUILD_CONTEXT:
+      "docker" in context.build.config &&
+      context.build.config.docker &&
+      "buildContextLocation" in context.build.config.docker &&
+      context.build.config.docker?.buildContextLocation === "component"
+        ? context.build.dir
+        : ".",
 
     ...getDockerImageVariables(context),
   };
@@ -184,7 +190,7 @@ export const getDockerBuildDefaultScript = (
       "docker-build",
       "Docker build",
     )([
-      "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile . --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
+      "docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1", //BUILDKIT_INLINE_CACHE,  see https://testdriven.io/blog/faster-ci-builds-with-docker-cache/
     ]),
     ...collapseableSection(
       "docker-push",

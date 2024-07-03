@@ -172,6 +172,11 @@ type BuildConfigDockerCustom = {
    * custom docker build, expect that a Dockerfile in your directory
    */
   type: "custom";
+
+  /**
+   * where to run the docker build, defaults to the root of the repo
+   */
+  buildContextLocation?: "root" | "component";
 };
 
 export type BuildConfigDocker =
