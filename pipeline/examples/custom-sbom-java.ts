@@ -6,10 +6,13 @@ const config: Config = {
   customerName: "pan",
   components: {
     app: {
-      dir: ".",
+      dir: "app",
       build: {
         type: "custom",
-        docker: { type: "custom" },
+        docker: {
+          type: "custom",
+          buildContextLocation: "component", // default is root
+        },
         jobImage: "maven:3-eclipse-temurin-11",
         buildCommand: ["mvn package", "cp -r target dist"],
         sbom: {

@@ -174,7 +174,9 @@ type BuildConfigDockerCustom = {
   type: "custom";
 
   /**
-   * where to run the docker build, defaults to the root of the repo
+   * where to run the docker build, defaults to the root of the repo.
+   *
+   * Depending on your Dockerfile you may want to change it to "component"
    */
   buildContextLocation?: "root" | "component";
 };

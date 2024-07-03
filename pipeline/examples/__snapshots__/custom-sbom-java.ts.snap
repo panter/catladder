@@ -9,8 +9,8 @@ exports[`matches snapshot 1`] = `
         "artifacts": {
           "expire_in": "1 day",
           "paths": [
-            "__build_info.json",
-            "dist",
+            "app/__build_info.json",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -31,7 +31,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="dev"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="dev"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -47,12 +47,12 @@ exports[`matches snapshot 1`] = `
           "export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_app_GCLOUD_RUN_canonicalHostSuffix"",
           "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd .",
+          "cd app",
           "mvn package",
           "cp -r target dist",
         ],
@@ -78,8 +78,8 @@ exports[`matches snapshot 1`] = `
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_DIR="."",
-          "export DOCKER_BUILD_CONTEXT="."",
+          "export APP_DIR="app"",
+          "export DOCKER_BUILD_CONTEXT="app"",
           "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
           "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app"",
           "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
@@ -161,7 +161,7 @@ exports[`matches snapshot 1`] = `
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="dev"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="dev"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -192,7 +192,7 @@ exports[`matches snapshot 1`] = `
 ENV_SHORT: |-
   dev
 APP_DIR: |-
-  .
+  app
 ENV_TYPE: |-
   dev
 BUILD_INFO_BUILD_ID: |-
@@ -398,8 +398,8 @@ EOF
         "artifacts": {
           "expire_in": "1 day",
           "paths": [
-            "__build_info.json",
-            "dist",
+            "app/__build_info.json",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -420,7 +420,7 @@ EOF
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="review"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="review"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -436,12 +436,12 @@ EOF
           "export GCLOUD_RUN_canonicalHostSuffix="$CL_review_app_GCLOUD_RUN_canonicalHostSuffix"",
           "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd .",
+          "cd app",
           "mvn package",
           "cp -r target dist",
         ],
@@ -467,8 +467,8 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_DIR="."",
-          "export DOCKER_BUILD_CONTEXT="."",
+          "export APP_DIR="app"",
+          "export DOCKER_BUILD_CONTEXT="app"",
           "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
           "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"",
           "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
@@ -550,7 +550,7 @@ EOF
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="review"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="review"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -581,7 +581,7 @@ EOF
 ENV_SHORT: |-
   review
 APP_DIR: |-
-  .
+  app
 ENV_TYPE: |-
   review
 BUILD_INFO_BUILD_ID: |-
@@ -793,8 +793,8 @@ EOF
         "artifacts": {
           "expire_in": "1 day",
           "paths": [
-            "__build_info.json",
-            "dist",
+            "app/__build_info.json",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -815,7 +815,7 @@ EOF
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="prod"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="prod"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -831,12 +831,12 @@ EOF
           "export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_app_GCLOUD_RUN_canonicalHostSuffix"",
           "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd .",
+          "cd app",
           "mvn package",
           "cp -r target dist",
         ],
@@ -851,8 +851,8 @@ EOF
         "artifacts": {
           "expire_in": "1 day",
           "paths": [
-            "__build_info.json",
-            "dist",
+            "app/__build_info.json",
+            "app/dist",
           ],
           "reports": {
             "junit": undefined,
@@ -873,7 +873,7 @@ EOF
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="stage"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="stage"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -889,12 +889,12 @@ EOF
           "export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_app_GCLOUD_RUN_canonicalHostSuffix"",
           "export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"",
           "echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"",
-          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > ./__build_info.json",
+          "echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json",
           "echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"",
           "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
           "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
           "echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"",
-          "cd .",
+          "cd app",
           "mvn package",
           "cp -r target dist",
         ],
@@ -920,8 +920,8 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_DIR="."",
-          "export DOCKER_BUILD_CONTEXT="."",
+          "export APP_DIR="app"",
+          "export DOCKER_BUILD_CONTEXT="app"",
           "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
           "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app"",
           "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
@@ -974,8 +974,8 @@ EOF
         },
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
-          "export APP_DIR="."",
-          "export DOCKER_BUILD_CONTEXT="."",
+          "export APP_DIR="app"",
+          "export DOCKER_BUILD_CONTEXT="app"",
           "export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"",
           "export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app"",
           "export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app"",
@@ -1057,7 +1057,7 @@ EOF
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="prod"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="prod"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -1088,7 +1088,7 @@ EOF
 ENV_SHORT: |-
   prod
 APP_DIR: |-
-  .
+  app
 ENV_TYPE: |-
   prod
 BUILD_INFO_BUILD_ID: |-
@@ -1182,7 +1182,7 @@ EOF
         "script": [
           "echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"",
           "export ENV_SHORT="stage"",
-          "export APP_DIR="."",
+          "export APP_DIR="app"",
           "export ENV_TYPE="stage"",
           "export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"",
           "export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"",
@@ -1213,7 +1213,7 @@ EOF
 ENV_SHORT: |-
   stage
 APP_DIR: |-
-  .
+  app
 ENV_TYPE: |-
   stage
 BUILD_INFO_BUILD_ID: |-
