@@ -108,7 +108,6 @@ export const createComponentContext = async (
   const context: Omit<ComponentContext, "customJobs"> = {
     type: "component",
     name: ctx.componentName,
-    componentName: ctx.componentName,
     env: ctx.env,
     fullConfig: ctx.config,
     componentConfig,

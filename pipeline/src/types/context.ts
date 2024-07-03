@@ -158,10 +158,6 @@ export type ComponentContext<
    * the name of the component
    */
   name: string;
-  /**
-   * @deprecated use name instead
-   */
-  componentName: string;
 
   /**
    * the merged component config.
