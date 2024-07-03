@@ -73,14 +73,6 @@ export type EnvVars = {
    * secret env vars. These vars can be managed with catladder/cli
    */
   secret?: string[];
-  /**
-   * @deprecated, use ${componentName:variableName} instead
-   *
-   * With fromComponents you can inject env vars from other components.
-   */
-  fromComponents?: {
-    [otherApp: string]: Record<string, string>;
-  };
 };
 
 export type DefaultEnvConfig = {

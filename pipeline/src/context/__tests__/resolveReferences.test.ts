@@ -1,8 +1,5 @@
 import type { BashExpression } from "../../bash/BashExpression";
-import {
-  resolveReferences,
-  translateLegacyFromComponents,
-} from "../resolveReferences";
+import { resolveReferences } from "../resolveReferences";
 
 const unpackBashExpressions = (obj: Record<string, string | BashExpression>) =>
   Object.fromEntries(
@@ -120,29 +117,6 @@ describe("resolveReferences", () => {
 
     expect(unpackBashExpressions(result)).toEqual({
       a: "value is frontend api ${frontend:FOO}!",
-    });
-  });
-});
-
-describe("translateLegacyFromComponents", () => {
-  it("translatetes the old `fromComponents` approach to ${componentName:variableName}", () => {
-    const fromComponents = {
-      api: {
-        API_FOO: "FOO",
-        API_BAR: "BAR",
-      },
-      www: {
-        WWW_X: "X",
-        WWW_Y: "Y",
-      },
-    };
-
-    const result = translateLegacyFromComponents(fromComponents);
-    expect(result).toEqual({
-      API_FOO: "${api:FOO}",
-      API_BAR: "${api:BAR}",
-      WWW_X: "${www:X}",
-      WWW_Y: "${www:Y}",
     });
   });
 });

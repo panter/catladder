@@ -1,4 +1,3 @@
-import { merge } from "lodash";
 import { DEPLOY_TYPES } from "../deploy";
 import type {
   ComponentContext,
@@ -13,10 +12,7 @@ import { isStandaloneBuildConfig } from "../build/types";
 import type { EnvironmentContext } from "../types/environmentContext";
 import { getBuildInfoVariables } from "./getBuildInfoVariables";
 import { getEnvironmentContext } from "./getEnvironmentContext";
-import {
-  resolveReferences,
-  translateLegacyFromComponents,
-} from "./resolveReferences";
+import { resolveReferences } from "./resolveReferences";
 import { transformJobOnlyVars } from "./transformJobOnlyVars";
 import {
   makeSecretEnvVarMapping,
@@ -132,17 +128,8 @@ export const getEnvironmentVariables = async (
     componentName,
     secretEnvVarKeys,
   );
-  // this is deprecated, we now support: $componentname:FOO
-  const legacyFromComponents = envConfigRaw.vars?.fromComponents ?? {};
-  const publicEnvVarsRawWithLegacyFromComponents = merge(
-    {},
-    translateLegacyFromComponents(legacyFromComponents),
-    publicEnvVarsRaw,
-  );
 
-  const publicEnvVarsRawSanitized = stringifyValues(
-    publicEnvVarsRawWithLegacyFromComponents,
-  );
+  const publicEnvVarsRawSanitized = stringifyValues(publicEnvVarsRaw);
 
   const envVarsRaw = addIndexVar({
     ...predefinedVariables,

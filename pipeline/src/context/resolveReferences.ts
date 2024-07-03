@@ -78,16 +78,3 @@ export const resolveReferences = async (
     ),
   ) as Record<string, BashExpression>;
 };
-
-export const translateLegacyFromComponents = (
-  fromComponents: Record<string, Record<string, string>>,
-) => {
-  return Object.fromEntries(
-    Object.entries(fromComponents).flatMap(([componentName, variables]) => {
-      return Object.entries(variables).map(([ourName, otherName]) => [
-        ourName,
-        "${" + componentName + ":" + otherName + "}",
-      ]);
-    }),
-  );
-};
