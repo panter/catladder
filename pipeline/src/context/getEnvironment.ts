@@ -20,7 +20,7 @@ export const getEnvironment = async (
     slugPrefix: envContext.environmentSlugPrefix,
     reviewSlug: envContext.reviewSlug,
     slug: envContext.environmentSlug,
-    shortName: env,
+
     ...variables,
   };
 };
