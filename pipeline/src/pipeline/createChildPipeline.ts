@@ -30,6 +30,7 @@ export const createChildPipeline = async <T extends PipelineType>(
       jobs: Object.fromEntries(
         gitlabJobs.map(({ gitlabJob, name }) => [name, gitlabJob]),
       ),
+      variables: config.runnerVariables,
     }) as Pipeline<T>;
   }
   throw new Error(`${pipelineType} is not supported`);

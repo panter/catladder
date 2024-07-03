@@ -214,4 +214,9 @@ export type Config<C extends ConfigProps = never> = {
   meta?: {
     labels?: Record<string, string>;
   };
+
+  /**
+   * additional vars only for the runner in all jobs.
+   */
+  runnerVariables?: Record<string, string>;
 };

@@ -91,6 +91,7 @@ export const createMainPipeline = async <T extends PipelineType>(
         ...allJobs,
         ...getGitlabReleaseJobs(),
       },
+      variables: config.runnerVariables,
     }) as Pipeline<T>;
   }
   throw new Error(`${pipelineType} is not supported`);
