@@ -176,16 +176,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -195,16 +194,15 @@ app 🧪 test:
       ENV_SHORT=dev
       APP_DIR=app
       ENV_TYPE=dev
-      HOST=unknown-host.example.com
+      HOSTNAME=unknown-host.example.com
       ROOT_URL=https://unknown-host.example.com
-      HOST_INTERNAL=unknown-host.example.com
-      HOST_CANONICAL=unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       APP_STORE_CONNECT_API_KEY_CONTENT=$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT
       APP_STORE_CONNECT_ISSUER_ID=$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID
       APP_STORE_CONNECT_API_KEY_ID=$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID
       GRAPHQL_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
@@ -297,16 +295,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_dev_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_dev_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -360,16 +357,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_review_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_review_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -379,16 +375,15 @@ app 🧪 test:
       ENV_SHORT=review
       APP_DIR=app
       ENV_TYPE=review
-      HOST=unknown-host.example.com
+      HOSTNAME=unknown-host.example.com
       ROOT_URL=https://unknown-host.example.com
-      HOST_INTERNAL=unknown-host.example.com
-      HOST_CANONICAL=unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       APP_STORE_CONNECT_API_KEY_CONTENT=$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT
       APP_STORE_CONNECT_ISSUER_ID=$CL_review_app_APP_STORE_CONNECT_ISSUER_ID
       APP_STORE_CONNECT_API_KEY_ID=$CL_review_app_APP_STORE_CONNECT_API_KEY_ID
       GRAPHQL_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
@@ -477,16 +472,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_review_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_review_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -538,16 +532,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -557,16 +550,15 @@ app 🧪 test:
       ENV_SHORT=stage
       APP_DIR=app
       ENV_TYPE=stage
-      HOST=unknown-host.example.com
+      HOSTNAME=unknown-host.example.com
       ROOT_URL=https://unknown-host.example.com
-      HOST_INTERNAL=unknown-host.example.com
-      HOST_CANONICAL=unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       APP_STORE_CONNECT_API_KEY_CONTENT=$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT
       APP_STORE_CONNECT_ISSUER_ID=$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID
       APP_STORE_CONNECT_API_KEY_ID=$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID
       GRAPHQL_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
@@ -655,16 +647,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_stage_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_stage_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_stage_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -710,16 +701,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -729,16 +719,15 @@ app 🧪 test:
       ENV_SHORT=prod
       APP_DIR=app
       ENV_TYPE=prod
-      HOST=unknown-host.example.com
+      HOSTNAME=unknown-host.example.com
       ROOT_URL=https://unknown-host.example.com
-      HOST_INTERNAL=unknown-host.example.com
-      HOST_CANONICAL=unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       APP_STORE_CONNECT_API_KEY_CONTENT=$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT
       APP_STORE_CONNECT_ISSUER_ID=$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID
       APP_STORE_CONNECT_API_KEY_ID=$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID
       GRAPHQL_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","APP_STORE_CONNECT_API_KEY_CONTENT","APP_STORE_CONNECT_ISSUER_ID","APP_STORE_CONNECT_API_KEY_ID","GRAPHQL_URL"]
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-app\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
@@ -827,16 +816,15 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="unknown-host.example.com"
+    - export HOSTNAME="unknown-host.example.com"
     - export ROOT_URL="https://unknown-host.example.com"
-    - export HOST_INTERNAL="unknown-host.example.com"
-    - export HOST_CANONICAL="unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export APP_STORE_CONNECT_API_KEY_CONTENT="$CL_prod_app_APP_STORE_CONNECT_API_KEY_CONTENT"
     - export APP_STORE_CONNECT_ISSUER_ID="$CL_prod_app_APP_STORE_CONNECT_ISSUER_ID"
     - export APP_STORE_CONNECT_API_KEY_ID="$CL_prod_app_APP_STORE_CONNECT_API_KEY_ID"
     - export GRAPHQL_URL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"APP_STORE_CONNECT_API_KEY_CONTENT\\",\\"APP_STORE_CONNECT_ISSUER_ID\\",\\"APP_STORE_CONNECT_API_KEY_ID\\",\\"GRAPHQL_URL\\"]"
     - export LC_A="L=en_US.UTF-8"
     - export LANG="en_US.UTF-8"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
@@ -984,16 +972,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1131,16 +1118,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api"
@@ -1167,13 +1153,11 @@ api 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -1184,7 +1168,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
       $(printf %s "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -1282,16 +1266,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1423,16 +1406,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api"
@@ -1459,13 +1441,11 @@ api 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -1476,7 +1456,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
       $(printf %s "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -1576,16 +1556,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1717,16 +1696,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api"
@@ -1753,13 +1731,11 @@ api 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -1770,7 +1746,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
       $(printf %s "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -1857,16 +1833,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1998,16 +1973,15 @@ api 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api"
@@ -2034,13 +2008,11 @@ api 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -2051,7 +2023,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
       $(printf %s "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"

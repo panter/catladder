@@ -164,33 +164,6 @@ export type DeployConfigMongodbReplicaset = {
 export type DeployConfigMongodb = DeployConfigMongodbBase &
   (DeployConfigMongodbStandalone | DeployConfigMongodbReplicaset);
 
-/**
- * @deprecated use config with instanceConnectionName
- */
-type DeployConfigKubernetesValuesCloudSQLLegacy = {
-  enabled: boolean;
-  /**
-   * @deprecated use config with instanceConnectionName
-   */
-  instanceId?: string;
-  /**
-   * @deprecated use config with instanceConnectionName
-   */
-  projectId?: string;
-  /**
-   * @deprecated use config with instanceConnectionName
-   */
-  region?: string;
-  /**
-   * @deprecated use type "unmanaged".
-   *
-   * Be aware that "unmanaged" is not fully backward compatible with "legacy".
-   *
-   *
-   */
-  type?: "legacy";
-};
-
 export type DeployConfigKubernetesValuesCloudSQLUnmanaged = {
   enabled: boolean;
   instanceConnectionName: string;
@@ -220,8 +193,7 @@ export type DeployConfigKubernetesValuesCloudSQLUnmanaged = {
   dbBaseName?: string;
 };
 export type DeployConfigKubernetesValuesCloudSQL =
-  | DeployConfigKubernetesValuesCloudSQLLegacy
-  | DeployConfigKubernetesValuesCloudSQLUnmanaged;
+  DeployConfigKubernetesValuesCloudSQLUnmanaged;
 export type DeployConfigKubernetesValues = AllowUnknownProps<{
   /**
    * enable cloudsql db. Currently you have to manually set it up

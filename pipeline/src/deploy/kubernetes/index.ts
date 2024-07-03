@@ -29,7 +29,7 @@ export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigKubernetes
         fullConfig.domainCanonical ||
         "panter.cloud";
 
-      const HOST_INTERNAL = joinBashExpressions(
+      const HOSTNAME_INTERNAL = joinBashExpressions(
         [
           componentSlug,
           ...(envType === "review" && reviewSlug ? [reviewSlug] : []),
@@ -44,7 +44,7 @@ export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigKubernetes
         KUBE_NAMESPACE,
         KUBE_APP_NAME,
         KUBE_APP_NAME_PREFIX,
-        HOST_INTERNAL,
+        HOSTNAME_INTERNAL,
       };
     },
   };

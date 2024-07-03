@@ -168,10 +168,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -189,7 +188,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -327,10 +326,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -348,7 +346,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -375,13 +373,11 @@ app1 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -405,7 +401,7 @@ app1 🧪 test:
       app1 doouble quote: \\"
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -503,10 +499,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -524,7 +519,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -656,10 +651,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -677,7 +671,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app1/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -704,13 +698,11 @@ app1 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -734,7 +726,7 @@ app1 🧪 test:
       app1 doouble quote: \\"
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -834,10 +826,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -855,7 +846,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -987,10 +978,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -1008,7 +998,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -1035,13 +1025,11 @@ app1 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -1065,7 +1053,7 @@ app1 🧪 test:
       app1 doouble quote: \\"
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -1152,10 +1140,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -1173,7 +1160,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1305,10 +1292,9 @@ app1 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -1326,7 +1312,7 @@ app1 🧪 test:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -1353,13 +1339,11 @@ app1 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -1383,7 +1367,7 @@ app1 🧪 test:
       app1 doouble quote: \\"
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -1574,10 +1558,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -1600,7 +1583,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1738,10 +1721,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -1764,7 +1746,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -1791,13 +1773,11 @@ app2 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -1826,7 +1806,7 @@ app2 🧪 test:
       --------
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -1924,10 +1904,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -1950,7 +1929,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -2082,10 +2061,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -2108,7 +2086,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app2/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -2135,13 +2113,11 @@ app2 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -2170,7 +2146,7 @@ app2 🧪 test:
       --------
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -2270,10 +2246,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -2296,7 +2271,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -2428,10 +2403,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -2454,7 +2428,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -2481,13 +2455,11 @@ app2 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -2516,7 +2488,7 @@ app2 🧪 test:
       --------
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -2603,10 +2575,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -2629,7 +2600,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -2761,10 +2732,9 @@ app2 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_INTERNAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOST_CANONICAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
@@ -2787,7 +2757,7 @@ app2 🧪 test:
       \${multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -2814,13 +2784,11 @@ app2 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
-      HOST: |-
+      HOSTNAME: |-
       $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL: |-
       $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
-      HOST_CANONICAL: |-
+      HOSTNAME_INTERNAL: |-
       $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
       ROOT_URL_INTERNAL: |-
       $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
@@ -2849,7 +2817,7 @@ app2 🧪 test:
       --------
       " | sed 's/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
@@ -3040,10 +3008,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.dev.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.dev.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.dev.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-dev"
     - export KUBE_APP_NAME="kube"
@@ -3084,7 +3051,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > kube/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -3222,10 +3189,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.dev.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.dev.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.dev.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-dev"
     - export KUBE_APP_NAME="kube"
@@ -3266,7 +3232,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/kube"
     - export DOCKER_IMAGE_NAME="dev/kube"
@@ -3337,13 +3303,11 @@ kube 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
             kube.dev.test-app.pan.panter.cloud
           ROOT_URL: |-
             https://kube.dev.test-app.pan.panter.cloud
-          HOST_INTERNAL: |-
-            kube.dev.test-app.pan.panter.cloud
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
             kube.dev.test-app.pan.panter.cloud
           ROOT_URL_INTERNAL: |-
             https://kube.dev.test-app.pan.panter.cloud
@@ -3353,7 +3317,7 @@ kube 🧪 test:
             kube
           KUBE_APP_NAME_PREFIX: ""
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       application:
         host: |-
           kube.dev.test-app.pan.panter.cloud
@@ -3425,10 +3389,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.dev.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.dev.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.dev.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-dev"
     - export KUBE_APP_NAME="kube"
@@ -3469,7 +3432,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-dev-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -3519,10 +3482,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.dev.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.dev.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.dev.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.dev.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-dev"
     - export KUBE_APP_NAME="kube"
@@ -3563,7 +3525,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-dev-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -3608,10 +3570,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-kube"
@@ -3652,7 +3613,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > kube/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -3784,10 +3745,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-kube"
@@ -3828,7 +3788,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/kube"
     - export DOCKER_IMAGE_NAME="review/kube"
@@ -3899,13 +3859,11 @@ kube 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
       $(printf %s "kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
           ROOT_URL: |-
       $(printf %s "https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
-          HOST_INTERNAL: |-
-      $(printf %s "kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
       $(printf %s "kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
           ROOT_URL_INTERNAL: |-
       $(printf %s "https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
@@ -3916,7 +3874,7 @@ kube 🧪 test:
           KUBE_APP_NAME_PREFIX: |-
       $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed 's/^/      /')
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       application:
         host: |-
       $(printf %s "kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/    /')
@@ -3986,10 +3944,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-kube"
@@ -4030,7 +3987,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -4078,10 +4035,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-kube"
@@ -4122,7 +4078,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -4165,10 +4121,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.stage.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.stage.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.stage.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-stage"
     - export KUBE_APP_NAME="kube"
@@ -4209,7 +4164,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > kube/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -4341,10 +4296,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.stage.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.stage.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.stage.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-stage"
     - export KUBE_APP_NAME="kube"
@@ -4385,7 +4339,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/kube"
     - export DOCKER_IMAGE_NAME="stage/kube"
@@ -4456,13 +4410,11 @@ kube 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
             kube.stage.test-app.pan.panter.cloud
           ROOT_URL: |-
             https://kube.stage.test-app.pan.panter.cloud
-          HOST_INTERNAL: |-
-            kube.stage.test-app.pan.panter.cloud
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
             kube.stage.test-app.pan.panter.cloud
           ROOT_URL_INTERNAL: |-
             https://kube.stage.test-app.pan.panter.cloud
@@ -4472,7 +4424,7 @@ kube 🧪 test:
             kube
           KUBE_APP_NAME_PREFIX: ""
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       application:
         host: |-
           kube.stage.test-app.pan.panter.cloud
@@ -4535,10 +4487,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.stage.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.stage.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.stage.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-stage"
     - export KUBE_APP_NAME="kube"
@@ -4579,7 +4530,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-stage-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -4627,10 +4578,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.stage.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.stage.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.stage.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.stage.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-stage"
     - export KUBE_APP_NAME="kube"
@@ -4671,7 +4621,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-stage-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -4714,10 +4664,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.prod.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.prod.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.prod.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-prod"
     - export KUBE_APP_NAME="kube"
@@ -4758,7 +4707,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > kube/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -4890,10 +4839,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.prod.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.prod.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.prod.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-prod"
     - export KUBE_APP_NAME="kube"
@@ -4934,7 +4882,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/kube"
     - export DOCKER_IMAGE_NAME="prod/kube"
@@ -5005,13 +4953,11 @@ kube 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
             kube.prod.test-app.pan.panter.cloud
           ROOT_URL: |-
             https://kube.prod.test-app.pan.panter.cloud
-          HOST_INTERNAL: |-
-            kube.prod.test-app.pan.panter.cloud
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
             kube.prod.test-app.pan.panter.cloud
           ROOT_URL_INTERNAL: |-
             https://kube.prod.test-app.pan.panter.cloud
@@ -5021,7 +4967,7 @@ kube 🧪 test:
             kube
           KUBE_APP_NAME_PREFIX: ""
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       application:
         host: |-
           kube.prod.test-app.pan.panter.cloud
@@ -5084,10 +5030,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.prod.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.prod.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.prod.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-prod"
     - export KUBE_APP_NAME="kube"
@@ -5128,7 +5073,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-prod-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
@@ -5176,10 +5121,9 @@ kube 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL="https://kube.prod.test-app.pan.panter.cloud"
-    - export HOST_INTERNAL="kube.prod.test-app.pan.panter.cloud"
-    - export HOST_CANONICAL="kube.prod.test-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="kube.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://kube.prod.test-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-test-app-prod"
     - export KUBE_APP_NAME="kube"
@@ -5220,7 +5164,7 @@ kube 🧪 test:
 
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
     - export RELEASE_NAME="pan-test-app-prod-kube"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"

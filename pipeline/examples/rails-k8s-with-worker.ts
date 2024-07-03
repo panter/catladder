@@ -44,7 +44,11 @@ const config: Config = {
           domainCanonical: "panter.cloud",
         },
         values: {
-          cloudsql: { enabled: true, projectId: "some-project-id" },
+          cloudsql: {
+            enabled: true,
+            type: "unmanaged",
+            instanceConnectionName: "myproject:europe-west6:instance-name",
+          },
           application: {
             // if deployed to Google Cloud Run use a gem like cloudtasker instead of a permanently running expensive worker
             worker: {

@@ -85,7 +85,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
     getAdditionalEnvVars: (ctx) => {
       const { fullName, env, componentName, deployConfigRaw } = ctx;
 
-      const HOST_INTERNAL = joinBashExpressions(
+      const HOSTNAME_INTERNAL = joinBashExpressions(
         [
           fullName,
           getBashVariable(
@@ -113,7 +113,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
           : {};
 
       return {
-        HOST_INTERNAL,
+        HOSTNAME_INTERNAL,
         ...getCloudSqlVariables(ctx),
         ...jobTriggers,
         DEPLOY_CLOUD_RUN_PROJECT_ID: deployConfigRaw

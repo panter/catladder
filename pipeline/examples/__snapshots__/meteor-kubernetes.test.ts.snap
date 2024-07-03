@@ -169,16 +169,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.dev.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-dev"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -309,16 +308,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.dev.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-dev"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/web"
     - export DOCKER_IMAGE_NAME="dev/web"
@@ -357,13 +355,11 @@ web 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
             web.dev.my-app.pan.panter.cloud
           ROOT_URL: |-
             https://web.dev.my-app.pan.panter.cloud
-          HOST_INTERNAL: |-
-            web.dev.my-app.pan.panter.cloud
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
             web.dev.my-app.pan.panter.cloud
           ROOT_URL_INTERNAL: |-
             https://web.dev.my-app.pan.panter.cloud
@@ -373,7 +369,7 @@ web 🧪 test:
             web
           KUBE_APP_NAME_PREFIX: ""
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
       application:
         host: |-
           web.dev.my-app.pan.panter.cloud
@@ -472,16 +468,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.dev.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-dev"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export RELEASE_NAME="pan-my-app-dev-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -531,16 +526,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.dev.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.dev.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-dev"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export RELEASE_NAME="pan-my-app-dev-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -586,16 +580,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"
     - export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -720,16 +713,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"
     - export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/web"
     - export DOCKER_IMAGE_NAME="review/web"
@@ -768,13 +760,11 @@ web 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
       $(printf %s "web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" | sed 's/^/      /')
           ROOT_URL: |-
       $(printf %s "https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" | sed 's/^/      /')
-          HOST_INTERNAL: |-
-      $(printf %s "web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" | sed 's/^/      /')
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
       $(printf %s "web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" | sed 's/^/      /')
           ROOT_URL_INTERNAL: |-
       $(printf %s "https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" | sed 's/^/      /')
@@ -785,7 +775,7 @@ web 🧪 test:
           KUBE_APP_NAME_PREFIX: |-
       $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed 's/^/      /')
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
       application:
         host: |-
       $(printf %s "web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" | sed 's/^/    /')
@@ -882,16 +872,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"
     - export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export RELEASE_NAME="pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -939,16 +928,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-review"
     - export KUBE_APP_NAME="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"
     - export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export RELEASE_NAME="pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -992,16 +980,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.stage.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-stage"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1126,16 +1113,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.stage.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-stage"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/web"
     - export DOCKER_IMAGE_NAME="stage/web"
@@ -1174,13 +1160,11 @@ web 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
             web.stage.my-app.pan.panter.cloud
           ROOT_URL: |-
             https://web.stage.my-app.pan.panter.cloud
-          HOST_INTERNAL: |-
-            web.stage.my-app.pan.panter.cloud
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
             web.stage.my-app.pan.panter.cloud
           ROOT_URL_INTERNAL: |-
             https://web.stage.my-app.pan.panter.cloud
@@ -1190,7 +1174,7 @@ web 🧪 test:
             web
           KUBE_APP_NAME_PREFIX: ""
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
       application:
         host: |-
           web.stage.my-app.pan.panter.cloud
@@ -1280,16 +1264,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.stage.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-stage"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export RELEASE_NAME="pan-my-app-stage-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -1337,16 +1320,15 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
-    - export HOST_INTERNAL="web.stage.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.stage.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-stage"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
     - export RELEASE_NAME="pan-my-app-stage-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -1390,17 +1372,16 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="www.example.com"
+    - export HOSTNAME="www.example.com"
     - export ROOT_URL="https://www.example.com"
-    - export HOST_INTERNAL="web.prod.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.prod.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-prod"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
     - export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
@@ -1525,17 +1506,16 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="www.example.com"
+    - export HOSTNAME="www.example.com"
     - export ROOT_URL="https://www.example.com"
-    - export HOST_INTERNAL="web.prod.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.prod.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-prod"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
     - export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/web"
     - export DOCKER_IMAGE_NAME="prod/web"
@@ -1578,13 +1558,11 @@ web 🧪 test:
       $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
       $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
-          HOST: |-
+          HOSTNAME: |-
             www.example.com
           ROOT_URL: |-
             https://www.example.com
-          HOST_INTERNAL: |-
-            web.prod.my-app.pan.panter.cloud
-          HOST_CANONICAL: |-
+          HOSTNAME_INTERNAL: |-
             web.prod.my-app.pan.panter.cloud
           ROOT_URL_INTERNAL: |-
             https://web.prod.my-app.pan.panter.cloud
@@ -1594,7 +1572,7 @@ web 🧪 test:
             web
           KUBE_APP_NAME_PREFIX: ""
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOST","ROOT_URL","HOST_INTERNAL","HOST_CANONICAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]
       application:
         host: |-
           www.example.com
@@ -1697,17 +1675,16 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="www.example.com"
+    - export HOSTNAME="www.example.com"
     - export ROOT_URL="https://www.example.com"
-    - export HOST_INTERNAL="web.prod.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.prod.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-prod"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
     - export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
     - export RELEASE_NAME="pan-my-app-prod-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
@@ -1755,17 +1732,16 @@ web 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOST="www.example.com"
+    - export HOSTNAME="www.example.com"
     - export ROOT_URL="https://www.example.com"
-    - export HOST_INTERNAL="web.prod.my-app.pan.panter.cloud"
-    - export HOST_CANONICAL="web.prod.my-app.pan.panter.cloud"
+    - export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
     - export KUBE_NAMESPACE="pan-my-app-prod"
     - export KUBE_APP_NAME="web"
     - export KUBE_APP_NAME_PREFIX=""
     - export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
     - export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
     - export RELEASE_NAME="pan-my-app-prod-web"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"

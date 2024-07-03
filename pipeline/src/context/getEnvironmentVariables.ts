@@ -39,12 +39,9 @@ type BasePredefinedVariables = ReturnType<typeof getBasePredefinedVariables>;
 
 // we export so that we have later nice autocomplete
 export type PredefinedVariables = BasePredefinedVariables & {
-  /**
-   * undefined in rails, Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
-   */
-  HOST?: StringOrBashExpression;
+  HOSTNAME?: StringOrBashExpression;
   ROOT_URL: StringOrBashExpression;
-  HOST_INTERNAL: StringOrBashExpression;
+  HOSTNAME_INTERNAL: StringOrBashExpression;
   ROOT_URL_INTERNAL: StringOrBashExpression;
 };
 
@@ -74,12 +71,8 @@ export const getEnvironmentVariables = async (
       ...basePredefinedVariables,
       ENV_SHORT: "local",
       ROOT_URL: url,
-      // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
-      ...(isStandaloneBuildConfig(buildConfigRaw) &&
-      buildConfigRaw.type === "rails"
-        ? {}
-        : { HOST: host }),
-      HOST_INTERNAL: host,
+      HOSTNAME: host,
+      HOSTNAME_INTERNAL: host,
       ROOT_URL_INTERNAL: "http://" + host,
       PORT: port.toString(),
     };
@@ -90,10 +83,10 @@ export const getEnvironmentVariables = async (
         )
       : {};
 
-    const HOST_INTERNAL =
-      additionalEnvVars.HOST_INTERNAL ?? "unknown-host.example.com";
+    const HOSTNAME_INTERNAL =
+      additionalEnvVars.HOSTNAME_INTERNAL ?? "unknown-host.example.com";
 
-    host = envConfigRaw?.host ?? HOST_INTERNAL;
+    host = envConfigRaw?.host ?? HOSTNAME_INTERNAL;
     url = joinBashExpressions(["https://", host]);
 
     predefinedVariables = {
@@ -102,12 +95,11 @@ export const getEnvironmentVariables = async (
       ...(isStandaloneBuildConfig(buildConfigRaw) &&
       buildConfigRaw.type === "rails"
         ? {}
-        : { HOST: host }),
+        : { HOSTNAME: host }),
       ROOT_URL: url,
-      HOST_INTERNAL,
-      /**@deprecated */
-      HOST_CANONICAL: HOST_INTERNAL, // legacy alias for HOST_INTERNAL
-      ROOT_URL_INTERNAL: joinBashExpressions(["https://", HOST_INTERNAL]),
+      HOSTNAME_INTERNAL,
+
+      ROOT_URL_INTERNAL: joinBashExpressions(["https://", HOSTNAME_INTERNAL]),
       ...additionalEnvVars,
     };
   }

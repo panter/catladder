@@ -41,21 +41,7 @@ export const createKubernetesCloudsqlBaseValues = (
     context,
     "cloudsqlProxyCredentials",
   )}`;
-  if (config?.type !== "unmanaged") {
-    const instanceConnectionName = `${config.projectId ?? "skynet-164509"}:${
-      config.region ?? "europe-west6"
-    }:${config.instanceId ?? context.environment.envVars.KUBE_NAMESPACE}`;
-
-    return {
-      cloudsql: {
-        enabled: config.enabled,
-        dbUser: "postgres",
-        instanceConnectionName,
-        proxyCredentials,
-        fullDbName: context.environment.envVars.KUBE_APP_NAME ?? "",
-      },
-    };
-  } else if (config.type === "unmanaged") {
+  if (config.type === "unmanaged") {
     return {
       cloudsql: {
         enabled: config.enabled,
