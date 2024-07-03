@@ -27,6 +27,9 @@ const config: Config = {
       dir: "www",
       build: {
         from: "myWorkspace",
+        cache: {
+          paths: [".next/cache"],
+        },
       },
       deploy: DEPLOY_CONFIG,
       vars: {

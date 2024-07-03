@@ -127,7 +127,26 @@ Components that use those shared builds set the build property to ` from: "<work
 
 ### Turbo Repo
 
-Turbo repo is supported out of the box in workspace builds. You can install and use it as usual. The .turbo path gets automatically cached.
+You can use Turbo repo in workspace builds. You can install and configure it as usual.
+
+for caching you can either:
+
+- use remote cache (recommended)
+- use gitlab cache:
+
+```ts title="catladder.ts"
+const config: Config = {
+  builds: {
+    myWorkspace: {
+      type: "node",
+      cache: {
+        paths: [".turbo"],
+      },
+    },
+  },
+  //...
+};
+```
 
 If your build relies on **.env** make sure to include .env in the cache settings:
 

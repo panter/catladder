@@ -63,34 +63,5 @@ export const getNodeCache = (
   return [
     ...getYarnCache(context, policy),
     ...getNodeModulesCache(context, policy),
-    ...(context.type === "workspace" ? getWorkspaceDefaultCaches(context) : []),
-  ];
-};
-
-export const getNextCache = (context: Context): CacheConfig[] => {
-  const paths = context.build
-    .getComponentDirs("direct")
-    .map((c) => join(c, ".next/cache"));
-
-  return [
-    {
-      pathMode: "absolute",
-      key: "next-cache",
-      policy: "pull-push",
-      paths,
-    },
-  ];
-};
-
-export const getWorkspaceDefaultCaches = (
-  context: WorkspaceContext,
-): CacheConfig[] => {
-  return [
-    {
-      // turbo repo
-      key: "turbo",
-      policy: "pull-push",
-      paths: [".turbo"],
-    },
   ];
 };

@@ -1,11 +1,11 @@
 import { createYamlLocalPipeline } from "./__utils__/helpers";
-import config from "./workspace-api-www-custom-cache";
+import config from "./cloud-run-nextjs";
 
 /**
  * This test is auto-generated.
  * Modifications will be overwritten on every `yarn test` run!
  */
 
-it("matches snapshot for workspace-api-www-custom-cache local pipeline YAML", async () => {
+it("matches snapshot for cloud-run-nextjs local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
 });

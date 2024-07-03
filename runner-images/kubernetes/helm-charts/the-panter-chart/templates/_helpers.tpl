@@ -185,15 +185,7 @@ env:
   - name: POSTGRESQL_DBNAME # alias
     value: "{{- template "DB_NAME" . -}}"
   {{- end -}}
-  {{ if .Values.legacyprisma1.enabled }}
-  - name: PRISMA_CONFIG
-    value: |
-      port: 4466
-      databases:
-        default:
-          connector: mongo
-          uri: $(MONGO_URL)
-  {{- end -}}
+ 
 {{- end -}}
 
 

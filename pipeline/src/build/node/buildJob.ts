@@ -15,7 +15,7 @@ import { createComponentBuildJobs, createWorkspaceBuildJobs } from "../base";
 import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import type { BuildConfigDocker } from "../types";
-import { getNextCache, getNodeCache, getYarnCache } from "./cache";
+import { getNodeCache, getYarnCache } from "./cache";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 
 export const createNodeBuildJobs = (
@@ -43,7 +43,7 @@ export const createNodeBuildJobDefinition = (
   const yarnInstall = getYarnInstall(context);
   return createBuildJobDefinition(context, buildConfig, {
     prescript: yarnInstall,
-    cache: [...getNodeCache(context), ...getNextCache(context)],
+    cache: getNodeCache(context),
   });
 };
 

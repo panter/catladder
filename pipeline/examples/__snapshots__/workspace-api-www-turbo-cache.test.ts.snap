@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches snapshot for workspace-api-www-custom-cache local pipeline YAML 1`] = `
+exports[`matches snapshot for workspace-api-www-turbo-cache local pipeline YAML 1`] = `
 "image: path/to/docker/jobs-default:the-version
 stages:
   - setup
@@ -104,10 +104,6 @@ variables:
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-turbo
-      policy: pull-push
-      paths:
-        - .turbo
   rules:
     - when: never
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -149,10 +145,6 @@ variables:
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-turbo
-      policy: pull-push
-      paths:
-        - .turbo
   rules:
     - when: never
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -228,20 +220,12 @@ variables:
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-turbo
-      policy: pull-push
-      paths:
-        - .turbo
-    - key: myWorkspace-next-cache
-      policy: pull-push
-      paths:
-        - api/.next/cache
-        - www/.next/cache
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .my-cache
+        - .turbo
         - api/.component-custom-cache
+        - www/.next/cache
   artifacts:
     paths:
       - api/.next
@@ -328,20 +312,12 @@ variables:
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-turbo
-      policy: pull-push
-      paths:
-        - .turbo
-    - key: myWorkspace-next-cache
-      policy: pull-push
-      paths:
-        - api/.next/cache
-        - www/.next/cache
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .my-cache
+        - .turbo
         - api/.component-custom-cache
+        - www/.next/cache
   artifacts:
     paths:
       - api/.next
@@ -426,20 +402,12 @@ variables:
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-turbo
-      policy: pull-push
-      paths:
-        - .turbo
-    - key: myWorkspace-next-cache
-      policy: pull-push
-      paths:
-        - api/.next/cache
-        - www/.next/cache
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .my-cache
+        - .turbo
         - api/.component-custom-cache
+        - www/.next/cache
   artifacts:
     paths:
       - api/.next
@@ -524,20 +492,12 @@ variables:
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-turbo
-      policy: pull-push
-      paths:
-        - .turbo
-    - key: myWorkspace-next-cache
-      policy: pull-push
-      paths:
-        - api/.next/cache
-        - www/.next/cache
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .my-cache
+        - .turbo
         - api/.component-custom-cache
+        - www/.next/cache
   artifacts:
     paths:
       - api/.next
