@@ -1,3 +1,11 @@
+# [1.157.0](https://git.panter.ch/catladder/catladder/compare/v1.156.4...v1.157.0) (2024-07-03)
+
+
+### Features
+
+* allow to set component dir as docker build context in custom docker build ([7c33cb1](https://git.panter.ch/catladder/catladder/commit/7c33cb10230152c7ccc04f64c6fead60aefe8f6d))
+* support for setting base pipeline runner variables ([a546d75](https://git.panter.ch/catladder/catladder/commit/a546d754553e67d8fbbd9bd1af50b403bf358774))
+
 ## [1.156.4](https://git.panter.ch/catladder/catladder/compare/v1.156.3...v1.156.4) (2024-06-28)
 
 ## [1.156.3](https://git.panter.ch/catladder/catladder/compare/v1.156.2...v1.156.3) (2024-06-28)
