@@ -1,3 +1,7 @@
+---
+sidebar_label: Cloud Ready
+---
+
 # Being "CLOUD READY"
 
 The future is in MACH-Architecture, which stands for **M**icroservice **A**pi-First **C**loud-Native and **H**eadless.  
@@ -9,10 +13,12 @@ Cloud infrastructure provide good scalability and failover-safety. In order to b
 
 ### Stateless
 
-Each Service/component of your app should be _stateless_:
+Each Service/component of your app should be _stateless_.
 
-- App does rely on disk-volumes → use cloud storage or s3-buckets instead.
-- App does not rely on in-memory sessions → if you really need shared-session, use something like Redis.
+The app does:
+
+- rely on disk-volumes → use cloud storage or s3-buckets instead.
+- not rely on in-memory sessions → if you really need shared-session, use something like Redis.
 
 ### No CPU and background work on web-services
 

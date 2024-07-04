@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Build
 
 Builds define how components are tested and built for deployment.
@@ -78,8 +82,7 @@ This may speed up the build process if multiple components share the same build 
 
 To configure a workspace build, you need to define a build in the `builds` section of the config:
 
-```typescript
-
+```ts title="catladder.ts"
 const config: Config = {
 
   builds: {
@@ -124,7 +127,7 @@ Components that use those shared builds set the build property to ` from: "<work
 
 ### Turbo Repo
 
-turbo repo is supported out of the box in workspace builds. You can install and use it as usual. The .turbo path gets automatically cached.
+Turbo repo is supported out of the box in workspace builds. You can install and use it as usual. The .turbo path gets automatically cached.
 
 If your build relies on **.env** make sure to include .env in the cache settings:
 

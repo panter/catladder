@@ -1,8 +1,12 @@
-# use pupeteer in node apps
+---
+sidebar_label: Pupeteer with Node
+---
+
+# Use pupeteer in node apps
 
 add this to your catladder.ts
 
-```typescript
+```ts title="catladder.ts"
 
 build: {
     type: "node",

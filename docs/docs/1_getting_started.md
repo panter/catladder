@@ -1,17 +1,21 @@
-## Getting started
+---
+sidebar_position: 1
+---
+
+# Getting started
 
 **Note**: _Currently, only GitLab is supported._
 
-### Install for a GitLab project
+## Install for a GitLab project
 
-#### Local mode
+### Local mode
 
 1. install catladder CLI: `yarn add @catladder/cli`
 2. Create the file `catladder.ts` in your repositories root.
 3. set `pipelineType: "gitlab",` in your `catladder.ts`
 4. setup `direnv`. Add the following to your `.envrc`:
 
-```bash
+```sh title=".envrc"
 layout node # allows for local installations of catladder-cli
 # if catladder is available, invoke that
 echo "using catenv"
@@ -22,16 +26,16 @@ eval "$(catenv-dev)" # eval is needed if you rely on exported env vars. If you r
 
 This will now upsert the gitlab-ci.yml file whenever something in catladder.ts changes and cd into that directory.
 
-check that file into git.
+Commit that file with git.
 
 5. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
 6. Authenticate gcloud CLI with `gcloud auth login`
 
-#### Childpipeline mode (classic)
+### Childpipeline mode (classic)
 
 1. Create a `.gitlab-ci.yml` file with this content:
 
-```yaml
+```yaml title=".gitlab-ci.yml"
 include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
 ```
 
@@ -40,20 +44,18 @@ include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/ge
 4. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
 5. Authenticate gcloud CLI with `gcloud auth login`
 
-## The configuration
+### The configuration
 
 `catladder.ts` is the central configuration for your project.  
 You can use TypeScript to get full advantage of type checking in this configuration (YAML is also supported, but not recommended).
 
 The configuration's basic structure looks like this:
 
-```typescript
+```ts title="catladder.ts" showLineNumbers
 
 import type { Config } from '@catladder/pipeline'
 
-
 const config: Config = {
-
    appName: "my-first-app",
    customerName: "pan", // copy three letters from controllr project (e.g. pan, wea, wpa, sss, ...)
    components: {
@@ -71,14 +73,10 @@ const config: Config = {
       myOtherComponent: {
         ...
       }
-
    }
-
 }
 
-
 export default config
-
 ```
 
 ### Components
@@ -92,7 +90,7 @@ In the catladder Config, you declare `Component`s within `components`, where the
 
 each `ComponentConfig` has this structure:
 
-```typescript
+```ts title="catladder.ts#config.components['componentName']" showLineNumbers
 {
   dir: "my-dir", // the working directory within your repo of that component
   vars: {}, // environment variables and secrets (see following chapter)
@@ -101,27 +99,3 @@ each `ComponentConfig` has this structure:
   env: {}, // customize each environment, e.g. configure different variables and deployment for production
 }
 ```
-
-# Environment variables
-
-See [VARS](1_VARS.md)
-
-# BUILD
-
-See [BUILD](2_BUILD.md)
-
-# DEPLOY
-
-See [DEPLOY](3_DEPLOY.md)
-
-# TROUBLESHOOT
-
-See [TROUBLESHOOT](4_TROUBLESHOOT.md)
-
-# RECIPES
-
-See [RECIPES](5_RECIPIES.md)
-
-# SECURITY AUDIT
-
-See [SECURITY AUDIT](6_SECURITY_AUDIT.md)

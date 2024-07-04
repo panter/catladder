@@ -1,4 +1,8 @@
-# Deploy type Kubernetes
+---
+sidebar_position: 4
+---
+
+# Kubernetes (deprecated)
 
 TODO
 

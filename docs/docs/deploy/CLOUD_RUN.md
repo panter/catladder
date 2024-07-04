@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Google Cloud Run
 
 Google Cloud Run is a container hosting.
@@ -13,7 +17,7 @@ Make sure to follow the [CLOUD READY](../recipies/CLOUD_READY.md) principles, as
 
 In your `catladder.ts` set the deploy type to `google-cloud-run`:
 
-```ts
+```ts title="catladder.ts"
 const config: Config = {
   customerName: "pan",
   appName: "myapp",
@@ -35,7 +39,7 @@ const config: Config = {
 
 **Whenever you make a change to this config, run this command in catladder-cli:**
 
-```
+```sh
 🐱 $ project-setup
 
 
@@ -98,9 +102,9 @@ Some hints:
 - Google's load balancer is powerful, but expensive in comparison (at least 20 CHF per month).  
   Recommended for bigger projects.
 - Firebase hosting is a cheaper alternative. You can use firebase hosting without actually using all other features of it.  
-  Only the the specially-named `__session` cookie is permitted to pass through to the execution of your app (see [docs](https://firebase.google.com/docs/hosting/manage-cache#using_cookies)).
+  Only the specially-named `__session` cookie is permitted to pass through to the execution of your app (see [docs](https://firebase.google.com/docs/hosting/manage-cache#using_cookies)).
   However, if you have a static app (E.g. frontend) as well, you might consider it as static hosting.
-- [Cloud Run domain mapping](https://cloud.google.com/run/docs/mapping-custom-domains#run) is the third option but it's not (yet) available in the Zurich region
+- [Cloud Run domain mapping](https://cloud.google.com/run/docs/mapping-custom-domains#run) is the third option, but it's not (yet) available in the Zurich region
 
 ### Custom Domains using firebase
 
@@ -112,19 +116,19 @@ Preparation work:
 - make sure your app is deployed to production and works correctly there
 
 1. Create a firebase project. When asked for the name, let the dropdown load. It will show you existing google cloud projects. Make sure to select the same project as your cloud run app.
-2. under hosting, add a custom domain. Follow the instructions. You will need to add a TXT record to your DNS. This is to verify that you own the domain. If you migrate from an exising prod-app, make sure to use the advanced method.
-3. Firebase will create a certificate for it, once you setup the DNS correctly. This can take up to 24h.
+2. under hosting, add a custom domain. Follow the instructions. You will need to add a TXT record to your DNS. This is to verify that you own the domain. If you migrate from an existing prod-app, make sure to use the advanced method.
+3. Firebase will create a certificate for it, once you've set up the DNS correctly. This can take up to 24h.
 4. in the meantime, install firebase tools: `npm i -g firebase-tools`
 5. Login to firebase: `firebase login`
 6. You need to create a .firebaserc file. [See this example](https://git.panter.ch/klassenlager2021/fonsi-2-0). You can also use `firebase init` to create it with a wizard. This example has multiple hosting targets, so its still worth to check it out
-7. Create a firebase.json where the hosting is setup, again look at this [example](https://git.panter.ch/klassenlager2021/fonsi-2-0)
+7. Create a `firebase.json` where the hosting is set up, again look at this [example](https://git.panter.ch/klassenlager2021/fonsi-2-0)
 8. Make sure your cloud run app is deployed to production and works correctly there
 9. Run `firebase deploy --only hosting` to deploy the hosting
 10. if your certificate from step 2 is ready, you can change the A-record of your domain to point to the firebase hosting IP. You can find it in the firebase console under hosting.
 
 Some tips:
 
-- if you migrate from an existing prod-app, make sure to use the advanced method in step 2, which first generates the certificate. Changes in any DNS can take time to propagate and is not immediatly active for all users on the globe. If you use the simple method, which is change either CNAME or A-record, you might end up with a certificate error.
+- if you migrate from an existing prod-app, make sure to use the advanced method in step 2, which first generates the certificate. Changes in any DNS can take time to propagate and is not immediately active for all users on the globe. If you use the simple method, which is change either CNAME or A-record, you might end up with a certificate error.
 - You can have multiple domains on the same firebase project. This can be used for apps with dedicated frontend and api service and you can also add custom domains for staging
 - no changes are needed in catladder. It will still deploy to cloud run, but firebase will route the traffic to it. You can still use the cloud run url to access your app.
 - Still make sure to set `host` in catladder.ts of your prod environment, so that your services know the url where there are hosted from (ROOT_URL)
@@ -136,9 +140,9 @@ Some tips:
 _Complexity of these topics is thoroughly described in the documentation [logging](https://www.notion.so/panterch/Logging-c13f3e36d3794ce79cc02258bc6ba07f) and [tracing](https://www.notion.so/panterch/Tracing-a7a7a774f32e4044bb65e73fffd13fa9) with more 
 information and examples. See subpages in Notion._
 
-Logs are taken automatically by cloud run, so simply log to stdout and stderr is the simplest approach. However you may want to group logs by request, or add additional context to logs. This can be achieved with structured logging and using @google-cloud/logging-winston.
+Logs are taken automatically by cloud run, so simply log to stdout and stderr is the simplest approach. However, you may want to group logs by request, or add additional context to logs. This can be achieved with structured logging and using @google-cloud/logging-winston.
 
-However there are certain pitfalls to be aware of, so best use this example
+However, there are certain pitfalls to be aware of, so best use this example
 
 ```ts
 import winston, { format } from "winston";
@@ -199,7 +203,7 @@ export default class LoggerFactory {
 }
 ```
 
-you can then use the `makeExpressMiddleware` so that each req has a `log` object which is an instance of a winston logger. All those logs will have the same trace as the initial request, so you can group them in google cloud logs
+You can then use the `makeExpressMiddleware` so that each req has a `log` object which is an instance of a winston logger. All those logs will have the same trace as the initial request, so you can group them in google cloud logs
 
 see also https://git.panter.ch/manul/wea/food-2050/-/blob/main/libs/logger/src/index.ts?ref_type=heads
 
@@ -209,7 +213,7 @@ Tracing allows you to see how much time is spent in which part of your app. This
 
 When traces are enabled some of your requests contain traces and can be either looked at in the google cloud console or the traces explorer.
 
-To enable traces and instrumentation in nodejs apps with graphql and express you can use this example:
+To enable traces and instrumentation in Node.js apps with GraphQL and express you can use this example:
 
 ```ts
 import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
@@ -255,11 +259,11 @@ registerInstrumentations({
 
 there are some pitfalls to be aware of:
 
-- make sure this file is the very first that you import in your server, even before importing any other library
+- Make sure this file is the very first that you import in your server, even before importing any other library
 - bundling the server using esbuild or webpack can lead to issues. Best make sure to not bundle dependencies. In esbuild this can be done using `--packages=external`. Full example: `esbuild ./src/index.ts --bundle --outfile=./dist/index.js --platform=node --keep-names --packages=external`
 - if you still have problems, enable diagnostics: `diag.setLogger(new DiagConsoleLogger(), { logLevel: DiagLogLevel.ALL });` (you can import diag and the stuff from one of the opentelemetry packages)
 
-## Migration from kubernetes to cloud run
+## Migration from Kubernetes to Cloud Run
 
 Preparations:
 
@@ -271,19 +275,19 @@ Preparations:
 Steps:
 
 1. Change the catladder.ts config to use `google-cloud-run` as deploy type. Don't forget to alter all jobs as well.
-2. run `project-setup` in catladderc-li
-3. Push and make sure it works on your review-branch. Test it thouroughly
+2. run `project-setup` in catladder-cli
+3. Push and make sure it works on your review-branch. Test it thoroughly
 4. Merge and create a release. Wait before you deploy to production.
-5. If you have cronjobs and background workers, you need to manually remove them from kubernetes because once you deploy the app to production, the new cronjobs and workers will start to operate as well.
+5. If you have cronjobs and background workers, you need to manually remove them from Kubernetes because once you deploy the app to production, the new cronjobs and workers will start to operate as well.
 6. Deploy it to production. Make sure it works correctly by accessing it via the cloud run url. If you have custom domains, you can already set them up, but don't change the DNS yet.
 7. Change the DNS to point the public prod domain to the custom domain (firebase) or load balancer.
-8. Once DNS is propagated (can take up to 24h), you can safely delete the old kubernetes namespace as no traffic should land there anymore.
+8. Once DNS is propagated (can take up to 24h), you can safely delete the old Kubernetes namespace as no traffic should land there any more.
 
 ### Considerations
 
 #### min instances and scaling behaviour
 
-Cloud run scales down to 0 when your app is not used. This is cost efficient, but lead to "cold starts" when someone access your app after a while. A typical node app is not so fast with starting, so cold start is often too long for a user to wait.
+Cloud run scales down to 0 when your app is not used. This is cost-efficient, but lead to "cold starts" when someone access your app after a while. A typical node app is not so fast with starting, so cold start is often too long for a user to wait.
 
 Having 0 min instances is therefore a recommended option for all non prod-apps.
 
@@ -293,17 +297,17 @@ For prod-apps, consider setting minInstances to 1. Be aware of the cost implicat
 
 Cloud run scales up to 100 instances by default. This is a lot and can lead to high costs. Consider setting a max instance limit.
 
-Bursts can happen if you are target of DDOS attacks.
+Bursts can happen if you are targeted with DDoS-attacks.
 
 #### Cronjobs and one time jobs
 
-Cronjobs and one time jobs (e.g. migrations) are supported by catladder and cloud-run. They are implemeted by using a cloud run job and setting up a cloud runner, see Jobs and migrations chapter.
+Cronjobs and one time jobs (e.g. migrations) are supported by catladder and cloud-run. They are implemented by using a cloud run job and setting up a cloud runner, see Jobs and migrations chapter.
 
-If you have a cronjob that runs more often then every 10min, you might consider to use a background worker instead as this is more cost efficient.
+If you have a cronjob that runs more often then every 10 min, you might consider using a background worker instead as this is more ccost-efficient
 
 #### Background workers
 
-Background workers are supported by catladder and cloud-run, but there are comparably expensive, since you need to always allocate cpu and memory for them.
+Background workers are supported by catladder and cloud-run, but there are comparably expensive, since you need to always allocate CPU and memory for them.
 
 Check the example [cloud-run-meteor-with-worker](../../pipeline/examples/cloud-run-meteor-with-worker.ts) to see how to set it up.
 
@@ -311,4 +315,4 @@ Consider migrating away from background workers to either cronjobs are asynchron
 
 #### MongoDb
 
-we supported mongodb in kubernetes by using a helm chart. This is not supported in cloud run. You can use a managed mongodb service, e.g. mongodb atlas.
+We supported MongoDB in Kubernetes by using a helm chart. This is not supported in cloud run. You can use a managed MongoDB service, e.g. MongoDB atlas.

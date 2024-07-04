@@ -1,3 +1,7 @@
+---
+sidebar_position: 8
+---
+
 # Security Audit
 
 Catladder pipeline's job `create release` contains a step which requires projects to contain security audit document (SECURITY.md).
@@ -25,7 +29,7 @@ flowchart TD
 - `No audit yet`: if `SECURITY.md` does not exist yet or in other words Security Audit MR is not merged yet
 - `Audit is invalid`: if `SECURITY.md` table has zero topics answered - does not have responsible and is answered with placeholder value (✅/❌)
 
-# catci
+## catci
 
 `catci` is CLI tool with main purpose to be used in pipeline jobs. `catci` allows us to do complex operations inside CI/CD jobs which would be rather cumbersome to do in bash scripts. 
 

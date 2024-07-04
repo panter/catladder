@@ -1,3 +1,8 @@
+---
+sidebar_position: 5
+sidebar_label: Troubleshooting
+---
+
 # Troubleshoot Common Errors
 
 ## My pipeline no longer works, you broke it!

@@ -1,8 +1,13 @@
+---
+sidebar_position: 2
+sidebar_label: Env Variables
+---
+
 # Environment variables
 
 Environment variables can be declared on a component like this:
 
-```ts
+```ts title="catladder.ts"
 const config: Config = {
   components: {
     app: {
@@ -64,7 +69,7 @@ _⚠️ Secrets are currently stored in GitLab. This may not be suitable for sup
 
 If you added a new key to `secrets` or want to change secrets, open a terminal and invoke `yarn catladder` (or just `catladder` if installed globally):
 
-```sh
+```sh title="catladder shell"
 $ yarn catladder
 
 ╔══════════════════════════╗
@@ -140,7 +145,7 @@ For this, you need to [install direnv first][direnv-install].
 
 [direnv][direnv] requires a project configuration file `.envrc` in your project root:
 
-```sh
+```sh title=".envrc"
 # Add “node_modules/.bin” to $PATH. You to use catladder without yarn.
 layout node
 # If catenv is available, invoke it.
@@ -252,7 +257,7 @@ $ yarn add -D @catladder/cli
 You need to fix the imports of [@catladder/pipeline][catladder-pipeline-npm] to [@catladder/cli][catladder-cli-npm] in your `catladder.ts` file (and elsewhere).  
 Additionally, you need to set the `pipelineType`.
 
-```ts
+```ts title="catladder.ts"
 import type { Config } from "@catladder/cli";
 
 const config: Config = {

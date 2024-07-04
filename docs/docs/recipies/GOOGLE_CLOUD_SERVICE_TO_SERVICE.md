@@ -1,3 +1,7 @@
+---
+sidebar_label: Service-to-Service in gCloud
+---
+
 # Service-to-Service communication in Google Cloud
 
 Your app may consist of multiple service, but you may not want to expose all of them to the public internet. In this case, you can use service-to-service communication to allow services to communicate with each other.
@@ -12,8 +16,7 @@ There are two options to prevent access: using authentication or using internal 
 
 To require authentication on your service, set
 
-```typescript
-// catladder.ts
+```ts title="catladder.ts"
 service: {
     allowUnauthenticated: false,
 }
@@ -25,9 +28,7 @@ This will prevent unauthenticated access to this service.
 
 You should access a non-public service through its internal ROOT_URL_INTERNAL, which is available as an environment variable. Example:
 
-```typescript
-// catladder.ts, components
-
+```ts title="catladder.ts, components"
 ["public-service-a"]: {
     vars: {
         public: {
@@ -58,7 +59,7 @@ How to access this service depends on the service you want to access it from:
 
 Tasks created by cloud task need to set the `oidcToken` field in the `httpRequest` field of the task.
 
-[see also the official docs](https://cloud.google.com/run/docs/triggering/using-tasks?hl=de#creating_http_tasks_with_authentication_tokens)
+[See also the official docs](https://cloud.google.com/run/docs/triggering/using-tasks?hl=de#creating_http_tasks_with_authentication_tokens)
 
 ```typescript
 import { CloudTasksClient } from "@google-cloud/tasks";
@@ -139,7 +140,7 @@ const client = new GraphQLClient(`${SERVICE_URL}/graphql`, {
 });
 ```
 
-`idTokenClient` also can do requests directly with `request` method.
+`idTokenClient` can also do requests directly with `request` method.
 
 #### Accessing locally from your development machine
 
@@ -151,11 +152,11 @@ gcloud auth print-identity-token
 
 you have to include that token in the `Authorization` or `X-Serverless-Authorization` header of your request: `Authorization: Bearer ${ID_TOKEN}`
 
-notice that these tokens have a short live span
+Notice that these tokens have a short life span.
 
 ### Preventing access to a service using internal ingress
 
-Alternativly you can set the ingress to "internal":
+Alternatively, you can set the ingress to "internal":
 
 ```typescript
 // catladder.ts, components

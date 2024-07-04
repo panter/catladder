@@ -1,0 +1,68 @@
+{
+  "name": "docs",
+  "scripts": {
+    "gen-examples-mdx": "ts-node -P scripts/tsconfig.json scripts/generate-recipies-examples.ts",
+    "docusaurus": "docusaurus",
+    "start": "yarn gen-examples-mdx && docusaurus start",
+    "build": "yarn gen-examples-mdx && docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "yarn gen-examples-mdx && docusaurus deploy",
+    "clear": "docusaurus clear",
+    "serve": "yarn gen-examples-mdx && docusaurus serve",
+    "write-translations": "docusaurus write-translations",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.4.0",
+    "@docusaurus/preset-classic": "3.4.0",
+    "@docusaurus/theme-mermaid": "^3.4.0",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.0.0",
+    "glob": "^10.4.2",
+    "prism-react-renderer": "^2.3.0",
+    "raw-loader": "^4.0.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "3.4.0",
+    "@docusaurus/tsconfig": "3.4.0",
+    "@docusaurus/types": "3.4.0",
+    "typescript": "~5.2.2"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 3 chrome version",
+      "last 3 firefox version",
+      "last 5 safari version"
+    ]
+  },
+  "license": "MIT",
+  "version": "0.0.0",
+  "keywords": [
+    "GitLab",
+    "cloud",
+    "cli",
+    "gitlab-ci",
+    "ci/cd",
+    "pipeline",
+    "deployment",
+    "devops",
+    "automation",
+    "typescript"
+  ],
+  "author": "Marco Wettstein <maw@panter.ch>",
+  "homepage": "https://git.panter.ch/catladder/catladder/#readme",
+  "bugs": "https://git.panter.ch/catladder/catladder/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://git.panter.ch/catladder/catladder.git",
+    "directory": "cli"
+  }
+}
