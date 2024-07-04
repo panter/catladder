@@ -1,5 +1,8 @@
 import { existsSync, readFileSync } from "fs";
-import { register } from "ts-node";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const tsx = require("tsx/cjs/api");
+
 import { parse } from "yaml";
 import type { Config } from "../types";
 
@@ -8,32 +11,24 @@ import type { Config } from "../types";
 const fullPath = (directory: string, ext: string) =>
   directory + "/catladder." + ext;
 
-function requireUncached(module: string) {
-  delete require.cache[require.resolve(module)];
-  return require(module);
-}
-
-export const readConfigSync = (
+export const readConfig = async (
   directory: string = process.cwd(),
-): { config: Config; path: string; ext: string } | null => {
-  register({
-    cwd: directory,
-    transpileOnly: true,
-    compilerOptions: {
-      module: "commonjs",
-    },
-  });
-
+): Promise<{ config: Config; path: string; ext: string } | null> => {
   const found = ["ts", "js", "yml", "yaml"].find((extension) =>
     existsSync(fullPath(directory, extension)),
   );
+
   if (found) {
     const filePath = fullPath(directory, found);
     if (found === "ts" || found === "js") {
+      const result = await tsx.require(filePath, directory);
+
+      // weird: if target project is esm, result is under result.default, but if its commonjs, its under result.default.default
+      const config = result.default.default || result.default;
       return {
         path: filePath,
         ext: found,
-        config: requireUncached(filePath).default,
+        config,
       };
     } else {
       return {

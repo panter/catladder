@@ -1,6 +1,6 @@
 import type { Config, EnvironmentEnvVars } from "@catladder/pipeline";
 import {
-  readConfigSync,
+  readConfig,
   getAllEnvs,
   getEnvironment as _getEnvironment,
   createComponentContext,
@@ -24,7 +24,7 @@ const reloadConfigAndObserve = async () => {
   if (!gitRoot) {
     return;
   }
-  const result = readConfigSync(gitRoot);
+  const result = await readConfig(gitRoot);
   if (!result) {
     // can't do anything, there is no config
     return;

@@ -1,6 +1,6 @@
 #!/bin/bash
-ncc build dist/cli/src/catenv.js -o dist/bundles/catenv -e 'ts-node' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
+ncc build dist/cli/src/catenv.js -o dist/bundles/catenv -e 'tsx/cjs/api' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
 
-ncc build dist/cli/src/cli.js -o dist/bundles/cli -e 'ts-node' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
+ncc build dist/cli/src/cli.js -o dist/bundles/cli -e 'tsx/cjs/api' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
 
-ncc build dist/cli/src/catci.js -o dist/bundles/catci -e 'ts-node' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
+ncc build dist/cli/src/catci.js -o dist/bundles/catci -e 'tsx/cjs/api' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
