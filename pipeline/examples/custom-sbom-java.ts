@@ -32,3 +32,7 @@ const config: Config = {
 };
 
 export default config;
+
+export const information = {
+  title: "Custom: Sbom Java",
+};

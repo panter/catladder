@@ -27,3 +27,7 @@ const config: Config = {
 };
 
 export default config;
+
+export const information = {
+  title: "Cloud Run: Memory Limit",
+};

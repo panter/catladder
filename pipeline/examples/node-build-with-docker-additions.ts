@@ -23,3 +23,7 @@ const config: Config = {
 };
 
 export default config;
+
+export const information = {
+  title: "Node: Build with Docker Additions",
+};

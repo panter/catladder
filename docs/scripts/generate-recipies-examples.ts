@@ -1,0 +1,71 @@
+import { rm, writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
+import { join, resolve, basename } from "path";
+import { glob } from "glob";
+
+/**
+ * With the env variable DOCS_EXAMPLES_SIDEBAR_POSITION you can set a different sidebar position for the examples.
+ */
+const defaultSidebarPosition = 7;
+const sidebarPosition = Number.parseInt(
+  `${process.env["DOCS_EXAMPLES_SIDEBAR_POSITION"] ?? defaultSidebarPosition}`,
+  10,
+);
+
+const rootPath = resolve(__dirname, "../../");
+const examplesSourcePath = "pipeline/examples";
+const outputDir = join(rootPath, "docs/docs/examples");
+
+async function main() {
+  if (!existsSync(outputDir)) {
+    await mkdir(outputDir, { recursive: true });
+  }
+  const [exampleFiles, currentExamples] = await Promise.all([
+    glob("*.ts", {
+      cwd: join(rootPath, examplesSourcePath),
+      ignore: ["*.test.ts"],
+    }),
+    glob(join(outputDir, "*.mdx")),
+  ]);
+  await Promise.all(currentExamples.map((file) => rm(file)));
+  const indexFileLines: string[] = [
+    `---\nsidebar_position: ${sidebarPosition}\n---\n\n# Config examples\n`,
+  ];
+  const exampleMdxForSort: {
+    outputPath: string;
+    content: string;
+    title: string;
+    indexItem: string;
+  }[] = [];
+  for (const file of exampleFiles) {
+    let title = basename(file, ".ts");
+    const path = join(examplesSourcePath, file);
+    const fileName = `${title}.mdx`;
+    const mod = require(join(rootPath, examplesSourcePath, title)); // eslint-disable-line @typescript-eslint/no-var-requires
+    if ("information" in mod) {
+      if ("title" in mod.information) {
+        title = mod.information.title;
+      }
+    }
+    exampleMdxForSort.push({
+      outputPath: join(outputDir, fileName),
+      content: `{/* Auto generated with 'yarn workspace docs gen-examples-mdx'. Do not edit manually */}\n\n# ${title}\n\n<ExampleCodeBlock path="${path}" />\n`,
+      title,
+      indexItem: `- [${title}](/docs/examples/${basename(fileName, ".mdx")})`,
+    });
+  }
+  await Promise.all(
+    exampleMdxForSort
+      .sort((a, b) => a.title.localeCompare(b.title))
+      .map(async ({ content, indexItem, outputPath, title }, index) => {
+        indexFileLines.push(indexItem);
+        await writeFile(
+          outputPath,
+          `---\nsidebar_position: ${index + 1}\nsidebar_label: '${title}'\n---\n\n${content}`,
+        );
+      }),
+  );
+  await writeFile(join(outputDir, "index.mdx"), indexFileLines.join("\n"));
+}
+
+main().catch(console.error);

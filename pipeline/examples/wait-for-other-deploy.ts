@@ -31,3 +31,7 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
 };
 
 export default config;
+
+export const information = {
+  title: "Wait for other deployment",
+};

@@ -59,3 +59,7 @@ doouble quote: "
 };
 
 export default config;
+
+export const information = {
+  title: "Multiline Environment Variables",
+};

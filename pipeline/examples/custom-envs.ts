@@ -26,3 +26,7 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
 };
 
 export default config;
+
+export const information = {
+  title: "Custom: Envs",
+};

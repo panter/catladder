@@ -58,3 +58,7 @@ const config: Config = {
 };
 
 export default config;
+
+export const information = {
+  title: "K8s: Meteor",
+};
