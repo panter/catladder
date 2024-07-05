@@ -1,5 +1,4 @@
 import type { Config } from "../src";
-import { createAllPipelines } from "./__utils__/helpers";
 
 const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
   appName: "test-app",
@@ -31,6 +30,4 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
   },
 };
 
-it("matches snapshot", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
+export default config;

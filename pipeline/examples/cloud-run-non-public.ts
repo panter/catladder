@@ -1,5 +1,4 @@
 import type { Config } from "../src";
-import { createAllPipelines } from "./__utils__/helpers";
 
 const config: Config = {
   appName: "test-app",
@@ -22,6 +21,4 @@ const config: Config = {
   },
 };
 
-it("matches snapshot", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
+export default config;

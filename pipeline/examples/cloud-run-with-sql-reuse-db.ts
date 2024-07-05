@@ -1,5 +1,4 @@
 import type { Config, DeployConfigCloudRunCloudSql } from "../src";
-import { createAllPipelines } from "./__utils__/helpers";
 
 const CLOUD_SQL: DeployConfigCloudRunCloudSql = {
   type: "unmanaged",
@@ -49,6 +48,4 @@ const config: Config = {
   },
 };
 
-it("matches snapshot", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
+export default config;

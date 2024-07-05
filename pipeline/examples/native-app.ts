@@ -1,6 +1,6 @@
 import type { Config } from "../src";
 import type { CatladderJob } from "../src/types/jobs";
-import { createAllPipelines } from "./__utils__/helpers";
+
 const APP_GEM_CACHE: CatladderJob["cache"] = [
   {
     key: {
@@ -76,6 +76,4 @@ const config: Config = {
   },
 };
 
-it("matches snapshot", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
+export default config;

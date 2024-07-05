@@ -5,7 +5,7 @@ module.exports = {
   testPathIgnorePatterns: ["dist", "/__utils__/"],
   testMatch: [
     "**/__tests__/**/*.[jt]s?(x)",
-    "**/pipeline/examples/**/*.[jt]s?(x)",
+    "**/pipeline/examples/*.test.ts",
   ],
   setupFiles: ["./jest/setup.ts"],
 };

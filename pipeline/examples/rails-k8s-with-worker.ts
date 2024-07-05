@@ -1,6 +1,4 @@
-import { rmSync, writeFileSync } from "fs";
 import type { Config } from "../src";
-import { createAllPipelines } from "./__utils__/helpers";
 
 // the image version should match your `.ruby-version`
 const RAILS_TEST_STAGE_IMAGE = "ruby:3.2.1";
@@ -90,12 +88,4 @@ const config: Config = {
   },
 };
 
-it("matches snapshot", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
-
-it("matches snapshot with a Dockerfile", async () => {
-  writeFileSync("Dockerfile", "");
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-  rmSync("Dockerfile");
-});
+export default config;

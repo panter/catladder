@@ -4,8 +4,8 @@
   "author": "Marco Wettstein <maw@panter.ch>",
   "license": "MIT",
   "scripts": {
-    "test": "jest",
-    "test:update": "jest --updateSnapshot",
+    "test": "yarn workspace @catladder/pipeline generate:examples-test && jest",
+    "test:update": "yarn workspace @catladder/pipeline generate:examples-test && jest --updateSnapshot",
     "build": "yarn workspaces foreach -v --topological-dev run build",
     "lint": "yarn workspaces foreach run lint",
     "dev": "yarn workspaces foreach -vi --parallel run build:watch",

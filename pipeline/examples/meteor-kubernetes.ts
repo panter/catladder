@@ -1,5 +1,4 @@
 import type { Config } from "../src";
-import { createAllPipelines } from "./__utils__/helpers";
 
 const config: Config = {
   customerName: "pan",
@@ -59,7 +58,3 @@ const config: Config = {
 };
 
 export default config;
-
-it("matches snapshot", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
