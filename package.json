@@ -6,7 +6,7 @@
   "scripts": {
     "test": "yarn workspace @catladder/pipeline generate:examples-test && jest",
     "test:update": "yarn workspace @catladder/pipeline generate:examples-test && jest --updateSnapshot",
-    "build": "yarn workspaces foreach -v --topological-dev run build",
+    "build": "yarn workspaces foreach --exclude='docs' -v --topological-dev run build",
     "lint": "yarn workspaces foreach run lint",
     "dev": "yarn workspaces foreach -vi --parallel run build:watch",
     "postinstall": "husky install",
