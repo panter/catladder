@@ -1,3 +1,24 @@
+# [1.161.0](https://git.panter.ch/catladder/catladder/compare/v1.160.0...v1.161.0) (2024-07-05)
+
+
+### Bug Fixes
+
+* **docs:** broken links corrected for working docusaurus build ([50ff9ea](https://git.panter.ch/catladder/catladder/commit/50ff9eaf62eaa2ae2ca489ce108908c109d9efdf))
+* **docs:** generated examples as plain markdown instead of mdx react component ([c965363](https://git.panter.ch/catladder/catladder/commit/c9653631d281b17c9911940f8c9b00d054562bed))
+* **docs:** global build script excludes docs workspace for project build ([66e7674](https://git.panter.ch/catladder/catladder/commit/66e7674dfa0082868e94237b041640c167af7f31))
+* **docs:** pages job should not block merge requests ([febcf9a](https://git.panter.ch/catladder/catladder/commit/febcf9adb4e74759dc6f74954c588d175bf4edd6))
+* **docs:** several small markdown content fixes ([f4a7fb8](https://git.panter.ch/catladder/catladder/commit/f4a7fb8ec6523299cdb7a35148d8e374a18a7c69))
+
+
+### Features
+
+* **docs:** add docusaurus docs link to readme ([8818355](https://git.panter.ch/catladder/catladder/commit/881835583f16caf89aa856e77c5abe8c64c18994))
+* **docs:** config examples cosmetics ([fbc001c](https://git.panter.ch/catladder/catladder/commit/fbc001c1b119b885a2a1fad0be5d61ea8b480d8d))
+* **docs:** docusaurus also supports plantuml rendering ([ddbf274](https://git.panter.ch/catladder/catladder/commit/ddbf2749a47757f1829a16625e90751bcea2c55e))
+* **docs:** gitlab pages deploy job ([33b3d86](https://git.panter.ch/catladder/catladder/commit/33b3d8647aa198128cfd5d745a046fbd8c756352))
+* **docs:** install and setup docusaurus ([651e258](https://git.panter.ch/catladder/catladder/commit/651e258df4a369ac7f7013f5b0312dfa8f2b6d28))
+* **docs:** pipeline config examples generated for docusaurus ([8d6ccee](https://git.panter.ch/catladder/catladder/commit/8d6ccee8cbc3a478df549366ddc2204beaa07689))
+
 # [1.160.0](https://git.panter.ch/catladder/catladder/compare/v1.159.1...v1.160.0) (2024-07-05)
 
 
