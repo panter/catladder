@@ -1,3 +1,10 @@
+# [1.158.0](https://git.panter.ch/catladder/catladder/compare/v1.157.1...v1.158.0) (2024-07-05)
+
+
+### Features
+
+* **project:** upgrade project ci image to node v20 (was v16) ([d1a006b](https://git.panter.ch/catladder/catladder/commit/d1a006b3b0dfca054cc8e243001c62832654be0b))
+
 ## [1.157.1](https://git.panter.ch/catladder/catladder/compare/v1.157.0...v1.157.1) (2024-07-03)
 
 # [1.157.0](https://git.panter.ch/catladder/catladder/compare/v1.156.4...v1.157.0) (2024-07-03)
