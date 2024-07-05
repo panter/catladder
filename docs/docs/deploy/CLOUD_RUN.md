@@ -11,7 +11,7 @@ which makes it a cost-efficient option as well for review-apps and dev-apps.
 
 It's compatible with all kinds of runtimes and frameworks, as it can run any Docker image.
 
-Make sure to follow the [CLOUD READY](../recipies/CLOUD_READY.md) principles, as they are in particular important for cloud run.
+Make sure to follow the [CLOUD READY](/docs/recipies/CLOUD_READY) principles, as they are in particular important for cloud run.
 
 ## Configuration
 
@@ -268,7 +268,7 @@ there are some pitfalls to be aware of:
 Preparations:
 
 - make sure you have access to the DNS of your domain (see Custom domains chapter)
-- Check the [CLOUD READY](../recipies/CLOUD_READY.md) principles and make sure your app is cloud ready
+- Check the [CLOUD READY](/docs/recipies/CLOUD_READY) principles and make sure your app is cloud ready
 - Check whether your app use background workers, cronjobs and one-time jobs to understand the cost structure
 - Be aware of the costs and check whether existing hosting costs are higher or lower than your estimations
 
@@ -309,7 +309,7 @@ If you have a cronjob that runs more often then every 10 min, you might consider
 
 Background workers are supported by catladder and cloud-run, but there are comparably expensive, since you need to always allocate CPU and memory for them.
 
-Check the example [cloud-run-meteor-with-worker](../../pipeline/examples/cloud-run-meteor-with-worker.ts) to see how to set it up.
+Check the example [cloud-run-meteor-with-worker](/docs/examples/cloud-run-meteor-with-worker) to see how to set it up.
 
 Consider migrating away from background workers to either cronjobs are asynchronous tasks using Cloud Tasks.
 

@@ -209,7 +209,8 @@ pages:
   script:
     - echo "Pages accessible through ${CI_PAGES_URL}/${PAGES_PREFIX}"
     - yarn install
-    - yarn workspace docs build --out-dir="${CI_PROJECT_DIR}/public"
+    - yarn workspace docs gen-examples-mdx
+    - yarn workspace docs build
   variables:
     PAGES_PREFIX: "" # No prefix by default (master)
   pages:
