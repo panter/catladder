@@ -1,3 +1,10 @@
+## [1.159.1](https://git.panter.ch/catladder/catladder/compare/v1.159.0...v1.159.1) (2024-07-05)
+
+
+### Bug Fixes
+
+* force tsx version in cli ([79e5339](https://git.panter.ch/catladder/catladder/commit/79e5339227a3991bffdf8fbe7b8cc9cbaf4f48f2))
+
 # [1.159.0](https://git.panter.ch/catladder/catladder/compare/v1.158.1...v1.159.0) (2024-07-05)
 
 
