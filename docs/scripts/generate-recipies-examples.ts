@@ -47,7 +47,8 @@ async function main() {
     const fileContent = await readFile(absPath, { encoding: "utf-8" });
     const cleanedContent = fileContent
       .replaceAll(/import( | type ).+from .+\n+/g, "")
-      .replaceAll(/\n+export const information = \{\n.+\n\};\n+/g, "");
+      .replaceAll(/\n+export const information = \{\n.+\n\};\n+/g, "")
+      .replaceAll(/\n+export default config;/g, "");
 
     const mod = require(join(rootPath, examplesSourcePath, title)); // eslint-disable-line @typescript-eslint/no-var-requires
     if ("information" in mod) {
@@ -59,7 +60,7 @@ async function main() {
       [
         `<!-- Auto generated with 'yarn workspace docs gen-examples-md'. Do not edit manually -->\n`,
         `# ${title}\n`,
-        `[${path}](https://git.panter.ch/catladder/catladder/-/blob/main/${path})\n`,
+        `[${file}](https://git.panter.ch/catladder/catladder/-/blob/main/${path})\n`,
         `\`\`\`ts`,
         cleanedContent,
         `\`\`\``,
