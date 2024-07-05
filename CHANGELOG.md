@@ -1,3 +1,10 @@
+# [1.160.0](https://git.panter.ch/catladder/catladder/compare/v1.159.1...v1.160.0) (2024-07-05)
+
+
+### Features
+
+* **pipeline:** remove examples tests from example files and test seperately ([42eb554](https://git.panter.ch/catladder/catladder/commit/42eb5549248e6a626a5b8cd7daf90da34be306db))
+
 ## [1.159.1](https://git.panter.ch/catladder/catladder/compare/v1.159.0...v1.159.1) (2024-07-05)
 
 
