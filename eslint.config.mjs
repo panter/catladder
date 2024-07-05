@@ -1,9 +1,11 @@
 import globals from "globals";
 import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default [
-  { languageOptions: { globals: globals.node } },
+  { languageOptions: { globals: { ...globals.node, ...globals.es2022 } } },
+  eslintPluginPrettierRecommended,
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   {
@@ -13,4 +15,5 @@ export default [
       "@typescript-eslint/consistent-type-imports": "error",
     },
   },
+  { ignores: ['**/dist/**/*'] }
 ];
