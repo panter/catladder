@@ -1,3 +1,10 @@
+# [1.159.0](https://git.panter.ch/catladder/catladder/compare/v1.158.1...v1.159.0) (2024-07-05)
+
+
+### Features
+
+* support catladder to be run in esm projects ([60ad925](https://git.panter.ch/catladder/catladder/commit/60ad9257621fb39623985a6ad3c08ab5473137ce))
+
 ## [1.158.1](https://git.panter.ch/catladder/catladder/compare/v1.158.0...v1.158.1) (2024-07-05)
 
 # [1.158.0](https://git.panter.ch/catladder/catladder/compare/v1.157.1...v1.158.0) (2024-07-05)
