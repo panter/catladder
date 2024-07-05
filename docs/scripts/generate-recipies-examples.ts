@@ -1,7 +1,8 @@
-import { rm, writeFile, mkdir } from "fs/promises";
+import { rm, readFile, writeFile, mkdir } from "fs/promises";
 import { existsSync } from "fs";
 import { join, resolve, basename } from "path";
 import { glob } from "glob";
+import { format } from "prettier";
 
 /**
  * With the env variable DOCS_EXAMPLES_SIDEBAR_POSITION you can set a different sidebar position for the examples.
@@ -25,7 +26,7 @@ async function main() {
       cwd: join(rootPath, examplesSourcePath),
       ignore: ["*.test.ts"],
     }),
-    glob(join(outputDir, "*.mdx")),
+    glob(join(outputDir, "*.md")),
   ]);
   await Promise.all(currentExamples.map((file) => rm(file)));
   const indexFileLines: string[] = [
@@ -40,18 +41,36 @@ async function main() {
   for (const file of exampleFiles) {
     let title = basename(file, ".ts");
     const path = join(examplesSourcePath, file);
-    const fileName = `${title}.mdx`;
+    const absPath = join(rootPath, path);
+    const fileName = `${title}.md`;
+
+    const fileContent = await readFile(absPath, { encoding: "utf-8" });
+    const cleanedContent = fileContent
+      .replaceAll(/import( | type ).+from .+\n+/g, "")
+      .replaceAll(/\n+export const information = \{\n.+\n\};\n+/g, "");
+
     const mod = require(join(rootPath, examplesSourcePath, title)); // eslint-disable-line @typescript-eslint/no-var-requires
     if ("information" in mod) {
       if ("title" in mod.information) {
         title = mod.information.title;
       }
     }
+    const content = await format(
+      [
+        `<!-- Auto generated with 'yarn workspace docs gen-examples-md'. Do not edit manually -->\n`,
+        `# ${title}\n`,
+        `[${path}](https://git.panter.ch/catladder/catladder/-/blob/main/${path})\n`,
+        `\`\`\`ts`,
+        cleanedContent,
+        `\`\`\``,
+      ].join("\n"),
+      { parser: "markdown" },
+    );
     exampleMdxForSort.push({
       outputPath: join(outputDir, fileName),
-      content: `{/* Auto generated with 'yarn workspace docs gen-examples-mdx'. Do not edit manually */}\n\n# ${title}\n\n<ExampleCodeBlock path="${path}" />\n`,
+      content,
       title,
-      indexItem: `- [${title}](/docs/examples/${basename(fileName, ".mdx")})`,
+      indexItem: `- [${title}](/docs/examples/${basename(fileName, ".md")})`,
     });
   }
   await Promise.all(
@@ -65,7 +84,10 @@ async function main() {
         );
       }),
   );
-  await writeFile(join(outputDir, "index.mdx"), indexFileLines.join("\n"));
+  const indexMd = await format(indexFileLines.join("\n"), {
+    parser: "markdown",
+  });
+  await writeFile(join(outputDir, "index.md"), indexMd);
 }
 
 main().catch(console.error);
