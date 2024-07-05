@@ -36,6 +36,9 @@ In cloud hosting, instances of your app can come and go. This is to guarantee sc
 
 ### Be economical with memory-usage
 
-Don't rely too much on memory. Memory can be used to speed up request. On jobs and workers, make sure to use good buffer-sizes, batch-sizes, etc. to not use too much memory. Make sure it runs on low memory and use memory only to speed up things.
+Don't rely too much on memory.  
+Memory can be used to speed up request.  
+On jobs and workers, make sure to use good buffer-sizes, batch-sizes, etc. to not use too much memory.   
+Make sure it runs on low memory and use memory only to speed up things.
 
 _more will follow!_

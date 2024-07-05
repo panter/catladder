@@ -34,7 +34,7 @@ The `catladder.ts` file defines the whole deployment for Kubernetes.
 
 Here's a short example file:
 
-```ts
+```ts title="catladder.ts"
 import type {
   Config,
   DeployConfigKubernetesCluster,

@@ -4,7 +4,11 @@ sidebar_position: 1
 
 # Getting started
 
-**Note**: _Currently, only GitLab is supported._
+:::note
+
+Currently, only GitLab is supported.
+
+:::
 
 ## Install for a GitLab project
 
@@ -92,10 +96,15 @@ each `ComponentConfig` has this structure:
 
 ```ts title="catladder.ts#config.components['componentName']" showLineNumbers
 {
-  dir: "my-dir", // the working directory within your repo of that component
-  vars: {}, // environment variables and secrets (see following chapter)
-  build: {}, // the configuration how the app is built
-  deploy: {}, // configures how the app will be deployed
-  env: {}, // customize each environment, e.g. configure different variables and deployment for production
+  // the working directory within your repo of that component
+  dir: "my-dir",
+  // environment variables and secrets (see following chapter)
+  vars: {},
+  // the configuration how the app is built
+  build: {},
+  // configures how the app will be deployed
+  deploy: {},
+  // customize each environment, e.g. configure different variables and deployment for production
+  env: {},
 }
 ```

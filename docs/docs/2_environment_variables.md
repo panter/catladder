@@ -65,7 +65,12 @@ Depending on the deploy type[^deploy-type], more variables are available.
 
 Secrets are environment variables that should not be checked into the source code.
 
-_⚠️ Secrets are currently stored in GitLab. This may not be suitable for super-high-security cases._
+:::warning
+
+Secrets are currently stored in GitLab. This may not be suitable for super-high-security cases.
+
+:::
+
 
 If you added a new key to `secrets` or want to change secrets, open a terminal and invoke `yarn catladder` (or just `catladder` if installed globally):
 
@@ -85,7 +90,11 @@ catladder $ project-config-secrets
 
 ```
 
-> _The catladder shell supports tab completion, and you can call `help` at any time._
+:::tip
+
+The catladder shell supports tab completion, and you can call `help` at any time.
+
+:::
 
 This will open up your editor with all environment variables in the YAML format.  
 Save this file, close it, and catladder will update the secrets.
@@ -117,7 +126,11 @@ catladder $
 The editor is selected from your shell's environment variables `$VISUAL` or `$EDITOR`, or falls back to `code` or `vim`. Be careful with `EDITOR=code` - **this will not work correctly**.  
 The correct way is `EDITOR="code --wait"`.
 
-> _catladder makes a copy of old values as a backup; you can restore those manually in GitLab if needed._
+:::note
+
+catladder makes a copy of old values as a backup; you can restore those manually in GitLab if needed.
+
+:::
 
 ## catenv - Env-vars in local development
 
@@ -189,8 +202,8 @@ To use `.env` files, set `dotEnv: true` on the component in your `catladder.ts` 
 
 There are two options for `dotEnv`:
 
-- true: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
-- "local": creates a .env file only locally
+- `true`: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
+- `"local"`: creates a .env file only locally
 
 .env files will never be included in the build artifacts as they may contain secrets.
 
@@ -241,8 +254,11 @@ This will make `catenv` generate an `env.d.ts` file with type definitions for `p
 
 Since catladder 1.145.0, you can generate a `.gitlab-ci.yml` config file locally and commit it with git.
 
-> _By default, catladder starts a GitLab-CI job that will generate a `__pipeline.yml` each time the CI pipeline starts, and run this pipeline then as a child pipeline._
+:::note
 
+By default, catladder starts a GitLab-CI job that will generate a `__pipeline.yml` each time the CI pipeline starts, and run this pipeline then as a child pipeline.
+
+:::
 ##### Migrate project to local GitLab pipeline
 
 First, you need to install the [@catladder/cli][catladder-cli-npm] package and remove the [@catladder/pipeline][catladder-pipeline-npm] package:

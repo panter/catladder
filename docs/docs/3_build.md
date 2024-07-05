@@ -151,4 +151,4 @@ If your build relies on **.env** make sure to include .env in the cache settings
 }
 ```
 
-see also https://turbo.build/repo/docs/crafting-your-repository/using-environment-variables#handling-env-files
+See also: [Turbo docs on Handling .env files](https://turbo.build/repo/docs/crafting-your-repository/using-environment-variables#handling-env-files)
