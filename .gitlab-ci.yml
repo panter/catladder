@@ -206,11 +206,12 @@ create release:
 pages:
   stage: deploy
   extends: [.yarn-cache]
+  allow_failure: true
+  interruptible: true
   script:
     - echo "Pages accessible through ${CI_PAGES_URL}/${PAGES_PREFIX}"
     - yarn install
     - yarn workspace docs gen-examples-md
-    - ls -lah docs/docs/examples
     - yarn workspace docs build
   variables:
     PAGES_PREFIX: "" # No prefix by default (master)
