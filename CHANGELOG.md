@@ -1,3 +1,15 @@
+# [1.162.0](https://git.panter.ch/catladder/catladder/compare/v1.161.1...v1.162.0) (2024-07-08)
+
+
+### Bug Fixes
+
+* **eslint:** add prettier plugin to config for it to work ([6a1f89f](https://git.panter.ch/catladder/catladder/commit/6a1f89f7d5b3fda2a23e55c68c12a69390516a5e))
+
+
+### Features
+
+* **eslint:** update packages and add missing eslint-config-prettier package ([2a0f02f](https://git.panter.ch/catladder/catladder/commit/2a0f02f023fa4715d40ec862eb257fce077c7571))
+
 ## [1.161.1](https://git.panter.ch/catladder/catladder/compare/v1.161.0...v1.161.1) (2024-07-08)
 
 
