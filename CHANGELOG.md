@@ -1,3 +1,10 @@
+## [1.161.1](https://git.panter.ch/catladder/catladder/compare/v1.161.0...v1.161.1) (2024-07-08)
+
+
+### Bug Fixes
+
+* **cli:** bash expression toString verifys not null and more efficient ([583cebe](https://git.panter.ch/catladder/catladder/commit/583cebe718db4c114285c7146ec9ccc0b5cce294))
+
 # [1.161.0](https://git.panter.ch/catladder/catladder/compare/v1.160.0...v1.161.0) (2024-07-05)
 
 
