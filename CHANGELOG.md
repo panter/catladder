@@ -1,3 +1,10 @@
+# [1.163.0](https://git.panter.ch/catladder/catladder/compare/v1.162.0...v1.163.0) (2024-07-08)
+
+
+### Features
+
+* deprecated buildType node-static and storybook ([d815e0b](https://git.panter.ch/catladder/catladder/commit/d815e0b9368e1c3d614e568a911f969ea841affe))
+
 # [1.162.0](https://git.panter.ch/catladder/catladder/compare/v1.161.1...v1.162.0) (2024-07-08)
 
 
