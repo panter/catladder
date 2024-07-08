@@ -123,23 +123,22 @@ const resolveSecrets = async (
   const allVariablesInGitlab = await getAllVariables(vorpal);
 
   return Object.fromEntries(
-    varSets.flatMap((set) =>
-      Object.entries(set.envVars)
-        .map(([key, value]) => {
-          const secretKey = set.secretEnvVarKeys.find((k) => k.key === key);
-
-          if (secretKey?.hidden || value === undefined) {
-            return null;
-          }
-
-          for (const variable of allVariablesInGitlab) {
-            value = value
-              .toString()
-              .replace(new RegExp("\\$" + variable.key, "g"), variable.value);
-          }
-          return [key, value];
-        })
-        .filter(Boolean),
+    varSets.flatMap(({ envVars, secretEnvVarKeys }) =>
+      Object.entries(envVars)
+        .filter(
+          ([key, value]) =>
+            value !== undefined &&
+            value !== null &&
+            !secretEnvVarKeys.find((k) => k.key === key)?.hidden,
+        )
+        .map(([key, value]) => [
+          key,
+          allVariablesInGitlab.reduce(
+            (acc, curr) =>
+              acc.replace(new RegExp("\\$" + curr.key, "g"), curr.value),
+            `${value}`,
+          ),
+        ]),
     ),
   );
 };
