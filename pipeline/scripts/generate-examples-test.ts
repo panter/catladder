@@ -63,16 +63,29 @@ async function main() {
     exampleFiles.map(async (exampleFile) => {
       const kebabName = basename(exampleFile, ".ts");
       const testFileContent = [
-        `import { createAllPipelines } from "./__utils__/helpers";`,
+        `import { createAllPipelines, createYamlChildPipeline, createYamlLocalPipeline } from "./__utils__/helpers";`,
         `import config from "./${kebabName}";`,
-        ``,
-        `/**`,
+        `\n/**`,
         ` * This test is auto-generated.`,
         ` * Modifications will be overwritten on every \`yarn test\` run!`,
-        ` */`,
+        ` */\n`,
         `it("matches snapshot for ${kebabName}", async () => {`,
         `  expect(await createAllPipelines(config)).toMatchSnapshot();`,
-        `});`,
+        `});\n`,
+        `jest.mock("../src/pipeline/gitlab/getPipelineTriggerForGitlabChildPipeline", () => ({`,
+        `  getPipelineTriggerForGitlabChildPipeline: () => process.env.TEST_MOCK_TRIGGER ?? 'mr',`,
+        `}));\n`,
+        ...["mainBranch", "taggedRelease", "mr"].map((trigger) =>
+          [
+            `it("matches snapshot for cloud-run-memory-limit child pipeline YAML ${trigger}", async () => {`,
+            `  process.env.TEST_MOCK_TRIGGER = "${trigger}";`,
+            `  expect(await createYamlChildPipeline(config)).toMatchSnapshot();`,
+            `});\n`,
+          ].join("\n"),
+        ),
+        `it("matches snapshot for cloud-run-memory-limit local pipeline YAML", async () => {`,
+        `  expect(await createYamlLocalPipeline(config)).toMatchSnapshot();`,
+        `});\n`,
       ].join("\n");
       const formattedTest = await format(testFileContent, {
         parser: "typescript",

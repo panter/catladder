@@ -1,5 +1,2339 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`matches snapshot for cloud-run-memory-limit child pipeline YAML mainBranch 1`] = `
+"image: path/to/docker/jobs-default:the-version
+stages:
+  - setup
+  - setup dev
+  - setup review
+  - setup stage
+  - setup prod
+  - test
+  - test dev
+  - test review
+  - test stage
+  - test prod
+  - build
+  - build dev
+  - build review
+  - build stage
+  - build prod
+  - deploy
+  - deploy dev
+  - deploy review
+  - deploy stage
+  - deploy prod
+  - verify
+  - verify dev
+  - verify review
+  - verify stage
+  - verify prod
+  - rollback
+  - rollback dev
+  - rollback review
+  - rollback stage
+  - rollback prod
+  - stop
+  - stop dev
+  - stop review
+  - stop stage
+  - stop prod
+variables:
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: fast
+  CACHE_COMPRESSION_LEVEL: fast
+  TRANSFER_METER_FREQUENCY: 5s
+  GIT_DEPTH: '1'
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+www 🛡 audit:
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - yarn npm audit --environment production
+  needs: []
+  retry: &a1
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  interruptible: true
+  allow_failure: true
+www 👮 lint:
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn lint
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+  needs: []
+  retry: *a1
+  interruptible: true
+www 🧪 test:
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn test
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 app | dev ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="dev"
+    - export APP_DIR="www"
+    - export ENV_TYPE="dev"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | dev ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="dev/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  needs:
+    - 'www 🔨 app | dev '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | dev ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | dev ':
+  stage: deploy dev
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="dev"
+    - export APP_DIR="www"
+    - export ENV_TYPE="dev"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="dev/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_dev_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: dev/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | dev '
+    auto_stop_in: 4 weeks
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: on_success
+  needs:
+    - job: www 👮 lint
+      artifacts: false
+    - job: 'www 🔨 app | dev '
+      artifacts: false
+    - job: 'www 🔨 docker | dev '
+      artifacts: false
+    - job: www 🧪 test
+      artifacts: false
+    - job: 'www 🧾 sbom | dev '
+      artifacts: true
+    - job: www 🛡 audit
+      artifacts: false
+  retry: *a1
+  interruptible: true
+  allow_failure: false
+'www 🛑 Stop ⚠️ | dev ':
+  stage: stop dev
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_dev_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: dev/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+"
+`;
+
+exports[`matches snapshot for cloud-run-memory-limit child pipeline YAML mr 1`] = `
+"image: path/to/docker/jobs-default:the-version
+stages:
+  - setup
+  - setup dev
+  - setup review
+  - setup stage
+  - setup prod
+  - test
+  - test dev
+  - test review
+  - test stage
+  - test prod
+  - build
+  - build dev
+  - build review
+  - build stage
+  - build prod
+  - deploy
+  - deploy dev
+  - deploy review
+  - deploy stage
+  - deploy prod
+  - verify
+  - verify dev
+  - verify review
+  - verify stage
+  - verify prod
+  - rollback
+  - rollback dev
+  - rollback review
+  - rollback stage
+  - rollback prod
+  - stop
+  - stop dev
+  - stop review
+  - stop stage
+  - stop prod
+variables:
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: fast
+  CACHE_COMPRESSION_LEVEL: fast
+  TRANSFER_METER_FREQUENCY: 5s
+  GIT_DEPTH: '1'
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+www 🛡 audit:
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - yarn npm audit --environment production
+  needs: []
+  retry: &a1
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  interruptible: true
+  allow_failure: true
+www 👮 lint:
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn lint
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+  needs: []
+  retry: *a1
+  interruptible: true
+www 🧪 test:
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn test
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 app | review ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="review"
+    - export APP_DIR="www"
+    - export ENV_TYPE="review"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | review ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="review/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  needs:
+    - 'www 🔨 app | review '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | review ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | review ':
+  stage: deploy review
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="review"
+    - export APP_DIR="www"
+    - export ENV_TYPE="review"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="review/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_review_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: review/$CI_COMMIT_REF_NAME/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | review '
+    auto_stop_in: 1 week
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: on_success
+  needs:
+    - job: www 👮 lint
+      artifacts: false
+    - job: 'www 🔨 app | review '
+      artifacts: false
+    - job: 'www 🔨 docker | review '
+      artifacts: false
+    - job: www 🧪 test
+      artifacts: false
+    - job: 'www 🧾 sbom | review '
+      artifacts: true
+    - job: www 🛡 audit
+      artifacts: false
+  retry: *a1
+  interruptible: true
+  allow_failure: false
+'www 🛑 Stop ⚠️ | review ':
+  stage: stop review
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_review_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: review/$CI_COMMIT_REF_NAME/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+"
+`;
+
+exports[`matches snapshot for cloud-run-memory-limit child pipeline YAML taggedRelease 1`] = `
+"image: path/to/docker/jobs-default:the-version
+stages:
+  - setup
+  - setup dev
+  - setup review
+  - setup stage
+  - setup prod
+  - test
+  - test dev
+  - test review
+  - test stage
+  - test prod
+  - build
+  - build dev
+  - build review
+  - build stage
+  - build prod
+  - deploy
+  - deploy dev
+  - deploy review
+  - deploy stage
+  - deploy prod
+  - verify
+  - verify dev
+  - verify review
+  - verify stage
+  - verify prod
+  - rollback
+  - rollback dev
+  - rollback review
+  - rollback stage
+  - rollback prod
+  - stop
+  - stop dev
+  - stop review
+  - stop stage
+  - stop prod
+variables:
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: fast
+  CACHE_COMPRESSION_LEVEL: fast
+  TRANSFER_METER_FREQUENCY: 5s
+  GIT_DEPTH: '1'
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+'www 🔨 app | stage ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="stage"
+    - export APP_DIR="www"
+    - export ENV_TYPE="stage"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  needs: []
+  retry: &a1
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  interruptible: true
+'www 🔨 docker | stage ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="stage/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  needs:
+    - 'www 🔨 app | stage '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | stage ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | stage ':
+  stage: deploy stage
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="stage"
+    - export APP_DIR="www"
+    - export ENV_TYPE="stage"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="stage/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_stage_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: stage/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | stage '
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: on_success
+  needs:
+    - job: 'www 🔨 app | stage '
+      artifacts: false
+    - job: 'www 🔨 docker | stage '
+      artifacts: false
+    - job: 'www 🧾 sbom | stage '
+      artifacts: true
+  retry: *a1
+  interruptible: true
+  allow_failure: false
+'www 🛑 Stop ⚠️ | stage ':
+  stage: stop stage
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_stage_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: stage/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🔨 app | prod ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="prod"
+    - export APP_DIR="www"
+    - export ENV_TYPE="prod"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | prod ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="prod/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  needs:
+    - 'www 🔨 app | prod '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | prod ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | prod ':
+  stage: deploy prod
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="prod"
+    - export APP_DIR="www"
+    - export ENV_TYPE="prod"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="prod/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_prod_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: prod/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | prod '
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: manual
+  needs:
+    - job: 'www 🔨 app | prod '
+      artifacts: false
+    - job: 'www 🔨 docker | prod '
+      artifacts: false
+    - job: 'www 🧾 sbom | prod '
+      artifacts: true
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🛑 Stop ⚠️ | prod ':
+  stage: stop prod
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_prod_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: prod/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+"
+`;
+
+exports[`matches snapshot for cloud-run-memory-limit local pipeline YAML 1`] = `
+"image: path/to/docker/jobs-default:the-version
+stages:
+  - setup
+  - setup dev
+  - setup review
+  - setup stage
+  - setup prod
+  - test
+  - test dev
+  - test review
+  - test stage
+  - test prod
+  - build
+  - build dev
+  - build review
+  - build stage
+  - build prod
+  - deploy
+  - deploy dev
+  - deploy review
+  - deploy stage
+  - deploy prod
+  - verify
+  - verify dev
+  - verify review
+  - verify stage
+  - verify prod
+  - rollback
+  - rollback dev
+  - rollback review
+  - rollback stage
+  - rollback prod
+  - stop
+  - stop dev
+  - stop review
+  - stop stage
+  - stop prod
+  - release
+variables:
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: fast
+  CACHE_COMPRESSION_LEVEL: fast
+  TRANSFER_METER_FREQUENCY: 5s
+  GIT_DEPTH: '1'
+www 🛡 audit:
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: &a1
+    max: 2
+    when:
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  interruptible: true
+  allow_failure: true
+www 👮 lint:
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn lint
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+www 🧪 test:
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_PATH="www"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn test
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 app | dev ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="dev"
+    - export APP_DIR="www"
+    - export ENV_TYPE="dev"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | dev ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="dev/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - 'www 🔨 app | dev '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | dev ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | dev ':
+  stage: deploy dev
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="dev"
+    - export APP_DIR="www"
+    - export ENV_TYPE="dev"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="dev/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_dev_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: dev/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | dev '
+    auto_stop_in: 4 weeks
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - when: on_success
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs:
+    - job: www 👮 lint
+      artifacts: false
+    - job: 'www 🔨 app | dev '
+      artifacts: false
+    - job: 'www 🔨 docker | dev '
+      artifacts: false
+    - job: www 🧪 test
+      artifacts: false
+    - job: 'www 🧾 sbom | dev '
+      artifacts: true
+    - job: www 🛡 audit
+      artifacts: false
+  retry: *a1
+  interruptible: true
+  allow_failure: false
+'www 🛑 Stop ⚠️ | dev ':
+  stage: stop dev
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_dev_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: dev/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: never
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+    - when: manual
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🔨 app | review ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="review"
+    - export APP_DIR="www"
+    - export ENV_TYPE="review"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | review ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="review/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+  needs:
+    - 'www 🔨 app | review '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | review ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | review ':
+  stage: deploy review
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="review"
+    - export APP_DIR="www"
+    - export ENV_TYPE="review"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="review/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_review_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: review/$CI_COMMIT_REF_NAME/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | review '
+    auto_stop_in: 1 week
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: on_success
+      if: $CI_MERGE_REQUEST_ID
+  needs:
+    - job: www 👮 lint
+      artifacts: false
+    - job: 'www 🔨 app | review '
+      artifacts: false
+    - job: 'www 🔨 docker | review '
+      artifacts: false
+    - job: www 🧪 test
+      artifacts: false
+    - job: 'www 🧾 sbom | review '
+      artifacts: true
+    - job: www 🛡 audit
+      artifacts: false
+  retry: *a1
+  interruptible: true
+  allow_failure: false
+'www 🛑 Stop ⚠️ | review ':
+  stage: stop review
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_review_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: review/$CI_COMMIT_REF_NAME/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+      if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🔨 app | stage ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="stage"
+    - export APP_DIR="www"
+    - export ENV_TYPE="stage"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | stage ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="stage/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs:
+    - 'www 🔨 app | stage '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | stage ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | stage ':
+  stage: deploy stage
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="stage"
+    - export APP_DIR="www"
+    - export ENV_TYPE="stage"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="stage/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_stage_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: stage/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | stage '
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: on_success
+      if: $CI_COMMIT_TAG
+  needs:
+    - job: 'www 🔨 app | stage '
+      artifacts: false
+    - job: 'www 🔨 docker | stage '
+      artifacts: false
+    - job: 'www 🧾 sbom | stage '
+      artifacts: true
+  retry: *a1
+  interruptible: true
+  allow_failure: false
+'www 🛑 Stop ⚠️ | stage ':
+  stage: stop stage
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_stage_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: stage/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+      if: $CI_COMMIT_TAG
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🔨 app | prod ':
+  stage: build
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="prod"
+    - export APP_DIR="www"
+    - export ENV_TYPE="prod"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - cd www
+    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - yarn install --immutable
+    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - yarn build
+  cache:
+    - key: www-yarn
+      policy: pull-push
+      paths:
+        - www/.yarn
+    - key: www-node-modules
+      policy: pull-push
+      paths:
+        - www/node_modules
+    - key: www-next-cache
+      policy: pull-push
+      paths:
+        - www/.next/cache
+  artifacts:
+    paths:
+      - www/__build_info.json
+      - www/.next
+      - www/dist
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs: []
+  retry: *a1
+  interruptible: true
+'www 🔨 docker | prod ':
+  stage: build
+  image: path/to/docker/docker-build:the-version
+  services:
+    - name: docker:24.0.6-dind
+      command:
+        - --tls=false
+  variables:
+    DOCKER_HOST: tcp://0.0.0.0:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 2Gi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export APP_DIR="www"
+    - export DOCKER_BUILD_CONTEXT="."
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="prod/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - |-
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      RUN yarn plugin import workspace-tools
+      RUN yarn workspaces focus --production && yarn rebuild"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
+      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
+      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+      COPY --chown=node:node .yarn /app/.yarn"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - ensureNodeDockerfile
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+    - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+    - docker push $DOCKER_CACHE_IMAGE
+    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+  cache:
+    - key: www-yarn
+      policy: pull
+      paths:
+        - www/.yarn
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs:
+    - 'www 🔨 app | prod '
+  retry: *a1
+  interruptible: true
+'www 🧾 sbom | prod ':
+  stage: build
+  image: aquasec/trivy:0.38.3
+  variables: {}
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
+  artifacts:
+    paths:
+      - __sbom.json
+  rules:
+    - if: $CI_COMMIT_TAG
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🚀 Deploy | prod ':
+  stage: deploy prod
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '1'
+    KUBERNETES_MEMORY_REQUEST: 1024Mi
+    KUBERNETES_MEMORY_LIMIT: 2048Mi
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export ENV_SHORT="prod"
+    - export APP_DIR="www"
+    - export ENV_TYPE="prod"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOST="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOST_INTERNAL="unknown-host.example.com"
+    - export HOST_CANONICAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOST\\",\\"ROOT_URL\\",\\"HOST_INTERNAL\\",\\"HOST_CANONICAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - export DOCKER_REGISTRY="$CI_REGISTRY"
+    - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/www"
+    - export DOCKER_IMAGE_NAME="prod/www"
+    - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+    - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
+    - export DEPLOY_API_KEY="$CL_prod_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - cd www
+    - echo 'would deploy'
+    - echo 'Uploading SBOM to Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  cache: []
+  environment:
+    name: prod/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    on_stop: 'www 🛑 Stop ⚠️ | prod '
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - when: manual
+      if: $CI_COMMIT_TAG
+  needs:
+    - job: 'www 🔨 app | prod '
+      artifacts: false
+    - job: 'www 🔨 docker | prod '
+      artifacts: false
+    - job: 'www 🧾 sbom | prod '
+      artifacts: true
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'www 🛑 Stop ⚠️ | prod ':
+  stage: stop prod
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.22'
+    KUBERNETES_MEMORY_REQUEST: 200Mi
+    KUBERNETES_MEMORY_LIMIT: 400Mi
+    GIT_STRATEGY: none
+  script:
+    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - export DEPLOY_API_KEY="$CL_prod_www_DEPLOY_API_KEY"
+    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo 'would stop'
+    - echo 'Disabling component in Dependency Track'
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+  environment:
+    name: prod/www
+    url: $CL_GITLAB_ENVIRONMENT_URL
+    action: stop
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
+  rules:
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
+      when: on_success
+    - when: manual
+      if: $CI_COMMIT_TAG
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+create release:
+  stage: release
+  image: path/to/docker/semantic-release:the-version
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 The project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - &a2
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - &a3
+      if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $AUTO_RELEASE == "true"
+      when: on_success
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+⚠️ force create release:
+  stage: release
+  image: path/to/docker/semantic-release:the-version
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 The project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - *a2
+    - *a3
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+  needs: []
+"
+`;
+
 exports[`matches snapshot for custom-deploy 1`] = `
 {
   "mainBranch": {
