@@ -10,32 +10,58 @@ Currently, only GitLab is supported.
 
 :::
 
-## Install for a GitLab project
+## Install
 
 ### Local mode
 
-1. install catladder CLI: `yarn add @catladder/cli`
-2. Create the file `catladder.ts` in your repositories root.
-3. set `pipelineType: "gitlab",` in your `catladder.ts`
-4. setup `direnv`. Add the following to your `.envrc`:
+1. Install catladder CLI: `yarn add -D @catladder/cli`
+1. Create the file `catladder.ts` in your repositories root.
+1. set `pipelineType: "gitlab",` in your `catladder.ts`
+
+```ts title="catladder.ts"
+import type { Config } from '@catladder/cli';
+const config: Config = {
+  appName: "example-app",
+  customerName: "pan",
+  pipelineType: "gitlab",
+  components: {}
+}
+export default config;
+```
+
+#### Direnv
+
+Setup [direnv][direnv-install].  
+Add the following to your `.envrc`:
 
 ```sh title=".envrc"
 layout node # allows for local installations of catladder-cli
-# if catladder is available, invoke that
-echo "using catenv"
-watch_file catladder*
 
-eval "$(catenv-dev)" # eval is needed if you rely on exported env vars. If you rely only on .env files, you don't need to eval it
+# if catladder is available, invoke catenv
+if command -v 'catenv' >/dev/null; then
+  watch_file catladder.ts
+  echo "using catenv"
+  # if you have dotenv enabled
+  catenv                # generates .env and .gitlab-ci.yml
+  dotenv_if_exists .env # loads .env file if it exists in your shell
+  
+  # eval is needed if you rely on exported env vars.
+  eval "$(catenv)"
+fi
 ```
 
-This will now upsert the gitlab-ci.yml file whenever something in catladder.ts changes and cd into that directory.
+[direnv][direnv] requires you to allow its config changes by calling `direnv allow` in the project root.
+
+This will now generate `.gitlab-ci.yml` whenever something in catladder.ts changes, and you enter the project directory with your shell.
+
+#### Finalize setup
 
 Commit that file with git.
 
-5. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
-6. Authenticate gcloud CLI with `gcloud auth login`
+1. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
+1. Authenticate gcloud CLI with `gcloud auth login`
 
-### Childpipeline mode (classic)
+### Child pipeline mode (classic)
 
 1. Create a `.gitlab-ci.yml` file with this content:
 
@@ -56,7 +82,6 @@ You can use TypeScript to get full advantage of type checking in this configurat
 The configuration's basic structure looks like this:
 
 ```ts title="catladder.ts" showLineNumbers
-
 import type { Config } from '@catladder/pipeline'
 
 const config: Config = {
@@ -108,3 +133,6 @@ each `ComponentConfig` has this structure:
   env: {},
 }
 ```
+
+[direnv]: https://direnv.net/ "unclutter your .profile"
+[direnv-install]: https://direnv.net/docs/installation.html "direnv installation instructions"
