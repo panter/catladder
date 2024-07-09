@@ -1,41 +1,18 @@
 # catladder 🐱 🔧
 
-Panter cli tool for Kubernetes.
+[Panter](https://panter.ch) cli tool for cloud CI/CD and DevOps.
 
-## Install
-
-```sh
-# yarn users
-yarn global add @catladder/cli
-# npm users
-npm install -g @catladder/cli
-```
-
-> **Note**: If you have [@catladder/pipeline](https://www.npmjs.com/package/@catladder/pipeline) installed, upgrade it to >=4.0.0 before installing [@catladder/cli](https://www.npmjs.com/package/@catladder/cli).
+**It just works™**
 
 ## Getting started
 
-You'll need:
+[See the documentation][docs-getting-started].
 
-- Google Cloud SDK ([see installation instructions](https://cloud.google.com/sdk/docs/install))
-- Kubectl ([see installation instructions](https://kubernetes.io/docs/tasks/tools/))
-- Cloud SQL Auth proxy ([see installation instructions](https://cloud.google.com/sql/docs/postgres/sql-proxy#install))
-
-Afterwards, you need to connect to your cluster, e.g. `gcloud container clusters get-credentials clustername --zone google-zone --project google-project-id`
-In most cases, you'll find the details on the Google Cloud [cluster overview ](https://console.cloud.google.com/kubernetes/list?project=skynet-164509)
-
-It just works™
-
-## Preferences
-
-Catladder stores some preferences in `~/.catladder/preferences.yml` in case you want to change settings.
+[docs-getting-started]: https://catladder.git.panter.biz/catladder/docs/getting_started "Getting started"
 
 ## Contribution
 
-Check the documentation [here](https://git.panter.ch/catladder/catladder/-/tree/main/cli/CONTRIBUTING.md).
+[See contribution guide][docs-contribute].
 
-### Adding packages in cli
+[docs-contribute]: https://catladder.git.panter.biz/catladder/docs/contribute "Contribution guide"
 
-if you add npm libs in cli, make sure to add them as dev-dependencies.
-
-the reason is that we bundle all dependencies in the cli package, so that if you add that to your project, it won't install all @catladder/cli's dependencies.
