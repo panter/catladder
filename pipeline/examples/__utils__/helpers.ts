@@ -3,7 +3,6 @@ import { stringify } from "yaml";
 import type { Config } from "../../src";
 import {
   createChildPipeline,
-  generateChildPipelineContent,
   generateLocalPipelineContent,
   yamlStringifyOptions,
 } from "../../src";
@@ -19,13 +18,6 @@ export const createAllPipelines = async (config: Config) =>
       ]),
     ),
   );
-
-export const createYamlChildPipeline = async (
-  config: Config,
-): Promise<string> => {
-  const pipelineContent = await generateChildPipelineContent(config, "gitlab");
-  return stringify(pipelineContent, yamlStringifyOptions);
-};
 
 export const createYamlLocalPipeline = async (
   config: Config,
