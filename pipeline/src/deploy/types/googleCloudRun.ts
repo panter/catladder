@@ -157,6 +157,15 @@ export type DeployConfigCloudRunService = {
    * defaults to gen1 according to gcloud
    */
   executionEnvironment?: "gen2" | "gen1";
+
+  /**
+   * vpc connector,
+   */
+  vpcConnector?: string;
+  /**
+   * vpc egress, see https://cloud.google.com/sdk/gcloud/reference/run/deploy#--vpc-egress
+   */
+  vpcEgress?: "all-traffic" | "private-ranges-only";
 } & DeployConfigCloudRunWithVolumes;
 
 export type DeployConfigCloudRunJobBase = {

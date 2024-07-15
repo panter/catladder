@@ -50,6 +50,8 @@ export const getServiceDeployScript = (
       cpu: customConfig?.cpu,
       memory: customConfig?.memory,
       timeout: customConfig?.timeout,
+      "vpc-connector": customConfig?.vpcConnector,
+      "vpc-egress": customConfig?.vpcEgress,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
       ingress: customConfig?.ingress ?? "all",
       "cpu-boost": true,
