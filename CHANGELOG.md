@@ -1,3 +1,10 @@
+# [1.164.0](https://git.panter.ch/catladder/catladder/compare/v1.163.2...v1.164.0) (2024-07-15)
+
+
+### Features
+
+* **cloud run:** allow to customize vpc settings ([6be6d6e](https://git.panter.ch/catladder/catladder/commit/6be6d6e89bc669a5b50ef524914f0ef1e019494e))
+
 ## [1.163.2](https://git.panter.ch/catladder/catladder/compare/v1.163.1...v1.163.2) (2024-07-15)
 
 ## [1.163.1](https://git.panter.ch/catladder/catladder/compare/v1.163.0...v1.163.1) (2024-07-15)
