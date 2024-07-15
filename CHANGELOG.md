@@ -1,3 +1,10 @@
+## [1.163.1](https://git.panter.ch/catladder/catladder/compare/v1.163.0...v1.163.1) (2024-07-15)
+
+
+### Bug Fixes
+
+* **pipeline:** yaml snapshots only with local pipeline ([09b93f4](https://git.panter.ch/catladder/catladder/commit/09b93f440d23ea4779d98b69fb32d59cfb9d29f5))
+
 # [1.163.0](https://git.panter.ch/catladder/catladder/compare/v1.162.0...v1.163.0) (2024-07-08)
 
 
