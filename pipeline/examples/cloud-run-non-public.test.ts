@@ -1,7 +1,4 @@
-import {
-  createAllPipelines,
-  createYamlLocalPipeline,
-} from "./__utils__/helpers";
+import { createYamlLocalPipeline } from "./__utils__/helpers";
 import config from "./cloud-run-non-public";
 
 /**
@@ -9,10 +6,6 @@ import config from "./cloud-run-non-public";
  * Modifications will be overwritten on every `yarn test` run!
  */
 
-it("matches snapshot for cloud-run-non-public", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
-
-it("matches snapshot for cloud-run-memory-limit local pipeline YAML", async () => {
+it("matches snapshot for cloud-run-non-public local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
 });

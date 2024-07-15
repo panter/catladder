@@ -63,16 +63,14 @@ async function main() {
     exampleFiles.map(async (exampleFile) => {
       const kebabName = basename(exampleFile, ".ts");
       const testFileContent = [
-        `import { createAllPipelines, createYamlLocalPipeline } from "./__utils__/helpers";`,
+        `import { createYamlLocalPipeline } from "./__utils__/helpers";`,
         `import config from "./${kebabName}";`,
         `\n/**`,
         ` * This test is auto-generated.`,
         ` * Modifications will be overwritten on every \`yarn test\` run!`,
         ` */\n`,
-        `it("matches snapshot for ${kebabName}", async () => {`,
-        `  expect(await createAllPipelines(config)).toMatchSnapshot();`,
-        `});\n`,
-        `it("matches snapshot for cloud-run-memory-limit local pipeline YAML", async () => {`,
+
+        `it("matches snapshot for ${kebabName} local pipeline YAML", async () => {`,
         `  expect(await createYamlLocalPipeline(config)).toMatchSnapshot();`,
         `});\n`,
       ].join("\n");

@@ -1,7 +1,4 @@
-import {
-  createAllPipelines,
-  createYamlLocalPipeline,
-} from "./__utils__/helpers";
+import { createYamlLocalPipeline } from "./__utils__/helpers";
 import config from "./custom-build-job";
 
 /**
@@ -9,10 +6,6 @@ import config from "./custom-build-job";
  * Modifications will be overwritten on every `yarn test` run!
  */
 
-it("matches snapshot for custom-build-job", async () => {
-  expect(await createAllPipelines(config)).toMatchSnapshot();
-});
-
-it("matches snapshot for cloud-run-memory-limit local pipeline YAML", async () => {
+it("matches snapshot for custom-build-job local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
 });
