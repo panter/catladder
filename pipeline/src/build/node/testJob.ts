@@ -35,7 +35,6 @@ export const createNodeTestJobs = (
       ...(context.type === "component"
         ? {
             ...context.environment.jobOnlyVars.build.envVars,
-            ...(context.build.config.extraVars ?? {}),
           }
         : {}),
     },

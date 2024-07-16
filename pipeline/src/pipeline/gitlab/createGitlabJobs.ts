@@ -106,7 +106,6 @@ export const makeGitlabJob = (
     environment,
     envMode,
     needsStages,
-    needsOtherComponent,
     name,
     needs,
     jobTags,
@@ -310,7 +309,7 @@ function deduplicateNeeds(needs: GitlabJobDef["needs"]): GitlabJobDef["needs"] {
 
 function getGitlabNeedsForComponentJob(
   context: ComponentContext,
-  { needsStages, needs, needsOtherComponent }: CatladderJob<string>,
+  { needsStages, needs }: CatladderJob<string>,
   allJobs: AllCatladderJobs,
 ): GitlabJobDef["needs"] {
   const needsFromStages = needsStages?.flatMap<CatladderJobNeed>((n) => {
@@ -353,8 +352,6 @@ function getGitlabNeedsForComponentJob(
   const cleanedNeeds: CatladderJob["needs"] = [
     ...(needsFromStages ?? []),
     ...(needs ?? []),
-    // pull in legacy needs from other component, which is now identical to needs
-    ...(needsOtherComponent ?? []),
   ];
 
   return cleanedNeeds

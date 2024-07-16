@@ -26,12 +26,6 @@ export type DeployConfigBase = {
   jobVars?: EnvVars;
 
   /**
-   * additional env vars for the deploy job
-   *
-   * @deprecated use deploy.jobVars for deploy job specific variables
-   */
-  extraVars?: Record<string, string>;
-  /**
    * additional vars only for the runner.
    * Also if you use services: that require env vars, you need to set them here.
    *

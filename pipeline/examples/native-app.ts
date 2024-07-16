@@ -28,9 +28,11 @@ const config: Config = {
         ],
       },
       build: {
-        extraVars: {
-          LC_A: "L=en_US.UTF-8",
-          LANG: "en_US.UTF-8",
+        jobVars: {
+          public: {
+            LC_A: "L=en_US.UTF-8",
+            LANG: "en_US.UTF-8",
+          },
         },
         type: "node",
         buildCommand: [
@@ -46,9 +48,11 @@ const config: Config = {
 
       deploy: {
         type: "custom",
-        extraVars: {
-          LC_A: "L=en_US.UTF-8",
-          LANG: "en_US.UTF-8",
+        jobVars: {
+          public: {
+            LC_A: "L=en_US.UTF-8",
+            LANG: "en_US.UTF-8",
+          },
         },
         requiresDocker: false,
         script: [

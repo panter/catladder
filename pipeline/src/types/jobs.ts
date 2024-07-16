@@ -71,14 +71,6 @@ export type CatladderJob<S = BaseStage> = {
   needs?: Array<CatladderJobNeed>;
 
   /**
-   * @deprecated set `componentName` to `needs` if you want to wait for a job from another component
-   */
-  needsOtherComponent?: Array<{
-    componentName: string;
-    job: string;
-    artifacts: boolean;
-  }>;
-  /**
    * cache config, we use here the same shape as gitlab itself
    */
   cache?: CatladderJobCache | CatladderJobCache[];

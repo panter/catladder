@@ -47,7 +47,6 @@ export const createRailsBuildJobs = (
     dockerBuild: {
       variables: {
         ...context.environment.jobOnlyVars.build.envVars,
-        ...context.build.config.extraVars,
       },
       // custom script
       script: [

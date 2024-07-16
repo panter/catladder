@@ -31,7 +31,6 @@ export const createCustomTestJobs = (
     variables: {
       APP_PATH: context.build.dir,
       ...context.environment.jobOnlyVars.build.envVars,
-      ...(buildConfig.extraVars ?? {}),
     },
     runnerVariables: RUNNER_CUSTOM_TEST_VARIABLES,
     services: buildConfig.jobServices,

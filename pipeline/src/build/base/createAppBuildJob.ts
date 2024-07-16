@@ -39,7 +39,6 @@ export const createAppBuildJob = (
           ? {
               ...context.environment.envVars,
               ...context.environment.jobOnlyVars.build.envVars,
-              ...(context.build.config.extraVars ?? {}),
             }
           : {}),
       },

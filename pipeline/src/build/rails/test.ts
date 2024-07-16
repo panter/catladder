@@ -24,7 +24,6 @@ export const createRailsTestJobs = (
   const base: Omit<CatladderJob, "script" | "name"> = {
     variables: {
       ...context.environment.jobOnlyVars.build.envVars,
-      ...(buildConfig.extraVars ?? {}),
     },
     stage: "test",
     needs: [],

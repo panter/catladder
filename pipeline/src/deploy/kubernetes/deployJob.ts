@@ -47,8 +47,6 @@ export const createKubernetesDeployJobs = (
         ...(deployConfig.additionalHelmArgs ?? []),
       ].join(" "),
       COMPONENT_NAME: context.name,
-      /** @deprecated */
-      BUILD_ID: context.environment.envVars.BUILD_INFO_BUILD_ID,
     },
   };
 

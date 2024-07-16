@@ -211,7 +211,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
@@ -368,7 +367,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
@@ -430,7 +428,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
@@ -547,7 +544,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --token="$CL_review_app_KUBE_TOKEN"
@@ -708,7 +704,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --token="$CL_review_app_KUBE_TOKEN"
@@ -768,7 +763,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --token="$CL_review_app_KUBE_TOKEN"
@@ -883,7 +877,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
@@ -1031,7 +1024,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
@@ -1091,7 +1083,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
@@ -1206,7 +1197,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
@@ -1354,7 +1344,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
@@ -1414,7 +1403,6 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - export BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
     - kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"

@@ -111,7 +111,7 @@ export const createDeployJob = (
       ...context.environment.envVars,
       ...(hasDocker ? getDockerImageVariables(context) : {}),
       ...context.environment.jobOnlyVars.deploy.envVars,
-      ...(deployConfig ? deployConfig.extraVars ?? {} : {}),
+
       ...jobDefinition.variables,
     },
     runnerVariables: {

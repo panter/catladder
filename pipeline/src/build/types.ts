@@ -89,12 +89,6 @@ export type BuildConfigBase = {
    * Can curently not reference other variables from other components
    */
   jobVars?: EnvVars;
-  /**
-   * additional env vars for the buid jobs
-   *
-   * @deprecated use jobVars or runnerVariables
-   */
-  extraVars?: Record<string, string>;
 
   /**
    * additional vars only for the runner.
@@ -238,13 +232,6 @@ type BuildConfigDockerCustom = {
 export type BuildConfigDocker =
   | BuildConfigDockerBuiltIn
   | BuildConfigDockerCustom;
-
-/**
- * @deprecated this type is no longer used. Use {@link BuildConfigDocker} instead.
- */
-export type BuildConfigCustomDocker =
-  | BuildConfigDockerCustom
-  | BuildConfigDockerBuiltInNgninx;
 
 export type BuildConfigCustom = Omit<
   BuildConfigBase,
