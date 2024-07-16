@@ -23,8 +23,8 @@ workflow:
       when: never
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_COMMIT_BRANCH == beta
-    - if: $CI_COMMIT_BRANCH == next
+    - if: $CI_COMMIT_BRANCH == "beta"
+    - if: $CI_COMMIT_BRANCH == "next"
     - if: $CI_MERGE_REQUEST_ID
 
 .yarn-cache:
@@ -206,8 +206,8 @@ create release:
     - if: $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/ # not after semantic release commit
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_COMMIT_BRANCH == beta
-    - if: $CI_COMMIT_BRANCH == next
+    - if: $CI_COMMIT_BRANCH == "beta"
+    - if: $CI_COMMIT_BRANCH == "next"
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
       when: manual
 
