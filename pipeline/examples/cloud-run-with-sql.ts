@@ -3,17 +3,12 @@ import type { Config } from "../src";
 const config: Config = {
   appName: "test-app",
   customerName: "pan",
-  builds: {
-    myWorkspace: {
-      type: "node",
-    },
-  },
   components: {
     api: {
       dotEnv: true,
       dir: "api",
       build: {
-        from: "myWorkspace",
+        type: "node",
       },
       deploy: {
         type: "google-cloudrun",
@@ -41,23 +36,6 @@ const config: Config = {
             schedule: "0 * * * *",
             timeout: "15m",
           },
-        },
-      },
-    },
-    www: {
-      dotEnv: true,
-      dir: "www",
-      build: {
-        from: "myWorkspace",
-      },
-      deploy: {
-        type: "google-cloudrun",
-        projectId: "google-project-id",
-        region: "europe-west6",
-      },
-      vars: {
-        public: {
-          API_URL: "${api:ROOT_URL}/graphql",
         },
       },
     },
