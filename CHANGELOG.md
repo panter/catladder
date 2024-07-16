@@ -1,3 +1,10 @@
+# [1.166.0](https://git.panter.ch/catladder/catladder/compare/v1.165.1...v1.166.0) (2024-07-16)
+
+
+### Features
+
+* custom cache ([9e46886](https://git.panter.ch/catladder/catladder/commit/9e468869d4f263425338cbc43c7adec781b429b9))
+
 ## [1.165.1](https://git.panter.ch/catladder/catladder/compare/v1.165.0...v1.165.1) (2024-07-16)
 
 
