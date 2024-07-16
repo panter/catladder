@@ -23,6 +23,8 @@ workflow:
       when: never
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == beta
+    - if: $CI_COMMIT_BRANCH == next
     - if: $CI_MERGE_REQUEST_ID
 
 .yarn-cache:
@@ -176,7 +178,13 @@ test:
     - yarn version apply -R --all
     - cd $DIR
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-    - DIST_TAG=$([ "$CI_COMMIT_TAG" ] && echo "latest" || echo "canary")
+    - if [ -z "$CI_COMMIT_TAG" ]; then
+      DIST_TAG="canary"
+      elif [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
+      DIST_TAG="$CI_COMMIT_BRANCH"
+      else
+      DIST_TAG="latest"
+      fi
     - npm publish --tag $DIST_TAG --no-git-tag-version --access public
 
 🚀 cli:
@@ -195,11 +203,11 @@ create release:
   script:
     - semanticRelease
   rules:
-    - if: $CI_PIPELINE_SOURCE == "parent_pipeline" # do not allow creating releases in a monorepo. this will handled in the parent pipeline insead
-      when: never
     - if: $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/ # not after semantic release commit
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == beta
+    - if: $CI_COMMIT_BRANCH == next
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
       when: manual
 
@@ -224,4 +232,4 @@ pages:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Conditionally change the prefix for Merge Requests
       when: manual # Run pages manually on Merge Requests
       variables:
-        PAGES_PREFIX: 'mr-$CI_MERGE_REQUEST_IID' # Prefix with the mr-<iid>, like `mr-123`
+        PAGES_PREFIX: "mr-$CI_MERGE_REQUEST_IID" # Prefix with the mr-<iid>, like `mr-123`
