@@ -178,12 +178,13 @@ test:
     - yarn version apply -R --all
     - cd $DIR
     - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
-    - if [ -z "$CI_COMMIT_TAG" ]; then
-      DIST_TAG="canary"
+    - |
+      if [ -z "$CI_COMMIT_TAG" ]; then
+        DIST_TAG="canary"
       elif [ "$CI_COMMIT_BRANCH" != "$CI_DEFAULT_BRANCH" ]; then
-      DIST_TAG="$CI_COMMIT_BRANCH"
+        DIST_TAG="$CI_COMMIT_BRANCH"
       else
-      DIST_TAG="latest"
+        DIST_TAG="latest"
       fi
     - npm publish --tag $DIST_TAG --no-git-tag-version --access public
 
