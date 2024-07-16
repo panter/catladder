@@ -3,7 +3,7 @@ import {
   type ComponentContext,
 } from "../..";
 import type { CatladderJob } from "../../types/jobs";
-import { ensureArray, notNil } from "../../utils";
+import { ensureArrayOrNull, notNil } from "../../utils";
 
 export const createRailsTestJobs = (
   context: ComponentContext,
@@ -54,7 +54,7 @@ export const createRailsTestJobs = (
             buildConfig.audit?.jobImage ?? buildConfig.jobImage ?? defaultImage,
           script: [
             `cd ${context.build.dir}`,
-            ...(ensureArray(buildConfig.audit?.command) ?? [
+            ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
               "gem install bundler-audit",
               "bundle audit check",
             ]),
@@ -75,7 +75,7 @@ export const createRailsTestJobs = (
           script: [
             `cd ${context.build.dir}`,
             ...bundlerInstall,
-            ...(ensureArray(buildConfig.lint?.command) ?? [
+            ...(ensureArrayOrNull(buildConfig.lint?.command) ?? [
               "bundle exec rubocop",
             ]),
           ],
@@ -93,7 +93,7 @@ export const createRailsTestJobs = (
           script: [
             `cd ${context.build.dir}`,
             ...bundlerInstall,
-            ...(ensureArray(buildConfig.test?.command) ?? [
+            ...(ensureArrayOrNull(buildConfig.test?.command) ?? [
               "bundle exec rspec",
             ]),
           ],

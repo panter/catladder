@@ -1,35 +1,31 @@
 import { uniq } from "lodash";
 import { join } from "path";
 import slugify from "slugify";
+
 import type { Context, WorkspaceContext } from "../../types/context";
-import type { GitlabJobCache } from "../../types/gitlab-types";
+import type { CacheConfig } from "../types";
 
 export const getYarnCache = (
   context: Context,
   policy = "pull-push",
-): GitlabJobCache[] => {
+): CacheConfig[] => {
   const componentIsInWorkspace =
     context.type === "component" &&
     context.packageManagerInfo.componentIsInWorkspace;
   return [
-    componentIsInWorkspace
-      ? {
-          key: "yarn",
-          policy,
-          paths: [".yarn"],
-        }
-      : {
-          key: slugify(context.build.dir) + "-yarn",
-          policy,
-          paths: [join(context.build.dir, ".yarn")],
-        },
+    {
+      scope: componentIsInWorkspace ? "global" : "buildDir",
+      key: "yarn",
+      policy,
+      paths: [".yarn"],
+    },
   ];
 };
 
 export const getNodeModulesCache = (
   context: Context,
   policy = "pull-push",
-): GitlabJobCache[] => {
+): CacheConfig[] => {
   const componentIsInWorkspace =
     context.type === "component" &&
     context.packageManagerInfo.componentIsInWorkspace;
@@ -38,6 +34,9 @@ export const getNodeModulesCache = (
   // It would slow down all pipelines whenever one adds a new dependency as it will need to download all node_modules again.
   return [
     {
+      scope: "global",
+      pathMode: "absolute",
+
       // if component is in a shared workspace, use workspace cache. use individual cache else
       key: componentIsInWorkspace
         ? "node-modules-workspace"
@@ -59,7 +58,7 @@ export const getNodeModulesCache = (
 export const getNodeCache = (
   context: Context,
   policy = "pull-push",
-): GitlabJobCache[] => {
+): CacheConfig[] => {
   return [
     ...getYarnCache(context, policy),
     ...getNodeModulesCache(context, policy),
@@ -67,15 +66,15 @@ export const getNodeCache = (
   ];
 };
 
-export const getNextCache = (context: Context): GitlabJobCache[] => {
-  const key = context.name + "-next-cache";
+export const getNextCache = (context: Context): CacheConfig[] => {
   const paths = context.build
     .getComponentDirs("direct")
     .map((c) => join(c, ".next/cache"));
 
   return [
     {
-      key,
+      pathMode: "absolute",
+      key: "next-cache",
       policy: "pull-push",
       paths,
     },
@@ -84,13 +83,13 @@ export const getNextCache = (context: Context): GitlabJobCache[] => {
 
 export const getWorkspaceDefaultCaches = (
   context: WorkspaceContext,
-): GitlabJobCache[] => {
+): CacheConfig[] => {
   return [
     {
       // turbo repo
-      key: context.name + "-turbo",
+      key: "turbo",
       policy: "pull-push",
-      paths: [join(context.build.dir, ".turbo")],
+      paths: [".turbo"],
     },
   ];
 };

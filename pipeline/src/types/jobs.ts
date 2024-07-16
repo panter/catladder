@@ -1,17 +1,14 @@
 import type { UnspecifiedEnvVars } from "..";
 import type {
-  BashExpression,
-  StringOrBashExpression,
-} from "../bash/BashExpression";
-import type {
   Artifacts,
-  GitlabJobCache,
-  GitlabRule,
-  GitlabJobImage,
-  GitlabJobDef,
   GitlabEnvironment,
+  GitlabJobCache,
+  GitlabJobDef,
+  GitlabJobImage,
+  GitlabRule,
 } from "./gitlab-types";
 
+export type CatladderJobCache = GitlabJobCache;
 export const BASE_STAGES = [
   "setup",
   "test",
@@ -84,7 +81,7 @@ export type CatladderJob<S = BaseStage> = {
   /**
    * cache config, we use here the same shape as gitlab itself
    */
-  cache?: GitlabJobCache | GitlabJobCache[];
+  cache?: CatladderJobCache | CatladderJobCache[];
 
   /**
    * job artifacts, we also use gitlab shape here

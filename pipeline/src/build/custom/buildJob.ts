@@ -1,16 +1,10 @@
 import type { ComponentContext } from "../../types/context";
-import { ensureArray } from "../../utils";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 
 import type { CatladderJob } from "../../types/jobs";
 import { createComponentBuildJobs } from "../base";
-
-const RUNNER_BUILD_VARIABLES = {
-  KUBERNETES_CPU_REQUEST: "0.45",
-  KUBERNETES_MEMORY_REQUEST: "1Gi",
-  KUBERNETES_MEMORY_LIMIT: "4Gi",
-};
+import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
 
 export const createCustomBuildJobs = (
   context: ComponentContext,
@@ -24,13 +18,7 @@ export const createCustomBuildJobs = (
   return createComponentBuildJobs(context, {
     appBuild:
       buildConfig.buildCommand !== null
-        ? {
-            image: buildConfig.jobImage,
-            runnerVariables: RUNNER_BUILD_VARIABLES,
-            cache: buildConfig.jobCache,
-            services: buildConfig.jobServices,
-            script: [...(ensureArray(buildConfig.buildCommand) ?? [])],
-          }
+        ? createBuildJobDefinition(context, buildConfig)
         : undefined,
     dockerBuild: {
       script: getDockerBuildScriptWithBuiltInDockerFile(context),

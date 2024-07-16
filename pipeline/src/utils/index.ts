@@ -6,8 +6,11 @@ export function notNil<TValue>(
   return value !== null && value !== undefined;
 }
 
-export const ensureArray = <T>(s: undefined | T | T[]): T[] | null =>
+export const ensureArrayOrNull = <T>(s: undefined | T | T[]): T[] | null =>
   isNil(s) ? null : Array.isArray(s) ? s : [s];
+
+export const ensureArray = <T>(s: undefined | T | T[]): T[] =>
+  ensureArrayOrNull(s) ?? [];
 
 // see https://github.com/lodash/lodash/issues/5384
 export const mergeWithMergingArrays = <A, B>(obj1: A, obj2: B): A & B => {

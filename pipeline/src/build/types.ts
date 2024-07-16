@@ -1,7 +1,42 @@
 import type { Artifacts, EnvVars, GitlabJobImage } from "../types";
 import type { Services } from "../types/gitlab-ci-yml";
 
-import type { CatladderJob } from "../types/jobs";
+import type { CatladderJob, CatladderJobCache } from "../types/jobs";
+
+export type CacheConfigAdvanced = Omit<CatladderJobCache, "paths" | "key"> & {
+  /**
+   * if you set a key, the cache is scoped to the key. Be aware that there is a limit in gitlab of 4 caches.
+   *
+   * see https://gitlab.com/gitlab-org/gitlab/-/issues/421962
+   */
+  key: Required<CatladderJobCache>["key"];
+
+  /**
+   * whether the cache is scoped to the context (component or workspace) or the build directory.
+   *
+   * defaults to context
+   */
+  scope?: "context" | "buildDir" | "global";
+} & CacheConfigSimple;
+
+export type CacheConfigSimple = {
+  /**
+   * paths to cache. All Paths are relative to the context dir.
+   */
+  paths: string[];
+
+  /**
+   * whether paths are relative to the base dir. defaults to relative.
+   */
+  pathMode?: "relative" | "absolute";
+
+  /**
+   * custom base dir
+   */
+  baseDir?: string;
+};
+
+export type CacheConfig = CacheConfigSimple | CacheConfigAdvanced;
 
 export type BuildConfigArtifactsReports = {
   /**
@@ -11,6 +46,13 @@ export type BuildConfigArtifactsReports = {
    * eg. `["dist/test-results/TEST-*.xml", "dist/rspec.xml", ...]`
    */
   junit?: string[];
+};
+
+export type WithCacheConfig = {
+  /*
+  cache config. All Paths are relative to the context dir.
+  */
+  cache?: CacheConfig | CacheConfig[];
 };
 
 export type TestJobCustom = {
@@ -87,6 +129,8 @@ export type BuildConfigBase = {
 
   /**
    * customize cache for the job
+   *
+   * @deprecated use cache
    */
   jobCache?: CatladderJob["cache"];
 
@@ -98,7 +142,7 @@ export type BuildConfigBase = {
    * custom image to use
    */
   jobImage?: GitlabJobImage;
-};
+} & WithCacheConfig;
 
 export type BuildConfigNodeBase = BuildConfigBase & {
   /**
@@ -290,7 +334,7 @@ export type BuildConfigFromWorkspace = {
    * by default "dist" and ".next" are allways included
    */
   artifactsPaths?: string[];
-};
+} & WithCacheConfig;
 export type BuildConfigStandalone =
   | BuildConfigNode
   | BuildConfigNodeStatic
@@ -351,7 +395,13 @@ export type WorkspaceBuildConfigBase = {
    * use to display information in merge requests, pipeline views and security dashboards.
    */
   artifactsReports?: BuildConfigArtifactsReports;
-};
+
+  jobImage?: GitlabJobImage;
+  /**
+   * tags for the underlying job runner (e.g gitlab)
+   */
+  jobTags?: string[];
+} & WithCacheConfig;
 
 export type WorkspaceBuildConfigNode = {
   type: "node";

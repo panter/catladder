@@ -1,7 +1,7 @@
 import type {
   Artifacts as GitlabCiArtifacts,
   JobTemplate,
-  Cache,
+  Cache as GitlabJobCache,
   Rules,
 } from "./gitlab-ci-yml";
 
@@ -9,7 +9,7 @@ export { Retry, Image as GitlabJobImage } from "./gitlab-ci-yml";
 
 // Reports won't show up on MRs until https://gitlab.com/groups/gitlab-org/-/epics/8205
 export type Artifacts = GitlabCiArtifacts;
-export type GitlabJobCache = Cache;
+export type { GitlabJobCache };
 export type GitlabRule = Exclude<
   Exclude<Rules, null>[number],
   string | string[] // we only use the object version

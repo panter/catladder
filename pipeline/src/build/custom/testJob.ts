@@ -1,9 +1,10 @@
+import type { Artifacts } from "../../types";
 import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
-import { isOfBuildType } from "../types";
-import type { Artifacts } from "../../types";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
+import { createJobCacheFromConfig } from "../cache/createJobCache";
+import { isOfBuildType } from "../types";
 
 const RUNNER_CUSTOM_TEST_VARIABLES = {
   KUBERNETES_CPU_REQUEST: "0.45",
@@ -34,7 +35,7 @@ export const createCustomTestJobs = (
     },
     runnerVariables: RUNNER_CUSTOM_TEST_VARIABLES,
     services: buildConfig.jobServices,
-    cache: buildConfig.jobCache,
+    cache: createJobCacheFromConfig(context, buildConfig),
     stage: "test",
     needs: [],
     envMode: "none",
@@ -45,7 +46,7 @@ export const createCustomTestJobs = (
         ...base,
         image: buildConfig.audit?.jobImage ?? buildConfig.jobImage,
         cache: undefined,
-        script: [...(ensureArray(buildConfig.audit?.command) ?? [])],
+        script: [...ensureArray(buildConfig.audit?.command)],
         allow_failure: true,
         ...createArtifactsConfig(
           context.build.dir,
@@ -61,7 +62,7 @@ export const createCustomTestJobs = (
 
         ...base,
         image: buildConfig.lint?.jobImage ?? buildConfig.jobImage,
-        script: [...(ensureArray(buildConfig.lint?.command) ?? [])],
+        script: [...ensureArray(buildConfig.lint?.command)],
         ...createArtifactsConfig(
           context.build.dir,
           buildConfig.lint?.artifactsReports,
@@ -75,7 +76,7 @@ export const createCustomTestJobs = (
 
         ...base,
         image: buildConfig.test?.jobImage ?? buildConfig.jobImage,
-        script: [...(ensureArray(buildConfig.test?.command) ?? [])],
+        script: [...ensureArray(buildConfig.test?.command)],
         ...createArtifactsConfig(
           context.build.dir,
           buildConfig.test?.artifactsReports,

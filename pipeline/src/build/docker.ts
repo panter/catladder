@@ -10,9 +10,10 @@ import {
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
 import { getRunnerImage } from "../runner";
-import type { ComponentContext } from "../types";
+import type { ComponentContext, JobDefintion } from "../types";
 import type { CatladderJob } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
+import { createJobCacheFromCacheConfigs } from "./cache/createJobCache";
 
 const DOCKER_BUILD_RUNNER_REQUESTS = {
   KUBERNETES_CPU_REQUEST: "0.45",
@@ -118,16 +119,17 @@ export const getDockerJobBaseProps = (): Pick<
   };
 };
 
-export type DockerBuildJobDefinition = Partial<CatladderJob>;
+export type DockerBuildJobDefinition = JobDefintion;
 export const createDockerBuildJobBase = (
   context: ComponentContext,
-  { script, ...def }: Partial<CatladderJob>,
+  { script, cache, ...def }: JobDefintion,
 ): CatladderJob => {
   return merge(
     {
       name: DOCKER_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
+      cache: cache ? createJobCacheFromCacheConfigs(context, cache) : undefined,
       ...getDockerJobBaseProps(),
       script: script || [],
     },

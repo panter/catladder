@@ -1,7 +1,7 @@
 import { isStandaloneBuildConfig } from ".";
 import type { ComponentContext } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
-import { ensureArray } from "../utils";
+import { ensureArrayOrNull } from "../utils";
 
 export const SBOM_BUILD_JOB_NAME = "🧾 sbom";
 export const SBOM_FILE = "__sbom.json";
@@ -29,7 +29,7 @@ export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
     isStandaloneBuildConfig(buildConfig) &&
     buildConfig.type === "custom" &&
     buildConfig.sbom !== false
-      ? ensureArray(buildConfig.sbom?.command) ?? defaultScript
+      ? ensureArrayOrNull(buildConfig.sbom?.command) ?? defaultScript
       : defaultScript;
 
   return {

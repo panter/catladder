@@ -5,9 +5,11 @@ import type {
   WorkspaceContext,
 } from "../..";
 import { getRunnerImage } from "../..";
+import type { JobDefintion } from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { createBuildJobArtifacts } from "../artifacts/createBuildJobArtifact";
+import { createJobCacheFromCacheConfigs } from "../cache/createJobCache";
 import { ensureNodeVersion } from "../node/yarn";
 import {
   APP_BUILD_JOB_NAME,
@@ -19,10 +21,10 @@ import {
   writeDotEnv,
 } from "./writeDotEnv";
 
-export type AppBuildJobDefinition = Partial<Omit<CatladderJob, "artifacts">>;
+export type AppBuildJobDefinition = JobDefintion;
 export const createAppBuildJob = (
   context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
-  { script, variables, runnerVariables, ...def }: AppBuildJobDefinition,
+  { script, variables, runnerVariables, cache, ...def }: AppBuildJobDefinition,
 ): CatladderJob => {
   return merge(
     {
@@ -31,7 +33,7 @@ export const createAppBuildJob = (
       stage: "build",
       image: getRunnerImage("jobs-default"),
       needs: [],
-      cache: [],
+      cache: cache ? createJobCacheFromCacheConfigs(context, cache) : undefined,
       variables: {
         ...(variables ?? {}),
         ...(context.type === "component"
@@ -61,7 +63,7 @@ export const createAppBuildJob = (
         ...(context.type === "component" ? writeBuildInfo(context) : []),
         ...ensureNodeVersion(context), // in pure node repos, we might want to have the nvmrc file in top-level
         `cd ${context.build.dir}`,
-        ...(ensureArray(script) ?? []),
+        ...ensureArray(script),
       ],
       artifacts: createBuildJobArtifacts(context),
     },

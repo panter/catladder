@@ -1,4 +1,3 @@
-import { getRunnerImage } from "../../runner";
 import type {
   BuildContextStandalone,
   WorkspaceContext,
@@ -8,20 +7,13 @@ import {
   type ComponentContext,
 } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { ensureArray } from "../../utils";
 import { createComponentBuildJobs, createWorkspaceBuildJobs } from "../base";
 import type { AppBuildJobDefinition } from "../base/createAppBuildJob";
+import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
 import type { DockerBuildJobDefinition } from "../docker";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import type { BuildConfigDocker } from "../types";
-import { isOfBuildType } from "../types";
-import {
-  getNextCache,
-  getNodeCache,
-  getWorkspaceDefaultCaches,
-  getYarnCache,
-} from "./cache";
-import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
+import { getNextCache, getNodeCache, getYarnCache } from "./cache";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 
 export const createNodeBuildJobs = (
@@ -46,26 +38,11 @@ export const createNodeBuildJobDefinition = (
 ): AppBuildJobDefinition | undefined => {
   const buildConfig = context.build.config;
 
-  if (!isOfBuildType(buildConfig, "node", "node-static", "storybook")) {
-    throw new Error("deploy config is not node, node-static or storybook");
-  }
-
-  if (buildConfig.buildCommand === null) return undefined;
-
-  const defaultImage = getRunnerImage("jobs-default");
   const yarnInstall = getYarnInstall(context);
-
-  return {
-    image: buildConfig.jobImage ?? defaultImage,
-    runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
-    cache: [
-      ...(ensureArray(buildConfig.jobCache) ?? []),
-      ...getNodeCache(context),
-      ...getNextCache(context),
-    ],
-    script: [...yarnInstall, ...(ensureArray(buildConfig.buildCommand) ?? [])],
-    jobTags: buildConfig.jobTags,
-  };
+  return createBuildJobDefinition(context, buildConfig, {
+    prescript: yarnInstall,
+    cache: [...getNodeCache(context), ...getNextCache(context)],
+  });
 };
 
 export const createNodeDockerJobDefinition = (

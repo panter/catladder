@@ -5,11 +5,12 @@ import {
   type ComponentContext,
 } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
-import { ensureArray, notNil } from "../../utils";
+import { ensureArrayOrNull, notNil } from "../../utils";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { ensureNodeVersion, getYarnInstall } from "./yarn";
+import { createJobCacheFromCacheConfigs } from "../cache/createJobCache";
 
 export const createNodeTestJobs = (
   context: ComponentContext | WorkspaceContext,
@@ -55,7 +56,7 @@ export const createNodeTestJobs = (
           cache: undefined, // audit does not need yarn install and no cache
           script: [
             `cd ${context.build.dir}`,
-            ...(ensureArray(buildConfig.audit?.command) ?? [
+            ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
               context.packageManagerInfo.isClassic
                 ? "yarn audit"
                 : "yarn npm audit --environment production", // yarn 2
@@ -76,12 +77,12 @@ export const createNodeTestJobs = (
           name: "👮 lint",
           ...base,
           image: buildConfig.lint?.jobImage ?? defaultImage,
-          cache: getNodeCache(context),
+          cache: createJobCacheFromCacheConfigs(context, getNodeCache(context)),
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
             ...yarnInstall,
-            ...(ensureArray(buildConfig.lint?.command) ?? ["yarn lint"]),
+            ...(ensureArrayOrNull(buildConfig.lint?.command) ?? ["yarn lint"]),
           ],
           ...createArtifactsConfig(
             context.build.dir,
@@ -98,12 +99,12 @@ export const createNodeTestJobs = (
           ...base,
           image:
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
-          cache: getNodeCache(context),
+          cache: createJobCacheFromCacheConfigs(context, getNodeCache(context)),
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
             ...yarnInstall,
-            ...(ensureArray(buildConfig.test?.command) ?? ["yarn test"]),
+            ...(ensureArrayOrNull(buildConfig.test?.command) ?? ["yarn test"]),
           ],
           ...createArtifactsConfig(
             context.build.dir,

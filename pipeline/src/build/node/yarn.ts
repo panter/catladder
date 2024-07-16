@@ -45,7 +45,7 @@ export const getYarnInstall = (
       ? collapseableSection(
           "postinstall",
           "Custom post install",
-        )(ensureArray(postInstall) ?? [])
+        )(ensureArray(postInstall))
       : []),
   ];
 };

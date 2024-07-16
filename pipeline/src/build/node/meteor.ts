@@ -1,25 +1,24 @@
-import { join } from "path";
 import { getRunnerImage } from "../../runner";
-import type { GitlabJobCache } from "../../types";
 import type { ComponentContext } from "../../types/context";
 
 import type { CatladderJob } from "../../types/jobs";
 
 import { createComponentBuildJobs } from "../base";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
+import type { CacheConfig } from "../types";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
 import { getYarnInstall } from "./yarn";
 
-const getMeteorCache = (context: ComponentContext): GitlabJobCache[] => [
+const getMeteorCache = (context: ComponentContext): CacheConfig[] => [
   {
-    key: context.name + "-meteor-build-cache",
+    key: "meteor-build-cache",
     policy: "pull-push",
     paths: [
-      join(context.build.dir, ".meteor/local/resolver-result-cache.json"),
-      join(context.build.dir, ".meteor/local/plugin-cache"),
-      join(context.build.dir, ".meteor/local/isopacks"),
-      join(context.build.dir, ".meteor/local/bundler-cache/scanner"),
+      ".meteor/local/resolver-result-cache.json",
+      ".meteor/local/plugin-cache",
+      ".meteor/local/isopacks",
+      ".meteor/local/bundler-cache/scanner",
     ],
   },
 ];
