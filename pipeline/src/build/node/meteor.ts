@@ -13,7 +13,7 @@ import { getYarnInstall } from "./yarn";
 
 const getMeteorCache = (context: ComponentContext): GitlabJobCache[] => [
   {
-    key: context.name + "meteor-build-cache",
+    key: context.name + "-meteor-build-cache",
     policy: "pull-push",
     paths: [
       join(context.build.dir, ".meteor/local/resolver-result-cache.json"),
