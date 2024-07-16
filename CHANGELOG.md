@@ -1,3 +1,10 @@
+## [1.166.1](https://git.panter.ch/catladder/catladder/compare/v1.166.0...v1.166.1) (2024-07-16)
+
+
+### Bug Fixes
+
+* yarn cache in workspaces ([d53664e](https://git.panter.ch/catladder/catladder/commit/d53664e538ac977a71a5a0e3b5b5200657834328))
+
 # [1.166.0](https://git.panter.ch/catladder/catladder/compare/v1.165.1...v1.166.0) (2024-07-16)
 
 
