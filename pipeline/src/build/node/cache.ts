@@ -15,6 +15,7 @@ export const getYarnCache = (
   return [
     {
       scope: componentIsInWorkspace ? "global" : "buildDir",
+      pathMode: componentIsInWorkspace ? "absolute" : "relative",
       key: "yarn",
       policy,
       paths: [".yarn"],
