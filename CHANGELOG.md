@@ -1,3 +1,15 @@
+# [1.165.0](https://git.panter.ch/catladder/catladder/compare/v1.164.0...v1.165.0) (2024-07-16)
+
+
+### Features
+
+* **cli:** lift engines.node to >= 18.0.0 ([32f9781](https://git.panter.ch/catladder/catladder/commit/32f978114b7ae82a5e5ae1a3e763133675835369))
+
+
+### Performance Improvements
+
+* **cli:** sligtly reduce build size by setting tsconfig target ([7c9385f](https://git.panter.ch/catladder/catladder/commit/7c9385f9341b2d7bafa24cb75127a102b7f1c75f))
+
 # [1.164.0](https://git.panter.ch/catladder/catladder/compare/v1.163.2...v1.164.0) (2024-07-15)
 
 
