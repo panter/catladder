@@ -36,5 +36,5 @@ EOF`,
 export const componentContextNeedsBuildTimeDotEnv = (
   context: ComponentContext,
 ) => {
-  return context.componentConfig.dotEnv === true; // don't build when set to `local`
+  return (context.componentConfig.dotEnv ?? true) === true; // don't build when set to `local`
 };

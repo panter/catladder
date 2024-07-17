@@ -5,7 +5,6 @@ const config: Config = {
   customerName: "pan",
   components: {
     api: {
-      dotEnv: true,
       dir: "api",
       build: {
         type: "node",

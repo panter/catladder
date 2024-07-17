@@ -5,7 +5,6 @@ const config: Config = {
   customerName: "pan",
   components: {
     www: {
-      dotEnv: true,
       dir: "www",
       build: {
         type: "node",

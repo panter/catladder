@@ -9,6 +9,8 @@ const config: Config = {
   components: {
     app: {
       dir: ".",
+      dotEnv: false,
+      envDTs: false,
       vars: {
         public: {
           RAILS_ENV: "production",

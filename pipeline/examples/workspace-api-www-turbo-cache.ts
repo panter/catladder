@@ -18,7 +18,6 @@ const config: Config = {
   },
   components: {
     api: {
-      dotEnv: true,
       dir: "api",
       build: {
         from: "myWorkspace",
@@ -29,7 +28,6 @@ const config: Config = {
       deploy: DEPLOY_CONFIG,
     },
     www: {
-      dotEnv: true,
       dir: "www",
       build: {
         from: "myWorkspace",

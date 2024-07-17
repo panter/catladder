@@ -16,7 +16,6 @@ const config: Config = {
   components: {
     app: {
       dir: "app",
-      dotEnv: true,
       vars: {
         public: {
           GRAPHQL_URL: "${api:ROOT_URL}/graphql",

@@ -6,6 +6,7 @@ const config: Config = {
   components: {
     api: {
       dir: "api",
+      dotEnv: false,
       build: {
         type: "node",
       },

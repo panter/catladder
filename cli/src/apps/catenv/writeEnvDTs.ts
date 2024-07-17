@@ -15,7 +15,7 @@ export const writeDTsFiles = async (config: Config, choice?: Choice) => {
   );
 
   const componentsWithEnabledEnvDTsWrite = Object.entries(config.components)
-    .filter(([, component]) => component?.envDTs)
+    .filter(([, component]) => component?.envDTs ?? true)
     .map(([componentName]) => componentName);
 
   const componentsToActuallyWriteEnvDts = currentComponent

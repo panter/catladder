@@ -6,7 +6,7 @@ const config: Config = {
   components: {
     web: {
       dir: "app",
-
+      dotEnv: false,
       build: { type: "meteor" },
       deploy: {
         type: "kubernetes",

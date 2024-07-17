@@ -161,12 +161,14 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * Use this in combination with @dotenvx/dotenvx or node 20 to start apps locally with .env files
    * During build and runtime, it relies on the env vars set in the environment
    *
+   * @defaultValue true
+   *
    */
   dotEnv?: boolean | "local";
   /**
    * whether to create a env.d.ts localy and during build jobs
    *
-   * Be careful, this will overwrite any existing env.d.ts file!
+   * @defaultValue true
    */
   envDTs?: boolean;
 } & DefaultEnvConfig;

@@ -1779,6 +1779,22 @@ www 🧪 test:
     - export KUBE_APP_NAME_PREFIX=""
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=dev
+      APP_DIR=www
+      ENV_TYPE=dev
+      HOSTNAME=www.dev.test-app.pan.panter.cloud
+      ROOT_URL=https://www.dev.test-app.pan.panter.cloud
+      HOSTNAME_INTERNAL=www.dev.test-app.pan.panter.cloud
+      ROOT_URL_INTERNAL=https://www.dev.test-app.pan.panter.cloud
+      KUBE_NAMESPACE=pan-test-app-dev
+      KUBE_APP_NAME=www
+      KUBE_APP_NAME_PREFIX=
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -1807,6 +1823,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -2157,6 +2175,22 @@ www 🧪 test:
     - export KUBE_APP_NAME_PREFIX="$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=review
+      APP_DIR=www
+      ENV_TYPE=review
+      HOSTNAME=www.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
+      ROOT_URL=https://www.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
+      HOSTNAME_INTERNAL=www.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
+      ROOT_URL_INTERNAL=https://www.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
+      KUBE_NAMESPACE=pan-test-app-review
+      KUBE_APP_NAME=$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www
+      KUBE_APP_NAME_PREFIX=$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -2185,6 +2219,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -2524,6 +2560,22 @@ www 🧪 test:
     - export KUBE_APP_NAME_PREFIX=""
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=stage
+      APP_DIR=www
+      ENV_TYPE=stage
+      HOSTNAME=www.stage.test-app.pan.panter.cloud
+      ROOT_URL=https://www.stage.test-app.pan.panter.cloud
+      HOSTNAME_INTERNAL=www.stage.test-app.pan.panter.cloud
+      ROOT_URL_INTERNAL=https://www.stage.test-app.pan.panter.cloud
+      KUBE_NAMESPACE=pan-test-app-stage
+      KUBE_APP_NAME=www
+      KUBE_APP_NAME_PREFIX=
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -2552,6 +2604,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -2883,6 +2937,22 @@ www 🧪 test:
     - export KUBE_APP_NAME_PREFIX=""
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=prod
+      APP_DIR=www
+      ENV_TYPE=prod
+      HOSTNAME=www.prod.test-app.pan.panter.cloud
+      ROOT_URL=https://www.prod.test-app.pan.panter.cloud
+      HOSTNAME_INTERNAL=www.prod.test-app.pan.panter.cloud
+      ROOT_URL_INTERNAL=https://www.prod.test-app.pan.panter.cloud
+      KUBE_NAMESPACE=pan-test-app-prod
+      KUBE_APP_NAME=www
+      KUBE_APP_NAME_PREFIX=
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -2911,6 +2981,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}

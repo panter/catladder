@@ -15,7 +15,7 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
 
   if (currentComponent) {
     // don't print vars if dotenv is enabled
-    if (config.components[currentComponent].dotEnv) {
+    if (config.components[currentComponent].dotEnv ?? true) {
       return {};
     }
     return await getEnvVarsResolved(null, env, currentComponent);
@@ -26,7 +26,7 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
     return await Object.keys(config.components).reduce(
       async (acc, componentName) => {
         // don't print vars if dotenv is enabled
-        if (config.components[componentName].dotEnv) {
+        if (config.components[componentName].dotEnv ?? true) {
           return await acc;
         }
         const subappvars = await getEnvVarsResolved(null, env, componentName);

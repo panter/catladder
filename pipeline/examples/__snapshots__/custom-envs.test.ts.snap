@@ -206,6 +206,19 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=dev
+      APP_DIR=api
+      ENV_TYPE=dev
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -234,6 +247,8 @@ api 🧪 test:
       - api/__build_info.json
       - api/.next
       - api/dist
+    exclude:
+      - api/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -284,6 +299,19 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=asdf
+      APP_DIR=api
+      ENV_TYPE=dev
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -312,6 +340,8 @@ api 🧪 test:
       - api/__build_info.json
       - api/.next
       - api/dist
+    exclude:
+      - api/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -362,6 +392,19 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=bla
+      APP_DIR=api
+      ENV_TYPE=dev
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -390,6 +433,8 @@ api 🧪 test:
       - api/__build_info.json
       - api/.next
       - api/dist
+    exclude:
+      - api/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -440,6 +485,19 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=review
+      APP_DIR=api
+      ENV_TYPE=review
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -468,6 +526,8 @@ api 🧪 test:
       - api/__build_info.json
       - api/.next
       - api/dist
+    exclude:
+      - api/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -514,6 +574,19 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=stage
+      APP_DIR=api
+      ENV_TYPE=stage
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -542,6 +615,8 @@ api 🧪 test:
       - api/__build_info.json
       - api/.next
       - api/dist
+    exclude:
+      - api/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -588,6 +663,19 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=prod
+      APP_DIR=api
+      ENV_TYPE=prod
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -616,6 +704,8 @@ api 🧪 test:
       - api/__build_info.json
       - api/.next
       - api/dist
+    exclude:
+      - api/.env
     expire_in: 1 day
     when: always
     reports: {}

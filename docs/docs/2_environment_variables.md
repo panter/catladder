@@ -71,7 +71,6 @@ Secrets are currently stored in GitLab. This may not be suitable for super-high-
 
 :::
 
-
 If you added a new key to `secrets` or want to change secrets, open a terminal and invoke `yarn catladder` (or just `catladder` if installed globally):
 
 ```sh title="catladder shell"
@@ -189,27 +188,29 @@ There are two modes that can be configured per component in `catladder.ts`:
 
 [env-files-section]: #env-files
 
-To use `.env` files, set `dotEnv: true` on the component in your `catladder.ts` file:
+By default, Catladder writes a `.env` and  a `env.d.ts` file to your project.  
+You can customize the behaviour of the component in your `catladder.ts` file:
 
 ```ts
 // ...
   components: {
     api: {
-      dotEnv: true, // <--
-      envDTs: true, // not mandatory, but recommended, see below
+      dotEnv: true, // <-- default
+      envDTs: true, // will genertae env.d.ts file (also default)
       dir: "api",
 ```
 
-There are two options for `dotEnv`:
+There are these options for `dotEnv`:
 
-- `true`: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
+- `true` ***default***: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
 - `"local"`: creates a .env file only locally
+- `false`: disables creating of a .env file
 
 .env files will never be included in the build artifacts as they may contain secrets.
 
 ##### Using .env files
 
-When `dotEnv` is set to `"local"`, `catenv` will create `.env` files in the component's directory.
+When `dotEnv` is set to `true` or `"local"`, `catenv` will create `.env` files in the component's directory.
 
 - Starting with Node 20, `.env` files can be loaded without third-party tools: `node -env-file=.env my-app.js`
 - For earlier Node versions or if you need more control, use [dotenvx][dotenvx]: `yarn run -T dotenvx run my-app.js`
@@ -224,24 +225,37 @@ When `dotEnv` is set to `"local"`, `catenv` will create `.env` files in the comp
 
 [inject-env-vars-section]: #injecting-env-vars-in-the-shell
 
-By default, `catenv` executes `export VARNAME` statements to the shell.  
+If dotEnv is set to `false` `catenv` executes `export VARNAME` statements to the shell.  
 This is the legacy method to inject env-vars into the local shell.
 
 - Each env-var is exported twice: once with the component name as a prefix and once without.
 - This has the downside that if multiple components declare the same env-var, the last one wins and overwrites the previous one.
-- It is therefore recommended to migrate to `.env` files.
+- It is therefore recommended to migrate to use `.env` files.
 
-#### Typescript and process.env
-
-[envDTs-section]: #typescript-and-processenv
-
-To get autocompletion in your IDE for `process.env`, set `envDTs` to `true` on the component:
+example:
 
 ```ts
 // ...
   components: {
     api: {
-      envDTs: true, // <--
+      dotEnv: false, // disable .env file creation
+      envDTs: true, // still possible to set
+      dir: "api",
+```
+
+#### Typescript and process.env
+
+[envDTs-section]: #typescript-and-processenv
+
+To get autocompletion in your IDE for `process.env`, an `env.d.ts` file is generated.
+
+Yu can disable this like this:
+
+```ts
+// ...
+  components: {
+    api: {
+      envDTs: false, // disable env.d.ts file generation
       dir: "api",
 // ...
 ```
@@ -259,6 +273,7 @@ Since catladder 1.145.0, you can generate a `.gitlab-ci.yml` config file locally
 By default, catladder starts a GitLab-CI job that will generate a `__pipeline.yml` each time the CI pipeline starts, and run this pipeline then as a child pipeline.
 
 :::
+
 ##### Migrate project to local GitLab pipeline
 
 First, you need to install the [@catladder/cli][catladder-cli-npm] package and remove the [@catladder/pipeline][catladder-pipeline-npm] package:

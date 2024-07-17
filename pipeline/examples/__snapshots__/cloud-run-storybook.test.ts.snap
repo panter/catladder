@@ -70,6 +70,23 @@ variables:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > app/.env
+      ENV_SHORT=dev
+      APP_DIR=app
+      ENV_TYPE=dev
+      HOSTNAME=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
+      DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GCLOUD_DEPLOY_credentialsKey=$CL_dev_api_GCLOUD_DEPLOY_credentialsKey
+      GCLOUD_RUN_canonicalHostSuffix=$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -98,6 +115,8 @@ variables:
       - app/__build_info.json
       - app/.next
       - app/dist
+    exclude:
+      - app/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -358,6 +377,23 @@ variables:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > app/.env
+      ENV_SHORT=review
+      APP_DIR=app
+      ENV_TYPE=review
+      HOSTNAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
+      DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GCLOUD_DEPLOY_credentialsKey=$CL_review_api_GCLOUD_DEPLOY_credentialsKey
+      GCLOUD_RUN_canonicalHostSuffix=$CL_review_api_GCLOUD_RUN_canonicalHostSuffix
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -386,6 +422,8 @@ variables:
       - app/__build_info.json
       - app/.next
       - app/dist
+    exclude:
+      - app/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -638,6 +676,23 @@ variables:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > app/.env
+      ENV_SHORT=stage
+      APP_DIR=app
+      ENV_TYPE=stage
+      HOSTNAME=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
+      DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GCLOUD_DEPLOY_credentialsKey=$CL_stage_api_GCLOUD_DEPLOY_credentialsKey
+      GCLOUD_RUN_canonicalHostSuffix=$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -666,6 +721,8 @@ variables:
       - app/__build_info.json
       - app/.next
       - app/dist
+    exclude:
+      - app/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -911,6 +968,23 @@ variables:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > app/.env
+      ENV_SHORT=prod
+      APP_DIR=app
+      ENV_TYPE=prod
+      HOSTNAME=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
+      DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GCLOUD_DEPLOY_credentialsKey=$CL_prod_api_GCLOUD_DEPLOY_credentialsKey
+      GCLOUD_RUN_canonicalHostSuffix=$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -939,6 +1013,8 @@ variables:
       - app/__build_info.json
       - app/.next
       - app/dist
+    exclude:
+      - app/.env
     expire_in: 1 day
     when: always
     reports: {}

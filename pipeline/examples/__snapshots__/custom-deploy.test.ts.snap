@@ -174,6 +174,19 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=dev
+      APP_DIR=www
+      ENV_TYPE=dev
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -202,6 +215,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -407,6 +422,19 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=review
+      APP_DIR=www
+      ENV_TYPE=review
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -435,6 +463,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -630,6 +660,19 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=stage
+      APP_DIR=www
+      ENV_TYPE=stage
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -658,6 +701,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
@@ -846,6 +891,19 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - |-
+      cat <<EOF > www/.env
+      ENV_SHORT=prod
+      APP_DIR=www
+      ENV_TYPE=prod
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
@@ -874,6 +932,8 @@ www 🧪 test:
       - www/__build_info.json
       - www/.next
       - www/dist
+    exclude:
+      - www/.env
     expire_in: 1 day
     when: always
     reports: {}
