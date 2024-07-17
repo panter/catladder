@@ -376,14 +376,27 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - set +e
-    - gcloud scheduler jobs create http pan-test-app-dev-api-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-dev-api-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set -e
-    - gcloud scheduler jobs update http pan-test-app-dev-api-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-dev-api-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set +e
-    - gcloud run jobs create pan-test-app-dev-api-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=pan-test-app-dev-api-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0
-    - set -e
-    - 'gcloud run jobs update pan-test-app-dev-api-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=pan-test-app-dev-api-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 '
+    - |-
+      exist_scheduler_names="$(
+        gcloud scheduler jobs list --filter='httpTarget.uri ~ dev.*api' --format='value(name)' --limit=999 --location='asia-east1' --project='asdf'
+      )"
+      current_job_uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-dev-api-alarm-clock:run"
+      current_scheduler_name="pan-test-app-dev-api-alarm-clock-scheduler"
+      if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      else
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      fi
+    - |-
+      exist_job_names="$(
+        gcloud run jobs list --filter='metadata.name ~ dev.*api' --format='value(name)' --limit=999 --project='asdf' --region='asia-east1'
+      )"
+      current_job_name="pan-test-app-dev-api-alarm-clock"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+      else
+        gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
+      fi
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
@@ -680,14 +693,27 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - set +e
-    - gcloud scheduler jobs create http $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set -e
-    - gcloud scheduler jobs update http $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set +e
-    - gcloud run jobs create $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0
-    - set -e
-    - 'gcloud run jobs update $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk ''{print tolower($0)}'')-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk ''{print tolower($0)}'')-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 '
+    - |-
+      exist_scheduler_names="$(
+        gcloud scheduler jobs list --filter='httpTarget.uri ~ review.*api' --format='value(name)' --limit=999 --location='asia-east1' --project='asdf'
+      )"
+      current_job_uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock:run"
+      current_scheduler_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock-scheduler"
+      if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      else
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      fi
+    - |-
+      exist_job_names="$(
+        gcloud run jobs list --filter='metadata.name ~ review.*api' --format='value(name)' --limit=999 --project='asdf' --region='asia-east1'
+      )"
+      current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+      else
+        gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
+      fi
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
@@ -986,14 +1012,27 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - set +e
-    - gcloud scheduler jobs create http pan-test-app-stage-api-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-stage-api-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set -e
-    - gcloud scheduler jobs update http pan-test-app-stage-api-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-stage-api-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set +e
-    - gcloud run jobs create pan-test-app-stage-api-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=pan-test-app-stage-api-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0
-    - set -e
-    - 'gcloud run jobs update pan-test-app-stage-api-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=pan-test-app-stage-api-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 '
+    - |-
+      exist_scheduler_names="$(
+        gcloud scheduler jobs list --filter='httpTarget.uri ~ stage.*api' --format='value(name)' --limit=999 --location='asia-east1' --project='asdf'
+      )"
+      current_job_uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-stage-api-alarm-clock:run"
+      current_scheduler_name="pan-test-app-stage-api-alarm-clock-scheduler"
+      if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      else
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      fi
+    - |-
+      exist_job_names="$(
+        gcloud run jobs list --filter='metadata.name ~ stage.*api' --format='value(name)' --limit=999 --project='asdf' --region='asia-east1'
+      )"
+      current_job_name="pan-test-app-stage-api-alarm-clock"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+      else
+        gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
+      fi
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
@@ -1279,14 +1318,27 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - set +e
-    - gcloud scheduler jobs create http pan-test-app-prod-api-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-prod-api-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set -e
-    - gcloud scheduler jobs update http pan-test-app-prod-api-alarm-clock-scheduler --project=asdf --location=asia-east1 --schedule="0 7 0 0 1-5" --max-retry-attempts=0 --uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-prod-api-alarm-clock:run" --http-method=POST --oauth-service-account-email=$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com
-    - set +e
-    - gcloud run jobs create pan-test-app-prod-api-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=pan-test-app-prod-api-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0
-    - set -e
-    - 'gcloud run jobs update pan-test-app-prod-api-alarm-clock --command="./wake-up-call" --image=asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=asdf --region=asia-east1 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=pan-test-app-prod-api-alarm-clock --memory=512Mi --task-timeout=10m --parallelism=1 --env-vars-file=____envvars.yaml --max-retries=0 '
+    - |-
+      exist_scheduler_names="$(
+        gcloud scheduler jobs list --filter='httpTarget.uri ~ prod.*api' --format='value(name)' --limit=999 --location='asia-east1' --project='asdf'
+      )"
+      current_job_uri="https://asia-east1-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/asdf/jobs/pan-test-app-prod-api-alarm-clock:run"
+      current_scheduler_name="pan-test-app-prod-api-alarm-clock-scheduler"
+      if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      else
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=asdf --location=asia-east1 --uri="$current_job_uri" --http-method=POST --oauth-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 7 0 0 1-5" --max-retry-attempts=0
+      fi
+    - |-
+      exist_job_names="$(
+        gcloud run jobs list --filter='metadata.name ~ prod.*api' --format='value(name)' --limit=999 --project='asdf' --region='asia-east1'
+      )"
+      current_job_name="pan-test-app-prod-api-alarm-clock"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+      else
+        gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
+      fi
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done

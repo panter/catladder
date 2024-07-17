@@ -1,5 +1,4 @@
 import type { ComponentContext } from "../../../types/context";
-import { allowFailureInScripts } from "../../../utils/gitlab";
 
 import type {
   DeployConfigCloudRunJob,
@@ -22,6 +21,7 @@ import type {
   StringOrBashExpression,
 } from "../../../bash/BashExpression";
 import { ENV_VARS_FILENAME } from "./constants";
+import { notNil } from "../../../utils";
 
 const getJobRunScriptForJob = (
   context: ComponentContext,
@@ -81,83 +81,115 @@ export const getJobRunScripts = (
     );
 };
 
-export const getJobCreateScripts = (context: ComponentContext) => {
-  const jobsWithNames = getCloudRunJobsWithNames(context);
+export const getJobCreateScripts = (context: ComponentContext): string[] =>
+  getCloudRunJobsWithNames(context).map(
+    (
+      {
+        job: {
+          command,
+          image,
+          cpu,
+          memory = "512Mi",
+          timeout = "10m",
+          parallelism = 1,
+          volumes,
+        },
+        jobName,
+      },
+      jobIndex,
+    ): string => {
+      const commandArray = Array.isArray(command)
+        ? command
+        : command.split(" ");
 
-  return jobsWithNames
-    .map(({ job, jobName }) => getJobCreateScriptsForJob(context, jobName, job))
-    .flat();
-};
-
-const getJobCreateScriptsForJob = (
-  context: ComponentContext,
-  jobName: StringOrBashExpression,
-  job: DeployConfigCloudRunJob,
-) => {
-  const commonDeployArgs = getCommonDeployArgs(context);
-
-  // due to some oversight from google, jobs create does not yet accept `--add-volume` 🤦
-  // lucky, update on the other hand accepts it... so let's just imediatly update it
-  // we cannot upsert a job, so we have to create it and catch the error and then update
-  const commandArray = Array.isArray(job.command)
-    ? job.command
-    : job.command.split(" ");
-
-  const commonDeployArgsString = createArgsString({
-    command: '"' + commandArray.join(",") + '"',
-    ...commonDeployArgs,
-    labels: makeLabelString({
-      ...getLabels(context),
-      "cloud-run-job-name": jobName.toString(),
-    }),
-    image: job.image || commonDeployArgs.image,
-    cpu: job?.cpu,
-    memory: job.memory || "512Mi",
-    "task-timeout": job.timeout || "10m",
-    parallelism: job.parallelism || 1,
-    "env-vars-file": ENV_VARS_FILENAME,
-    "max-retries": 0,
-  });
-
-  const requiresBeta = job?.volumes && Object.keys(job?.volumes).length > 0;
-
-  const argsString = `${jobName} ${commonDeployArgsString}`;
-  return [
-    ...allowFailureInScripts([`${gcloudRunCmd()} jobs create ${argsString}`]),
-    `${gcloudRunCmd(
-      requiresBeta ? "beta" : undefined,
-    )} jobs update ${argsString} ${createArgsString(
-      ...createVolumeConfig(job?.volumes, "job"),
-    )}`,
-  ];
-};
-
-export const getCreateScheduleScripts = (context: ComponentContext) => {
-  const jobsWithSchedule = getCloudRunJobsWithSchedule(context);
-  const deployConfig = getCloudRunDeployConfig(context);
-
-  return jobsWithSchedule
-    .map(({ job, jobName, schedulerName }) => {
-      const argsString = createArgsString({
-        project: deployConfig.projectId,
-        location: deployConfig.region,
-        schedule: `"${job.schedule}"`,
-        "max-retry-attempts": job.maxRetryAttempts ?? 0,
-
-        uri: `"https://${deployConfig.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${deployConfig.projectId}/jobs/${jobName}:run"`,
-        "http-method": "POST",
-        "oauth-service-account-email":
-          "$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com",
+      const {
+        image: commonImage,
+        project,
+        region,
+        ...deployArgs
+      } = getCommonDeployArgs(context);
+      const commonDeployArgsString = createArgsString({
+        command: `"${commandArray.join(",")}"`,
+        labels: `"${makeLabelString(getLabels(context))},cloud-run-job-name=$current_job_name"`,
+        image: `"${image ?? commonImage}"`,
+        project,
+        region,
+        cpu,
+        memory,
+        parallelism,
+        "task-timeout": timeout,
+        "env-vars-file": ENV_VARS_FILENAME,
+        "max-retries": 0,
+        ...deployArgs,
       });
-      const commonArgs = `http ${schedulerName} ${argsString}`;
+
+      // due to some oversight from google, jobs create does not yet accept `--add-volume` 🤦
+      // lucky, update on the other hand accepts it... so let's just imediatly update it
+      // we cannot upsert a job, so we have to create it and catch the error and then update
+      const hasVolumes = Object.keys(volumes || {}).length > 0;
+      const needsBeta = hasVolumes ? "beta" : undefined;
+      const volumeArgs = hasVolumes
+        ? createArgsString(...createVolumeConfig(volumes, "job"))
+        : "";
+
       return [
-        ...allowFailureInScripts([
-          `${gcloudSchedulerCmd()} jobs create ${commonArgs}`,
-        ]),
-        `${gcloudSchedulerCmd()} jobs update ${commonArgs}`,
-      ];
-    })
-    .flat();
+        jobIndex === 0
+          ? `exist_job_names="$(\n  ${gcloudRunCmd()} jobs list --filter='metadata.name ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --project='${project}' --region='${region}'\n)"`
+          : null,
+        `current_job_name="${jobName}"`,
+        'if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then',
+        `  ${gcloudRunCmd(needsBeta)} jobs update "$current_job_name" ${commonDeployArgsString} ${volumeArgs}`,
+        "else",
+        `  ${gcloudRunCmd()} jobs create "$current_job_name" ${commonDeployArgsString}`,
+        "fi",
+      ]
+        .filter(notNil)
+        .join("\n");
+    },
+  );
+
+export const getCreateScheduleScripts = (
+  context: ComponentContext,
+): string[] => {
+  const jobsWithSchedule = getCloudRunJobsWithSchedule(context);
+  const { region: location, projectId: project } =
+    getCloudRunDeployConfig(context);
+
+  const uriBase = `https://${location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${project}/jobs`;
+  const gcloudArgs = {
+    project,
+    location,
+    uri: `"$current_job_uri"`,
+    "http-method": "POST",
+    "oauth-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
+  };
+
+  return jobsWithSchedule.map(
+    (
+      { job: { maxRetryAttempts, schedule }, jobName, schedulerName },
+      jobIndex,
+    ): string => {
+      const argsString = createArgsString({
+        ...gcloudArgs,
+        schedule: `"${schedule}"`,
+        "max-retry-attempts": maxRetryAttempts ?? 0,
+      });
+      return [
+        jobIndex === 0
+          ? `exist_scheduler_names="$(\n  ${gcloudSchedulerCmd()} jobs list --filter='httpTarget.uri ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --location='${location}' --project='${project}'\n)"`
+          : null,
+        `current_job_uri="${uriBase}/${jobName}:run"`,
+        `current_scheduler_name="${schedulerName}"`,
+        `if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then`,
+        `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}`,
+        `else`,
+        `  ${gcloudSchedulerCmd()} jobs create http "$current_scheduler_name" ${argsString}`,
+        `fi`,
+      ]
+        .filter(notNil)
+        .join("\n");
+    },
+  );
 };
 
 const getCloudRunJobsWithSchedule = (context: ComponentContext) => {
@@ -170,11 +202,13 @@ const getCloudRunJobsWithSchedule = (context: ComponentContext) => {
       ): entry is {
         jobName: BashExpression;
         job: DeployConfigCloudRunJobWithSchedule;
+        jobKey: string;
       } => entry.job.when === "schedule",
     )
-    .map(({ job, jobName }) => ({
+    .map(({ job, jobName, jobKey }) => ({
       job,
       jobName,
+      jobKey,
       schedulerName: jobName.concat("-scheduler"),
     }));
 };
@@ -190,9 +224,10 @@ const getCloudRunJobsWithNames = (context: ComponentContext) => {
     .filter((entry): entry is [string, DeployConfigCloudRunJob] =>
       Boolean(entry[1]),
     )
-    .map(([name, job]) => ({
-      jobName: getFullJobName(name),
+    .map(([jobKey, job]) => ({
+      jobName: getFullJobName(jobKey),
       job,
+      jobKey,
     }));
   return jobsWithNames;
 };
