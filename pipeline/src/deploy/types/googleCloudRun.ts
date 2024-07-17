@@ -166,6 +166,17 @@ export type DeployConfigCloudRunService = {
    * vpc egress, see https://cloud.google.com/sdk/gcloud/reference/run/deploy#--vpc-egress
    */
   vpcEgress?: "all-traffic" | "private-ranges-only";
+
+  /**
+   * Use http2 end-to-end. See https://cloud.google.com/run/docs/configuring/http2
+   *
+   * Defaults to false.
+   *
+   * Your service needs to be able to handle http2 requests.
+   * Its recommended to use http2 without tls, since cloud run handles the encryption for you. (so called "h2c" (http2 cleartext))
+   *
+   */
+  http2?: boolean;
 } & DeployConfigCloudRunWithVolumes;
 
 export type DeployConfigCloudRunJobBase = {
