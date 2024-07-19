@@ -1,3 +1,5 @@
+## [1.168.2](https://git.panter.ch/catladder/catladder/compare/v1.168.1...v1.168.2) (2024-07-19)
+
 ## [1.168.1](https://git.panter.ch/catladder/catladder/compare/v1.168.0...v1.168.1) (2024-07-19)
 
 
