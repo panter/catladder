@@ -1,13 +1,8 @@
 import { join } from "path";
-import type {
-  BuildConfigStandalone,
-  CacheConfig,
-  CacheConfigAdvanced,
-  CacheConfigSimple,
-  WorkspaceBuildConfig,
-} from "..";
+import type { CacheConfig, CacheConfigAdvanced, CacheConfigSimple } from "..";
 import type { Context } from "../../types";
 import type { CatladderJobCache } from "../../types/jobs";
+import type { WithCacheConfig } from "../types";
 import { getAllCacheConfigsFromConfig } from "./getAllCacheConfigsFromConfig";
 
 export const createJobCacheFromCacheConfigs = (
@@ -61,6 +56,7 @@ export const createJobCacheFromCacheConfigs = (
                   pathMode === "absolute" ? f : join(baseDir, f),
                 ),
               };
+
       return {
         key: transformedKey,
         policy: policy ?? "pull-push",
@@ -70,16 +66,17 @@ export const createJobCacheFromCacheConfigs = (
       };
     },
   );
+
   return [...advancedCaches, ...simpleCaches];
 };
 
 /** shortcut, used in some build types */
 export const createJobCacheFromConfig = (
   context: Context,
-  buildConfig: BuildConfigStandalone | WorkspaceBuildConfig,
+  configWithCache: WithCacheConfig,
 ) => {
   return createJobCacheFromCacheConfigs(
     context,
-    getAllCacheConfigsFromConfig(context, buildConfig),
+    getAllCacheConfigsFromConfig(context, configWithCache),
   );
 };

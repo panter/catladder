@@ -1,3 +1,4 @@
+import { getAllCacheConfigsFromConfig } from "../../build/cache/getAllCacheConfigsFromConfig";
 import { getYarnInstall } from "../../build/node/yarn";
 import { getRunnerImage } from "../../runner";
 import type { ComponentContext } from "../../types/context";
@@ -22,10 +23,11 @@ export const createCustomDeployJobs = (
   const yarnInstall = getYarnInstall(context, {
     noCustomPostInstall: true,
   });
-  return createDeployementJobs(context, {
+
+  const result = createDeployementJobs(context, {
     deploy: {
       image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
-      cache: deployConfig.jobCache ?? [],
+      cache: getAllCacheConfigsFromConfig(context, deployConfig),
       script: [
         `cd ${context.build.dir}`,
         ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
@@ -45,4 +47,5 @@ export const createCustomDeployJobs = (
         }
       : undefined,
   });
+  return result;
 };

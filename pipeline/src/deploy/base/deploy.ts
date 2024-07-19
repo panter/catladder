@@ -1,8 +1,10 @@
+import { createJobCacheFromCacheConfigs } from "../../build/cache/createJobCache";
 import {
   getDockerImageVariables,
   requiresDockerBuild,
 } from "../../build/docker";
 import { SBOM_BUILD_JOB_NAME } from "../../build/sbom";
+import type { DeployJobDefinition } from "../../types";
 import {
   componentContextHasWorkspaceBuild,
   type ComponentContext,
@@ -16,16 +18,6 @@ import { DEPLOY_RUNNER_VARIABLES } from "./variables";
 
 export const DEPLOY_JOB_NAME = "🚀 Deploy";
 
-export type DeployJobDefinition = Pick<
-  CatladderJob,
-  | "script"
-  | "variables"
-  | "image"
-  | "cache"
-  | "artifacts"
-  | "services"
-  | "runnerVariables"
->;
 export const createDeployJob = (
   context: ComponentContext,
   jobDefinition: DeployJobDefinition,
@@ -58,7 +50,9 @@ export const createDeployJob = (
     name: DEPLOY_JOB_NAME,
     script: jobDefinition.script,
     image: jobDefinition.image,
-    cache: jobDefinition.cache,
+    cache: jobDefinition.cache
+      ? createJobCacheFromCacheConfigs(context, jobDefinition.cache)
+      : undefined,
     artifacts: jobDefinition.artifacts,
     services: jobDefinition.services,
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env

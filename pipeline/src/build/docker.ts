@@ -10,7 +10,7 @@ import {
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
 import { getRunnerImage } from "../runner";
-import type { ComponentContext, JobDefintion } from "../types";
+import type { ComponentContext, DockerBuildJobDefinition } from "../types";
 import type { CatladderJob } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { createJobCacheFromCacheConfigs } from "./cache/createJobCache";
@@ -119,10 +119,9 @@ export const getDockerJobBaseProps = (): Pick<
   };
 };
 
-export type DockerBuildJobDefinition = JobDefintion;
 export const createDockerBuildJobBase = (
   context: ComponentContext,
-  { script, cache, ...def }: JobDefintion,
+  { script, cache, ...def }: DockerBuildJobDefinition,
 ): CatladderJob => {
   return merge(
     {

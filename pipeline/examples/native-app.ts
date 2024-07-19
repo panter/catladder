@@ -1,12 +1,12 @@
-import type { Config } from "../src";
+import type { CacheConfig, Config } from "../src";
 import type { CatladderJob } from "../src/types/jobs";
 
-const APP_GEM_CACHE: CatladderJob["cache"] = [
+const APP_GEM_CACHE: CacheConfig[] = [
   {
     key: {
-      files: ["app/Gemfile.lock"],
+      files: ["Gemfile.lock"],
     },
-    paths: ["app/vendor"],
+    paths: ["vendor"],
   },
 ];
 
@@ -41,7 +41,7 @@ const config: Config = {
           "bundle exec fastlane build",
         ],
         jobTags: ["mac-runner"],
-        jobCache: APP_GEM_CACHE,
+        cache: APP_GEM_CACHE,
       },
 
       deploy: {
@@ -58,7 +58,7 @@ const config: Config = {
           "bundle exec fastlane deploy_test",
         ],
         jobTags: ["mac-runner"],
-        jobCache: APP_GEM_CACHE,
+        cache: APP_GEM_CACHE,
       },
     },
 

@@ -6,11 +6,13 @@ import {
   componentContextIsStandaloneBuild,
   type ComponentContext,
 } from "../../types/context";
+import type {
+  AppBuildJobDefinition,
+  DockerBuildJobDefinition,
+} from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
 import { createComponentBuildJobs, createWorkspaceBuildJobs } from "../base";
-import type { AppBuildJobDefinition } from "../base/createAppBuildJob";
 import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
-import type { DockerBuildJobDefinition } from "../docker";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import type { BuildConfigDocker } from "../types";
 import { getNextCache, getNodeCache, getYarnCache } from "./cache";

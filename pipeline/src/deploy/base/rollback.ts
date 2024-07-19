@@ -1,13 +1,10 @@
 import type { ComponentContext } from "../../types/context";
+import type { RollbackJobDefinition } from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
 import { DEPLOY_RUNNER_VARIABLES } from "./variables";
 
 export const ROLLBACK_JOB_NAME = "↩️ Rollback ⚠️";
 
-export type RollbackJobDefinition = Pick<
-  CatladderJob,
-  "script" | "variables" | "runnerVariables" | "image"
->;
 export const createRollbackJob = (
   context: ComponentContext,
   jobDefinition: RollbackJobDefinition,

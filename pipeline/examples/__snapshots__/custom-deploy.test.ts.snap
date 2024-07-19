@@ -328,7 +328,6 @@ www 🧪 test:
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
-  cache: []
   environment:
     name: dev/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -561,7 +560,6 @@ www 🧪 test:
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
-  cache: []
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -790,7 +788,6 @@ www 🧪 test:
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
-  cache: []
   environment:
     name: stage/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1012,7 +1009,6 @@ www 🧪 test:
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
-  cache: []
   environment:
     name: prod/www
     url: $CL_GITLAB_ENVIRONMENT_URL

@@ -5,7 +5,7 @@ import type {
   WorkspaceContext,
 } from "../..";
 import { getRunnerImage } from "../..";
-import type { JobDefintion } from "../../types/jobDefinition";
+import type { AppBuildJobDefinition } from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { createBuildJobArtifacts } from "../artifacts/createBuildJobArtifact";
@@ -21,7 +21,6 @@ import {
   writeDotEnv,
 } from "./writeDotEnv";
 
-export type AppBuildJobDefinition = JobDefintion;
 export const createAppBuildJob = (
   context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
   { script, variables, runnerVariables, cache, ...def }: AppBuildJobDefinition,

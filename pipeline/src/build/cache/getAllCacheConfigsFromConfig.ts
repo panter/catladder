@@ -1,24 +1,17 @@
 import type { Context } from "../../types";
 import { ensureArray } from "../../utils/index";
-import type {
-  BuildConfigStandalone,
-  CacheConfig,
-  WorkspaceBuildConfig,
-} from "../types";
+import type { CacheConfig, WithCacheConfig } from "../types";
 import { transformLegacyJobCache } from "./transformLegacyJobCache";
 
 export const getAllCacheConfigsFromConfig = (
   context: Context,
-  buildConfig: BuildConfigStandalone | WorkspaceBuildConfig,
+  configWithCache: WithCacheConfig,
 ): CacheConfig[] => {
   return [
-    ...("jobCache" in buildConfig
-      ? transformLegacyJobCache(buildConfig.jobCache)
+    ...("jobCache" in configWithCache
+      ? transformLegacyJobCache(configWithCache.jobCache)
       : []),
-    ...ensureArray(buildConfig.cache).map((c) => ({
-      ...c,
-      context,
-    })),
+    ...ensureArray(configWithCache.cache),
     ...(context.type === "workspace"
       ? // also add cache configs of the components of that workspace
         context.components.flatMap<CacheConfig>(

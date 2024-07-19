@@ -53,6 +53,13 @@ export type WithCacheConfig = {
   cache config. All Paths are relative to the context dir.
   */
   cache?: CacheConfig | CacheConfig[];
+
+  /**
+   * customize cache for the job
+   *
+   * @deprecated use cache
+   */
+  jobCache?: CatladderJob["cache"];
 };
 
 export type TestJobCustom = {

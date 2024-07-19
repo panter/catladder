@@ -1,7 +1,6 @@
 import type { BuildConfigStandalone, WorkspaceBuildConfig } from "..";
 import { getRunnerImage } from "../../runner";
-import type { Context } from "../../types";
-import type { JobDefintion } from "../../types/jobDefinition";
+import type { AppBuildJobDefinition, Context } from "../../types";
 import { ensureArray } from "../../utils";
 import { getAllCacheConfigsFromConfig } from "../cache/getAllCacheConfigsFromConfig";
 import { NODE_RUNNER_BUILD_VARIABLES } from "../node/constants";
@@ -9,11 +8,11 @@ import { NODE_RUNNER_BUILD_VARIABLES } from "../node/constants";
 export const createBuildJobDefinition = (
   context: Context,
   buildConfig: BuildConfigStandalone | WorkspaceBuildConfig,
-  customize: Pick<JobDefintion, "cache"> & {
+  customize: Pick<AppBuildJobDefinition, "cache"> & {
     prescript?: string[];
     postscript?: string[];
   } = {},
-): JobDefintion | undefined => {
+): AppBuildJobDefinition | undefined => {
   if (buildConfig.buildCommand === null) return undefined;
 
   const defaultImage = getRunnerImage("jobs-default");
