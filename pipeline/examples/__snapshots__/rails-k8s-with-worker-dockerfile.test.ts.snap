@@ -52,7 +52,7 @@ app 🛡 audit:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - cd .
+    - cd .temp-with-dockerfile
     - gem install bundler-audit
     - bundle audit check
   rules:
@@ -75,7 +75,7 @@ app 👮 lint:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - cd .
+    - cd .temp-with-dockerfile
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
     - bundle exec rubocop
@@ -101,7 +101,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - cd .
+    - cd .temp-with-dockerfile
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
     - bundle exec rspec
@@ -131,7 +131,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
@@ -164,7 +164,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
       - __sbom.json
@@ -186,7 +186,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="dev"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="dev"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -235,7 +235,7 @@ app 🧪 test:
           ENV_SHORT: |-
             dev
           APP_DIR: |-
-            .
+            .temp-with-dockerfile
           ENV_TYPE: |-
             dev
           BUILD_INFO_BUILD_ID: |-
@@ -348,7 +348,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="dev"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="dev"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -410,7 +410,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="dev"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="dev"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -474,7 +474,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
@@ -505,7 +505,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
       - __sbom.json
@@ -525,7 +525,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="review"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="review"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -574,7 +574,7 @@ app 🧪 test:
           ENV_SHORT: |-
             review
           APP_DIR: |-
-            .
+            .temp-with-dockerfile
           ENV_TYPE: |-
             review
           BUILD_INFO_BUILD_ID: |-
@@ -691,7 +691,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="review"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="review"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -751,7 +751,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="review"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="review"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -813,7 +813,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
@@ -844,7 +844,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
       - __sbom.json
@@ -864,7 +864,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="stage"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="stage"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -913,7 +913,7 @@ app 🧪 test:
           ENV_SHORT: |-
             stage
           APP_DIR: |-
-            .
+            .temp-with-dockerfile
           ENV_TYPE: |-
             stage
           BUILD_INFO_BUILD_ID: |-
@@ -1017,7 +1017,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="stage"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="stage"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -1077,7 +1077,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="stage"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="stage"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -1139,7 +1139,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
@@ -1170,7 +1170,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .
+    - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
       - __sbom.json
@@ -1190,7 +1190,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="prod"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="prod"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -1239,7 +1239,7 @@ app 🧪 test:
           ENV_SHORT: |-
             prod
           APP_DIR: |-
-            .
+            .temp-with-dockerfile
           ENV_TYPE: |-
             prod
           BUILD_INFO_BUILD_ID: |-
@@ -1343,7 +1343,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="prod"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="prod"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
@@ -1403,7 +1403,7 @@ app 🧪 test:
   script:
     - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
     - export ENV_SHORT="prod"
-    - export APP_DIR="."
+    - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="prod"
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
