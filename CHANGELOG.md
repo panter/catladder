@@ -1,3 +1,10 @@
+## [1.168.1](https://git.panter.ch/catladder/catladder/compare/v1.168.0...v1.168.1) (2024-07-19)
+
+
+### Bug Fixes
+
+* problems in new cache config, add also new cache config to custom deploy ([b38c122](https://git.panter.ch/catladder/catladder/commit/b38c122b8f532916d17e146e2c2c50a4c812712d))
+
 # [1.168.0](https://git.panter.ch/catladder/catladder/compare/v1.167.0...v1.168.0) (2024-07-19)
 
 
