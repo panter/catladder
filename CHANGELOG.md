@@ -1,3 +1,10 @@
+# [1.168.0](https://git.panter.ch/catladder/catladder/compare/v1.167.0...v1.168.0) (2024-07-19)
+
+
+### Features
+
+* **pipeline:** faster scheduler and job deployments ([2f2f483](https://git.panter.ch/catladder/catladder/commit/2f2f483ee8e50538815f9f3f5f643f026f8d567c))
+
 # [1.167.0](https://git.panter.ch/catladder/catladder/compare/v1.166.1...v1.167.0) (2024-07-17)
 
 
