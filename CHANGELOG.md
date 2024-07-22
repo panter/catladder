@@ -1,3 +1,10 @@
+## [1.168.4](https://git.panter.ch/catladder/catladder/compare/v1.168.3...v1.168.4) (2024-07-22)
+
+
+### Bug Fixes
+
+* yarn cache broken if not in workspace and in subdirectory ([660dd5f](https://git.panter.ch/catladder/catladder/commit/660dd5f1e54d45d221c34bbb7c04d5a65223c4f3))
+
 ## [1.168.3](https://git.panter.ch/catladder/catladder/compare/v1.168.2...v1.168.3) (2024-07-22)
 
 ## [1.168.2](https://git.panter.ch/catladder/catladder/compare/v1.168.1...v1.168.2) (2024-07-19)
