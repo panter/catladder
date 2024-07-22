@@ -4,6 +4,7 @@ import type { Context } from "../../types";
 import type { CatladderJobCache } from "../../types/jobs";
 import type { WithCacheConfig } from "../types";
 import { getAllCacheConfigsFromConfig } from "./getAllCacheConfigsFromConfig";
+import slugify from "slugify";
 
 export const createJobCacheFromCacheConfigs = (
   context: Context,
@@ -46,7 +47,7 @@ export const createJobCacheFromCacheConfigs = (
           ? key
           : typeof key === "string"
             ? (scope === "buildDir" // really edge case...
-                ? baseDir
+                ? slugify(baseDir)
                 : context.name) +
               "-" +
               key
