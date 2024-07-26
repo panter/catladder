@@ -60,7 +60,8 @@ test:
   interruptible: true
   retry: 2 # ugly hack for https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27384
   services:
-    - docker:24.0.6-dind # https://github.com/docker-library/docker/issues/463
+    - name: docker:24.0.6-dind # https://github.com/docker-library/docker/issues/463
+      command: ["--registry-mirror=https://mirror.gcr.io"]
 
   stage: build
   variables:
