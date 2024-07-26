@@ -4,20 +4,23 @@ const config: Config = {
   appName: "test-app",
   customerName: "pan",
   components: {
-    api: {
-      dir: "api",
+    app1: {
+      dir: "app1",
       build: {
         type: "node",
       },
       vars: {
         public: {
           foo: "foo-value",
-          multiline: `line1
-line2
-line3  
+          multiline: `app1 line1
+app1 line2
+app1 line3  
 
-single quote: '
-doouble quote: "
+the url of self: "\${ROOT_URL}"
+
+
+app1 single quote: '
+app1 doouble quote: "
 `,
         },
       },
@@ -27,20 +30,59 @@ doouble quote: "
         region: "asia-east1",
       },
     },
-    api2: {
-      dir: "api",
+    app2: {
+      dir: "app2",
       build: {
         type: "node",
       },
       vars: {
         public: {
-          multiline_from_api: "${api:multiline}",
-          multiline2: `yeah
-yeah2
-yeah3  
+          foo: "foo-value",
+          multiline: `app2 yeah
+app2 yeah2
+app2 yeah3  
 
-single quote: '
-doouble quote: "
+app2 single quote: '
+app2 doouble quote: "
+
+the url of self: "\${ROOT_URL}"
+the url of app1: "\${app1:ROOT_URL}"
+
+value from app1:
+-------
+\${multiline_from_app1}
+--------
+`,
+        },
+      },
+      deploy: {
+        type: "google-cloudrun",
+        projectId: "asdf",
+        region: "asia-east1",
+      },
+    },
+    kube: {
+      dir: "kube",
+      build: {
+        type: "node",
+      },
+      vars: {
+        public: {
+          multiline_from_app1: "${app1:multiline}",
+          multiline: `kube yeah
+kube yeah2
+kube yeah3  
+
+kube single quote: '
+kube doouble quote: "
+
+the url of self: "\${ROOT_URL}"
+the url of app1: "\${app1:ROOT_URL}"
+
+value from app1:
+-------
+\${multiline_from_app1}
+--------
 `,
         },
       },

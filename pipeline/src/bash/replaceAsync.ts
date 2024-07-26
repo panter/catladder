@@ -1,4 +1,4 @@
-import { BashExpression } from "./BashExpression";
+import { BashExpression, bashEscape } from "./BashExpression";
 
 // from https://github.com/dsblv/string-replace-async/blob/main/index.js
 // and adjusted a bit
@@ -11,13 +11,17 @@ export default async function replaceAsync(
   ) => Promise<string | BashExpression>,
 ) {
   const wasBashExpression = string instanceof BashExpression;
+
+  const stringRepresentation = wasBashExpression
+    ? string.toString()
+    : bashEscape(string);
   try {
     // 1. Run fake pass of `replace`, collect values from `replacer` calls
     // 2. Resolve them with `Promise.all`
     // 3. Run `replace` with resolved values
     const values: Array<Promise<string | BashExpression>> = [];
     String.prototype.replace.call(
-      string.toString(),
+      stringRepresentation,
       searchValue,
       function (...args) {
         // eslint-disable-next-line prefer-spread
@@ -33,7 +37,7 @@ export default async function replaceAsync(
     );
 
     const result = String.prototype.replace.call(
-      string.toString(),
+      stringRepresentation,
       searchValue,
       function () {
         return resolvedValues.shift()?.toString() ?? "";
