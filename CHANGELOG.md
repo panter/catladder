@@ -1,3 +1,10 @@
+# [1.169.0](https://git.panter.ch/catladder/catladder/compare/v1.168.4...v1.169.0) (2024-07-26)
+
+
+### Features
+
+* **docker:** use registry mirror ([aa8f226](https://git.panter.ch/catladder/catladder/commit/aa8f226e5506e1f993d6e48da406135c161e7016))
+
 ## [1.168.4](https://git.panter.ch/catladder/catladder/compare/v1.168.3...v1.168.4) (2024-07-22)
 
 
