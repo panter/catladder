@@ -111,7 +111,7 @@ export const getDockerJobBaseProps = (): Pick<
     services: [
       {
         name: "docker:24.0.6-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
-        command: ["--tls=false"],
+        command: ["--tls=false", "--registry-mirror=https://mirror.gcr.io"],
       },
     ],
     variables: {},
