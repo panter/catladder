@@ -15,8 +15,7 @@ const config: Config = {
         region: "europe-west6",
 
         service: {
-          network: "my-network",
-          subnet: "my-subnet",
+          vpcConnector: "my-first-vpc-connector",
           vpcEgress: "all-traffic",
         },
       },

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches snapshot for cloud-run-service-custom-vpc local pipeline YAML 1`] = `
+exports[`matches snapshot for cloud-run-service-custom-vpc-connector local pipeline YAML 1`] = `
 "image: path/to/docker/jobs-default:the-version
 stages:
   - setup
@@ -228,7 +228,6 @@ api 🧪 test:
     - name: docker:24.0.6-dind
       command:
         - --tls=false
-        - --registry-mirror=https://mirror.gcr.io
   variables:
     DOCKER_HOST: tcp://0.0.0.0:2375
     DOCKER_TLS_CERTDIR: ''
@@ -373,7 +372,7 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-egress=all-traffic --network=my-network --subnet=my-subnet --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-connector=my-first-vpc-connector --vpc-egress=all-traffic --allow-unauthenticated --ingress=all --cpu-boost
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
@@ -524,7 +523,6 @@ api 🧪 test:
     - name: docker:24.0.6-dind
       command:
         - --tls=false
-        - --registry-mirror=https://mirror.gcr.io
   variables:
     DOCKER_HOST: tcp://0.0.0.0:2375
     DOCKER_TLS_CERTDIR: ''
@@ -665,7 +663,7 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-egress=all-traffic --network=my-network --subnet=my-subnet --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-connector=my-first-vpc-connector --vpc-egress=all-traffic --allow-unauthenticated --ingress=all --cpu-boost
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
@@ -818,7 +816,6 @@ api 🧪 test:
     - name: docker:24.0.6-dind
       command:
         - --tls=false
-        - --registry-mirror=https://mirror.gcr.io
   variables:
     DOCKER_HOST: tcp://0.0.0.0:2375
     DOCKER_TLS_CERTDIR: ''
@@ -959,7 +956,7 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-egress=all-traffic --network=my-network --subnet=my-subnet --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-connector=my-first-vpc-connector --vpc-egress=all-traffic --allow-unauthenticated --ingress=all --cpu-boost
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
@@ -1099,7 +1096,6 @@ api 🧪 test:
     - name: docker:24.0.6-dind
       command:
         - --tls=false
-        - --registry-mirror=https://mirror.gcr.io
   variables:
     DOCKER_HOST: tcp://0.0.0.0:2375
     DOCKER_TLS_CERTDIR: ''
@@ -1240,7 +1236,7 @@ api 🧪 test:
       EOF
     - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
-    - gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-egress=all-traffic --network=my-network --subnet=my-subnet --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --vpc-connector=my-first-vpc-connector --vpc-egress=all-traffic --allow-unauthenticated --ingress=all --cpu-boost
     - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
     - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done

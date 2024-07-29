@@ -52,6 +52,8 @@ export const getServiceDeployScript = (
       timeout: customConfig?.timeout,
       "vpc-connector": customConfig?.vpcConnector,
       "vpc-egress": customConfig?.vpcEgress,
+      network: customConfig?.network,
+      subnet: customConfig?.subnet,
       "use-http2": customConfig?.http2,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
       ingress: customConfig?.ingress ?? "all",

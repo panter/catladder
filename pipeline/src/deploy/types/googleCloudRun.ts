@@ -158,14 +158,22 @@ export type DeployConfigCloudRunService = {
    */
   executionEnvironment?: "gen2" | "gen1";
 
+  /* the vpc network, see https://cloud.google.com/sdk/gcloud/reference/run/deploy#--network  */
+  network?: string;
+
   /**
-   * vpc connector,
+   * vpc subnet to use, see https://cloud.google.com/sdk/gcloud/reference/run/deploy#--subnet
    */
-  vpcConnector?: string;
+  subnet?: string;
   /**
    * vpc egress, see https://cloud.google.com/sdk/gcloud/reference/run/deploy#--vpc-egress
    */
   vpcEgress?: "all-traffic" | "private-ranges-only";
+
+  /**
+   * vpc connector
+   */
+  vpcConnector?: string;
 
   /**
    * Use http2 end-to-end. See https://cloud.google.com/run/docs/configuring/http2
