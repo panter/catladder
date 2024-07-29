@@ -12,6 +12,16 @@ export class BashExpression {
     return this.value.toString();
   }
 
+  public replace(
+    searchValue: any,
+
+    replacer: (substring: string, ...args: any[]) => string,
+  ) {
+    return new BashExpression(
+      this.value.toString().replace(searchValue, replacer),
+    );
+  }
+
   /**
    *
    * @returns a bash expression to lowercase the string

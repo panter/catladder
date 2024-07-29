@@ -12,16 +12,13 @@ export default async function replaceAsync(
 ) {
   const wasBashExpression = string instanceof BashExpression;
 
-  const stringRepresentation = wasBashExpression
-    ? string.toString()
-    : bashEscape(string);
   try {
     // 1. Run fake pass of `replace`, collect values from `replacer` calls
     // 2. Resolve them with `Promise.all`
     // 3. Run `replace` with resolved values
     const values: Array<Promise<string | BashExpression>> = [];
     String.prototype.replace.call(
-      stringRepresentation,
+      string instanceof BashExpression ? string : bashEscape(string),
       searchValue,
       function (...args) {
         // eslint-disable-next-line prefer-spread
@@ -35,14 +32,12 @@ export default async function replaceAsync(
     const containsBashExpression = resolvedValues.some(
       (value) => value instanceof BashExpression,
     );
+    const result = (
+      string instanceof BashExpression ? string : bashEscape(string)
+    ).replace(searchValue, function () {
+      return resolvedValues.shift()?.toString() ?? "";
+    });
 
-    const result = String.prototype.replace.call(
-      stringRepresentation,
-      searchValue,
-      function () {
-        return resolvedValues.shift()?.toString() ?? "";
-      },
-    );
     if (wasBashExpression || containsBashExpression) {
       return new BashExpression(result);
     } else {
