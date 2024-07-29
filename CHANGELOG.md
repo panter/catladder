@@ -1,3 +1,15 @@
+# [1.170.0](https://git.panter.ch/catladder/catladder/compare/v1.169.0...v1.170.0) (2024-07-29)
+
+
+### Bug Fixes
+
+* variables containing quotes are not escaped properly ([35ebcfb](https://git.panter.ch/catladder/catladder/commit/35ebcfb1cebe878a420861df2cbc6061adf09c2f))
+
+
+### Features
+
+* **cloud run:** allow to specify network and subnet for vpc ([2743937](https://git.panter.ch/catladder/catladder/commit/2743937797284b56f8d4445c0c41e2a4a136d3f4))
+
 # [1.169.0](https://git.panter.ch/catladder/catladder/compare/v1.168.4...v1.169.0) (2024-07-26)
 
 
