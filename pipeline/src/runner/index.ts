@@ -5,7 +5,6 @@ export type RunnerImageName =
   | "jobs-meteor"
   | "jobs-testing-chrome"
   | "kubernetes"
-  | "base-pipeline"
   | "docker-build"
   | "gcloud"
   | "semantic-release";

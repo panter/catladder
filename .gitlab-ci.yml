@@ -89,14 +89,6 @@ test:
       docker push $IMAGE_NAME:latest;
       fi
 
-🔨 runner base-pipeline:
-  needs: ["🔨 packages"]
-  variables:
-    NAME: "base-pipeline"
-    BUILD_CONTEXT: .
-  extends:
-    - .docker-build-base
-
 🔨 runner kubernetes:
   variables:
     NAME: kubernetes
@@ -144,27 +136,6 @@ test:
     NAME: gcloud
   extends:
     - .docker-build-base
-
-🚀 includes:
-  stage: deploy
-  script:
-    - set +e # Disable exit on error, otherwise gitlab will stop if variables below are not set
-    - 'echo "version: $CI_COMMIT_REF_SLUG"'
-      # if its a tagged version, e.g. v1.2.3, publish all v1, v1.2 and v1.2.3
-      # if not, just deploy the one version
-      # CI_COMMIT_REF_SLUG contains either the tag or the current branch name
-      # first publish the exact version or branch version (canary)
-    - VERSION_TO_DEPLOY=$CI_COMMIT_REF_SLUG
-    - &deploy '[ "$VERSION_TO_DEPLOY" ] && echo "deploying $VERSION_TO_DEPLOY" && curl --header "JOB-TOKEN: $CI_JOB_TOKEN" --upload-file ci-includes/dist/includes/gitlab-ci.yml "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/ci-includes/$VERSION_TO_DEPLOY/gitlab-ci.yml"'
-      # then if is tagged version, split and deploy major and minor
-      # we do this so that you can include just "v1" and get all minor updates
-    - MAJOR_VERSION=$([ "$CI_COMMIT_TAG" ] && echo $CI_COMMIT_TAG | cut -f1 -d.)
-    - MINOR_VERSION=$([ "$CI_COMMIT_TAG" ] && echo $CI_COMMIT_TAG | cut -f1,2 -d.)
-    - VERSION_TO_DEPLOY=$MAJOR_VERSION
-    - *deploy
-    - VERSION_TO_DEPLOY=$MINOR_VERSION
-    - *deploy
-    - set -e # reenable
 
 .npm-publish-base:
   image: node:14 # npm publish has some problem with node 16

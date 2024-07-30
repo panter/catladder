@@ -22,15 +22,7 @@ If possible, use serverless deployment types like `google-cloud-run`
 
 ### Deployment files
 
-You need two files in your repository's root folder: `catladder.ts` and `.gitlab-ci.yml`.
-
-In the `.gitlab-ci.yml` file, you can define all the includes you need:
-
-```yaml
-include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
-```
-
-The `catladder.ts` file defines the whole deployment for Kubernetes. 
+The `catladder.ts` file defines the whole deployment for Kubernetes.
 
 Here's a short example file:
 

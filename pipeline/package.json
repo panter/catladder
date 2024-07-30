@@ -57,8 +57,7 @@
   "stableVersion": "0.1.0",
   "scripts": {
     "build:tsc": "yarn tsc",
-    "build": "yarn build:compile && yarn build:inline-variables && yarn build:bundle",
-    "build:bundle": "./scripts/bundle",
+    "build": "yarn build:compile && yarn build:inline-variables",
     "build:compile": "yarn tsc",
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
     "build:watch": "yarn tsc -w",
@@ -70,9 +69,6 @@
   "types": "dist/index.d.ts",
   "main": "dist/index.js",
   "sideEffects": false,
-  "bin": {
-    "catladder-gitlab": "./bin/catladder-gitlab.js"
-  },
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.0.0-0",

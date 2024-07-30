@@ -188,7 +188,7 @@ There are two modes that can be configured per component in `catladder.ts`:
 
 [env-files-section]: #env-files
 
-By default, Catladder writes a `.env` and  a `env.d.ts` file to your project.  
+By default, Catladder writes a `.env` and a `env.d.ts` file to your project.  
 You can customize the behaviour of the component in your `catladder.ts` file:
 
 ```ts
@@ -202,7 +202,7 @@ You can customize the behaviour of the component in your `catladder.ts` file:
 
 There are these options for `dotEnv`:
 
-- `true` ***default***: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
+- `true` **_default_**: creates a .env files both locally and during the build job. This is typically required for native apps (e.g. react-native).
 - `"local"`: creates a .env file only locally
 - `false`: disables creating of a .env file
 
@@ -268,11 +268,7 @@ This will make `catenv` generate an `env.d.ts` file with type definitions for `p
 
 Since catladder 1.145.0, you can generate a `.gitlab-ci.yml` config file locally and commit it with git.
 
-:::note
-
-By default, catladder starts a GitLab-CI job that will generate a `__pipeline.yml` each time the CI pipeline starts, and run this pipeline then as a child pipeline.
-
-:::
+Since version 2 this is the only behavior
 
 ##### Migrate project to local GitLab pipeline
 

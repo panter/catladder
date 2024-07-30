@@ -5,21 +5,6 @@ sidebar_label: Troubleshooting
 
 # Troubleshoot Common Errors
 
-## My pipeline no longer works, you broke it!
-
-Take a deep breath - there is a (temporary) way out:
-
-1. Identify a working version
-    - In the last pipeline in your project that worked check the job log of the _create-pipeline_ job and make a note of the output:
-      `catladder verson vX-Y-Z-<sha>`
-    - or check the [releases](https://git.panter.ch/catladder/catladder/-/releases) page
-1. Pin the version in your `.gitlab-ci.yml` to that specific version:
-    ```yaml
-    include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/vX-Y-Z/gitlab-ci.yml
-    ```
-1. Create a issue or even better a merge request
-1. Don't forget to switch back to the `.../vX/gitlab-ci.yml` again!
-
 ## `Error: UPGRADE FAILED: another operation (install/upgrade/rollback) is in progress`
 
 Might happen if you cancel the deploy job.
@@ -38,15 +23,3 @@ But if you suspect the build fails due to the content of `node_modules` try to [
 ---
 
 Please add more!
-
-## Create quickly a __pipeline.yml from catladder.ts
-
-If you'd like to quickly create `__pipeline.yml` on a project:
-
-`cl-gitlab.sh`
-```bash
-#!/bin/bash
-LATEST_CATLADDER_DOCKER_IMAGE=$(curl -L -s https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml | head -n 1 | sed -En "s/image: (.*)/\1/p")
-docker run --user=$(echo $UID) --workdir=/app -v $(pwd):/app -e CI_MERGE_REQUEST_ID=999999 -it $LATEST_CATLADDER_DOCKER_IMAGE catladder-gitlab
-```
-

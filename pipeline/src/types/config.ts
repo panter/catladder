@@ -178,6 +178,9 @@ export type ConfigProps = {
 };
 
 export type Config<C extends ConfigProps = never> = {
+  /**
+   * the pipeline type to generate, defaults to gitlab
+   */
   pipelineType?: PipelineType;
 
   /**

@@ -19,13 +19,13 @@ Currently, only GitLab is supported.
 1. set `pipelineType: "gitlab",` in your `catladder.ts`
 
 ```ts title="catladder.ts"
-import type { Config } from '@catladder/cli';
+import type { Config } from "@catladder/cli";
 const config: Config = {
   appName: "example-app",
   customerName: "pan",
   pipelineType: "gitlab",
-  components: {}
-}
+  components: {},
+};
 export default config;
 ```
 
@@ -44,7 +44,7 @@ if command -v 'catenv' >/dev/null; then
   # if you have dotenv enabled
   catenv                # generates .env and .gitlab-ci.yml
   dotenv_if_exists .env # loads .env file if it exists in your shell
-  
+
   # eval is needed if you rely on exported env vars.
   eval "$(catenv)"
 fi
@@ -61,19 +61,6 @@ Commit that file with git.
 1. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
 1. Authenticate gcloud CLI with `gcloud auth login`
 
-### Child pipeline mode (classic)
-
-1. Create a `.gitlab-ci.yml` file with this content:
-
-```yaml title=".gitlab-ci.yml"
-include: https://git.panter.ch/api/v4/projects/catladder%2Fcatladder/packages/generic/ci-includes/v1/gitlab-ci.yml
-```
-
-2. It's recommended to add a local version of `@catladder/cli` and `@catladder/pipeline` as dev dependencies to your project.
-3. Create the file `catladder.ts` in your repositories root.
-4. Install gcloud CLI: https://cloud.google.com/sdk/docs/install-sdk
-5. Authenticate gcloud CLI with `gcloud auth login`
-
 ### The configuration
 
 `catladder.ts` is the central configuration for your project.  
@@ -82,7 +69,7 @@ You can use TypeScript to get full advantage of type checking in this configurat
 The configuration's basic structure looks like this:
 
 ```ts title="catladder.ts" showLineNumbers
-import type { Config } from '@catladder/pipeline'
+import type { Config } from '@catladder/cli'
 
 const config: Config = {
    appName: "my-first-app",
