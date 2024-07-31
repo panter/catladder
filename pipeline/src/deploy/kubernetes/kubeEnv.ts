@@ -1,5 +1,5 @@
-import type { StringOrBashExpression } from "../../bash/BashExpression";
 import type { ComponentContext } from "../../types";
+import type { VariableValue } from "../../variables/VariableValue";
 import { isOfDeployType } from "../types";
 
 const shouldGoIntoSecrets = (key: string, value: string | undefined) => {
@@ -23,8 +23,8 @@ export const createKubeEnv = (context: ComponentContext) => {
   const allEnvVars = context.environment.envVars;
 
   const env = Object.entries(allEnvVars).reduce<{
-    secret: Record<string, StringOrBashExpression>;
-    public: Record<string, StringOrBashExpression>;
+    secret: Record<string, VariableValue>;
+    public: Record<string, VariableValue>;
   }>(
     (acc, [key, value]) => {
       if (shouldGoIntoSecrets(key, value?.toString())) {

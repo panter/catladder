@@ -1,6 +1,6 @@
 import type { Config } from "@catladder/pipeline";
 import { getEnvVarsResolved } from "../../config/getProjectConfig";
-import type { Choice, Variables } from "./types";
+import type { Choice } from "./types";
 import {
   getCurrentComponentAndEnvFromChoice,
   makeKeyValueString,
@@ -54,5 +54,5 @@ export const printVariables = async (config: Config, choice?: Choice) => {
   console.log(makeExportKeyValuestring(variables));
 };
 
-const makeExportKeyValuestring = (variables: Variables) =>
+const makeExportKeyValuestring = (variables: Record<string, string>) =>
   makeKeyValueString(variables, "export ");

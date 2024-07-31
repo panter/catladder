@@ -47,18 +47,34 @@ variables:
   GIT_DEPTH: '1'
 before_script:
   - |-
+    function escapeForDotEnv () {
+    input="\${1:-$(cat)}"
+     input="\${input//$'\\n'/\\\\n}"
+      if [[ "$input" == *\\\\n* ]]; then
+        if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+          printf "%s\\n" "$input"
+        elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+          printf "\`%s\`\\n" "$input"
+        elif [[ "$input" == *\\"* ]]; then
+          printf "'%s'\\n" "$input"
+        else
+          printf "\\"%s\\"\\n" "$input"
+        fi
+      else
+        printf "%s\\n" "$input"
+      fi
+    }
+  - |-
     function collapseable_section_start () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       local section_description="\${2:-$section_title}"
       echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
-
-            }
+    }
   - |-
     function collapseable_section_end () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
-
-            }
+    }
 app 🛡 audit:
   stage: test
   image: ruby:3.2.1
@@ -239,11 +255,11 @@ app 🧪 test:
       env:
         secret:
           SECRET_KEY_BASE: |-
-      $(printf %s "$CL_dev_app_SECRET_KEY_BASE" | sed 's/^/      /')
+            $(printf %s "$CL_dev_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
           POSTGRESQL_PASSWORD: |-
-      $(printf %s "$CL_dev_app_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+            $(printf %s "$CL_dev_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
           cloudsqlProxyCredentials: |-
-      $(printf %s "$CL_dev_app_cloudsqlProxyCredentials" | sed 's/^/      /')
+            $(printf %s "$CL_dev_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
         public:
           ENV_SHORT: |-
             dev
@@ -252,11 +268,11 @@ app 🧪 test:
           ENV_TYPE: |-
             dev
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           ROOT_URL: |-
             https://app.dev.test-app.pan.panter.cloud
           HOSTNAME_INTERNAL: |-
@@ -571,11 +587,11 @@ app 🧪 test:
       env:
         secret:
           SECRET_KEY_BASE: |-
-      $(printf %s "$CL_review_app_SECRET_KEY_BASE" | sed 's/^/      /')
+            $(printf %s "$CL_review_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
           POSTGRESQL_PASSWORD: |-
-      $(printf %s "$CL_review_app_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+            $(printf %s "$CL_review_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
           cloudsqlProxyCredentials: |-
-      $(printf %s "$CL_review_app_cloudsqlProxyCredentials" | sed 's/^/      /')
+            $(printf %s "$CL_review_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
         public:
           ENV_SHORT: |-
             review
@@ -584,30 +600,30 @@ app 🧪 test:
           ENV_TYPE: |-
             review
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           ROOT_URL: |-
-      $(printf %s "https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           HOSTNAME_INTERNAL: |-
-      $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           ROOT_URL_INTERNAL: |-
-      $(printf %s "https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           KUBE_NAMESPACE: |-
             pan-test-app-review
           KUBE_APP_NAME: |-
-      $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | sed 's/^/      /')
+            $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | sed '1!s/^/      /')
           KUBE_APP_NAME_PREFIX: |-
-      $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed 's/^/      /')
+            $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed '1!s/^/      /')
           RAILS_ENV: |-
             production
           _ALL_ENV_VAR_KEYS: |-
             ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
       application:
         host: |-
-      $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/    /')
+          $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
         command: |-
           /cnb/process/web
         livenessProbe:
@@ -636,7 +652,7 @@ app 🧪 test:
         proxyCredentials: |-
           $CL_review_app_cloudsqlProxyCredentials
         fullDbName: |-
-      $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | sed 's/^/    /')
+          $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | sed '1!s/^/    /')
         type: |-
           unmanaged
       jobs:
@@ -903,11 +919,11 @@ app 🧪 test:
       env:
         secret:
           SECRET_KEY_BASE: |-
-      $(printf %s "$CL_stage_app_SECRET_KEY_BASE" | sed 's/^/      /')
+            $(printf %s "$CL_stage_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
           POSTGRESQL_PASSWORD: |-
-      $(printf %s "$CL_stage_app_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+            $(printf %s "$CL_stage_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
           cloudsqlProxyCredentials: |-
-      $(printf %s "$CL_stage_app_cloudsqlProxyCredentials" | sed 's/^/      /')
+            $(printf %s "$CL_stage_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
         public:
           ENV_SHORT: |-
             stage
@@ -916,11 +932,11 @@ app 🧪 test:
           ENV_TYPE: |-
             stage
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           ROOT_URL: |-
             https://app.stage.test-app.pan.panter.cloud
           HOSTNAME_INTERNAL: |-
@@ -1222,11 +1238,11 @@ app 🧪 test:
       env:
         secret:
           SECRET_KEY_BASE: |-
-      $(printf %s "$CL_prod_app_SECRET_KEY_BASE" | sed 's/^/      /')
+            $(printf %s "$CL_prod_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
           POSTGRESQL_PASSWORD: |-
-      $(printf %s "$CL_prod_app_POSTGRESQL_PASSWORD" | sed 's/^/      /')
+            $(printf %s "$CL_prod_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
           cloudsqlProxyCredentials: |-
-      $(printf %s "$CL_prod_app_cloudsqlProxyCredentials" | sed 's/^/      /')
+            $(printf %s "$CL_prod_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
         public:
           ENV_SHORT: |-
             prod
@@ -1235,11 +1251,11 @@ app 🧪 test:
           ENV_TYPE: |-
             prod
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           ROOT_URL: |-
             https://my-fancy-website.com
           HOSTNAME_INTERNAL: |-

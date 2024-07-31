@@ -1,7 +1,8 @@
 import { isNil } from "lodash";
+import { escapeForDotEnv } from "../../bash/bashEscape";
+import { ALL_BUILD_VARIABLES } from "../../context/getBuildInfoVariables";
 import type { ComponentContext } from "../../types";
 import { collapseableSection } from "../../utils/gitlab";
-import { ALL_BUILD_VARIABLES } from "../../context/getBuildInfoVariables";
 
 /**
  * writes a .env file in the components folder
@@ -18,14 +19,13 @@ export const writeDotEnv = (context: ComponentContext) => {
     // filter out build variables, since they may interfer with caching like turbo
     // build variables are rarely used anyway and we may treat them differently in the future
     .filter(([key]) => !ALL_BUILD_VARIABLES.includes(key))
-    .map(
-      ([key, value]) => `${key}=${value?.toString().replaceAll("\n", "\\n")}`,
-    )
+
+    .map(([key, value]) => `${key}=${escapeForDotEnv(value)}`)
     .join("\n");
 
   return collapseableSection(
     "write-dotenv-" + context.name,
-    "write dot env",
+    "write dot env for " + context.name,
   )([
     `cat <<EOF > ${context.build.dir}/.env
 ${keyValueString}

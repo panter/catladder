@@ -1,4 +1,8 @@
-import type { Config, EnvironmentEnvVars } from "@catladder/pipeline";
+import type {
+  Config,
+  EnvironmentEnvVars,
+  VariableValue,
+} from "@catladder/pipeline";
 import {
   readConfig,
   getAllEnvs,

@@ -87,7 +87,9 @@ const getProxyInfoForKubernetes = async (
   // bit hacky, would be nicer if we would also declare this through env vars
   const cloudSqlValues = createKubernetesCloudsqlBaseValues(context);
 
-  const DB_PASSWORD = envVars?.DB_PASSWORD || envVars?.POSTGRESQL_PASSWORD;
+  const DB_PASSWORD = (
+    envVars?.DB_PASSWORD || envVars?.POSTGRESQL_PASSWORD
+  )?.toString();
 
   const DB_NAME = cloudSqlValues.cloudsql.fullDbName.toString();
 
@@ -114,8 +116,8 @@ const getProxyInfoForCloudRun = async (
 
   const envVars = await getEnvVarsResolved(vorpal, context.env, context.name);
 
-  const DB_PASSWORD = envVars?.DB_PASSWORD;
-  const DB_USER = envVars?.DB_USER;
+  const DB_PASSWORD = envVars?.DB_PASSWORD?.toString();
+  const DB_USER = envVars?.DB_USER?.toString();
 
   const DB_NAME = context.environment.envVars.DB_NAME.toString();
 

@@ -76,16 +76,3 @@ export const joinBashExpressions = (
     return parts.join(joiner);
   }
 };
-
-/**
- * escapes a string or bash expression for bash
- * it mainly escapes double quotes
- */
-export const bashEscape = (value: StringOrBashExpression | any) => {
-  if (value instanceof BashExpression) {
-    return value.toString(); // no need to escape bash expressions, as we want them to evaluate
-  }
-  // we wrap it in double quotes, so we need to escape them
-  if (typeof value === "string") return value.replace(/"/g, '\\"');
-  return value;
-};

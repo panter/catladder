@@ -1,7 +1,8 @@
 import type { Config } from "@catladder/pipeline";
 import { join } from "path";
 import { getGitRoot } from "../../utils/projects";
-import type { Choice, Variables } from "./types";
+import type { Choice } from "./types";
+import { escapeForDotEnv } from "@catladder/pipeline";
 export const getComponentFullPath = (
   gitRoot: string,
   config: Config,
@@ -31,19 +32,14 @@ export const getCurrentComponentAndEnvFromChoice = async (
   };
 };
 
-export const makeKeyValueString = (variables: Variables, keyPrefix = "") =>
+export const makeKeyValueString = (
+  variables: Record<string, string>,
+  keyPrefix = "",
+) =>
   Object.entries(variables)
-    .map(([key, value]) => `${keyPrefix}${key}='${value}'`)
+    // quotes are important, otherwise line breaks don't work properly
+    .map(([key, value]) => `${keyPrefix}${key}=${escapeForDotEnv(value)}`)
     .join("\n");
-
-export const sanitizeMultiLine = (variables: Variables) => {
-  return Object.fromEntries(
-    Object.entries(variables).map(([key, value]) => [
-      key,
-      value.replaceAll("\n", "\\n"),
-    ]),
-  );
-};
 
 export const sanitizeEnvVarName = (name: string) =>
   name.replace(/[\s\-.]+/g, "_");

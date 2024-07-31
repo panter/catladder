@@ -47,18 +47,34 @@ variables:
   GIT_DEPTH: '1'
 before_script:
   - |-
+    function escapeForDotEnv () {
+    input="\${1:-$(cat)}"
+     input="\${input//$'\\n'/\\\\n}"
+      if [[ "$input" == *\\\\n* ]]; then
+        if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+          printf "%s\\n" "$input"
+        elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+          printf "\`%s\`\\n" "$input"
+        elif [[ "$input" == *\\"* ]]; then
+          printf "'%s'\\n" "$input"
+        else
+          printf "\\"%s\\"\\n" "$input"
+        fi
+      else
+        printf "%s\\n" "$input"
+      fi
+    }
+  - |-
     function collapseable_section_start () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       local section_description="\${2:-$section_title}"
       echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
-
-            }
+    }
   - |-
     function collapseable_section_end () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
-
-            }
+    }
 api 🛡 audit:
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -188,7 +204,7 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=dev
@@ -325,7 +341,7 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=review
@@ -456,7 +472,7 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=stage
@@ -581,7 +597,7 @@ api 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=prod
@@ -810,7 +826,7 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-www" "write dot env"
+    - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=dev
@@ -949,7 +965,7 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-www" "write dot env"
+    - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=review
@@ -1082,7 +1098,7 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-www" "write dot env"
+    - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=stage
@@ -1209,7 +1225,7 @@ www 🧪 test:
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-www" "write dot env"
+    - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=prod

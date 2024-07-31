@@ -65,7 +65,9 @@ export default async (vorpal: Vorpal) =>
           hosts: [],
         });
 
-        const parsersResult = parser.parse(sourceEnvVars.DATABASE_URL);
+        const parsersResult = parser.parse(
+          sourceEnvVars.DATABASE_URL.toString(),
+        );
         sourcePort = parsersResult.hosts?.[0]?.port;
         sourceUsername = parsersResult.username;
         sourcePassword = parsersResult.password;
@@ -73,13 +75,14 @@ export default async (vorpal: Vorpal) =>
       } else {
         sourcePort = 54399;
         sourceProxy = await startCloudSqlProxyInBackground({
-          instanceName: sourceEnvVars.CLOUD_SQL_INSTANCE_CONNECTION_NAME,
+          instanceName:
+            sourceEnvVars.CLOUD_SQL_INSTANCE_CONNECTION_NAME.toString(),
           localPort: sourcePort,
         });
 
-        sourceUsername = sourceEnvVars.DB_USER;
-        sourcePassword = sourceEnvVars.DB_PASSWORD;
-        sourceDbName = sourceEnvVars.DB_NAME;
+        sourceUsername = sourceEnvVars.DB_USER.toString();
+        sourcePassword = sourceEnvVars.DB_PASSWORD.toString();
+        sourceDbName = sourceEnvVars.DB_NAME?.toString();
       }
 
       const { targetEnvAndComponent } = await this.prompt({
@@ -109,7 +112,9 @@ export default async (vorpal: Vorpal) =>
           hosts: [],
         });
 
-        const parsersResult = parser.parse(targetEnvVars.DATABASE_URL);
+        const parsersResult = parser.parse(
+          targetEnvVars.DATABASE_URL.toString(),
+        );
 
         targetPort = parsersResult.hosts?.[0]?.port;
         targetUsername = parsersResult.username;
@@ -118,13 +123,14 @@ export default async (vorpal: Vorpal) =>
       } else {
         targetPort = 54499;
         targetProxy = await startCloudSqlProxyInBackground({
-          instanceName: targetEnvVars.CLOUD_SQL_INSTANCE_CONNECTION_NAME,
+          instanceName:
+            targetEnvVars.CLOUD_SQL_INSTANCE_CONNECTION_NAME.toString(),
           localPort: targetPort,
         });
 
-        targetUsername = targetEnvVars.DB_USER;
-        targetPassword = targetEnvVars.DB_PASSWORD;
-        targetDbName = targetEnvVars.DB_NAME;
+        targetUsername = targetEnvVars.DB_USER.toString();
+        targetPassword = targetEnvVars.DB_PASSWORD.toString();
+        targetDbName = targetEnvVars.DB_NAME.toString();
       }
 
       const { shouldContinue } = await this.prompt({

@@ -10,9 +10,10 @@ import type { StringOrBashExpression } from "../bash/BashExpression";
 import { joinBashExpressions } from "../bash/BashExpression";
 import { isStandaloneBuildConfig } from "../build/types";
 import type { EnvironmentContext } from "../types/environmentContext";
+import { createVariableValueContainingReferencesFromString } from "../variables/VariableValueContainingReferences";
+import { resolveAllReferences } from "../variables/resolveAllReferences";
 import { getBuildInfoVariables } from "./getBuildInfoVariables";
 import { getEnvironmentContext } from "./getEnvironmentContext";
-import { resolveReferences } from "./resolveReferences";
 import { transformJobOnlyVars } from "./transformJobOnlyVars";
 import {
   makeSecretEnvVarMapping,
@@ -47,7 +48,7 @@ export type PredefinedVariables = BasePredefinedVariables & {
 
 export const getEnvironmentVariables = async (
   ctx: CreateComponentContextContext,
-  alreadyVisited: Record<string, Record<string, boolean>> = {}, // to prevent endless loop
+  options: { shouldResolveReferences?: boolean } = {},
 ): Promise<EnvironmentVariables> => {
   const environmentContext = getEnvironmentContext(ctx);
 
@@ -123,26 +124,39 @@ export const getEnvironmentVariables = async (
 
   const publicEnvVarsRawSanitized = stringifyValues(publicEnvVarsRaw);
 
-  const envVarsRaw = addIndexVar({
+  const publicEnvVarsUnresolved = Object.fromEntries(
+    Object.entries(publicEnvVarsRawSanitized).map(([key, value]) => [
+      key,
+      createVariableValueContainingReferencesFromString(value, {
+        componentName: ctx.componentName,
+      }),
+    ]),
+  );
+
+  const publicEnvVars =
+    options.shouldResolveReferences ?? true
+      ? await resolveAllReferences(
+          publicEnvVarsUnresolved,
+          async (otherComponentName) => {
+            const { envVars: otherEnvVars } = await getEnvironmentVariables(
+              {
+                ...ctx,
+                componentName: otherComponentName,
+              },
+              {
+                shouldResolveReferences: false, // we already do this here with replaceAllReferences recursivly until re replaced all
+              },
+            );
+            return otherEnvVars;
+          },
+        )
+      : publicEnvVarsUnresolved;
+
+  const envVars = addIndexVar({
     ...predefinedVariables,
     ...secretEnvVars,
-    ...publicEnvVarsRawSanitized,
+    ...publicEnvVars,
   });
-
-  const envVars = (await resolveReferences(
-    envVarsRaw,
-    async (otherComponentName, alreadyVisited) => {
-      const { envVars: otherEnvVars } = await getEnvironmentVariables(
-        {
-          ...ctx,
-          componentName: otherComponentName,
-        },
-        alreadyVisited,
-      );
-      return otherEnvVars;
-    },
-    alreadyVisited,
-  )) as typeof envVarsRaw;
 
   return {
     envVars,

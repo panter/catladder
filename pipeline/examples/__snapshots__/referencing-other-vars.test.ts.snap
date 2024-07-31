@@ -47,18 +47,34 @@ variables:
   GIT_DEPTH: '1'
 before_script:
   - |-
+    function escapeForDotEnv () {
+    input="\${1:-$(cat)}"
+     input="\${input//$'\\n'/\\\\n}"
+      if [[ "$input" == *\\\\n* ]]; then
+        if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+          printf "%s\\n" "$input"
+        elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+          printf "\`%s\`\\n" "$input"
+        elif [[ "$input" == *\\"* ]]; then
+          printf "'%s'\\n" "$input"
+        else
+          printf "\\"%s\\"\\n" "$input"
+        fi
+      else
+        printf "%s\\n" "$input"
+      fi
+    }
+  - |-
     function collapseable_section_start () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       local section_description="\${2:-$section_title}"
       echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
-
-            }
+    }
   - |-
     function collapseable_section_end () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
-
-            }
+    }
 app1 🛡 audit:
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -194,24 +210,24 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app1" "write dot env"
+    - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
       cat <<EOF > app1/.env
       ENV_SHORT=dev
       APP_DIR=app1
       ENV_TYPE=dev
-      HOSTNAME=$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET1=$CL_dev_app1_SECRET1
-      GCLOUD_DEPLOY_credentialsKey=$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix
+      SECRET1=$(printf %s "$CL_dev_app1_SECRET1" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
@@ -365,7 +381,7 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app1"
@@ -388,27 +404,27 @@ app1 🧪 test:
       ENV_TYPE: |-
         dev
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET1: |-
-      $(printf %s "$CL_dev_app1_SECRET1" | sed 's/^/  /')
+        $(printf %s "$CL_dev_app1_SECRET1" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo: |-
         foo-value
       bar: |-
@@ -416,7 +432,7 @@ app1 🧪 test:
       foo3: |-
         from app3: foo-value-3
       circle: |-
-        this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+        this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","bar","foo3","circle"]
 
@@ -528,24 +544,24 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app1" "write dot env"
+    - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
       cat <<EOF > app1/.env
       ENV_SHORT=review
       APP_DIR=app1
       ENV_TYPE=review
-      HOSTNAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET1=$CL_review_app1_SECRET1
-      GCLOUD_DEPLOY_credentialsKey=$CL_review_app1_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix
+      SECRET1=$(printf %s "$CL_review_app1_SECRET1" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
@@ -693,7 +709,7 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app1/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
@@ -716,27 +732,27 @@ app1 🧪 test:
       ENV_TYPE: |-
         review
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET1: |-
-      $(printf %s "$CL_review_app1_SECRET1" | sed 's/^/  /')
+        $(printf %s "$CL_review_app1_SECRET1" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo: |-
         foo-value
       bar: |-
@@ -744,7 +760,7 @@ app1 🧪 test:
       foo3: |-
         from app3: foo-value-3
       circle: |-
-        this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+        this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","bar","foo3","circle"]
 
@@ -858,24 +874,24 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app1" "write dot env"
+    - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
       cat <<EOF > app1/.env
       ENV_SHORT=stage
       APP_DIR=app1
       ENV_TYPE=stage
-      HOSTNAME=$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET1=$CL_stage_app1_SECRET1
-      GCLOUD_DEPLOY_credentialsKey=$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix
+      SECRET1=$(printf %s "$CL_stage_app1_SECRET1" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
@@ -1023,7 +1039,7 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app1"
@@ -1046,27 +1062,27 @@ app1 🧪 test:
       ENV_TYPE: |-
         stage
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET1: |-
-      $(printf %s "$CL_stage_app1_SECRET1" | sed 's/^/  /')
+        $(printf %s "$CL_stage_app1_SECRET1" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo: |-
         foo-value
       bar: |-
@@ -1074,7 +1090,7 @@ app1 🧪 test:
       foo3: |-
         from app3: foo-value-3
       circle: |-
-        this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+        this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","bar","foo3","circle"]
 
@@ -1175,24 +1191,24 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app1" "write dot env"
+    - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
       cat <<EOF > app1/.env
       ENV_SHORT=prod
       APP_DIR=app1
       ENV_TYPE=prod
-      HOSTNAME=$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET1=$CL_prod_app1_SECRET1
-      GCLOUD_DEPLOY_credentialsKey=$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix
+      SECRET1=$(printf %s "$CL_prod_app1_SECRET1" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
@@ -1340,7 +1356,7 @@ app1 🧪 test:
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
-    - 'export circle="this is from app3 that has reference to app1: \\\\"this is from app2: this is from app1: foo-value\\\\""'
+    - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app1"
@@ -1363,27 +1379,27 @@ app1 🧪 test:
       ENV_TYPE: |-
         prod
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET1: |-
-      $(printf %s "$CL_prod_app1_SECRET1" | sed 's/^/  /')
+        $(printf %s "$CL_prod_app1_SECRET1" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo: |-
         foo-value
       bar: |-
@@ -1391,7 +1407,7 @@ app1 🧪 test:
       foo3: |-
         from app3: foo-value-3
       circle: |-
-        this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+        this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","bar","foo3","circle"]
 
@@ -1601,27 +1617,27 @@ app2 🧪 test:
     - export app1Api="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app2" "write dot env"
+    - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
       cat <<EOF > app2/.env
       ENV_SHORT=dev
       APP_DIR=app2
       ENV_TYPE=dev
-      HOSTNAME=$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET2=$CL_dev_app2_SECRET2
-      GCLOUD_DEPLOY_credentialsKey=$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix
+      SECRET2=$(printf %s "$CL_dev_app2_SECRET2" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo2=foo-value-2
-      referencingSecret=secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2
+      referencingSecret=$(printf %s "secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2" | escapeForDotEnv)
       foo1=this is from app1: foo-value
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
-      app1Api=https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+      app1Api=$(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -1796,31 +1812,31 @@ app2 🧪 test:
       ENV_TYPE: |-
         dev
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET2: |-
-      $(printf %s "$CL_dev_app2_SECRET2" | sed 's/^/  /')
+        $(printf %s "$CL_dev_app2_SECRET2" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo2: |-
         foo-value-2
       referencingSecret: |-
-      $(printf %s "secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2" | sed 's/^/  /')
+        secret1: $(printf %s "$CL_dev_app1_SECRET1" | sed '1!s/^/  /'), secret2: $(printf %s "$CL_dev_app2_SECRET2" | sed '1!s/^/  /')
       foo1: |-
         this is from app1: foo-value
       selfReference: |-
@@ -1828,7 +1844,7 @@ app2 🧪 test:
       selfReference2: |-
         this is from self: this is from app1: foo-value
       app1Api: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')/graphql
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
@@ -1945,27 +1961,27 @@ app2 🧪 test:
     - export app1Api="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app2" "write dot env"
+    - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
       cat <<EOF > app2/.env
       ENV_SHORT=review
       APP_DIR=app2
       ENV_TYPE=review
-      HOSTNAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET2=$CL_review_app2_SECRET2
-      GCLOUD_DEPLOY_credentialsKey=$CL_review_app2_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix
+      SECRET2=$(printf %s "$CL_review_app2_SECRET2" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo2=foo-value-2
-      referencingSecret=secret1: $CL_review_app1_SECRET1, secret2: $CL_review_app2_SECRET2
+      referencingSecret=$(printf %s "secret1: $CL_review_app1_SECRET1, secret2: $CL_review_app2_SECRET2" | escapeForDotEnv)
       foo1=this is from app1: foo-value
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
-      app1Api=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+      app1Api=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -2134,31 +2150,31 @@ app2 🧪 test:
       ENV_TYPE: |-
         review
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET2: |-
-      $(printf %s "$CL_review_app2_SECRET2" | sed 's/^/  /')
+        $(printf %s "$CL_review_app2_SECRET2" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo2: |-
         foo-value-2
       referencingSecret: |-
-      $(printf %s "secret1: $CL_review_app1_SECRET1, secret2: $CL_review_app2_SECRET2" | sed 's/^/  /')
+        secret1: $(printf %s "$CL_review_app1_SECRET1" | sed '1!s/^/  /'), secret2: $(printf %s "$CL_review_app2_SECRET2" | sed '1!s/^/  /')
       foo1: |-
         this is from app1: foo-value
       selfReference: |-
@@ -2166,7 +2182,7 @@ app2 🧪 test:
       selfReference2: |-
         this is from self: this is from app1: foo-value
       app1Api: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')/graphql
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
@@ -2285,27 +2301,27 @@ app2 🧪 test:
     - export app1Api="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app2" "write dot env"
+    - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
       cat <<EOF > app2/.env
       ENV_SHORT=stage
       APP_DIR=app2
       ENV_TYPE=stage
-      HOSTNAME=$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET2=$CL_stage_app2_SECRET2
-      GCLOUD_DEPLOY_credentialsKey=$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix
+      SECRET2=$(printf %s "$CL_stage_app2_SECRET2" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo2=foo-value-2
-      referencingSecret=secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2
+      referencingSecret=$(printf %s "secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2" | escapeForDotEnv)
       foo1=this is from app1: foo-value
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
-      app1Api=https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+      app1Api=$(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -2474,31 +2490,31 @@ app2 🧪 test:
       ENV_TYPE: |-
         stage
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET2: |-
-      $(printf %s "$CL_stage_app2_SECRET2" | sed 's/^/  /')
+        $(printf %s "$CL_stage_app2_SECRET2" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo2: |-
         foo-value-2
       referencingSecret: |-
-      $(printf %s "secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2" | sed 's/^/  /')
+        secret1: $(printf %s "$CL_stage_app1_SECRET1" | sed '1!s/^/  /'), secret2: $(printf %s "$CL_stage_app2_SECRET2" | sed '1!s/^/  /')
       foo1: |-
         this is from app1: foo-value
       selfReference: |-
@@ -2506,7 +2522,7 @@ app2 🧪 test:
       selfReference2: |-
         this is from self: this is from app1: foo-value
       app1Api: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')/graphql
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
@@ -2612,27 +2628,27 @@ app2 🧪 test:
     - export app1Api="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app2" "write dot env"
+    - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
       cat <<EOF > app2/.env
       ENV_SHORT=prod
       APP_DIR=app2
       ENV_TYPE=prod
-      HOSTNAME=$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
-      SECRET2=$CL_prod_app2_SECRET2
-      GCLOUD_DEPLOY_credentialsKey=$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix
+      SECRET2=$(printf %s "$CL_prod_app2_SECRET2" | escapeForDotEnv)
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       foo2=foo-value-2
-      referencingSecret=secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2
+      referencingSecret=$(printf %s "secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2" | escapeForDotEnv)
       foo1=this is from app1: foo-value
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
-      app1Api=https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
+      app1Api=$(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -2801,31 +2817,31 @@ app2 🧪 test:
       ENV_TYPE: |-
         prod
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
       SECRET2: |-
-      $(printf %s "$CL_prod_app2_SECRET2" | sed 's/^/  /')
+        $(printf %s "$CL_prod_app2_SECRET2" | sed '1!s/^/  /')
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       foo2: |-
         foo-value-2
       referencingSecret: |-
-      $(printf %s "secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2" | sed 's/^/  /')
+        secret1: $(printf %s "$CL_prod_app1_SECRET1" | sed '1!s/^/  /'), secret2: $(printf %s "$CL_prod_app2_SECRET2" | sed '1!s/^/  /')
       foo1: |-
         this is from app1: foo-value
       selfReference: |-
@@ -2833,7 +2849,7 @@ app2 🧪 test:
       selfReference2: |-
         this is from self: this is from app1: foo-value
       app1Api: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')/graphql
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
@@ -3040,7 +3056,7 @@ app3 🧪 test:
     - 'export someJson="[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.dev.test-app.pan.panter.cloud\\"}]"'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"foo3\\",\\"foo2\\",\\"transitive\\",\\"transitiveWithSecret\\",\\"someJson\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app3" "write dot env"
+    - collapseable_section_start "write-dotenv-app3" "write dot env for app3"
     - |-
       cat <<EOF > kube/.env
       ENV_SHORT=dev
@@ -3056,8 +3072,8 @@ app3 🧪 test:
       foo3=foo-value-3
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
-      transitiveWithSecret=this is from app2: secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.dev.test-app.pan.panter.cloud\\"}]
+      transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2" | escapeForDotEnv)
+      someJson=$(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.dev.test-app.pan.panter.cloud\\"}]" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"
@@ -3230,9 +3246,9 @@ app3 🧪 test:
       env:
         secret:
           transitiveWithSecret: |-
-      $(printf %s "this is from app2: secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2" | sed 's/^/      /')
+            this is from app2: secret1: $(printf %s "$CL_dev_app1_SECRET1" | sed '1!s/^/      /'), secret2: $(printf %s "$CL_dev_app2_SECRET2" | sed '1!s/^/      /')
           someJson: |-
-      $(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.dev.test-app.pan.panter.cloud\\"}]" | sed 's/^/      /')
+            [{"name": "app1", "url": "$(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app2", "url": "$(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app3", "url": "https://app3.dev.test-app.pan.panter.cloud"}]
         public:
           ENV_SHORT: |-
             dev
@@ -3241,11 +3257,11 @@ app3 🧪 test:
           ENV_TYPE: |-
             dev
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           HOSTNAME: |-
             app3.dev.test-app.pan.panter.cloud
           ROOT_URL: |-
@@ -3471,24 +3487,24 @@ app3 🧪 test:
     - 'export someJson="[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud\\"}]"'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"foo3\\",\\"foo2\\",\\"transitive\\",\\"transitiveWithSecret\\",\\"someJson\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app3" "write dot env"
+    - collapseable_section_start "write-dotenv-app3" "write dot env for app3"
     - |-
       cat <<EOF > kube/.env
       ENV_SHORT=review
       APP_DIR=kube
       ENV_TYPE=review
-      HOSTNAME=app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
-      ROOT_URL=https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
-      HOSTNAME_INTERNAL=app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
-      ROOT_URL_INTERNAL=https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud
+      HOSTNAME=$(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | escapeForDotEnv)
       KUBE_NAMESPACE=pan-test-app-review
-      KUBE_APP_NAME=$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3
-      KUBE_APP_NAME_PREFIX=$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-
+      KUBE_APP_NAME=$(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" | escapeForDotEnv)
+      KUBE_APP_NAME_PREFIX=$(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | escapeForDotEnv)
       foo3=foo-value-3
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
-      transitiveWithSecret=this is from app2: secret1: $CL_review_app1_SECRET1, secret2: $CL_review_app2_SECRET2
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud\\"}]
+      transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_review_app1_SECRET1, secret2: $CL_review_app2_SECRET2" | escapeForDotEnv)
+      someJson=$(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud\\"}]" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"
@@ -3655,9 +3671,9 @@ app3 🧪 test:
       env:
         secret:
           transitiveWithSecret: |-
-      $(printf %s "this is from app2: secret1: $CL_review_app1_SECRET1, secret2: $CL_review_app2_SECRET2" | sed 's/^/      /')
+            this is from app2: secret1: $(printf %s "$CL_review_app1_SECRET1" | sed '1!s/^/      /'), secret2: $(printf %s "$CL_review_app2_SECRET2" | sed '1!s/^/      /')
           someJson: |-
-      $(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud\\"}]" | sed 's/^/      /')
+            [{"name": "app1", "url": "$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app2", "url": "$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app3", "url": "$(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')"}]
         public:
           ENV_SHORT: |-
             review
@@ -3666,25 +3682,25 @@ app3 🧪 test:
           ENV_TYPE: |-
             review
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           HOSTNAME: |-
-      $(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           ROOT_URL: |-
-      $(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           HOSTNAME_INTERNAL: |-
-      $(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           ROOT_URL_INTERNAL: |-
-      $(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/      /')
+            $(printf %s "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           KUBE_NAMESPACE: |-
             pan-test-app-review
           KUBE_APP_NAME: |-
-      $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" | sed 's/^/      /')
+            $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" | sed '1!s/^/      /')
           KUBE_APP_NAME_PREFIX: |-
-      $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed 's/^/      /')
+            $(printf %s "$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-" | sed '1!s/^/      /')
           foo3: |-
             foo-value-3
           foo2: |-
@@ -3695,7 +3711,7 @@ app3 🧪 test:
             ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       application:
         host: |-
-      $(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed 's/^/    /')
+          $(printf %s "app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
         command: |-
           yarn start
         livenessProbe:
@@ -3891,7 +3907,7 @@ app3 🧪 test:
     - 'export someJson="[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.stage.test-app.pan.panter.cloud\\"}]"'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"foo3\\",\\"foo2\\",\\"transitive\\",\\"transitiveWithSecret\\",\\"someJson\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app3" "write dot env"
+    - collapseable_section_start "write-dotenv-app3" "write dot env for app3"
     - |-
       cat <<EOF > kube/.env
       ENV_SHORT=stage
@@ -3907,8 +3923,8 @@ app3 🧪 test:
       foo3=foo-value-3
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
-      transitiveWithSecret=this is from app2: secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.stage.test-app.pan.panter.cloud\\"}]
+      transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2" | escapeForDotEnv)
+      someJson=$(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.stage.test-app.pan.panter.cloud\\"}]" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"
@@ -4075,9 +4091,9 @@ app3 🧪 test:
       env:
         secret:
           transitiveWithSecret: |-
-      $(printf %s "this is from app2: secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2" | sed 's/^/      /')
+            this is from app2: secret1: $(printf %s "$CL_stage_app1_SECRET1" | sed '1!s/^/      /'), secret2: $(printf %s "$CL_stage_app2_SECRET2" | sed '1!s/^/      /')
           someJson: |-
-      $(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.stage.test-app.pan.panter.cloud\\"}]" | sed 's/^/      /')
+            [{"name": "app1", "url": "$(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app2", "url": "$(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app3", "url": "https://app3.stage.test-app.pan.panter.cloud"}]
         public:
           ENV_SHORT: |-
             stage
@@ -4086,11 +4102,11 @@ app3 🧪 test:
           ENV_TYPE: |-
             stage
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           HOSTNAME: |-
             app3.stage.test-app.pan.panter.cloud
           ROOT_URL: |-
@@ -4303,7 +4319,7 @@ app3 🧪 test:
     - 'export someJson="[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk ''{print tolower($0)}'')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.prod.test-app.pan.panter.cloud\\"}]"'
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"foo3\\",\\"foo2\\",\\"transitive\\",\\"transitiveWithSecret\\",\\"someJson\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-app3" "write dot env"
+    - collapseable_section_start "write-dotenv-app3" "write dot env for app3"
     - |-
       cat <<EOF > kube/.env
       ENV_SHORT=prod
@@ -4319,8 +4335,8 @@ app3 🧪 test:
       foo3=foo-value-3
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
-      transitiveWithSecret=this is from app2: secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.prod.test-app.pan.panter.cloud\\"}]
+      transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2" | escapeForDotEnv)
+      someJson=$(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.prod.test-app.pan.panter.cloud\\"}]" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"
@@ -4487,9 +4503,9 @@ app3 🧪 test:
       env:
         secret:
           transitiveWithSecret: |-
-      $(printf %s "this is from app2: secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2" | sed 's/^/      /')
+            this is from app2: secret1: $(printf %s "$CL_prod_app1_SECRET1" | sed '1!s/^/      /'), secret2: $(printf %s "$CL_prod_app2_SECRET2" | sed '1!s/^/      /')
           someJson: |-
-      $(printf %s "[{\\"name\\": \\"app1\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.prod.test-app.pan.panter.cloud\\"}]" | sed 's/^/      /')
+            [{"name": "app1", "url": "$(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app2", "url": "$(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/      /')"}, {"name": "app3", "url": "https://app3.prod.test-app.pan.panter.cloud"}]
         public:
           ENV_SHORT: |-
             prod
@@ -4498,11 +4514,11 @@ app3 🧪 test:
           ENV_TYPE: |-
             prod
           BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/      /')
+            $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
           BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/      /')
+            $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/      /')
+            $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
           HOSTNAME: |-
             app3.prod.test-app.pan.panter.cloud
           ROOT_URL: |-

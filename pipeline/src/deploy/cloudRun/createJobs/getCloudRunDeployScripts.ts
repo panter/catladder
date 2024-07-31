@@ -1,11 +1,10 @@
-import { isNil, omit } from "lodash";
-import type {
-  ComponentContext,
-  UnspecifiedEnvVars,
-} from "../../../types/context";
+import { omit } from "lodash";
+import type { ComponentContext } from "../../../types/context";
 import { collapseableSection } from "../../../utils/gitlab";
 import { getDependencyTrackUploadScript } from "../../sbom";
 
+import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from "..";
+import { writeBashYamlToFileScript } from "../../../bash/bashYaml";
 import { getRemoveOldRevisionsAndImagesCommand } from "../cleanup";
 import { getDatabaseCreateScript } from "../utils/database";
 import { gcloudServiceAccountLoginCommands } from "../utils/gcloudServiceAccountLoginCommands";
@@ -19,14 +18,7 @@ import {
   getCloudRunDeployConfig,
   setGoogleProjectNumberScript,
 } from "./common";
-import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from "..";
-import type { StringOrBashExpression } from "../../../bash/BashExpression";
-import { BashExpression, bashEscape } from "../../../bash/BashExpression";
 import { ENV_VARS_FILENAME } from "./constants";
-import {
-  writeBashYamlToFileScript,
-  yamlBashString,
-} from "../../../bash/bashYaml";
 
 export function getCloudRunDeployScripts(context: ComponentContext) {
   const deployConfig = getCloudRunDeployConfig(context);

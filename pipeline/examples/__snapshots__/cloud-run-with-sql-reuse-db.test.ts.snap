@@ -47,18 +47,34 @@ variables:
   GIT_DEPTH: '1'
 before_script:
   - |-
+    function escapeForDotEnv () {
+    input="\${1:-$(cat)}"
+     input="\${input//$'\\n'/\\\\n}"
+      if [[ "$input" == *\\\\n* ]]; then
+        if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+          printf "%s\\n" "$input"
+        elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+          printf "\`%s\`\\n" "$input"
+        elif [[ "$input" == *\\"* ]]; then
+          printf "'%s'\\n" "$input"
+        else
+          printf "\\"%s\\"\\n" "$input"
+        fi
+      else
+        printf "%s\\n" "$input"
+      fi
+    }
+  - |-
     function collapseable_section_start () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       local section_description="\${2:-$section_title}"
       echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
-
-            }
+    }
   - |-
     function collapseable_section_end () {
-                local section_title="\${1}"
+    local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
-
-            }
+    }
 api 🛡 audit:
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -198,26 +214,26 @@ api 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=dev
       APP_DIR=api
       ENV_TYPE=dev
-      HOSTNAME=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
       DB_NAME=pan-test-app-dev-api
       DB_USER=my-user
-      DB_PASSWORD=$CL_dev_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_dev_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_dev_api_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
@@ -391,19 +407,19 @@ api 🧪 test:
       ENV_TYPE: |-
         dev
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
@@ -411,7 +427,7 @@ api 🧪 test:
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_dev_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_dev_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -421,7 +437,7 @@ api 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -541,26 +557,26 @@ api 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=review
       APP_DIR=api
       ENV_TYPE=review
-      HOSTNAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
-      DB_NAME=pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api
+      DB_NAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | escapeForDotEnv)
       DB_USER=my-user
-      DB_PASSWORD=$CL_review_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_review_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_review_api_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_review_api_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
@@ -728,27 +744,27 @@ api 🧪 test:
       ENV_TYPE: |-
         review
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
-      $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | sed 's/^/  /')
+        $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | sed '1!s/^/  /')
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_review_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_review_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -758,7 +774,7 @@ api 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -883,26 +899,26 @@ api 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=stage
       APP_DIR=api
       ENV_TYPE=stage
-      HOSTNAME=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
       DB_NAME=pan-test-app-stage-api
       DB_USER=my-user
-      DB_PASSWORD=$CL_stage_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_stage_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_stage_api_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
@@ -1070,19 +1086,19 @@ api 🧪 test:
       ENV_TYPE: |-
         stage
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
@@ -1090,7 +1106,7 @@ api 🧪 test:
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_stage_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_stage_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -1100,7 +1116,7 @@ api 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -1209,26 +1225,26 @@ api 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-api" "write dot env"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=prod
       APP_DIR=api
       ENV_TYPE=prod
-      HOSTNAME=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
       DB_NAME=pan-test-app-prod-api
       DB_USER=my-user
-      DB_PASSWORD=$CL_prod_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_prod_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_prod_api_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
@@ -1396,19 +1412,19 @@ api 🧪 test:
       ENV_TYPE: |-
         prod
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
@@ -1416,7 +1432,7 @@ api 🧪 test:
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_prod_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_prod_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -1426,7 +1442,7 @@ api 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -1639,26 +1655,26 @@ worker 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-worker" "write dot env"
+    - collapseable_section_start "write-dotenv-worker" "write dot env for worker"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=dev
       APP_DIR=api
       ENV_TYPE=dev
-      HOSTNAME=$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
       DB_NAME=pan-test-app-dev-api
       DB_USER=my-user
-      DB_PASSWORD=$CL_dev_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_dev_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_dev_worker_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_worker_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-worker"
@@ -1832,19 +1848,19 @@ worker 🧪 test:
       ENV_TYPE: |-
         dev
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
@@ -1852,7 +1868,7 @@ worker 🧪 test:
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_dev_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_dev_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -1862,7 +1878,7 @@ worker 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -1982,26 +1998,26 @@ worker 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-worker" "write dot env"
+    - collapseable_section_start "write-dotenv-worker" "write dot env for worker"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=review
       APP_DIR=api
       ENV_TYPE=review
-      HOSTNAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
-      DB_NAME=pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api
+      DB_NAME=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | escapeForDotEnv)
       DB_USER=my-user
-      DB_PASSWORD=$CL_review_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_review_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_review_worker_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_worker_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-worker"
@@ -2169,27 +2185,27 @@ worker 🧪 test:
       ENV_TYPE: |-
         review
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
-      $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | sed 's/^/  /')
+        $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | sed '1!s/^/  /')
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_review_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_review_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -2199,7 +2215,7 @@ worker 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -2324,26 +2340,26 @@ worker 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-worker" "write dot env"
+    - collapseable_section_start "write-dotenv-worker" "write dot env for worker"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=stage
       APP_DIR=api
       ENV_TYPE=stage
-      HOSTNAME=$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
       DB_NAME=pan-test-app-stage-api
       DB_USER=my-user
-      DB_PASSWORD=$CL_stage_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_stage_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_stage_worker_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_worker_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-worker"
@@ -2511,19 +2527,19 @@ worker 🧪 test:
       ENV_TYPE: |-
         stage
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
@@ -2531,7 +2547,7 @@ worker 🧪 test:
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_stage_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_stage_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -2541,7 +2557,7 @@ worker 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
@@ -2650,26 +2666,26 @@ worker 🧪 test:
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
-    - collapseable_section_start "write-dotenv-worker" "write dot env"
+    - collapseable_section_start "write-dotenv-worker" "write dot env for worker"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=prod
       APP_DIR=api
       ENV_TYPE=prod
-      HOSTNAME=$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL=https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      HOSTNAME_INTERNAL=$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
-      ROOT_URL_INTERNAL=https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       CLOUD_SQL_INSTANCE_CONNECTION_NAME=projectId:region:instancename
       DB_NAME=pan-test-app-prod-api
       DB_USER=my-user
-      DB_PASSWORD=$CL_prod_api_DB_PASSWORD
+      DB_PASSWORD=$(printf %s "$CL_prod_api_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
-      GCLOUD_DEPLOY_credentialsKey=$CL_prod_worker_GCLOUD_DEPLOY_credentialsKey
-      GCLOUD_RUN_canonicalHostSuffix=$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix
+      GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_worker_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+      GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-worker"
@@ -2837,19 +2853,19 @@ worker 🧪 test:
       ENV_TYPE: |-
         prod
       BUILD_INFO_BUILD_ID: |-
-      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed 's/^/  /')
+        $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
       BUILD_INFO_BUILD_TIME: |-
-      $(printf %s "$CI_JOB_STARTED_AT" | sed 's/^/  /')
+        $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/  /')
       BUILD_INFO_CURRENT_VERSION: |-
-      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed 's/^/  /')
+        $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-      $(printf %s "$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-      $(printf %s "https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed 's/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_SQL_INSTANCE_CONNECTION_NAME: |-
         projectId:region:instancename
       DB_NAME: |-
@@ -2857,7 +2873,7 @@ worker 🧪 test:
       DB_USER: |-
         my-user
       DB_PASSWORD: |-
-      $(printf %s "$CL_prod_api_DB_PASSWORD" | sed 's/^/  /')
+        $(printf %s "$CL_prod_api_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
         postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL: |-
@@ -2867,7 +2883,7 @@ worker 🧪 test:
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
       GCLOUD_RUN_canonicalHostSuffix: |-
-      $(printf %s "$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | sed 's/^/  /')
+        $(printf %s "$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 

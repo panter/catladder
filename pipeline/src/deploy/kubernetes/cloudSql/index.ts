@@ -1,6 +1,7 @@
 import type { StringOrBashExpression } from "../../../bash/BashExpression";
 import { getSecretVarNameForContext } from "../../../context";
 import type { ComponentContext } from "../../../types";
+import type { VariableValue } from "../../../variables/VariableValue";
 import { getFullDbName } from "../../cloudSql/utils";
 import { isOfDeployType } from "../../types";
 
@@ -18,7 +19,7 @@ type CloudSqlValues = {
   proxyCredentials: string;
 
   instanceConnectionName: string;
-  fullDbName: StringOrBashExpression;
+  fullDbName: VariableValue;
   dbUser: string;
 };
 export const createKubernetesCloudsqlBaseValues = (

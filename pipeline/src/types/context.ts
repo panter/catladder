@@ -6,6 +6,7 @@ import type {
 } from "../build";
 import type { PredefinedVariables, SecretEnvVar } from "../context";
 import type { DeployConfig } from "../deploy";
+import type { VariableValue } from "../variables/VariableValue";
 import type {
   ComponentConfig,
   Config,
@@ -17,7 +18,7 @@ import type { PipelineType } from "./pipeline";
 
 export type UnspecifiedEnvVars = Record<
   string,
-  StringOrBashExpression | undefined | null
+  VariableValue | undefined | null
 >;
 
 export type EnvironmentEnvVars<
