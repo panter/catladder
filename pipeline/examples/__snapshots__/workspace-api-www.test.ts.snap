@@ -45,6 +45,20 @@ variables:
   CACHE_COMPRESSION_LEVEL: fast
   TRANSFER_METER_FREQUENCY: 5s
   GIT_DEPTH: '1'
+before_script:
+  - |-
+    function collapseable_section_start () {
+                local section_title="\${1}"
+      local section_description="\${2:-$section_title}"
+      echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
+
+            }
+  - |-
+    function collapseable_section_end () {
+                local section_title="\${1}"
+      echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
+
+            }
 🔸 myWorkspace 🛡 audit:
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -53,9 +67,9 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="."
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd .
     - yarn npm audit --environment production
   rules:
@@ -79,21 +93,21 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="."
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd .
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
     - key: .-yarn
@@ -120,21 +134,21 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="."
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd .
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn test
   cache:
     - key: .-yarn
@@ -161,9 +175,9 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=dev
@@ -179,8 +193,8 @@ variables:
       GCLOUD_RUN_canonicalHostSuffix=$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "write-dotenv-api"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=dev
@@ -197,19 +211,19 @@ variables:
       API_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "write-dotenv-www"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd .
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: .-yarn
@@ -251,9 +265,9 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=review
@@ -269,8 +283,8 @@ variables:
       GCLOUD_RUN_canonicalHostSuffix=$CL_review_api_GCLOUD_RUN_canonicalHostSuffix
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "write-dotenv-api"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=review
@@ -287,19 +301,19 @@ variables:
       API_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "write-dotenv-www"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd .
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: .-yarn
@@ -339,9 +353,9 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=stage
@@ -357,8 +371,8 @@ variables:
       GCLOUD_RUN_canonicalHostSuffix=$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "write-dotenv-api"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=stage
@@ -375,19 +389,19 @@ variables:
       API_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "write-dotenv-www"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd .
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: .-yarn
@@ -427,9 +441,9 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=prod
@@ -445,8 +459,8 @@ variables:
       GCLOUD_RUN_canonicalHostSuffix=$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "write-dotenv-api"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=prod
@@ -463,19 +477,19 @@ variables:
       API_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')/graphql
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "write-dotenv-www"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd .
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: .-yarn
@@ -524,7 +538,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="api"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -540,20 +554,20 @@ variables:
       COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: api-yarn
       policy: pull
@@ -573,8 +587,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -595,7 +609,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR="api"
     - export ENV_TYPE="dev"
@@ -616,13 +630,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -655,15 +669,15 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -703,9 +717,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-dev-api --project=google-project-id --region=europe-west6
@@ -750,7 +764,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="api"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -766,20 +780,20 @@ variables:
       COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: api-yarn
       policy: pull
@@ -797,8 +811,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -817,7 +831,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR="api"
     - export ENV_TYPE="review"
@@ -838,13 +852,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -877,18 +891,18 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags
     - set -e
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -926,9 +940,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
@@ -974,7 +988,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="api"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -990,20 +1004,20 @@ variables:
       COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: api-yarn
       policy: pull
@@ -1021,8 +1035,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -1041,7 +1055,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR="api"
     - export ENV_TYPE="stage"
@@ -1062,13 +1076,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -1101,15 +1115,15 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -1140,9 +1154,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-stage-api --project=google-project-id --region=europe-west6
@@ -1185,7 +1199,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="api"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -1201,20 +1215,20 @@ variables:
       COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: api-yarn
       policy: pull
@@ -1232,8 +1246,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -1252,7 +1266,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR="api"
     - export ENV_TYPE="prod"
@@ -1273,13 +1287,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -1312,15 +1326,15 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -1351,9 +1365,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_api_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-prod-api --project=google-project-id --region=europe-west6
@@ -1396,7 +1410,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -1412,20 +1426,20 @@ variables:
       COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: www-yarn
       policy: pull
@@ -1445,8 +1459,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -1467,7 +1481,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR="www"
     - export ENV_TYPE="dev"
@@ -1489,13 +1503,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -1530,15 +1544,15 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-dev-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -1578,9 +1592,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-dev-www --project=google-project-id --region=europe-west6
@@ -1625,7 +1639,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -1641,20 +1655,20 @@ variables:
       COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: www-yarn
       policy: pull
@@ -1672,8 +1686,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -1692,7 +1706,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR="www"
     - export ENV_TYPE="review"
@@ -1714,13 +1728,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_www_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -1755,18 +1769,18 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www --quiet --delete-tags
     - set -e
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -1804,9 +1818,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
@@ -1852,7 +1866,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -1868,20 +1882,20 @@ variables:
       COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: www-yarn
       policy: pull
@@ -1899,8 +1913,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -1919,7 +1933,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR="www"
     - export ENV_TYPE="stage"
@@ -1941,13 +1955,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -1982,15 +1996,15 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-stage-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -2021,9 +2035,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-stage-www --project=google-project-id --region=europe-west6
@@ -2066,7 +2080,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
@@ -2082,20 +2096,20 @@ variables:
       COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
       COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
       COPY --chown=node:node .yarn /app/.yarn"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud auth configure-docker europe-west6-docker.pkg.dev
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   cache:
     - key: www-yarn
       policy: pull
@@ -2113,8 +2127,8 @@ variables:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -2133,7 +2147,7 @@ variables:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR="www"
     - export ENV_TYPE="prod"
@@ -2155,13 +2169,13 @@ variables:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):prepare[collapsed=true]\\r\\e[0KPrepare..."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "prepare" "Prepare..."
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey")
     - export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
     - 'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"'
-    - echo -e "\\e[0Ksection_end:$(date +%s):prepare\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeenvvars[collapsed=true]\\r\\e[0KWrite env vars to file"
+    - collapseable_section_end "prepare"
+    - collapseable_section_start "writeenvvars" "Write env vars to file"
     - |
       cat > ____envvars.yaml <<EOF
       ENV_SHORT: |-
@@ -2196,15 +2210,15 @@ variables:
         ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","API_URL"]
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeenvvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):deploy[collapsed=true]\\r\\e[0KDeploy to cloud run"
+    - collapseable_section_end "writeenvvars"
+    - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-prod-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - echo -e "\\e[0Ksection_end:$(date +%s):deploy\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):cleanup[collapsed=true]\\r\\e[0KCleanup"
+    - collapseable_section_end "deploy"
+    - collapseable_section_start "cleanup" "Cleanup"
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
-    - echo -e "\\e[0Ksection_end:$(date +%s):cleanup\\r\\e[0K"
+    - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
@@ -2235,9 +2249,9 @@ variables:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-prod-www --project=google-project-id --region=europe-west6

@@ -1,11 +1,12 @@
 import { getRunnerImage } from "../../runner";
 import type { Pipeline } from "../../types";
-
+import { globalScriptFunctions } from "../../globalScriptFunctions";
 type PickRequired<T, K extends keyof T> = Required<Pick<T, K>> & Omit<T, K>;
 
 export const createGitlabPipelineWithDefaults = ({
   image,
   variables,
+  before_script,
   ...config
 }: PickRequired<
   Partial<Pipeline<"gitlab">>,
@@ -22,6 +23,12 @@ export const createGitlabPipelineWithDefaults = ({
       GIT_DEPTH: "1", // no need the full depth
       ...(variables ?? {}),
     },
+    before_script: [
+      ...[...globalScriptFunctions.values()].map((script) =>
+        script.toBashFunction(),
+      ),
+      ...(before_script ?? []),
+    ],
 
     ...config,
   };

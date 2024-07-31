@@ -66,4 +66,5 @@ export interface GitlabPipeline extends Pick<JobTemplate, "variables"> {
   };
   stages: string[];
   jobs: Record<string, GitlabJobDef>;
+  before_script?: string[];
 }

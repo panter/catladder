@@ -45,6 +45,20 @@ variables:
   CACHE_COMPRESSION_LEVEL: fast
   TRANSFER_METER_FREQUENCY: 5s
   GIT_DEPTH: '1'
+before_script:
+  - |-
+    function collapseable_section_start () {
+                local section_title="\${1}"
+      local section_description="\${2:-$section_title}"
+      echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
+
+            }
+  - |-
+    function collapseable_section_end () {
+                local section_title="\${1}"
+      echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
+
+            }
 api 🛡 audit:
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -53,9 +67,9 @@ api 🛡 audit:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="api"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd api
     - yarn npm audit --environment production
   rules:
@@ -79,21 +93,21 @@ api 👮 lint:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="api"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd api
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
     - key: api-yarn
@@ -120,21 +134,21 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="api"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd api
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn test
   cache:
     - key: api-yarn
@@ -161,7 +175,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR="api"
     - export ENV_TYPE="dev"
@@ -173,8 +187,8 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=dev
@@ -186,20 +200,20 @@ api 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd api
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: api-yarn
@@ -232,8 +246,8 @@ api 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -254,7 +268,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR="api"
     - export ENV_TYPE="dev"
@@ -266,7 +280,7 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd api
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -298,7 +312,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR="api"
     - export ENV_TYPE="review"
@@ -310,8 +324,8 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=review
@@ -323,20 +337,20 @@ api 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd api
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: api-yarn
@@ -367,8 +381,8 @@ api 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -387,7 +401,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR="api"
     - export ENV_TYPE="review"
@@ -399,7 +413,7 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd api
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -429,7 +443,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR="api"
     - export ENV_TYPE="stage"
@@ -441,8 +455,8 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=stage
@@ -454,20 +468,20 @@ api 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd api
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: api-yarn
@@ -498,8 +512,8 @@ api 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -518,7 +532,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR="api"
     - export ENV_TYPE="stage"
@@ -530,7 +544,7 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd api
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -554,7 +568,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR="api"
     - export ENV_TYPE="prod"
@@ -566,8 +580,8 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-api[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env"
     - |-
       cat <<EOF > api/.env
       ENV_SHORT=prod
@@ -579,20 +593,20 @@ api 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-api\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd api
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: api-yarn
@@ -623,8 +637,8 @@ api 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
   artifacts:
     paths:
@@ -643,7 +657,7 @@ api 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR="api"
     - export ENV_TYPE="prod"
@@ -655,7 +669,7 @@ api 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd api
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -679,9 +693,9 @@ www 🛡 audit:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="www"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd www
     - yarn npm audit --environment production
   rules:
@@ -701,21 +715,21 @@ www 👮 lint:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="www"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd www
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
     - key: www-yarn
@@ -742,21 +756,21 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_PATH="www"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd www
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn test
   cache:
     - key: www-yarn
@@ -783,7 +797,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR="www"
     - export ENV_TYPE="dev"
@@ -795,8 +809,8 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=dev
@@ -808,20 +822,20 @@ www 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd www
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: www-yarn
@@ -854,8 +868,8 @@ www 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -876,7 +890,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR="www"
     - export ENV_TYPE="dev"
@@ -888,7 +902,7 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd www
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -922,7 +936,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR="www"
     - export ENV_TYPE="review"
@@ -934,8 +948,8 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=review
@@ -947,20 +961,20 @@ www 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd www
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: www-yarn
@@ -991,8 +1005,8 @@ www 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -1011,7 +1025,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR="www"
     - export ENV_TYPE="review"
@@ -1023,7 +1037,7 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd www
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -1055,7 +1069,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR="www"
     - export ENV_TYPE="stage"
@@ -1067,8 +1081,8 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=stage
@@ -1080,20 +1094,20 @@ www 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd www
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: www-yarn
@@ -1124,8 +1138,8 @@ www 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -1144,7 +1158,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR="www"
     - export ENV_TYPE="stage"
@@ -1156,7 +1170,7 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd www
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -1182,7 +1196,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 4Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR="www"
     - export ENV_TYPE="prod"
@@ -1194,8 +1208,8 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):write-dotenv-www[collapsed=true]\\r\\e[0Kwrite dot env"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-www" "write dot env"
     - |-
       cat <<EOF > www/.env
       ENV_SHORT=prod
@@ -1207,20 +1221,20 @@ www 🧪 test:
       ROOT_URL_INTERNAL=https://unknown-host.example.com
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):write-dotenv-www\\r\\e[0K"
+    - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
+    - collapseable_section_end "nodeinstall"
     - cd www
-    - echo -e "\\e[0Ksection_start:$(date +%s):nodeinstall[collapsed=true]\\r\\e[0KEnsure node version"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
     - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-    - echo -e "\\e[0Ksection_end:$(date +%s):nodeinstall\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):yarninstall[collapsed=true]\\r\\e[0KYarn install"
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
     - yarn install --immutable
-    - echo -e "\\e[0Ksection_end:$(date +%s):yarninstall\\r\\e[0K"
+    - collapseable_section_end "yarninstall"
     - yarn build
   cache:
     - key: www-yarn
@@ -1251,8 +1265,8 @@ www 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
   artifacts:
     paths:
@@ -1271,7 +1285,7 @@ www 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR="www"
     - export ENV_TYPE="prod"
@@ -1283,7 +1297,7 @@ www 🧪 test:
     - export HOSTNAME_INTERNAL="unknown-host.example.com"
     - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - cd www
     - yarn deploy
     - echo 'Uploading SBOM to Dependency Track'

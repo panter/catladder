@@ -45,13 +45,27 @@ variables:
   CACHE_COMPRESSION_LEVEL: fast
   TRANSFER_METER_FREQUENCY: 5s
   GIT_DEPTH: '1'
+before_script:
+  - |-
+    function collapseable_section_start () {
+                local section_title="\${1}"
+      local section_description="\${2:-$section_title}"
+      echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
+
+            }
+  - |-
+    function collapseable_section_end () {
+                local section_title="\${1}"
+      echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
+
+            }
 app 🛡 audit:
   stage: test
   image: ruby:3.2.1
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - cd .temp-with-dockerfile
     - gem install bundler-audit
     - bundle audit check
@@ -73,8 +87,8 @@ app 👮 lint:
   image: ruby:3.2.1
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - cd .temp-with-dockerfile
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
@@ -99,8 +113,8 @@ app 🧪 test:
   image: ruby:3.2.1
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - cd .temp-with-dockerfile
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
@@ -131,7 +145,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
@@ -139,18 +153,18 @@ app 🧪 test:
     - export DOCKER_IMAGE_NAME="dev/app"
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "docker-login" "Docker Login"
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   rules:
     - when: never
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -163,8 +177,8 @@ app 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
@@ -185,7 +199,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="dev"
@@ -214,12 +228,12 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-dev-app" --cluster="kube-pan-test-app-dev-app" --user="kube-pan-test-app-dev-app" --namespace="pan-test-app-dev"
     - kubectl config use-context "kube-pan-test-app-dev-app"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"
+    - collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
     - |
       cat > __all_values.yml <<EOF
       env:
@@ -300,7 +314,7 @@ app 🧪 test:
             launcher bundle exec rake db:migrate
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"
+    - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -343,7 +357,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="dev"
@@ -367,7 +381,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-dev-app" --cluster="kube-pan-test-app-dev-app" --user="kube-pan-test-app-dev-app" --namespace="pan-test-app-dev"
@@ -403,7 +417,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="dev"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="dev"
@@ -427,7 +441,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-dev-app" --cluster="kube-pan-test-app-dev-app" --user="kube-pan-test-app-dev-app" --namespace="pan-test-app-dev"
@@ -467,7 +481,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
@@ -475,18 +489,18 @@ app 🧪 test:
     - export DOCKER_IMAGE_NAME="review/app"
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "docker-login" "Docker Login"
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   rules:
     - if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -497,8 +511,8 @@ app 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
@@ -517,7 +531,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="review"
@@ -546,12 +560,12 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --token="$CL_review_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --namespace="pan-test-app-review"
     - kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"
+    - collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
     - |
       cat > __all_values.yml <<EOF
       env:
@@ -638,7 +652,7 @@ app 🧪 test:
             launcher bundle exec rake db:prepare db:seed
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"
+    - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -679,7 +693,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="review"
@@ -703,7 +717,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --token="$CL_review_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --namespace="pan-test-app-review"
@@ -737,7 +751,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="review"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="review"
@@ -761,7 +775,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --token="$CL_review_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" --namespace="pan-test-app-review"
@@ -799,7 +813,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
@@ -807,18 +821,18 @@ app 🧪 test:
     - export DOCKER_IMAGE_NAME="stage/app"
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "docker-login" "Docker Login"
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   rules:
     - if: $CI_COMMIT_TAG
   needs: []
@@ -829,8 +843,8 @@ app 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
@@ -849,7 +863,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="stage"
@@ -878,12 +892,12 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-stage-app" --cluster="kube-pan-test-app-stage-app" --user="kube-pan-test-app-stage-app" --namespace="pan-test-app-stage"
     - kubectl config use-context "kube-pan-test-app-stage-app"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"
+    - collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
     - |
       cat > __all_values.yml <<EOF
       env:
@@ -964,7 +978,7 @@ app 🧪 test:
             launcher bundle exec rake db:migrate
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"
+    - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -998,7 +1012,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="stage"
@@ -1022,7 +1036,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-stage-app" --cluster="kube-pan-test-app-stage-app" --user="kube-pan-test-app-stage-app" --namespace="pan-test-app-stage"
@@ -1056,7 +1070,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="stage"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="stage"
@@ -1080,7 +1094,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-stage-app" --cluster="kube-pan-test-app-stage-app" --user="kube-pan-test-app-stage-app" --namespace="pan-test-app-stage"
@@ -1118,7 +1132,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 1Gi
     KUBERNETES_MEMORY_LIMIT: 2Gi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export APP_DIR=".temp-with-dockerfile"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="$CI_REGISTRY"
@@ -1126,18 +1140,18 @@ app 🧪 test:
     - export DOCKER_IMAGE_NAME="prod/app"
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-login[collapsed=true]\\r\\e[0KDocker Login"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "docker-login" "Docker Login"
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-login\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-build[collapsed=true]\\r\\e[0KDocker build"
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "docker-build" "Docker build"
     - docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-build\\r\\e[0K"
-    - echo -e "\\e[0Ksection_start:$(date +%s):docker-push[collapsed=true]\\r\\e[0KDocker push and tag"
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Docker push and tag"
     - docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
-    - echo -e "\\e[0Ksection_end:$(date +%s):docker-push\\r\\e[0K"
+    - collapseable_section_end "docker-push"
   rules:
     - if: $CI_COMMIT_TAG
   needs: []
@@ -1148,8 +1162,8 @@ app 🧪 test:
   image: aquasec/trivy:0.38.3
   variables: {}
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - collapseable_section_end "injectvars"
     - trivy fs --quiet --format cyclonedx --output "__sbom.json" .temp-with-dockerfile
   artifacts:
     paths:
@@ -1168,7 +1182,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_REQUEST: 200Mi
     KUBERNETES_MEMORY_LIMIT: 400Mi
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="prod"
@@ -1197,12 +1211,12 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-prod-app" --cluster="kube-pan-test-app-prod-app" --user="kube-pan-test-app-prod-app" --namespace="pan-test-app-prod"
     - kubectl config use-context "kube-pan-test-app-prod-app"
-    - echo -e "\\e[0Ksection_start:$(date +%s):writeallvalues[collapsed=true]\\r\\e[0KWrite __all_values.yml for helm deployment"
+    - collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
     - |
       cat > __all_values.yml <<EOF
       env:
@@ -1283,7 +1297,7 @@ app 🧪 test:
             launcher bundle exec rake db:migrate
 
       EOF
-    - echo -e "\\e[0Ksection_end:$(date +%s):writeallvalues\\r\\e[0K"
+    - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
@@ -1317,7 +1331,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="prod"
@@ -1341,7 +1355,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-prod-app" --cluster="kube-pan-test-app-prod-app" --user="kube-pan-test-app-prod-app" --namespace="pan-test-app-prod"
@@ -1375,7 +1389,7 @@ app 🧪 test:
     KUBERNETES_MEMORY_LIMIT: 400Mi
     GIT_STRATEGY: none
   script:
-    - echo -e "\\e[0Ksection_start:$(date +%s):injectvars[collapsed=true]\\r\\e[0KInjecting variables"
+    - collapseable_section_start "injectvars" "Injecting variables"
     - export ENV_SHORT="prod"
     - export APP_DIR=".temp-with-dockerfile"
     - export ENV_TYPE="prod"
@@ -1399,7 +1413,7 @@ app 🧪 test:
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
-    - echo -e "\\e[0Ksection_end:$(date +%s):injectvars\\r\\e[0K"
+    - collapseable_section_end "injectvars"
     - kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
     - kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
     - kubectl config set-context "kube-pan-test-app-prod-app" --cluster="kube-pan-test-app-prod-app" --user="kube-pan-test-app-prod-app" --namespace="pan-test-app-prod"
