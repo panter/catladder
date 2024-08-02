@@ -59,17 +59,19 @@ export const escapeSingleQuotes = (value: string | null | undefined) =>
 
 /**
  *
- * what an absolute nightmare.
- * unfortunatly, dotenv has many limitations. You can't escape quotes properly.
- *
- * In order to be very forgiving, we need to do some magic here:
+ * escape env vars for .env files.
+ * unfortunatly, the format has many limitations. In order to be very forgiving, we need to do some magic here:
  *
  * - when the value contains no newlines, we are fine
  * - if the value contains newlines, we need to wrap it in quotes. And thats where the problem begins:
- * - you can't escape quotes. this is a shitty limitation of dotenv and node
+ * - you can't escape quotes. this is a limitation of dotenv and node
  * - you can have inner quotes, but they break in node.js (not in dotenv though), see https://github.com/nodejs/node/issues/54134
  * - so we need to quote cleverly
  * - to make things worse, we need to check whether we have a simple stirng or a bash expression, that needs to be evalulated first...
+ *
+ *  what an absolute nightmare.
+ *
+ * - other languages are currently only partially supported, since most .env implementations are slightly different
  */
 export const escapeForDotEnv = (
   value: VariableValue | undefined | null,
@@ -87,8 +89,8 @@ export const escapeForDotEnv = (
       const quote = value.includes(`"`)
         ? value.includes(`'`)
           ? value.includes("`")
-            ? // If all quote types are present, default to no
-              ""
+            ? // If all quote types are present, default to double quotes. This works in dotenv, but not in node.js because of the bug mentioned abouve
+              '"'
             : "`"
           : "'"
         : '"';
@@ -137,7 +139,7 @@ const escapeForDotEnvScript = registerGlobalScriptFunction(
  input="\${input//$'\\n'/\\\\n}"
   if [[ "$input" == *\\\\n* ]]; then
     if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-      printf "%s\\n" "$input"
+      printf "\\"%s\\"\\n" "$input" ${/* fallback to double quotes */ ""}
     elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
       printf "\`%s\`\\n" "$input"
     elif [[ "$input" == *\\"* ]]; then
