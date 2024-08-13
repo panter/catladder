@@ -36,6 +36,9 @@ workflow:
 
 test:
   stage: "test"
+  variables:
+    KUBERNETES_MEMORY_LIMIT: "6Gi"
+    KUBERNETES_MEMORY_REQUEST: "6Gi"
   extends:
     - .yarn-cache
   script:
