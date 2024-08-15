@@ -49,11 +49,13 @@ export const getPackageManagerInfoForComponent = async (
     : [];
 
   const pathsToCopyInDocker = [
-    packageJson,
-    ...(workspacePackageJson ? [workspacePackageJson] : []),
-    lockFile,
-    ...configFilePaths,
-    ...currentWorkspaceDependencies,
+    ...new Set([
+      packageJson,
+      ...(workspacePackageJson ? [workspacePackageJson] : []),
+      lockFile,
+      ...configFilePaths,
+      ...currentWorkspaceDependencies,
+    ]),
   ];
   return {
     ...baseInfo,
