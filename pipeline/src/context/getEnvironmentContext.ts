@@ -1,4 +1,4 @@
-import type { BuildConfig, CreateComponentContextContext } from "..";
+import type { CreateComponentContextContext } from "..";
 import type { StringOrBashExpression } from "../bash/BashExpression";
 import { joinBashExpressions } from "../bash/BashExpression";
 

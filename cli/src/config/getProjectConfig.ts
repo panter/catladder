@@ -155,21 +155,17 @@ export const getEnvVarsResolved = async (
   if (!componentName) {
     return {};
   }
-  try {
-    const envionment = await getEnvironment(env, componentName);
 
-    // in the pipeline the secrets alreadyy exists  and bash will expand them
-    // but here we need to manually load them
-    return resolveSecrets(vorpal, [
-      {
-        envVars: envionment.envVars,
-        secretEnvVarKeys: envionment.secretEnvVarKeys,
-      },
-    ]);
-  } catch (e) {
-    // env is disabled
-    return {};
-  }
+  const envionment = await getEnvironment(env, componentName);
+
+  // in the pipeline the secrets alreadyy exists  and bash will expand them
+  // but here we need to manually load them
+  return resolveSecrets(vorpal, [
+    {
+      envVars: envionment.envVars,
+      secretEnvVarKeys: envionment.secretEnvVarKeys,
+    },
+  ]);
 };
 
 /**
@@ -181,14 +177,9 @@ export const getJobOnlyEnvVarsResolved = async (
   env: string,
   componentName: string,
 ) => {
-  try {
-    const envionment = await getEnvironment(env, componentName);
-    return resolveSecrets(vorpal, [
-      envionment.jobOnlyVars.build,
-      envionment.jobOnlyVars.deploy,
-    ]);
-  } catch (e) {
-    // env is disabled
-    return {};
-  }
+  const envionment = await getEnvironment(env, componentName);
+  return resolveSecrets(vorpal, [
+    envionment.jobOnlyVars.build,
+    envionment.jobOnlyVars.deploy,
+  ]);
 };
