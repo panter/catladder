@@ -1,3 +1,37 @@
+# [2.0.0](https://git.panter.ch/catladder/catladder/compare/v1.170.1...v2.0.0) (2024-08-19)
+
+
+### Bug Fixes
+
+* deduplicate copy paths in docker ([f2d8534](https://git.panter.ch/catladder/catladder/commit/f2d85341f4e8e87fbd8e5aa4273e77ec22328f24))
+* several problems in variables ([1624691](https://git.panter.ch/catladder/catladder/commit/16246913e46b523991627d86d0d6047ab3d721a6))
+
+
+### Features
+
+* **cli:** remove deprecated stuff ([c6a29f8](https://git.panter.ch/catladder/catladder/commit/c6a29f859a668b724d2996821c35a28ff1826307))
+* create dotEnv and env.d.ts by default ([ce5b161](https://git.panter.ch/catladder/catladder/commit/ce5b161bd1b0a1373b6b17ce1b365907fefa647b))
+* don't throw if env is disabled ([b2d3f7f](https://git.panter.ch/catladder/catladder/commit/b2d3f7f72679ef69210c8852383b4d201b1a0945))
+* **dotenv:** when all quotes are present, fallback to double quotes as outer quotes ([ffa6c16](https://git.panter.ch/catladder/catladder/commit/ffa6c1621a3de46ea52f78b1a5cdb0ebb4e787fe))
+* improve collapseable sections readability in log ([191e95e](https://git.panter.ch/catladder/catladder/commit/191e95e0430b17eae311cdc074c7cf98964ca6bc))
+* **kube:** deprecate leaderElector ([b097d49](https://git.panter.ch/catladder/catladder/commit/b097d4905e5d1d82486acb468783df233a6313b7))
+* **kube:** remove deprecated legacy cloud sql support ([4acb764](https://git.panter.ch/catladder/catladder/commit/4acb764ffbcc33e6fbb956ab24115f69f62489a7))
+* **kube:** remove legacyprisma1 ([f7bff99](https://git.panter.ch/catladder/catladder/commit/f7bff99e0676fa49721724a093e7d2bfb4d95395))
+* **kubernetes:** remove secretsAsFile ([8a0480c](https://git.panter.ch/catladder/catladder/commit/8a0480cdf3bbee2e42dd9fd624a33806ee8b670c))
+* remove internal property ([08099e7](https://git.panter.ch/catladder/catladder/commit/08099e72c23adb17e4a059b4a9fbd32732c95925))
+* remove legacy fromComponents ([65f99e2](https://git.panter.ch/catladder/catladder/commit/65f99e259878ab9e8ff4b0c4ad0d3a1dcddf610d))
+* remove parent-child-pipeline mode ([b3a5a79](https://git.panter.ch/catladder/catladder/commit/b3a5a791a35c801ac9091db0bb0ec699d5328686))
+* remove unused internal property ([862e398](https://git.panter.ch/catladder/catladder/commit/862e398878b90afd738bfeaffde5aec3678946a1))
+* remove version number in generated files ([7ed2ab8](https://git.panter.ch/catladder/catladder/commit/7ed2ab88dd25f97cbe838ca42dcad28e143dec8f))
+
+
+### BREAKING CHANGES
+
+* you have to use local pipeline (which is anyway better for you)
+* this is a breaking change
+* **kubernetes:** The secretsAsFile feature is removed from the kubernetes deployment
+* The fromComponents function has been removed, but it was probably never used
+
 ## [1.170.1](https://git.panter.ch/catladder/catladder/compare/v1.170.0...v1.170.1) (2024-08-13)
 
 # [1.170.0](https://git.panter.ch/catladder/catladder/compare/v1.169.0...v1.170.0) (2024-07-29)
