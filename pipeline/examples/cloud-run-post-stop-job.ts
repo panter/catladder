@@ -18,6 +18,7 @@ const config: Config = {
         review: {
           deploy: {
             jobs: {
+              // in this example we only declare the job on the review environment.
               ["drop-db"]: {
                 command: [
                   "/bin/sh",
@@ -25,6 +26,12 @@ const config: Config = {
                   "mongosh \\$MONGO_URL --eval 'db.dropDatabase()'",
                 ],
                 image: "rtsp/mongosh:latest",
+              },
+            },
+            execute: {
+              ["drop-db"]: {
+                type: "job",
+                job: "drop-db",
                 when: "postStop",
               },
             },

@@ -20,7 +20,6 @@ const config: Config = {
         },
         jobs: {
           myjob: {
-            when: "manual",
             command: "echo hello",
             vpcConnector: "my-first-vpc-connector",
             vpcEgress: "all-traffic",

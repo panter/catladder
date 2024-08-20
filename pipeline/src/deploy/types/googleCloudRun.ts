@@ -197,6 +197,11 @@ export type DeployConfigCloudRunJobBase = {
   command: string | string[];
 
   /**
+   * optional, specify args. Those get overwritten by job executions if specified there
+   */
+  args?: string[];
+
+  /**
    * custom image to use. Defaults to the image from the build
    */
   image?: string;
@@ -232,25 +237,39 @@ type DayOfWeek = string;
 type Month = string;
 export type DeployConfigCloudRunJobWithSchedule =
   DeployConfigCloudRunJobBase & {
+    /**
+     * @deprecated use `execute` instead
+     */
     when: "schedule";
+    /**
+     * @deprecated use `run` instead
+     */
     schedule: `${Minute} ${Hour} ${DayOfMonth} ${Month} ${DayOfWeek}`;
     /**
      * Max number of retries of the cloud scheduler.
      * Note: the task itself is never retried.
      *
      * defaults to 0 (no retries)
+     *
+     *  @deprecated use `run` instead
      */
     maxRetryAttempts?: 0 | 1 | 2 | 3 | 4 | 5;
   };
 
 export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {
-  when: "manual" | "preDeploy" | "postDeploy" | "preStop" | "postStop";
   /**
    * wait for completion of the job on preDeploy and postDeploy
    *
    * has no effect on preStop and postStop (which always wait for completion)
+   *
+   *
+   * @deprecated use `run` instead
    */
   waitForCompletion?: boolean;
+  /**
+   * @deprecated use `run` instead
+   */
+  when?: "manual" | "preDeploy" | "postDeploy" | "preStop" | "postStop";
 };
 
 export type DeployConfigCloudRunWithVolumes = {
@@ -304,6 +323,11 @@ export type DeployConfigCloudRun = {
    */
   cloudSql?: DeployConfigCloudRunCloudSql | false;
 
+  /**
+   * execute jobs on deploy or execute jobs and http requests on a schedule
+   */
+  execute?: Record<string, DeployConfigCloudRunExecute | null>;
+
   debug?: boolean;
 } & DeployConfigBase;
 
@@ -318,3 +342,101 @@ export type DeployConfigCloudRunVolume = {
   mountPath: string;
   readonly?: boolean;
 };
+
+export type DeployConfigCloudRunExecuteJobBase = {
+  /**
+   * set to "job" to run a cloud run job
+   */
+  type: "job";
+  /**
+   * the cloud run job to run
+   */
+  job: string;
+
+  /**
+   * additional args to pass to the job
+   */
+  args?: string[];
+};
+
+type WithSchedule = {
+  /**
+   * run the job on a schedule
+   */
+  when: "schedule";
+  /**
+   * the cron schedule. See https://crontab.guru/
+   */
+  schedule: `${Minute} ${Hour} ${DayOfMonth} ${Month} ${DayOfWeek}`;
+
+  /**
+   * Max number of retries of the cloud scheduler.
+   * Note: the task itself is never retried.
+   *
+   * defaults to 0 (no retries)
+   */
+  maxRetryAttempts?: 0 | 1 | 2 | 3 | 4 | 5;
+};
+
+export type DeployConfigCloudRunExecuteJobScheduled =
+  DeployConfigCloudRunExecuteJobBase & WithSchedule;
+
+export type DeployConfigCloudRunExecuteOnDeploy =
+  DeployConfigCloudRunExecuteJobBase &
+    (
+      | {
+          /**
+           * run the job before or after the deploy
+           */
+          when: "preDeploy" | "postDeploy";
+          /**
+           * whether to wait for completion of the job
+           */
+          waitForCompletion?: boolean;
+        }
+      | {
+          /**
+           * run the job before or after the environment is stopped
+           */
+          when: "preStop" | "postStop";
+        }
+    );
+
+export type DeployConfigCloudRunExecuteJob =
+  | DeployConfigCloudRunExecuteJobScheduled
+  | DeployConfigCloudRunExecuteOnDeploy;
+
+export type DeployConfigCloudRunExecuteHttp = {
+  /**
+   * set to "http" to run a http request
+   */
+  type: "http";
+  /**
+   * the url to call
+   */
+  url: string;
+
+  /**
+   * the http-method to use. Defaults to "POST" (as specified by google cloud scheduler)
+   */
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+
+  /**
+   * the body to send
+   */
+  body?: string;
+
+  /**
+   * the headers to send
+   */
+  headers?: Record<string, string>;
+} & WithSchedule;
+
+export type DeployConfigCloudRunExecute =
+  | DeployConfigCloudRunExecuteJob
+  | DeployConfigCloudRunExecuteHttp;
+
+export type DeployConfigCloudRunExecuteWithSchedule = Extract<
+  DeployConfigCloudRunExecute,
+  WithSchedule
+>;

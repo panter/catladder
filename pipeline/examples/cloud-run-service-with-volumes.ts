@@ -34,7 +34,7 @@ const config: Config = {
         jobs: {
           migrate: {
             command: "migrate",
-            when: "postDeploy",
+
             volumes: {
               myMount: {
                 type: "cloud-storage",
@@ -42,6 +42,14 @@ const config: Config = {
                 mountPath: "/mnt/my-mount",
               },
             },
+          },
+        },
+
+        execute: {
+          migrate: {
+            type: "job",
+            job: "migrate",
+            when: "postDeploy",
           },
         },
       },

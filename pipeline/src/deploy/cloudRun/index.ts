@@ -9,11 +9,11 @@ import type { EnvironmentContext } from "../../types/environmentContext";
 import { sanitizeForBashVariable } from "../../utils/gitlab";
 import { getFullDbName } from "../cloudSql/utils";
 import { createGoogleCloudRunDeployJobs } from "./createJobs";
+import { getCloudRunJobExecuteUrl } from "./utils/cloudRunExecutionUrl";
 import {
   DATABASE_JDBC_URL,
   getDatabaseConnectionString,
 } from "./utils/database";
-import { getCloudRunJobName } from "./utils/jobName";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
 
@@ -103,11 +103,11 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
           ? Object.fromEntries(
               Object.entries(deployConfigRaw.jobs).map(([name, job]) => [
                 "CLOUD_RUN_JOB_TRIGGER_URL_" + sanitizeForBashVariable(name),
-                `https://${
-                  deployConfigRaw.region
-                }-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${
-                  deployConfigRaw.projectId
-                }/jobs/${getCloudRunJobName(fullName, name)}:run`,
+                getCloudRunJobExecuteUrl(name, {
+                  appFullName: fullName,
+                  projectId: deployConfigRaw.projectId,
+                  region: deployConfigRaw.region,
+                }),
               ]),
             )
           : {};

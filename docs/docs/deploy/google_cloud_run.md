@@ -74,7 +74,9 @@ To use a DB from another project, refer to this https://stackoverflow.com/a/7077
 
 ## Jobs and migrations
 
-You can declare jobs too. Those jobs are either for one-time work that needs to be done or for recurring tasks on a schedule (cronjobs):
+Jobs are either for one-time work that needs to be done or for recurring tasks on a schedule (cronjobs)
+
+### Execute jobs before or after deployment
 
 ```ts
 deploy: {
@@ -84,13 +86,72 @@ deploy: {
   jobs: {
     myjob: {
       command: "your-command", // <-- by default it will use the same image as your app, but with another command/entrypoint
-      when: "preDeploy", // or "schedule", "postDeploy", "manual"
+    }
+  },
+  execute: {
+    myjobexecution: { // <-- you can chose any name here. If you want to overwride an execution, you can use the same name
+      type: "job",
+      job: "myjob",
+      when: "preDeploy", // can also be "postDeploy", "preStop", "postStop"
+      waitForCompletion: true, // <-- if true, the deployment will wait until the job is finished, defaults to false
     }
   }
 }
 ```
 
-Make sure to check out this example https://git.panter.ch/catladder/test-projects/cloudrun-prisma. This also describes how to trigger a job from within another cloud run app.
+### Execut jobs on a schedule
+
+You can run a cloud run job on a schedule:
+
+```ts
+deploy: {
+  type: "google-cloudrun",
+  projectId: "your-google-cloud-project",
+  region: "europe-west6",
+  jobs: {
+    ["send-emails"]: {
+      command: "send-emails",
+    }
+  },
+  execute: {
+    "send-newsletter": {
+      type: "job",
+      job: "send-emails",
+      args: ["--newsletter"], // <-- optionally you can specify arguments
+      when: "schedule",
+      schedule: "0 0 * * *", // <-- cron syntax, here: every day at midnight
+    }
+  }
+}
+```
+
+You can also call an http endpoint on a schedule. This is useful if you have a background worker that can be triggerd by an http request.
+
+```ts
+deploy: {
+  type: "google-cloudrun",
+  projectId: "your-google-cloud-project",
+  region: "europe-west6",
+  jobs: {
+    ["send-emails"]: {
+      command: "send-emails",
+    }
+  },
+  execute: {
+    "send-newsletter": {
+      type: "http",
+      url: "${ROOT_URL}/send-emails", // <-- you can use variables here
+      when: "schedule",
+      method: "GET",
+      schedule: "0 0 * * *", // <-- cron syntax, here: every day at midnight
+    }
+  }
+}
+```
+
+### Execute a job from within your app
+
+Check out this example https://git.panter.ch/catladder/test-projects/cloudrun-prisma.
 
 ## Custom domains
 
@@ -137,7 +198,7 @@ Some tips:
 
 ### Traces and logs
 
-_Complexity of these topics is thoroughly described in the documentation [logging](https://www.notion.so/panterch/Logging-c13f3e36d3794ce79cc02258bc6ba07f) and [tracing](https://www.notion.so/panterch/Tracing-a7a7a774f32e4044bb65e73fffd13fa9) with more 
+_Complexity of these topics is thoroughly described in the documentation [logging](https://www.notion.so/panterch/Logging-c13f3e36d3794ce79cc02258bc6ba07f) and [tracing](https://www.notion.so/panterch/Tracing-a7a7a774f32e4044bb65e73fffd13fa9) with more
 information and examples. See subpages in Notion._
 
 Logs are taken automatically by cloud run, so simply log to stdout and stderr is the simplest approach. However, you may want to group logs by request, or add additional context to logs. This can be achieved with structured logging and using @google-cloud/logging-winston.
@@ -178,7 +239,7 @@ export default class LoggerFactory {
               format: format.combine(
                 format.timestamp(),
                 format.colorize(),
-                myFormat
+                myFormat,
               ),
             }),
           ],
@@ -276,13 +337,13 @@ Steps:
 
 1. Change the catladder.ts config to use `google-cloud-run` as deploy type. Don't forget to alter all jobs as well.
 2. run `project-setup` in catladder-cli
-2. migrate the `POSTGRESQL_PASSWORD` secret to the `DB_PASSWORD` secret.
-3. Push and make sure it works on your review-branch. Test it thoroughly
-4. Merge and create a release. Wait before you deploy to production.
-5. If you have cronjobs and background workers, you need to manually remove them from Kubernetes because once you deploy the app to production, the new cronjobs and workers will start to operate as well.
-6. Deploy it to production. Make sure it works correctly by accessing it via the cloud run url. If you have custom domains, you can already set them up, but don't change the DNS yet.
-7. Change the DNS to point the public prod domain to the custom domain (firebase) or load balancer.
-8. Once DNS is propagated (can take up to 24h), you can safely delete the old Kubernetes namespace as no traffic should land there any more.
+3. migrate the `POSTGRESQL_PASSWORD` secret to the `DB_PASSWORD` secret.
+4. Push and make sure it works on your review-branch. Test it thoroughly
+5. Merge and create a release. Wait before you deploy to production.
+6. If you have cronjobs and background workers, you need to manually remove them from Kubernetes because once you deploy the app to production, the new cronjobs and workers will start to operate as well.
+7. Deploy it to production. Make sure it works correctly by accessing it via the cloud run url. If you have custom domains, you can already set them up, but don't change the DNS yet.
+8. Change the DNS to point the public prod domain to the custom domain (firebase) or load balancer.
+9. Once DNS is propagated (can take up to 24h), you can safely delete the old Kubernetes namespace as no traffic should land there any more.
 
 ### Considerations
 

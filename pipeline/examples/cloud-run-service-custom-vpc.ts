@@ -21,7 +21,6 @@ const config: Config = {
         },
         jobs: {
           myjob: {
-            when: "manual",
             command: "echo hello",
             network: "my-network",
             subnet: "my-subnet",

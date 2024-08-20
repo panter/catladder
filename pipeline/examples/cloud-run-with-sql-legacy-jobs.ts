@@ -1,0 +1,49 @@
+import type { Config } from "../src";
+
+const config: Config = {
+  appName: "test-app",
+  customerName: "pan",
+  components: {
+    api: {
+      dir: "api",
+      build: {
+        type: "node",
+      },
+      deploy: {
+        type: "google-cloudrun",
+        projectId: "google-project-id",
+        region: "europe-west6",
+        // optional, set min and max instances
+        // defaults to 0-100
+        service: {
+          minInstances: 0,
+          maxInstances: 5,
+        },
+        cloudSql: {
+          type: "unmanaged",
+          instanceConnectionName: "projectId:region:instancename",
+          dbUser: "my-user",
+        },
+        jobs: {
+          migration: {
+            when: "preDeploy",
+            command: "yarn migrate",
+            waitForCompletion: true,
+          },
+          ["send-reminders"]: {
+            when: "schedule",
+            command: "yarn job:send-reminders",
+            schedule: "0 * * * *",
+            timeout: "15m",
+          },
+        },
+      },
+    },
+  },
+};
+
+export default config;
+
+export const information = {
+  title: "Cloud Run: With SQL",
+};

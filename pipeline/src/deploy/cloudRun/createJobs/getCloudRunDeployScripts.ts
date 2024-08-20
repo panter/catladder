@@ -8,17 +8,15 @@ import { writeBashYamlToFileScript } from "../../../bash/bashYaml";
 import { getRemoveOldRevisionsAndImagesCommand } from "../cleanup";
 import { getDatabaseCreateScript } from "../utils/database";
 import { gcloudServiceAccountLoginCommands } from "../utils/gcloudServiceAccountLoginCommands";
-import {
-  getCreateScheduleScripts,
-  getJobCreateScripts,
-  getJobRunScripts,
-} from "./cloudRunJobs";
+import { getJobCreateScripts } from "./cloudRunJobs";
+import { getOnDeployExecuteScript } from "./execute/onDeploy";
 import { getServiceDeployScript } from "./cloudRunServices";
 import {
   getCloudRunDeployConfig,
   setGoogleProjectNumberScript,
 } from "./common";
 import { ENV_VARS_FILENAME } from "./constants";
+import { getCreateScheduleScript } from "./execute/schedules";
 
 export function getCloudRunDeployScripts(context: ComponentContext) {
   const deployConfig = getCloudRunDeployConfig(context);
@@ -47,9 +45,9 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
       ...(deployConfig.cloudSql
         ? getDatabaseCreateScript(context, deployConfig) // we create the db, so that we can also delete it afterwards
         : []),
-      ...getCreateScheduleScripts(context),
+      ...getCreateScheduleScript(context),
       ...getJobCreateScripts(context),
-      ...getJobRunScripts(context, "preDeploy"),
+      ...getOnDeployExecuteScript(context, "preDeploy"),
 
       ...(deployConfig.service !== false
         ? [getServiceDeployScript(context, deployConfig.service)]
@@ -58,7 +56,7 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
         ([name, service]) =>
           getServiceDeployScript(context, service, "-" + name),
       ),
-      ...getJobRunScripts(context, "postDeploy"),
+      ...getOnDeployExecuteScript(context, "postDeploy"),
     ]),
     ...collapseableSection(
       "cleanup",
