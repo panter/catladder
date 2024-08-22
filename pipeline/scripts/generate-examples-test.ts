@@ -37,13 +37,6 @@ async function getExampleIgnores(): Promise<string[]> {
   }
 }
 
-type ExampleTestLines = {
-  importLine: string;
-  testString: string;
-  kebabName: string;
-  camelName: string;
-};
-
 async function main() {
   const exampleIgnores = await getExampleIgnores();
   const [exampleFiles, existingTestFiles] = await Promise.all([
