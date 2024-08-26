@@ -1,4 +1,4 @@
-import fs from "fs-extra";
+import { createFile, pathExists, readFile, writeFile } from "fs-extra";
 import { homedir } from "os";
 
 import { parse, stringify } from "yaml";
@@ -6,11 +6,13 @@ const directory = `${homedir()}/.catladder`;
 const file = `${directory}/preferences.yml`;
 
 const getPreferences = async () => {
-  if (!(await fs.pathExists(file))) {
-    await fs.createFile(file);
+  if (!(await pathExists(file))) {
+    await createFile(file);
   }
-  return (parse(await fs.readFile(file, { encoding: "utf-8" })) ??
-    {}) as Record<string, string>;
+  return (parse(await readFile(file, { encoding: "utf-8" })) ?? {}) as Record<
+    string,
+    string
+  >;
 };
 
 export const hasPreference = async (key: string) => {
@@ -30,5 +32,5 @@ export const setPreference = async (key: string, value: string | number) => {
     [key]: value,
   };
 
-  await fs.writeFile(file, stringify(newPreferences));
+  await writeFile(file, stringify(newPreferences));
 };
