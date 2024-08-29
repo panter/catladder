@@ -1,5 +1,5 @@
 import type { CommandInstance } from "vorpal";
-import dayjs from "dayjs";
+import { add, format } from "date-fns";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 
 const TOKEN_NAME = "semantic-release";
@@ -15,10 +15,10 @@ export const setupAccessTokens = async (instance: CommandInstance) => {
     (t) => t.name === TOKEN_NAME && t.active === true,
   );
 
-  const expires_at = dayjs()
-    .add(1, "year")
-    .subtract(1, "day")
-    .format("YYYY-MM-DD");
+  const expires_at = format(
+    add(new Date(), { years: 1, days: -1 }),
+    "yyyy-MM-dd",
+  );
 
   const newToken = token
     ? await doGitlabRequest(
