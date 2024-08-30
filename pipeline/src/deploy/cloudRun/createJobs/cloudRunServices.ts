@@ -62,13 +62,8 @@ export const getServiceDeployScript = (
     },
     ...createVolumeConfig(customConfig?.volumes, "service"),
   );
-  // volumes require beta
-  const requiresBeta =
-    customConfig?.volumes && Object.keys(customConfig?.volumes).length > 0;
 
-  return `${gcloudRunCmd(
-    requiresBeta ? "beta" : undefined,
-  )} deploy ${fullServiceName} ${argsString}`;
+  return `${gcloudRunCmd()} deploy ${fullServiceName} ${argsString}`;
 };
 
 export const getServiceDeleteScript = (

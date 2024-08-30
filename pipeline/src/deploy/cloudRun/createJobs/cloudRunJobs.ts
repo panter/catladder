@@ -108,29 +108,23 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
         region,
         ...deployArgs
       } = getCommonDeployArgs(context);
-      const commonDeployArgsString = createArgsString({
-        command: `"${commandArray.join(",")}"`,
-        labels: `"${makeLabelString(getLabels(context))},cloud-run-job-name=$current_job_name"`,
-        image: `"${image ?? commonImage}"`,
-        project,
-        region,
-        cpu,
-        memory,
-        parallelism,
-        "task-timeout": timeout,
-        "env-vars-file": ENV_VARS_FILENAME,
-        "max-retries": 0,
-        ...deployArgs,
-      });
-
-      // due to some oversight from google, jobs create does not yet accept `--add-volume` 🤦
-      // lucky, update on the other hand accepts it... so let's just imediatly update it
-      // we cannot upsert a job, so we have to create it and catch the error and then update
-      const hasVolumes = Object.keys(volumes || {}).length > 0;
-      const needsBeta = hasVolumes ? "beta" : undefined;
-      const volumeArgs = hasVolumes
-        ? createArgsString(...createVolumeConfig(volumes, "job"))
-        : "";
+      const commonDeployArgsString = createArgsString(
+        {
+          command: `"${commandArray.join(",")}"`,
+          labels: `"${makeLabelString(getLabels(context))},cloud-run-job-name=$current_job_name"`,
+          image: `"${image ?? commonImage}"`,
+          project,
+          region,
+          cpu,
+          memory,
+          parallelism,
+          "task-timeout": timeout,
+          "env-vars-file": ENV_VARS_FILENAME,
+          "max-retries": 0,
+          ...deployArgs,
+        },
+        ...createVolumeConfig(volumes, "job"),
+      );
 
       return [
         jobIndex === 0
@@ -138,7 +132,7 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
           : null,
         `current_job_name="${jobName}"`,
         'if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then',
-        `  ${gcloudRunCmd(needsBeta)} jobs update "$current_job_name" ${commonDeployArgsString} ${volumeArgs}`,
+        `  ${gcloudRunCmd()} jobs update "$current_job_name" ${commonDeployArgsString}`,
         "else",
         `  ${gcloudRunCmd()} jobs create "$current_job_name" ${commonDeployArgsString}`,
         "fi",

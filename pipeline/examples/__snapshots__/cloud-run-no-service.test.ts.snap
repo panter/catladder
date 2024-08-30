@@ -436,7 +436,7 @@ api 🧪 test:
       )"
       current_job_name="pan-test-app-dev-api-alarm-clock"
       if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
-        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       else
         gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       fi
@@ -766,7 +766,7 @@ api 🧪 test:
       )"
       current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-alarm-clock"
       if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
-        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       else
         gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       fi
@@ -1098,7 +1098,7 @@ api 🧪 test:
       )"
       current_job_name="pan-test-app-stage-api-alarm-clock"
       if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
-        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       else
         gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       fi
@@ -1417,7 +1417,7 @@ api 🧪 test:
       )"
       current_job_name="pan-test-app-prod-api-alarm-clock"
       if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
-        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 
+        gcloud run jobs update "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       else
         gcloud run jobs create "$current_job_name" --command="./wake-up-call" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG" --project=asdf --region=asia-east1 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       fi
