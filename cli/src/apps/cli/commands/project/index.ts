@@ -12,8 +12,7 @@ import commandSetup from "./commandSetup";
 import commandRenewToken from "./commandRenewToken";
 import commandListPods from "./commandListPods";
 import commandNamespace from "./commandNamespace";
-import commandOpenCostDashboard from "./commandOpenCostDashboard";
-import commandOpenDashboard from "./commandOpenDashboard";
+
 import commandOpenEnv from "./commandOpenEnv";
 import commandOpenGit from "./commandOpenGit";
 import commandOpenLogs from "./commandOpenLogs";
@@ -35,11 +34,7 @@ export default async (vorpal: Vorpal) => {
   commandPauseProject(vorpal);
   commandDeleteProject(vorpal);
 
-  commandOpenDashboard(vorpal);
-
   commandOpenLogs(vorpal);
-
-  commandOpenCostDashboard(vorpal);
 
   commandCloudSqlProxy(vorpal);
   commandProjectRestoreDb(vorpal);
