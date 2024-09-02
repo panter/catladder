@@ -9,15 +9,13 @@ export const getGitlabReleaseJobs = () => {
     ["create release"]: {
       stage: "release",
       image: getRunnerImage("semantic-release"),
-      script: ["semanticRelease"],
-      after_script: [EXPIRED_TOKEN_HELP],
+      script: ["semanticRelease", EXPIRED_TOKEN_HELP],
       rules: RULES_RELEASE,
     },
     ["⚠️ force create release"]: {
       stage: "release",
       image: getRunnerImage("semantic-release"),
-      script: ["semanticRelease"],
-      after_script: [EXPIRED_TOKEN_HELP],
+      script: ["semanticRelease", EXPIRED_TOKEN_HELP],
       needs: [],
       rules: RULES_MANUAL_RELEASE,
     },
