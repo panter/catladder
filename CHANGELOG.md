@@ -1,3 +1,10 @@
+## [2.0.5](https://git.panter.ch/catladder/catladder/compare/v2.0.4...v2.0.5) (2024-09-02)
+
+
+### Bug Fixes
+
+* **cloud run:** add volumes when creating tasks ([20c54c1](https://git.panter.ch/catladder/catladder/commit/20c54c168d2aba41d3e86b9685523bc070094057))
+
 ## [2.0.4](https://git.panter.ch/catladder/catladder/compare/v2.0.3...v2.0.4) (2024-09-02)
 
 ## [2.0.3](https://git.panter.ch/catladder/catladder/compare/v2.0.2...v2.0.3) (2024-09-02)
