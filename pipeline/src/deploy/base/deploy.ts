@@ -62,11 +62,11 @@ export const createDeployJob = (
         ? []
         : [{ job: SBOM_BUILD_JOB_NAME, artifacts: true }]),
       ...(deployConfig
-        ? deployConfig.waitFor?.map((c) => ({
+        ? (deployConfig.waitFor?.map((c) => ({
             componentName: c,
             job: DEPLOY_JOB_NAME,
             artifacts: false,
-          })) ?? []
+          })) ?? [])
         : []),
     ],
     // we don't want to deploy when there is a broken test
@@ -117,7 +117,7 @@ export const createDeployJob = (
     runnerVariables: {
       ...DEPLOY_RUNNER_VARIABLES,
       ...(jobDefinition.runnerVariables ?? {}),
-      ...(deployConfig ? deployConfig.runnerVariables ?? {} : {}),
+      ...(deployConfig ? (deployConfig.runnerVariables ?? {}) : {}),
     },
     environment: isStoppable
       ? {

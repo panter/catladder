@@ -134,7 +134,7 @@ export const getEnvironmentVariables = async (
   );
 
   const publicEnvVars =
-    options.shouldResolveReferences ?? true
+    (options.shouldResolveReferences ?? true)
       ? await resolveAllReferences(
           publicEnvVarsUnresolved,
           async (otherComponentName) => {

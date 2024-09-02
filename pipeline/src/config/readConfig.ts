@@ -1,6 +1,5 @@
 import { existsSync, readFileSync } from "fs";
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const tsx = require("tsx/cjs/api");
 
 import { parse } from "yaml";

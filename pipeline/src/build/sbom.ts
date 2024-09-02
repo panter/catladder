@@ -22,14 +22,14 @@ export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
     isStandaloneBuildConfig(buildConfig) &&
     buildConfig.type === "custom" &&
     buildConfig.sbom !== false
-      ? buildConfig.sbom?.jobImage ?? defaultImage
+      ? (buildConfig.sbom?.jobImage ?? defaultImage)
       : defaultImage;
 
   const script =
     isStandaloneBuildConfig(buildConfig) &&
     buildConfig.type === "custom" &&
     buildConfig.sbom !== false
-      ? ensureArrayOrNull(buildConfig.sbom?.command) ?? defaultScript
+      ? (ensureArrayOrNull(buildConfig.sbom?.command) ?? defaultScript)
       : defaultScript;
 
   return {

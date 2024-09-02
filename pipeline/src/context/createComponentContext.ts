@@ -76,7 +76,7 @@ export const createComponentContext = async (
     dir,
     // also copy workspace dependencies in monorepo if packages are shared and they create build artifacts
     ...(mode === "all"
-      ? packageManagerInfo.currentWorkspaceDependencies ?? []
+      ? (packageManagerInfo.currentWorkspaceDependencies ?? [])
       : []),
   ];
   const _getBuildContext = (): BuildContextComponent => {

@@ -4,7 +4,6 @@
 // this will point to the root package.json
 
 const path = require.main?.path + "/../package.json";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const ownPkg = require(path);
 
 export default ownPkg;

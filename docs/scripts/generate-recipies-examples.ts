@@ -50,7 +50,7 @@ async function main() {
       .replaceAll(/\n+export const information = \{\n.+\n\};\n+/g, "")
       .replaceAll(/\n+export default config;/g, "");
 
-    const mod = require(join(rootPath, examplesSourcePath, title)); // eslint-disable-line @typescript-eslint/no-var-requires
+    const mod = require(join(rootPath, examplesSourcePath, title));
     if ("information" in mod) {
       if ("title" in mod.information) {
         title = mod.information.title;

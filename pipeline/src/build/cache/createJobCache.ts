@@ -30,7 +30,7 @@ export const createJobCacheFromCacheConfigs = (
                 const baseDir =
                   c.pathMode === "absolute"
                     ? ""
-                    : c.baseDir ?? context.build.dir;
+                    : (c.baseDir ?? context.build.dir);
                 return join(baseDir, p);
               }),
             ),
@@ -41,7 +41,7 @@ export const createJobCacheFromCacheConfigs = (
   const advancedCaches = advancedCacheDefs.map(
     ({ key, paths, policy, scope, pathMode, buildDir, ...rest }) => {
       const baseDir =
-        pathMode === "absolute" ? "" : buildDir ?? context.build.dir;
+        pathMode === "absolute" ? "" : (buildDir ?? context.build.dir);
       const transformedKey =
         scope === "global"
           ? key
