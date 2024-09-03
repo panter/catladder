@@ -222,6 +222,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.dev.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.dev.test-app.pan.panter.cloud"
@@ -232,7 +233,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_dev_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_dev_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
     - export DOCKER_IMAGE_NAME="dev/app"
@@ -273,6 +274,8 @@ app 🧪 test:
             $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
             $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+          HOSTNAME: |-
+            app.dev.test-app.pan.panter.cloud
           ROOT_URL: |-
             https://app.dev.test-app.pan.panter.cloud
           HOSTNAME_INTERNAL: |-
@@ -287,7 +290,7 @@ app 🧪 test:
           RAILS_ENV: |-
             production
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
       application:
         host: |-
           app.dev.test-app.pan.panter.cloud
@@ -380,6 +383,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.dev.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.dev.test-app.pan.panter.cloud"
@@ -390,7 +394,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_dev_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_dev_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-dev-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -440,6 +444,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.dev.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.dev.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.dev.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.dev.test-app.pan.panter.cloud"
@@ -450,7 +455,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_dev_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_dev_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-dev-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -554,6 +559,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
@@ -564,7 +570,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_review_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_review_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
     - export DOCKER_IMAGE_NAME="review/app"
@@ -605,6 +611,8 @@ app 🧪 test:
             $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
             $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+          HOSTNAME: |-
+            $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           ROOT_URL: |-
             $(printf %s "https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
           HOSTNAME_INTERNAL: |-
@@ -620,7 +628,7 @@ app 🧪 test:
           RAILS_ENV: |-
             production
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
       application:
         host: |-
           $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
@@ -716,6 +724,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
@@ -726,7 +735,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_review_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_review_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -774,6 +783,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud"
@@ -784,7 +794,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_review_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_review_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -886,6 +896,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.stage.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.stage.test-app.pan.panter.cloud"
@@ -896,7 +907,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_stage_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_stage_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
     - export DOCKER_IMAGE_NAME="stage/app"
@@ -937,6 +948,8 @@ app 🧪 test:
             $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
             $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+          HOSTNAME: |-
+            app.stage.test-app.pan.panter.cloud
           ROOT_URL: |-
             https://app.stage.test-app.pan.panter.cloud
           HOSTNAME_INTERNAL: |-
@@ -951,7 +964,7 @@ app 🧪 test:
           RAILS_ENV: |-
             production
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
       application:
         host: |-
           app.stage.test-app.pan.panter.cloud
@@ -1035,6 +1048,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.stage.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.stage.test-app.pan.panter.cloud"
@@ -1045,7 +1059,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_stage_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_stage_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-stage-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -1093,6 +1107,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="app.stage.test-app.pan.panter.cloud"
     - export ROOT_URL="https://app.stage.test-app.pan.panter.cloud"
     - export HOSTNAME_INTERNAL="app.stage.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.stage.test-app.pan.panter.cloud"
@@ -1103,7 +1118,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_stage_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_stage_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-stage-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -1205,6 +1220,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="my-fancy-website.com"
     - export ROOT_URL="https://my-fancy-website.com"
     - export HOSTNAME_INTERNAL="app.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.prod.test-app.pan.panter.cloud"
@@ -1215,7 +1231,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_prod_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_prod_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export DOCKER_REGISTRY="$CI_REGISTRY"
     - export DOCKER_CACHE_IMAGE="$CI_REGISTRY_IMAGE/caches/app"
     - export DOCKER_IMAGE_NAME="prod/app"
@@ -1256,6 +1272,8 @@ app 🧪 test:
             $(printf %s "$CI_JOB_STARTED_AT" | sed '1!s/^/      /')
           BUILD_INFO_CURRENT_VERSION: |-
             $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+          HOSTNAME: |-
+            my-fancy-website.com
           ROOT_URL: |-
             https://my-fancy-website.com
           HOSTNAME_INTERNAL: |-
@@ -1270,7 +1288,7 @@ app 🧪 test:
           RAILS_ENV: |-
             production
           _ALL_ENV_VAR_KEYS: |-
-            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+            ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
       application:
         host: |-
           my-fancy-website.com
@@ -1354,6 +1372,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="my-fancy-website.com"
     - export ROOT_URL="https://my-fancy-website.com"
     - export HOSTNAME_INTERNAL="app.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.prod.test-app.pan.panter.cloud"
@@ -1364,7 +1383,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_prod_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_prod_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-prod-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
@@ -1412,6 +1431,7 @@ app 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="my-fancy-website.com"
     - export ROOT_URL="https://my-fancy-website.com"
     - export HOSTNAME_INTERNAL="app.prod.test-app.pan.panter.cloud"
     - export ROOT_URL_INTERNAL="https://app.prod.test-app.pan.panter.cloud"
@@ -1422,7 +1442,7 @@ app 🧪 test:
     - export POSTGRESQL_PASSWORD="$CL_prod_app_POSTGRESQL_PASSWORD"
     - export cloudsqlProxyCredentials="$CL_prod_app_cloudsqlProxyCredentials"
     - export RAILS_ENV="production"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
     - export RELEASE_NAME="pan-test-app-prod-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"

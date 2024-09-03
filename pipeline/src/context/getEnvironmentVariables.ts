@@ -92,11 +92,7 @@ export const getEnvironmentVariables = async (
 
     predefinedVariables = {
       ...basePredefinedVariables,
-      // Rails before 6.1 (mis)uses the `HOST` environment variable to specify the IP to bind to
-      ...(isStandaloneBuildConfig(buildConfigRaw) &&
-      buildConfigRaw.type === "rails"
-        ? {}
-        : { HOSTNAME: host }),
+      HOSTNAME: host,
       ROOT_URL: url,
       HOSTNAME_INTERNAL,
 
@@ -134,7 +130,7 @@ export const getEnvironmentVariables = async (
   );
 
   const publicEnvVars =
-    (options.shouldResolveReferences ?? true)
+    options.shouldResolveReferences ?? true
       ? await resolveAllReferences(
           publicEnvVarsUnresolved,
           async (otherComponentName) => {
