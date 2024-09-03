@@ -222,14 +222,14 @@ const addGitlabEnvironment = (
     return job;
   }
   const { env, name, environment } = context;
-  const { url, envType } = environment;
+  const { envVars, envType } = environment;
   const { on_stop, ...restEnvironment } = catladderJobEnvironment;
   // those can be dynamic, so we therefore have to do this: https://docs.gitlab.com/ee/ci/environments/#set-a-dynamic-environment-url
 
   const dotEnvFile = "gitlab_environment.env";
 
   const scriptToAdd = [
-    `echo "${GITLAB_ENVIRONMENT_URL_VARIABLE}=${url}" >> ${dotEnvFile}`,
+    `echo "${GITLAB_ENVIRONMENT_URL_VARIABLE}=${envVars.ROOT_URL}" >> ${dotEnvFile}`,
   ];
 
   // this is NOT a bashVariable since it NEEDS to be used as a string in gitlab

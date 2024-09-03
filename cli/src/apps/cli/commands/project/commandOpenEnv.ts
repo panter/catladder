@@ -16,7 +16,7 @@ export default async (vorpal: Vorpal) =>
       const { env, componentName } = parseChoice(envComponent);
       await ensureCluster.call(this, envComponent);
       const environment = await getEnvironment(env, componentName);
-      const url = environment.url;
+      const url = environment.envVars.ROOT_URL;
 
       open(url.toString());
     });

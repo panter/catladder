@@ -40,7 +40,7 @@ type BasePredefinedVariables = ReturnType<typeof getBasePredefinedVariables>;
 
 // we export so that we have later nice autocomplete
 export type PredefinedVariables = BasePredefinedVariables & {
-  HOSTNAME?: StringOrBashExpression;
+  HOSTNAME: StringOrBashExpression;
   ROOT_URL: StringOrBashExpression;
   HOSTNAME_INTERNAL: StringOrBashExpression;
   ROOT_URL_INTERNAL: StringOrBashExpression;
@@ -95,7 +95,6 @@ export const getEnvironmentVariables = async (
       HOSTNAME: host,
       ROOT_URL: url,
       HOSTNAME_INTERNAL,
-
       ROOT_URL_INTERNAL: joinBashExpressions(["https://", HOSTNAME_INTERNAL]),
       ...additionalEnvVars,
     };
@@ -130,7 +129,7 @@ export const getEnvironmentVariables = async (
   );
 
   const publicEnvVars =
-    options.shouldResolveReferences ?? true
+    (options.shouldResolveReferences ?? true)
       ? await resolveAllReferences(
           publicEnvVarsUnresolved,
           async (otherComponentName) => {
@@ -172,9 +171,6 @@ export const getEnvironmentVariables = async (
         (deployConfigRaw && deployConfigRaw.jobVars) || null,
       ),
     },
-
-    host,
-    url,
   };
 };
 

@@ -26,7 +26,7 @@ const createAppConfig = (
 
   return mergeWithMergingArrays(
     {
-      host: context.environment.host,
+      host: context.environment.envVars.HOSTNAME,
       command: command ?? context.build.config.startCommand,
       livenessProbe: {
         httpGet: {

@@ -28,9 +28,6 @@ export type EnvironmentEnvVars<
   secretEnvVarKeys: SecretEnvVar[];
 };
 export type EnvironmentEnvVarPart = {
-  host: StringOrBashExpression;
-  url: StringOrBashExpression;
-
   /**
    * vars that only are injected in certain jobs, but not elsewhere
    */
@@ -41,8 +38,6 @@ export type EnvironmentEnvVarPart = {
 } & EnvironmentEnvVars<PredefinedVariables>;
 // FIXME: align with EnvironmentContext
 export type Environment = {
-  host: StringOrBashExpression;
-  url: StringOrBashExpression;
   /**
    * the full name of the app. We use this as RELEASE_NAME in kubernetes and the service name in google cloud run
    */
