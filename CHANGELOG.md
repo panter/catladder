@@ -1,3 +1,10 @@
+# [2.2.0](https://git.panter.ch/catladder/catladder/compare/v2.1.0...v2.2.0) (2024-09-03)
+
+
+### Features
+
+* **gitlab:** create multiple gitlab includes ([3df5566](https://git.panter.ch/catladder/catladder/commit/3df5566dbe57d61f10518718b2391fe00003c2c2))
+
 # [2.1.0](https://git.panter.ch/catladder/catladder/compare/v2.0.5...v2.1.0) (2024-09-03)
 
 
