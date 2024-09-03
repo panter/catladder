@@ -1,3 +1,10 @@
+## [2.2.1](https://git.panter.ch/catladder/catladder/compare/v2.2.0...v2.2.1) (2024-09-03)
+
+
+### Bug Fixes
+
+* don't fail when catladder generated folder does not exist ([4a74b6c](https://git.panter.ch/catladder/catladder/commit/4a74b6cbbd2e284c66f417b527e1a0717e4d9bf5))
+
 # [2.2.0](https://git.panter.ch/catladder/catladder/compare/v2.1.0...v2.2.0) (2024-09-03)
 
 
