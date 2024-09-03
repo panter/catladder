@@ -26,8 +26,9 @@ const config: Config = {
         },
         jobs: {
           migration: {
-            when: "postDeploy",
+            when: "preDeploy",
             command: "yarn migrate",
+            waitForCompletion: true,
           },
           ["send-reminders"]: {
             when: "schedule",

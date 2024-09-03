@@ -69,16 +69,19 @@ export const getJobRunScripts = (
   when: DeployConfigCloudRunJob["when"],
 ) => {
   const jobsWithNames = getCloudRunJobsWithNames(context);
+
   return jobsWithNames
     .filter(({ job }) => job.when === when)
-    .map(({ jobName }) =>
-      getJobRunScriptForJob(
-        context,
-        jobName,
-        // wait for completin on stop jobs, since stop will delete the jobs afterwards, so they will fail
-        ["preStop", "postStop"].includes(when),
-      ),
-    );
+    .map(({ jobName, job }) => {
+      // always wait for completion for preStop and postStop jobs
+      // since stop will delete the jobs afterwards, so they will fail
+      const waitForCompletion = ["preStop", "postStop"].includes(when)
+        ? true
+        : "waitForCompletion" in job
+          ? (job.waitForCompletion ?? false)
+          : false;
+      return getJobRunScriptForJob(context, jobName, waitForCompletion);
+    });
 };
 
 export const getJobCreateScripts = (context: ComponentContext): string[] =>

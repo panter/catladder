@@ -241,6 +241,12 @@ export type DeployConfigCloudRunJobWithSchedule =
 
 export type DeployConfigCloudRunJobNormal = DeployConfigCloudRunJobBase & {
   when: "manual" | "preDeploy" | "postDeploy" | "preStop" | "postStop";
+  /**
+   * wait for completion of the job on preDeploy and postDeploy
+   *
+   * has no effect on preStop and postStop (which always wait for completion)
+   */
+  waitForCompletion?: boolean;
 };
 
 export type DeployConfigCloudRunWithVolumes = {
