@@ -1,2 +1,2 @@
-export * from "./getGitConfigVars";
 export * from "./gitConfig";
+export * from "./gitProjectInformation";

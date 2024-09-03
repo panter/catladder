@@ -17,14 +17,17 @@ export const setupGitlabToken = async (vorpal: CommandInstance) => {
   vorpal.log("");
   vorpal.log("☝ we open up the settings page for you!");
   vorpal.log("");
-  const { shouldContinue } = await vorpal.prompt({
-    default: true,
-    message: "Ok",
-    name: "shouldContinue",
-    type: "prompt",
-  });
+  const [{ shouldContinue }, { gitRemoteHost }] = await Promise.all([
+    vorpal.prompt({
+      default: true,
+      message: "Ok",
+      name: "shouldContinue",
+      type: "prompt",
+    }),
+    getGitRemoteHostAndPath(),
+  ]);
 
-  open("https://git.panter.ch/-/profile/personal_access_tokens");
+  open(`https://${gitRemoteHost}/-/profile/personal_access_tokens`);
 
   vorpal.log("Please type in gitlab's personal access token");
 
