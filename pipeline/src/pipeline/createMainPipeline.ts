@@ -6,7 +6,6 @@ import {
 } from "../rules";
 import type {
   ComponentContext,
-  GitlabJobDef,
   GitlabRule,
   Pipeline,
   PipelineTrigger,
@@ -16,6 +15,7 @@ import type {
 import { ALL_PIPELINE_TRIGGERS, type Config } from "../types/config";
 import { createAllJobs } from "./createAllJobs";
 import { getPipelineStages } from "./getPipelineStages";
+import type { GitlabJobWithContext } from "./gitlab/createGitlabJobs";
 import { createGitlabJobs } from "./gitlab/createGitlabJobs";
 import { createGitlabPipelineWithDefaults } from "./gitlab/createGitlabPipeline";
 import { getGitlabReleaseJobs } from "./gitlab/gitlabReleaseJobs";
@@ -40,7 +40,7 @@ export const createMainPipeline = async <T extends PipelineType>(
     ).then((j) => j.flat());
 
     const allWorkspaceJobs = allJobsPerTrigger
-      .filter((j) => j.context.type === "workspace") // sort by componentName in the same order as they appear in the config
+      .filter((j) => j.context?.type === "workspace") // sort by componentName in the same order as they appear in the config
       // this is purely for better readability in git diffs when you add new components
       .sort((a, b) => {
         const workspaceNames = Object.keys(config.builds ?? {});
@@ -54,7 +54,7 @@ export const createMainPipeline = async <T extends PipelineType>(
       });
 
     const allComponentJobs = allJobsPerTrigger
-      .filter((j) => j.context.type === "component")
+      .filter((j) => j.context?.type === "component")
       // sort by componentName in the same order as they appear in the config
       // this is purely for better readability in git diffs when you add new components
       .sort((a, b) => {
@@ -68,28 +68,36 @@ export const createMainPipeline = async <T extends PipelineType>(
         return aIndex - bIndex;
       });
     const allJobs = [...allWorkspaceJobs, ...allComponentJobs].reduce(
-      (acc, { gitlabJob, name }) => {
+      (acc, { gitlabJob, name, context }) => {
         // merge jobs, if a job is already there, merge the rules
         // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
         if (acc[name]) {
-          acc[name].rules = [
-            ...(acc[name].rules ?? []),
+          acc[name].gitlabJob.rules = [
+            ...(acc[name].gitlabJob.rules ?? []),
             ...(gitlabJob.rules ?? []),
           ];
         } else {
-          acc[name] = gitlabJob;
+          acc[name] = { context, gitlabJob };
         }
 
         return acc;
       },
-      {} as { [key: string]: GitlabJobDef },
+      {} as { [key: string]: GitlabJobWithContext },
     );
 
     return createGitlabPipelineWithDefaults({
       stages: [...stages, "release"],
       jobs: {
         ...allJobs,
-        ...getGitlabReleaseJobs(),
+        ...Object.fromEntries(
+          Object.entries(getGitlabReleaseJobs()).map(([name, gitlabJob]) => [
+            name,
+            {
+              gitlabJob,
+              context: null,
+            },
+          ]),
+        ),
       },
       variables: config.runnerVariables,
     }) as Pipeline<T>;

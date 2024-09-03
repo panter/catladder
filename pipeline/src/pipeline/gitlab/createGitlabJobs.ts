@@ -14,11 +14,11 @@ import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
 import type { AllCatladderJobs } from "../createAllJobs";
 
-export type AllGitlabJobs = {
-  name: string;
+export type GitlabJobWithContext = {
   gitlabJob: GitlabJobDef;
-  context: Context;
-}[];
+  context: Context | null;
+};
+export type AllGitlabJobs = (GitlabJobWithContext & { name: string })[];
 
 export const GITLAB_ENVIRONMENT_URL_VARIABLE = "CL_GITLAB_ENVIRONMENT_URL";
 const getFullJobName = ({

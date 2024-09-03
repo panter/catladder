@@ -1,3 +1,4 @@
+import type { GitlabJobWithContext } from "../pipeline/gitlab/createGitlabJobs";
 import type {
   Artifacts as GitlabCiArtifacts,
   JobTemplate,
@@ -65,6 +66,6 @@ export interface GitlabPipeline extends Pick<JobTemplate, "variables"> {
     rules: GitlabRule[];
   };
   stages: string[];
-  jobs: Record<string, GitlabJobDef>;
+  jobs: Record<string, GitlabJobWithContext>;
   before_script?: string[];
 }
