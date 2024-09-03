@@ -1,3 +1,15 @@
+# [2.1.0](https://git.panter.ch/catladder/catladder/compare/v2.0.5...v2.1.0) (2024-09-03)
+
+
+### Bug Fixes
+
+* **catenv:** broken pipeline type argument breaks build ([4c89910](https://git.panter.ch/catladder/catladder/commit/4c89910990cd8bca5e4e3d1977823811075d516f))
+
+
+### Features
+
+* **updates:** all packages where no breaking changes are expected ([7d749f5](https://git.panter.ch/catladder/catladder/commit/7d749f5dab9f9ee308364e1a62941670ac2da547))
+
 ## [2.0.5](https://git.panter.ch/catladder/catladder/compare/v2.0.4...v2.0.5) (2024-09-02)
 
 
