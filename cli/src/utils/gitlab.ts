@@ -1,11 +1,11 @@
 import { getSecretVarName } from "@catladder/pipeline";
-import { exec } from "child-process-promise";
 import { has, isObject } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
 import type { CommandInstance } from "vorpal";
 import { getPreference, hasPreference, setPreference } from "./preferences";
+import { getGitRemoteHostAndPath } from "../git/gitProjectInformation";
 
 const TOKEN_KEY = "gitlab-personal-access-token";
 
@@ -91,16 +91,10 @@ export const doGitlabRequest = async <T = any>(
 export const getProjectInfo = async (
   vorpal: CommandInstance | null,
 ): Promise<{ id: string; web_url: string }> => {
-  const gitRemoteOriginUrl = (
-    await exec("git config --get remote.origin.url")
-  ).stdout.trim();
-  const projectPath =
-    /(https:\/\/|git@)git\.panter\.ch[:/]([^.]*)(\.git)?/g.exec(
-      gitRemoteOriginUrl,
-    );
+  const { gitRemotePath } = await getGitRemoteHostAndPath();
   const project = await doGitlabRequest(
     vorpal,
-    `projects/${encodeURIComponent(projectPath[2])}`,
+    `projects/${encodeURIComponent(gitRemotePath)}`,
   );
   return project;
 };
