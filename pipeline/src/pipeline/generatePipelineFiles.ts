@@ -32,7 +32,7 @@ export async function generatePipelineFiles<T extends PipelineType>(
   const files = [mainFile, ...includes];
 
   // first clean up the folder
-  await rm(GITLAB_GENERATED_FOLDER, { recursive: true });
+  await rm(GITLAB_GENERATED_FOLDER, { force: true, recursive: true });
   // write files
   await Promise.all(
     files.map(async ({ path, content }) => {
