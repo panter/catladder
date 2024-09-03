@@ -58,11 +58,14 @@ export const doGitlabRequest = async <T = any>(
   data: any = undefined,
   method: Method = "GET",
 ): Promise<T> => {
-  const rootToken = await getGitlabToken(vorpal);
+  const [rootToken, { gitRemoteHost }] = await Promise.all([
+    getGitlabToken(vorpal),
+    getGitRemoteHostAndPath(),
+  ]);
 
   //const method = data ? (update ? "PUT" : "POST") : "GET";
 
-  const result = await fetch(`https://git.panter.ch/api/v4/${path}`, {
+  const result = await fetch(`https://${gitRemoteHost}/api/v4/${path}`, {
     method,
     headers: {
       "Content-Type": "application/json",
