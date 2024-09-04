@@ -510,7 +510,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: dev/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -854,7 +853,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1180,7 +1178,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: stage/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1506,7 +1503,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: prod/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1951,7 +1947,6 @@ worker 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-worker-$CL_dev_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: dev/worker
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -2295,7 +2290,6 @@ worker 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-worker-$CL_review_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/worker
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -2621,7 +2615,6 @@ worker 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-worker-$CL_stage_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: stage/worker
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -2947,7 +2940,6 @@ worker 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-worker-$CL_prod_worker_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: prod/worker
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:

@@ -427,7 +427,6 @@ www 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: dev/www
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -706,7 +705,6 @@ www 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -970,7 +968,6 @@ www 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: stage/www
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1234,7 +1231,6 @@ www 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: prod/www
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:

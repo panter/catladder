@@ -242,7 +242,10 @@ const addGitlabEnvironment = (
     ...job,
     environment: {
       name: gitlabEnvironmentName,
-      url: `$${GITLAB_ENVIRONMENT_URL_VARIABLE}`,
+      ...(!catladderJobEnvironment.action ||
+      catladderJobEnvironment.action === "start"
+        ? { url: `$${GITLAB_ENVIRONMENT_URL_VARIABLE}` }
+        : {}),
       ...(on_stop
         ? {
             on_stop: getFullReferencedJobNameFromComponent(

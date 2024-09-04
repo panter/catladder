@@ -511,7 +511,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: dev/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -566,7 +565,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: dev/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
@@ -901,7 +899,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -954,7 +951,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
@@ -1279,7 +1275,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: stage/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1332,7 +1327,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: stage/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
@@ -1657,7 +1651,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: prod/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1710,7 +1703,6 @@ api 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://api.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: prod/api
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:

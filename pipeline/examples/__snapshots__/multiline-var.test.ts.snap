@@ -524,7 +524,6 @@ app1 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: dev/app1
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -879,7 +878,6 @@ app1 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app1
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1219,7 +1217,6 @@ app1 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: stage/app1
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -1559,7 +1556,6 @@ app1 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: prod/app1
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -2038,7 +2034,6 @@ app2 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: dev/app2
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -2413,7 +2408,6 @@ app2 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app2
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -2773,7 +2767,6 @@ app2 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: stage/app2
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -3133,7 +3126,6 @@ app2 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
   environment:
     name: prod/app2
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -3756,7 +3748,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: dev/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -3847,7 +3838,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: dev/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
@@ -4359,7 +4349,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -4448,7 +4437,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
@@ -4950,7 +4938,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: stage/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -5039,7 +5026,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: stage/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
@@ -5541,7 +5527,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: prod/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: stop
   artifacts:
     reports:
@@ -5630,7 +5615,6 @@ kube 🧪 test:
     - echo "CL_GITLAB_ENVIRONMENT_URL=https://kube.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
   environment:
     name: prod/kube
-    url: $CL_GITLAB_ENVIRONMENT_URL
     action: access
   artifacts:
     reports:
