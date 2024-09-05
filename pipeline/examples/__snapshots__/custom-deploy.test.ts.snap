@@ -366,8 +366,8 @@ www 🧪 test:
     - cd www
     - echo 'would deploy'
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -411,8 +411,8 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - echo 'would stop'
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/www
     action: stop
@@ -606,9 +606,10 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - cd www
     - echo 'would deploy'
+    - ROOT_URL="$(my deploy command)"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -650,8 +651,8 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - echo 'would stop'
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
     action: stop
@@ -844,8 +845,8 @@ www 🧪 test:
     - cd www
     - echo 'would deploy'
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -880,8 +881,8 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - echo 'would stop'
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/www
     action: stop
@@ -1074,8 +1075,8 @@ www 🧪 test:
     - cd www
     - echo 'would deploy'
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "https://unknown-host.example.com" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/www
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1110,8 +1111,8 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - echo 'would stop'
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "https://unknown-host.example.com" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://unknown-host.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/www
     action: stop

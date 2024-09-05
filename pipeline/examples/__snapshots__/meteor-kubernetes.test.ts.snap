@@ -450,9 +450,9 @@ web 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://web.dev.my-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.dev.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/web
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -520,8 +520,8 @@ web 🧪 test:
     - kubectl config use-context "kube-pan-my-app-dev-web"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://web.dev.my-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.dev.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/web
     action: stop
@@ -576,7 +576,7 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"
     - kubectl config use-context "kube-pan-my-app-dev-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.dev.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/web
     action: access
@@ -854,9 +854,9 @@ web 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/web
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -922,8 +922,8 @@ web 🧪 test:
     - kubectl config use-context "kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/web
     action: stop
@@ -976,7 +976,7 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" --cluster="kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" --user="kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" --namespace="pan-my-app-review"
     - kubectl config use-context "kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/web
     action: access
@@ -1251,9 +1251,9 @@ web 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://web.stage.my-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.stage.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/web
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1312,8 +1312,8 @@ web 🧪 test:
     - kubectl config use-context "kube-pan-my-app-stage-web"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://web.stage.my-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.stage.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/web
     action: stop
@@ -1366,7 +1366,7 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"
     - kubectl config use-context "kube-pan-my-app-stage-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://web.stage.my-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/web
     action: access
@@ -1660,9 +1660,9 @@ web 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "https://www.example.com" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-my-app/web" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://www.example.com" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/web
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1722,8 +1722,8 @@ web 🧪 test:
     - kubectl config use-context "kube-pan-my-app-prod-web"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "https://www.example.com" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://www.example.com" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/web
     action: stop
@@ -1777,7 +1777,7 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"
     - kubectl config use-context "kube-pan-my-app-prod-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://www.example.com" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/web
     action: access

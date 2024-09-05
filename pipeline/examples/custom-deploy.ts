@@ -25,6 +25,13 @@ const config: Config = {
         script: ["echo 'would deploy'"],
         stopScript: ["echo 'would stop'"],
       },
+      env: {
+        review: {
+          deploy: {
+            script: ['ROOT_URL="$(my deploy command)"'],
+          },
+        },
+      },
     },
   },
 };

@@ -438,8 +438,8 @@ api 🧪 test:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -489,9 +489,9 @@ api 🧪 test:
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-api-$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/api
     action: stop
@@ -761,8 +761,8 @@ api 🧪 test:
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -813,9 +813,9 @@ api 🧪 test:
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags
     - set -e
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
     action: stop
@@ -1080,8 +1080,8 @@ api 🧪 test:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1122,9 +1122,9 @@ api 🧪 test:
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-api-$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/api
     action: stop
@@ -1389,8 +1389,8 @@ api 🧪 test:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1431,9 +1431,9 @@ api 🧪 test:
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-api-$CL_prod_api_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/api
     action: stop

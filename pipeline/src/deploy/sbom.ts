@@ -1,3 +1,4 @@
+import { getBashVariable } from "../bash/BashExpression";
 import { SBOM_FILE } from "../build/sbom";
 import {
   componentContextIsStandaloneBuild,
@@ -16,7 +17,7 @@ export const getDependencyTrackUploadScript = (
     ? []
     : [
         "echo 'Uploading SBOM to Dependency Track'",
-        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.name}" "${context.environment.envVars.ROOT_URL}" "${SBOM_FILE}" vex.json || true`,
+        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.name}" "${getBashVariable("ROOT_URL")}" "${SBOM_FILE}" vex.json || true`,
       ];
 };
 
@@ -27,6 +28,6 @@ export const getDependencyTrackDeleteScript = (
     ? []
     : [
         "echo 'Disabling component in Dependency Track'",
-        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.name}" "${context.environment.envVars.ROOT_URL}" || true`,
+        `/dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "${context.fullConfig.customerName}-${context.fullConfig.appName}/${context.name}" "${getBashVariable("CI_ENVIRONMENT_URL")}" || true`,
       ];
 };

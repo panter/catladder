@@ -447,8 +447,8 @@ app1 🧪 test:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -496,9 +496,9 @@ app1 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app1 --quiet --delete-tags
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app1
     action: stop
@@ -777,8 +777,8 @@ app1 🧪 test:
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -827,9 +827,9 @@ app1 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app1 --quiet --delete-tags
     - set -e
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app1
     action: stop
@@ -1103,8 +1103,8 @@ app1 🧪 test:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1143,9 +1143,9 @@ app1 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app1 --quiet --delete-tags
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app1
     action: stop
@@ -1419,8 +1419,8 @@ app1 🧪 test:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app1" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1459,9 +1459,9 @@ app1 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app1 --quiet --delete-tags
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app1
     action: stop
@@ -1855,8 +1855,8 @@ app2 🧪 test:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1904,9 +1904,9 @@ app2 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app2 --quiet --delete-tags
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app2
     action: stop
@@ -2195,8 +2195,8 @@ app2 🧪 test:
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -2245,9 +2245,9 @@ app2 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app2 --quiet --delete-tags
     - set -e
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app2
     action: stop
@@ -2531,8 +2531,8 @@ app2 🧪 test:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -2571,9 +2571,9 @@ app2 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app2 --quiet --delete-tags
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app2
     action: stop
@@ -2857,8 +2857,8 @@ app2 🧪 test:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" "__sbom.json" vex.json || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app2" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -2897,9 +2897,9 @@ app2 🧪 test:
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app2 --quiet --delete-tags
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app2
     action: stop
@@ -3298,9 +3298,9 @@ app3 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "https://app3.dev.test-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app3
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -3372,8 +3372,8 @@ app3 🧪 test:
     - kubectl config use-context "kube-pan-test-app-dev-app3"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "https://app3.dev.test-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app3
     action: stop
@@ -3432,7 +3432,7 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-dev-app3" --cluster="kube-pan-test-app-dev-app3" --user="kube-pan-test-app-dev-app3" --namespace="pan-test-app-dev"
     - kubectl config use-context "kube-pan-test-app-dev-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.dev.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app3
     action: access
@@ -3722,9 +3722,9 @@ app3 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app3
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -3794,8 +3794,8 @@ app3 🧪 test:
     - kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app3
     action: stop
@@ -3852,7 +3852,7 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" --namespace="pan-test-app-review"
     - kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app3
     action: access
@@ -4139,9 +4139,9 @@ app3 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "https://app3.stage.test-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app3
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -4204,8 +4204,8 @@ app3 🧪 test:
     - kubectl config use-context "kube-pan-test-app-stage-app3"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "https://app3.stage.test-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app3
     action: stop
@@ -4262,7 +4262,7 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-stage-app3" --cluster="kube-pan-test-app-stage-app3" --user="kube-pan-test-app-stage-app3" --namespace="pan-test-app-stage"
     - kubectl config use-context "kube-pan-test-app-stage-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.stage.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app3
     action: access
@@ -4549,9 +4549,9 @@ app3 🧪 test:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "https://app3.prod.test-app.pan.panter.cloud" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app3" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app3
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -4614,8 +4614,8 @@ app3 🧪 test:
     - kubectl config use-context "kube-pan-test-app-prod-app3"
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "https://app3.prod.test-app.pan.panter.cloud" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app3
     action: stop
@@ -4672,7 +4672,7 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-prod-app3" --cluster="kube-pan-test-app-prod-app3" --user="kube-pan-test-app-prod-app3" --namespace="pan-test-app-prod"
     - kubectl config use-context "kube-pan-test-app-prod-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=https://app3.prod.test-app.pan.panter.cloud" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app3
     action: access

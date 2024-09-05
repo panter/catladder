@@ -13,6 +13,7 @@ import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
 import type { AllCatladderJobs } from "../createAllJobs";
+import { getBashVariable } from "../../bash/BashExpression";
 
 export type GitlabJobWithContext = {
   gitlabJob: GitlabJobDef;
@@ -229,7 +230,7 @@ const addGitlabEnvironment = (
   const dotEnvFile = "gitlab_environment.env";
 
   const scriptToAdd = [
-    `echo "${GITLAB_ENVIRONMENT_URL_VARIABLE}=${envVars.ROOT_URL}" >> ${dotEnvFile}`,
+    `echo "${GITLAB_ENVIRONMENT_URL_VARIABLE}=${getBashVariable("ROOT_URL")}" >> ${dotEnvFile}`,
   ];
 
   // this is NOT a bashVariable since it NEEDS to be used as a string in gitlab
