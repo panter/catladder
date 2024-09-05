@@ -340,6 +340,7 @@ app 🧪 test:
     - bundle exec fastlane deploy_test
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   cache:
     - key:
         files:
@@ -347,6 +348,12 @@ app 🧪 test:
       policy: pull-push
       paths:
         - app/vendor
+  environment:
+    name: dev/app
+    url: $CL_GITLAB_ENVIRONMENT_URL
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
   rules:
     - when: never
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -513,6 +520,7 @@ app 🧪 test:
     - bundle exec fastlane deploy_test
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   cache:
     - key:
         files:
@@ -520,6 +528,12 @@ app 🧪 test:
       policy: pull-push
       paths:
         - app/vendor
+  environment:
+    name: review/$CI_COMMIT_REF_NAME/app
+    url: $CL_GITLAB_ENVIRONMENT_URL
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
   rules:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
@@ -684,6 +698,7 @@ app 🧪 test:
     - bundle exec fastlane deploy_test
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   cache:
     - key:
         files:
@@ -691,6 +706,12 @@ app 🧪 test:
       policy: pull-push
       paths:
         - app/vendor
+  environment:
+    name: stage/app
+    url: $CL_GITLAB_ENVIRONMENT_URL
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
   rules:
     - when: on_success
       if: $CI_COMMIT_TAG
@@ -849,6 +870,7 @@ app 🧪 test:
     - bundle exec fastlane deploy_test
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   cache:
     - key:
         files:
@@ -856,6 +878,12 @@ app 🧪 test:
       policy: pull-push
       paths:
         - app/vendor
+  environment:
+    name: prod/app
+    url: $CL_GITLAB_ENVIRONMENT_URL
+  artifacts:
+    reports:
+      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_COMMIT_TAG

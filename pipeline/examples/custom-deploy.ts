@@ -23,12 +23,12 @@ const config: Config = {
           KUBERNETES_MEMORY_LIMIT: "2048Mi",
         },
         script: ["echo 'would deploy'"],
-        stopScript: ["echo 'would stop'"],
       },
       env: {
         review: {
           deploy: {
             script: ['ROOT_URL="$(my deploy command)"'],
+            stopScript: ["echo 'would stop'"],
           },
         },
       },

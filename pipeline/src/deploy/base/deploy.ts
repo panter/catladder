@@ -124,7 +124,7 @@ export const createDeployJob = (
           on_stop: STOP_JOB_NAME,
           auto_stop_in: autoStop,
         }
-      : undefined,
+      : {},
     jobTags: deployConfig ? deployConfig.jobTags : undefined,
   };
 };
