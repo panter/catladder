@@ -1,3 +1,16 @@
+# [2.3.0](https://git.panter.ch/catladder/catladder/compare/v2.2.4...v2.3.0) (2024-09-05)
+
+
+### Bug Fixes
+
+* **pipeline:** create gitlab environment when there is no stop job ([cb17404](https://git.panter.ch/catladder/catladder/commit/cb1740485b9c68b971a8f5ede4a71fd879e73d34))
+* **pipeline:** only set url on jobs starting a gitlab environment ([6197615](https://git.panter.ch/catladder/catladder/commit/619761512892cb2cec771b086a594e809cba26d9))
+
+
+### Features
+
+* **pipeline:** dynamic urls in custom deployments ([b22c51b](https://git.panter.ch/catladder/catladder/commit/b22c51b5a95c9c7b728a7e53391d92c87e509007))
+
 ## [2.2.4](https://git.panter.ch/catladder/catladder/compare/v2.2.3...v2.2.4) (2024-09-05)
 
 ## [2.2.3](https://git.panter.ch/catladder/catladder/compare/v2.2.2...v2.2.3) (2024-09-03)
