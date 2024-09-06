@@ -1,3 +1,10 @@
+# [2.4.0](https://git.panter.ch/catladder/catladder/compare/v2.3.0...v2.4.0) (2024-09-06)
+
+
+### Features
+
+* **cloud run:** allow to wait for completion for pre/post deploy jobs ([46d37e5](https://git.panter.ch/catladder/catladder/commit/46d37e54aa89a7c069de4af45f9079f0c96202e2))
+
 # [2.3.0](https://git.panter.ch/catladder/catladder/compare/v2.2.4...v2.3.0) (2024-09-05)
 
 
