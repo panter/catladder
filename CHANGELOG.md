@@ -1,3 +1,10 @@
+# [2.5.0](https://git.panter.ch/catladder/catladder/compare/v2.4.0...v2.5.0) (2024-09-10)
+
+
+### Features
+
+* **docs:** add local search in docusaurus ([e792d83](https://git.panter.ch/catladder/catladder/commit/e792d83e6bd10710c35073a0266752b9ccac1953))
+
 # [2.4.0](https://git.panter.ch/catladder/catladder/compare/v2.3.0...v2.4.0) (2024-09-06)
 
 
