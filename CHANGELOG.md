@@ -1,3 +1,12 @@
+# [2.6.0](https://git.panter.ch/catladder/catladder/compare/v2.5.0...v2.6.0) (2024-09-10)
+
+
+### Features
+
+* **doGitlabRequest:** use git remote hostname instead of git.panter.ch ([1a1ec6a](https://git.panter.ch/catladder/catladder/commit/1a1ec6a5a1a20256b509c969d96f75efaf8200e9))
+* **gitProjectInformation:** function to get basic project information from git ([bbe562c](https://git.panter.ch/catladder/catladder/commit/bbe562c82cb6cd2212042029fc0ecfd207c1e107))
+* **setupGitlabToken:** open page no longer uses hard coded git.panter.ch hostname ([8ec1b61](https://git.panter.ch/catladder/catladder/commit/8ec1b61a410c0ded40b095d9e7e1c40634e7a52a))
+
 # [2.5.0](https://git.panter.ch/catladder/catladder/compare/v2.4.0...v2.5.0) (2024-09-10)
 
 
