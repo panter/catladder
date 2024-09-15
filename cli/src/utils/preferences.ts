@@ -49,7 +49,7 @@ export const setPreference = async (key: string, value: string | number) => {
     [key]: value,
   };
 
-  await writeFile(legacyPreferencesPath, stringify(newPreferences), {
+  await writeFile(preferencesPath, stringify(newPreferences), {
     encoding: "utf-8",
     mode: 0o600,
   });
