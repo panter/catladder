@@ -1,3 +1,10 @@
+## [2.6.2](https://git.panter.ch/catladder/catladder/compare/v2.6.1...v2.6.2) (2024-09-15)
+
+
+### Bug Fixes
+
+* **cli:** preferences missing change of new write path ([bcd7ed7](https://git.panter.ch/catladder/catladder/commit/bcd7ed75b3a5ed6f650799ab8de2367e9b6f1970))
+
 ## [2.6.1](https://git.panter.ch/catladder/catladder/compare/v2.6.0...v2.6.1) (2024-09-15)
 
 # [2.6.0](https://git.panter.ch/catladder/catladder/compare/v2.5.0...v2.6.0) (2024-09-10)
