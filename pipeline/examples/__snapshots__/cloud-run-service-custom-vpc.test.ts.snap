@@ -490,13 +490,9 @@ api 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/api
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -813,13 +809,9 @@ api 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1121,13 +1113,9 @@ api 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/api
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1429,13 +1417,9 @@ api 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/api
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success

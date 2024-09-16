@@ -498,13 +498,9 @@ app1 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app1
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -829,13 +825,9 @@ app1 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app1
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1145,13 +1137,9 @@ app1 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app1
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1461,13 +1449,9 @@ app1 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app1" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app1
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1906,13 +1890,9 @@ app2 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app2
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -2247,13 +2227,9 @@ app2 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app2
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -2573,13 +2549,9 @@ app2 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app2
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -2899,13 +2871,9 @@ app2 🧪 test:
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app2" "$CI_ENVIRONMENT_URL" || true
     - set -e
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app2
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -3373,13 +3341,9 @@ app3 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app3
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -3432,13 +3396,9 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-dev-app3" --cluster="kube-pan-test-app-dev-app3" --user="kube-pan-test-app-dev-app3" --namespace="pan-test-app-dev"
     - kubectl config use-context "kube-pan-test-app-dev-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app3
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: never
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -3795,13 +3755,9 @@ app3 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app3
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -3852,13 +3808,9 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3" --namespace="pan-test-app-review"
     - kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app3
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
@@ -4205,13 +4157,9 @@ app3 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app3
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -4262,13 +4210,9 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-stage-app3" --cluster="kube-pan-test-app-stage-app3" --user="kube-pan-test-app-stage-app3" --namespace="pan-test-app-stage"
     - kubectl config use-context "kube-pan-test-app-stage-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app3
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_COMMIT_TAG
@@ -4615,13 +4559,9 @@ app3 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app3" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app3
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -4672,13 +4612,9 @@ app3 🧪 test:
     - kubectl config set-context "kube-pan-test-app-prod-app3" --cluster="kube-pan-test-app-prod-app3" --user="kube-pan-test-app-prod-app3" --namespace="pan-test-app-prod"
     - kubectl config use-context "kube-pan-test-app-prod-app3"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app3
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_COMMIT_TAG

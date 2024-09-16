@@ -521,13 +521,9 @@ web 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/web
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -576,13 +572,9 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"
     - kubectl config use-context "kube-pan-my-app-dev-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/web
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: never
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -923,13 +915,9 @@ web 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/web
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -976,13 +964,9 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" --cluster="kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" --user="kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" --namespace="pan-my-app-review"
     - kubectl config use-context "kube-pan-my-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/web
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
@@ -1313,13 +1297,9 @@ web 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/web
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1366,13 +1346,9 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"
     - kubectl config use-context "kube-pan-my-app-stage-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/web
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_COMMIT_TAG
@@ -1723,13 +1699,9 @@ web 🧪 test:
     - kubernetesDelete
     - echo 'Disabling component in Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-my-app/web" "$CI_ENVIRONMENT_URL" || true
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/web
     action: stop
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
@@ -1777,13 +1749,9 @@ web 🧪 test:
     - kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"
     - kubectl config use-context "kube-pan-my-app-prod-web"
     - kubernetesRollback
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/web
     action: access
-  artifacts:
-    reports:
-      dotenv: gitlab_environment.env
   rules:
     - when: manual
       if: $CI_COMMIT_TAG

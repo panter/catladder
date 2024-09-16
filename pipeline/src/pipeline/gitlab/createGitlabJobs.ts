@@ -1,4 +1,4 @@
-import { isObject, merge } from "lodash";
+import { isEmpty, isObject, merge } from "lodash";
 import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { BASE_RETRY } from "../../defaults";
 import type {
@@ -228,6 +228,20 @@ const addGitlabEnvironment = (
   // those can be dynamic, so we therefore have to do this: https://docs.gitlab.com/ee/ci/environments/#set-a-dynamic-environment-url
 
   const dotEnvFile = "gitlab_environment.env";
+  const createsJobEnv =
+    !catladderJobEnvironment.action ||
+    catladderJobEnvironment.action === "start";
+
+  const artifacts = merge(
+    job.artifacts ?? {},
+    createsJobEnv
+      ? {
+          reports: {
+            dotenv: dotEnvFile,
+          },
+        }
+      : {},
+  );
 
   const scriptToAdd = [
     `echo "${GITLAB_ENVIRONMENT_URL_VARIABLE}=${getBashVariable("ROOT_URL")}" >> ${dotEnvFile}`,
@@ -243,10 +257,7 @@ const addGitlabEnvironment = (
     ...job,
     environment: {
       name: gitlabEnvironmentName,
-      ...(!catladderJobEnvironment.action ||
-      catladderJobEnvironment.action === "start"
-        ? { url: `$${GITLAB_ENVIRONMENT_URL_VARIABLE}` }
-        : {}),
+      ...(createsJobEnv ? { url: `$${GITLAB_ENVIRONMENT_URL_VARIABLE}` } : {}),
       ...(on_stop
         ? {
             on_stop: getFullReferencedJobNameFromComponent(
@@ -259,13 +270,8 @@ const addGitlabEnvironment = (
         : {}),
       ...restEnvironment,
     },
-    artifacts: merge(job.artifacts ?? {}, {
-      reports: {
-        dotenv: `${dotEnvFile}`,
-      },
-    }),
-
-    script: [...(job.script ?? []), ...scriptToAdd],
+    ...(!isEmpty(artifacts) ? { artifacts } : {}),
+    script: [...(job.script ?? []), ...(createsJobEnv ? scriptToAdd : [])],
   };
 };
 
