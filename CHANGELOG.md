@@ -1,3 +1,10 @@
+## [2.6.3](https://git.panter.ch/catladder/catladder/compare/v2.6.2...v2.6.3) (2024-09-16)
+
+
+### Bug Fixes
+
+* **cli:** git config get breaking change fails on older git vesions ([c2f81f5](https://git.panter.ch/catladder/catladder/commit/c2f81f59e82721db94cb312e4041574f313bffd1))
+
 ## [2.6.2](https://git.panter.ch/catladder/catladder/compare/v2.6.1...v2.6.2) (2024-09-15)
 
 
