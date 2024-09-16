@@ -14,7 +14,7 @@ export async function gitConfigGet(
   { location }: Pick<GitConfigOptions, "location"> = {},
 ) {
   const { stdout } = await exec(
-    `git config get ${argsJoin([location ? `--${location}` : undefined])} ${key}`,
+    `git config --get ${argsJoin([location ? `--${location}` : undefined])} ${key}`,
   );
   return stdout.trim();
 }
@@ -25,7 +25,7 @@ export const gitConfigSet = (
   { location, comment }: GitConfigOptions = {},
 ) =>
   exec(
-    `git config set ${argsJoin([
+    `git config --set ${argsJoin([
       location ? `--${location}` : undefined,
       comment ? `--comment=${comment}` : undefined,
     ])} ${key} ${value}`,
