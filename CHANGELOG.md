@@ -1,3 +1,10 @@
+# [2.7.0](https://git.panter.ch/catladder/catladder/compare/v2.6.3...v2.7.0) (2024-10-01)
+
+
+### Features
+
+* **cloud run:** jobs can have network settings ([daaec75](https://git.panter.ch/catladder/catladder/commit/daaec7559d9ee73ab3536199c3fcaa3d5e2c64bd))
+
 ## [2.6.3](https://git.panter.ch/catladder/catladder/compare/v2.6.2...v2.6.3) (2024-09-16)
 
 
