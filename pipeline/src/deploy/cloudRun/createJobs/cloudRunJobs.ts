@@ -38,16 +38,14 @@ const getJobRunScriptForJob = (
 
 export const getDeleteSchedulesScripts = (context: ComponentContext) => {
   const deployConfig = getCloudRunDeployConfig(context);
-  const jobsWithSchedule = getCloudRunJobsWithSchedule(context);
+  const schedules = getSchedules(context);
   const argsString = createArgsString({
     project: deployConfig.projectId,
     location: deployConfig.region,
   });
-  return jobsWithSchedule
-    .map(({ schedulerName }) => {
-      return [
-        `${gcloudSchedulerCmd()} jobs delete ${schedulerName} ${argsString}`,
-      ];
+  return schedules
+    .map(({ name }) => {
+      return [`${gcloudSchedulerCmd()} jobs delete ${name} ${argsString}`];
     })
     .flat();
 };
@@ -142,47 +140,62 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
 export const getCreateScheduleScripts = (
   context: ComponentContext,
 ): string[] => {
-  const jobsWithSchedule = getCloudRunJobsWithSchedule(context);
+  const schedules = getSchedules(context);
   const { region: location, projectId: project } =
     getCloudRunDeployConfig(context);
 
-  const uriBase = `https://${location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${project}/jobs`;
+  return schedules.map((scheduler, jobIndex): string => {
+    const uri = getSchedulerUrl(scheduler, context);
 
-  return jobsWithSchedule.map(
-    (
-      { job: { maxRetryAttempts, schedule }, jobName, schedulerName },
-      jobIndex,
-    ): string => {
-      const url = `${uriBase}/${jobName}:run`;
-
-      const argsString = createArgsString({
-        project,
-        location,
-        uri: `"$current_job_uri"`,
-        "http-method": "POST",
-        "oauth-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
-        schedule: `"${schedule}"`,
-        "max-retry-attempts": maxRetryAttempts ?? 0,
-      });
-      return [
-        jobIndex === 0
-          ? `exist_scheduler_names="$(\n  ${gcloudSchedulerCmd()} jobs list --filter='httpTarget.uri ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --location='${location}' --project='${project}'\n)"`
-          : null,
-        `current_job_uri="${url}"`,
-        `current_scheduler_name="${schedulerName}"`,
-        `if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then`,
-        `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}`,
-        `else`,
-        `  ${gcloudSchedulerCmd()} jobs create http "$current_scheduler_name" ${argsString}`,
-        `fi`,
-      ]
-        .filter(notNil)
-        .join("\n");
-    },
-  );
+    const argsString = createArgsString({
+      project,
+      location,
+      uri: `"$current_job_uri"`,
+      "http-method": "POST",
+      "oauth-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
+      schedule: `"${scheduler.schedule}"`,
+      "max-retry-attempts": scheduler.maxRetryAttempts ?? 0,
+    });
+    return [
+      jobIndex === 0
+        ? `exist_scheduler_names="$(\n  ${gcloudSchedulerCmd()} jobs list --filter='httpTarget.uri ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --location='${location}' --project='${project}'\n)"`
+        : null,
+      `current_job_uri="${uri}"`,
+      `current_scheduler_name="${scheduler.name}"`,
+      `if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then`,
+      `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}`,
+      `else`,
+      `  ${gcloudSchedulerCmd()} jobs create http "$current_scheduler_name" ${argsString}`,
+      `fi`,
+    ]
+      .filter(notNil)
+      .join("\n");
+  });
 };
 
-const getCloudRunJobsWithSchedule = (context: ComponentContext) => {
+type Scheduler = {
+  name: StringOrBashExpression;
+  maxRetryAttempts?: number;
+  schedule: string;
+} & {
+  type: "cloudRunJob";
+  jobName: StringOrBashExpression;
+};
+
+const getSchedulerUrl = (scheduler: Scheduler, context: ComponentContext) => {
+  if (scheduler.type === "cloudRunJob") {
+    const { region: location, projectId: project } =
+      getCloudRunDeployConfig(context);
+
+    const uriBase = `https://${location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${project}/jobs`;
+
+    return `${uriBase}/${scheduler.jobName}:run`;
+  }
+
+  throw new Error(`Unknown scheduler type: ${scheduler.type}`);
+};
+
+const getSchedules = (context: ComponentContext): Scheduler[] => {
   const jobsWithNames = getCloudRunJobsWithNames(context);
 
   return jobsWithNames
@@ -195,12 +208,16 @@ const getCloudRunJobsWithSchedule = (context: ComponentContext) => {
         jobKey: string;
       } => entry.job.when === "schedule",
     )
-    .map(({ job, jobName, jobKey }) => ({
-      job,
-      jobName,
-      jobKey,
-      schedulerName: jobName.concat("-scheduler"),
-    }));
+    .map(({ job: { maxRetryAttempts, schedule }, jobName }) => {
+      const schedulerName = jobName.concat("-scheduler");
+      return {
+        name: schedulerName,
+        maxRetryAttempts,
+        schedule,
+        type: "cloudRunJob",
+        jobName,
+      };
+    });
 };
 
 const getCloudRunJobsWithNames = (context: ComponentContext) => {
