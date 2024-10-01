@@ -147,21 +147,20 @@ export const getCreateScheduleScripts = (
     getCloudRunDeployConfig(context);
 
   const uriBase = `https://${location}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${project}/jobs`;
-  const gcloudArgs = {
-    project,
-    location,
-    uri: `"$current_job_uri"`,
-    "http-method": "POST",
-    "oauth-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
-  };
 
   return jobsWithSchedule.map(
     (
       { job: { maxRetryAttempts, schedule }, jobName, schedulerName },
       jobIndex,
     ): string => {
+      const url = `${uriBase}/${jobName}:run`;
+
       const argsString = createArgsString({
-        ...gcloudArgs,
+        project,
+        location,
+        uri: `"$current_job_uri"`,
+        "http-method": "POST",
+        "oauth-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
         schedule: `"${schedule}"`,
         "max-retry-attempts": maxRetryAttempts ?? 0,
       });
@@ -169,7 +168,7 @@ export const getCreateScheduleScripts = (
         jobIndex === 0
           ? `exist_scheduler_names="$(\n  ${gcloudSchedulerCmd()} jobs list --filter='httpTarget.uri ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --location='${location}' --project='${project}'\n)"`
           : null,
-        `current_job_uri="${uriBase}/${jobName}:run"`,
+        `current_job_uri="${url}"`,
         `current_scheduler_name="${schedulerName}"`,
         `if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then`,
         `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}`,
