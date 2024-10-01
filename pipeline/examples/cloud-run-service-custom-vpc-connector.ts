@@ -18,6 +18,14 @@ const config: Config = {
           vpcConnector: "my-first-vpc-connector",
           vpcEgress: "all-traffic",
         },
+        jobs: {
+          myjob: {
+            when: "manual",
+            command: "echo hello",
+            vpcConnector: "my-first-vpc-connector",
+            vpcEgress: "all-traffic",
+          },
+        },
       },
     },
   },

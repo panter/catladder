@@ -111,7 +111,14 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
           "task-timeout": job.timeout ?? "10m",
           "env-vars-file": ENV_VARS_FILENAME,
           "max-retries": 0,
+
           ...deployArgs,
+
+          // network
+          "vpc-connector": job?.vpcConnector,
+          "vpc-egress": job?.vpcEgress,
+          network: job?.network,
+          subnet: job?.subnet,
         },
         ...createVolumeConfig(job.volumes, "job"),
       );

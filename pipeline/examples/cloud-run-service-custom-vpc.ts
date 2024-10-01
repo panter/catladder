@@ -19,6 +19,15 @@ const config: Config = {
           subnet: "my-subnet",
           vpcEgress: "all-traffic",
         },
+        jobs: {
+          myjob: {
+            when: "manual",
+            command: "echo hello",
+            network: "my-network",
+            subnet: "my-subnet",
+            vpcEgress: "all-traffic",
+          },
+        },
       },
     },
   },
