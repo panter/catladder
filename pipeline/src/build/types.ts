@@ -160,7 +160,7 @@ export type BuildConfigNode = {
 
 export type BuildConfigNodeStatic = BuildConfigNodeBase & {
   /**
-   * @deprecated use type: "node" and docker: { type: "nginx" } instead
+   * @deprecated use `type: "node", startCommand: "", docker: { type: "nginx" }` instead
    */
   type: "node-static";
   startCommand?: never;
