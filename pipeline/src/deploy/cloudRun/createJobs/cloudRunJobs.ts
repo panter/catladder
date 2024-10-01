@@ -86,24 +86,10 @@ export const getJobRunScripts = (
 
 export const getJobCreateScripts = (context: ComponentContext): string[] =>
   getCloudRunJobsWithNames(context).map(
-    (
-      {
-        job: {
-          command,
-          image,
-          cpu,
-          memory = "512Mi",
-          timeout = "10m",
-          parallelism = 1,
-          volumes,
-        },
-        jobName,
-      },
-      jobIndex,
-    ): string => {
-      const commandArray = Array.isArray(command)
-        ? command
-        : command.split(" ");
+    ({ job, jobName }, jobIndex): string => {
+      const commandArray = Array.isArray(job.command)
+        ? job.command
+        : job.command.split(" ");
 
       const {
         image: commonImage,
@@ -115,18 +101,19 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
         {
           command: `"${commandArray.join(",")}"`,
           labels: `"${makeLabelString(getLabels(context))},cloud-run-job-name=$current_job_name"`,
-          image: `"${image ?? commonImage}"`,
+          image: `"${job.image ?? commonImage}"`,
           project,
           region,
-          cpu,
-          memory,
-          parallelism,
-          "task-timeout": timeout,
+          cpu: job.cpu,
+          memory: job.memory ?? "512Mi",
+          parallelism: job.parallelism ?? 1,
+
+          "task-timeout": job.timeout ?? "10m",
           "env-vars-file": ENV_VARS_FILENAME,
           "max-retries": 0,
           ...deployArgs,
         },
-        ...createVolumeConfig(volumes, "job"),
+        ...createVolumeConfig(job.volumes, "job"),
       );
 
       return [
