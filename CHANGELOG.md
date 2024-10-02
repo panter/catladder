@@ -1,3 +1,10 @@
+## [2.7.4](https://git.panter.ch/catladder/catladder/compare/v2.7.3...v2.7.4) (2024-10-02)
+
+
+### Bug Fixes
+
+* **cli:** preferences file move not working properly ([430e412](https://git.panter.ch/catladder/catladder/commit/430e4128a77862005fc599cd9fe21f63a807d4e0))
+
 ## [2.7.3](https://git.panter.ch/catladder/catladder/compare/v2.7.2...v2.7.3) (2024-10-01)
 
 ## [2.7.2](https://git.panter.ch/catladder/catladder/compare/v2.7.1...v2.7.2) (2024-10-01)
