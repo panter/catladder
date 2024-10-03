@@ -1,3 +1,10 @@
+## [2.7.5](https://git.panter.ch/catladder/catladder/compare/v2.7.4...v2.7.5) (2024-10-03)
+
+
+### Bug Fixes
+
+* fix redirect to gitlab's user settings page for creating PAT ([715d131](https://git.panter.ch/catladder/catladder/commit/715d13177e5d9dbaed0d77c3148fa4f15f29d279))
+
 ## [2.7.4](https://git.panter.ch/catladder/catladder/compare/v2.7.3...v2.7.4) (2024-10-02)
 
 
