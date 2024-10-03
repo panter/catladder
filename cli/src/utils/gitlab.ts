@@ -27,7 +27,7 @@ export const setupGitlabToken = async (vorpal: CommandInstance) => {
     getGitRemoteHostAndPath(),
   ]);
 
-  open(`https://${gitRemoteHost}/-/profile/personal_access_tokens`);
+  open(`https://${gitRemoteHost}/-/user_settings/personal_access_tokens`);
 
   vorpal.log("Please type in gitlab's personal access token");
 
