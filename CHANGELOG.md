@@ -1,3 +1,10 @@
+## [2.7.6](https://git.panter.ch/catladder/catladder/compare/v2.7.5...v2.7.6) (2024-10-07)
+
+
+### Bug Fixes
+
+* **pipeline:** allow custom jobs with env mode none on tagged pipelines ([33040db](https://git.panter.ch/catladder/catladder/commit/33040dbec39f51c8dab82a4586181ab82a39b6e6))
+
 ## [2.7.5](https://git.panter.ch/catladder/catladder/compare/v2.7.4...v2.7.5) (2024-10-03)
 
 
