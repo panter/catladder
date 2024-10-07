@@ -97,9 +97,7 @@ www 🛡 audit:
       junit:
         - www/dist/audit.xml
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a2
@@ -128,9 +126,7 @@ www 👮 lint:
       junit:
         - www/dist/lint.xml
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
@@ -155,9 +151,7 @@ www 🧪 test:
         - www/dist/TEST-*.xml
         - www/dist/junit-*.xml
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
@@ -224,9 +218,7 @@ www 🧪 test:
     when: always
     reports: {}
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a2
   interruptible: true
@@ -269,9 +261,7 @@ www 🧪 test:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'www 🔨 app | dev '
   retry: *a2
@@ -288,9 +278,7 @@ www 🧪 test:
     paths:
       - __sbom.json
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a2
   interruptible: true
@@ -384,10 +372,8 @@ www 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: www 👮 lint
       artifacts: false
@@ -430,10 +416,8 @@ www 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a2
   interruptible: true

@@ -89,9 +89,7 @@ before_script:
     - cd .
     - yarn npm audit --environment production
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
@@ -135,9 +133,7 @@ before_script:
       paths:
         - node_modules
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -176,9 +172,7 @@ before_script:
       paths:
         - node_modules
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -269,9 +263,7 @@ before_script:
     when: always
     reports: {}
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -598,9 +590,7 @@ before_script:
       paths:
         - api/.yarn
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: '🔸 myWorkspace 🔨 app | dev '
       artifacts: true
@@ -618,9 +608,7 @@ before_script:
     paths:
       - __sbom.json
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -714,10 +702,8 @@ before_script:
     reports:
       dotenv: gitlab_environment.env
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: 🔸 myWorkspace 👮 lint
       artifacts: false
@@ -758,10 +744,8 @@ before_script:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -1450,9 +1434,7 @@ before_script:
       paths:
         - www/.yarn
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: '🔸 myWorkspace 🔨 app | dev '
       artifacts: true
@@ -1470,9 +1452,7 @@ before_script:
     paths:
       - __sbom.json
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -1569,10 +1549,8 @@ before_script:
     reports:
       dotenv: gitlab_environment.env
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: 🔸 myWorkspace 👮 lint
       artifacts: false
@@ -1613,10 +1591,8 @@ before_script:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true

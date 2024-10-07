@@ -86,9 +86,7 @@ app 🛡 audit:
     - gem install bundler-audit
     - bundle audit check
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
@@ -117,9 +115,7 @@ app 👮 lint:
     paths:
       - tmp/cache
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -137,9 +133,7 @@ app 🧪 test:
     - bundle exec rspec
   cache: *a2
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -178,9 +172,7 @@ app 🧪 test:
     - sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
     - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:22'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -196,9 +188,7 @@ app 🧪 test:
     paths:
       - __sbom.json
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -345,10 +335,8 @@ app 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: app 👮 lint
       artifacts: false
@@ -411,10 +399,8 @@ app 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -463,10 +449,8 @@ app 🧪 test:
     name: dev/app
     action: access
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true

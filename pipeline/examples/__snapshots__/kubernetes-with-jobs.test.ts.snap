@@ -89,9 +89,7 @@ api 🛡 audit:
     - cd api
     - yarn npm audit --environment production
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
@@ -135,9 +133,7 @@ api 👮 lint:
       paths:
         - api/node_modules
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -176,9 +172,7 @@ api 🧪 test:
       paths:
         - api/node_modules
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -239,9 +233,7 @@ api 🧪 test:
     when: always
     reports: {}
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -298,9 +290,7 @@ api 🧪 test:
       paths:
         - api/.yarn
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'api 🔨 app | dev '
   retry: *a1
@@ -317,9 +307,7 @@ api 🧪 test:
     paths:
       - __sbom.json
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -441,10 +429,8 @@ api 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: api 👮 lint
       artifacts: false
@@ -505,10 +491,8 @@ api 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -553,10 +537,8 @@ api 🧪 test:
     name: dev/api
     action: access
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -1655,9 +1637,7 @@ www 🛡 audit:
     - cd www
     - yarn npm audit --environment production
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -1697,9 +1677,7 @@ www 👮 lint:
       paths:
         - www/node_modules
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -1738,9 +1716,7 @@ www 🧪 test:
       paths:
         - www/node_modules
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -1819,9 +1795,7 @@ www 🧪 test:
     when: always
     reports: {}
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -1878,9 +1852,7 @@ www 🧪 test:
       paths:
         - www/.yarn
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'www 🔨 app | dev '
   retry: *a1
@@ -1897,9 +1869,7 @@ www 🧪 test:
     paths:
       - __sbom.json
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -2011,10 +1981,8 @@ www 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - job: www 👮 lint
       artifacts: false
@@ -2075,10 +2043,8 @@ www 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true
@@ -2123,10 +2089,8 @@ www 🧪 test:
     name: dev/www
     action: access
   rules:
-    - when: never
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
   interruptible: true

@@ -2,11 +2,20 @@ import type { GitlabRule } from "../types";
 export const RULE_CONDITION_MAIN_BRANCH =
   "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH";
 
+export const RULE_CONDITION_RELEASE_COMMIT =
+  "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/";
+
+export const RULE_CONDITION_NOT_RELEASE_COMMIT =
+  "$CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/";
+
 export const RULE_IS_MAIN_BRANCH: GitlabRule = {
   if: RULE_CONDITION_MAIN_BRANCH,
 };
+export const RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT: GitlabRule = {
+  if: RULE_CONDITION_MAIN_BRANCH + " && " + RULE_CONDITION_NOT_RELEASE_COMMIT,
+};
 export const RULE_NEVER_ON_RELEASE_COMMIT: GitlabRule = {
-  if: "$CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/",
+  if: RULE_CONDITION_RELEASE_COMMIT,
   when: "never",
 };
 

@@ -1,8 +1,7 @@
 import {
-  RULE_IS_MAIN_BRANCH,
+  RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
-  RULE_NEVER_ON_RELEASE_COMMIT,
 } from "../rules";
 import type {
   ComponentContext,
@@ -105,12 +104,12 @@ export const createMainPipeline = async <T extends PipelineType>(
   throw new Error(`${pipelineType} is not supported`);
 };
 function getGitlabRulesForTrigger(trigger: PipelineTrigger): GitlabRule[] {
-  // mainBranch: on push to main branch
+  // mainBranch: on push to main branch except it's a release commit
   // mr: on merge request
   // taggedRelease: on tag
   switch (trigger) {
     case "mainBranch":
-      return [RULE_NEVER_ON_RELEASE_COMMIT, RULE_IS_MAIN_BRANCH];
+      return [RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT];
     case "mr":
       return [RULE_IS_MERGE_REQUEST];
     case "taggedRelease":
