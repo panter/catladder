@@ -19,7 +19,7 @@ const ensurePreferencesFile = async () => {
   if (existsSync(legacyPreferencesPath)) {
     await mkdir(dirname(preferencesPath), { recursive: true, mode: 0o700 });
     await cp(legacyPreferencesPath, preferencesPath);
-    await chmod(dirname(preferencesPath), 0o600);
+    await chmod(preferencesPath, 0o600);
     await rename(
       legacyPreferencesPath,
       join(dirname(preferencesPath), "old_preferences_backup.yml"),
