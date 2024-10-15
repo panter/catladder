@@ -1,3 +1,10 @@
+## [2.7.7](https://git.panter.ch/catladder/catladder/compare/v2.7.6...v2.7.7) (2024-10-15)
+
+
+### Bug Fixes
+
+* **cli:** chmod the pref file not the folder ([5f0f33e](https://git.panter.ch/catladder/catladder/commit/5f0f33efb109b1516b62ae52f3c2fac02b9493ea))
+
 ## [2.7.6](https://git.panter.ch/catladder/catladder/compare/v2.7.5...v2.7.6) (2024-10-07)
 
 
