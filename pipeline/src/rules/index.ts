@@ -32,19 +32,6 @@ export const RULE_IS_TAGGED_RELEASE: GitlabRule = {
   if: "$CI_COMMIT_TAG",
 };
 
-export const RULES_ALWAYS: GitlabRule[] = [
-  RULE_IS_TAGGED_RELEASE,
-  RULE_NEVER_ON_RELEASE_COMMIT,
-  RULE_NEVER_ON_SCHEDULE,
-  {
-    if: "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/",
-  },
-  {
-    if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH",
-  },
-  RULE_IS_MERGE_REQUEST,
-];
-
 export const RULE_CONDITION_HOTFIX_BRANCH =
   "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/";
 
