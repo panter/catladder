@@ -11,6 +11,7 @@ import {
   getYarnVersion,
   getWorkspaceDependencies,
 } from "./yarn/yarnUtils";
+import memoizee from "memoizee";
 
 export const getPackageManagerInfoForComponent = async (
   config: Config,
@@ -65,10 +66,11 @@ export const getPackageManagerInfoForComponent = async (
     pathsToCopyInDocker,
   };
 };
-// TODO: memoizee
-export const getPackageManagerInfoBase =
+
+const _getPackageManagerInfoBase =
   async (): Promise<PackageManagerInfoBase> => {
     // currently only supports yarn
+
     const version = await getYarnVersion();
     if (!version) throw new Error("could not get yarn version");
     const isClassic = version.startsWith("1");
@@ -82,3 +84,7 @@ export const getPackageManagerInfoBase =
       isClassic,
     };
   };
+
+export const getPackageManagerInfoBase = memoizee(_getPackageManagerInfoBase, {
+  promise: true,
+});
