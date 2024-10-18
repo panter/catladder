@@ -1,3 +1,10 @@
+# [2.9.0](https://git.panter.ch/catladder/catladder/compare/v2.8.0...v2.9.0) (2024-10-18)
+
+
+### Features
+
+* **yarn-updates:** globals ([4b12a1b](https://git.panter.ch/catladder/catladder/commit/4b12a1b7f063fca15b8db23478433e6f171d6533))
+
 # [2.8.0](https://git.panter.ch/catladder/catladder/compare/v2.7.8...v2.8.0) (2024-10-18)
 
 
