@@ -1,3 +1,10 @@
+# [2.8.0](https://git.panter.ch/catladder/catladder/compare/v2.7.8...v2.8.0) (2024-10-18)
+
+
+### Features
+
+* update nvm ([9bd74b3](https://git.panter.ch/catladder/catladder/commit/9bd74b3425a883ea6c09308aa18a440756be3cf6))
+
 ## [2.7.8](https://git.panter.ch/catladder/catladder/compare/v2.7.7...v2.7.8) (2024-10-18)
 
 
