@@ -1,3 +1,10 @@
+## [2.7.8](https://git.panter.ch/catladder/catladder/compare/v2.7.7...v2.7.8) (2024-10-18)
+
+
+### Performance Improvements
+
+* memoizee package manager function ([626db6d](https://git.panter.ch/catladder/catladder/commit/626db6d9fe0661b4fd7acfc4f1e3e02e3d6e8b8b))
+
 ## [2.7.7](https://git.panter.ch/catladder/catladder/compare/v2.7.6...v2.7.7) (2024-10-15)
 
 
