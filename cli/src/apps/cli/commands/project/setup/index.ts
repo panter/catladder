@@ -4,15 +4,20 @@ import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
 import { setupTopic } from "./setupTopic";
 
-export const setupProject = async (instance: CommandInstance) => {
-  const allContext = await getAllPipelineContexts();
-
+export const setupProject = async (
+  instance: CommandInstance,
+  onlyComponents?: string | string[],
+) => {
+  const allContext = await getAllPipelineContexts(onlyComponents);
+  instance.log("will setup those contexts:");
+  allContext.forEach((context) => {
+    instance.log(` - ${context.name}:${context.env}`);
+  });
   for (const context of allContext) {
     await setupContext(instance, context);
   }
   await setupAccessTokens(instance);
   await setupTopic(instance);
-
   instance.log("");
   instance.log("gitlab is ready! 🥂");
   instance.log("\n");

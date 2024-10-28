@@ -12,6 +12,15 @@ export const allEnvs = async () => {
   return getAllEnvsInAllComponents(config);
 };
 
+export const allComponents = async () => {
+  const config = await getProjectConfig();
+  if (!config) {
+    return [];
+  }
+
+  return Object.keys(config.components);
+};
+
 export const envAndComponents = async () => {
   const allEnvAndcomponents = await getAllComponentsWithAllEnvsFlat();
 
