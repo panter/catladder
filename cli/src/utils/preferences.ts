@@ -1,12 +1,4 @@
-import {
-  readFile,
-  writeFile,
-  mkdir,
-  rename,
-  cp,
-  rmdir,
-  chmod,
-} from "fs/promises";
+import { readFile, writeFile, mkdir, cp, chmod } from "fs/promises";
 import { existsSync } from "fs";
 import { join, dirname } from "path";
 import { homedir } from "os";
@@ -16,29 +8,22 @@ const legacyPreferencesPath = join(homedir(), ".catladder/preferences.yml");
 const preferencesPath = join(homedir(), ".config/catladder/preferences.yml");
 
 const ensurePreferencesFile = async () => {
-  if (existsSync(legacyPreferencesPath)) {
-    await mkdir(dirname(preferencesPath), { recursive: true, mode: 0o700 });
-    await cp(legacyPreferencesPath, preferencesPath);
-    await chmod(preferencesPath, 0o600);
-    await rename(
-      legacyPreferencesPath,
-      join(dirname(preferencesPath), "old_preferences_backup.yml"),
-    );
-    await chmod(
-      join(dirname(preferencesPath), "old_preferences_backup.yml"),
-      0o600,
-    );
-    await rmdir(dirname(legacyPreferencesPath));
-    return;
-  }
   if (existsSync(preferencesPath)) {
     return;
   }
   await mkdir(dirname(preferencesPath), { recursive: true, mode: 0o700 });
-  await writeFile(preferencesPath, "---\n{}", {
-    encoding: "utf-8",
-    mode: 0o600,
-  });
+  if (!existsSync(legacyPreferencesPath)) {
+    return writeFile(preferencesPath, "---\n{}", {
+      encoding: "utf-8",
+      mode: 0o600,
+    });
+  }
+  await cp(legacyPreferencesPath, preferencesPath);
+  await chmod(preferencesPath, 0o600);
+  await cp(
+    preferencesPath,
+    join(dirname(preferencesPath), "old_preferences_backup.yml"),
+  );
 };
 
 const loadPreferences = async () => {
