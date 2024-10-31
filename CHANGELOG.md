@@ -1,3 +1,10 @@
+## [2.9.1](https://git.panter.ch/catladder/catladder/compare/v2.9.0...v2.9.1) (2024-10-31)
+
+
+### Bug Fixes
+
+* **cli:** config move does not remove legacy config file from ~/.catladder ([bf01264](https://git.panter.ch/catladder/catladder/commit/bf0126448679c79f13355ba0dada3a17549fd7d7))
+
 # [2.9.0](https://git.panter.ch/catladder/catladder/compare/v2.8.0...v2.9.0) (2024-10-18)
 
 
