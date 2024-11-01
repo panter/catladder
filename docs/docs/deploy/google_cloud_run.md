@@ -276,6 +276,7 @@ Steps:
 
 1. Change the catladder.ts config to use `google-cloud-run` as deploy type. Don't forget to alter all jobs as well.
 2. run `project-setup` in catladder-cli
+2. migrate the `POSTGRESQL_PASSWORD` secret to the `DB_PASSWORD` secret.
 3. Push and make sure it works on your review-branch. Test it thoroughly
 4. Merge and create a release. Wait before you deploy to production.
 5. If you have cronjobs and background workers, you need to manually remove them from Kubernetes because once you deploy the app to production, the new cronjobs and workers will start to operate as well.
