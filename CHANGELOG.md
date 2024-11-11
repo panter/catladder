@@ -1,3 +1,10 @@
+# [2.10.0](https://git.panter.ch/catladder/catladder/compare/v2.9.3...v2.10.0) (2024-11-11)
+
+
+### Features
+
+* **cloud-run:** new job executions ([c5bbedc](https://git.panter.ch/catladder/catladder/commit/c5bbedc628a25d96a142899a727b346dde70256a))
+
 ## [2.9.3](https://git.panter.ch/catladder/catladder/compare/v2.9.2...v2.9.3) (2024-11-04)
 
 ## [2.9.2](https://git.panter.ch/catladder/catladder/compare/v2.9.1...v2.9.2) (2024-11-01)
