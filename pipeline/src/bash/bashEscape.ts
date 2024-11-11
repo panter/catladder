@@ -57,6 +57,9 @@ export const escapeDoubleQuotes = (value: string | null | undefined) =>
 export const escapeSingleQuotes = (value: string | null | undefined) =>
   value?.toString().replace(/'/g, "\\'");
 
+export type EscapeForDotEnvOptions = {
+  quoteMode: "auto" | "always";
+};
 /**
  *
  * escape env vars for .env files.
@@ -75,6 +78,9 @@ export const escapeSingleQuotes = (value: string | null | undefined) =>
  */
 export const escapeForDotEnv = (
   value: VariableValue | undefined | null,
+  options: EscapeForDotEnvOptions = {
+    quoteMode: "auto",
+  },
 ): string => {
   if (value === undefined || value === null) {
     return "";
@@ -82,7 +88,7 @@ export const escapeForDotEnv = (
   if (typeof value === "string") {
     // if string contains newlines, we need to wrap it in quotes
     // we additionaly escape newlines, that give best compatibility
-    if (value.includes("\n")) {
+    if (options.quoteMode === "always" || value.includes("\n")) {
       const newlinesReplaces = value.replace(/\n/g, "\\n");
 
       // default to ", but if this is not possible, we try to use ' or `

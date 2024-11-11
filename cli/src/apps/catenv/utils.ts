@@ -1,4 +1,4 @@
-import type { Config } from "@catladder/pipeline";
+import type { Config, EscapeForDotEnvOptions } from "@catladder/pipeline";
 import { join } from "path";
 import { getGitRoot } from "../../utils/projects";
 import type { Choice } from "./types";
@@ -32,13 +32,22 @@ export const getCurrentComponentAndEnvFromChoice = async (
   };
 };
 
+export type MakeKeyValueStringOptions = {
+  keyPrefix?: string;
+  escapeOptions?: EscapeForDotEnvOptions;
+};
 export const makeKeyValueString = (
   variables: Record<string, string>,
-  keyPrefix = "",
+  { keyPrefix, escapeOptions }: MakeKeyValueStringOptions = {
+    keyPrefix: "",
+  },
 ) =>
   Object.entries(variables)
     // quotes are important, otherwise line breaks don't work properly
-    .map(([key, value]) => `${keyPrefix}${key}=${escapeForDotEnv(value)}`)
+    .map(
+      ([key, value]) =>
+        `${keyPrefix}${key}=${escapeForDotEnv(value, escapeOptions)}`,
+    )
     .join("\n");
 
 export const sanitizeEnvVarName = (name: string) =>

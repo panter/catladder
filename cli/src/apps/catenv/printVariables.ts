@@ -55,4 +55,7 @@ export const printVariables = async (config: Config, choice?: Choice) => {
 };
 
 const makeExportKeyValuestring = (variables: Record<string, string>) =>
-  makeKeyValueString(variables, "export ");
+  makeKeyValueString(variables, {
+    keyPrefix: "export ",
+    escapeOptions: { quoteMode: "always" },
+  });
