@@ -1,3 +1,10 @@
+## [2.10.1](https://git.panter.ch/catladder/catladder/compare/v2.10.0...v2.10.1) (2024-11-11)
+
+
+### Bug Fixes
+
+* **catenv printVariables:** print variables (dotEnv: [secure]) breaks json strings ([ca4b855](https://git.panter.ch/catladder/catladder/commit/ca4b8550485f329bf8af1261659efab8437a9926))
+
 # [2.10.0](https://git.panter.ch/catladder/catladder/compare/v2.9.3...v2.10.0) (2024-11-11)
 
 
