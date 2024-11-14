@@ -1,3 +1,26 @@
+# [3.0.0](https://git.panter.ch/catladder/catladder/compare/v2.10.3...v3.0.0) (2024-11-14)
+
+
+### Features
+
+* custom env configs no longer merge arrays, but now optionally allow to specify an array ([4188853](https://git.panter.ch/catladder/catladder/commit/4188853efaffae86da1be32d6479b8c2ff93c53b))
+
+
+### BREAKING CHANGES
+
+* custom env configs no longer merge arrays, but now optionally allow to specify an array
+
+Background:
+
+custom env config was merged with merging arrays as well.
+this was mainly done because you sometimes add additional secrets to some envs (e.g. local or review).
+
+however in some other cases, merging arrays was very unexpected and caused issues.
+indeed we had even an example that showed this issue (custom-deploy).
+
+the solution is to no longer merge arrays, but provide a new way of doing that.
+the new way is to optionally allow that the value can be a function that takes the original value and returns the new value.
+
 ## [2.10.3](https://git.panter.ch/catladder/catladder/compare/v2.10.2...v2.10.3) (2024-11-14)
 
 ## [2.10.2](https://git.panter.ch/catladder/catladder/compare/v2.10.1...v2.10.2) (2024-11-14)
