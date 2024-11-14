@@ -94,6 +94,18 @@ export type DevLocalEnvConfig = {
   vars?: EnvVars;
   port?: number;
 };
+type AddOverrideFunction<T> = {
+  [K in keyof T]:
+    | T[K] // either accept the value
+    | ((defaultValue: T[K]) => T[K]) // or function that returns the value
+    | (T[K] extends Record<string, unknown> | undefined // unknown is important, see https://stackoverflow.com/questions/71422178/typescript-record-accepts-array-why
+        ? AddOverrideFunction<T[K]>
+        : never); // or a nested object
+};
+
+type EnvConfigWithOverride<E extends EnvType = EnvType> = AddOverrideFunction<
+  EnvConfig<E>
+>;
 export type EnvConfig<E extends EnvType = EnvType> = {
   /**
    * type of the env (stage, prod, review, dev)
@@ -107,19 +119,19 @@ export type EnvConfig<E extends EnvType = EnvType> = {
 
 export type EnvConfigWithComponent = EnvConfig<EnvType> & ComponentConfig;
 
-export type CustomEnv = EnvConfig & {
+export type CustomEnv = EnvConfigWithOverride & {
   type: EnvType;
 };
 export type Env<C extends ConfigProps = never> = {
   /**
    * local is a special env that is only used in local development
    */
-  local?: DevLocalEnvConfig;
+  local?: AddOverrideFunction<DevLocalEnvConfig>;
 
-  dev?: EnvConfig<"dev"> | false;
-  stage?: EnvConfig<"stage"> | false;
-  review?: EnvConfig<"review"> | false;
-  prod?: EnvConfig<"prod"> | false;
+  dev?: EnvConfigWithOverride<"dev"> | false;
+  stage?: EnvConfigWithOverride<"stage"> | false;
+  review?: EnvConfigWithOverride<"review"> | false;
+  prod?: EnvConfigWithOverride<"prod"> | false;
   // unfortunatly, typescript does not properly support objects with a mix of known and unknown properties.
   // for backwards compatiblity we allow unknown props, but we cannot type it (typescript problem)
   // however, we now support providing custom envs through a generic parameter of `Config`

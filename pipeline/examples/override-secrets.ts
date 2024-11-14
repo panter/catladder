@@ -20,12 +20,16 @@ const config: Config = {
       env: {
         local: {
           vars: {
-            secret: ["MY_LOCAL_SECRET"],
+            // arrays are not merged
+            // you can merge them manually, by using a function:
+            secret: (original) => [...(original ?? []), "MY_LOCAL_SECRET"],
           },
         },
         review: {
           vars: {
-            secret: ["MY_REVIEW_SECRET"],
+            // arrays are not merged
+            // you can merge them manually, by using a function:
+            secret: (original) => [...(original ?? []), "MY_REVIEW_SECRET"],
           },
         },
       },
