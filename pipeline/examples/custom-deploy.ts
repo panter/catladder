@@ -27,7 +27,7 @@ const config: Config = {
       env: {
         review: {
           deploy: {
-            script: ['ROOT_URL="$(my deploy command)"'],
+            script: ['ROOT_URL="$(my deploy command)"'], // be careful as arrays are merged currently
             stopScript: ["echo 'would stop'"],
           },
         },
