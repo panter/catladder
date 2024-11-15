@@ -1,3 +1,10 @@
+# [3.1.0](https://git.panter.ch/catladder/catladder/compare/v3.0.0...v3.1.0) (2024-11-15)
+
+
+### Features
+
+* **cloud run:** jobs can have maxRetries ([ddb8b24](https://git.panter.ch/catladder/catladder/commit/ddb8b249d8932c7bc299432d38c7efad7597d404))
+
 # [3.0.0](https://git.panter.ch/catladder/catladder/compare/v2.10.3...v3.0.0) (2024-11-14)
 
 
