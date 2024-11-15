@@ -227,6 +227,11 @@ export type DeployConfigCloudRunJobBase = {
    * number of tasks that may run concurrently, defaults to 1
    */
   parallelism?: number;
+
+  /**
+   * max number of retries of the job. Defaults to 0
+   */
+  maxRetries?: number;
 } & DeployConfigCloudRunWithVolumes &
   DeployConfigCloudRunNetworkConfig;
 
