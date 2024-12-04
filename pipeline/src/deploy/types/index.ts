@@ -26,3 +26,10 @@ export const isOfDeployType = <T extends Array<DeployConfigType>>(
 ): t is Extract<DeployConfig, { type: T[number] }> => {
   return t && types.includes(t.type) ? true : false;
 };
+
+export const getDeployConfigType = (
+  t: DeployConfig | false | null | undefined,
+) => {
+  if (!t) return undefined;
+  return t.type;
+};
