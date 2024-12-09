@@ -1,3 +1,11 @@
+# [3.2.0](https://git.panter.ch/catladder/catladder/compare/v3.1.1...v3.2.0) (2024-12-09)
+
+
+### Features
+
+* **cloud-sql-proxy:** log errors better to user ([eb79b9b](https://git.panter.ch/catladder/catladder/commit/eb79b9b11780b823c6aa80c173f6a05b80096596))
+* **loging:** fix missing types on logError and add more convenience ([9f89d4a](https://git.panter.ch/catladder/catladder/commit/9f89d4ae2c6ccd86aa8bbbafa2f5289385da3be3))
+
 ## [3.1.1](https://git.panter.ch/catladder/catladder/compare/v3.1.0...v3.1.1) (2024-12-09)
 
 
