@@ -21,7 +21,7 @@ const config: Config = {
           },
         },
       },
-      customJobs: [
+      customJobs: (context) => [
         {
           name: `e2e`,
           stage: "verify",
@@ -35,6 +35,7 @@ const config: Config = {
           image: "cypress/browsers",
           script: [
             "yarn install --frozen-lockfile",
+            `echo "custom job for env '${context.environment.envType}'"`, // a test to test the
             `CYPRESS_BASE_URL=$CI_ENVIRONMENT_URL yarn cypress:run:ci`,
           ],
           environment: {

@@ -1,4 +1,4 @@
-import { mergeWith } from "lodash";
+import { cloneDeep, mergeWith } from "lodash";
 import type { Config, EnvConfigWithComponent } from "../types/config";
 
 export const getEnvConfig = (
@@ -17,16 +17,17 @@ export const getEnvConfig = (
     return defaultConfig;
   }
   /**
-   *   env config is merged with default. Arrays are not merged.
+   * env config is merged with default. Arrays are not merged.
    * you can customize this by providing a function that takes the default value as argument
    */
   return mergeWith(
-    {},
-    defaultConfig,
+    // mergeWith unfortunatly mutates the first object, so we need to clone it.
+    // Passing empty object also doesn't work for us, because that will mess with the customizer function (second argument isn't nessecary the customized value)
+    cloneDeep(defaultConfig),
     envCustomizations,
-    (defaultValue, customValue) => {
+    (defaultValue, customValue, key, obj, source) => {
       // check if custom value is a function (and default is not),
-      // we currently don't have config options that are functions, but we might in the future
+      // we currently don't have config options, that are functions, but we might in the future (customJobs is an exception)
       if (
         typeof customValue === "function" &&
         typeof defaultValue !== "function"

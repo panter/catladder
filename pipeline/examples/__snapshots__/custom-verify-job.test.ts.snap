@@ -495,6 +495,7 @@ www 🧪 test:
     - export CYPRESS_CACHE_FOLDER="$CI_PROJECT_DIR/cache/cypress"
     - collapseable_section_end "injectvars"
     - yarn install --frozen-lockfile
+    - echo "custom job for env 'dev'"
     - CYPRESS_BASE_URL=$CI_ENVIRONMENT_URL yarn cypress:run:ci
   cache:
     key: cypress
@@ -847,6 +848,7 @@ www 🧪 test:
     - export CYPRESS_CACHE_FOLDER="$CI_PROJECT_DIR/cache/cypress"
     - collapseable_section_end "injectvars"
     - yarn install --frozen-lockfile
+    - echo "custom job for env 'review'"
     - CYPRESS_BASE_URL=$CI_ENVIRONMENT_URL yarn cypress:run:ci
   cache:
     key: cypress
@@ -1186,6 +1188,7 @@ www 🧪 test:
     - export CYPRESS_CACHE_FOLDER="$CI_PROJECT_DIR/cache/cypress"
     - collapseable_section_end "injectvars"
     - yarn install --frozen-lockfile
+    - echo "custom job for env 'stage'"
     - CYPRESS_BASE_URL=$CI_ENVIRONMENT_URL yarn cypress:run:ci
   cache:
     key: cypress
@@ -1525,6 +1528,7 @@ www 🧪 test:
     - export CYPRESS_CACHE_FOLDER="$CI_PROJECT_DIR/cache/cypress"
     - collapseable_section_end "injectvars"
     - yarn install --frozen-lockfile
+    - echo "custom job for env 'prod'"
     - CYPRESS_BASE_URL=$CI_ENVIRONMENT_URL yarn cypress:run:ci
   cache:
     key: cypress

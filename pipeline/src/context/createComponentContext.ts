@@ -124,6 +124,7 @@ export const createComponentContext = async (
     pipelineType: ctx.pipelineType,
     trigger: ctx.trigger,
   };
+
   const resolvedCustomJobs = isFunction(customJobs)
     ? customJobs(context)
     : customJobs;
