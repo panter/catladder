@@ -1,3 +1,10 @@
+## [3.1.1](https://git.panter.ch/catladder/catladder/compare/v3.1.0...v3.1.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* customJobs config that takes a function breaks catenv ([ccd87a9](https://git.panter.ch/catladder/catladder/commit/ccd87a98e173adedb03dc1758892e3cd7e32c624))
+
 # [3.1.0](https://git.panter.ch/catladder/catladder/compare/v3.0.0...v3.1.0) (2024-11-15)
 
 
