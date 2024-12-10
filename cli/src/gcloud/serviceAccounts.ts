@@ -69,7 +69,7 @@ const upsertGcloudServiceAccount = async (
   const memberName = `serviceAccount:${fullIdentifier}`;
   for (const role of roles) {
     await exec(
-      `gcloud projects add-iam-policy-binding ${projectId} --member=${memberName} --role=${role} `,
+      `gcloud projects add-iam-policy-binding ${projectId} --member=${memberName} --role=${role} --condition=None`,
     );
   }
 
