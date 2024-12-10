@@ -1,3 +1,10 @@
+## [3.2.1](https://git.panter.ch/catladder/catladder/compare/v3.2.0...v3.2.1) (2024-12-10)
+
+
+### Bug Fixes
+
+* **gcloud:** project-setup throws error on newer glcoud versions ([840038c](https://git.panter.ch/catladder/catladder/commit/840038cfd8bca9a4dc4d4abb2f35774f26231aaf))
+
 # [3.2.0](https://git.panter.ch/catladder/catladder/compare/v3.1.1...v3.2.0) (2024-12-09)
 
 
