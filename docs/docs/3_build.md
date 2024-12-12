@@ -83,7 +83,7 @@ This may speed up the build process if multiple components share the same build 
 To configure a workspace build, you need to define a build in the `builds` section of the config:
 
 ```ts title="catladder.ts"
-const config: Config = {
+const config = {
 
   builds: {
     myWorkspace: {
@@ -114,7 +114,7 @@ const config: Config = {
 
     }
   }
-}
+} satisfies Config;
 ```
 
 Components that use those shared builds set the build property to ` from: "<workspace-name>"` like in the example above.
@@ -135,7 +135,7 @@ for caching you can either:
 - use gitlab cache:
 
 ```ts title="catladder.ts"
-const config: Config = {
+const config = {
   builds: {
     myWorkspace: {
       type: "node",
@@ -145,7 +145,7 @@ const config: Config = {
     },
   },
   //...
-};
+} satisfies Config;
 ```
 
 If your build relies on **.env** make sure to include .env in the cache settings:

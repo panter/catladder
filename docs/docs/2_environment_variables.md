@@ -8,7 +8,7 @@ sidebar_label: Env Variables
 Environment variables can be declared on a component like this:
 
 ```ts title="catladder.ts"
-const config: Config = {
+const config = {
   components: {
     app: {
       vars: {
@@ -41,7 +41,7 @@ const config: Config = {
     },
     api: {}, // Api component config ...
   },
-};
+} satisfies Config;
 ```
 
 ## Where to use env-vars
@@ -287,14 +287,14 @@ Additionally, you need to set the `pipelineType`.
 ```ts title="catladder.ts"
 import type { Config } from "@catladder/cli";
 
-const config: Config = {
+const config = {
   appName: "my-app",
   appName: "dem",
   pipelineType: "gitlab",
   components: {
     // Your components config ...
   },
-};
+} satisfies Config;
 
 export default config;
 ```

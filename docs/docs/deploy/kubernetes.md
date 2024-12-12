@@ -47,7 +47,7 @@ const DEV_CLUSTER: DeployConfigKubernetesCluster = {
   region: "europe-west6-a",
   domainCanonical: "panter.dev",
 };
-const config: Config = {
+const config = {
   customerName: "EXAMPLE CUSTOMER NAME (always 3 letters, lowercase. e.g.: ihz, pvl, vps etc.)",
   appName: "EXAMPLE APP NAME (always separated by dashes, lowercase, e.g.: ihz-member-app, pvl-cyclomania-web etc.)",
   components: {
@@ -85,7 +85,7 @@ const config: Config = {
       ...
     }
   },
-};
+} satisfies Config;
 
 export default config;
 

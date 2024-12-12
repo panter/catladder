@@ -5,7 +5,7 @@ const DEPLOY_CONFIG: DeployConfig = {
   projectId: "google-project-id",
   region: "europe-west6",
 };
-const config: Config = {
+const config = {
   appName: "test-app",
   customerName: "pan",
   builds: {
@@ -43,7 +43,7 @@ const config: Config = {
       },
     },
   },
-};
+} satisfies Config;
 
 export default config;
 

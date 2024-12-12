@@ -20,12 +20,12 @@ Currently, only GitLab is supported.
 
 ```ts title="catladder.ts"
 import type { Config } from "@catladder/cli";
-const config: Config = {
+const config = {
   appName: "example-app",
   customerName: "pan",
   pipelineType: "gitlab",
   components: {},
-};
+} satisfies Config;
 export default config;
 ```
 
@@ -71,7 +71,7 @@ The configuration's basic structure looks like this:
 ```ts title="catladder.ts" showLineNumbers
 import type { Config } from '@catladder/cli'
 
-const config: Config = {
+const config = {
    appName: "my-first-app",
    customerName: "pan", // copy three letters from controllr project (e.g. pan, wea, wpa, sss, ...)
    components: {
@@ -90,7 +90,7 @@ const config: Config = {
         ...
       }
    }
-}
+} satisfies Config;
 
 export default config
 ```

@@ -5,7 +5,7 @@ const CLOUD_SQL: DeployConfigCloudRunCloudSql = {
   instanceConnectionName: "projectId:region:instancename",
   dbUser: "my-user",
 };
-const config: Config = {
+const config = {
   appName: "test-app",
   customerName: "pan",
   components: {
@@ -46,7 +46,7 @@ const config: Config = {
       },
     },
   },
-};
+} satisfies Config;
 
 export default config;
 

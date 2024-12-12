@@ -1,6 +1,6 @@
 import type { Config } from "../src";
 
-const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
+const config = {
   appName: "test-app",
   customerName: "pan",
   components: {
@@ -23,7 +23,7 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
       },
     },
   },
-};
+} satisfies Config<{ CustomEnvs: "asdf" | "bla" }>;
 
 export default config;
 

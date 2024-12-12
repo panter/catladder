@@ -1,6 +1,6 @@
 import type { Config } from "../src";
 
-const config: Config = {
+const config = {
   appName: "test-app",
   customerName: "pan",
   components: {
@@ -40,7 +40,7 @@ const config: Config = {
       },
     },
   },
-};
+} satisfies Config;
 
 export default config;
 

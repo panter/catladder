@@ -28,7 +28,7 @@ const config: Config<{ CustomEnvs: "asdf" | "bla" }> = {
       },
     },
   },
-};
+} satisfies Config;
 
 export default config;
 

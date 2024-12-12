@@ -3,7 +3,7 @@ import type { Config } from "../src";
 // the image version should match your `.ruby-version`
 const RAILS_TEST_STAGE_IMAGE = "ruby:3.2.1";
 
-const config: Config = {
+const config = {
   appName: "test-app",
   customerName: "pan",
   components: {
@@ -92,7 +92,7 @@ const config: Config = {
       },
     },
   },
-};
+} satisfies Config;
 
 export default config;
 

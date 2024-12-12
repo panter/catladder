@@ -18,7 +18,7 @@ Make sure to follow the [CLOUD READY](/docs/recipies/CLOUD_READY) principles, as
 In your `catladder.ts` set the deploy type to `google-cloud-run`:
 
 ```ts title="catladder.ts"
-const config: Config = {
+const config = {
   customerName: "pan",
   appName: "myapp",
   components: {
@@ -34,7 +34,7 @@ const config: Config = {
       },
     },
   },
-};
+} satisfies Config;
 ```
 
 **Whenever you make a change to this config, run this command in catladder-cli:**
