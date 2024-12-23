@@ -1,6 +1,5 @@
 import type { CommandInstance } from "vorpal";
 import { getAllPipelineContexts } from "../../../../../config/getProjectConfig";
-import { projectConfigSecrets } from "../commandConfigSecrets";
 import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
 import { setupTopic } from "./setupTopic";
@@ -13,21 +12,7 @@ export const setupProject = async (instance: CommandInstance) => {
   }
   await setupAccessTokens(instance);
   await setupTopic(instance);
-  instance.log("");
-  const { configSecrets } = await instance.prompt({
-    default: true,
-    message: "Before deployments work, you need to config secrets. Do it now?",
-    name: "configSecrets",
-    type: "confirm",
-  });
-  instance.log("");
-  if (configSecrets) {
-    await projectConfigSecrets(instance);
-  } else {
-    instance.log(
-      "👆 don't forget to config secret using `project-config-secrets`",
-    );
-  }
+
   instance.log("");
   instance.log("gitlab is ready! 🥂");
   instance.log("\n");
