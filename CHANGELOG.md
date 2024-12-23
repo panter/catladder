@@ -1,3 +1,10 @@
+# [3.4.0](https://git.panter.ch/catladder/catladder/compare/v3.3.0...v3.4.0) (2024-12-23)
+
+
+### Features
+
+* **cli:** add optional component filter to projectSetup ([a31b7e8](https://git.panter.ch/catladder/catladder/commit/a31b7e826bda9dcad8f8b4f5ababdae6a0d8997f))
+
 # [3.3.0](https://git.panter.ch/catladder/catladder/compare/v3.2.1...v3.3.0) (2024-12-23)
 
 
