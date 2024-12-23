@@ -1,3 +1,10 @@
+# [3.3.0](https://git.panter.ch/catladder/catladder/compare/v3.2.1...v3.3.0) (2024-12-23)
+
+
+### Features
+
+* don't ask for config secrets in project-setup ([e889391](https://git.panter.ch/catladder/catladder/commit/e8893919bd625e1f479f81f807d755e62f5c5983))
+
 ## [3.2.1](https://git.panter.ch/catladder/catladder/compare/v3.2.0...v3.2.1) (2024-12-10)
 
 
