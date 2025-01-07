@@ -1,3 +1,10 @@
+# [3.5.0](https://git.panter.ch/catladder/catladder/compare/v3.4.0...v3.5.0) (2025-01-07)
+
+
+### Features
+
+* **runner-images:** add node 22 and remove node 10 from jobs-default image ([0ce5cb2](https://git.panter.ch/catladder/catladder/commit/0ce5cb2ffd29e95d4c5a27b328a5eda2f68a61e9))
+
 # [3.4.0](https://git.panter.ch/catladder/catladder/compare/v3.3.0...v3.4.0) (2024-12-23)
 
 
