@@ -1,3 +1,11 @@
+# [3.7.0](https://git.panter.ch/catladder/catladder/compare/v3.6.0...v3.7.0) (2025-01-10)
+
+
+### Features
+
+* allow to disable build ([3c734de](https://git.panter.ch/catladder/catladder/commit/3c734de54346280227853bb80670f0ed63d13bd2))
+* **cloud-run:** allow to specify args and image on service ([ffb3375](https://git.panter.ch/catladder/catladder/commit/ffb3375e698aa5037a1feb4e6627211805a61cfc))
+
 # [3.6.0](https://git.panter.ch/catladder/catladder/compare/v3.5.0...v3.6.0) (2025-01-10)
 
 
