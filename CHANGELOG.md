@@ -1,3 +1,10 @@
+# [3.6.0](https://git.panter.ch/catladder/catladder/compare/v3.5.0...v3.6.0) (2025-01-10)
+
+
+### Features
+
+* **cloud-run:** add support for GPU in cloud run ([864c4fe](https://git.panter.ch/catladder/catladder/commit/864c4fe3a5924870eb95b4c72c5d1fc19ba971a7))
+
 # [3.5.0](https://git.panter.ch/catladder/catladder/compare/v3.4.0...v3.5.0) (2025-01-07)
 
 
