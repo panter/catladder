@@ -168,6 +168,18 @@ export type DeployConfigCloudRunService = {
    *
    */
   http2?: boolean;
+
+  /**
+   * Number of GPUs to use. Defaults to 0
+   *
+   * This is a preview feature and not all regions support it.
+   */
+  gpu?: number;
+
+  /**
+   * gpu type to use. Refer to https://cloud.google.com/run/docs/configuring/services/gpu#gcloud for defaults
+   */
+  gpuType?: string;
 } & DeployConfigCloudRunWithVolumes &
   DeployConfigCloudRunNetworkConfig;
 

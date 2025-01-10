@@ -59,11 +59,13 @@ export const getServiceDeployScript = (
       ingress: customConfig?.ingress ?? "all",
       "cpu-boost": true,
       "execution-environment": customConfig?.executionEnvironment,
+      gpu: customConfig?.gpu,
+      "gpu-type": customConfig?.gpuType,
     },
     ...createVolumeConfig(customConfig?.volumes, "service"),
   );
-
-  return `${gcloudRunCmd()} deploy ${fullServiceName} ${argsString}`;
+  const version = requiresBeta(customConfig) ? "beta" : undefined;
+  return `${gcloudRunCmd(version)} deploy ${fullServiceName} ${argsString}`;
 };
 
 export const getServiceDeleteScript = (
@@ -83,4 +85,17 @@ export const getServiceDeleteScript = (
   return [
     `${gcloudRunCmd()} services delete ${fullServiceName} ${commonArgsString}`,
   ];
+};
+const requiresBeta = (config: DeployConfigCloudRunService | undefined) => {
+  if (!config) {
+    return false;
+  }
+
+  if (config.gpuType) {
+    return true;
+  }
+  if (config.gpu && config.gpu > 0) {
+    return true;
+  }
+  return false;
 };
