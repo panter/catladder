@@ -14,7 +14,7 @@ import {
 } from "./common";
 import { ENV_VARS_FILENAME } from "./constants";
 import { createVolumeConfig } from "./volumes";
-import { getCloudRunJobArgsArg } from "./execute/onDeploy";
+import { getCloudRunServiceOrJobArgsArg } from "../utils/getJobOrServiceArgs";
 
 export const getDeleteJobsScripts = (context: ComponentContext) => {
   const commonArgs = getCommonCloudRunArgs(context);
@@ -44,7 +44,7 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
       const commonDeployArgsString = createArgsString(
         {
           command: `"${commandArray.join(",")}"`,
-          args: getCloudRunJobArgsArg(job.args),
+          args: getCloudRunServiceOrJobArgsArg(job.args),
           labels: `"${makeLabelString(getLabels(context))},cloud-run-job-name=$current_job_name"`,
           image: `"${job.image ?? commonImage}"`,
           project,

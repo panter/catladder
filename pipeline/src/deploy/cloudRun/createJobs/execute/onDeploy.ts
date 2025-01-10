@@ -3,8 +3,10 @@ import type { ComponentContext } from "../../../../types/context";
 import type {
   DeployConfigCloudRunExecuteOnDeploy,
   DeployConfigCloudRunJob,
+  DeployConfigCloudRunService,
 } from "../../../types/googleCloudRun";
 import { createArgsString } from "../../utils/createArgsString";
+import { getCloudRunServiceOrJobArgsArg } from "../../utils/getJobOrServiceArgs";
 import { getFullJobName } from "../../utils/jobName";
 import { getCloudRunJobsWithNames } from "../cloudRunJobs";
 import {
@@ -93,20 +95,8 @@ const getJobRunScriptForExecute = (
   const argString = createArgsString({
     ...commonArgs,
     wait: waitForCompletion === true ? true : undefined,
-    args: getCloudRunJobArgsArg(config.args),
+    args: getCloudRunServiceOrJobArgsArg(config.args),
   });
   const fullJobName = getFullJobName(context, jobName);
   return `${gcloudRunCmd()} jobs execute ${fullJobName.toString()} ${argString}`;
-};
-
-export const getCloudRunJobArgsArg = (
-  args:
-    | DeployConfigCloudRunExecuteOnDeploy["args"]
-    | DeployConfigCloudRunJob["args"],
-) => {
-  return args !== undefined
-    ? args.length > 0
-      ? args?.map((arg) => `"${arg}"`).join(",")
-      : ""
-    : undefined;
 };

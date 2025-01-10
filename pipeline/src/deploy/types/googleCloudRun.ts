@@ -180,6 +180,17 @@ export type DeployConfigCloudRunService = {
    * gpu type to use. Refer to https://cloud.google.com/run/docs/configuring/services/gpu#gcloud for defaults
    */
   gpuType?: string;
+
+  /**
+   * the image to use. Defaults to the image from the build.
+   *
+   * If you specify an image, you usually want to disable the build by setting build: false
+   */
+  image?: string;
+  /**
+   * args to pass to the command
+   */
+  args?: string[];
 } & DeployConfigCloudRunWithVolumes &
   DeployConfigCloudRunNetworkConfig;
 

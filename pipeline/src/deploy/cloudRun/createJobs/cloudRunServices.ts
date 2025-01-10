@@ -3,6 +3,7 @@ import type { ComponentContext } from "../../../types/context";
 
 import type { DeployConfigCloudRunService } from "../../types/googleCloudRun";
 import { createArgsString } from "../utils/createArgsString";
+import { getCloudRunServiceOrJobArgsArg } from "../utils/getJobOrServiceArgs";
 import { getServiceName } from "../utils/getServiceName";
 import {
   gcloudRunCmd,
@@ -38,7 +39,9 @@ export const getServiceDeployScript = (
     {
       // command as empty string resets it to default (uses the image's entrypoint)
       command: commandArray ? '"' + commandArray.join(",") + '"' : '""',
+      args: getCloudRunServiceOrJobArgsArg(customConfig?.args),
       ...commonDeployArgs,
+      image: customConfig?.image ?? commonDeployArgs.image,
       labels: makeLabelString({
         ...getLabels(context),
         "cloud-run-service-name": fullServiceName,
