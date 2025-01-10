@@ -16,12 +16,13 @@ export const getAllCacheConfigsFromConfig = (
       ? // also add cache configs of the components of that workspace
         // FIXNME: this only works currently for the build config
         // we would probably need to introduce a path to the right config property (build-->test or so)
-        context.components.flatMap<CacheConfig>(
-          (componentContext) =>
-            ensureArray(componentContext.build.config.cache).map((c) => ({
-              ...c,
-              baseDir: componentContext.build.dir,
-            })) ?? [],
+        context.components.flatMap<CacheConfig>((componentContext) =>
+          componentContext.build.type !== "disabled"
+            ? (ensureArray(componentContext.build.config.cache).map((c) => ({
+                ...c,
+                baseDir: componentContext.build.dir,
+              })) ?? [])
+            : [],
         )
       : []),
   ];

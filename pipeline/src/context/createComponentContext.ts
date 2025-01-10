@@ -42,26 +42,31 @@ export const createComponentContext = async (
 
   const componentConfigWithoutDefaults = envContext.envConfigRaw;
 
-  const resolvedBuildType = isStandaloneBuildConfig(
-    componentConfigWithoutDefaults.build,
-  )
-    ? componentConfigWithoutDefaults.build.type
-    : ctx.config.builds?.[componentConfigWithoutDefaults.build.from].type;
-  if (!resolvedBuildType) {
+  const resolvedBuildType =
+    componentConfigWithoutDefaults.build === false
+      ? false
+      : isStandaloneBuildConfig(componentConfigWithoutDefaults.build)
+        ? componentConfigWithoutDefaults.build.type
+        : ctx.config.builds?.[componentConfigWithoutDefaults.build.from].type;
+  if (resolvedBuildType === undefined) {
     throw new Error("build type not found, is the build config correct?");
   }
   const defaults: {
-    build: PartialDeep<BuildConfig>;
+    build: PartialDeep<BuildConfig | false>;
     deploy: PartialDeep<DeployConfig>;
   } = componentConfigWithoutDefaults.deploy
     ? {
-        build: BUILD_TYPES[resolvedBuildType].defaults(envContext),
+        build:
+          resolvedBuildType &&
+          BUILD_TYPES[resolvedBuildType].defaults(envContext),
         deploy: DEPLOY_TYPES[
           componentConfigWithoutDefaults.deploy.type as DeployConfigType
         ].defaults(envContext as any),
       }
     : {
-        build: BUILD_TYPES[resolvedBuildType].defaults(envContext),
+        build:
+          resolvedBuildType &&
+          BUILD_TYPES[resolvedBuildType].defaults(envContext),
         deploy: {},
       };
 
@@ -80,6 +85,14 @@ export const createComponentContext = async (
       : []),
   ];
   const _getBuildContext = (): BuildContextComponent => {
+    if (build === false) {
+      return {
+        type: "disabled",
+        getComponentDirs,
+        dir,
+      };
+    }
+
     if (isStandaloneBuildConfig(build)) {
       return {
         dir: dir,

@@ -1,5 +1,8 @@
 import { sbomDeactivated } from "../../deploy/sbom";
-import type { WorkspaceContext } from "../../types/context";
+import type {
+  ComponentContextWithBuild,
+  WorkspaceContext,
+} from "../../types/context";
 import {
   componentContextHasWorkspaceBuild,
   componentContextIsStandaloneBuild,
@@ -16,7 +19,7 @@ import { APP_BUILD_JOB_NAME } from "./constants";
 import { createAppBuildJob } from "./createAppBuildJob";
 
 export const createComponentBuildJobs = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
   definitions: {
     appBuild?: AppBuildJobDefinition;
     dockerBuild: DockerBuildJobDefinition;

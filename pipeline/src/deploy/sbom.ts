@@ -6,9 +6,10 @@ import {
 } from "../types/context";
 
 export const sbomDeactivated = (context: ComponentContext) =>
-  componentContextIsStandaloneBuild(context) &&
-  context.build.config.type === "custom" &&
-  context.build.config.sbom === false;
+  context.build.type === "disabled" ||
+  (componentContextIsStandaloneBuild(context) &&
+    context.build.config.type === "custom" &&
+    context.build.config.sbom === false);
 
 export const getDependencyTrackUploadScript = (
   context: ComponentContext,

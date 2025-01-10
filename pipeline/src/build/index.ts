@@ -1,4 +1,7 @@
-import type { ComponentContext, WorkspaceContext } from "../types/context";
+import type {
+  ComponentContextWithBuild,
+  WorkspaceContext,
+} from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 
 import type { CatladderJob } from "../types/jobs";
@@ -16,7 +19,7 @@ export * from "./types";
 
 export type BuildTypes = {
   [type in BuildConfigStandaloneType]: {
-    jobs: (context: ComponentContext) => CatladderJob[];
+    jobs: (context: ComponentContextWithBuild) => CatladderJob[];
     defaults: (
       envContext: EnvironmentContext,
     ) => Partial<Extract<BuildConfig, { type: type }>>;

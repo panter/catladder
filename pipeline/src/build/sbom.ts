@@ -1,12 +1,14 @@
 import { isStandaloneBuildConfig } from ".";
-import type { ComponentContext } from "../types/context";
+import type { ComponentContextWithBuild } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
 import { ensureArrayOrNull } from "../utils";
 
 export const SBOM_BUILD_JOB_NAME = "🧾 sbom";
 export const SBOM_FILE = "__sbom.json";
 
-export const createSbomBuildJob = (context: ComponentContext): CatladderJob => {
+export const createSbomBuildJob = (
+  context: ComponentContextWithBuild,
+): CatladderJob => {
   const buildConfig = context.build.config;
 
   const defaultImage = "aquasec/trivy:0.38.3";

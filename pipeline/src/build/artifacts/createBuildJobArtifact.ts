@@ -41,7 +41,9 @@ const getArtifactsPathForComponent = (
   additionalPaths?: string[],
 ): string[] => {
   return [
-    ...(c.build.config.artifactsPaths ?? []),
+    ...(c.build.type !== "disabled"
+      ? (c.build.config.artifactsPaths ?? [])
+      : []),
     ...(additionalPaths ?? []),
   ]?.flatMap((artifact) =>
     c.build

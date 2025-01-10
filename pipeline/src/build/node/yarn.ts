@@ -1,5 +1,5 @@
 import { BashExpression } from "../../bash/BashExpression";
-import type { Context } from "../../types";
+import { type Context } from "../../types";
 import { ensureArray } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 
@@ -32,7 +32,9 @@ export const getYarnInstall = (
   },
 ) => {
   const postInstall =
-    context.type !== "workspace" && "postInstall" in context.build.config
+    context.type !== "workspace" &&
+    context.build.type !== "disabled" &&
+    "postInstall" in context.build.config
       ? context.build.config.postInstall
       : null;
   return [

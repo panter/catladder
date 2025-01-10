@@ -1,4 +1,4 @@
-import type { ComponentContext } from "../../types/context";
+import type { ComponentContextWithBuild } from "../../types/context";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import { isOfBuildType } from "../types";
 
@@ -7,7 +7,7 @@ import { createComponentBuildJobs } from "../base";
 import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
 
 export const createCustomBuildJobs = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
 ): CatladderJob[] => {
   const buildConfig = context.build.config;
 

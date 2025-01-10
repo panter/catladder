@@ -116,6 +116,9 @@ export type BuildContextStandalone<
   buildType: C["type"];
 };
 
+export type BuildContextDisabled = BuildContextComponentBase & {
+  type: "disabled";
+};
 export type BuildContextFromWorkspace = BuildContextComponentBase & {
   config: BuildConfigFromWorkspace;
   workspaceName: string;
@@ -133,9 +136,13 @@ export type BuildContextWorkspace = BuildContextBase & {
   config: WorkspaceBuildConfig;
 };
 
-export type BuildContextComponent =
+export type BuildContextWithBuild =
   | BuildContextStandalone
   | BuildContextFromWorkspace;
+
+export type BuildContextComponent =
+  | BuildContextWithBuild
+  | BuildContextDisabled;
 
 export type BuildContext = BuildContextComponent | BuildContextWorkspace;
 
@@ -171,6 +178,8 @@ export type ComponentContext<
 
   customJobs?: CatladderJob[];
 };
+
+export type ComponentContextWithBuild = ComponentContext<BuildContextWithBuild>;
 
 export type Context = ComponentContext | WorkspaceContext;
 

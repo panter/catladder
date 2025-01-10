@@ -1,9 +1,5 @@
-import {
-  componentContextIsStandaloneBuild,
-  type BuildConfigRails,
-  type BuildContextStandalone,
-  type ComponentContext,
-} from "../..";
+import type { ComponentContextWithBuild } from "../..";
+import { componentContextIsStandaloneBuild } from "../..";
 import type { CatladderJob } from "../../types/jobs";
 import { createComponentBuildJobs } from "../base";
 import {
@@ -14,7 +10,7 @@ import {
 import { isOfBuildType } from "../types";
 
 export const createRailsBuildJobs = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
 ): CatladderJob[] => {
   const buildConfig = context.build.config;
   if (!isOfBuildType(buildConfig, "rails")) {

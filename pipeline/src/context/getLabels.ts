@@ -14,7 +14,10 @@ export const getLabels = (context: ComponentContext) => {
     "app-name": sanitize(context.fullConfig.appName),
     "env-type": sanitize(context.environment.envType),
     "env-name": sanitize(context.env),
-    "build-type": sanitize(context.build.buildType),
+    "build-type":
+      context.build.type === "disabled"
+        ? "disabled"
+        : sanitize(context.build.buildType),
     ...(context.fullConfig.meta?.labels ?? {}),
   };
   return labels;

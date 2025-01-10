@@ -1,5 +1,6 @@
 import type {
   BuildContextStandalone,
+  ComponentContextWithBuild,
   WorkspaceContext,
 } from "../../types/context";
 import {
@@ -19,7 +20,7 @@ import { getNodeCache, getYarnCache } from "./cache";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 
 export const createNodeBuildJobs = (
-  context: ComponentContext | WorkspaceContext,
+  context: ComponentContextWithBuild | WorkspaceContext,
 ): CatladderJob[] => {
   if (context.type === "workspace") {
     return createWorkspaceBuildJobs(context, {
@@ -47,8 +48,10 @@ export const createNodeBuildJobDefinition = (
   });
 };
 
+type NewType = ComponentContextWithBuild;
+
 export const createNodeDockerJobDefinition = (
-  context: ComponentContext,
+  context: NewType,
 ): DockerBuildJobDefinition => {
   // get the default docker built-in type based on the build type
   const dockerDefaultBuiltIn: BuildConfigDocker["type"] =

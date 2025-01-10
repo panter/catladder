@@ -1,5 +1,5 @@
 import type { Artifacts } from "../../types";
-import type { ComponentContext } from "../../types/context";
+import type { ComponentContextWithBuild } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
@@ -13,7 +13,7 @@ const RUNNER_CUSTOM_TEST_VARIABLES = {
 };
 
 export const createCustomTestJobs = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
 ): CatladderJob[] => {
   // don't run tests after release
   // TODO: this will be replaced by using rules

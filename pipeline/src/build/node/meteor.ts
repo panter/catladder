@@ -1,5 +1,8 @@
 import { getRunnerImage } from "../../runner";
-import type { ComponentContext } from "../../types/context";
+import type {
+  ComponentContext,
+  ComponentContextWithBuild,
+} from "../../types/context";
 
 import type { CatladderJob } from "../../types/jobs";
 
@@ -23,7 +26,7 @@ const getMeteorCache = (context: ComponentContext): CacheConfig[] => [
   },
 ];
 export const createMeteorBuildJobs = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
 ): CatladderJob[] => {
   const buildConfig = context.build.config;
 

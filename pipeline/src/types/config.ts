@@ -83,7 +83,7 @@ export type DefaultEnvConfig = {
   /**
    * how the app is built and its runtime
    */
-  build: BuildConfig;
+  build: BuildConfig | false;
   /**
    * environment variables
    */

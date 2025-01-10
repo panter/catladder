@@ -1,6 +1,9 @@
 import { merge } from "lodash";
 
-import type { ComponentContext } from "../../types/context";
+import type {
+  BuildContextComponent,
+  ComponentContext,
+} from "../../types/context";
 import { mergeWithMergingArrays } from "../../utils";
 import type { DeployConfigKubernetesValues } from "../types";
 import { isOfDeployType } from "../types";
@@ -13,7 +16,7 @@ import { createKubeEnv } from "./kubeEnv";
 import { createMongodbBaseConfig } from "./mongodb";
 
 const createAppConfig = (
-  context: ComponentContext,
+  context: ComponentContext<BuildContextComponent>,
   application: DeployConfigKubernetesValues["application"],
 ): DeployConfigKubernetesValues["application"] => {
   if (application === false) {
@@ -27,7 +30,11 @@ const createAppConfig = (
   return mergeWithMergingArrays(
     {
       host: context.environment.envVars.HOSTNAME,
-      command: command ?? context.build.config.startCommand,
+      command:
+        command ??
+        (context.build.type !== "disabled"
+          ? context.build.config.startCommand
+          : undefined),
       livenessProbe: {
         httpGet: {
           path: healthRoute ?? "__health",
@@ -55,7 +62,9 @@ const removeFalsy = <T>(record?: Record<string, false | T>) => {
   );
 };
 
-export const createKubeValues = (context: ComponentContext) => {
+export const createKubeValues = (
+  context: ComponentContext<BuildContextComponent>,
+) => {
   const deployConfig = context.deploy?.config;
   if (!deployConfig) {
     return [];

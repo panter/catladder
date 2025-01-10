@@ -10,7 +10,11 @@ import {
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
 import { getRunnerImage } from "../runner";
-import type { ComponentContext, DockerBuildJobDefinition } from "../types";
+import type {
+  ComponentContext,
+  ComponentContextWithBuild,
+  DockerBuildJobDefinition,
+} from "../types";
 import type { CatladderJob } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { createJobCacheFromCacheConfigs } from "./cache/createJobCache";
@@ -84,7 +88,7 @@ const getDockerAdditions = (build: BuildConfig) => {
         : undefined,
   };
 };
-export const getDockerBuildVariables = (context: ComponentContext) => {
+export const getDockerBuildVariables = (context: ComponentContextWithBuild) => {
   return {
     ...getDockerAdditions(context.build.config),
     APP_DIR: context.build.dir,
@@ -120,7 +124,7 @@ export const getDockerJobBaseProps = (): Pick<
 };
 
 export const createDockerBuildJobBase = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
   { script, cache, ...def }: DockerBuildJobDefinition,
 ): CatladderJob => {
   return merge(
@@ -163,7 +167,7 @@ const BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS = {
 };
 
 export const getDockerBuildScriptWithBuiltInDockerFile = (
-  context: ComponentContext,
+  context: ComponentContextWithBuild,
   defaultType?: BuildConfigDocker["type"],
 ) => {
   const type =
