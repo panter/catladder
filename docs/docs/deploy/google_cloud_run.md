@@ -70,7 +70,7 @@ deploy: {
 
 Catladder will automatically create the databases on this instance. You can reuse the same instance for multiple apps, as the database-names contain the full app name and should not clash.
 
-To use a DB from another project, refer to this https://stackoverflow.com/a/70770872/1463534
+To use a DB from another project, refer to this <https://stackoverflow.com/a/70770872/1463534>
 
 ## Jobs and migrations
 
@@ -151,12 +151,12 @@ deploy: {
 
 ### Execute a job from within your app
 
-Check out this example https://git.panter.ch/catladder/test-projects/cloudrun-prisma.
+Check out this example <https://git.panter.ch/catladder/test-projects/cloudrun-prisma>.
 
 ## Custom domains
 
 There's no built-in support for custom domains in catladder, but you can set up custom domains manually.  
-Follow these guide: https://cloud.google.com/run/docs/mapping-custom-domains
+Follow these guide: <https://cloud.google.com/run/docs/mapping-custom-domains>
 
 Some hints:
 
@@ -266,7 +266,7 @@ export default class LoggerFactory {
 
 You can then use the `makeExpressMiddleware` so that each req has a `log` object which is an instance of a winston logger. All those logs will have the same trace as the initial request, so you can group them in google cloud logs
 
-see also https://git.panter.ch/manul/wea/food-2050/-/blob/main/libs/logger/src/index.ts?ref_type=heads
+see also <https://git.panter.ch/manul/wea/food-2050/-/blob/main/libs/logger/src/index.ts?ref_type=heads>
 
 ### Tracing
 
@@ -378,3 +378,88 @@ Consider migrating away from background workers to either cronjobs are asynchron
 #### MongoDb
 
 We supported MongoDB in Kubernetes by using a helm chart. This is not supported in cloud run. You can use a managed MongoDB service, e.g. MongoDB atlas.
+
+## Health Check
+
+HTTP1 and TCP probes for health checks are supported and can be configured in `deploy.service.healthCheck`.
+
+### Cloud Run's Default Health Check
+
+When `deploy.service.healthCheck` is not set, Cloud Run's default health check is used. It is a TCP startup probe that checks if the container is listening on the port. No liveness probe is set.
+
+```ts
+
+{
+  components: {
+    www: {
+      deploy: {
+        type: "google-cloudrun",
+        // ...
+        service: {
+          // healthCheck is not set
+        },
+      },
+    },
+  },
+}
+```
+
+### Enabling Health Check
+
+To enable default health checks, set `healthCheck` to `true`:
+
+```ts
+
+{
+  components: {
+    www: {
+      deploy: {
+        type: "google-cloudrun",
+        // ...
+        service: {
+          healthCheck: true,
+        },
+      },
+    },
+  },
+}
+```
+
+Default values for startup and liveness probes can be found in `defaultStartupProbe` and `defaultLivenessProbe`.
+
+### Custom Liveness and Startup Probes
+
+When you need custom health checks, you can use the `livenessProbe` and `startupProbe` options:
+
+```ts
+{
+  components: {
+    www: {
+      deploy: {
+        type: "google-cloudrun",
+        // ...
+        service: {
+          healthCheck: {
+            livenessProbe: {
+              type: "http1",
+              failureThreshold: 3,
+              initialDelaySeconds: 0,
+              path: "/liveness/health",
+              periodSeconds: 60,
+              timeoutSeconds: 30,
+            },
+            startupProbe: {
+              type: "http1",
+              failureThreshold: 3,
+              initialDelaySeconds: 0,
+              path: "/startup/health",
+              periodSeconds: 10,
+              timeoutSeconds: 5,
+            },
+          },
+        },
+      },
+    },
+  },
+}
+```

@@ -12,6 +12,7 @@ import {
   makeLabelString,
 } from "./common";
 import { ENV_VARS_FILENAME } from "./constants";
+import { healthCheckCliArgs } from "./healthCheck";
 import { createVolumeConfig } from "./volumes";
 
 export const getServiceDeployScript = (
@@ -38,6 +39,7 @@ export const getServiceDeployScript = (
       : command.split(" ")
     : undefined;
   const fullServiceName = serviceName.concat(nameSuffix ?? "");
+
   const argsString = createArgsString(
     {
       // command as empty string resets it to default (uses the image's entrypoint)
@@ -67,6 +69,7 @@ export const getServiceDeployScript = (
       "execution-environment": customConfig?.executionEnvironment,
       gpu: customConfig?.gpu,
       "gpu-type": customConfig?.gpuType,
+      ...healthCheckCliArgs(customConfig?.healthCheck),
     },
     ...createVolumeConfig(customConfig?.volumes, "service"),
   );
@@ -101,6 +104,9 @@ const requiresBeta = (config: DeployConfigCloudRunService | undefined) => {
     return true;
   }
   if (config.gpu && config.gpu > 0) {
+    return true;
+  }
+  if (config.healthCheck !== undefined) {
     return true;
   }
   return false;

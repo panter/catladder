@@ -191,8 +191,109 @@ export type DeployConfigCloudRunService = {
    * args to pass to the command
    */
   args?: string[];
+
+  /**
+   * Configuration of the health check.
+   *
+   * When set to `true`, startup and liveness probes will be
+   * configured to `defaultStartupProbe` and `defaultLivenessProbe`.
+   *
+   * When not set, default Cloud Run's health check
+   * configuration is used (startup TCP probe and no liveness probe).
+   */
+  healthCheck?:
+    | true
+    | {
+        /**
+         * Startup probe configuration.
+         */
+        startupProbe: DeployConfigCloudRunProbe;
+
+        /**
+         * Liveness probe configuration.
+         * `false` disables the liveness probe.
+         */
+        livenessProbe: false | DeployConfigCloudRunProbe;
+      };
 } & DeployConfigCloudRunWithVolumes &
   DeployConfigCloudRunNetworkConfig;
+
+export const defaultStartupProbe: DeployConfigCloudRunProbe = {
+  type: "http1",
+  path: "/__health",
+
+  initialDelaySeconds: 5,
+  timeoutSeconds: 1,
+  periodSeconds: 30,
+  failureThreshold: 3,
+};
+
+export const defaultLivenessProbe: DeployConfigCloudRunProbe = {
+  ...defaultStartupProbe,
+
+  initialDelaySeconds: 0,
+  timeoutSeconds: 10,
+  periodSeconds: 30,
+  failureThreshold: 3,
+};
+
+export type DeployConfigCloudRunProbe =
+  | DeployConfigCloudRunHttp1Probe
+  | DeployConfigCloudRunTcpProbe;
+
+export type DeployConfigCloudRunProbeShared = {
+  /**
+   * The period in seconds at which to perform the probe.
+   * For example 2 to perform the probe every 2 seconds.
+   * Specify a value **from 1 second to 240** seconds.
+   */
+  periodSeconds: number;
+
+  /**
+   * The number of seconds to wait after the container has started before performing the first probe.
+   * Specify a value **from 0 seconds to 240** seconds.
+   */
+  initialDelaySeconds: number;
+
+  /**
+   * The number of seconds to wait until the probe times out.
+   * This value cannot exceed the value specified for `period`.
+   * Specify a value **from 1 to 240**.
+   */
+  timeoutSeconds: number;
+
+  /**
+   * The number of times to retry the probe before shutting down the container.
+   */
+  failureThreshold: number;
+};
+
+export type DeployConfigCloudRunTcpProbe = DeployConfigCloudRunProbeShared & {
+  /**
+   * Cloud Run makes a TCP connection to open the TCP Socket on the specified port.
+   * If Cloud Run is unable to establish a connection, it indicates a failure.
+   */
+  type: "tcp";
+};
+
+export type DeployConfigCloudRunHttp1Probe = DeployConfigCloudRunProbeShared & {
+  /**
+   * **This will NOT work with http2 enabled services**
+   *
+   * Cloud Run makes an HTTP GET request to the service health check endpoint (for example, /ready).
+   * Any response between 200 and 400 is a success, everything else indicates failure.
+   *
+   * If a startup probe does not succeed within the specified time (failureThreshold * period), which cannot exceed 240 seconds, the container is shut down.
+   *
+   * If the HTTP startup probe succeeds within the specified time, and you have enabled liveness probe, the HTTP liveness probe is started.
+   */
+  type: "http1";
+
+  /**
+   * the route path to check for health status of the service starting with a `/`.
+   */
+  path: string;
+};
 
 export type DeployConfigCloudRunNetworkConfig = {
   /* the vpc network, see https://cloud.google.com/sdk/gcloud/reference/run/deploy#--network  */
