@@ -1,3 +1,10 @@
+# [3.8.0](https://git.panter.ch/catladder/catladder/compare/v3.7.0...v3.8.0) (2025-01-21)
+
+
+### Features
+
+* **cloud-run:** add support for health check ([7219b03](https://git.panter.ch/catladder/catladder/commit/7219b03feaeae5970244517b03e46302a07a2898))
+
 # [3.7.0](https://git.panter.ch/catladder/catladder/compare/v3.6.0...v3.7.0) (2025-01-10)
 
 
