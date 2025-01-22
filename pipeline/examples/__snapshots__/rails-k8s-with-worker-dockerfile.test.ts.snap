@@ -287,8 +287,6 @@ app 🧪 test:
       application:
         host: |-
           app.dev.test-app.pan.panter.cloud
-        command: |-
-          /cnb/process/web
         livenessProbe:
           httpGet:
             path: |-
@@ -612,8 +610,6 @@ app 🧪 test:
       application:
         host: |-
           $(printf %s "app.$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }).review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
-        command: |-
-          /cnb/process/web
         livenessProbe:
           httpGet:
             path: |-
@@ -941,8 +937,6 @@ app 🧪 test:
       application:
         host: |-
           app.stage.test-app.pan.panter.cloud
-        command: |-
-          /cnb/process/web
         livenessProbe:
           httpGet:
             path: |-
@@ -1258,8 +1252,6 @@ app 🧪 test:
       application:
         host: |-
           my-fancy-website.com
-        command: |-
-          /cnb/process/web
         livenessProbe:
           httpGet:
             path: |-
