@@ -14,6 +14,7 @@ export const setupGitlabToken = async (vorpal: CommandInstance) => {
   vorpal.log("");
   vorpal.log("☝ in order to access the api, we need a personal access token");
   vorpal.log("Its best to create one specifically for catladder");
+  vorpal.log("Scopes needed: api");
   vorpal.log("");
   vorpal.log("☝ we open up the settings page for you!");
   vorpal.log("");
