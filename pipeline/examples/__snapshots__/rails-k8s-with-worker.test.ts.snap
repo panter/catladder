@@ -167,10 +167,10 @@ app 🧪 test:
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
     - cd .
     - docker pull $DOCKER_CACHE_IMAGE || true
-    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack
+    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
     - chmod +x /usr/local/bin/pack
     - sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:22'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
+    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:24'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -484,10 +484,10 @@ app 🧪 test:
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
     - cd .
     - docker pull $DOCKER_CACHE_IMAGE || true
-    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack
+    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
     - chmod +x /usr/local/bin/pack
     - sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:22'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
+    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:24'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
   rules:
     - if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -807,10 +807,10 @@ app 🧪 test:
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
     - cd .
     - docker pull $DOCKER_CACHE_IMAGE || true
-    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack
+    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
     - chmod +x /usr/local/bin/pack
     - sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:22'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
+    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:24'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
   rules:
     - if: $CI_COMMIT_TAG
   needs: []
@@ -1117,10 +1117,10 @@ app 🧪 test:
     - docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY
     - cd .
     - docker pull $DOCKER_CACHE_IMAGE || true
-    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.32.1/pack-v0.32.1-linux.tgz | tar -zx --directory /usr/local/bin pack
+    - wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
     - chmod +x /usr/local/bin/pack
     - sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:22'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
+    - 'pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder ''heroku/builder:24'' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env ''SECRET_KEY_BASE=dummy-value'' '
   rules:
     - if: $CI_COMMIT_TAG
   needs: []
