@@ -1,3 +1,10 @@
+## [3.8.3](https://git.panter.ch/catladder/catladder/compare/v3.8.2...v3.8.3) (2025-01-24)
+
+
+### Bug Fixes
+
+* **docs:** fix docs build ([55bf5d6](https://git.panter.ch/catladder/catladder/commit/55bf5d635e9ff82c7a7508a9d7157d33dbe47230))
+
 ## [3.8.2](https://git.panter.ch/catladder/catladder/compare/v3.8.1...v3.8.2) (2025-01-24)
 
 ## [3.8.1](https://git.panter.ch/catladder/catladder/compare/v3.8.0...v3.8.1) (2025-01-23)
