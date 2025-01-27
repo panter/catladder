@@ -67,7 +67,7 @@ export const requiresDockerBuild = (context: ComponentContext): boolean => {
 
 // those need to be runner variables
 const getDockerBuildRunnerVariables = () => ({
-  DOCKER_HOST: "tcp://0.0.0.0:2375",
+  DOCKER_HOST: "tcp://docker:2375",
   DOCKER_TLS_CERTDIR: "",
   DOCKER_DRIVER: "overlay2",
   DOCKER_BUILDKIT: "1", // see https://docs.docker.com/develop/develop-images/build_enhancements/
