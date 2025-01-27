@@ -1,3 +1,10 @@
+## [3.8.5](https://git.panter.ch/catladder/catladder/compare/v3.8.4...v3.8.5) (2025-01-27)
+
+
+### Bug Fixes
+
+* **sbom:** unset default image entrypoint for docker executor runners ([f7bb634](https://git.panter.ch/catladder/catladder/commit/f7bb634c8dedf7b4d8643c3d70755c1211c249f9))
+
 ## [3.8.4](https://git.panter.ch/catladder/catladder/compare/v3.8.3...v3.8.4) (2025-01-27)
 
 
