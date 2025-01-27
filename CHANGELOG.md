@@ -1,3 +1,10 @@
+## [3.8.4](https://git.panter.ch/catladder/catladder/compare/v3.8.3...v3.8.4) (2025-01-27)
+
+
+### Bug Fixes
+
+* **docker:** set build host to service name for docker executor compatability ([07e1543](https://git.panter.ch/catladder/catladder/commit/07e1543a56cd80ee9aa0154b3645c04ec6ca667b))
+
 ## [3.8.3](https://git.panter.ch/catladder/catladder/compare/v3.8.2...v3.8.3) (2025-01-24)
 
 
