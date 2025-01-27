@@ -315,7 +315,10 @@ web 🧪 test:
   interruptible: true
 'web 🧾 sbom | dev ':
   stage: build
-  image: aquasec/trivy:0.38.3
+  image:
+    name: aquasec/trivy:0.38.3
+    entrypoint:
+      - ''
   variables: {}
   script:
     - collapseable_section_start "injectvars" "Injecting variables"
@@ -609,7 +612,10 @@ web 🧪 test:
   interruptible: true
 'web 🧾 sbom | review ':
   stage: build
-  image: aquasec/trivy:0.38.3
+  image:
+    name: aquasec/trivy:0.38.3
+    entrypoint:
+      - ''
   variables: {}
   script:
     - collapseable_section_start "injectvars" "Injecting variables"
@@ -909,7 +915,10 @@ web 🧪 test:
   interruptible: true
 'web 🧾 sbom | stage ':
   stage: build
-  image: aquasec/trivy:0.38.3
+  image:
+    name: aquasec/trivy:0.38.3
+    entrypoint:
+      - ''
   variables: {}
   script:
     - collapseable_section_start "injectvars" "Injecting variables"
@@ -1196,7 +1205,10 @@ web 🧪 test:
   interruptible: true
 'web 🧾 sbom | prod ':
   stage: build
-  image: aquasec/trivy:0.38.3
+  image:
+    name: aquasec/trivy:0.38.3
+    entrypoint:
+      - ''
   variables: {}
   script:
     - collapseable_section_start "injectvars" "Injecting variables"

@@ -11,7 +11,10 @@ export const createSbomBuildJob = (
 ): CatladderJob => {
   const buildConfig = context.build.config;
 
-  const defaultImage = "aquasec/trivy:0.38.3";
+  const defaultImage = {
+    name: "aquasec/trivy:0.38.3",
+    entrypoint: [""],
+  };
   const defaultScript = [
     `trivy fs --quiet --format cyclonedx --output "${SBOM_FILE}" ${
       context.packageManagerInfo.componentIsInWorkspace
