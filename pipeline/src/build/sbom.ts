@@ -12,7 +12,7 @@ export const createSbomBuildJob = (
   const buildConfig = context.build.config;
 
   const defaultImage = {
-    name: "aquasec/trivy:0.38.3",
+    name: "aquasec/trivy:0.58.2",
     entrypoint: [""],
   };
   const defaultScript = [
