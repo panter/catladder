@@ -48,7 +48,6 @@ export const createRailsBuildJobs = (
       script: [
         ...gitlabDockerLogin(context),
         `cd ${context.build.dir}`,
-        `docker pull $DOCKER_CACHE_IMAGE || true`,
         `wget --output-document=- https://github.com/buildpacks/pack/releases/download/v${cnbConf?.packVersion}/pack-v${cnbConf?.packVersion}-linux.tgz | tar -zx --directory /usr/local/bin pack`,
         `chmod +x /usr/local/bin/pack`,
         //  replace private git ssh gem sources with https to make bundler with credentials via env var work
