@@ -1,3 +1,10 @@
+## [3.8.8](https://git.panter.ch/catladder/catladder/compare/v3.8.7...v3.8.8) (2025-02-01)
+
+
+### Bug Fixes
+
+* **rails:** use default container image entrypoint ([6a3a072](https://git.panter.ch/catladder/catladder/commit/6a3a072335a9997a88350a1ad2e4ca8c2b201e04))
+
 ## [3.8.7](https://git.panter.ch/catladder/catladder/compare/v3.8.6...v3.8.7) (2025-01-31)
 
 ## [3.8.6](https://git.panter.ch/catladder/catladder/compare/v3.8.5...v3.8.6) (2025-01-27)
