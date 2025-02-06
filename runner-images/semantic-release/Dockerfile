@@ -14,7 +14,7 @@ RUN yarn global add \
     https://github.com/panter/git.git#b4037626cc583d3e9f7995ea0604b23730d0a22e \
     @semantic-release/changelog \
     @semantic-release/gitlab@9 \
-    @semantic-release/exec \
+    @semantic-release/exec@6 \
     /packages/cli
 
 RUN mkdir -p /scripts
