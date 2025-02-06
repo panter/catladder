@@ -1,3 +1,10 @@
+## [3.8.9](https://git.panter.ch/catladder/catladder/compare/v3.8.8...v3.8.9) (2025-02-06)
+
+
+### Bug Fixes
+
+* **semantic-release:** pin exec to v6 for v19 compatability ([1f24e49](https://git.panter.ch/catladder/catladder/commit/1f24e49f251d736637ca5d6fb6b78dabbeec907f))
+
 ## [3.8.8](https://git.panter.ch/catladder/catladder/compare/v3.8.7...v3.8.8) (2025-02-01)
 
 
