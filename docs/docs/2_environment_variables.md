@@ -55,6 +55,7 @@ It is also possible to generate `.env` files automatically on local development 
 ## Predefined variables
 
 - **ROOT_URL**: This is the public URL of a component. In **_review_** and **_dev_** environment, this is normally auto-generated depending on the deployment type
+- **HOSTNAME**: This is the public host name of a component. In **_review_** and **_dev_** environment, this is normally auto-generated depending on the deployment type
 - **PORT**: The port the app should listen to.
 
 Depending on the deploy type[^deploy-type], more variables are available.
