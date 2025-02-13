@@ -1,3 +1,10 @@
+# [3.9.0](https://git.panter.ch/catladder/catladder/compare/v3.8.10...v3.9.0) (2025-02-13)
+
+
+### Features
+
+* **rails:** run postgresql db service for test job ([281aa9d](https://git.panter.ch/catladder/catladder/commit/281aa9d456988df09779267ead8d4417b33ba841))
+
 ## [3.8.10](https://git.panter.ch/catladder/catladder/compare/v3.8.9...v3.8.10) (2025-02-12)
 
 ## [3.8.9](https://git.panter.ch/catladder/catladder/compare/v3.8.8...v3.8.9) (2025-02-06)
