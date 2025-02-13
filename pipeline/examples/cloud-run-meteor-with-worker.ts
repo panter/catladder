@@ -22,7 +22,11 @@ const config = {
             noCpuThrottling: true,
             maxInstances: 1,
             minInstances: 1,
-            command: ["/bin/sh -c", "BACKGROUND_JOBS_ENABLED=1 node main.js"],
+            command: [
+              "/bin/sh",
+              "-c",
+              "BACKGROUND_JOBS_ENABLED=1 node main.js",
+            ],
           },
         },
       },
