@@ -123,13 +123,21 @@ app 👮 lint:
 app 🧪 test:
   stage: test
   image: ruby:3.2.1
-  variables: {}
+  services:
+    - name: docker.io/postgres:latest
+      alias: database
+      variables:
+        POSTGRES_HOST_AUTH_METHOD: trust
+  variables:
+    RAILS_ENV: test
+    DATABASE_URL: postgresql://postgres@database
   script:
     - collapseable_section_start "injectvars" "Injecting variables"
     - collapseable_section_end "injectvars"
     - cd .temp-with-dockerfile
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
+    - bundle exec rake db:setup
     - bundle exec rspec
   cache: *a2
   rules:

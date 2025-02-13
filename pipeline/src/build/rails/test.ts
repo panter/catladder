@@ -93,8 +93,26 @@ export const createRailsTestJobs = (
             `cd ${context.build.dir}`,
             ...bundlerInstall,
             ...(ensureArrayOrNull(buildConfig.test?.command) ?? [
+              "bundle exec rake db:setup",
               "bundle exec rspec",
             ]),
+          ],
+          runnerVariables: {
+            RAILS_ENV: "test",
+            DATABASE_URL: "postgresql://postgres@database",
+          },
+          services: [
+            {
+              name:
+                buildConfig.test && "databaseImage" in buildConfig.test
+                  ? (buildConfig?.test?.databaseImage ??
+                    "docker.io/postgres:latest")
+                  : "docker.io/postgres:latest",
+              alias: "database",
+              variables: {
+                POSTGRES_HOST_AUTH_METHOD: "trust",
+              },
+            },
           ],
         }
       : null;

@@ -277,6 +277,14 @@ export type BuildConfigCustom = Omit<
 
 export type BuildConfigRails = BuildConfigBase & {
   type: "rails";
+  test?: Pick<BuildConfigBase, "test"> & {
+    /**
+     * The container image to use as the database.
+     * Currently only supports PostgreSQL.
+     * Defaults to `docker.io/postgres:latest`
+     */
+    databaseImage?: string;
+  };
   /**
    * The [Cloud Native Buildpacks](https://buildpacks.io/) builder configuration.
    *
