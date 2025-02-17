@@ -1,3 +1,10 @@
+## [3.9.2](https://git.panter.ch/catladder/catladder/compare/v3.9.1...v3.9.2) (2025-02-17)
+
+
+### Bug Fixes
+
+* **rails:** ensure assets are ready for test job ([13602ca](https://git.panter.ch/catladder/catladder/commit/13602ca4529c317cf7b87cbaf4efb1b2b1a947d0))
+
 ## [3.9.1](https://git.panter.ch/catladder/catladder/compare/v3.9.0...v3.9.1) (2025-02-13)
 
 # [3.9.0](https://git.panter.ch/catladder/catladder/compare/v3.8.10...v3.9.0) (2025-02-13)
