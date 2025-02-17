@@ -1,3 +1,10 @@
+## [3.9.3](https://git.panter.ch/catladder/catladder/compare/v3.9.2...v3.9.3) (2025-02-17)
+
+
+### Bug Fixes
+
+* **rails:** prepare test db without any seeds ([f6857d3](https://git.panter.ch/catladder/catladder/commit/f6857d3ab80b1f422b75b83a75054122c2a9fa27))
+
 ## [3.9.2](https://git.panter.ch/catladder/catladder/compare/v3.9.1...v3.9.2) (2025-02-17)
 
 
