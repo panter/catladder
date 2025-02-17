@@ -93,7 +93,7 @@ export const createRailsTestJobs = (
             `cd ${context.build.dir}`,
             ...bundlerInstall,
             ...(ensureArrayOrNull(buildConfig.test?.command) ?? [
-              "bundle exec rake db:setup",
+              "bundle exec rake db:test:prepare",
               "bundle exec rake assets:precompile assets:clean",
               "bundle exec rspec",
             ]),

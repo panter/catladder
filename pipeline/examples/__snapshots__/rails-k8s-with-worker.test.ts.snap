@@ -137,7 +137,7 @@ app 🧪 test:
     - cd .
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
-    - bundle exec rake db:setup
+    - bundle exec rake db:test:prepare
     - bundle exec rake assets:precompile assets:clean
     - bundle exec rspec
   cache: *a2
