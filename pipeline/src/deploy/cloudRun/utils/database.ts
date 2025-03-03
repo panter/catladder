@@ -1,3 +1,8 @@
+import {
+  BashExpression,
+  joinBashExpressions,
+  type StringOrBashExpression,
+} from "../../../bash";
 import type { ComponentContext } from "../../../types";
 import { allowFailureInScripts, repeatOnFailure } from "../../../utils/gitlab";
 import type {
@@ -57,21 +62,101 @@ export const getDatabaseCreateScript = (
   ]);
 };
 
-export const DATABASE_JDBC_URL =
-  "jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD";
+export type DBVariables = {
+  CLOUD_SQL_INSTANCE_CONNECTION_NAME: StringOrBashExpression;
+  DB_NAME: StringOrBashExpression;
+  DB_USER: StringOrBashExpression;
+  DB_PASSWORD: StringOrBashExpression;
+};
+
+/**
+ * controls how variables in the connection string are handled
+ *
+ * - legacy: variables like $DB_USER will be kept as environment variables to be replaced at runtime (default). It is not using BashExpressions as this was not the case in the past.
+ * - embedded: variables will be replaced with their actual values in the connection string
+ *
+ * We will remove the legacy mode in the future, as it is confusing. But its unclear whether its a breaking change in some edge cases
+ */
+export type DBVariablesMode = "legacy" | "embedded";
+
+export const DEFAULT_DB_VARIABLES_MODE: DBVariablesMode = "legacy";
+
+const getVariableOrValue = (
+  key: keyof DBVariables,
+  variables: DBVariables,
+  mode: DBVariablesMode,
+): StringOrBashExpression => {
+  return mode === "legacy" ? `$${key}` : variables[key];
+};
+
+export const getDatabaseJdbcUrl = (
+  variables: DBVariables,
+  mode: DBVariablesMode,
+) => {
+  const parts = [
+    "jdbc:postgresql:///",
+    getVariableOrValue("DB_NAME", variables, mode),
+    "?cloudSqlInstance=",
+    getVariableOrValue("CLOUD_SQL_INSTANCE_CONNECTION_NAME", variables, mode),
+    "&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=",
+    getVariableOrValue("DB_USER", variables, mode),
+    "&password=",
+    getVariableOrValue("DB_PASSWORD", variables, mode),
+  ];
+
+  return joinBashExpressions(parts);
+};
+
+export const getRailsDatabaseConnectionString = (
+  variables: DBVariables,
+  mode: DBVariablesMode,
+) => {
+  const parts = [
+    "postgresql://",
+    getVariableOrValue("DB_USER", variables, mode),
+    ":",
+    getVariableOrValue("DB_PASSWORD", variables, mode),
+    "@",
+    encodeURIComponent(
+      `/cloudsql/${variables.CLOUD_SQL_INSTANCE_CONNECTION_NAME}`,
+    ),
+    "/",
+    getVariableOrValue("DB_NAME", variables, mode),
+    "?",
+  ];
+  return joinBashExpressions(parts);
+};
+
+export const getPrismaDatabaseConnectionString = (
+  variables: DBVariables,
+  mode: DBVariablesMode,
+) => {
+  const parts = [
+    "postgresql://",
+    getVariableOrValue("DB_USER", variables, mode),
+    ":",
+    getVariableOrValue("DB_PASSWORD", variables, mode),
+    "@localhost/",
+    getVariableOrValue("DB_NAME", variables, mode),
+    "?host=/cloudsql/",
+    getVariableOrValue("CLOUD_SQL_INSTANCE_CONNECTION_NAME", variables, mode),
+  ];
+  return joinBashExpressions(parts);
+};
 
 export const getDatabaseConnectionString = (
   config: DeployConfigCloudRunCloudSql,
-): string => {
+  variables: DBVariables,
+): StringOrBashExpression => {
+  const mode =
+    config.dbConnectionStringVariablesMode ?? DEFAULT_DB_VARIABLES_MODE;
   switch (config.dbConnectionStringFormat) {
     case "jdbc":
-      return DATABASE_JDBC_URL;
+      return getDatabaseJdbcUrl(variables, mode);
     case "rails":
-      return `postgresql://$DB_USER:$DB_PASSWORD@${encodeURIComponent(
-        `/cloudsql/${config.instanceConnectionName}`,
-      )}/$DB_NAME?`;
+      return getRailsDatabaseConnectionString(variables, mode);
     default:
       // prisma
-      return "postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME";
+      return getPrismaDatabaseConnectionString(variables, mode);
   }
 };

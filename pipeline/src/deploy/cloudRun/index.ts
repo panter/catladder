@@ -11,8 +11,9 @@ import { getFullDbName } from "../cloudSql/utils";
 import { createGoogleCloudRunDeployJobs } from "./createJobs";
 import { getCloudRunJobExecuteUrl } from "./utils/cloudRunExecutionUrl";
 import {
-  DATABASE_JDBC_URL,
+  DEFAULT_DB_VARIABLES_MODE,
   getDatabaseConnectionString,
+  getDatabaseJdbcUrl,
 } from "./utils/database";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
@@ -42,16 +43,24 @@ const getCloudSqlVariables = ({
       .map(([key, value]) => `&${key}=${value}`)
       .join("");
 
-    return {
+    const dbVars = {
       CLOUD_SQL_INSTANCE_CONNECTION_NAME:
         deployConfigRaw.cloudSql.instanceConnectionName,
       DB_NAME: DB_NAME,
       DB_USER: deployConfigRaw.cloudSql.dbUser ?? "postgres",
       DB_PASSWORD: "$" + getSecretVarName(env, componentName, "DB_PASSWORD"),
-      DATABASE_URL: `${getDatabaseConnectionString(
+    };
+    return {
+      ...dbVars,
+      DATABASE_URL: getDatabaseConnectionString(
         deployConfigRaw.cloudSql,
-      )}${additionalQueryParamsString}`,
-      DATABASE_JDBC_URL: DATABASE_JDBC_URL,
+        dbVars,
+      ).concat(additionalQueryParamsString),
+      DATABASE_JDBC_URL: getDatabaseJdbcUrl(
+        dbVars,
+        deployConfigRaw.cloudSql.dbConnectionStringVariablesMode ??
+          DEFAULT_DB_VARIABLES_MODE,
+      ),
     };
   }
   return {};

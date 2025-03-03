@@ -1,3 +1,4 @@
+import type { DBVariablesMode } from "../cloudRun/utils/database";
 import type { DeployConfigBase } from "./base";
 
 export type Gcloudregion =
@@ -76,6 +77,16 @@ export type DeployConfigCloudRunCloudSql = {
    * defaults to prisma
    */
   dbConnectionStringFormat?: "prisma" | "rails" | "jdbc";
+
+  /**
+   * controls how variables in the connection string are handled
+   *
+   * - environment: variables like $DB_USER will be kept as environment variables to be replaced at runtime (default)
+   * - embedded: variables will be replaced with their actual values in the connection string
+   *
+   * @default "environment"
+   */
+  dbConnectionStringVariablesMode?: DBVariablesMode;
 
   /**
    * add additional query params to the database connection string
