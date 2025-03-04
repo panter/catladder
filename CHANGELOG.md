@@ -1,3 +1,10 @@
+# [3.10.0](https://git.panter.ch/catladder/catladder/compare/v3.9.3...v3.10.0) (2025-03-04)
+
+
+### Features
+
+* add example for cloud run with multiple dbs or referencing database-url from another component ([1befbbe](https://git.panter.ch/catladder/catladder/commit/1befbbee64542c73602957888551c57a47af59f4))
+
 ## [3.9.3](https://git.panter.ch/catladder/catladder/compare/v3.9.2...v3.9.3) (2025-02-17)
 
 
