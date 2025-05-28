@@ -16,9 +16,9 @@ export function getCloudRunStopScripts(context: ComponentContext) {
     ...gcloudServiceAccountLoginCommands(context),
     ...getOnDeployExecuteScript(context, "preStop"),
     ...(deployConfig.service !== false ? getServiceDeleteScript(context) : []),
-    ...Object.entries(deployConfig.additionalServices ?? {}).flatMap(([name]) =>
-      getServiceDeleteScript(context, name),
-    ),
+    ...Object.entries(deployConfig.additionalServices ?? {})
+      .filter(([_, service]) => service !== false && service !== null)
+      .flatMap(([name]) => getServiceDeleteScript(context, name)),
     ...getOnDeployExecuteScript(context, "postStop"),
     ...getDeleteSchedulesScript(context),
     ...getDeleteJobsScripts(context),

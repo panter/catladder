@@ -17,6 +17,7 @@ import {
 } from "./common";
 import { ENV_VARS_FILENAME } from "./constants";
 import { getCreateScheduleScript } from "./execute/schedules";
+import type { DeployConfigCloudRunService } from "../../types";
 
 export function getCloudRunDeployScripts(context: ComponentContext) {
   const deployConfig = getCloudRunDeployConfig(context);
@@ -52,10 +53,15 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
       ...(deployConfig.service !== false
         ? [getServiceDeployScript(context, deployConfig.service)]
         : []),
-      ...Object.entries(deployConfig.additionalServices ?? {}).map(
-        ([name, service]) =>
-          getServiceDeployScript(context, service, "-" + name),
-      ),
+      ...Object.entries(deployConfig.additionalServices ?? {})
+        .filter(([_, service]) => service !== false && service !== null)
+        .map(([name, service]) =>
+          getServiceDeployScript(
+            context,
+            service as DeployConfigCloudRunService,
+            "-" + name,
+          ),
+        ),
       ...getOnDeployExecuteScript(context, "postDeploy"),
     ]),
     ...collapseableSection(

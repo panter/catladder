@@ -26,6 +26,15 @@ const config = {
           },
         },
       },
+      env: {
+        review: {
+          deploy: {
+            additionalServices: {
+              worker: null, // disable the worker service on review
+            },
+          },
+        },
+      },
     },
   },
 } satisfies Config;

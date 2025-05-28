@@ -451,7 +451,7 @@ export type DeployConfigCloudRun = {
    * deploy additional services with different entry points.
    */
   additionalServices?: {
-    [name: string]: DeployConfigCloudRunService;
+    [name: string]: DeployConfigCloudRunService | false | null;
   };
 
   jobs?: {
