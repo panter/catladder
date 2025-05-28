@@ -1,3 +1,10 @@
+# [3.11.0](https://git.panter.ch/catladder/catladder/compare/v3.10.1...v3.11.0) (2025-05-28)
+
+
+### Features
+
+* support disabling additional services on envs ([adecb28](https://git.panter.ch/catladder/catladder/commit/adecb282a6a662d99dd7ee43139b754f85fc8d4b))
+
 ## [3.10.1](https://git.panter.ch/catladder/catladder/compare/v3.10.0...v3.10.1) (2025-03-04)
 
 # [3.10.0](https://git.panter.ch/catladder/catladder/compare/v3.9.3...v3.10.0) (2025-03-04)
