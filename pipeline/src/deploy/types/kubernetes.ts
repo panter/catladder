@@ -245,6 +245,7 @@ export type DeployConfigKubernetesValues = AllowUnknownProps<{
         schedule: string;
         command: string;
         concurrencyPolicy?: "Forbid" | "Allow" | "Replace";
+        timeZone?: string;
       }>
   >;
   /**

@@ -20,6 +20,9 @@ metadata:
 
 spec:
   schedule: {{ $job.schedule | quote}}
+  {{if $job.timeZone -}}
+  timeZone: {{ $job.timeZone | quote }}
+  {{end}}
   # concerning concurreny we also set it to allow as default like in kubernetes i
   # see https://kubernetes.io/docs/tasks/job/automated-tasks-with-cron-jobs/#concurrency-policy
   concurrencyPolicy: "{{- default "Allow" $job.concurrencyPolicy -}}"
