@@ -171,3 +171,7 @@ If your build relies on **.env** make sure to include .env in the cache settings
 ```
 
 See also: [Turbo docs on Handling .env files](https://turbo.build/repo/docs/crafting-your-repository/using-environment-variables#handling-env-files)
+
+### Forcing a turbo build and bypassing the cache
+
+If you want to force a turbo build and bypass the cache on gitlab CI, you can do so by running a pipeline manually in gitlab and setting the `TURBO_FORCE` environment variable to `true`.
