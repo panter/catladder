@@ -74,7 +74,7 @@ $(POSTGRESQL_PASSWORD)
 
 {{- define "cloudSqlContainer" -}}
 name: cloudsql-proxy
-image: eu.gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.7.0-alpine
+image: eu.gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.18.0-alpine
 # see https://github.com/kubernetes/kubernetes/issues/25908#issuecomment-308569672
 # and https://github.com/kubernetes/enhancements/tree/master/keps/sig-node/753-sidecar-containers
 command: ["/bin/sh", "-c"]
