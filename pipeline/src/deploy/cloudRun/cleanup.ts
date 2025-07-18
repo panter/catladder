@@ -1,4 +1,5 @@
 import type { ComponentContext } from "../../types/context";
+import { allowFailureInScripts } from "../../utils/gitlab";
 import { getDeleteUnusedImagesCommands } from "./artifactsRegistry";
 import { getDeleteUnusedRevisionsCommands } from "./cloudRunRevisions";
 
@@ -26,5 +27,8 @@ export const getRemoveOldRevisionsAndImagesCommand = (
     imagesToKeep,
   );
 
-  return [...deleteOldRevisionsCommands, ...deleteOldImagesCommands];
+  return allowFailureInScripts([
+    ...deleteOldRevisionsCommands,
+    ...deleteOldImagesCommands,
+  ]);
 };

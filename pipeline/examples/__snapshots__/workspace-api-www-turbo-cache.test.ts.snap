@@ -689,9 +689,11 @@ before_script:
     - gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -905,11 +907,13 @@ before_script:
     - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags
+    - set -e
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
@@ -1127,9 +1131,11 @@ before_script:
     - gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -1336,9 +1342,11 @@ before_script:
     - gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -1548,9 +1556,11 @@ before_script:
     - gcloud run deploy pan-test-app-dev-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -1767,11 +1777,13 @@ before_script:
     - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www --quiet --delete-tags
+    - set -e
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
@@ -1992,9 +2004,11 @@ before_script:
     - gcloud run deploy pan-test-app-stage-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -2204,9 +2218,11 @@ before_script:
     - gcloud run deploy pan-test-app-prod-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true

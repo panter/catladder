@@ -151,9 +151,11 @@ before_script:
     - gcloud beta run deploy pan-my-ai-app-dev-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=dev,env-name=dev,build-type=disabled,cloud-run-service-name=pan-my-ai-app-dev-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-dev-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -281,11 +283,13 @@ before_script:
     - gcloud beta run deploy $(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm" | awk '{print tolower($0)}') --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=review,env-name=review,build-type=disabled,cloud-run-service-name=$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west4 --service=$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm --quiet --delete-tags
+    - set -e
     - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
@@ -413,9 +417,11 @@ before_script:
     - gcloud beta run deploy pan-my-ai-app-stage-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=stage,env-name=stage,build-type=disabled,cloud-run-service-name=pan-my-ai-app-stage-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-stage-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -538,9 +544,11 @@ before_script:
     - gcloud beta run deploy pan-my-ai-app-prod-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=prod,env-name=prod,build-type=disabled,cloud-run-service-name=pan-my-ai-app-prod-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-prod-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:

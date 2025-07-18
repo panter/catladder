@@ -433,9 +433,11 @@ api 🧪 test:
       fi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-dev-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -757,11 +759,13 @@ api 🧪 test:
       fi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set +e
     - gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/api --quiet --delete-tags
+    - set -e
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
@@ -1087,9 +1091,11 @@ api 🧪 test:
       fi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-stage-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
@@ -1404,9 +1410,11 @@ api 🧪 test:
       fi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
+    - set +e
     - gcloud run revisions list --project=asdf --region=asia-east1 --service=pan-test-app-prod-api --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=asdf --region=asia-east1 --quiet $revisionname ; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/api@$version --quiet --delete-tags; done
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
+    - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
     - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
