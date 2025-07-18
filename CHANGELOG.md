@@ -1,3 +1,10 @@
+# [3.12.0](https://git.panter.ch/catladder/catladder/compare/v3.11.2...v3.12.0) (2025-07-18)
+
+
+### Features
+
+* cleanup is allowed to fail ([a70829d](https://git.panter.ch/catladder/catladder/commit/a70829d862fe39dfe73750e466257cfe7e390246))
+
 ## [3.11.2](https://git.panter.ch/catladder/catladder/compare/v3.11.1...v3.11.2) (2025-06-30)
 
 ## [3.11.1](https://git.panter.ch/catladder/catladder/compare/v3.11.0...v3.11.1) (2025-06-26)
