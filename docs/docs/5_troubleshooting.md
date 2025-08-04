@@ -20,6 +20,11 @@ The `node_modules` is cached between all pipeline jobs, which means more package
 
 But if you suspect the build fails due to the content of `node_modules` try to [clear the CI/CD cache manually](https://docs.gitlab.com/ee/ci/caching/#clear-the-cache-manually) and retry the job(s).
 
+## Expired GitLab token
+
+1) create new personal access token with `api` scope https://git.panter.ch/-/user_settings/personal_access_tokens
+2) change it in  `~/.config/catladder/preferences.yml`
+
 ---
 
 Please add more!
