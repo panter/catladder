@@ -28,6 +28,9 @@ const config = {
           migrate: {
             command: "yarn migrate",
           },
+          reset: {
+            command: "yarn reset",
+          },
           ["send-reminders"]: {
             command: "yarn job:send-reminders",
             args: ["--verbose=false"],
@@ -67,7 +70,24 @@ const config = {
         review: {
           deploy: {
             execute: {
+              reset: {
+                type: "job",
+                job: "reset",
+                when: "preDeploy",
+                waitForCompletion: true,
+              },
               "send-reminders": null, // disable on this env
+            },
+          },
+        },
+        prod: {
+          deploy: {
+            jobs: {
+              // prevernt running the reset job on prod
+              // technically, this isn't needed, because we only execute it on review
+              // but we still set up a job that can be executed on prod
+              // setting it to null doesn't even deploy it
+              reset: null,
             },
           },
         },

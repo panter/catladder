@@ -203,12 +203,13 @@ api 🧪 test:
     - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
     - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_reset="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-reset:run"
     - export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_reset\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -227,12 +228,13 @@ api 🧪 test:
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_reset=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-reset:run
       CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_reset","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -377,12 +379,13 @@ api 🧪 test:
     - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
     - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_reset="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-reset:run"
     - export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_reset\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -431,6 +434,8 @@ api 🧪 test:
         jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
         https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_reset: |-
+        https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-reset:run
       CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: |-
         https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -440,7 +445,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_dev_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_reset","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -485,6 +490,13 @@ api 🧪 test:
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
+      fi
+    - |-
+      current_job_name="pan-test-app-dev-api-reset"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="yarn,reset" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
+      else
+        gcloud run jobs create "$current_job_name" --command="yarn,reset" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       fi
     - |-
       current_job_name="pan-test-app-dev-api-send-reminders"
@@ -553,6 +565,8 @@ api 🧪 test:
     - gcloud scheduler jobs delete pan-test-app-dev-api-call-http-endpoint --project=google-project-id --location=europe-west6
     - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-dev-api-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
     - gcloud run jobs delete pan-test-app-dev-api-migrate --project=google-project-id --region=europe-west6
+    - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-dev-api-reset --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
+    - gcloud run jobs delete pan-test-app-dev-api-reset --project=google-project-id --region=europe-west6
     - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-dev-api-send-reminders --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
     - gcloud run jobs delete pan-test-app-dev-api-send-reminders --project=google-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api --quiet --delete-tags
@@ -598,12 +612,13 @@ api 🧪 test:
     - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
     - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_reset="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-reset:run"
     - export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-send-reminders:run"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_reset\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -622,12 +637,13 @@ api 🧪 test:
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_reset=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-reset:run
       CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders:run
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_reset","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -772,12 +788,13 @@ api 🧪 test:
     - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
     - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_reset="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-reset:run"
     - export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-send-reminders:run"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_reset\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -826,6 +843,8 @@ api 🧪 test:
         jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
         https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_reset: |-
+        https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-reset:run
       CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: |-
         https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders:run
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -835,7 +854,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_review_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_reset","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -874,6 +893,13 @@ api 🧪 test:
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       fi
     - |-
+      current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-reset"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="yarn,reset" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
+      else
+        gcloud run jobs create "$current_job_name" --command="yarn,reset" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
+      fi
+    - |-
       current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders"
       if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,job:send-reminders" --args="--verbose=false" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -881,6 +907,7 @@ api 🧪 test:
         gcloud run jobs create "$current_job_name" --command="yarn,job:send-reminders" --args="--verbose=false" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       fi
     - gcloud run jobs execute $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate --project=google-project-id --region=europe-west6 --wait --args="--verbose=true","--create-db"
+    - gcloud run jobs execute $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-reset --project=google-project-id --region=europe-west6 --wait
     - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --set-cloudsql-instances=projectId:region:instancename --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=5 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
@@ -942,6 +969,8 @@ api 🧪 test:
     - gcloud scheduler jobs delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-call-http-endpoint --project=google-project-id --location=europe-west6
     - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
     - gcloud run jobs delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate --project=google-project-id --region=europe-west6
+    - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-reset --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
+    - gcloud run jobs delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-reset --project=google-project-id --region=europe-west6
     - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
     - gcloud run jobs delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders --project=google-project-id --region=europe-west6
     - echo "deleting database pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api..."
@@ -993,12 +1022,13 @@ api 🧪 test:
     - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
     - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_reset="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-reset:run"
     - export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_reset\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-api" "write dot env for api"
     - |-
@@ -1017,12 +1047,13 @@ api 🧪 test:
       DATABASE_URL=postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
       DATABASE_JDBC_URL=jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_reset=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-reset:run
       CLOUD_RUN_JOB_TRIGGER_URL_send_reminders=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_api_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_reset","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
       EOF
     - collapseable_section_end "write-dotenv-api"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
@@ -1167,12 +1198,13 @@ api 🧪 test:
     - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
     - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_reset="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-reset:run"
     - export CLOUD_RUN_JOB_TRIGGER_URL_send_reminders="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_api_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_migrate\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_reset\\",\\"CLOUD_RUN_JOB_TRIGGER_URL_send_reminders\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
@@ -1221,6 +1253,8 @@ api 🧪 test:
         jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
       CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
         https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_reset: |-
+        https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-reset:run
       CLOUD_RUN_JOB_TRIGGER_URL_send_reminders: |-
         https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -1230,7 +1264,7 @@ api 🧪 test:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_stage_api_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","CLOUD_RUN_JOB_TRIGGER_URL_migrate","CLOUD_RUN_JOB_TRIGGER_URL_reset","CLOUD_RUN_JOB_TRIGGER_URL_send_reminders","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1275,6 +1309,13 @@ api 🧪 test:
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
+      fi
+    - |-
+      current_job_name="pan-test-app-stage-api-reset"
+      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+        gcloud run jobs update "$current_job_name" --command="yarn,reset" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
+      else
+        gcloud run jobs create "$current_job_name" --command="yarn,reset" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       fi
     - |-
       current_job_name="pan-test-app-stage-api-send-reminders"
@@ -1336,6 +1377,8 @@ api 🧪 test:
     - gcloud scheduler jobs delete pan-test-app-stage-api-call-http-endpoint --project=google-project-id --location=europe-west6
     - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-stage-api-migrate --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
     - gcloud run jobs delete pan-test-app-stage-api-migrate --project=google-project-id --region=europe-west6
+    - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-stage-api-reset --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
+    - gcloud run jobs delete pan-test-app-stage-api-reset --project=google-project-id --region=europe-west6
     - gcloud run jobs executions list --project=google-project-id --region=europe-west6 --job pan-test-app-stage-api-send-reminders --format="value(name)" | xargs -I {} gcloud run jobs executions delete {}  --quiet --project=google-project-id --region=europe-west6
     - gcloud run jobs delete pan-test-app-stage-api-send-reminders --project=google-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api --quiet --delete-tags

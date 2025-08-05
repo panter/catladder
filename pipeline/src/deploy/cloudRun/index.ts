@@ -110,14 +110,16 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
       const jobTriggers =
         deployConfigRaw && deployConfigRaw.jobs
           ? Object.fromEntries(
-              Object.entries(deployConfigRaw.jobs).map(([name, job]) => [
-                "CLOUD_RUN_JOB_TRIGGER_URL_" + sanitizeForBashVariable(name),
-                getCloudRunJobExecuteUrl(name, {
-                  appFullName: fullName,
-                  projectId: deployConfigRaw.projectId,
-                  region: deployConfigRaw.region,
-                }),
-              ]),
+              Object.entries(deployConfigRaw.jobs)
+                .filter(([name, job]) => Boolean(job))
+                .map(([name, job]) => [
+                  "CLOUD_RUN_JOB_TRIGGER_URL_" + sanitizeForBashVariable(name),
+                  getCloudRunJobExecuteUrl(name, {
+                    appFullName: fullName,
+                    projectId: deployConfigRaw.projectId,
+                    region: deployConfigRaw.region,
+                  }),
+                ]),
             )
           : {};
 
