@@ -1,3 +1,10 @@
+## [3.12.2](https://git.panter.ch/catladder/catladder/compare/v3.12.1...v3.12.2) (2025-08-05)
+
+
+### Bug Fixes
+
+* don't set job trigger url variable for disabled jobs ([fdfc56f](https://git.panter.ch/catladder/catladder/commit/fdfc56f5f878e5f534f9ab3bab83e5025857e7e0))
+
 ## [3.12.1](https://git.panter.ch/catladder/catladder/compare/v3.12.0...v3.12.1) (2025-08-02)
 
 # [3.12.0](https://git.panter.ch/catladder/catladder/compare/v3.11.2...v3.12.0) (2025-07-18)
