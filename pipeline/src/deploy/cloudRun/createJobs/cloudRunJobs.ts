@@ -73,7 +73,7 @@ export const getJobCreateScripts = (context: ComponentContext): string[] =>
           ? `exist_job_names="$(\n  ${gcloudRunCmd()} jobs list --filter='metadata.name ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --project='${project}' --region='${region}'\n)"`
           : null,
         `current_job_name="${fullJobName}"`,
-        'if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then',
+        'if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then',
         `  ${gcloudRunCmd()} jobs update "$current_job_name" ${commonDeployArgsString}`,
         "else",
         `  ${gcloudRunCmd()} jobs create "$current_job_name" ${commonDeployArgsString}`,

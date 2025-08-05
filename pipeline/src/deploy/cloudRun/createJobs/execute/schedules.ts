@@ -55,7 +55,7 @@ export const getCreateScheduleScript = (
         : null,
       `current_job_uri="${uri}"`,
       `current_scheduler_name="${fullName}"`,
-      `if grep "$current_scheduler_name" <<<"$exist_scheduler_names" >/dev/null; then`,
+      `if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then`,
       `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}`,
       `else`,
       `  ${gcloudSchedulerCmd()} jobs create http "$current_scheduler_name" ${argsString}`,

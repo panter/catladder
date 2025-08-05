@@ -714,7 +714,7 @@ api 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ review.*api' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-drop-db"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="/bin/sh,-c,mongosh \\$MONGO_URL --eval 'db.dropDatabase()'" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="rtsp/mongosh:latest" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0
       else
         gcloud run jobs create "$current_job_name" --command="/bin/sh,-c,mongosh \\$MONGO_URL --eval 'db.dropDatabase()'" --labels="customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="rtsp/mongosh:latest" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0

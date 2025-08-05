@@ -449,7 +449,7 @@ db1 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ dev.*db1' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="pan-test-app-dev-db1-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/db1:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/db1:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -798,7 +798,7 @@ db1 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ review.*db1' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/db1/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/db1/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -1156,7 +1156,7 @@ db1 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ stage.*db1' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="pan-test-app-stage-db1-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/db1:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/db1:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -1498,7 +1498,7 @@ db1 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ prod.*db1' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="pan-test-app-prod-db1-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/db1:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db1,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/db1:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -1938,7 +1938,7 @@ db2 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ dev.*db2' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="pan-test-app-dev-db2-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/db2:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/db2:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -2287,7 +2287,7 @@ db2 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ review.*db2' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/db2/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/db2/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -2645,7 +2645,7 @@ db2 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ stage.*db2' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="pan-test-app-stage-db2-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/db2:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/db2:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
@@ -2987,7 +2987,7 @@ db2 🧪 test:
         gcloud run jobs list --filter='metadata.name ~ prod.*db2' --format='value(name)' --limit=999 --project='google-project-id' --region='europe-west6'
       )"
       current_job_name="pan-test-app-prod-db2-migrate"
-      if grep "$current_job_name" <<<"$exist_job_names" >/dev/null; then
+      if echo "$exist_job_names" | grep -Fx "$current_job_name" >/dev/null; then
         gcloud run jobs update "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/db2:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
       else
         gcloud run jobs create "$current_job_name" --command="yarn,migrate" --labels="customer-name=pan,component-name=db2,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-job-name=$current_job_name" --image="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/db2:$DOCKER_IMAGE_TAG" --project=google-project-id --region=europe-west6 --memory=512Mi --parallelism=1 --task-timeout=10m --env-vars-file=____envvars.yaml --max-retries=0 --set-cloudsql-instances=projectId:region:instancename
