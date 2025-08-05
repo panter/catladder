@@ -1,3 +1,10 @@
+## [3.12.3](https://git.panter.ch/catladder/catladder/compare/v3.12.2...v3.12.3) (2025-08-05)
+
+
+### Bug Fixes
+
+* deploy fails when new scheduler name is prefix from existing scheduler name ([727a25e](https://git.panter.ch/catladder/catladder/commit/727a25ee536ef991c58cf5ec23bb1530366a994b))
+
 ## [3.12.2](https://git.panter.ch/catladder/catladder/compare/v3.12.1...v3.12.2) (2025-08-05)
 
 
