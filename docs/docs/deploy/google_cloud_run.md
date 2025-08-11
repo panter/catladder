@@ -198,6 +198,73 @@ Pitfalls:
 
 - firebase will provide a CDN out-of-the-box, but will make some assumptions about your app. All cookies will be stripped, with the exception of `__session`.
 
+### Using google load balancer
+
+Google load balancer is a more expensive option, but it's more flexible and can be used for more complex use cases.
+
+we suggest you use _DNS authorization_ for leasing the ssl certificate.
+
+You will need to create some entities on google cloud. You can name them freely, but we recommend to use something like `appname-componentName` for the name. E.g. myapp-www.
+
+We also suggest to create wildcard certificates.
+
+First let's set up the load balancer. Best use the wizard: https://console.cloud.google.com/net-services/loadbalancing/
+
+1. click on create
+2. chose "Application Load Balancer"
+3. chose "public facing"
+4. use global or regional. Use regional if you have legal restrictions (it isn't cheaper than a global). If in doubt: use global.
+5. chose "Global external application load balancer"
+6. click "configure"
+7. give name (e.g. myapp-www)
+8. chose "HTTPS"
+9. Unfortunatly the wizard doesn't support DNS authorization, which we will add later. But it also does not let us skip it here. So click on "create a new certificate", chose "Create Google-managed certificate" and type some fantasy domain (e.g. example.com) and name like `delete-me`
+10. For backend configuration, click on "create a backend service", give it some name. Chose "serverless network endpoint group", in Backends, search your cloud run service and chose it. You can further specify CDN settings there, but you can do that later as well, so leave it as is.
+11. Review everything and create it
+
+Next, we will create a DNS authorization and a certificate.
+
+👉 Pro tip, instead of always specifying the project (with `--project=my-google-cloud-project`), you can set the default project: `gcloud config set project my-google-cloud-project`
+
+1. `gcloud certificate-manager dns-authorizations create myapp-www --domain="example.com"`
+2. `gcloud certificate-manager certificates create myapp-www --domains="example.com,*.example.com" --dns-authorizations=myapp-www`
+3. `gcloud certificate-manager maps create myapp-www`
+4. `gcloud certificate-manager maps entries create myapp-www --map="myapp-www" --certificates="myapp-www" --hostname="example.com"`
+5. `gcloud certificate-manager maps entries create myapp-www-wildcard --map="myapp-www" --certificates="myapp-www" --hostname="*.example.com"`
+6. Now we can switch from our fake domain to the real one.
+7. The load balancer wizard did set up a `target-https-proxy` for us. Verify this:
+8. `gcloud compute target-https-proxies list`
+9. You should see something like this:
+
+```
+NAME                     SSL_CERTIFICATES  URL_MAP    REGION  CERTIFICATE_MAP
+myapp-www-target-proxy   delete-me         delete-me
+```
+
+10. `gcloud compute target-https-proxies update myapp-www-target-proxy   --certificate-map="myapp-www" --global`
+11. Remove the old `delete-me` certificate form the proxy: `gcloud compute target-https-proxies update myapp-www-target-proxy   --certificate-map="myapp-www" --global`
+12. Delete the old `delete-me` (classic) certificate: `gcloud compute ssl-certificates delete delete-me --global`
+
+Now, we need to setup the DNS.
+
+13. `gcloud certificate-manager dns-authorizations describe myapp-www` should return you information about what to add to the DNS:
+
+```
+createTime: '2025-08-11T10:09:48.402782386Z'
+dnsResourceRecord:
+  data: 2e759fc3-61ed-4422-9dc5-217575471c9b.11.authorize.certificatemanager.goog.
+  name: _acme-challenge.example.com.
+  type: CNAME
+domain: example.com
+name: projects/my-google-cloud-project/locations/global/dnsAuthorizations/myapp-www
+type: FIXED_RECORD
+updateTime: '2025-08-11T10:09:49.169018244Z'
+```
+
+14. Add the CNAME record to your DNS. Hostname `_acme-challenge.example.com.` and content is the string in `data` (`2e759fc3-61ed-4422-9dc5-217575471c9b.11.authorize.certificatemanager.goog`)
+15. Wait for the certificate to be created. This can take some minutes or hours, but is usually much faster than e.g. firebase hosting. You can check the progress here: https://console.cloud.google.com/security/ccm/list/certificates
+16. Once the certificate is created, you can change the A-record of your domain to point to the load balancer IP. You can find it in the load balancer console under "IP addresses".
+
 ## Monitoring & Performance
 
 ### Traces and logs
