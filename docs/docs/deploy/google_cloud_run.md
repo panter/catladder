@@ -194,6 +194,10 @@ Some tips:
 - no changes are needed in catladder. It will still deploy to cloud run, but firebase will route the traffic to it. You can still use the cloud run url to access your app.
 - Still make sure to set `host` in catladder.ts of your prod environment, so that your services know the url where there are hosted from (ROOT_URL)
 
+Pitfalls:
+
+- firebase will provide a CDN out-of-the-box, but will make some assumptions about your app. All cookies will be stripped, with the exception of `__session`.
+
 ## Monitoring & Performance
 
 ### Traces and logs
