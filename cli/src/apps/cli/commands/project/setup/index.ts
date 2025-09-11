@@ -3,6 +3,7 @@ import { getAllPipelineContexts } from "../../../../../config/getProjectConfig";
 import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
 import { setupTopic } from "./setupTopic";
+import { setupAgents } from "./setupAgents";
 
 export const setupProject = async (
   instance: CommandInstance,
@@ -18,6 +19,7 @@ export const setupProject = async (
   }
   await setupAccessTokens(instance);
   await setupTopic(instance);
+  await setupAgents(instance);
   instance.log("");
   instance.log("gitlab is ready! 🥂");
   instance.log("\n");

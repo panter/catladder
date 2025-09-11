@@ -57,6 +57,12 @@ export const escapeDoubleQuotes = (value: string | null | undefined) =>
 export const escapeSingleQuotes = (value: string | null | undefined) =>
   value?.toString().replace(/'/g, "\\'");
 
+export const escapeBackTicks = (value: string | null | undefined) =>
+  value?.toString().replace(/`/g, "\\`");
+
+export const escapeNewlines = (value: string | null | undefined) =>
+  value?.toString().replace(/\n/g, "\\n");
+
 export type EscapeForDotEnvOptions = {
   quoteMode: "auto" | "always";
 };

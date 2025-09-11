@@ -28,6 +28,11 @@ stages:
   - verify review
   - verify stage
   - verify prod
+  - agents
+  - agents dev
+  - agents review
+  - agents stage
+  - agents prod
   - rollback
   - rollback dev
   - rollback review
@@ -48,6 +53,10 @@ variables:
 workflow:
   name: $PIPELINE_ICON $PIPELINE_NAME
   rules:
+    - if: $CI_PIPELINE_SOURCE  == "trigger"
+      variables:
+        PIPELINE_ICON: 🤖
+        PIPELINE_NAME: Thinking...
     - if: $CI_MERGE_REQUEST_ID
       variables:
         PIPELINE_ICON: 🐱🔨
@@ -116,7 +125,11 @@ www 🛡 audit:
       junit:
         - www/dist/audit.xml
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a2
@@ -145,7 +158,11 @@ www 👮 lint:
       junit:
         - www/dist/lint.xml
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
@@ -170,7 +187,11 @@ www 🧪 test:
         - www/dist/TEST-*.xml
         - www/dist/junit-*.xml
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
@@ -237,6 +258,8 @@ www 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a2
@@ -280,6 +303,8 @@ www 🧪 test:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'www 🔨 app | dev '
@@ -300,6 +325,8 @@ www 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a2
@@ -396,6 +423,8 @@ www 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
@@ -440,6 +469,8 @@ www 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -508,6 +539,8 @@ www 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
@@ -551,6 +584,8 @@ www 🧪 test:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
     - 'www 🔨 app | review '
@@ -571,6 +606,8 @@ www 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
@@ -670,6 +707,8 @@ www 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
@@ -717,6 +756,8 @@ www 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -785,6 +826,8 @@ www 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a2
@@ -828,6 +871,8 @@ www 🧪 test:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'www 🔨 app | stage '
@@ -848,6 +893,8 @@ www 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a2
@@ -943,6 +990,8 @@ www 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
@@ -981,6 +1030,8 @@ www 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -1049,6 +1100,8 @@ www 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a2
@@ -1092,6 +1145,8 @@ www 🧪 test:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'www 🔨 app | prod '
@@ -1112,6 +1167,8 @@ www 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a2
@@ -1207,6 +1264,8 @@ www 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
@@ -1245,6 +1304,8 @@ www 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -1262,6 +1323,9 @@ create release:
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
     - &a4
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - &a5
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $AUTO_RELEASE == "true"
@@ -1279,6 +1343,7 @@ create release:
   rules:
     - *a3
     - *a4
+    - *a5
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/

@@ -28,6 +28,11 @@ stages:
   - verify review
   - verify stage
   - verify prod
+  - agents
+  - agents dev
+  - agents review
+  - agents stage
+  - agents prod
   - rollback
   - rollback dev
   - rollback review
@@ -48,6 +53,10 @@ variables:
 workflow:
   name: $PIPELINE_ICON $PIPELINE_NAME
   rules:
+    - if: $CI_PIPELINE_SOURCE  == "trigger"
+      variables:
+        PIPELINE_ICON: 🤖
+        PIPELINE_NAME: Thinking...
     - if: $CI_MERGE_REQUEST_ID
       variables:
         PIPELINE_ICON: 🐱🔨
@@ -108,7 +117,11 @@ api 🛡 audit:
     - cd api
     - yarn npm audit --environment production
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
@@ -152,7 +165,11 @@ api 👮 lint:
       paths:
         - api/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -191,7 +208,11 @@ api 🧪 test:
       paths:
         - api/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -272,6 +293,8 @@ api 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -329,6 +352,8 @@ api 🧪 test:
       paths:
         - api/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'api 🔨 app | dev '
@@ -349,6 +374,8 @@ api 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -446,6 +473,8 @@ api 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
@@ -491,6 +520,8 @@ api 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -573,6 +604,8 @@ api 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -630,6 +663,8 @@ api 🧪 test:
       paths:
         - api/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
     - 'api 🔨 app | review '
@@ -650,6 +685,8 @@ api 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -749,6 +786,8 @@ api 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
@@ -796,6 +835,8 @@ api 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -878,6 +919,8 @@ api 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -935,6 +978,8 @@ api 🧪 test:
       paths:
         - api/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'api 🔨 app | stage '
@@ -955,6 +1000,8 @@ api 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1051,6 +1098,8 @@ api 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
@@ -1090,6 +1139,8 @@ api 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -1172,6 +1223,8 @@ api 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1229,6 +1282,8 @@ api 🧪 test:
       paths:
         - api/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'api 🔨 app | prod '
@@ -1249,6 +1304,8 @@ api 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1345,6 +1402,8 @@ api 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
@@ -1384,6 +1443,8 @@ api 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -1401,6 +1462,9 @@ create release:
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
     - &a3
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - &a4
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $AUTO_RELEASE == "true"
@@ -1418,6 +1482,7 @@ create release:
   rules:
     - *a2
     - *a3
+    - *a4
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/

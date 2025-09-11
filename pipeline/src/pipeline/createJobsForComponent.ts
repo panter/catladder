@@ -39,5 +39,6 @@ export const createJobsForComponentContext = (
       : [];
 
   const customJobs = getCustomJobs(context);
+
   return [...buildJobs, ...deployJobs, ...customJobs];
 };

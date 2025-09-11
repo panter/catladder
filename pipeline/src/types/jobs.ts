@@ -15,6 +15,7 @@ export const BASE_STAGES = [
   "build",
   "deploy",
   "verify",
+  "agents",
   "rollback",
   "stop",
 ] as const;
@@ -129,4 +130,9 @@ export type CatladderJob<S = BaseStage> = {
    * tags for the underlying job runner (e.g gitlab)
    */
   jobTags?: string[];
+
+  /**
+   * whether the job is interruptible (default: true)
+   */
+  interruptible?: boolean;
 };

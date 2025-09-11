@@ -4,3 +4,4 @@ export * from "./context";
 export * from "./jobDefinition";
 export * from "./pipeline";
 export * from "./jobs";
+export * from "./agent";

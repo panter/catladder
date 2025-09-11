@@ -73,9 +73,7 @@ export const getAllComponentsWithAllEnvsFlat = async (): Promise<
   if (!config) {
     return [];
   }
-  return Object.keys(config.components).flatMap((componentName) =>
-    getAllEnvs(config, componentName).map((env) => ({ env, componentName })),
-  );
+  return getAllComponentsWithAllEnvsFlatFromConfig(config);
 };
 
 export const getAllComponentsWithAllEnvsHierarchical = async (): Promise<{
@@ -194,3 +192,10 @@ export const getJobOnlyEnvVarsResolved = async (
     envionment.jobOnlyVars.deploy,
   ]);
 };
+function getAllComponentsWithAllEnvsFlatFromConfig(
+  config: Config,
+): { env: string; componentName: string }[] {
+  return Object.keys(config.components).flatMap((componentName) =>
+    getAllEnvs(config, componentName).map((env) => ({ env, componentName })),
+  );
+}

@@ -18,6 +18,11 @@ export const RULE_NEVER_ON_RELEASE_COMMIT: GitlabRule = {
   if: RULE_CONDITION_RELEASE_COMMIT,
   when: "never",
 };
+// currently, we consider all triggered pipelines as agent triggers
+export const RULE_NEVER_ON_AGENT_TRIGGER: GitlabRule = {
+  if: '$CI_PIPELINE_SOURCE  == "trigger"',
+  when: "never",
+};
 
 export const RULE_NEVER_ON_SCHEDULE: GitlabRule = {
   if: '$CI_PIPELINE_SOURCE  == "schedule"',
@@ -37,6 +42,7 @@ export const RULE_CONDITION_HOTFIX_BRANCH =
 
 export const RULES_RELEASE: GitlabRule[] = [
   RULE_NEVER_ON_RELEASE_COMMIT,
+  RULE_NEVER_ON_AGENT_TRIGGER,
   RULE_NEVER_ON_SCHEDULE,
   {
     if: RULE_CONDITION_MAIN_BRANCH + ' && $AUTO_RELEASE == "true"',
@@ -54,6 +60,7 @@ export const RULES_RELEASE: GitlabRule[] = [
 
 export const RULES_MANUAL_RELEASE: GitlabRule[] = [
   RULE_NEVER_ON_RELEASE_COMMIT,
+  RULE_NEVER_ON_AGENT_TRIGGER,
   RULE_NEVER_ON_SCHEDULE,
   {
     if: RULE_CONDITION_MAIN_BRANCH,

@@ -2,6 +2,7 @@ import { isEmpty, isObject, merge } from "lodash";
 import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { BASE_RETRY } from "../../defaults";
 import type {
+  AgentContext,
   ComponentContext,
   Context,
   GitlabJobDef,
@@ -17,7 +18,7 @@ import { getBashVariable } from "../../bash/BashExpression";
 
 export type GitlabJobWithContext = {
   gitlabJob: GitlabJobDef;
-  context: Context | null;
+  context: Context | AgentContext | null;
 };
 export type AllGitlabJobs = (GitlabJobWithContext & { name: string })[];
 
@@ -29,14 +30,14 @@ const getFullJobName = ({
   allJobs,
   env,
 }: {
-  type: "component" | "workspace";
+  type: "component" | "workspace" | "agent";
   name: string;
   baseName: string;
   allJobs: AllCatladderJobs;
   env?: string | null;
 }) => {
   const shouldAddIcon = allJobs.workspaces.length > 0;
-  const icon = type === "component" ? "🔹" : "🔸";
+  const icon = type === "component" ? "🔹" : type === "agent" ? "🤖" : "🔸";
   const prefix = shouldAddIcon ? icon + " " : "";
   if (env) {
     return `${prefix}${baseName} ${name} | ${env} `;
@@ -98,7 +99,7 @@ const getJobName = (need: CatladderJobNeed) =>
   isObject(need) ? need.job : need;
 
 export const makeGitlabJob = (
-  context: Context,
+  context: Context | AgentContext,
   job: CatladderJob<string>,
   allJobs: AllCatladderJobs,
   baseRules?: GitlabRule[],
@@ -118,7 +119,9 @@ export const makeGitlabJob = (
     ...rest
   } = job;
   const stage =
-    envMode === "stagePerEnv" ? `${job.stage} ${context.env}` : job.stage;
+    envMode === "stagePerEnv" && context.type !== "agent"
+      ? `${job.stage} ${context.env}`
+      : job.stage;
 
   const deduplicatedGitlabNeeds: GitlabJobDef["needs"] = getGitlabNeeds(
     context,
@@ -130,7 +133,8 @@ export const makeGitlabJob = (
     type: context.type,
     name,
     baseName: context.name,
-    env: envMode !== "none" ? context.env : undefined,
+    env:
+      envMode !== "none" && context.type !== "agent" ? context.env : undefined,
     allJobs,
   });
 
@@ -184,6 +188,8 @@ export const makeGitlabJob = (
   ];
 
   const gitlabJob: GitlabJobDef = {
+    retry: BASE_RETRY,
+    interruptible: true,
     ...rest,
     rules: rules.length > 0 ? rules : undefined,
     variables: {
@@ -196,8 +202,6 @@ export const makeGitlabJob = (
 
     // sort in a predictable manner for snapshot tests
     needs: deduplicatedGitlabNeeds,
-    retry: BASE_RETRY,
-    interruptible: true,
   };
   const modified = addGitlabEnvironment(
     context,
@@ -210,7 +214,7 @@ export const makeGitlabJob = (
 };
 
 const addGitlabEnvironment = (
-  context: Context,
+  context: Context | AgentContext,
   catladderJobEnvironment: CatladderJob["environment"],
   job: GitlabJobDef,
   allJobs: AllCatladderJobs,
@@ -219,7 +223,7 @@ const addGitlabEnvironment = (
     return job;
   }
   if (context.type !== "component") {
-    // don't add enviornment for workspace jobs atm.
+    // don't add enviornment for workspace and agent jobs atm.
     return job;
   }
   const { env, name, environment } = context;
@@ -280,36 +284,41 @@ export const createGitlabJobs = async (
   baseRules?: GitlabRule[],
 ): Promise<AllGitlabJobs> => {
   // TODO: add workspace jobs
-  return [...allJobs.workspaces, ...allJobs.components].flatMap(
-    ({ context, jobs }) => {
-      return jobs.map((job) => {
-        const [fullJobName, gitlabJob] = makeGitlabJob(
-          context,
-          job,
-          allJobs,
-          baseRules,
-        );
-        return {
-          name: fullJobName,
-          gitlabJob,
-          context,
-        };
-      });
-    },
-  );
+
+  return [
+    ...allJobs.workspaces,
+    ...allJobs.components,
+    ...allJobs.agents,
+  ].flatMap(({ context, jobs }) => {
+    return jobs.map((job) => {
+      const [fullJobName, gitlabJob] = makeGitlabJob(
+        context,
+        job,
+        allJobs,
+        baseRules,
+      );
+      return {
+        name: fullJobName,
+        gitlabJob,
+        context,
+      };
+    });
+  });
 };
 
 function getGitlabNeeds(
-  context: Context,
+  context: Context | AgentContext,
   job: CatladderJob<string>,
   allJobs: AllCatladderJobs,
 ): GitlabJobDef["needs"] {
   const needs =
     context.type === "workspace"
       ? getGitlabNeedsForWorkspaceJob(context, job, allJobs)
-      : getGitlabNeedsForComponentJob(context, job, allJobs);
+      : context.type === "agent"
+        ? (job.needs ?? null)
+        : getGitlabNeedsForComponentJob(context, job, allJobs);
 
-  return deduplicateNeeds(needs);
+  return needs ? deduplicateNeeds(needs) : undefined;
 }
 function deduplicateNeeds(needs: GitlabJobDef["needs"]): GitlabJobDef["needs"] {
   return needs

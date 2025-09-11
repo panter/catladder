@@ -28,6 +28,11 @@ stages:
   - verify review
   - verify stage
   - verify prod
+  - agents
+  - agents dev
+  - agents review
+  - agents stage
+  - agents prod
   - rollback
   - rollback dev
   - rollback review
@@ -48,6 +53,10 @@ variables:
 workflow:
   name: $PIPELINE_ICON $PIPELINE_NAME
   rules:
+    - if: $CI_PIPELINE_SOURCE  == "trigger"
+      variables:
+        PIPELINE_ICON: 🤖
+        PIPELINE_NAME: Thinking...
     - if: $CI_MERGE_REQUEST_ID
       variables:
         PIPELINE_ICON: 🐱🔨
@@ -108,7 +117,11 @@ app1 🛡 audit:
     - cd app1
     - yarn npm audit --environment production
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
@@ -152,7 +165,11 @@ app1 👮 lint:
       paths:
         - app1/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -191,7 +208,11 @@ app1 🧪 test:
       paths:
         - app1/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -295,6 +316,8 @@ app1 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -352,6 +375,8 @@ app1 🧪 test:
       paths:
         - app1/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'app1 🔨 app | dev '
@@ -372,6 +397,8 @@ app1 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -493,6 +520,8 @@ app1 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
@@ -537,6 +566,8 @@ app1 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -642,6 +673,8 @@ app1 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -699,6 +732,8 @@ app1 🧪 test:
       paths:
         - app1/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
     - 'app1 🔨 app | review '
@@ -719,6 +754,8 @@ app1 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -843,6 +880,8 @@ app1 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
@@ -890,6 +929,8 @@ app1 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -995,6 +1036,8 @@ app1 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1052,6 +1095,8 @@ app1 🧪 test:
       paths:
         - app1/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'app1 🔨 app | stage '
@@ -1072,6 +1117,8 @@ app1 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1192,6 +1239,8 @@ app1 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
@@ -1230,6 +1279,8 @@ app1 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -1335,6 +1386,8 @@ app1 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1392,6 +1445,8 @@ app1 🧪 test:
       paths:
         - app1/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'app1 🔨 app | prod '
@@ -1412,6 +1467,8 @@ app1 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -1532,6 +1589,8 @@ app1 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
@@ -1570,6 +1629,8 @@ app1 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -1590,7 +1651,11 @@ app2 🛡 audit:
     - cd app2
     - yarn npm audit --environment production
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -1630,7 +1695,11 @@ app2 👮 lint:
       paths:
         - app2/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -1669,7 +1738,11 @@ app2 🧪 test:
       paths:
         - app2/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -1783,6 +1856,8 @@ app2 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -1840,6 +1915,8 @@ app2 🧪 test:
       paths:
         - app2/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'app2 🔨 app | dev '
@@ -1860,6 +1937,8 @@ app2 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -1991,6 +2070,8 @@ app2 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
@@ -2035,6 +2116,8 @@ app2 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -2150,6 +2233,8 @@ app2 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -2207,6 +2292,8 @@ app2 🧪 test:
       paths:
         - app2/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
     - 'app2 🔨 app | review '
@@ -2227,6 +2314,8 @@ app2 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -2361,6 +2450,8 @@ app2 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
@@ -2408,6 +2499,8 @@ app2 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -2523,6 +2616,8 @@ app2 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -2580,6 +2675,8 @@ app2 🧪 test:
       paths:
         - app2/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'app2 🔨 app | stage '
@@ -2600,6 +2697,8 @@ app2 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -2730,6 +2829,8 @@ app2 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
@@ -2768,6 +2869,8 @@ app2 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -2883,6 +2986,8 @@ app2 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -2940,6 +3045,8 @@ app2 🧪 test:
       paths:
         - app2/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'app2 🔨 app | prod '
@@ -2960,6 +3067,8 @@ app2 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -3090,6 +3199,8 @@ app2 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
@@ -3128,6 +3239,8 @@ app2 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -3148,7 +3261,11 @@ kube 🛡 audit:
     - cd kube
     - yarn npm audit --environment production
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -3188,7 +3305,11 @@ kube 👮 lint:
       paths:
         - kube/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -3227,7 +3348,11 @@ kube 🧪 test:
       paths:
         - kube/node_modules
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -3376,6 +3501,8 @@ kube 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -3433,6 +3560,8 @@ kube 🧪 test:
       paths:
         - kube/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
     - 'kube 🔨 app | dev '
@@ -3453,6 +3582,8 @@ kube 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
   retry: *a1
@@ -3637,6 +3768,8 @@ kube 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
@@ -3735,6 +3868,8 @@ kube 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -3817,6 +3952,8 @@ kube 🧪 test:
     name: dev/kube
     action: access
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs: []
@@ -3967,6 +4104,8 @@ kube 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -4024,6 +4163,8 @@ kube 🧪 test:
       paths:
         - kube/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
     - 'kube 🔨 app | review '
@@ -4044,6 +4185,8 @@ kube 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
@@ -4229,6 +4372,8 @@ kube 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
@@ -4327,6 +4472,8 @@ kube 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -4409,6 +4556,8 @@ kube 🧪 test:
     name: review/$CI_COMMIT_REF_NAME/kube
     action: access
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
@@ -4559,6 +4708,8 @@ kube 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -4616,6 +4767,8 @@ kube 🧪 test:
       paths:
         - kube/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'kube 🔨 app | stage '
@@ -4636,6 +4789,8 @@ kube 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -4819,6 +4974,8 @@ kube 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
@@ -4911,6 +5068,8 @@ kube 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -4993,6 +5152,8 @@ kube 🧪 test:
     name: stage/kube
     action: access
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -5143,6 +5304,8 @@ kube 🧪 test:
     when: always
     reports: {}
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -5200,6 +5363,8 @@ kube 🧪 test:
       paths:
         - kube/.yarn
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
     - 'kube 🔨 app | prod '
@@ -5220,6 +5385,8 @@ kube 🧪 test:
     paths:
       - __sbom.json
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs: []
   retry: *a1
@@ -5403,6 +5570,8 @@ kube 🧪 test:
     reports:
       dotenv: gitlab_environment.env
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
@@ -5495,6 +5664,8 @@ kube 🧪 test:
   rules:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
       when: on_success
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -5577,6 +5748,8 @@ kube 🧪 test:
     name: prod/kube
     action: access
   rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
@@ -5594,6 +5767,9 @@ create release:
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
     - &a3
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - &a4
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $AUTO_RELEASE == "true"
@@ -5611,6 +5787,7 @@ create release:
   rules:
     - *a2
     - *a3
+    - *a4
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/

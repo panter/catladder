@@ -2,6 +2,7 @@ import {
   RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
+  RULE_NEVER_ON_AGENT_TRIGGER,
 } from "../rules";
 import type {
   ComponentContext,
@@ -66,7 +67,16 @@ export const createMainPipeline = async <T extends PipelineType>(
         );
         return aIndex - bIndex;
       });
-    const allJobs = [...allWorkspaceJobs, ...allComponentJobs].reduce(
+
+    const allGlobalJobs = allJobsPerTrigger.filter(
+      (j) => j.context?.type === "agent",
+    );
+
+    const allJobs = [
+      ...allWorkspaceJobs,
+      ...allComponentJobs,
+      ...allGlobalJobs,
+    ].reduce(
       (acc, { gitlabJob, name, context }) => {
         // merge jobs, if a job is already there, merge the rules
         // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
@@ -109,10 +119,15 @@ function getGitlabRulesForTrigger(trigger: PipelineTrigger): GitlabRule[] {
   // taggedRelease: on tag
   switch (trigger) {
     case "mainBranch":
-      return [RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT];
+      return [
+        RULE_NEVER_ON_AGENT_TRIGGER,
+        RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
+      ];
     case "mr":
-      return [RULE_IS_MERGE_REQUEST];
+      return [RULE_NEVER_ON_AGENT_TRIGGER, RULE_IS_MERGE_REQUEST];
     case "taggedRelease":
-      return [RULE_IS_TAGGED_RELEASE];
+      return [RULE_NEVER_ON_AGENT_TRIGGER, RULE_IS_TAGGED_RELEASE];
   }
+
+  throw new Error(`${trigger} is not supported`);
 }

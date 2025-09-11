@@ -38,6 +38,13 @@ export const createGitlabPipelineWithDefaults = ({
       name: "$PIPELINE_ICON $PIPELINE_NAME",
       rules: [
         {
+          if: '$CI_PIPELINE_SOURCE  == "trigger"',
+          variables: {
+            PIPELINE_ICON: "🤖",
+            PIPELINE_NAME: "Thinking...",
+          },
+        },
+        {
           if: RULE_IS_MERGE_REQUEST.if,
           variables: {
             PIPELINE_ICON: "🐱🔨",
@@ -58,6 +65,7 @@ export const createGitlabPipelineWithDefaults = ({
             PIPELINE_NAME: "Main",
           },
         },
+
         {
           when: "always", // fallback
           variables: {

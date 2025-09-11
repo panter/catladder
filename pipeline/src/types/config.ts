@@ -5,6 +5,7 @@ import type { CatladderJob } from "./jobs";
 import type { ComponentContext } from "./context";
 import type { PartialDeep } from "./utils";
 import type { PipelineType, WorkspaceBuildConfig } from "..";
+import type { AgentConfig } from "./agent";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -209,6 +210,8 @@ export type Config<C extends ConfigProps = never> = {
    *
    */
   domainCanonical?: string;
+
+  agents?: Record<string, AgentConfig>;
 
   // shared workspace Builds
   builds?: Record<string, WorkspaceBuildConfig>;

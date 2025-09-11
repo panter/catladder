@@ -7,6 +7,7 @@ import type {
 import type { PredefinedVariables, SecretEnvVar } from "../context";
 import type { DeployConfig } from "../deploy";
 import type { VariableValue } from "../variables/VariableValue";
+import type { AgentConfig } from "./agent";
 import type {
   ComponentConfig,
   Config,
@@ -213,4 +214,11 @@ export type WorkspaceContext = {
   trigger: PipelineTrigger;
   pipelineType: PipelineType;
   env: string;
+};
+
+export type AgentContext = {
+  type: "agent";
+  name: string;
+  fullConfig: Config;
+  agentConfig: AgentConfig;
 };

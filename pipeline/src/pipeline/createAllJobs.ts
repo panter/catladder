@@ -1,11 +1,17 @@
 import type { CreateAllComponentsContextProps } from "../context/createAllComponentsContext";
 import { createAllComponentsContext } from "../context/createAllComponentsContext";
 import { createWorkspaceContext } from "../context/createWorkspaceContext";
-import type { ComponentContext, WorkspaceContext } from "../types";
+import type {
+  AgentContext,
+  ComponentContext,
+  WorkspaceContext,
+} from "../types";
 import { componentContextHasWorkspaceBuild } from "../types";
 import type { CatladderJob } from "../types/jobs";
 import { createJobsForComponentContext } from "./createJobsForComponent";
 import { createJobsForWorkspace } from "./createJobsForWorkspace";
+import { createJobsForAgentContext } from "./agent/createJobsForAgentContext";
+import { createAgentContext } from "./agent/createAgentContext";
 
 export type AllCatladderJobs = {
   workspaces: Array<{
@@ -14,6 +20,10 @@ export type AllCatladderJobs = {
   }>;
   components: Array<{
     context: ComponentContext;
+    jobs: Array<CatladderJob>;
+  }>;
+  agents: Array<{
+    context: AgentContext;
     jobs: Array<CatladderJob>;
   }>;
 };
@@ -68,5 +78,14 @@ export const createAllJobs = async ({
         jobs: createJobsForComponentContext(context),
       };
     }),
+    agents: await Promise.all(
+      Object.keys(config.agents ?? {}).map(async (agentName) => {
+        const context = await createAgentContext({ agentName, config });
+        return {
+          context,
+          jobs: createJobsForAgentContext(context),
+        };
+      }),
+    ).then((f) => f.flat()),
   };
 };
