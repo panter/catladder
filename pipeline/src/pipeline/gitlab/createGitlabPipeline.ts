@@ -1,6 +1,11 @@
 import { getRunnerImage } from "../../runner";
 import type { Pipeline } from "../../types";
 import { globalScriptFunctions } from "../../globalScriptFunctions";
+import {
+  RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
+  RULE_IS_MERGE_REQUEST,
+  RULE_IS_TAGGED_RELEASE,
+} from "../../rules";
 type PickRequired<T, K extends keyof T> = Required<Pick<T, K>> & Omit<T, K>;
 
 export const createGitlabPipelineWithDefaults = ({
@@ -29,6 +34,39 @@ export const createGitlabPipelineWithDefaults = ({
       ),
       ...(before_script ?? []),
     ],
+    workflow: {
+      name: "$PIPELINE_ICON $PIPELINE_NAME",
+      rules: [
+        {
+          if: RULE_IS_MERGE_REQUEST.if,
+          variables: {
+            PIPELINE_ICON: "🐱🔨",
+            PIPELINE_NAME: "Merge Request $CI_MERGE_REQUEST_IID",
+          },
+        },
+        {
+          if: RULE_IS_TAGGED_RELEASE.if,
+          variables: {
+            PIPELINE_ICON: "🐱📦",
+            PIPELINE_NAME: "Release $CI_COMMIT_TAG",
+          },
+        },
+        {
+          if: RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT.if,
+          variables: {
+            PIPELINE_ICON: "🐱🔨",
+            PIPELINE_NAME: "Main $CI_COMMIT_REF_NAME",
+          },
+        },
+        {
+          when: "always", // fallback
+          variables: {
+            PIPELINE_ICON: "🐱❓",
+            PIPELINE_NAME: "Default",
+          },
+        },
+      ],
+    },
 
     ...config,
   };

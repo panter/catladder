@@ -64,6 +64,8 @@ export interface GitlabPipeline extends Pick<JobTemplate, "variables"> {
   image: string;
   workflow?: {
     rules: GitlabRule[];
+    name?: string;
+    variables?: Record<string, string>;
   };
   stages: string[];
   jobs: Record<string, GitlabJobWithContext>;
