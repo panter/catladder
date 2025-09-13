@@ -1,3 +1,11 @@
+## [3.14.1](https://git.panter.ch/catladder/catladder/compare/v3.14.0...v3.14.1) (2025-09-13)
+
+
+### Bug Fixes
+
+* agent broken ([a99d800](https://git.panter.ch/catladder/catladder/commit/a99d80006b0542e7f0af8f7a6d7f8cd0d8b93e83))
+* **agent:** not looking at pipeline state ([6131a0e](https://git.panter.ch/catladder/catladder/commit/6131a0e3ae675827979aeb5a06de4e2f705b4d4c))
+
 # [3.14.0](https://git.panter.ch/catladder/catladder/compare/v3.13.1...v3.14.0) (2025-09-13)
 
 
