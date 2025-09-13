@@ -22,7 +22,7 @@ export const baseSetupScript = [
   "apk update",
   "apk add --no-cache git curl bash",
   "npm install -g @anthropic-ai/claude-code",
-  "claude mcp add gitlab --env GITLAB_PERSONAL_ACCESS_TOKEN=$GITLAB_PERSONAL_ACCESS_TOKEN --env GITLAB_API_URL=$GITLAB_API_URL -- npx -y @zereight/mcp-gitlab",
+  "claude mcp add gitlab --env GITLAB_PERSONAL_ACCESS_TOKEN=$GITLAB_PERSONAL_ACCESS_TOKEN --env GITLAB_API_URL=$GITLAB_API_URL --USE_PIPELINE='true' -- npx -y @zereight/mcp-gitlab",
 ];
 
 export const callClaude = ({ prompt }: { prompt: string }) => {
