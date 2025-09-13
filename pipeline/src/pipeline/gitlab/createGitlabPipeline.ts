@@ -55,7 +55,7 @@ export const createGitlabPipelineWithDefaults = ({
           if: RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT.if,
           variables: {
             PIPELINE_ICON: "🐱🔨",
-            PIPELINE_NAME: "Main $CI_COMMIT_REF_NAME",
+            PIPELINE_NAME: "Main",
           },
         },
         {
