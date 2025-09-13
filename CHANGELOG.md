@@ -1,3 +1,10 @@
+# [3.14.0](https://git.panter.ch/catladder/catladder/compare/v3.13.1...v3.14.0) (2025-09-13)
+
+
+### Features
+
+* claude code (experimental) ([f29db9e](https://git.panter.ch/catladder/catladder/commit/f29db9e2f363d54bc52154c007d5b25951020d0b))
+
 ## [3.13.1](https://git.panter.ch/catladder/catladder/compare/v3.13.0...v3.13.1) (2025-09-13)
 
 
