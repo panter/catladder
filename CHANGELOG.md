@@ -1,3 +1,10 @@
+# [3.13.0](https://git.panter.ch/catladder/catladder/compare/v3.12.5...v3.13.0) (2025-09-13)
+
+
+### Features
+
+* custom pipeline name ([5bdbbbe](https://git.panter.ch/catladder/catladder/commit/5bdbbbe0655f5ba589dd7c1879b56d2341cec568))
+
 ## [3.12.5](https://git.panter.ch/catladder/catladder/compare/v3.12.4...v3.12.5) (2025-09-04)
 
 ## [3.12.4](https://git.panter.ch/catladder/catladder/compare/v3.12.3...v3.12.4) (2025-08-11)
