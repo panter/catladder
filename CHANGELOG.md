@@ -1,3 +1,10 @@
+## [3.13.1](https://git.panter.ch/catladder/catladder/compare/v3.13.0...v3.13.1) (2025-09-13)
+
+
+### Bug Fixes
+
+* main main in pipeline name is redundant ([4077661](https://git.panter.ch/catladder/catladder/commit/4077661b0fee29c01e1a017ab33481eeff38c783))
+
 # [3.13.0](https://git.panter.ch/catladder/catladder/compare/v3.12.5...v3.13.0) (2025-09-13)
 
 
