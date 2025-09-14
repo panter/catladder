@@ -1,3 +1,11 @@
+# [3.15.0](https://git.panter.ch/catladder/catladder/compare/v3.14.1...v3.15.0) (2025-09-14)
+
+
+### Features
+
+* **agent:** reviewer looks at pipeline state ([7d4f1d8](https://git.panter.ch/catladder/catladder/commit/7d4f1d8843b3eee6e26d1e3d386ea34e8368df46))
+* **agent:** several improvements ([76f21f2](https://git.panter.ch/catladder/catladder/commit/76f21f2008bf702c0a09e92220a810edc120ccbe))
+
 ## [3.14.1](https://git.panter.ch/catladder/catladder/compare/v3.14.0...v3.14.1) (2025-09-13)
 
 
