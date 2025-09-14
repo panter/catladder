@@ -1,4 +1,4 @@
-// prompts.ts — MCP-only, DRY, review-first-then-push, CI logic, self-mention guard,
+// prompts.ts — MCP-only, DRY, review-first-then-push, CI logic (no retries), self-mention guard,
 // event prompt supports review-on-demand via manual "agent-review" job or fallback MR review.
 // Prevents double-runs: event-triggered work cancels any running "agent-review" job on the same MR.
 
@@ -87,8 +87,6 @@ const mcpOnly = () => `
 - **Pipelines / Jobs**  (requires env USE_PIPELINE=true)
   - list_pipeline_jobs({ projectId, pipelineId })
   - get_pipeline_job_output({ projectId, pipelineId, jobId })
-  - retry_pipeline({ projectId, pipelineId })
-  - retry_pipeline_job({ projectId, jobId })
   - play_pipeline_job({ projectId, jobId })
   - cancel_pipeline_job({ projectId, jobId })
 `;
@@ -158,7 +156,7 @@ If the issue/note text **asks for a review** (case-insensitive tokens like: "rev
      - full GitLab MR URL
    - If no MR can be resolved, reply with a brief comment asking the user to reference an MR (sanitize) and **stop**.
 
-3) **Single-Runner Guard (cancel any running "agent-review" job)**   // NEW: Single-runner guard
+3) **Single-Runner Guard (cancel any running "agent-review" job)**
    - Execute the **Single-Runner Guard** steps above **before** MR Review Mode.
 
 4) **Enter MR Review Mode**: execute the **MR Review Bundle** below with the resolved \`mr_iid\`.
@@ -222,30 +220,22 @@ Follow this sequence with verification at each step:
 `;
 
 const ciInspection = () => `
-4) **CI jobs (current pipeline focus: diagnose first, retry only when useful)**
+4) **CI jobs (diagnose only; no job retries)**
    - Inspect jobs for the **current pipeline**: \`$CI_PIPELINE_ID\` via \`list_pipeline_jobs\`.
    - Consider **only** jobs with \`status = "failed"\` and \`allow_failure = false\`.
    - For each such job:
      1. Retrieve details (id, name, stage, status, allow_failure, web_url).
      2. Fetch job output via \`get_pipeline_job_output({ projectId: $CI_PROJECT_ID, pipelineId: $CI_PIPELINE_ID, jobId })\`.
      3. **Classify the failure**:
-        - **Code-related (do not retry):** compiler/type/lint/test/build script errors.
-        - **Likely transient (may retry):** network/timeouts/infra/cache/artifacts/5xx/429/etc.
+        - **Code-related:** compiler/type/lint/test/build script errors. Provide the minimal fix in your review/changes. Do **not** retry.
+        - **Likely transient / infra:** network/timeouts/cache/artifacts/5xx/429/runner issues. Do **not** retry here; briefly note the likely cause and suggest the team enable CI-level retry/backoff if appropriate.
      4. **Decision**:
         - If \`will_push_changes = true\`:
-          - **Do not retry** current pipeline (upcoming push will trigger a new one).
-          - Post an MR note: brief diagnosis per failed job; note a new pipeline will validate the fix (sanitize).
+          - Do **not** retry anything (the upcoming push will trigger a new pipeline).
+          - Post an MR note with a brief diagnosis per failed job; note that a new pipeline will validate the fix.
         - If \`will_push_changes = false\`:
-          - If transient ⇒ \`retry_pipeline_job({ projectId: $CI_PROJECT_ID, jobId })\` (or \`retry_pipeline\` if job-level retry not available).  
-            Post a note stating you retried and why (sanitize).
-          - If code-related ⇒ do not retry; post a note with diagnosis and suggested fix (sanitize).
-   - Retry-once policy: at most **one** retry per job in this run.
-
-5) **Assign human reviewer if ready**
-   - If discussions are resolved and blocking CI issues are addressed or clearly triaged, request review from a recent active human contributor (not you), if supported by your environment.
-
-6) **Stdout summary**
-   - Print concise summary: branch used, files changed count (approx by diffs), discussions resolved/left, **blocking failed jobs (names + stages)** with classification (code vs transient), which jobs were retried (if any), and requested reviewers.
+          - Do **not** retry. Post an MR note with diagnosis and suggested next steps (or request human input if infra-related).
+   - **No in-agent retries.** Any retry policy should be configured at the CI job level.
 `;
 
 const outputDisciplineMR = ({ agentUserName }: Ctx) => `
@@ -280,9 +270,9 @@ ${identity(ctx)}
 ${goldenRules(ctx)}
 ${selfMentionGuard(ctx)}
 ${eventSelfParse()}
-${singleRunnerGuard()}  <!-- NEW: included so the agent can run it when acting on an existing MR -->
+${singleRunnerGuard()}  <!-- included so the agent can run it when acting on an existing MR -->
 ${reviewOnDemandFromEvents()}
-${mrReviewBundle(ctx)}  <!-- Included so the agent can execute it when review intent is true -->
+${mrReviewBundle(ctx)}  <!-- included so the agent can execute it when review intent is true -->
 ${eventWorkflow(ctx)}
 ${commentGuidelines()}
 ${mcpOnly()}
