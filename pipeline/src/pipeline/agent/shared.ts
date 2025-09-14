@@ -31,6 +31,6 @@ export const callClaude = ({ prompt }: { prompt: string }) => {
       escapeDoubleQuotes(escapeBackTicks(prompt)),
     )}"`,
     //'echo "$PROMPT"',
-    `claude -p "$PROMPT" --permission-mode acceptEdits --allowedTools "Bash(*) Read(*) Edit(*) Write(*) mcp__gitlab" --verbose --debug`,
+    `claude -p "$PROMPT" --permission-mode acceptEdits --allowedTools "Bash(*) Bash(git checkout:*) Read(*) Edit(*) Write(*) mcp__gitlab" --verbose --debug`,
   ];
 };

@@ -4,4 +4,18 @@ export type AgentConfig = {
     username: string;
     userId: string;
   };
+  reviews?: {
+    /**
+     * usernames that the agent should review merge requests for.
+     * Defaults to agentUser
+     */
+    byUser?:
+      | Record<
+          string,
+          {
+            automatic: boolean;
+          }
+        >
+      | "all-automatic";
+  };
 };

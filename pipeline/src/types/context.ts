@@ -216,9 +216,4 @@ export type WorkspaceContext = {
   env: string;
 };
 
-export type AgentContext = {
-  type: "agent";
-  name: string;
-  fullConfig: Config;
-  agentConfig: AgentConfig;
-};
+export type { AgentContext } from "../pipeline/agent/createAgentContext";
