@@ -3,6 +3,7 @@ import {
   escapeDoubleQuotes,
   escapeNewlines,
 } from "../../bash/bashEscape";
+import { getRunnerImage } from "../../runner";
 import type { AgentContext, CatladderJob } from "../../types";
 
 export const createBaseAgentJob = (
@@ -10,7 +11,8 @@ export const createBaseAgentJob = (
 ): Omit<CatladderJob, "name" | "rules" | "script"> => ({
   stage: "agents",
   envMode: "none",
-  image: "node:24-alpine3.21",
+  // image: "node:24-alpine3.21",
+  image: getRunnerImage("agent-claude"),
   variables: {
     MAX_MCP_OUTPUT_TOKENS: "75000",
     GITLAB_PERSONAL_ACCESS_TOKEN: "$AGENT_GITLAB_PERSONAL_ACCESS_TOKEN", // TODO: we don't have global secret keys to configure yet
@@ -19,9 +21,10 @@ export const createBaseAgentJob = (
 });
 
 export const baseSetupScript = [
-  "apk update",
-  "apk add --no-cache git curl bash",
-  "npm install -g @anthropic-ai/claude-code",
+  // these are done in the image already
+  // "apk update",
+  // "apk add --no-cache git curl bash",
+  //"npm install -g @anthropic-ai/claude-code",
   "claude mcp add gitlab --env GITLAB_PERSONAL_ACCESS_TOKEN=$GITLAB_PERSONAL_ACCESS_TOKEN --env GITLAB_API_URL=$GITLAB_API_URL --env USE_PIPELINE='true' -- npx -y @zereight/mcp-gitlab",
 ];
 
