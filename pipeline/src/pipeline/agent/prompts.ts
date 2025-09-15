@@ -1,6 +1,6 @@
-// prompts.ts — MCP-only, DRY, review-first-then-push, CI logic (no retries), self-mention guard,
+// prompts.ts — MCP-only, DRY, review-first-then-push, CI diagnosis (no retries), self-mention guard,
 // event prompt supports review-on-demand via manual "agent-review" job or fallback MR review.
-// Prevents double-runs: event-triggered work cancels any running "agent-review" job on the same MR.
+// Prevents double-runs: event-triggered work cancels any running "agent-review" job on the MR's own pipeline.
 
 type Ctx = { agentUserName: string };
 
@@ -85,6 +85,8 @@ const mcpOnly = () => `
   - merge_merge_request(...)  // **Do NOT use** (never merge)
 
 - **Pipelines / Jobs**  (requires env USE_PIPELINE=true)
+  - list_pipelines({ projectId, ref?, sha?, status?, orderBy?, sort? })
+  - get_pipeline({ projectId, pipelineId })
   - list_pipeline_jobs({ projectId, pipelineId })
   - get_pipeline_job_output({ projectId, pipelineId, jobId })
   - play_pipeline_job({ projectId, jobId })
@@ -114,41 +116,49 @@ From \`event_json\`, extract:
 If any key is missing, choose the safest minimal action or briefly explain via a comment.
 `;
 
-// NEW: Single-runner guard (event-triggered → existing MR)
+/* Helper used by Single-Runner Guard and Review-on-Demand to find the MR’s own pipeline */
+const resolveMrPipeline = () => `
+## Resolve MR Pipeline (for MR IID resolved from the event)
+Given \`mr_iid\`:
+1) Call \`get_merge_request({ projectId: $CI_PROJECT_ID, mergeRequestIid: mr_iid })\` to obtain:
+   - \`sourceBranch\` (required)
+   - \`sha\` or head SHA (if available)
+2) Prefer **SHA-based** lookup:
+   - \`list_pipelines({ projectId: $CI_PROJECT_ID, sha })\` ordered by most recent; pick the newest.
+3) Fallback to **ref-based** lookup if SHA not available:
+   - \`list_pipelines({ projectId: $CI_PROJECT_ID, ref: sourceBranch, orderBy: "updated_at", sort: "desc" })\`; pick the newest.
+4) The chosen pipeline becomes \`mr_pipeline_id\`. Use it for all job queries/plays/cancels related to this MR.
+- If no pipeline is found, post a short MR note explaining that no pipeline was located for the current MR head and proceed with review actions without CI job control.
+`;
+
+// Updated: operate on the MR’s pipeline, not the event pipeline
 const singleRunnerGuard = () => `
 ## Single-Runner Guard (event-triggered work on an existing MR)
 Before entering MR Review Mode from an event:
 
-- **Goal:** Avoid two agents working the same MR. If a **running or pending** CI job whose name **ends with "agent-review"** is active for this MR, **cancel** it first.
+- **Goal:** Avoid two agents working the same MR. If a **running or pending** CI job whose name **ends with "agent-review"** is active for this MR's pipeline, **cancel** it first.
 
-**Best-effort procedure (MCP-only):**
-1) If \`$CI_PIPELINE_ID\` is available (this event is executing inside a CI context for the same MR):
-   - Call \`list_pipeline_jobs({ projectId: $CI_PROJECT_ID, pipelineId: $CI_PIPELINE_ID })\`.
-   - Identify any job where \`status\` is \`"running"\` or \`"pending"\` **and** \`name\` **endsWith** \`"agent-review"\`.
-   - For each match, call \`cancel_pipeline_job({ projectId: $CI_PROJECT_ID, jobId })\`.
-   - Proceed with review immediately after issuing cancellations (do not wait).
-
-2) If \`$CI_PIPELINE_ID\` is **not** available, or jobs for this MR cannot be listed with available MCP calls:
-   - Post a short MR note stating you are proceeding but **cannot verify/cancel** a running \`agent-review\` job due to missing capabilities.
+**Procedure (MCP-only):**
+1) Resolve the MR IID from the event (target URL or text) and run **Resolve MR Pipeline** to get \`mr_pipeline_id\`.
+2) If \`mr_pipeline_id\` is available:
+   - \`list_pipeline_jobs({ projectId: $CI_PROJECT_ID, pipelineId: mr_pipeline_id })\`.
+   - For any job with \`status\` in \`["running","pending"]\` and \`name\` ending with \`"agent-review"\`, call:
+     - \`cancel_pipeline_job({ projectId: $CI_PROJECT_ID, jobId })\`.
+   - Proceed immediately after issuing cancellations (do not wait).
+3) If the pipeline cannot be resolved:
+   - Post a short MR note stating you are proceeding but **cannot verify/cancel** a running \`agent-review\` job due to missing pipeline context.
    - Proceed with review.
 
 **Notes:**
 - Keep this guard **idempotent** (safe to run multiple times).
-- This guard only applies to **event-triggered** flows that decide to act on an **existing MR**.
+- Only applies to **event-triggered** flows that act on an **existing MR**.
 `;
 
 const reviewOnDemandFromEvents = () => `
 ## Review-on-Demand (from events)
 If the issue/note text **asks for a review** (case-insensitive tokens like: "review", "please review", "PTAL", "needs review", "can you look at", "LGTM?"), then:
 
-1) **Check for pipeline review job**
-   - List jobs for the current pipeline \`$CI_PIPELINE_ID\` via \`list_pipeline_jobs\`.
-   - If any job has \`status = "manual"\` **and** its \`name\` ends with "agent-review":
-     - Trigger it via \`play_pipeline_job({ projectId: $CI_PROJECT_ID, jobId })\`.
-     - Post a short comment confirming you triggered the review job (sanitize).
-     - **Stop** further review actions.
-
-2) **If no such job exists, resolve which MR to review**:
+1) **Resolve which MR to review**:
    - If the event target is an MR → use its \`iid\`.
    - Else, parse the text for MR references in order:
      - \`!<iid>\` (e.g., \`!123\`)
@@ -156,10 +166,21 @@ If the issue/note text **asks for a review** (case-insensitive tokens like: "rev
      - full GitLab MR URL
    - If no MR can be resolved, reply with a brief comment asking the user to reference an MR (sanitize) and **stop**.
 
-3) **Single-Runner Guard (cancel any running "agent-review" job)**
-   - Execute the **Single-Runner Guard** steps above **before** MR Review Mode.
+2) **Find the MR's pipeline** (do **not** use \`$CI_PIPELINE_ID\` from the event):
+   - Execute **Resolve MR Pipeline** to obtain \`mr_pipeline_id\`.
 
-4) **Enter MR Review Mode**: execute the **MR Review Bundle** below with the resolved \`mr_iid\`.
+3) **If a manual "agent-review" job exists on the MR pipeline, trigger it**
+   - If \`mr_pipeline_id\` is available:
+     - \`list_pipeline_jobs({ projectId: $CI_PROJECT_ID, pipelineId: mr_pipeline_id })\`.
+     - If any job has \`status = "manual"\` **and** its \`name\` ends with "agent-review":
+       - Trigger via \`play_pipeline_job({ projectId: $CI_PROJECT_ID, jobId })\`.
+       - Post a short comment confirming you triggered the review job (sanitize).
+       - **Stop** further review actions.
+
+4) **Single-Runner Guard**
+   - If no manual job was triggered, execute the **Single-Runner Guard** (it will cancel any running/pending \`agent-review\` jobs on the MR pipeline) before MR Review Mode.
+
+5) **Enter MR Review Mode**: execute the **MR Review Bundle** below with the resolved \`mr_iid\`.
 `;
 
 /** Regular event workflow for non-review work */
@@ -221,21 +242,20 @@ Follow this sequence with verification at each step:
 
 const ciInspection = () => `
 4) **CI jobs (diagnose only; no job retries)**
-   - Inspect jobs for the **current pipeline**: \`$CI_PIPELINE_ID\` via \`list_pipeline_jobs\`.
-   - Consider **only** jobs with \`status = "failed"\` and \`allow_failure = false\`.
-   - For each such job:
-     1. Retrieve details (id, name, stage, status, allow_failure, web_url).
-     2. Fetch job output via \`get_pipeline_job_output({ projectId: $CI_PROJECT_ID, pipelineId: $CI_PIPELINE_ID, jobId })\`.
-     3. **Classify the failure**:
-        - **Code-related:** compiler/type/lint/test/build script errors. Provide the minimal fix in your review/changes. Do **not** retry.
-        - **Likely transient / infra:** network/timeouts/cache/artifacts/5xx/429/runner issues. Do **not** retry here; briefly note the likely cause and suggest the team enable CI-level retry/backoff if appropriate.
-     4. **Decision**:
-        - If \`will_push_changes = true\`:
-          - Do **not** retry anything (the upcoming push will trigger a new pipeline).
-          - Post an MR note with a brief diagnosis per failed job; note that a new pipeline will validate the fix.
-        - If \`will_push_changes = false\`:
-          - Do **not** retry. Post an MR note with diagnosis and suggested next steps (or request human input if infra-related).
-   - **No in-agent retries.** Any retry policy should be configured at the CI job level.
+   - To analyze CI context during review triggered from events, prefer the **MR pipeline** (not the event pipeline).
+   - If you are in MR Review Mode and have \`mr_pipeline_id\` (from **Resolve MR Pipeline**):
+     - \`list_pipeline_jobs({ projectId: $CI_PROJECT_ID, pipelineId: mr_pipeline_id })\`.
+     - Consider **only** jobs with \`status = "failed"\` and \`allow_failure = false\`.
+     - For each such job:
+       1. Retrieve details (id, name, stage, status, allow_failure, web_url).
+       2. Fetch job output via \`get_pipeline_job_output({ projectId: $CI_PROJECT_ID, pipelineId: mr_pipeline_id, jobId })\`.
+       3. **Classify the failure**:
+          - **Code-related:** compiler/type/lint/test/build script errors. Provide minimal fix in your review/changes. Do **not** retry.
+          - **Likely transient / infra:** network/timeouts/cache/artifacts/5xx/429/runner issues. Do **not** retry here; note likely cause and suggest CI-level retry/backoff if appropriate.
+       4. **Decision**:
+          - If \`will_push_changes = true\`: do **not** retry; note that the new pipeline from your push will validate fixes.
+          - If \`will_push_changes = false\`: do **not** retry; post diagnosis and next steps (or request human input for infra issues).
+   - If \`mr_pipeline_id\` is not available, you may skip CI analysis or post a short note explaining the missing pipeline context.
 `;
 
 const outputDisciplineMR = ({ agentUserName }: Ctx) => `
@@ -270,9 +290,10 @@ ${identity(ctx)}
 ${goldenRules(ctx)}
 ${selfMentionGuard(ctx)}
 ${eventSelfParse()}
-${singleRunnerGuard()}  <!-- included so the agent can run it when acting on an existing MR -->
+${resolveMrPipeline()}   <!-- new helper used by review/cancel paths -->
+${singleRunnerGuard()}   <!-- operates on MR pipeline, not event pipeline -->
 ${reviewOnDemandFromEvents()}
-${mrReviewBundle(ctx)}  <!-- included so the agent can execute it when review intent is true -->
+${mrReviewBundle(ctx)}   <!-- included so the agent can execute it when review intent is true -->
 ${eventWorkflow(ctx)}
 ${commentGuidelines()}
 ${mcpOnly()}
