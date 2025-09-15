@@ -2,6 +2,7 @@ import type { CommandInstance } from "vorpal";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 import { getProjectConfig } from "../../../../../config/getProjectConfig";
 import { getGitRemoteHostAndPath } from "../../../../../git/gitProjectInformation";
+import { getMainBranch } from "../../../../../git";
 import type { AgentConfig } from "@catladder/pipeline";
 
 type TriggerToken = {
@@ -133,7 +134,8 @@ const setupAgentWebhook = async (
 ): Promise<Webhook> => {
   const webhookName = `cl_agent_${agentName}_webhook`;
   const { gitRemoteHost } = await getGitRemoteHostAndPath();
-  const webhookUrl = `https://${gitRemoteHost}/api/v4/projects/${projectId}/ref/main/trigger/pipeline?token=${triggerToken}`;
+  const mainBranch = await getMainBranch();
+  const webhookUrl = `https://${gitRemoteHost}/api/v4/projects/${projectId}/ref/${mainBranch}/trigger/pipeline?token=${triggerToken}`;
 
   instance.log(`Setting up webhook for agent: ${agentName}`);
 

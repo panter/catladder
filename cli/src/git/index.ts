@@ -1,2 +1,3 @@
 export * from "./gitConfig";
 export * from "./gitProjectInformation";
+export * from "./getGetMainBranch";
