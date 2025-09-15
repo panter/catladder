@@ -1,3 +1,17 @@
+# [3.16.0](https://git.panter.ch/catladder/catladder/compare/v3.15.1...v3.16.0) (2025-09-15)
+
+
+### Bug Fixes
+
+* **agent:** asking the agent to review does not properly try to trigger the review job if available ([ee4d2a9](https://git.panter.ch/catladder/catladder/commit/ee4d2a943f86980301ed02273b625e2728325d1b))
+* **agent:** don't try to retry jobs ([e36f3c6](https://git.panter.ch/catladder/catladder/commit/e36f3c6878283ccbcdb6fdaaaa6ebbdb5c897ee0))
+* **agent:** webhook does not work if not main branch ([4fc3c2e](https://git.panter.ch/catladder/catladder/commit/4fc3c2ec2a8e8d6b3577570ea182be408ea0fe3c))
+
+
+### Features
+
+* **agent:** improve message discussion handling ([aafb3c3](https://git.panter.ch/catladder/catladder/commit/aafb3c3b74cd6611bfb76bac276e3a1ae22ac936))
+
 ## [3.15.1](https://git.panter.ch/catladder/catladder/compare/v3.15.0...v3.15.1) (2025-09-14)
 
 # [3.15.0](https://git.panter.ch/catladder/catladder/compare/v3.14.1...v3.15.0) (2025-09-14)
