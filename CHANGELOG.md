@@ -1,3 +1,10 @@
+## [3.16.1](https://git.panter.ch/catladder/catladder/compare/v3.16.0...v3.16.1) (2025-09-15)
+
+
+### Bug Fixes
+
+* reduce risk of double quotes in gitlab webhooks ([b67a4ad](https://git.panter.ch/catladder/catladder/commit/b67a4ad49416c7f91578941e303cdceabe78bc8f))
+
 # [3.16.0](https://git.panter.ch/catladder/catladder/compare/v3.15.1...v3.16.0) (2025-09-15)
 
 
