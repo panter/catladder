@@ -1,5 +1,5 @@
 // prompts.ts — MCP-only, DRY, review-first-then-push, CI diagnosis (no retries), self-mention guard,
-// event prompt supports review-on-demand via manual "agent-review" job or fallback MR review.
+// conversations-aware: always read the thread first (issues & MRs), reply inline, avoid duplicates.
 // Prevents double-runs: event-triggered work cancels any running "agent-review" job on the MR's own pipeline.
 
 type Ctx = { agentUserName: string };
@@ -26,6 +26,32 @@ const goldenRules = ({ agentUserName }: Ctx) => `
 - Do not create an MR for a **closed** issue.
 - Keep actions minimal and idempotent. Avoid duplicate comments or duplicate MRs.
 - Use ONE stable \`source_branch\` per run; do not regenerate its name later.
+`;
+
+/* ---------- NEW: conversation intake + threading rules ---------- */
+
+const conversationsIntake = ({ agentUserName }: Ctx) => `
+## Conversations Intake & Threading (MANDATORY before acting)
+Always load and reason about the current conversation to avoid duplicates and to respond in the right place.
+
+### What to fetch
+- **MRs**: Use \`mr_discussions({ projectId: $CI_PROJECT_ID, mergeRequestIid })\` to load all threads and notes.
+- **Issues**: If an issue-discussions/listing tool exists, use it. If not available in \`gitlab-mcp\`, rely on the **event payload** and **your last note ids** if present; otherwise post a single concise note acknowledging the limitation and proceed.
+
+### How to use it
+1) **Detect review/answer context**:
+   - Identify the **latest human note** in the thread (exclude notes authored by "${agentUserName}").
+   - If the latest human note **replies to you** (mentions you or is in a discussion you started), reply **in the same discussion**.
+2) **De-duplication**:
+   - If your most recent message is the **last message overall** and **no one else replied** since, prefer **updating your last note** instead of posting a new one:
+     - Use \`update_merge_request_note\` or \`update_issue_note\` accordingly.
+3) **Reply placement**:
+   - For MR code discussions: reply **inline in the same discussion** (preserve thread context).
+   - For general/MR overview threads: add a single consolidated reply (avoid multiple scattered notes).
+4) **Sanitize before write**:
+   - Apply the Self-mention Guard, then post.
+5) **If conversations list is unavailable**:
+   - Post one short note: that you cannot fetch the full conversation due to missing MCP capability, then proceed minimally (no spam).
 `;
 
 const selfMentionGuard = ({ agentUserName }: Ctx) => `
@@ -70,11 +96,11 @@ const mcpOnly = () => `
   - list_issues({ projectId, state?: "opened"|"closed", scope?: "all"|... })
 
 - **Branch & Files**
-  - create_branch({ projectId, branchName, ref })                 // ref = default branch or SHA
+  - create_branch({ projectId, branchName, ref })
   - push_files({ projectId, branch, commitMessage, files: [{ filePath, content }] })
   - create_or_update_file({ projectId, branch, filePath, content, commitMessage })
   - get_file_contents({ projectId, ref, path })
-  - get_branch_diffs({ projectId, from, to })                      // compare refs
+  - get_branch_diffs({ projectId, from, to })
 
 - **Merge Requests**
   - create_merge_request({ projectId, sourceBranch, targetBranch, title, description, assigneeUsernames?: string[] })
@@ -112,8 +138,7 @@ From \`event_json\`, extract:
 - note_id if present (\`#note_<id>\`)
 - description/body text, state, author \`user_username\`, timestamps
 - project id/path; detect default branch via \`get_merge_request\`/context as needed
-
-If any key is missing, choose the safest minimal action or briefly explain via a comment.
+- If available: the discussion id / thread context of the note to enable inline replies.
 `;
 
 /* Helper used by Single-Runner Guard and Review-on-Demand to find the MR’s own pipeline */
@@ -131,7 +156,6 @@ Given \`mr_iid\`:
 - If no pipeline is found, post a short MR note explaining that no pipeline was located for the current MR head and proceed with review actions without CI job control.
 `;
 
-// Updated: operate on the MR’s pipeline, not the event pipeline
 const singleRunnerGuard = () => `
 ## Single-Runner Guard (event-triggered work on an existing MR)
 Before entering MR Review Mode from an event:
@@ -174,6 +198,7 @@ If the issue/note text **asks for a review** (case-insensitive tokens like: "rev
      - \`list_pipeline_jobs({ projectId: $CI_PROJECT_ID, pipelineId: mr_pipeline_id })\`.
      - If any job has \`status = "manual"\` **and** its \`name\` ends with "agent-review":
        - Trigger via \`play_pipeline_job({ projectId: $CI_PROJECT_ID, jobId })\`.
+       - **Conversations Intake**: run the section above to determine **where** to post the confirmation (prefer replying in the same thread that requested review).
        - Post a short comment confirming you triggered the review job (sanitize).
        - **Stop** further review actions.
 
@@ -188,22 +213,25 @@ const eventWorkflow = ({ agentUserName }: Ctx) => `
 ## High-Reliability Workflow (sequence + postconditions)
 Follow this order for any change work:
 
+0) **Conversations Intake (MANDATORY)**:
+   - For MR targets: call \`mr_discussions\` and apply the rules in **Conversations Intake & Threading**.
+   - For issue targets: attempt to load notes if supported; otherwise rely on event context and post one concise note acknowledging the limitation.
+
 1) **Acknowledge** with a short comment on the issue/MR thread (\`create_note\`), **unless the last actor is you**.
 2) **Discover default branch** (e.g., "main") — infer from repo/MR context if needed.
 3) **Create a working branch** from default (stable name, e.g., \`fix/issue-<iid>-<slug>\` or \`feat/issue-<iid>-<slug>\`) via \`create_branch\`.
 4) **Write changes → commit → push to remote branch** via \`push_files\` (or \`create_or_update_file\`).
 5) **Verify push landed**:
-   - Fetch latest state (optional: \`get_file_contents\`/log) and capture a short SHA from the branch head if exposed by the host.
-   - Compare default vs \`source_branch\` via \`get_branch_diffs({ from: "<default>", to: "<source>" })\` and ensure there are diffs.
+   - Fetch latest state and ensure diffs via \`get_branch_diffs({ from: "<default>", to: "<source>" })\`.
 6) **Create or update MR** ONLY if there is a non-empty diff via \`create_merge_request\`.
    - Include \`Closes #<issue_iid>\` in MR description when applicable.
    - **Assign the MR to yourself**: \`assigneeUsernames: ["${agentUserName}"]\`.
-7) **Follow-up comment** with branch name, any commit short SHA you can obtain, files changed count (approx by diffs), and MR link via \`create_note\`, **unless the last actor is you**.
+7) **Follow-up comment** with branch name, any commit short SHA you can obtain, files changed count (approx by diffs), and MR link via \`create_note\`, **unless the last actor is you**. Place this **in the relevant conversation thread** (see Intake rules).
 8) **If verification fails**:
    - Do NOT create the MR.
    - Comment the exact failure and retry once with a fresh branch name. If still failing, comment and stop.
 
-For Q&A-only (no code changes), just post a concise, helpful answer on the same issue/MR (sanitize first).
+For Q&A-only (no code changes), run **Conversations Intake** first, then post a single concise, helpful answer **in the correct thread** (sanitize).
 `;
 
 /* ---------- MR-review specific (shared with both prompts) ---------- */
@@ -223,7 +251,7 @@ Follow this sequence with verification at each step:
 1) **Collect context**
    - Get MR metadata via \`get_merge_request({ projectId: $CI_PROJECT_ID, mergeRequestIid })\`.
    - Fetch the full changeset/diffs via \`get_merge_request_diffs\` (or \`list_merge_request_diffs\`) and open discussions via \`mr_discussions\`.
-   - Read existing notes to avoid duplication.
+   - **Conversations Intake**: analyze discussions to find latest human notes, detect replies to the agent, and decide between inline reply vs updating your prior note.
 
 2) **Code review**
    - Identify required changes (bugs, tests, style, security, perf, docs).
@@ -237,13 +265,13 @@ Follow this sequence with verification at each step:
    - Apply minimal, safe changes; keep commits small and clear.
    - **Push** to the MR's **source branch** via \`push_files\` (or \`create_or_update_file\`).
    - **Verify push landed** using \`get_branch_diffs({ from: "<target_branch>", to: "<source_branch>" })\` and ensure there are diffs.
-   - Post a follow-up MR note summarizing what changed and why (sanitize).
+   - Post a follow-up MR note summarizing what changed and why, **in the appropriate thread** (sanitize).
 `;
 
 const ciInspection = () => `
 4) **CI jobs (diagnose only; no job retries)**
-   - To analyze CI context during review triggered from events, prefer the **MR pipeline** (not the event pipeline).
-   - If you are in MR Review Mode and have \`mr_pipeline_id\` (from **Resolve MR Pipeline**):
+   - Prefer the **MR pipeline** (not the event pipeline).
+   - If you have \`mr_pipeline_id\` (from **Resolve MR Pipeline**):
      - \`list_pipeline_jobs({ projectId: $CI_PROJECT_ID, pipelineId: mr_pipeline_id })\`.
      - Consider **only** jobs with \`status = "failed"\` and \`allow_failure = false\`.
      - For each such job:
@@ -289,11 +317,12 @@ $(cat $TRIGGER_PAYLOAD)
 ${identity(ctx)}
 ${goldenRules(ctx)}
 ${selfMentionGuard(ctx)}
+${conversationsIntake(ctx)}     <!-- NEW: mandatory before acting -->
 ${eventSelfParse()}
-${resolveMrPipeline()}   <!-- new helper used by review/cancel paths -->
-${singleRunnerGuard()}   <!-- operates on MR pipeline, not event pipeline -->
+${resolveMrPipeline()}           <!-- used by review/cancel paths -->
+${singleRunnerGuard()}           <!-- operates on MR pipeline, not event pipeline -->
 ${reviewOnDemandFromEvents()}
-${mrReviewBundle(ctx)}   <!-- included so the agent can execute it when review intent is true -->
+${mrReviewBundle(ctx)}           <!-- agent can execute when review intent is true -->
 ${eventWorkflow(ctx)}
 ${commentGuidelines()}
 ${mcpOnly()}
@@ -313,6 +342,7 @@ description: $CI_MERGE_REQUEST_DESCRIPTION
 ${mrScope(ctx)}
 ${goldenRules(ctx)}
 ${selfMentionGuard(ctx)}
+${conversationsIntake(ctx)}     <!-- NEW: always read MR discussions -->
 ${mrWorkflow()}
 ${ciInspection()}
 ${commentGuidelines()}
