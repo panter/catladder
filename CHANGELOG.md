@@ -1,3 +1,15 @@
+# [3.17.0](https://git.panter.ch/catladder/catladder/compare/v3.16.1...v3.17.0) (2025-09-16)
+
+
+### Bug Fixes
+
+* **agent:** allow all bash ([124a457](https://git.panter.ch/catladder/catladder/commit/124a4578c497481b90605a1d277b9892accce0ae))
+
+
+### Features
+
+* **agent:** improve prompt and permissions ([db6ec1e](https://git.panter.ch/catladder/catladder/commit/db6ec1ef87456642359f325085775b45b07ffc1e))
+
 ## [3.16.1](https://git.panter.ch/catladder/catladder/compare/v3.16.0...v3.16.1) (2025-09-15)
 
 
