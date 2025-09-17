@@ -12,6 +12,9 @@ const config: Config = {
       type: "claude",
     },
   },
+  releases: {
+    when: "auto",
+  },
   components: {}, // currently we use custom gitlab
   hooks: {
     transformFileBeforeWrite: async ({

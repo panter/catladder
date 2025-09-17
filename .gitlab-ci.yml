@@ -23,12 +23,6 @@ variables:
   KUBERNETES_MEMORY_REQUEST: "1Gi"
   KUBERNETES_MEMORY_LIMIT: "4Gi"
   YARN_CACHE_FOLDER: $CI_PROJECT_DIR/.yarn/cache
-stages:
-  - test
-  - build
-  - deploy
-  - release
-  - agents
 
 workflow:
   rules:
@@ -195,20 +189,6 @@ test:
   extends: .npm-publish-base
   variables:
     DIR: pipeline
-
-create release:
-  stage: release
-  image: $INLINE_DOCKER_REGISTRY/semantic-release:$INLINE_PIPELINE_IMAGE_TAG
-  script:
-    - semanticRelease
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "parent_pipeline" # do not allow creating releases in a monorepo. this will handled in the parent pipeline insead
-      when: never
-    - if: $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/ # not after semantic release commit
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
-      when: manual
 
 pages:
   stage: deploy
