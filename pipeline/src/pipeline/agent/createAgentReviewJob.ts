@@ -28,7 +28,7 @@ export const createAgentReviewJob = (context: AgentContext): CatladderJob => {
   return {
     ...baseJob,
     name: context.name + "-agent-review",
-
+    allow_failure: true, // make it optional
     rules: [
       ...rules,
       {
