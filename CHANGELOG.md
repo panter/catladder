@@ -1,3 +1,10 @@
+# [3.18.0](https://git.panter.ch/catladder/catladder/compare/v3.17.1...v3.18.0) (2025-09-17)
+
+
+### Features
+
+* **cli:** setup base setup  before components ([4d1a3af](https://git.panter.ch/catladder/catladder/commit/4d1a3af5f12d1260c61ad0f058e6fa3e3bd1cc23))
+
 ## [3.17.1](https://git.panter.ch/catladder/catladder/compare/v3.17.0...v3.17.1) (2025-09-17)
 
 
