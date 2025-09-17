@@ -1,3 +1,10 @@
+## [3.17.1](https://git.panter.ch/catladder/catladder/compare/v3.17.0...v3.17.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* **agent:** small improvement ([18bd451](https://git.panter.ch/catladder/catladder/commit/18bd4513f1d72c10a20a9379aaf8bd096781eca3))
+
 # [3.17.0](https://git.panter.ch/catladder/catladder/compare/v3.16.1...v3.17.0) (2025-09-16)
 
 
