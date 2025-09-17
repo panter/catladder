@@ -1,3 +1,10 @@
+# [3.20.0](https://git.panter.ch/catladder/catladder/compare/v3.19.0...v3.20.0) (2025-09-17)
+
+
+### Features
+
+* allow automatic releases on main branch ([36cd2ea](https://git.panter.ch/catladder/catladder/commit/36cd2ea8561bb904b3e916a50c383d401df5199d))
+
 # [3.19.0](https://git.panter.ch/catladder/catladder/compare/v3.18.0...v3.19.0) (2025-09-17)
 
 
