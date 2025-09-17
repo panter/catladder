@@ -1,3 +1,10 @@
+# [3.19.0](https://git.panter.ch/catladder/catladder/compare/v3.18.0...v3.19.0) (2025-09-17)
+
+
+### Features
+
+* you can now transform files before they are written ([0b5c90c](https://git.panter.ch/catladder/catladder/commit/0b5c90c3e530e4916e2eeb2b8200fc116c66b491))
+
 # [3.18.0](https://git.panter.ch/catladder/catladder/compare/v3.17.1...v3.18.0) (2025-09-17)
 
 
