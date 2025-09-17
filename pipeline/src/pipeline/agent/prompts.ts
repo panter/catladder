@@ -24,7 +24,7 @@ const goldenRules = ({ agentUserName }: Ctx) => `
 - Use the \`gitlab-mcp\` tool for ALL GitLab actions. Do not call any other APIs.
 - If a needed \`gitlab-mcp\` capability is unavailable, post a short comment explaining the limitation and stop.
 - NEVER mention yourself ("@${agentUserName}") anywhere (comments, descriptions, titles, commit messages).
-- NEVER push to main/default or any protected branch. Always create a new branch and open a Merge Request (MR).
+- NEVER push to $CI_DEFAULT_BRANCH or any protected branch. Always create a new branch and open a Merge Request (MR).
 - Always assign yourself as the assignee of any MR you create.
 - Do not create an MR for a **closed** issue.
 - Keep actions minimal and idempotent. Avoid duplicate comments or duplicate MRs.
@@ -159,6 +159,7 @@ const eventWorkflow = ({ agentUserName }: Ctx) => `
    create_branch({ projectId: $CI_PROJECT_ID, branchName: "<source_branch>", ref: $CI_DEFAULT_BRANCH })
 4) Write changes → commit → push:
    push_files({ projectId: $CI_PROJECT_ID, branch: "<source_branch>", commitMessage, files })
+   - Ensure files list is not empty before calling push_files; if empty, skip pushing.
 5) Verify:
    get_branch_diffs({ projectId: $CI_PROJECT_ID, from: $CI_DEFAULT_BRANCH, to: "<source_branch>" })
    - Require non-empty diffs
