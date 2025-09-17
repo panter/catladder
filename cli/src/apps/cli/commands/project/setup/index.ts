@@ -4,6 +4,7 @@ import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
 import { setupTopic } from "./setupTopic";
 import { setupAgents } from "./setupAgents";
+import { logSection } from "./logSection";
 
 export const setupProject = async (
   instance: CommandInstance,
@@ -14,12 +15,16 @@ export const setupProject = async (
   allContext.forEach((context) => {
     instance.log(` - ${context.name}:${context.env}`);
   });
+
+  await logSection(instance, "base setup", async () => {
+    await setupAccessTokens(instance);
+    await setupTopic(instance);
+    await setupAgents(instance);
+  });
   for (const context of allContext) {
     await setupContext(instance, context);
   }
-  await setupAccessTokens(instance);
-  await setupTopic(instance);
-  await setupAgents(instance);
+
   instance.log("");
   instance.log("gitlab is ready! 🥂");
   instance.log("\n");
