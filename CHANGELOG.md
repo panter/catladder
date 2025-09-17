@@ -1,3 +1,10 @@
+## [3.20.1](https://git.panter.ch/catladder/catladder/compare/v3.20.0...v3.20.1) (2025-09-17)
+
+
+### Bug Fixes
+
+* review job blocks pipeline ([0bed496](https://git.panter.ch/catladder/catladder/commit/0bed496dc72e6ee456bb1b2ffba05700ee1a1dcf))
+
 # [3.20.0](https://git.panter.ch/catladder/catladder/compare/v3.19.0...v3.20.0) (2025-09-17)
 
 
