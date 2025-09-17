@@ -7,6 +7,7 @@ import type { PartialDeep } from "./utils";
 import type { PipelineType, WorkspaceBuildConfig } from "..";
 import type { AgentConfig } from "./agent";
 import type { Hooks } from "./hooks";
+import type { ReleaseConfig } from "./release";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -237,4 +238,9 @@ export type Config<C extends ConfigProps = never> = {
    * hook into catladder generation
    */
   hooks?: Hooks;
+
+  /**
+   * configure tagged releases
+   */
+  releases?: ReleaseConfig;
 };

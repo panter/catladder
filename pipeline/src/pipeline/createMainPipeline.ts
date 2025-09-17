@@ -99,13 +99,15 @@ export const createMainPipeline = async <T extends PipelineType>(
       jobs: {
         ...allJobs,
         ...Object.fromEntries(
-          Object.entries(getGitlabReleaseJobs()).map(([name, gitlabJob]) => [
-            name,
-            {
-              gitlabJob,
-              context: null,
-            },
-          ]),
+          Object.entries(getGitlabReleaseJobs(config)).map(
+            ([name, gitlabJob]) => [
+              name,
+              {
+                gitlabJob,
+                context: null,
+              },
+            ],
+          ),
         ),
       },
       variables: config.runnerVariables,

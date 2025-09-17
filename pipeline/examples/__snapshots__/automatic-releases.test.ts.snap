@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`matches snapshot for cloud-run-with-agents local pipeline YAML 1`] = `
+exports[`matches snapshot for automatic-releases local pipeline YAML 1`] = `
 "image: path/to/docker/jobs-default:the-version
 stages:
   - setup
@@ -232,10 +232,10 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
@@ -248,10 +248,10 @@ www 🧪 test:
       ENV_SHORT=dev
       APP_DIR=www
       ENV_TYPE=dev
-      HOSTNAME=$(printf %s "$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL=$(printf %s "https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -282,10 +282,6 @@ www 🧪 test:
       policy: pull-push
       paths:
         - www/node_modules
-    - key: www-default
-      policy: pull-push
-      paths:
-        - www/.next/cache
   artifacts:
     paths:
       - www/__build_info.json
@@ -324,8 +320,8 @@ www 🧪 test:
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/dev/www"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
@@ -400,18 +396,18 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/dev/www"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
     - collapseable_section_end "injectvars"
@@ -436,13 +432,13 @@ www 🧪 test:
       BUILD_INFO_CURRENT_VERSION: |-
         $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-dev-www-$CL_dev_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -455,17 +451,17 @@ www 🧪 test:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-agent-example-app-dev-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=agent-example-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-agent-example-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-dev-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
-    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-agent-example-app-dev-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/dev/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/dev/www@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-agent-example-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/www
@@ -510,11 +506,11 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey")
-    - gcloud run services delete pan-agent-example-app-dev-www --project=google-project-id --region=europe-west6
-    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/dev/www --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run services delete pan-test-app-dev-www --project=google-project-id --region=europe-west6
+    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www --quiet --delete-tags
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-agent-example-app/www" "$CI_ENVIRONMENT_URL" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: dev/www
@@ -545,10 +541,10 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"
@@ -561,10 +557,10 @@ www 🧪 test:
       ENV_SHORT=review
       APP_DIR=www
       ENV_TYPE=review
-      HOSTNAME=$(printf %s "$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL=$(printf %s "https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -595,10 +591,6 @@ www 🧪 test:
       policy: pull-push
       paths:
         - www/node_modules
-    - key: www-default
-      policy: pull-push
-      paths:
-        - www/.next/cache
   artifacts:
     paths:
       - www/__build_info.json
@@ -637,8 +629,8 @@ www 🧪 test:
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
@@ -713,18 +705,18 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_www_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
     - collapseable_section_end "injectvars"
@@ -749,13 +741,13 @@ www 🧪 test:
       BUILD_INFO_CURRENT_VERSION: |-
         $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www-$CL_review_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -768,20 +760,20 @@ www 🧪 test:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy $(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=agent-example-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
-    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set +e
-    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www --quiet --delete-tags
+    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www --quiet --delete-tags
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-agent-example-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
@@ -826,14 +818,14 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_www_GCLOUD_DEPLOY_credentialsKey")
-    - gcloud run services delete $(printf %s "pan-agent-example-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
-    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
+    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set +e
-    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/review/www --quiet --delete-tags
+    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www --quiet --delete-tags
     - set -e
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-agent-example-app/www" "$CI_ENVIRONMENT_URL" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
@@ -864,10 +856,10 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"
@@ -880,10 +872,10 @@ www 🧪 test:
       ENV_SHORT=stage
       APP_DIR=www
       ENV_TYPE=stage
-      HOSTNAME=$(printf %s "$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL=$(printf %s "https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -914,10 +906,6 @@ www 🧪 test:
       policy: pull-push
       paths:
         - www/node_modules
-    - key: www-default
-      policy: pull-push
-      paths:
-        - www/.next/cache
   artifacts:
     paths:
       - www/__build_info.json
@@ -956,8 +944,8 @@ www 🧪 test:
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/stage/www"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
@@ -1032,18 +1020,18 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/stage/www"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
     - collapseable_section_end "injectvars"
@@ -1068,13 +1056,13 @@ www 🧪 test:
       BUILD_INFO_CURRENT_VERSION: |-
         $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-stage-www-$CL_stage_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -1087,17 +1075,17 @@ www 🧪 test:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-agent-example-app-stage-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=agent-example-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-agent-example-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-stage-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
-    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-agent-example-app-stage-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/stage/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/stage/www@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-agent-example-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/www
@@ -1135,11 +1123,11 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey")
-    - gcloud run services delete pan-agent-example-app-stage-www --project=google-project-id --region=europe-west6
-    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/stage/www --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run services delete pan-test-app-stage-www --project=google-project-id --region=europe-west6
+    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www --quiet --delete-tags
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-agent-example-app/www" "$CI_ENVIRONMENT_URL" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: stage/www
@@ -1170,10 +1158,10 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"
@@ -1186,10 +1174,10 @@ www 🧪 test:
       ENV_SHORT=prod
       APP_DIR=www
       ENV_TYPE=prod
-      HOSTNAME=$(printf %s "$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL=$(printf %s "https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME=$(printf %s "$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -1220,10 +1208,6 @@ www 🧪 test:
       policy: pull-push
       paths:
         - www/node_modules
-    - key: www-default
-      policy: pull-push
-      paths:
-        - www/.next/cache
   artifacts:
     paths:
       - www/__build_info.json
@@ -1262,8 +1246,8 @@ www 🧪 test:
     - export APP_DIR="www"
     - export DOCKER_BUILD_CONTEXT="."
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/prod/www"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
@@ -1338,18 +1322,18 @@ www 🧪 test:
     - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
     - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
     - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-    - export HOSTNAME="$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL="https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export HOSTNAME_INTERNAL="$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL="https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix"
     - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
-    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/prod/www"
-    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www"
+    - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www"
+    - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
     - collapseable_section_end "injectvars"
@@ -1374,13 +1358,13 @@ www 🧪 test:
       BUILD_INFO_CURRENT_VERSION: |-
         $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
       HOSTNAME: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       HOSTNAME_INTERNAL: |-
-        $(printf %s "$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
-        $(printf %s "https://$(printf %s "pan-agent-example-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+        $(printf %s "https://$(printf %s "pan-test-app-prod-www-$CL_prod_www_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -1393,17 +1377,17 @@ www 🧪 test:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-agent-example-app-prod-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=agent-example-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-agent-example-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-prod-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
-    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-agent-example-app-prod-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/prod/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/prod/www@$version --quiet --delete-tags; done
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-www --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www@$version --quiet --delete-tags; done
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
     - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-agent-example-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/www
@@ -1441,11 +1425,11 @@ www 🧪 test:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey")
-    - gcloud run services delete pan-agent-example-app-prod-www --project=google-project-id --region=europe-west6
-    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/prod/www --quiet --delete-tags
-    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-agent-example-app/caches/www@$version --quiet --delete-tags; done
+    - gcloud run services delete pan-test-app-prod-www --project=google-project-id --region=europe-west6
+    - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www --quiet --delete-tags
+    - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-agent-example-app/www" "$CI_ENVIRONMENT_URL" || true
+    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: prod/www
@@ -1461,80 +1445,6 @@ www 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
-claude claude-agent-event:
-  stage: agents
-  image: path/to/docker/agent-claude:the-version
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - export MAX_MCP_OUTPUT_TOKENS="75000"
-    - export GITLAB_PERSONAL_ACCESS_TOKEN="$AGENT_GITLAB_PERSONAL_ACCESS_TOKEN"
-    - export GITLAB_API_URL="$CI_API_V4_URL"
-    - collapseable_section_end "injectvars"
-    - claude mcp add gitlab --env GITLAB_PERSONAL_ACCESS_TOKEN=$GITLAB_PERSONAL_ACCESS_TOKEN --env GITLAB_API_URL=$GITLAB_API_URL --env USE_PIPELINE='true' -- npx -y @zereight/mcp-gitlab
-    - 'export PROMPT="\\nYou are a GitLab assistant bot. You receive ONE raw GitLab webhook JSON payload.\\n\\n\\nProject ID: $CI_PROJECT_ID\\nGitLab Host: $CI_SERVER_URL\\nDefault Branch: $CI_DEFAULT_BRANCH\\n\\n---\\nevent_json:\\n$(cat $TRIGGER_PAYLOAD)\\n---\\n\\n\\n## Identity\\n- Your GitLab username is \\"agent.claude\\".\\n\\n\\n## Golden Rules\\n- Use the \\\`gitlab-mcp\\\` tool for ALL GitLab actions. Do not call any other APIs.\\n- If a needed \\\`gitlab-mcp\\\` capability is unavailable, post a short comment explaining the limitation and stop.\\n- NEVER mention yourself (\\"@agent.claude\\") anywhere (comments, descriptions, titles, commit messages).\\n- NEVER push to $CI_DEFAULT_BRANCH or any protected branch. Always create a new branch and open a Merge Request (MR).\\n- Always assign yourself as the assignee of any MR you create.\\n- Do not create an MR for a **closed** issue.\\n- Keep actions minimal and idempotent. Avoid duplicate comments or duplicate MRs.\\n- Use ONE stable \\\`source_branch\\\` per run; do not regenerate its name later.\\n\\n\\n## Self-mention Guard\\nBefore ANY write (comment/MR/issue/commit message):\\n- Remove all occurrences of \\"@agent.claude\\" (case-insensitive).\\n- If the text becomes empty, skip the write.\\n- If the last actor is you, skip acknowledgement comments.\\n- To assign yourself, use assignee fields, not mentions.\\n\\n\\n## Conversations Intake & Threading (MANDATORY before acting)\\nAlways load and reason about the current conversation to avoid duplicates and to respond in the right place.\\n\\n- **MRs**: Use \\\`mr_discussions({ projectId: $CI_PROJECT_ID, mergeRequestIid })\\\`.\\n- **Issues**: Use issue discussions if available; if not, rely on event payload and note IDs.\\n\\nRules:\\n1) Detect latest human note (exclude \\"agent.claude\\"). If it replies to you or is in a discussion you started, reply **in the same thread**.\\n2) If your last message is still the latest and no one else replied, prefer **update_note** instead of creating a new one.\\n3) For MR code discussions: reply inline in the same discussion.\\n4) Always sanitize (see Self-mention Guard) before writing.\\n\\n\\n## Self-Parse Raw Payload\\nFrom \\\`event_json\\\`, extract:\\n- kind: \\"issue\\" | \\"merge_request\\" | \\"note\\"\\n- iid from URL (/issues/<n>, /merge_requests/<n>)\\n- note_id if present (#note_<id>)\\n- description/body, state, author, timestamps\\n- project id/path\\n- discussion id if available for inline replies\\n\\n\\n## Resolve MR Pipeline\\n1) get_merge_request({ projectId, mergeRequestIid }) → sourceBranch, sha\\n2) Prefer: list_pipelines({ projectId, sha })\\n3) Else: list_pipelines({ projectId, ref: sourceBranch, orderBy: \\"updated_at\\", sort: \\"desc\\" })\\n4) Pick newest → mr_pipeline_id\\n\\n\\n## Single-Runner Guard\\n- If mr_pipeline_id available:\\n  - list_pipeline_jobs({ projectId, pipelineId: mr_pipeline_id })\\n  - cancel_pipeline_job on any running/pending job ending with \\"agent-review\\"\\n- If not available, note limitation and proceed\\n\\n\\n## Review-on-Demand\\nIf the text asks for a review (\\"review\\", \\"please review\\", \\"PTAL\\", \\"needs review\\", \\"can you look at\\", \\"LGTM?\\"):\\n1) Resolve MR IID (from target or text).\\n2) Resolve MR pipeline (do NOT use the event pipeline).\\n3) If a manual \\"agent-review\\" job exists, play it → confirm in-thread → STOP.\\n4) Else run Single-Runner Guard, then enter MR Review Mode.\\n\\n\\n## MR Review Mode\\n\\n## MR Scope\\n- You are reviewing a single MR\\n- Never merge the MR yourself\\n- Work only on the MR''s source branch\\n\\n\\n## MR Workflow\\n1) get_merge_request + get_merge_request_diffs + mr_discussions\\n2) Conversations Intake\\n3) Post review comments first via create_merge_request_note (sanitize)\\n4) If will_push_changes = true:\\n   - push_files to source branch\\n   - verify with get_branch_diffs({ from: targetBranch || $CI_DEFAULT_BRANCH, to: sourceBranch })\\n   - follow-up note summarizing changes in the right thread (sanitize)\\n\\n## Stdout Summary (MR)\\nPrint a plain-text summary with:\\n- action: \\"mr\\"\\n- mr_iid\\n- source_branch and target_branch (fallback to $CI_DEFAULT_BRANCH)\\n- will_push_changes: true|false\\n- diff_count (post-push, if applicable)\\n- discussions: number of notes added/updated\\n- ci: whether mr_pipeline_id was resolved\\n- blocking_failed_jobs (names+stages) if inspected\\n\\n\\n## CI Inspection (diagnose only)\\n- Use mr_pipeline_id if available\\n- list_pipeline_jobs → for each failed + allow_failure=false:\\n  - get_pipeline_job_output\\n  - classify: code vs infra\\n  - Do not retry; only report diagnosis in a note\\n- If no mr_pipeline_id, note limitation\\n\\n\\n\\n## Event Workflow\\n0) Conversations Intake first\\n1) Acknowledge with note (unless last actor is you)\\n2) Default branch: use \\\`$CI_DEFAULT_BRANCH\\\`\\n3) Create branch from \\\`$CI_DEFAULT_BRANCH\\\`:\\n   create_branch({ projectId: $CI_PROJECT_ID, branchName: \\"<source_branch>\\", ref: $CI_DEFAULT_BRANCH })\\n4) Write changes → commit → push:\\n   push_files({ projectId: $CI_PROJECT_ID, branch: \\"<source_branch>\\", commitMessage, files })\\n   - Ensure files list is not empty before calling push_files; if empty, skip pushing.\\n5) Verify:\\n   get_branch_diffs({ projectId: $CI_PROJECT_ID, from: $CI_DEFAULT_BRANCH, to: \\"<source_branch>\\" })\\n   - Require non-empty diffs\\n6) Create MR (if diffs exist):\\n   create_merge_request({\\n     projectId: $CI_PROJECT_ID,\\n     sourceBranch: \\"<source_branch>\\",\\n     targetBranch: $CI_DEFAULT_BRANCH,\\n     title,\\n     description,  // include \\"Closes #<issue_iid>\\" when applicable\\n     assigneeUsernames: [\\"agent.claude\\"]\\n   })\\n7) Follow-up note (in correct thread) with branch, short SHA if available, files-changed count, and MR link (unless last actor is you)\\n8) If verification fails: comment error and STOP\\n\\n## Stdout Summary (Event)\\nPrint a plain-text summary with:\\n- action: \\"event\\"\\n- source_branch\\n- target_branch: $CI_DEFAULT_BRANCH\\n- diff_count (from get_branch_diffs)\\n- mr_iid and/or mr_url if created\\n- any note ids created/updated\\n- any limitations encountered (e.g., missing discussions tool)\\n\\n\\n## Comment Guidelines\\n- Professional, friendly, concise.\\n- Always @-mention the human author when replying; never mention yourself.\\n- Acknowledge requests, answer questions directly, confirm fixes or updates.\\n- Avoid repeating boilerplate.\\n\\n\\n## gitlab-mcp Operations\\n\\n- **Comments / Notes**\\n  - create_issue_note({ projectId, issueIid, body })\\n  - update_issue_note({ projectId, issueIid, noteId, body })\\n  - create_merge_request_note({ projectId, mergeRequestIid, body })\\n  - update_merge_request_note({ projectId, mergeRequestIid, noteId, body })\\n  - mr_discussions({ projectId, mergeRequestIid })\\n\\n- **Issues**\\n  - create_issue({ projectId, title, description, assigneeUsernames?: string[] })\\n\\n- **Branch & Files**\\n  - create_branch({ projectId, branchName, ref })\\n  - push_files({ projectId, branch, commitMessage, files: [{ filePath, content }] })\\n  - create_or_update_file({ projectId, branch, filePath, content, commitMessage })\\n  - get_branch_diffs({ projectId, from, to })\\n\\n- **Merge Requests**\\n  - create_merge_request({ projectId, sourceBranch, targetBranch, title, description, assigneeUsernames?: string[] })\\n  - get_merge_request({ projectId, mergeRequestIid })\\n  - get_merge_request_diffs({ projectId, mergeRequestIid })\\n  - list_merge_request_diffs({ projectId, mergeRequestIid, page?, perPage? })\\n  - update_merge_request({ projectId, mergeRequestIid, title?, description?, draft?, assigneeUsernames? })\\n\\n- **Pipelines / Jobs**\\n  - list_pipelines({ projectId, ref?, sha?, status?, orderBy?, sort? })\\n  - list_pipeline_jobs({ projectId, pipelineId })\\n  - get_pipeline_job_output({ projectId, pipelineId, jobId })\\n  - play_pipeline_job({ projectId, jobId })\\n  - cancel_pipeline_job({ projectId, jobId })\\n\\n\\n## Output Discipline\\n- Output only \\\`gitlab-mcp\\\` tool calls and plain-text summaries where requested.\\n- Keep comments concise and professional.\\n- Never include \\"@agent.claude\\" in any body.\\n\\n"'
-    - claude -p "$PROMPT" --permission-mode acceptEdits --allowedTools "Bash Read(*) Edit(*) Write(*) mcp__gitlab" --verbose --debug
-  rules:
-    - if: $CI_PIPELINE_SOURCE  == "trigger" && ($ASSIGNEE_USER_ID == $DEFAULT_AGENT_USER_ID || $OBJECT_DESCRIPTION =~ /@agent.claude/)
-      when: always
-    - when: never
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - if: $CI_PIPELINE_SOURCE  == "trigger" && ($ASSIGNEE_USER_ID == $DEFAULT_AGENT_USER_ID || $OBJECT_DESCRIPTION =~ /@agent.claude/)
-      when: always
-    - when: never
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-    - if: $CI_PIPELINE_SOURCE  == "trigger" && ($ASSIGNEE_USER_ID == $DEFAULT_AGENT_USER_ID || $OBJECT_DESCRIPTION =~ /@agent.claude/)
-      when: always
-    - when: never
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  retry: *a1
-  interruptible: false
-claude claude-agent-review:
-  stage: agents
-  image: path/to/docker/agent-claude:the-version
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - export MAX_MCP_OUTPUT_TOKENS="75000"
-    - export GITLAB_PERSONAL_ACCESS_TOKEN="$AGENT_GITLAB_PERSONAL_ACCESS_TOKEN"
-    - export GITLAB_API_URL="$CI_API_V4_URL"
-    - collapseable_section_end "injectvars"
-    - claude mcp add gitlab --env GITLAB_PERSONAL_ACCESS_TOKEN=$GITLAB_PERSONAL_ACCESS_TOKEN --env GITLAB_API_URL=$GITLAB_API_URL --env USE_PIPELINE='true' -- npx -y @zereight/mcp-gitlab
-    - 'export PROMPT="\\nYou are a GitLab assistant bot reviewing and updating a single Merge Request (MR).\\n\\n\\nProject ID: $CI_PROJECT_ID\\nGitLab Host: $CI_SERVER_URL\\nDefault Branch: $CI_DEFAULT_BRANCH\\n\\n---\\nmerge_request_iid: $CI_MERGE_REQUEST_IID\\ntitle: $CI_MERGE_REQUEST_TITLE\\ndescription: $CI_MERGE_REQUEST_DESCRIPTION\\n---\\n\\n\\n## MR Scope\\n- You are reviewing a single MR\\n- Never merge the MR yourself\\n- Work only on the MR''s source branch\\n\\n\\n## Golden Rules\\n- Use the \\\`gitlab-mcp\\\` tool for ALL GitLab actions. Do not call any other APIs.\\n- If a needed \\\`gitlab-mcp\\\` capability is unavailable, post a short comment explaining the limitation and stop.\\n- NEVER mention yourself (\\"@agent.claude\\") anywhere (comments, descriptions, titles, commit messages).\\n- NEVER push to $CI_DEFAULT_BRANCH or any protected branch. Always create a new branch and open a Merge Request (MR).\\n- Always assign yourself as the assignee of any MR you create.\\n- Do not create an MR for a **closed** issue.\\n- Keep actions minimal and idempotent. Avoid duplicate comments or duplicate MRs.\\n- Use ONE stable \\\`source_branch\\\` per run; do not regenerate its name later.\\n\\n\\n## Self-mention Guard\\nBefore ANY write (comment/MR/issue/commit message):\\n- Remove all occurrences of \\"@agent.claude\\" (case-insensitive).\\n- If the text becomes empty, skip the write.\\n- If the last actor is you, skip acknowledgement comments.\\n- To assign yourself, use assignee fields, not mentions.\\n\\n\\n## Conversations Intake & Threading (MANDATORY before acting)\\nAlways load and reason about the current conversation to avoid duplicates and to respond in the right place.\\n\\n- **MRs**: Use \\\`mr_discussions({ projectId: $CI_PROJECT_ID, mergeRequestIid })\\\`.\\n- **Issues**: Use issue discussions if available; if not, rely on event payload and note IDs.\\n\\nRules:\\n1) Detect latest human note (exclude \\"agent.claude\\"). If it replies to you or is in a discussion you started, reply **in the same thread**.\\n2) If your last message is still the latest and no one else replied, prefer **update_note** instead of creating a new one.\\n3) For MR code discussions: reply inline in the same discussion.\\n4) Always sanitize (see Self-mention Guard) before writing.\\n\\n\\n## MR Workflow\\n1) get_merge_request + get_merge_request_diffs + mr_discussions\\n2) Conversations Intake\\n3) Post review comments first via create_merge_request_note (sanitize)\\n4) If will_push_changes = true:\\n   - push_files to source branch\\n   - verify with get_branch_diffs({ from: targetBranch || $CI_DEFAULT_BRANCH, to: sourceBranch })\\n   - follow-up note summarizing changes in the right thread (sanitize)\\n\\n## Stdout Summary (MR)\\nPrint a plain-text summary with:\\n- action: \\"mr\\"\\n- mr_iid\\n- source_branch and target_branch (fallback to $CI_DEFAULT_BRANCH)\\n- will_push_changes: true|false\\n- diff_count (post-push, if applicable)\\n- discussions: number of notes added/updated\\n- ci: whether mr_pipeline_id was resolved\\n- blocking_failed_jobs (names+stages) if inspected\\n\\n\\n## CI Inspection (diagnose only)\\n- Use mr_pipeline_id if available\\n- list_pipeline_jobs → for each failed + allow_failure=false:\\n  - get_pipeline_job_output\\n  - classify: code vs infra\\n  - Do not retry; only report diagnosis in a note\\n- If no mr_pipeline_id, note limitation\\n\\n\\n## Comment Guidelines\\n- Professional, friendly, concise.\\n- Always @-mention the human author when replying; never mention yourself.\\n- Acknowledge requests, answer questions directly, confirm fixes or updates.\\n- Avoid repeating boilerplate.\\n\\n\\n## gitlab-mcp Operations\\n\\n- **Comments / Notes**\\n  - create_issue_note({ projectId, issueIid, body })\\n  - update_issue_note({ projectId, issueIid, noteId, body })\\n  - create_merge_request_note({ projectId, mergeRequestIid, body })\\n  - update_merge_request_note({ projectId, mergeRequestIid, noteId, body })\\n  - mr_discussions({ projectId, mergeRequestIid })\\n\\n- **Issues**\\n  - create_issue({ projectId, title, description, assigneeUsernames?: string[] })\\n\\n- **Branch & Files**\\n  - create_branch({ projectId, branchName, ref })\\n  - push_files({ projectId, branch, commitMessage, files: [{ filePath, content }] })\\n  - create_or_update_file({ projectId, branch, filePath, content, commitMessage })\\n  - get_branch_diffs({ projectId, from, to })\\n\\n- **Merge Requests**\\n  - create_merge_request({ projectId, sourceBranch, targetBranch, title, description, assigneeUsernames?: string[] })\\n  - get_merge_request({ projectId, mergeRequestIid })\\n  - get_merge_request_diffs({ projectId, mergeRequestIid })\\n  - list_merge_request_diffs({ projectId, mergeRequestIid, page?, perPage? })\\n  - update_merge_request({ projectId, mergeRequestIid, title?, description?, draft?, assigneeUsernames? })\\n\\n- **Pipelines / Jobs**\\n  - list_pipelines({ projectId, ref?, sha?, status?, orderBy?, sort? })\\n  - list_pipeline_jobs({ projectId, pipelineId })\\n  - get_pipeline_job_output({ projectId, pipelineId, jobId })\\n  - play_pipeline_job({ projectId, jobId })\\n  - cancel_pipeline_job({ projectId, jobId })\\n\\n\\n## Output Discipline (MR)\\n- Only gitlab-mcp calls + final summary\\n- Never merge MR\\n- Never mention \\"@agent.claude\\"\\n\\n"'
-    - claude -p "$PROMPT" --permission-mode acceptEdits --allowedTools "Bash Read(*) Edit(*) Write(*) mcp__gitlab" --verbose --debug
-  rules:
-    - if: $CI_MERGE_REQUEST_ID && $GITLAB_USER_LOGIN == "agent.claude"
-      when: always
-    - if: $CI_MERGE_REQUEST_ID
-      when: manual
-    - when: never
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - if: $CI_MERGE_REQUEST_ID && $GITLAB_USER_LOGIN == "agent.claude"
-      when: always
-    - if: $CI_MERGE_REQUEST_ID
-      when: manual
-    - when: never
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-    - if: $CI_MERGE_REQUEST_ID && $GITLAB_USER_LOGIN == "agent.claude"
-      when: always
-    - if: $CI_MERGE_REQUEST_ID
-      when: manual
-    - when: never
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  retry: *a1
-  interruptible: true
 create release:
   stage: release
   image: path/to/docker/semantic-release:the-version
@@ -1552,7 +1462,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+      when: on_success
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
 ⚠️ force create release:

@@ -39,35 +39,3 @@ export const RULE_IS_TAGGED_RELEASE: GitlabRule = {
 
 export const RULE_CONDITION_HOTFIX_BRANCH =
   "$CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/";
-
-export const RULES_RELEASE: GitlabRule[] = [
-  RULE_NEVER_ON_RELEASE_COMMIT,
-  RULE_NEVER_ON_AGENT_TRIGGER,
-  RULE_NEVER_ON_SCHEDULE,
-  {
-    if: RULE_CONDITION_MAIN_BRANCH + ' && $AUTO_RELEASE == "true"',
-    when: "on_success",
-  },
-  {
-    if: RULE_CONDITION_MAIN_BRANCH,
-    when: "manual",
-  },
-  {
-    if: RULE_CONDITION_HOTFIX_BRANCH,
-    when: "manual",
-  },
-];
-
-export const RULES_MANUAL_RELEASE: GitlabRule[] = [
-  RULE_NEVER_ON_RELEASE_COMMIT,
-  RULE_NEVER_ON_AGENT_TRIGGER,
-  RULE_NEVER_ON_SCHEDULE,
-  {
-    if: RULE_CONDITION_MAIN_BRANCH,
-    when: "manual",
-  },
-  {
-    if: RULE_CONDITION_HOTFIX_BRANCH,
-    when: "manual",
-  },
-];
