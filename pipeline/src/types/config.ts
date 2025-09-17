@@ -6,6 +6,7 @@ import type { ComponentContext } from "./context";
 import type { PartialDeep } from "./utils";
 import type { PipelineType, WorkspaceBuildConfig } from "..";
 import type { AgentConfig } from "./agent";
+import type { Hooks } from "./hooks";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -231,4 +232,9 @@ export type Config<C extends ConfigProps = never> = {
    * additional vars only for the runner in all jobs.
    */
   runnerVariables?: Record<string, string>;
+
+  /**
+   * hook into catladder generation
+   */
+  hooks?: Hooks;
 };

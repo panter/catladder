@@ -1,9 +1,10 @@
 import { mkdir, rm } from "fs/promises";
 import { dirname } from "path";
 import type { Config, GitlabJobDef, PipelineType } from "../types";
-import { writeYamlfile } from "../utils/writeFiles";
+
 import { createMainPipeline } from "./createMainPipeline";
 import { sortGitLabJobDefProps } from "./gitlab/sortGitLabJobDefProps";
+import type { CatenvContext } from "../catenv";
 
 const CATLADDER_GENERATED_FOLDER = ".catladder-generated";
 
@@ -14,13 +15,13 @@ type YamlFile = {
   content: Record<string, unknown>;
 };
 export async function generatePipelineFiles<T extends PipelineType>(
-  config: Config,
+  context: CatenvContext,
   pipelineType: T,
 ) {
   if (pipelineType !== "gitlab") {
     throw new Error("Pipeline type not supported");
   }
-  const includes = await getGitlabPipelineIncludes(config);
+  const includes = await getGitlabPipelineIncludes(context.config);
 
   const mainFile: YamlFile = {
     path: ".gitlab-ci.yml",
@@ -37,7 +38,7 @@ export async function generatePipelineFiles<T extends PipelineType>(
   await Promise.all(
     files.map(async ({ path, content }) => {
       await mkdir(dirname(path), { recursive: true });
-      await writeYamlfile(path, content);
+      await context.fileWriter.writeYamlfile(path, content);
     }),
   );
 }

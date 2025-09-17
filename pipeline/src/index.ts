@@ -9,3 +9,4 @@ export * from "./deploy";
 export * from "./utils/writeFiles";
 export * from "./variables/VariableValue";
 export * from "./bash";
+export * from "./catenv";

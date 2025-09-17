@@ -1,4 +1,4 @@
-import type { Config } from "@catladder/pipeline";
+import type { CatenvContext, Config } from "@catladder/pipeline";
 import { getEnvVarsResolved } from "../../config/getProjectConfig";
 import type { Choice } from "./types";
 import {
@@ -48,8 +48,11 @@ const getAllVariablesToPrint = async (config: Config, choice?: Choice) => {
   }
 };
 
-export const printVariables = async (config: Config, choice?: Choice) => {
-  const variables = await getAllVariablesToPrint(config, choice);
+export const printVariables = async (
+  context: CatenvContext,
+  choice?: Choice,
+) => {
+  const variables = await getAllVariablesToPrint(context.config, choice);
 
   console.log(makeExportKeyValuestring(variables));
 };

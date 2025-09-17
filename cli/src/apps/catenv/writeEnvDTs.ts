@@ -1,4 +1,4 @@
-import { writeGeneratedFile, type Config } from "@catladder/pipeline";
+import type { CatenvContext } from "@catladder/pipeline";
 import { join } from "path";
 import { getEnvironment } from "../../config/getProjectConfig";
 import { getGitRoot } from "../../utils/projects";
@@ -8,13 +8,18 @@ import {
   getCurrentComponentAndEnvFromChoice,
 } from "./utils";
 
-export const writeDTsFiles = async (config: Config, choice?: Choice) => {
+export const writeDTsFiles = async (
+  context: CatenvContext,
+  choice?: Choice,
+) => {
   const { env, currentComponent } = await getCurrentComponentAndEnvFromChoice(
-    config,
+    context.config,
     choice,
   );
 
-  const componentsWithEnabledEnvDTsWrite = Object.entries(config.components)
+  const componentsWithEnabledEnvDTsWrite = Object.entries(
+    context.config.components,
+  )
     .filter(([, component]) => component?.envDTs ?? true)
     .map(([componentName]) => componentName);
 
@@ -29,9 +34,13 @@ export const writeDTsFiles = async (config: Config, choice?: Choice) => {
     const envNames = await getEnvsForDTs(env, componentName);
     const envDTsContent = createEnvDTsContent(envNames);
 
-    const componentDir = getComponentFullPath(gitRoot, config, componentName);
+    const componentDir = getComponentFullPath(
+      gitRoot,
+      context.config,
+      componentName,
+    );
     const filePath = join(componentDir, "env.d.ts");
-    await writeGeneratedFile(filePath, envDTsContent, {
+    await context.fileWriter.writeGeneratedFile(filePath, envDTsContent, {
       commentChar: "//",
     });
   }

@@ -3,7 +3,11 @@ import { printVariables } from "./printVariables";
 import type { Choice } from "./types";
 import { writeDotEnvFiles } from "./writeDotEnvFiles";
 import { writeDTsFiles } from "./writeEnvDTs";
-import { generatePipelineFiles } from "@catladder/pipeline";
+import {
+  FileWriter,
+  createCatenvContext,
+  generatePipelineFiles,
+} from "@catladder/pipeline";
 
 export default async (choice?: Choice) => {
   const config = await getProjectConfig();
@@ -11,12 +15,14 @@ export default async (choice?: Choice) => {
     return;
   }
 
+  const context = createCatenvContext(config);
+
   await Promise.all([
-    generatePipelineFiles(config, config.pipelineType ?? "gitlab"),
-    writeDotEnvFiles(config, choice),
+    generatePipelineFiles(context, config.pipelineType ?? "gitlab"),
+    writeDotEnvFiles(context, choice),
 
-    writeDTsFiles(config, choice),
+    writeDTsFiles(context, choice),
 
-    printVariables(config, choice),
+    printVariables(context, choice),
   ]);
 };
