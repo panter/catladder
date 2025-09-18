@@ -13,7 +13,7 @@ variables:
   KUBERNETES_MEMORY_LIMIT: "4Gi"
   YARN_CACHE_FOLDER: $CI_PROJECT_DIR/.yarn/cache
 
-workflow:
+.base-rules:
   rules:
     - if: $CI_COMMIT_TAG
       variables:
@@ -23,6 +23,7 @@ workflow:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\.([0-9]+|x)\.x$/ # hotfix branches
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
     - if: $CI_MERGE_REQUEST_ID
+    - when: never
 
 .yarn-cache:
   cache:
@@ -40,6 +41,7 @@ test:
     KUBERNETES_MEMORY_LIMIT: "8Gi"
     KUBERNETES_MEMORY_REQUEST: "6Gi"
   extends:
+    - .base-rules
     - .yarn-cache
   script:
     - yarn install --immutable
@@ -50,6 +52,7 @@ test:
   interruptible: true
   needs: [] # don't wait for test atm
   extends:
+    - .base-rules
     - .yarn-cache
   script:
     - yarn install --immutable
@@ -66,7 +69,8 @@ test:
   services:
     - name: docker:24.0.6-dind # https://github.com/docker-library/docker/issues/463
       command: ["--registry-mirror=https://mirror.gcr.io"]
-
+  extends:
+    - .base-rules
   stage: build
   variables:
     DOCKER_BUILDKIT: "1"
@@ -148,6 +152,7 @@ test:
   interruptible: true
   image: node:14 # npm publish has some problem with node 16
   extends:
+    - .base-rules
     - .yarn-cache
   needs: ["🔨 packages"]
   stage: deploy
@@ -184,7 +189,7 @@ test:
 
 pages:
   stage: deploy
-  extends: [.yarn-cache]
+  extends: [.yarn-cache, .base-rules]
   allow_failure: true
   interruptible: true
   script:
