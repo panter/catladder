@@ -50,18 +50,22 @@ project-setup
 
 ### 4. Manual Environment Variables Setup
 
-Currently, two environment variables need to be set up manually in your GitLab project's CI/CD settings:
+Currently, these environment variables need to be set up manually in your GitLab project's CI/CD settings:
 
-#### ANTHROPIC_API_KEY
+#### ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN
 
-Set your Anthropic API key for Claude access in GitLab CI/CD variables:
+(only needed if group or global variables are not set)
+
+Set your Anthropic API key or Claude Code OAuth token for Claude access in GitLab CI/CD variables:
+
 - Go to your project's **Settings > CI/CD > Variables**
-- Add variable: `ANTHROPIC_API_KEY` with your Anthropic API key value
+- Add variable: `ANTHROPIC_API_KEY` with your Anthropic API key value or `CLAUDE_CODE_OAUTH_TOKEN` with your Claude Code OAuth token value
 - Mark as **Protected** and **Masked**
 
 #### AGENT_GITLAB_PERSONAL_ACCESS_TOKEN
 
 Set a GitLab personal access token for the agent.claude user:
+
 - Go to your project's **Settings > CI/CD > Variables**
 - Add variable: `AGENT_GITLAB_PERSONAL_ACCESS_TOKEN` with the token value
 - Mark as **Protected** and **Masked**

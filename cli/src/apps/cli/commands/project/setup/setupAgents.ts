@@ -312,10 +312,12 @@ export const setupAgents = async (instance: CommandInstance) => {
   instance.log("✅ All agents setup complete!");
   instance.log("");
   instance.log("🔧 Manual setup required:");
-  instance.log("Please configure these environment variables in GitLab CI/CD:");
+  instance.log(
+    "Please configure these environment variables in GitLab CI/CD unless they are already set (by group or global):",
+  );
   instance.log("   Go to Settings > CI/CD > Variables and add:");
   instance.log(
-    "   - ANTHROPIC_API_KEY (your Anthropic API key, mark as Protected & Masked)",
+    "   - CLAUDE_CODE_OAUTH_TOKEN or ANTHROPIC_API_KEY (your Anthropic API key, mark as Protected & Masked)",
   );
   instance.log(
     "   - AGENT_GITLAB_PERSONAL_ACCESS_TOKEN (token from agent.claude user, mark as Protected & Masked)",
