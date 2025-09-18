@@ -1,22 +1,19 @@
-import { readFile } from "fs/promises";
-import type { Config } from "./pipeline/src";
+import type { Config } from "../src";
 
-// this project did not use catladder itself to create its pipeline
-// however we now start to use some of its features
-// the original gitlab ci file is injected here as well (see below)
-const config: Config = {
-  appName: "catladder",
+const config = {
+  appName: "test-app",
   customerName: "pan",
-  agents: {
-    claude: {
-      type: "claude",
+  components: {
+    api: {
+      dir: "api",
+      build: {
+        type: "node",
+      },
+      deploy: false,
     },
   },
-  releases: {
-    when: "auto",
-  },
-  components: {}, // currently we use custom gitlab
   hooks: {
+    // example include a file
     transformYamlBeforeWrite: async ({ filename, data }) => {
       if (filename === ".gitlab-ci.yml") {
         // inject the original gitlab ci file
@@ -26,7 +23,7 @@ const config: Config = {
             {
               local: ".gitlab-ci-yaml-custom.yaml",
               rules: [
-                // do not include when its a agent trigger
+                // optional conditions. here: do not include when its a agent trigger
                 { if: `$CI_PIPELINE_SOURCE == "trigger"`, when: "never" },
                 { when: "always" },
               ],
@@ -37,6 +34,10 @@ const config: Config = {
       }
     },
   },
-};
+} satisfies Config;
 
 export default config;
+
+export const information = {
+  title: "Custom: Modify Generated Files",
+};

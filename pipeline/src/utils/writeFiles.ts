@@ -1,6 +1,7 @@
 import { writeFile } from "fs/promises";
 import { stringify } from "yaml";
 import type { Config } from "../types";
+import type { BaseHookContext } from "../types/hooks";
 
 type WriteFileOptions = {
   commentChar: string;
@@ -30,15 +31,22 @@ export class FileWriter {
 
   protected async writeTheFile(path: string, content: string) {
     const transformedContent =
-      await this.config.hooks?.transformFileBeforeWrite({
-        filename: path,
+      await this.config.hooks?.transformFileBeforeWrite?.({
+        ...(await this.getBaseHookContext(path)),
         content,
-        extension: path.split(".").pop() ?? "",
-        path,
       });
     await writeFile(path, transformedContent ?? content, {
       encoding: "utf-8",
     });
+  }
+
+  protected async getBaseHookContext(path: string): Promise<BaseHookContext> {
+    const filename = path.split("/").pop() ?? "";
+    return {
+      filename,
+      path,
+      extension: path.split(".").pop() ?? "",
+    };
   }
 
   public async writeGeneratedFile(
@@ -52,10 +60,16 @@ export class FileWriter {
     );
   }
 
-  public writeYamlfile(path: string, data: any) {
+  public async writeYamlfile(path: string, data: any) {
+    const dataTransformed = await this.config.hooks?.transformYamlBeforeWrite?.(
+      {
+        ...(await this.getBaseHookContext(path)),
+        data,
+      },
+    );
     return this.writeGeneratedFile(
       path,
-      stringify(data, yamlStringifyOptions),
+      stringify(dataTransformed ?? data, yamlStringifyOptions),
       {
         commentChar: "#",
       },
