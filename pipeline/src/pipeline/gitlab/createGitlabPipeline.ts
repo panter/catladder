@@ -48,7 +48,7 @@ export const createGitlabPipelineWithDefaults = ({
           if: RULE_IS_MERGE_REQUEST.if,
           variables: {
             PIPELINE_ICON: "🐱🔨",
-            PIPELINE_NAME: "Merge Request $CI_MERGE_REQUEST_IID",
+            PIPELINE_NAME: "mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE",
           },
         },
         {
@@ -62,7 +62,7 @@ export const createGitlabPipelineWithDefaults = ({
           if: RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT.if,
           variables: {
             PIPELINE_ICON: "🐱🔨",
-            PIPELINE_NAME: "Main",
+            PIPELINE_NAME: "Main - $CI_COMMIT_MESSAGE",
           },
         },
 
