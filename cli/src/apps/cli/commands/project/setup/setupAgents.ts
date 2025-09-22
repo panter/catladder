@@ -181,13 +181,11 @@ const setupAgentWebhook = async (
       merge_request_title: "{{merge_request.title}}",
       merge_request_source_branch: "{{merge_request.source_branch}}",
       merge_request_time_estimate: "{{merge_request.time_estimate}}",
-      // FIXME: may cause issues with gitlab webhooks when there are double quotes in the description
-      //merge_request_description: "{{merge_request.description}}",
+      merge_request_description: "{{merge_request.description}}",
       merge_request_merge_status: "{{merge_request.merge_status}}",
       merge_request_last_commit_title: "{{merge_request.last_commit.title}}",
-      // FIXME: may cause issues with gitlab webhooks when there are double quotes in the message
-      //merge_request_last_commit_message:
-      //  "{{merge_request.last_commit.message}}",
+      merge_request_last_commit_message:
+        "{{merge_request.last_commit.message}}",
       merge_request_last_commit_author_name:
         "{{merge_request.last_commit.author.name}}",
       merge_request_last_commit_author_email:

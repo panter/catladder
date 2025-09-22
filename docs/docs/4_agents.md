@@ -103,10 +103,6 @@ agents: {
 }
 ```
 
-## Known Issues
-
-- **Webhook failures**: Sometimes webhooks may fail to trigger properly. This is a known GitLab issue that should be resolved in GitLab 18.4 (scheduled for September 2025)
-
 ## Troubleshooting
 
 - Ensure both required environment variables are properly set
