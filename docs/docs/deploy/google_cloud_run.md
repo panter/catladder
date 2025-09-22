@@ -226,11 +226,13 @@ Next, we will create a DNS authorization and a certificate.
 
 👉 Pro tip, instead of always specifying the project (with `--project=my-google-cloud-project`), you can set the default project: `gcloud config set project my-google-cloud-project`
 
-1. `gcloud certificate-manager dns-authorizations create myapp-www --domain="example.com"`
-2. `gcloud certificate-manager certificates create myapp-www --domains="example.com,*.example.com" --dns-authorizations=myapp-www`
+In the following, replace "yourdomain.com" with your actual domain.
+
+1. `gcloud certificate-manager dns-authorizations create myapp-www --domain="yourdomain.com"`
+2. `gcloud certificate-manager certificates create myapp-www --domains="yourdomain.com,*.yourdomain.com" --dns-authorizations=myapp-www`
 3. `gcloud certificate-manager maps create myapp-www`
-4. `gcloud certificate-manager maps entries create myapp-www --map="myapp-www" --certificates="myapp-www" --hostname="example.com"`
-5. `gcloud certificate-manager maps entries create myapp-www-wildcard --map="myapp-www" --certificates="myapp-www" --hostname="*.example.com"`
+4. `gcloud certificate-manager maps entries create myapp-www --map="myapp-www" --certificates="myapp-www" --hostname="yourdomain.com"`
+5. `gcloud certificate-manager maps entries create myapp-www-wildcard --map="myapp-www" --certificates="myapp-www" --hostname="*.yourdomain.com"`
 6. Now we can switch from our fake domain to the real one.
 7. The load balancer wizard did set up a `target-https-proxy` for us. Verify this:
 8. `gcloud compute target-https-proxies list`
@@ -253,15 +255,15 @@ Now, we need to setup the DNS.
 createTime: '2025-08-11T10:09:48.402782386Z'
 dnsResourceRecord:
   data: 2e759fc3-61ed-4422-9dc5-217575471c9b.11.authorize.certificatemanager.goog.
-  name: _acme-challenge.example.com.
+  name: _acme-challenge.yourdomain.com.
   type: CNAME
-domain: example.com
+domain: yourdomain.com
 name: projects/my-google-cloud-project/locations/global/dnsAuthorizations/myapp-www
 type: FIXED_RECORD
 updateTime: '2025-08-11T10:09:49.169018244Z'
 ```
 
-14. Add the CNAME record to your DNS. Hostname `_acme-challenge.example.com.` and content is the string in `data` (`2e759fc3-61ed-4422-9dc5-217575471c9b.11.authorize.certificatemanager.goog`)
+14. Add the CNAME record to your DNS. Hostname `_acme-challenge.yourdomain.com.` and content is the string in `data` (`2e759fc3-61ed-4422-9dc5-217575471c9b.11.authorize.certificatemanager.goog`)
 15. Wait for the certificate to be created. This can take some minutes or hours, but is usually much faster than e.g. firebase hosting. You can check the progress here: https://console.cloud.google.com/security/ccm/list/certificates
 16. Once the certificate is created, you can change the A-record of your domain to point to the load balancer IP. You can find it in the load balancer console under "IP addresses".
 
