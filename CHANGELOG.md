@@ -1,3 +1,10 @@
+# [3.23.0](https://git.panter.ch/catladder/catladder/compare/v3.22.3...v3.23.0) (2025-09-22)
+
+
+### Features
+
+* **agent:** readd more payload fields to the webhook ([2341ccb](https://git.panter.ch/catladder/catladder/commit/2341ccb797191efb9696a7e078febd74d8d26fbb))
+
 ## [3.22.3](https://git.panter.ch/catladder/catladder/compare/v3.22.2...v3.22.3) (2025-09-22)
 
 ## [3.22.2](https://git.panter.ch/catladder/catladder/compare/v3.22.1...v3.22.2) (2025-09-18)
