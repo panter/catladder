@@ -84,7 +84,7 @@ workflow:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
       variables:
         PIPELINE_ICON: 🐱🔨
-        PIPELINE_NAME: Main - $CI_COMMIT_MESSAGE
+        PIPELINE_NAME: Main - $CI_COMMIT_TITLE
     - when: always
       variables:
         PIPELINE_ICON: 🐱❓
