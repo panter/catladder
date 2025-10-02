@@ -1,3 +1,10 @@
+## [3.23.1](https://git.panter.ch/catladder/catladder/compare/v3.23.0...v3.23.1) (2025-10-02)
+
+
+### Bug Fixes
+
+* pipeline on main would not run if commit message is too long ([fb266e7](https://git.panter.ch/catladder/catladder/commit/fb266e7fe14655caed1572a1ea8d986fd7ae9561))
+
 # [3.23.0](https://git.panter.ch/catladder/catladder/compare/v3.22.3...v3.23.0) (2025-09-22)
 
 
