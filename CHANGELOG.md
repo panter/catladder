@@ -1,3 +1,10 @@
+# [3.25.0](https://git.panter.ch/catladder/catladder/compare/v3.24.0...v3.25.0) (2025-10-09)
+
+
+### Features
+
+* exclude .next/cache/**/* from artifacts by default ([49cf4dd](https://git.panter.ch/catladder/catladder/commit/49cf4dd9fbac2df248966454d0a8cd6e33351792))
+
 # [3.24.0](https://git.panter.ch/catladder/catladder/compare/v3.23.1...v3.24.0) (2025-10-09)
 
 
