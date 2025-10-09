@@ -33,6 +33,7 @@ export const BUILD_TYPES: BuildTypes = {
       buildCommand: "yarn build",
       startCommand: "yarn start",
       artifactsPaths: ["dist", ".next"],
+      artifactsExcludePaths: [".next/cache/**/*"],
     }),
   },
   "node-static": {
