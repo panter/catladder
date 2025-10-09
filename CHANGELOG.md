@@ -1,3 +1,10 @@
+# [3.24.0](https://git.panter.ch/catladder/catladder/compare/v3.23.1...v3.24.0) (2025-10-09)
+
+
+### Features
+
+* allow to exclude artifacts paths ([6545ebf](https://git.panter.ch/catladder/catladder/commit/6545ebf1dd6a4e51bdd7fabf9b369b2f9f951134))
+
 ## [3.23.1](https://git.panter.ch/catladder/catladder/compare/v3.23.0...v3.23.1) (2025-10-02)
 
 
