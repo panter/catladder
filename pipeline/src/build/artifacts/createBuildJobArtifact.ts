@@ -15,11 +15,13 @@ export const createBuildJobArtifacts = (
     context.type === "workspace"
       ? context.components.flatMap((c) => getArtifactsPathForComponent(c))
       : getArtifactsPathForComponent(context, ["__build_info.json"]);
-  // esxclude .env files if generated
+
   const exclude =
     context.type === "workspace"
-      ? context.components.flatMap((c) => getDotEnvPathsForComponent(c))
-      : getDotEnvPathsForComponent(context);
+      ? context.components.flatMap((c) =>
+          getAllArtifactExcludePathsForComponent(c),
+        )
+      : getAllArtifactExcludePathsForComponent(context);
   return {
     paths: uniq(paths).sort((a, b) => a.localeCompare(b)),
     ...(exclude.length > 0 ? { exclude } : {}),
@@ -36,14 +38,13 @@ export const createBuildJobArtifacts = (
         : {},
   };
 };
-const getArtifactsPathForComponent = (
+const _getArtifactPathsForComponent = (
   c: ComponentContext,
+  configKey: "artifactsPaths" | "artifactsExcludePaths",
   additionalPaths?: string[],
 ): string[] => {
   return [
-    ...(c.build.type !== "disabled"
-      ? (c.build.config.artifactsPaths ?? [])
-      : []),
+    ...(c.build.type !== "disabled" ? (c.build.config[configKey] ?? []) : []),
     ...(additionalPaths ?? []),
   ]?.flatMap((artifact) =>
     c.build
@@ -52,6 +53,33 @@ const getArtifactsPathForComponent = (
       // this highly depends on the build tool. To be safe, we get all
       .getComponentDirs("all")
       .flatMap((cDir) => join(cDir, artifact)),
+  );
+};
+
+const getArtifactsPathForComponent = (
+  c: ComponentContext,
+  additionalPaths?: string[],
+): string[] => {
+  return _getArtifactPathsForComponent(c, "artifactsPaths", additionalPaths);
+};
+
+const getAllArtifactExcludePathsForComponent = (
+  c: ComponentContext,
+): string[] => {
+  return [
+    ...getDotEnvPathsForComponent(c), // always exclude .env files
+    ...getArtifactExcludePathsForComponent(c),
+  ];
+};
+
+const getArtifactExcludePathsForComponent = (
+  c: ComponentContext,
+  additionalPaths?: string[],
+): string[] => {
+  return _getArtifactPathsForComponent(
+    c,
+    "artifactsExcludePaths",
+    additionalPaths,
   );
 };
 

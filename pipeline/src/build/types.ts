@@ -123,6 +123,12 @@ export type BuildConfigBase = {
   artifactsPaths?: string[];
 
   /**
+   * paths for artifacts to exclude,
+   *
+   */
+  artifactsExcludePaths?: string[];
+
+  /**
    * additional CI/CD artifacts reports,
    * use to display information in merge requests, pipeline views and security dashboards.
    */
@@ -336,6 +342,11 @@ export type BuildConfigFromWorkspace = {
    * by default "dist" and ".next" are allways included
    */
   artifactsPaths?: string[];
+  /**
+   * paths for artifacts to exclude,
+   *
+   */
+  artifactsExcludePaths?: string[];
 } & WithCacheConfig;
 export type BuildConfigStandalone =
   | BuildConfigNode
