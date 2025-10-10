@@ -60,12 +60,12 @@ const getFullReferencedJobNameFromComponent = (
       `unknown job referenced: '${referencedJobName}' from '${env}:${componentName}'`,
     );
   }
-  const envToSet = referencedJob.envMode !== "none" ? env : null;
+
   return getFullJobName({
     type: "component",
     name: referencedJobName,
     baseName: componentName,
-    env: envToSet,
+    env,
     allJobs,
   });
 };
@@ -84,13 +84,12 @@ const getFullReferencedJobNameFromWorkspace = (
       `unknown job referenced: '${referencedJobName}' from workspace ${env}:${workspaceName}'`,
     );
   }
-  const envToSet = referencedJob.envMode !== "none" ? env : null;
 
   return getFullJobName({
     type: "workspace",
     name: referencedJobName,
     baseName: workspaceName,
-    env: envToSet,
+    env,
     allJobs,
   });
 };
@@ -133,8 +132,7 @@ export const makeGitlabJob = (
     type: context.type,
     name,
     baseName: context.name,
-    env:
-      envMode !== "none" && context.type !== "agent" ? context.env : undefined,
+    env: context.type !== "agent" ? context.env : undefined,
     allJobs,
   });
 

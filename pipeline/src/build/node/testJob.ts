@@ -42,7 +42,6 @@ export const createNodeTestJobs = (
     runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
     stage: "test",
     needs: [],
-    envMode: "none",
   };
   const buildConfig = context.build.config;
   const yarnInstall = getYarnInstall(context);

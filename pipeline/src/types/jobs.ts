@@ -38,11 +38,10 @@ export type CatladderJob<S = BaseStage> = {
   name: string;
   /**
    * envMode sets the behavior of the job regarding multiple envs:
-   * - none: the job does not run per env, but once for all envs
-   * - jobPerEnv: the job runs once per env
+   * - jobPerEnv: the job runs once per env (default)
    * - stagePerEnv: the job runs once per env and is organized in its own stage. This mproves usability in gitlab, but works the same as `jobPerEnv`
    */
-  envMode: "jobPerEnv" | "stagePerEnv" | "none";
+  envMode?: "jobPerEnv" | "stagePerEnv";
 
   /**
    * the stage of the job

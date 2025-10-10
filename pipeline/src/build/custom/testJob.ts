@@ -37,7 +37,6 @@ export const createCustomTestJobs = (
     cache: createJobCacheFromConfig(context, buildConfig),
     stage: "test",
     needs: [],
-    envMode: "none",
   };
   const auditJob: CatladderJob | null = buildConfig.audit
     ? {

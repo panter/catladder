@@ -103,7 +103,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-🔸 myWorkspace 🛡 audit:
+'🔸 myWorkspace 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -120,9 +120,6 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
     max: 2
@@ -131,7 +128,7 @@ before_script:
       - stuck_or_timeout_failure
   interruptible: true
   allow_failure: true
-🔸 myWorkspace 👮 lint:
+'🔸 myWorkspace 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -168,13 +165,10 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-🔸 myWorkspace 🧪 test:
+'🔸 myWorkspace 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -211,9 +205,6 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -306,6 +297,107 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+  needs: []
+  retry: *a1
+  interruptible: true
+'🔸 myWorkspace 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="."
+    - collapseable_section_end "injectvars"
+    - cd .
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'🔸 myWorkspace 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd .
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: .-yarn
+      policy: pull-push
+      paths:
+        - .yarn
+    - key: .-node-modules
+      policy: pull-push
+      paths:
+        - node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'🔸 myWorkspace 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="."
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd .
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: .-yarn
+      policy: pull-push
+      paths:
+        - .yarn
+    - key: .-node-modules
+      policy: pull-push
+      paths:
+        - node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -764,11 +856,11 @@ before_script:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: 🔸 myWorkspace 👮 lint
+    - job: '🔸 myWorkspace 👮 lint | dev '
       artifacts: false
-    - job: 🔸 myWorkspace 🧪 test
+    - job: '🔸 myWorkspace 🧪 test | dev '
       artifacts: false
-    - job: 🔸 myWorkspace 🛡 audit
+    - job: '🔸 myWorkspace 🛡 audit | dev '
       artifacts: false
     - job: '🔹 api 🔨 docker | dev '
       artifacts: false
@@ -993,11 +1085,11 @@ before_script:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🔸 myWorkspace 👮 lint
+    - job: '🔸 myWorkspace 👮 lint | review '
       artifacts: false
-    - job: 🔸 myWorkspace 🧪 test
+    - job: '🔸 myWorkspace 🧪 test | review '
       artifacts: false
-    - job: 🔸 myWorkspace 🛡 audit
+    - job: '🔸 myWorkspace 🛡 audit | review '
       artifacts: false
     - job: '🔹 api 🔨 docker | review '
       artifacts: false
@@ -1663,11 +1755,11 @@ before_script:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: 🔸 myWorkspace 👮 lint
+    - job: '🔸 myWorkspace 👮 lint | dev '
       artifacts: false
-    - job: 🔸 myWorkspace 🧪 test
+    - job: '🔸 myWorkspace 🧪 test | dev '
       artifacts: false
-    - job: 🔸 myWorkspace 🛡 audit
+    - job: '🔸 myWorkspace 🛡 audit | dev '
       artifacts: false
     - job: '🔹 www 🔨 docker | dev '
       artifacts: false
@@ -1895,11 +1987,11 @@ before_script:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🔸 myWorkspace 👮 lint
+    - job: '🔸 myWorkspace 👮 lint | review '
       artifacts: false
-    - job: 🔸 myWorkspace 🧪 test
+    - job: '🔸 myWorkspace 🧪 test | review '
       artifacts: false
-    - job: 🔸 myWorkspace 🛡 audit
+    - job: '🔸 myWorkspace 🛡 audit | review '
       artifacts: false
     - job: '🔹 www 🔨 docker | review '
       artifacts: false

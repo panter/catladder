@@ -80,6 +80,7 @@ export const createMainPipeline = async <T extends PipelineType>(
       (acc, { gitlabJob, name, context }) => {
         // merge jobs, if a job is already there, merge the rules
         // this is currently needed because of envMode: "none", which creates the same job for all triggers, so it can appear multiple times
+        // NOTICE: envNode none has been removed and this may no longer be needed
         if (acc[name]) {
           acc[name].gitlabJob.rules = [
             ...(acc[name].gitlabJob.rules ?? []),

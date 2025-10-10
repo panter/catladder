@@ -103,7 +103,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-web 🛡 audit:
+'web 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -120,9 +120,6 @@ web 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
     max: 2
@@ -131,7 +128,7 @@ web 🛡 audit:
       - stuck_or_timeout_failure
   interruptible: true
   allow_failure: true
-web 👮 lint:
+'web 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -168,13 +165,10 @@ web 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-web 🧪 test:
+'web 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -211,9 +205,6 @@ web 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -476,17 +467,17 @@ web 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: web 👮 lint
+    - job: 'web 👮 lint | dev '
       artifacts: false
     - job: 'web 🔨 app | dev '
       artifacts: false
     - job: 'web 🔨 docker | dev '
       artifacts: false
-    - job: web 🧪 test
+    - job: 'web 🧪 test | dev '
       artifacts: false
     - job: 'web 🧾 sbom | dev '
       artifacts: true
-    - job: web 🛡 audit
+    - job: 'web 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -526,6 +517,107 @@ web 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'web 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="web"
+    - collapseable_section_end "injectvars"
+    - cd web
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'web 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="web"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd web
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: web-yarn
+      policy: pull-push
+      paths:
+        - web/.yarn
+    - key: web-node-modules
+      policy: pull-push
+      paths:
+        - web/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'web 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="web"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd web
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: web-yarn
+      policy: pull-push
+      paths:
+        - web/.yarn
+    - key: web-node-modules
+      policy: pull-push
+      paths:
+        - web/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'web 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-meteor:the-version
@@ -788,17 +880,17 @@ web 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: web 👮 lint
+    - job: 'web 👮 lint | review '
       artifacts: false
     - job: 'web 🔨 app | review '
       artifacts: false
     - job: 'web 🔨 docker | review '
       artifacts: false
-    - job: web 🧪 test
+    - job: 'web 🧪 test | review '
       artifacts: false
     - job: 'web 🧾 sbom | review '
       artifacts: true
-    - job: web 🛡 audit
+    - job: 'web 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true

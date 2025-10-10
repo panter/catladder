@@ -27,7 +27,6 @@ export const createRailsTestJobs = (
     },
     stage: "test",
     needs: [],
-    envMode: "none",
   };
   const defaultImage = "docker.io/ruby";
   const bundlerCacheDir = "tmp/cache";

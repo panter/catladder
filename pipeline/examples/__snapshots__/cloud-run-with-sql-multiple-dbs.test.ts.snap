@@ -103,7 +103,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-db1 🛡 audit:
+'db1 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -120,9 +120,6 @@ db1 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
     max: 2
@@ -131,7 +128,7 @@ db1 🛡 audit:
       - stuck_or_timeout_failure
   interruptible: true
   allow_failure: true
-db1 👮 lint:
+'db1 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -168,13 +165,10 @@ db1 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-db1 🧪 test:
+'db1 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -211,9 +205,6 @@ db1 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -527,17 +518,17 @@ db1 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: db1 👮 lint
+    - job: 'db1 👮 lint | dev '
       artifacts: false
     - job: 'db1 🔨 app | dev '
       artifacts: false
     - job: 'db1 🔨 docker | dev '
       artifacts: false
-    - job: db1 🧪 test
+    - job: 'db1 🧪 test | dev '
       artifacts: false
     - job: 'db1 🧾 sbom | dev '
       artifacts: true
-    - job: db1 🛡 audit
+    - job: 'db1 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -577,6 +568,107 @@ db1 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'db1 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="packages/db1"
+    - collapseable_section_end "injectvars"
+    - cd packages/db1
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'db1 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="packages/db1"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd packages/db1
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: packagesdb1-yarn
+      policy: pull-push
+      paths:
+        - packages/db1/.yarn
+    - key: packagesdb1-node-modules
+      policy: pull-push
+      paths:
+        - packages/db1/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'db1 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="packages/db1"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd packages/db1
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: packagesdb1-yarn
+      policy: pull-push
+      paths:
+        - packages/db1/.yarn
+    - key: packagesdb1-node-modules
+      policy: pull-push
+      paths:
+        - packages/db1/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'db1 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -890,17 +982,17 @@ db1 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: db1 👮 lint
+    - job: 'db1 👮 lint | review '
       artifacts: false
     - job: 'db1 🔨 app | review '
       artifacts: false
     - job: 'db1 🔨 docker | review '
       artifacts: false
-    - job: db1 🧪 test
+    - job: 'db1 🧪 test | review '
       artifacts: false
     - job: 'db1 🧾 sbom | review '
       artifacts: true
-    - job: db1 🛡 audit
+    - job: 'db1 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -1652,7 +1744,7 @@ db1 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
-db2 🛡 audit:
+'db2 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -1669,14 +1761,11 @@ db2 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
   allow_failure: true
-db2 👮 lint:
+'db2 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -1713,13 +1802,10 @@ db2 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-db2 🧪 test:
+'db2 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -1756,9 +1842,6 @@ db2 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -2072,17 +2155,17 @@ db2 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: db2 👮 lint
+    - job: 'db2 👮 lint | dev '
       artifacts: false
     - job: 'db2 🔨 app | dev '
       artifacts: false
     - job: 'db2 🔨 docker | dev '
       artifacts: false
-    - job: db2 🧪 test
+    - job: 'db2 🧪 test | dev '
       artifacts: false
     - job: 'db2 🧾 sbom | dev '
       artifacts: true
-    - job: db2 🛡 audit
+    - job: 'db2 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -2122,6 +2205,107 @@ db2 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'db2 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="packages/db2"
+    - collapseable_section_end "injectvars"
+    - cd packages/db2
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'db2 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="packages/db2"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd packages/db2
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: packagesdb2-yarn
+      policy: pull-push
+      paths:
+        - packages/db2/.yarn
+    - key: packagesdb2-node-modules
+      policy: pull-push
+      paths:
+        - packages/db2/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'db2 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="packages/db2"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd packages/db2
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: packagesdb2-yarn
+      policy: pull-push
+      paths:
+        - packages/db2/.yarn
+    - key: packagesdb2-node-modules
+      policy: pull-push
+      paths:
+        - packages/db2/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'db2 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -2435,17 +2619,17 @@ db2 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: db2 👮 lint
+    - job: 'db2 👮 lint | review '
       artifacts: false
     - job: 'db2 🔨 app | review '
       artifacts: false
     - job: 'db2 🔨 docker | review '
       artifacts: false
-    - job: db2 🧪 test
+    - job: 'db2 🧪 test | review '
       artifacts: false
     - job: 'db2 🧾 sbom | review '
       artifacts: true
-    - job: db2 🛡 audit
+    - job: 'db2 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -3197,7 +3381,7 @@ db2 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
-api 🛡 audit:
+'api 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -3214,14 +3398,11 @@ api 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
   allow_failure: true
-api 👮 lint:
+'api 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -3258,13 +3439,10 @@ api 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-api 🧪 test:
+'api 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -3301,9 +3479,6 @@ api 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -3607,17 +3782,17 @@ api 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: api 👮 lint
+    - job: 'api 👮 lint | dev '
       artifacts: false
     - job: 'api 🔨 app | dev '
       artifacts: false
     - job: 'api 🔨 docker | dev '
       artifacts: false
-    - job: api 🧪 test
+    - job: 'api 🧪 test | dev '
       artifacts: false
     - job: 'api 🧾 sbom | dev '
       artifacts: true
-    - job: api 🛡 audit
+    - job: 'api 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -3656,6 +3831,107 @@ api 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'api 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - cd api
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'api 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: api-yarn
+      policy: pull-push
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull-push
+      paths:
+        - api/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'api 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: api-yarn
+      policy: pull-push
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull-push
+      paths:
+        - api/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'api 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -3959,17 +4235,17 @@ api 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: api 👮 lint
+    - job: 'api 👮 lint | review '
       artifacts: false
     - job: 'api 🔨 app | review '
       artifacts: false
     - job: 'api 🔨 docker | review '
       artifacts: false
-    - job: api 🧪 test
+    - job: 'api 🧪 test | review '
       artifacts: false
     - job: 'api 🧾 sbom | review '
       artifacts: true
-    - job: api 🛡 audit
+    - job: 'api 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true

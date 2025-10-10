@@ -8,9 +8,9 @@ import type { AgentContext, CatladderJob } from "../../types";
 
 export const createBaseAgentJob = (
   context: AgentContext,
-): Omit<CatladderJob, "name" | "rules" | "script"> => ({
+): Omit<CatladderJob, "name" | "rules" | "script" | "envMode"> => ({
   stage: "agents",
-  envMode: "none",
+
   // image: "node:24-alpine3.21",
   image: getRunnerImage("agent-claude"),
   variables: {

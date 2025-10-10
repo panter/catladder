@@ -27,6 +27,7 @@ export const createAgentReviewJob = (context: AgentContext): CatladderJob => {
 
   return {
     ...baseJob,
+    envMode: "jobPerEnv",
     name: context.name + "-agent-review",
     allow_failure: true, // make it optional
     rules: [

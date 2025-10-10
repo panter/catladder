@@ -103,7 +103,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-app1 🛡 audit:
+'app1 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -120,9 +120,6 @@ app1 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a1
     max: 2
@@ -131,7 +128,7 @@ app1 🛡 audit:
       - stuck_or_timeout_failure
   interruptible: true
   allow_failure: true
-app1 👮 lint:
+'app1 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -168,13 +165,10 @@ app1 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-app1 🧪 test:
+'app1 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -211,9 +205,6 @@ app1 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -526,17 +517,17 @@ app1 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: app1 👮 lint
+    - job: 'app1 👮 lint | dev '
       artifacts: false
     - job: 'app1 🔨 app | dev '
       artifacts: false
     - job: 'app1 🔨 docker | dev '
       artifacts: false
-    - job: app1 🧪 test
+    - job: 'app1 🧪 test | dev '
       artifacts: false
     - job: 'app1 🧾 sbom | dev '
       artifacts: true
-    - job: app1 🛡 audit
+    - job: 'app1 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -575,6 +566,107 @@ app1 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'app1 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="app1"
+    - collapseable_section_end "injectvars"
+    - cd app1
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'app1 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="app1"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd app1
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: app1-yarn
+      policy: pull-push
+      paths:
+        - app1/.yarn
+    - key: app1-node-modules
+      policy: pull-push
+      paths:
+        - app1/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'app1 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="app1"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd app1
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: app1-yarn
+      policy: pull-push
+      paths:
+        - app1/.yarn
+    - key: app1-node-modules
+      policy: pull-push
+      paths:
+        - app1/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'app1 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -887,17 +979,17 @@ app1 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: app1 👮 lint
+    - job: 'app1 👮 lint | review '
       artifacts: false
     - job: 'app1 🔨 app | review '
       artifacts: false
     - job: 'app1 🔨 docker | review '
       artifacts: false
-    - job: app1 🧪 test
+    - job: 'app1 🧪 test | review '
       artifacts: false
     - job: 'app1 🧾 sbom | review '
       artifacts: true
-    - job: app1 🛡 audit
+    - job: 'app1 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -1641,7 +1733,7 @@ app1 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
-app2 🛡 audit:
+'app2 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -1658,14 +1750,11 @@ app2 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
   allow_failure: true
-app2 👮 lint:
+'app2 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -1702,13 +1791,10 @@ app2 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-app2 🧪 test:
+'app2 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -1745,9 +1831,6 @@ app2 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -2080,17 +2163,17 @@ app2 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: app2 👮 lint
+    - job: 'app2 👮 lint | dev '
       artifacts: false
     - job: 'app2 🔨 app | dev '
       artifacts: false
     - job: 'app2 🔨 docker | dev '
       artifacts: false
-    - job: app2 🧪 test
+    - job: 'app2 🧪 test | dev '
       artifacts: false
     - job: 'app2 🧾 sbom | dev '
       artifacts: true
-    - job: app2 🛡 audit
+    - job: 'app2 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -2129,6 +2212,107 @@ app2 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'app2 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="app2"
+    - collapseable_section_end "injectvars"
+    - cd app2
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'app2 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="app2"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd app2
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: app2-yarn
+      policy: pull-push
+      paths:
+        - app2/.yarn
+    - key: app2-node-modules
+      policy: pull-push
+      paths:
+        - app2/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'app2 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="app2"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd app2
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: app2-yarn
+      policy: pull-push
+      paths:
+        - app2/.yarn
+    - key: app2-node-modules
+      policy: pull-push
+      paths:
+        - app2/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'app2 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -2461,17 +2645,17 @@ app2 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: app2 👮 lint
+    - job: 'app2 👮 lint | review '
       artifacts: false
     - job: 'app2 🔨 app | review '
       artifacts: false
     - job: 'app2 🔨 docker | review '
       artifacts: false
-    - job: app2 🧪 test
+    - job: 'app2 🧪 test | review '
       artifacts: false
     - job: 'app2 🧾 sbom | review '
       artifacts: true
-    - job: app2 🛡 audit
+    - job: 'app2 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -3255,7 +3439,7 @@ app2 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
-kube 🛡 audit:
+'kube 🛡 audit | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -3272,14 +3456,11 @@ kube 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
   allow_failure: true
-kube 👮 lint:
+'kube 👮 lint | dev ':
   stage: test
   image: path/to/docker/jobs-default:the-version
   variables:
@@ -3316,13 +3497,10 @@ kube 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
-kube 🧪 test:
+'kube 🧪 test | dev ':
   stage: test
   image: path/to/docker/jobs-testing-chrome:the-version
   variables:
@@ -3359,9 +3537,6 @@ kube 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a1
   interruptible: true
@@ -3782,17 +3957,17 @@ kube 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: kube 👮 lint
+    - job: 'kube 👮 lint | dev '
       artifacts: false
     - job: 'kube 🔨 app | dev '
       artifacts: false
     - job: 'kube 🔨 docker | dev '
       artifacts: false
-    - job: kube 🧪 test
+    - job: 'kube 🧪 test | dev '
       artifacts: false
     - job: 'kube 🧾 sbom | dev '
       artifacts: true
-    - job: kube 🛡 audit
+    - job: 'kube 🛡 audit | dev '
       artifacts: false
   retry: *a1
   interruptible: true
@@ -3969,6 +4144,107 @@ kube 🧪 test:
   retry: *a1
   interruptible: true
   allow_failure: true
+'kube 🛡 audit | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="kube"
+    - collapseable_section_end "injectvars"
+    - cd kube
+    - yarn npm audit --environment production
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+  allow_failure: true
+'kube 👮 lint | review ':
+  stage: test
+  image: path/to/docker/jobs-default:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="kube"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd kube
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: kube-yarn
+      policy: pull-push
+      paths:
+        - kube/.yarn
+    - key: kube-node-modules
+      policy: pull-push
+      paths:
+        - kube/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
+'kube 🧪 test | review ':
+  stage: test
+  image: path/to/docker/jobs-testing-chrome:the-version
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="kube"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd kube
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: kube-yarn
+      policy: pull-push
+      paths:
+        - kube/.yarn
+    - key: kube-node-modules
+      policy: pull-push
+      paths:
+        - kube/node_modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a1
+  interruptible: true
 'kube 🔨 app | review ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -4387,17 +4663,17 @@ kube 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: kube 👮 lint
+    - job: 'kube 👮 lint | review '
       artifacts: false
     - job: 'kube 🔨 app | review '
       artifacts: false
     - job: 'kube 🔨 docker | review '
       artifacts: false
-    - job: kube 🧪 test
+    - job: 'kube 🧪 test | review '
       artifacts: false
     - job: 'kube 🧾 sbom | review '
       artifacts: true
-    - job: kube 🛡 audit
+    - job: 'kube 🛡 audit | review '
       artifacts: false
   retry: *a1
   interruptible: true

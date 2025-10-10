@@ -103,7 +103,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-www 🛡 audit:
+'www 🛡 audit | dev ':
   stage: test
   image: audit-image
   services: &a1
@@ -128,9 +128,6 @@ www 🛡 audit:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: &a2
     max: 2
@@ -139,7 +136,7 @@ www 🛡 audit:
       - stuck_or_timeout_failure
   interruptible: true
   allow_failure: true
-www 👮 lint:
+'www 👮 lint | dev ':
   stage: test
   image: lint-image
   services: *a1
@@ -161,13 +158,10 @@ www 👮 lint:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
   interruptible: true
-www 🧪 test:
+'www 🧪 test | dev ':
   stage: test
   image: test-image
   services: *a1
@@ -190,9 +184,6 @@ www 🧪 test:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
   needs: []
   retry: *a2
   interruptible: true
@@ -428,17 +419,17 @@ www 🧪 test:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
   needs:
-    - job: www 👮 lint
+    - job: 'www 👮 lint | dev '
       artifacts: false
     - job: 'www 🔨 app | dev '
       artifacts: false
     - job: 'www 🔨 docker | dev '
       artifacts: false
-    - job: www 🧪 test
+    - job: 'www 🧪 test | dev '
       artifacts: false
     - job: 'www 🧾 sbom | dev '
       artifacts: true
-    - job: www 🛡 audit
+    - job: 'www 🛡 audit | dev '
       artifacts: false
   retry: *a2
   interruptible: true
@@ -477,6 +468,86 @@ www 🧪 test:
   retry: *a2
   interruptible: true
   allow_failure: true
+'www 🛡 audit | review ':
+  stage: test
+  image: audit-image
+  services: &a3
+    - name: job-service-1
+      command:
+        - --some-command=some-value
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="www"
+    - collapseable_section_end "injectvars"
+    - audit
+  artifacts:
+    paths: []
+    reports:
+      junit:
+        - www/dist/audit.xml
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a2
+  interruptible: true
+  allow_failure: true
+'www 👮 lint | review ':
+  stage: test
+  image: lint-image
+  services: *a3
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="www"
+    - collapseable_section_end "injectvars"
+    - lint
+  artifacts:
+    paths: []
+    reports:
+      junit:
+        - www/dist/lint.xml
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a2
+  interruptible: true
+'www 🧪 test | review ':
+  stage: test
+  image: test-image
+  services: *a3
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="www"
+    - collapseable_section_end "injectvars"
+    - test
+  artifacts:
+    paths: []
+    reports:
+      junit:
+        - www/dist/TEST-*.xml
+        - www/dist/junit-*.xml
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs: []
+  retry: *a2
+  interruptible: true
 'www 🔨 app | review ':
   stage: build
   image: foo
@@ -712,17 +783,17 @@ www 🧪 test:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: www 👮 lint
+    - job: 'www 👮 lint | review '
       artifacts: false
     - job: 'www 🔨 app | review '
       artifacts: false
     - job: 'www 🔨 docker | review '
       artifacts: false
-    - job: www 🧪 test
+    - job: 'www 🧪 test | review '
       artifacts: false
     - job: 'www 🧾 sbom | review '
       artifacts: true
-    - job: www 🛡 audit
+    - job: 'www 🛡 audit | review '
       artifacts: false
   retry: *a2
   interruptible: true
@@ -1319,13 +1390,13 @@ create release:
     - semanticRelease
     - echo '👉 The project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - &a3
+    - &a4
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
-    - &a4
+    - &a5
       if: $CI_PIPELINE_SOURCE  == "trigger"
       when: never
-    - &a5
+    - &a6
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -1339,9 +1410,9 @@ create release:
     - semanticRelease
     - echo '👉 The project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - *a3
     - *a4
     - *a5
+    - *a6
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
