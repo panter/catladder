@@ -619,14 +619,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
-    - key: www-yarn
+    - key: www-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/.yarn
-    - key: www-node-modules
+      fallback_keys:
+        - www-yarn
+    - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/node_modules
+      fallback_keys:
+        - www-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -659,14 +663,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn test
   cache:
-    - key: www-yarn
+    - key: www-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/.yarn
-    - key: www-node-modules
+      fallback_keys:
+        - www-yarn
+    - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/node_modules
+      fallback_keys:
+        - www-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -731,14 +739,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
-    - key: www-yarn
+    - key: www-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/.yarn
-    - key: www-node-modules
+      fallback_keys:
+        - www-yarn
+    - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/node_modules
+      fallback_keys:
+        - www-node-modules
   artifacts:
     paths:
       - www/__build_info.json
@@ -805,10 +817,12 @@ before_script:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: www-yarn
+    - key: www-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - www/.yarn
+      fallback_keys:
+        - www-yarn
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -1017,12 +1031,14 @@ before_script:
     - echo "custom job for env 'review'"
     - CYPRESS_BASE_URL=$CI_ENVIRONMENT_URL yarn cypress:run:ci
   cache:
-    key: cypress
+    key: cypress-mr$CI_MERGE_REQUEST_IID
     policy: pull-push
     paths:
       - .yarn/cache
       - node_modules/
       - cache/cypress
+    fallback_keys:
+      - cypress
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
     action: access

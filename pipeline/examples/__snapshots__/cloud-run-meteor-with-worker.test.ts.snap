@@ -563,14 +563,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
-    - key: web-yarn
+    - key: web-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/.yarn
-    - key: web-node-modules
+      fallback_keys:
+        - web-yarn
+    - key: web-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/node_modules
+      fallback_keys:
+        - web-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -603,14 +607,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn test
   cache:
-    - key: web-yarn
+    - key: web-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/.yarn
-    - key: web-node-modules
+      fallback_keys:
+        - web-yarn
+    - key: web-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/node_modules
+      fallback_keys:
+        - web-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -680,21 +688,27 @@ before_script:
     - TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
     - cp ./__build_info.json ./dist/bundle/programs/server
   cache:
-    - key: web-yarn
+    - key: web-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/.yarn
-    - key: web-node-modules
+      fallback_keys:
+        - web-yarn
+    - key: web-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/node_modules
-    - key: web-meteor-build-cache
+      fallback_keys:
+        - web-node-modules
+    - key: web-meteor-build-cache-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - web/.meteor/local/resolver-result-cache.json
         - web/.meteor/local/plugin-cache
         - web/.meteor/local/isopacks
         - web/.meteor/local/bundler-cache/scanner
+      fallback_keys:
+        - web-meteor-build-cache
   artifacts:
     paths:
       - web/__build_info.json

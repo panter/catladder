@@ -564,14 +564,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
-    - key: api-yarn
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - api/.yarn
-    - key: api-node-modules
+      fallback_keys:
+        - api-yarn
+    - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - api/node_modules
+      fallback_keys:
+        - api-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -604,14 +608,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn test
   cache:
-    - key: api-yarn
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - api/.yarn
-    - key: api-node-modules
+      fallback_keys:
+        - api-yarn
+    - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - api/node_modules
+      fallback_keys:
+        - api-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -678,14 +686,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
-    - key: api-yarn
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - api/.yarn
-    - key: api-node-modules
+      fallback_keys:
+        - api-yarn
+    - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - api/node_modules
+      fallback_keys:
+        - api-node-modules
   artifacts:
     paths:
       - api/__build_info.json
@@ -752,10 +764,12 @@ before_script:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: api-yarn
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - api/.yarn
+      fallback_keys:
+        - api-yarn
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"

@@ -348,14 +348,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
-    - key: .-yarn
+    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - .yarn
-    - key: .-node-modules
+      fallback_keys:
+        - .-yarn
+    - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - node_modules
+      fallback_keys:
+        - .-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -388,14 +392,18 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn test
   cache:
-    - key: .-yarn
+    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - .yarn
-    - key: .-node-modules
+      fallback_keys:
+        - .-yarn
+    - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - node_modules
+      fallback_keys:
+        - .-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -462,20 +470,26 @@ before_script:
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
-    - key: .-yarn
+    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - .yarn
-    - key: .-node-modules
+      fallback_keys:
+        - .-yarn
+    - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - node_modules
-    - key: myWorkspace-default
+      fallback_keys:
+        - .-node-modules
+    - key: myWorkspace-default-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - .turbo
         - api/.component-custom-cache
         - www/.next/cache
+      fallback_keys:
+        - myWorkspace-default
   artifacts:
     paths:
       - api/.next
@@ -959,10 +973,12 @@ before_script:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: api-yarn
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - api/.yarn
+      fallback_keys:
+        - api-yarn
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -1858,10 +1874,12 @@ before_script:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: www-yarn
+    - key: www-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - www/.yarn
+      fallback_keys:
+        - www-yarn
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"

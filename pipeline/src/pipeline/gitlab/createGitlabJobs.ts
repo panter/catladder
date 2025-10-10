@@ -15,6 +15,7 @@ import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
 import type { AllCatladderJobs } from "../createAllJobs";
 import { getBashVariable } from "../../bash/BashExpression";
+import { addCacheFallback } from "./cache";
 
 export type GitlabJobWithContext = {
   gitlabJob: GitlabJobDef;
@@ -115,6 +116,7 @@ export const makeGitlabJob = (
     variables,
     runnerVariables,
     when,
+    cache,
     ...rest
   } = job;
   const stage =
@@ -184,11 +186,11 @@ export const makeGitlabJob = (
         ? [{ when }]
         : []),
   ];
-
   const gitlabJob: GitlabJobDef = {
     retry: BASE_RETRY,
     interruptible: true,
     ...rest,
+    cache: cache ? addCacheFallback(cache, context) : undefined,
     rules: rules.length > 0 ? rules : undefined,
     variables: {
       ...legacyRunnerVariables,
@@ -281,8 +283,6 @@ export const createGitlabJobs = async (
   allJobs: AllCatladderJobs,
   baseRules?: GitlabRule[],
 ): Promise<AllGitlabJobs> => {
-  // TODO: add workspace jobs
-
   return [
     ...allJobs.workspaces,
     ...allJobs.components,
