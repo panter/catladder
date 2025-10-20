@@ -10,13 +10,17 @@ import { gcloudServiceAccountLoginCommands } from "../utils/gcloudServiceAccount
 import { getJobCreateScripts } from "./cloudRunJobs";
 import { getOnDeployExecuteScript } from "./execute/onDeploy";
 import { getServiceDeployScript } from "./cloudRunServices";
+import { getWorkerPoolDeployScript } from "./cloudRunWorkerPools";
 import {
   getCloudRunDeployConfig,
   setGoogleProjectNumberScript,
 } from "./common";
 import { ENV_VARS_FILENAME } from "./constants";
 import { getCreateScheduleScript } from "./execute/schedules";
-import type { DeployConfigCloudRunService } from "../../types";
+import type {
+  DeployConfigCloudRunService,
+  DeployConfigCloudRunWorkerPool,
+} from "../../types";
 
 export function getCloudRunDeployScripts(context: ComponentContext) {
   const deployConfig = getCloudRunDeployConfig(context);
@@ -59,6 +63,15 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
             context,
             service as DeployConfigCloudRunService,
             "-" + name,
+          ),
+        ),
+      ...Object.entries(deployConfig.workerPools ?? {})
+        .filter(([_, workerPool]) => workerPool !== false && workerPool !== null)
+        .map(([name, workerPool]) =>
+          getWorkerPoolDeployScript(
+            context,
+            workerPool as DeployConfigCloudRunWorkerPool,
+            name,
           ),
         ),
       ...getOnDeployExecuteScript(context, "postDeploy"),

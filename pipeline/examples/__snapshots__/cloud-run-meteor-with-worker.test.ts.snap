@@ -419,7 +419,7 @@ before_script:
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-dev-web --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=dev,env-name=dev,build-type=meteor,cloud-run-service-name=pan-test-app-dev-web --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - gcloud run deploy pan-test-app-dev-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=dev,env-name=dev,build-type=meteor,cloud-run-service-name=pan-test-app-dev-web-worker --env-vars-file=____envvars.yaml --min-instances=1 --max-instances=1 --no-cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud beta run worker-pools deploy pan-test-app-dev-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=dev,env-name=dev,build-type=meteor,cloud-run-worker-pool-name=pan-test-app-dev-web-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -471,7 +471,7 @@ before_script:
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_web_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-dev-web --project=google-project-id --region=europe-west6
-    - gcloud run services delete pan-test-app-dev-web-worker --project=google-project-id --region=europe-west6
+    - gcloud beta run worker-pools delete pan-test-app-dev-web-worker --project=google-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
     - set -e
@@ -816,7 +816,7 @@ before_script:
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}') --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=review,env-name=review,build-type=meteor,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}')-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=review,env-name=review,build-type=meteor,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}')-worker --env-vars-file=____envvars.yaml --min-instances=1 --max-instances=1 --no-cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud beta run worker-pools deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}')-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=review,env-name=review,build-type=meteor,cloud-run-worker-pool-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}')-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -871,7 +871,7 @@ before_script:
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_web_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
-    - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}')-worker --project=google-project-id --region=europe-west6
+    - gcloud beta run worker-pools delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-web" | awk '{print tolower($0)}')-worker --project=google-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
     - set +e
@@ -1102,7 +1102,7 @@ before_script:
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-stage-web --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=stage,env-name=stage,build-type=meteor,cloud-run-service-name=pan-test-app-stage-web --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - gcloud run deploy pan-test-app-stage-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=stage,env-name=stage,build-type=meteor,cloud-run-service-name=pan-test-app-stage-web-worker --env-vars-file=____envvars.yaml --min-instances=1 --max-instances=1 --no-cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud beta run worker-pools deploy pan-test-app-stage-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=stage,env-name=stage,build-type=meteor,cloud-run-worker-pool-name=pan-test-app-stage-web-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -1147,7 +1147,7 @@ before_script:
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_web_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-stage-web --project=google-project-id --region=europe-west6
-    - gcloud run services delete pan-test-app-stage-web-worker --project=google-project-id --region=europe-west6
+    - gcloud beta run worker-pools delete pan-test-app-stage-web-worker --project=google-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
     - set -e
@@ -1375,7 +1375,7 @@ before_script:
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
     - gcloud run deploy pan-test-app-prod-web --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=prod,env-name=prod,build-type=meteor,cloud-run-service-name=pan-test-app-prod-web --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
-    - gcloud run deploy pan-test-app-prod-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=prod,env-name=prod,build-type=meteor,cloud-run-service-name=pan-test-app-prod-web-worker --env-vars-file=____envvars.yaml --min-instances=1 --max-instances=1 --no-cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud beta run worker-pools deploy pan-test-app-prod-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=prod,env-name=prod,build-type=meteor,cloud-run-worker-pool-name=pan-test-app-prod-web-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -1420,7 +1420,7 @@ before_script:
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_web_GCLOUD_DEPLOY_credentialsKey")
     - gcloud run services delete pan-test-app-prod-web --project=google-project-id --region=europe-west6
-    - gcloud run services delete pan-test-app-prod-web-worker --project=google-project-id --region=europe-west6
+    - gcloud beta run worker-pools delete pan-test-app-prod-web-worker --project=google-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
     - set -e

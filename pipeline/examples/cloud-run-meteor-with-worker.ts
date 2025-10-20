@@ -13,15 +13,14 @@ const config = {
         type: "google-cloudrun",
         projectId: "google-project-id",
         region: "europe-west6",
-        additionalServices: {
+        // worker pools are like services, but they don't have a load balanced endpoint and don't support autoscaling.
+        // But they are 40% cheaper than services.
+        workerPools: {
           // its usually better to create another catladder component for the worker
-          // but in some legacy cases it might be easier to add an extra service
+          // but in some legacy cases it might be easier to add service or worker pool
           // notice that you can't use different secrets on the worker, it will receive the same env vars as the normal service
           // you can specify extra vars though
           worker: {
-            noCpuThrottling: true,
-            maxInstances: 1,
-            minInstances: 1,
             command: [
               "/bin/sh",
               "-c",

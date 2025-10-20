@@ -7,6 +7,7 @@ import { getDeleteJobsScripts } from "./cloudRunJobs";
 import { getOnDeployExecuteScript } from "./execute/onDeploy";
 import { getDeleteSchedulesScript } from "./execute/schedules";
 import { getServiceDeleteScript } from "./cloudRunServices";
+import { getWorkerPoolDeleteScript } from "./cloudRunWorkerPools";
 import { getCloudRunDeployConfig } from "./common";
 
 export function getCloudRunStopScripts(context: ComponentContext) {
@@ -18,6 +19,9 @@ export function getCloudRunStopScripts(context: ComponentContext) {
     ...Object.entries(deployConfig.additionalServices ?? {})
       .filter(([_, service]) => service !== false && service !== null)
       .flatMap(([name]) => getServiceDeleteScript(context, name)),
+    ...Object.entries(deployConfig.workerPools ?? {})
+      .filter(([_, workerPool]) => workerPool !== false && workerPool !== null)
+      .flatMap(([name]) => getWorkerPoolDeleteScript(context, name)),
     ...getOnDeployExecuteScript(context, "postStop"),
     ...getDeleteSchedulesScript(context),
     ...getDeleteJobsScripts(context),

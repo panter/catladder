@@ -3,7 +3,7 @@ import type { keyValuesArg } from "../utils/createArgsString";
 
 export const createVolumeConfig = (
   volumes: DeployConfigCloudRunVolumes | undefined,
-  type: "service" | "job",
+  type: "service" | "job" | "worker-pool",
 ): keyValuesArg[] => {
   if (!volumes) {
     return [];

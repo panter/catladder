@@ -436,6 +436,52 @@ export type DeployConfigCloudRunJob =
   | DeployConfigCloudRunJobNormal
   | DeployConfigCloudRunJobWithSchedule;
 
+export type DeployConfigCloudRunWorkerPool = {
+  /**
+   * command / entrypoint for the worker pool
+   */
+  command: string | string[];
+
+  /**
+   * number of instances to run. Defaults to 1.
+   * Worker pools do not support autoscaling.
+   */
+  instances?: number;
+
+  /**
+   * CPU limit. Defaults to 1
+   */
+  cpu?: Cpu;
+
+  /**
+   * memory limit. Defaults to 512Mi
+   */
+  memory?: Memory;
+
+  /**
+   * the image to use. Defaults to the image from the build.
+   */
+  image?: string;
+
+  /**
+   * args to pass to the command
+   */
+  args?: string[];
+
+  /**
+   * Number of GPUs to use. Defaults to 0
+   *
+   * This is a preview feature and not all regions support it.
+   */
+  gpu?: number;
+
+  /**
+   * gpu type to use. Refer to https://cloud.google.com/run/docs/configuring/services/gpu#gcloud for defaults
+   */
+  gpuType?: string;
+} & DeployConfigCloudRunWithVolumes &
+  DeployConfigCloudRunNetworkConfig;
+
 export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
   /**
    * cloud run deployment.
@@ -468,6 +514,15 @@ export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
 
   jobs?: {
     [name: string]: DeployConfigCloudRunJob | false | null;
+  };
+
+  /**
+   * deploy worker pools for continuous background work.
+   * Worker pools are cost-effective alternatives to services for background processing.
+   * They don't have a load balanced endpoint and don't support autoscaling.
+   */
+  workerPools?: {
+    [name: string]: DeployConfigCloudRunWorkerPool | false | null;
   };
 
   /**
