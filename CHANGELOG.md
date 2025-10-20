@@ -1,3 +1,11 @@
+# [3.26.0](https://git.panter.ch/catladder/catladder/compare/v3.25.0...v3.26.0) (2025-10-20)
+
+
+### Features
+
+* add cache fallback for mr ([9b62fbb](https://git.panter.ch/catladder/catladder/commit/9b62fbb1c5811b4ad3a84f42b89efbfe7c62ddbd))
+* remove envMode none ([f765c1a](https://git.panter.ch/catladder/catladder/commit/f765c1ae770897679604f1ce071b3aac29c5cb37))
+
 # [3.25.0](https://git.panter.ch/catladder/catladder/compare/v3.24.0...v3.25.0) (2025-10-09)
 
 
