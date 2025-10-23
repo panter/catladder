@@ -559,7 +559,7 @@ export type DeployConfigCloudRunExecuteHttp = {
   /**
    * the http-method to use. Defaults to "POST" (as specified by google cloud scheduler)
    */
-  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+  method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "PURGE";
 
   /**
    * the body to send

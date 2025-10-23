@@ -149,7 +149,7 @@ before_script:
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable
+    - yarn install --immutable --inline-builds
     - collapseable_section_end "yarninstall"
     - yarn lint
   cache:
@@ -189,7 +189,7 @@ before_script:
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable
+    - yarn install --immutable --inline-builds
     - collapseable_section_end "yarninstall"
     - yarn test
   cache:
@@ -245,7 +245,7 @@ before_script:
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable
+    - yarn install --immutable --inline-builds
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
@@ -300,7 +300,8 @@ before_script:
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      COPY --chown=node:node $APP_DIR .
       RUN yarn plugin import workspace-tools
       RUN yarn workspaces focus --production && yarn rebuild"
     - |-
@@ -777,7 +778,7 @@ before_script:
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable
+    - yarn install --immutable --inline-builds
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
@@ -836,7 +837,8 @@ before_script:
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      COPY --chown=node:node $APP_DIR .
       RUN yarn plugin import workspace-tools
       RUN yarn workspaces focus --production && yarn rebuild"
     - |-
@@ -1207,7 +1209,7 @@ before_script:
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable
+    - yarn install --immutable --inline-builds
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
@@ -1262,7 +1264,8 @@ before_script:
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      COPY --chown=node:node $APP_DIR .
       RUN yarn plugin import workspace-tools
       RUN yarn workspaces focus --production && yarn rebuild"
     - |-
@@ -1623,7 +1626,7 @@ before_script:
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable
+    - yarn install --immutable --inline-builds
     - collapseable_section_end "yarninstall"
     - yarn build
   cache:
@@ -1678,7 +1681,8 @@ before_script:
     - export DOCKER_IMAGE="$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      COPY --chown=node:node $APP_DIR .
       RUN yarn plugin import workspace-tools
       RUN yarn workspaces focus --production && yarn rebuild"
     - |-

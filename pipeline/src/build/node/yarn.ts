@@ -12,8 +12,8 @@ const getYarnInstallCommand = (context: Context) => {
   if (context.packageManagerInfo.isClassic) {
     return YARN_INSTALL_CLASSIC;
   }
-
-  return `yarn install --immutable`;
+  // inline builds make debugging easier as it prints it out in the logs, instead of writing it in temp files
+  return `yarn install --immutable --inline-builds`;
 };
 
 export const ensureNodeVersion = (context: Context) =>
@@ -78,6 +78,7 @@ RUN ${YARN_INSTALL_CLASSIC} --production
   // rebuild first does not work as it will run postinstall and that might require files in the app
   return new BashExpression(
     `
+    ENV YARN_ENABLE_INLINE_BUILDS=1
 ${DOCKER_COPY_FILES}
 ${maybeAddWorkspaceToolsCommand}
 RUN ${YARN_BERRY_PROD_REBUILD}
