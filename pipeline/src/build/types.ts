@@ -204,6 +204,12 @@ type BuildConfigDockerWithAdditions = {
 
 type BuildConfigDockerBuiltInNode = {
   type: "node";
+  /**
+   * whether to run yarn rebuild after yarn install. Defaults to true.
+   *
+   * Future versions of catladder will default to false.
+   */
+  yarnRebuildEnabled?: boolean;
 } & BuildConfigDockerWithAdditions;
 
 type BuildConfigDockerBuiltInMeteor = {

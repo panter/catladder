@@ -1,12 +1,14 @@
 import { BashExpression } from "../../bash/BashExpression";
+import type { ComponentContextWithBuild } from "../../types";
 import { type Context } from "../../types";
 import { ensureArray } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 
 const YARN_INSTALL_CLASSIC = `yarn install --frozen-lockfile`;
 
+const YARN_BERRY_PROD_INSTALL = `yarn workspaces focus --production`;
 // FIXME: check why and when rebuild is needed
-const YARN_BERRY_PROD_REBUILD = `yarn workspaces focus --production && yarn rebuild`;
+const YARN_BERRY_PROD_REBUILD = `yarn rebuild`;
 
 const getYarnInstallCommand = (context: Context) => {
   if (context.packageManagerInfo.isClassic) {
@@ -54,7 +56,9 @@ export const getYarnInstall = (
 
 const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
 
-export const getDockerAppCopyAndBuildScript = (context: Context) => {
+export const getDockerAppCopyAndBuildScript = (
+  context: ComponentContextWithBuild,
+) => {
   if (context.packageManagerInfo.isClassic) {
     return new BashExpression(
       `
@@ -64,6 +68,13 @@ RUN ${YARN_INSTALL_CLASSIC} --production
     `.trim(),
     );
   }
+
+  const yarnRebuildEnabled =
+    "docker" in context.build.config &&
+    context.build.config.docker &&
+    "yarnRebuildEnabled" in context.build.config.docker
+      ? (context.build.config.docker.yarnRebuildEnabled ?? true)
+      : true;
 
   // yarn >= 4 ships with build in plugins, see https://github.com/yarnpkg/berry/pull/4253
   // trying to import those fail on this version
@@ -81,7 +92,8 @@ RUN ${YARN_INSTALL_CLASSIC} --production
     ENV YARN_ENABLE_INLINE_BUILDS=1
 ${DOCKER_COPY_FILES}
 ${maybeAddWorkspaceToolsCommand}
-RUN ${YARN_BERRY_PROD_REBUILD}
+RUN ${YARN_BERRY_PROD_INSTALL}
+${yarnRebuildEnabled ? `RUN ${YARN_BERRY_PROD_REBUILD}` : ""}
 
     `.trim(),
   );
