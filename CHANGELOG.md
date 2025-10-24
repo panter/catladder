@@ -1,3 +1,10 @@
+# [3.28.0](https://git.panter.ch/catladder/catladder/compare/v3.27.0...v3.28.0) (2025-10-24)
+
+
+### Features
+
+* allow to disable yarn rebuild in docker ([cda13e0](https://git.panter.ch/catladder/catladder/commit/cda13e033c8dc76f898e4e553b296cdd666484e9))
+
 # [3.27.0](https://git.panter.ch/catladder/catladder/compare/v3.26.0...v3.27.0) (2025-10-24)
 
 
