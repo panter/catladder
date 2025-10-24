@@ -1,3 +1,10 @@
+# [3.27.0](https://git.panter.ch/catladder/catladder/compare/v3.26.0...v3.27.0) (2025-10-24)
+
+
+### Features
+
+* **yarn:** set inline builds to true by default ([ee0fff9](https://git.panter.ch/catladder/catladder/commit/ee0fff9fc9c1c9c32879aa95f10ac7ec734ab341))
+
 # [3.26.0](https://git.panter.ch/catladder/catladder/compare/v3.25.0...v3.26.0) (2025-10-20)
 
 
