@@ -1,3 +1,10 @@
+# [3.29.0](https://git.panter.ch/catladder/catladder/compare/v3.28.0...v3.29.0) (2025-10-27)
+
+
+### Features
+
+* **node workspace:** allow to set docker defaults (currently only yarnRebuildEnabled) ([048d386](https://git.panter.ch/catladder/catladder/commit/048d386b97dda37df58dede088a9db2e6b187107))
+
 # [3.28.0](https://git.panter.ch/catladder/catladder/compare/v3.27.0...v3.28.0) (2025-10-24)
 
 
