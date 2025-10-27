@@ -425,6 +425,11 @@ export type WorkspaceBuildConfigBase = {
 export type WorkspaceBuildConfigNode = {
   type: "node";
   buildCommand?: string | string[];
+  /**
+   * set docker config defaults for the node build type.
+   * Currently not all options are supported.
+   */
+  dockerDefaults?: Pick<BuildConfigDockerBuiltInNode, "yarnRebuildEnabled">;
 } & WorkspaceBuildConfigBase;
 
 export type WorkspaceBuildConfig = WorkspaceBuildConfigNode;

@@ -11,6 +11,9 @@ const config = {
   builds: {
     myWorkspace: {
       type: "node",
+      dockerDefaults: {
+        yarnRebuildEnabled: false,
+      },
     },
   },
   components: {

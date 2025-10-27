@@ -69,12 +69,19 @@ RUN ${YARN_INSTALL_CLASSIC} --production
     );
   }
 
+  const yarnRebuildEnabledDefault =
+    context.build.type === "fromWorkspace"
+      ? (context.build.workspaceBuildConfig.dockerDefaults
+          ?.yarnRebuildEnabled ?? true)
+      : true;
+
   const yarnRebuildEnabled =
     "docker" in context.build.config &&
     context.build.config.docker &&
     "yarnRebuildEnabled" in context.build.config.docker
-      ? (context.build.config.docker.yarnRebuildEnabled ?? true)
-      : true;
+      ? (context.build.config.docker.yarnRebuildEnabled ??
+        yarnRebuildEnabledDefault)
+      : yarnRebuildEnabledDefault;
 
   // yarn >= 4 ships with build in plugins, see https://github.com/yarnpkg/berry/pull/4253
   // trying to import those fail on this version
