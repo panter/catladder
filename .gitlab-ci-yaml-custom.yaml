@@ -151,7 +151,7 @@ test:
 
 .npm-publish-base:
   interruptible: true
-  image: node:20
+  image: node:18
   extends:
     - .base-rules
     - .yarn-cache
@@ -159,35 +159,53 @@ test:
   stage: deploy
   retry: 1 # https://github.com/npm/feedback/discussions/796
   script:
+    # Determine version
     - VERSION=$([ "$CI_COMMIT_TAG" ] && echo "${CI_COMMIT_TAG#'v'}" || echo "0.0.0-$INLINE_PIPELINE_IMAGE_TAG")
-    - echo "publish version $VERSION"
-    - yarn workspaces foreach version $VERSION --deferred
+    - echo "Publishing version $VERSION"
+
+    # Bump versions in all workspaces
+    - yarn workspaces foreach version "$VERSION" --deferred
     - yarn version apply -R --all
-    - cd $DIR
+
+    # Move to the package directory to publish
+    - cd "$DIR"
+
+    # --- Registry & authentication configuration ---
+    # Disable workspace awareness for npm commands
+    - export NPM_CONFIG_WORKSPACES=false
+    # Force correct registry and auth behavior
+    - export NPM_CONFIG_REGISTRY="https://registry.npmjs.org/"
+    - export NPM_CONFIG_ALWAYS_AUTH=true
+    # Write a local .npmrc for token-based auth
     - |
       cat > .npmrc <<'EOF'
       registry=https://registry.npmjs.org/
       always-auth=true
       //registry.npmjs.org/:_authToken=${NPM_TOKEN}
       EOF
-    # optional but helpful diagnostics
-    - npm config get registry
-    - npm ping
-    - npm whoami
-    # avoid provenance/repo validation surprises during CI
-    - npm config set provenance false
+
+    # --- Sanity checks ---
+    - npm --workspaces=false ping
+    - npm --workspaces=false whoami || { echo "Auth failed – check NPM_TOKEN scope."; exit 1; }
+
+    # Disable provenance for CI (can be re-enabled later)
+    - npm --workspaces=false config set provenance false
+
+    # --- Compute dist-tag ---
     - |
-      DIST_TAG=$( 
-        if [ "$CI_COMMIT_TAG" ]; then 
-          echo "latest" 
-        elif [ "$CI_COMMIT_REF_SLUG" = "beta" ] || [ "$CI_COMMIT_REF_SLUG" = "next" ]; then 
-          echo "$CI_COMMIT_REF_SLUG" 
-        else 
-          echo "canary" 
-        fi 
+      DIST_TAG=$(
+        if [ "$CI_COMMIT_TAG" ]; then
+          echo "latest"
+        elif [ "$CI_COMMIT_REF_SLUG" = "beta" ] || [ "$CI_COMMIT_REF_SLUG" = "next" ]; then
+          echo "$CI_COMMIT_REF_SLUG"
+        else
+          echo "canary"
+        fi
       )
-    - echo "publishing with tag $DIST_TAG"
-    - npm publish --tag $DIST_TAG --no-git-tag-version --access public
+      echo "Publishing with tag $DIST_TAG"
+
+    # --- Publish ---
+    - npm --workspaces=false publish --tag "$DIST_TAG" --no-git-tag-version --access public
 
 🚀 cli:
   extends: .npm-publish-base
