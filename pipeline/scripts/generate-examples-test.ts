@@ -56,6 +56,7 @@ async function main() {
     exampleFiles.map(async (exampleFile) => {
       const kebabName = basename(exampleFile, ".ts");
       const testFileContent = [
+        `import { it, expect } from "vitest";`,
         `import { createYamlLocalPipeline } from "./__utils__/helpers";`,
         `import config from "./${kebabName}";`,
         `\n/**`,

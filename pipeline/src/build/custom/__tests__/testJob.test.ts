@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import type { BuildContextStandalone, ComponentContext } from "../../..";
 import { createCustomTestJobs } from "../testJob";
 

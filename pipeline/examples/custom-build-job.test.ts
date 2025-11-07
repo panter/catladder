@@ -1,3 +1,4 @@
+import { it, expect } from "vitest";
 import { createYamlLocalPipeline } from "./__utils__/helpers";
 import config from "./custom-build-job";
 

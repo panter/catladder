@@ -1,3 +1,4 @@
+import { describe, it, expect } from "vitest";
 import { createArtifactsConfig } from "../createArtifactsConfig";
 
 describe("createArtifactsConfig", () => {
