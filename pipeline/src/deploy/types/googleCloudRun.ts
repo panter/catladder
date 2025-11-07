@@ -1,5 +1,9 @@
 import type { DBVariablesMode } from "../cloudRun/utils/database";
 import type { DeployConfigBase } from "./base";
+import type {
+  DeployConfigBaseExecute,
+  DeployConfigBaseExecuteOnDeploy,
+} from "./executeBase";
 
 export type Gcloudregion =
   | "asia-east1"
@@ -424,7 +428,7 @@ export type DeployConfigCloudRunJob =
   | DeployConfigCloudRunJobNormal
   | DeployConfigCloudRunJobWithSchedule;
 
-export type DeployConfigCloudRun = {
+export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
   /**
    * cloud run deployment.
    *
@@ -469,7 +473,7 @@ export type DeployConfigCloudRun = {
   execute?: Record<string, DeployConfigCloudRunExecute | null>;
 
   debug?: boolean;
-} & DeployConfigBase;
+};
 
 export type DeployConfigCloudRunVolumes = Record<
   string,
@@ -543,6 +547,7 @@ export type DeployConfigCloudRunExecuteOnDeploy =
     );
 
 export type DeployConfigCloudRunExecuteJob =
+  | DeployConfigBaseExecute
   | DeployConfigCloudRunExecuteJobScheduled
   | DeployConfigCloudRunExecuteOnDeploy;
 
@@ -573,6 +578,7 @@ export type DeployConfigCloudRunExecuteHttp = {
 } & WithSchedule;
 
 export type DeployConfigCloudRunExecute =
+  | DeployConfigBaseExecute
   | DeployConfigCloudRunExecuteJob
   | DeployConfigCloudRunExecuteHttp;
 

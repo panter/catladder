@@ -1,10 +1,8 @@
 import type { StringOrBashExpression } from "../../../../bash";
 import type { ComponentContext } from "../../../../types/context";
-import type {
-  DeployConfigCloudRunExecuteOnDeploy,
-  DeployConfigCloudRunJob,
-  DeployConfigCloudRunService,
-} from "../../../types/googleCloudRun";
+import { ensureArray } from "../../../../utils";
+import type { DeployConfigBaseExecuteOnDeploy } from "../../../types/executeBase";
+import type { DeployConfigCloudRunExecuteOnDeploy } from "../../../types/googleCloudRun";
 import { createArgsString } from "../../utils/createArgsString";
 import { getCloudRunServiceOrJobArgsArg } from "../../utils/getJobOrServiceArgs";
 import { getFullJobName } from "../../utils/jobName";
@@ -17,7 +15,7 @@ import {
 
 type Execute = {
   jobName: StringOrBashExpression;
-  config: DeployConfigCloudRunExecuteOnDeploy;
+  config: DeployConfigCloudRunExecuteOnDeploy | DeployConfigBaseExecuteOnDeploy;
 };
 export const getOnDeployExecuteScript = (
   context: ComponentContext,
@@ -27,7 +25,7 @@ export const getOnDeployExecuteScript = (
 
   return executes
     .filter(({ config }) => config.when === when)
-    .map((execute) => {
+    .flatMap((execute) => {
       return getJobRunScriptForExecute(context, execute);
     });
 };
@@ -38,7 +36,7 @@ const getExecutes = (context: ComponentContext): Execute[] => {
     ...getLegacyExecutes(context),
     ...Object.entries(deployConfig.execute ?? {}).flatMap(([key, value]) => {
       // remove all schedule executes
-      if (!value || value.when === "schedule") {
+      if (!value) {
         return [];
       }
       return [
@@ -82,22 +80,30 @@ const getLegacyExecutes = (context: ComponentContext): Execute[] => {
 const getJobRunScriptForExecute = (
   context: ComponentContext,
   { jobName, config }: Execute,
-) => {
-  const commonArgs = getCommonCloudRunArgs(context);
+): string[] => {
+  const type = config.type;
+  if (type === "script") {
+    return ensureArray(config.script);
+  } else if (type === "job") {
+    const commonArgs = getCommonCloudRunArgs(context);
 
-  // always wait for completion for preStop and postStop jobs
-  // since stop will delete the jobs afterwards, so they will fail
-  const waitForCompletion = ["preStop", "postStop"].includes(config.when)
-    ? true // always
-    : "waitForCompletion" in config
-      ? (config.waitForCompletion ?? false) // depends on config
-      : false;
+    // always wait for completion for preStop and postStop jobs
+    // since stop will delete the jobs afterwards, so they will fail
+    const waitForCompletion = ["preStop", "postStop"].includes(config.when)
+      ? true // always
+      : "waitForCompletion" in config
+        ? (config.waitForCompletion ?? false) // depends on config
+        : false;
 
-  const argString = createArgsString({
-    ...commonArgs,
-    wait: waitForCompletion === true ? true : undefined,
-    args: getCloudRunServiceOrJobArgsArg(config.args),
-  });
-  const fullJobName = getFullJobName(context, jobName);
-  return `${gcloudRunCmd()} jobs execute ${fullJobName.toString()} ${argString}`;
+    const argString = createArgsString({
+      ...commonArgs,
+      wait: waitForCompletion === true ? true : undefined,
+      args: getCloudRunServiceOrJobArgsArg(config.args),
+    });
+    const fullJobName = getFullJobName(context, jobName);
+    return [
+      `${gcloudRunCmd()} jobs execute ${fullJobName.toString()} ${argString}`,
+    ];
+  }
+  throw new Error(`unsupported execute type: ${type}`);
 };

@@ -1,4 +1,5 @@
 import type { EnvVars } from "../../types/config";
+import type { DeployConfigBaseExecute } from "./executeBase";
 
 export type DeployConfigBase = {
   /**
