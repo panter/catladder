@@ -37,7 +37,8 @@ const getExecutes = (context: ComponentContext): Execute[] => {
   return [
     ...getLegacyExecutes(context),
     ...Object.entries(deployConfig.execute ?? {}).flatMap(([key, value]) => {
-      if (!value || (value.when !== "schedule" && value.type !== "job")) {
+      // remove all schedule executes
+      if (!value || value.when === "schedule") {
         return [];
       }
       return [
