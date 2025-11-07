@@ -502,7 +502,9 @@ before_script:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_app_GCLOUD_DEPLOY_credentialsKey")
+    - echo 'stopping'
     - gcloud run services delete pan-test-app-dev-app --project=google-project-id --region=europe-west6
+    - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/app --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
@@ -934,7 +936,9 @@ before_script:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_app_GCLOUD_DEPLOY_credentialsKey")
+    - echo 'stopping'
     - gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
+    - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/app/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set +e
@@ -1244,7 +1248,9 @@ before_script:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_app_GCLOUD_DEPLOY_credentialsKey")
+    - echo 'stopping'
     - gcloud run services delete pan-test-app-stage-app --project=google-project-id --region=europe-west6
+    - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/app --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'
@@ -1551,7 +1557,9 @@ before_script:
     - collapseable_section_end "injectvars"
     - set +e
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_app_GCLOUD_DEPLOY_credentialsKey")
+    - echo 'stopping'
     - gcloud run services delete pan-test-app-prod-app --project=google-project-id --region=europe-west6
+    - echo 'stopped'
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/app --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - echo 'Disabling component in Dependency Track'

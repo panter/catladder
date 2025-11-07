@@ -24,6 +24,16 @@ const config = {
             script: ["echo 'deployed'"],
             when: "postDeploy",
           },
+          "pre-stop-script": {
+            type: "script",
+            script: ["echo 'stopping'"],
+            when: "preStop",
+          },
+          "post-stop-script": {
+            type: "script",
+            script: ["echo 'stopped'"],
+            when: "postStop",
+          },
         },
       },
     },
