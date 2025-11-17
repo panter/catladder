@@ -1,3 +1,10 @@
+## [3.30.3](https://git.panter.ch/catladder/catladder/compare/v3.30.2...v3.30.3) (2025-11-17)
+
+
+### Bug Fixes
+
+* **cli:** cloud sql restore fails if password contains special characters ([2641fe2](https://git.panter.ch/catladder/catladder/commit/2641fe28e17affac7d76a8a277a65bb499b62e95))
+
 ## [3.30.2](https://git.panter.ch/catladder/catladder/compare/v3.30.1...v3.30.2) (2025-11-07)
 
 ## [3.30.1](https://git.panter.ch/catladder/catladder/compare/v3.30.0...v3.30.1) (2025-11-07)
