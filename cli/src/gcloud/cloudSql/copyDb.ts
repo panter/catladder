@@ -30,15 +30,19 @@ const createCopyDbScript = ({
   const targetPSQL = (command: string) =>
     `PGPASSWORD=${targetPassword} psql -p ${targetPort} --host=localhost --user=${targetUsername} -q ${command}`;
 
+  // URL-encode credentials to handle special characters like @, :, /, etc.
+  const encodedSourceUsername = encodeURIComponent(sourceUsername);
+  const encodedSourcePassword = encodeURIComponent(sourcePassword);
+
   const copyDBScript = `
       set -e
-     
-    
+
+
 
       dumptmp=$(mktemp /tmp/dump.XXXXXX)
 
       echo "Dumping file to $dumptmp"
-      pg_dump --dbname=postgres://${sourceUsername}:${sourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
+      pg_dump --dbname=postgres://${encodedSourceUsername}:${encodedSourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
       echo "dump done"
       ${targetPSQL(
         `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`,
