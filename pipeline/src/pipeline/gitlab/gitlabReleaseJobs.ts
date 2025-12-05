@@ -10,7 +10,7 @@ import type { Config } from "../../types/config";
 import type { GitlabRule } from "../../types";
 
 const EXPIRED_TOKEN_HELP =
-  "echo '👉 The project access token might be invald - run `project-renew-token` in catladder CLI to fix.'";
+  "echo '👉 If this job failed with access denied, the project access token might be invald - run `project-renew-token` in catladder CLI to fix.'";
 
 const baseReleaseRules = [
   RULE_NEVER_ON_RELEASE_COMMIT,
@@ -22,7 +22,8 @@ export const getGitlabReleaseJobs = (config: Config) => {
     ["create release"]: {
       stage: "release",
       image: getRunnerImage("semantic-release"),
-      script: ["semanticRelease", EXPIRED_TOKEN_HELP],
+      script: ["semanticRelease"],
+      after_script: [EXPIRED_TOKEN_HELP],
       rules: [
         ...baseReleaseRules,
         {
@@ -38,7 +39,8 @@ export const getGitlabReleaseJobs = (config: Config) => {
     ["⚠️ force create release"]: {
       stage: "release",
       image: getRunnerImage("semantic-release"),
-      script: ["semanticRelease", EXPIRED_TOKEN_HELP],
+      script: ["semanticRelease"],
+      after_script: [EXPIRED_TOKEN_HELP],
       needs: [],
       rules: [
         ...baseReleaseRules,

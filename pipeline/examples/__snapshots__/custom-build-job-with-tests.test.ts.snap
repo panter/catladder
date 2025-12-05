@@ -1388,7 +1388,8 @@ create release:
   image: path/to/docker/semantic-release:the-version
   script:
     - semanticRelease
-    - echo '👉 The project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
     - &a4
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
@@ -1408,7 +1409,8 @@ create release:
   image: path/to/docker/semantic-release:the-version
   script:
     - semanticRelease
-    - echo '👉 The project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
     - *a4
     - *a5
