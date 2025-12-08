@@ -1,3 +1,10 @@
+## [3.30.4](https://git.panter.ch/catladder/catladder/compare/v3.30.3...v3.30.4) (2025-12-08)
+
+
+### Bug Fixes
+
+* **kube:** mongodb image registry and repository no longer available ([d958dee](https://git.panter.ch/catladder/catladder/commit/d958deea195851051ae54842747e5c45a6fb80e0))
+
 ## [3.30.3](https://git.panter.ch/catladder/catladder/compare/v3.30.2...v3.30.3) (2025-11-17)
 
 
