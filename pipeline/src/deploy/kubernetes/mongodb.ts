@@ -102,6 +102,10 @@ export const createMongodbBaseConfig = (context: ComponentContext) => {
       persistence: {
         storageClass: "standard-rwo",
       },
+      image: {
+        registry: "bitnamilegacy",
+        repository: "mongodb",
+      },
       backup: createMongoBackupDefaultConfig(context),
     },
     env: {
