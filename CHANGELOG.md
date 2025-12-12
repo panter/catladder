@@ -1,3 +1,10 @@
+## [3.30.5](https://git.panter.ch/catladder/catladder/compare/v3.30.4...v3.30.5) (2025-12-12)
+
+
+### Bug Fixes
+
+* **pipeline:** ensure hint about expiring token is always shown in job log ([4891a63](https://git.panter.ch/catladder/catladder/commit/4891a63e6b5171f2ea40e51e34713e48f0f7b86c))
+
 ## [3.30.4](https://git.panter.ch/catladder/catladder/compare/v3.30.3...v3.30.4) (2025-12-08)
 
 
