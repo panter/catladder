@@ -1,3 +1,16 @@
+# [3.31.0](https://git.panter.ch/catladder/catladder/compare/v3.30.5...v3.31.0) (2025-12-29)
+
+
+### Bug Fixes
+
+* remove log ([aed4d64](https://git.panter.ch/catladder/catladder/commit/aed4d64e6d4661da30a5342cfeaf9e065bb023cc))
+
+
+### Features
+
+* enable to set runner variables for test and lint job separately ([7beb484](https://git.panter.ch/catladder/catladder/commit/7beb484089cc17c54376154fa564fa1203ed8cad))
+* update tsx and buid tools ([6b9107c](https://git.panter.ch/catladder/catladder/commit/6b9107c540814a636b74da145ee617b81aeddac6))
+
 ## [3.30.5](https://git.panter.ch/catladder/catladder/compare/v3.30.4...v3.30.5) (2025-12-12)
 
 
