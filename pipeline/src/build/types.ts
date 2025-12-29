@@ -76,6 +76,11 @@ export type TestJobCustom = {
    * {@link TestJobCustom.artifacts}.reports.junit is merged with {@link TestJobCustom.artifactsReports} in case both given.
    */
   artifacts?: Artifacts;
+
+  /**
+   * additional vars for this job runner
+   */
+  runnerVariables?: Record<string, string>;
 };
 
 export type BuildConfigBase = {
@@ -403,7 +408,7 @@ export type WorkspaceBuildConfigBase = {
    */
   audit?: false | TestJobCustom;
   /**
-   * additional vars only for the runner.
+   * additional vars only for the build job.
    * Also if you use services: that require env vars, you need to set them here.
    *
    */

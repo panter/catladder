@@ -32,7 +32,6 @@ export const createCustomTestJobs = (
       APP_PATH: context.build.dir,
       ...context.environment.jobOnlyVars.build.envVars,
     },
-    runnerVariables: RUNNER_CUSTOM_TEST_VARIABLES,
     services: buildConfig.jobServices,
     cache: createJobCacheFromConfig(context, buildConfig),
     stage: "test",
@@ -42,6 +41,10 @@ export const createCustomTestJobs = (
     ? {
         name: "🛡 audit",
         ...base,
+        runnerVariables: {
+          ...RUNNER_CUSTOM_TEST_VARIABLES,
+          ...(buildConfig.audit?.runnerVariables ?? {}),
+        },
         image: buildConfig.audit?.jobImage ?? buildConfig.jobImage,
         cache: undefined,
         script: [...ensureArray(buildConfig.audit?.command)],
@@ -59,6 +62,10 @@ export const createCustomTestJobs = (
         name: "👮 lint",
 
         ...base,
+        runnerVariables: {
+          ...RUNNER_CUSTOM_TEST_VARIABLES,
+          ...(buildConfig.lint?.runnerVariables ?? {}),
+        },
         image: buildConfig.lint?.jobImage ?? buildConfig.jobImage,
         script: [...ensureArray(buildConfig.lint?.command)],
         ...createArtifactsConfig(
@@ -73,6 +80,10 @@ export const createCustomTestJobs = (
         name: "🧪 test",
 
         ...base,
+        runnerVariables: {
+          ...RUNNER_CUSTOM_TEST_VARIABLES,
+          ...(buildConfig.test?.runnerVariables ?? {}),
+        },
         image: buildConfig.test?.jobImage ?? buildConfig.jobImage,
         script: [...ensureArray(buildConfig.test?.command)],
         ...createArtifactsConfig(

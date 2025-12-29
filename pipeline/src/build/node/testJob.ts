@@ -39,7 +39,6 @@ export const createNodeTestJobs = (
         : {}),
     },
 
-    runnerVariables: NODE_RUNNER_BUILD_VARIABLES,
     stage: "test",
     needs: [],
   };
@@ -50,6 +49,10 @@ export const createNodeTestJobs = (
       ? {
           name: "🛡 audit",
           ...base,
+          runnerVariables: {
+            ...NODE_RUNNER_BUILD_VARIABLES,
+            ...(buildConfig.audit?.runnerVariables ?? {}),
+          },
           image: buildConfig.audit?.jobImage ?? defaultImage,
           cache: undefined, // audit does not need yarn install and no cache
           script: [
@@ -68,12 +71,16 @@ export const createNodeTestJobs = (
           ),
         }
       : null;
-
+  console.log("buildConfig.lint", buildConfig.lint);
   const lintJob: CatladderJob | null =
     buildConfig.lint !== false
       ? {
           name: "👮 lint",
           ...base,
+          runnerVariables: {
+            ...NODE_RUNNER_BUILD_VARIABLES,
+            ...(buildConfig.lint?.runnerVariables ?? {}),
+          },
           image: buildConfig.lint?.jobImage ?? defaultImage,
           cache: createJobCacheFromCacheConfigs(context, getNodeCache(context)),
           script: [
@@ -95,6 +102,10 @@ export const createNodeTestJobs = (
           name: "🧪 test",
 
           ...base,
+          runnerVariables: {
+            ...NODE_RUNNER_BUILD_VARIABLES,
+            ...(buildConfig.test?.runnerVariables ?? {}),
+          },
           image:
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
           cache: createJobCacheFromCacheConfigs(context, getNodeCache(context)),
