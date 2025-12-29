@@ -8,7 +8,8 @@ create release:
   image: git.panter.ch:5001/catladder/catladder/semantic-release:latest
   script:
     - semanticRelease
-    - echo '👉 The project access token might be invald - run `project-renew-token` in catladder CLI to fix.'
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run `project-renew-token` in catladder CLI to fix.'
   rules:
     - &a1
       if: $CI_COMMIT_MESSAGE =~ /^chore\(release\).*/
@@ -28,7 +29,8 @@ create release:
   image: git.panter.ch:5001/catladder/catladder/semantic-release:latest
   script:
     - semanticRelease
-    - echo '👉 The project access token might be invald - run `project-renew-token` in catladder CLI to fix.'
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run `project-renew-token` in catladder CLI to fix.'
   rules:
     - *a1
     - *a2

@@ -71,7 +71,6 @@ export const createNodeTestJobs = (
           ),
         }
       : null;
-  console.log("buildConfig.lint", buildConfig.lint);
   const lintJob: CatladderJob | null =
     buildConfig.lint !== false
       ? {
