@@ -166,19 +166,29 @@ const BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS = {
   [type in BuildConfigDocker["type"]]: string | null;
 };
 
-export const getDockerBuildScriptWithBuiltInDockerFile = (
+const getEnsureDockerFileScript = (
   context: ComponentContextWithBuild,
-  defaultType?: BuildConfigDocker["type"],
+  fallbackType?: BuildConfigDocker["type"],
 ) => {
-  const type =
+  if (
     "docker" in context.build.config &&
     context.build.config.docker &&
     "type" in context.build.config.docker
-      ? context.build.config.docker?.type
-      : defaultType;
+  ) {
+    const type = context.build.config.docker?.type ?? fallbackType;
+
+    return type ? BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS[type] : null;
+  }
+  return fallbackType ? BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS[fallbackType] : null;
+};
+
+export const getDockerBuildScriptWithBuiltInDockerFile = (
+  context: ComponentContextWithBuild,
+  fallbackType?: BuildConfigDocker["type"],
+) => {
   return getDockerBuildDefaultScript(
     context,
-    type ? BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS[type] : null,
+    getEnsureDockerFileScript(context, fallbackType),
   );
 };
 export const getDockerBuildDefaultScript = (
