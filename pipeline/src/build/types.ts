@@ -244,6 +244,16 @@ type BuildConfigDockerCustom = {
    * Depending on your Dockerfile you may want to change it to "component"
    */
   buildContextLocation?: "root" | "component";
+
+  /**
+   * EXPERIMENTAL: custom docker file content
+   *
+   * you can use some predefined variables:
+   * - $DOCKER_COPY_WORKSPACE_FILES
+   * - $DOCKER_COPY_AND_INSTALL_APP
+   * - and all default variables
+   */
+  dockerfileContent?: string[];
 };
 
 export type BuildConfigDocker =

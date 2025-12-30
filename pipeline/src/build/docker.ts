@@ -175,8 +175,18 @@ const getEnsureDockerFileScript = (
     context.build.config.docker &&
     "type" in context.build.config.docker
   ) {
-    const type = context.build.config.docker?.type ?? fallbackType;
+    if (context.build.config.docker?.type === "custom") {
+      if (context.build.config.docker?.dockerfileContent) {
+        // we need to create a script that creates a Dockerfile in the current directory
+        return `
+echo "Creating Dockerfile"
+cat >$APP_DIR/Dockerfile <<EOF
+${context.build.config.docker?.dockerfileContent?.join("\n")}
+EOF`;
+      }
+    }
 
+    const type = context.build.config.docker?.type ?? fallbackType;
     return type ? BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS[type] : null;
   }
   return fallbackType ? BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS[fallbackType] : null;
