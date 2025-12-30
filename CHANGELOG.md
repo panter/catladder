@@ -1,3 +1,10 @@
+# [3.32.0](https://git.panter.ch/catladder/catladder/compare/v3.31.0...v3.32.0) (2025-12-30)
+
+
+### Features
+
+* custom docker file content ([db41b6d](https://git.panter.ch/catladder/catladder/commit/db41b6d1f4097f78bea0f71b2d3a7cc805cd2029))
+
 # [3.31.0](https://git.panter.ch/catladder/catladder/compare/v3.30.5...v3.31.0) (2025-12-29)
 
 
