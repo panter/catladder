@@ -8,6 +8,9 @@ import type { CatladderJob } from "../../types/jobs";
 import { uniq } from "lodash";
 import { componentContextNeedsBuildTimeDotEnv } from "../base/writeDotEnv";
 
+const uniqueAndAlphabeticalSort = (arr: string[]): string[] => {
+  return uniq(arr).sort((a, b) => a.localeCompare(b));
+};
 export const createBuildJobArtifacts = (
   context: Context,
 ): CatladderJob["artifacts"] => {
@@ -23,8 +26,10 @@ export const createBuildJobArtifacts = (
         )
       : getAllArtifactExcludePathsForComponent(context);
   return {
-    paths: uniq(paths).sort((a, b) => a.localeCompare(b)),
-    ...(exclude.length > 0 ? { exclude } : {}),
+    paths: uniqueAndAlphabeticalSort(paths),
+    ...(exclude.length > 0
+      ? { exclude: uniqueAndAlphabeticalSort(exclude) }
+      : {}),
     expire_in: "1 day",
     when: "always",
     reports:
