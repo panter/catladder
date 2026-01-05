@@ -1,3 +1,10 @@
+## [3.32.1](https://git.panter.ch/catladder/catladder/compare/v3.32.0...v3.32.1) (2026-01-05)
+
+
+### Bug Fixes
+
+* avoid duplicate paths in artifacts exclude ([62f57d7](https://git.panter.ch/catladder/catladder/commit/62f57d7ff49a91ec107ee3ea84c9162b157d2b1b))
+
 # [3.32.0](https://git.panter.ch/catladder/catladder/compare/v3.31.0...v3.32.0) (2025-12-30)
 
 
