@@ -95,7 +95,11 @@ export type DefaultEnvConfig = {
 
 export type DevLocalEnvConfig = {
   vars?: EnvVars;
-  port?: number;
+  /**
+   * port that is used. If not set, 3000 is used.
+   * set false to not set a port at all
+   */
+  port?: number | false;
 };
 type AddOverrideFunction<T> = {
   [K in keyof T]:

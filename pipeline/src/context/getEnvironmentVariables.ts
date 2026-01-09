@@ -40,10 +40,10 @@ type BasePredefinedVariables = ReturnType<typeof getBasePredefinedVariables>;
 
 // we export so that we have later nice autocomplete
 export type PredefinedVariables = BasePredefinedVariables & {
-  HOSTNAME: StringOrBashExpression;
-  ROOT_URL: StringOrBashExpression;
-  HOSTNAME_INTERNAL: StringOrBashExpression;
-  ROOT_URL_INTERNAL: StringOrBashExpression;
+  HOSTNAME?: StringOrBashExpression;
+  ROOT_URL?: StringOrBashExpression;
+  HOSTNAME_INTERNAL?: StringOrBashExpression;
+  ROOT_URL_INTERNAL?: StringOrBashExpression;
 };
 
 export const getEnvironmentVariables = async (
@@ -60,22 +60,23 @@ export const getEnvironmentVariables = async (
     getBasePredefinedVariables(environmentContext);
 
   let predefinedVariables: PredefinedVariables & UnspecifiedEnvVars;
-  let host: StringOrBashExpression;
-  let url: StringOrBashExpression;
+  let host: StringOrBashExpression | null;
+  let url: StringOrBashExpression | null;
 
   if (envType === "local") {
     const devLocalConfig: DevLocalEnvConfig = envConfigRaw;
-    const port = devLocalConfig.port ?? 3000;
-    host = "localhost:" + port.toString();
-    url = "http://" + host;
+    const port =
+      devLocalConfig.port !== false ? (devLocalConfig.port ?? 3000) : null;
+    host = port ? "localhost:" + port.toString() : null;
+    url = host ? "http://" + host : null;
     predefinedVariables = {
       ...basePredefinedVariables,
       ENV_SHORT: "local",
-      ROOT_URL: url,
-      HOSTNAME: host,
-      HOSTNAME_INTERNAL: host,
-      ROOT_URL_INTERNAL: "http://" + host,
-      PORT: port.toString(),
+      ...(url ? { ROOT_URL: url } : {}),
+      ...(host ? { HOSTNAME: host } : {}),
+      ...(host ? { HOSTNAME_INTERNAL: host } : {}),
+      ...(host ? { ROOT_URL_INTERNAL: "http://" + host } : {}),
+      ...(port ? { PORT: port.toString() } : {}),
     };
   } else {
     const additionalEnvVars = deployConfigRaw
