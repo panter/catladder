@@ -1,3 +1,10 @@
+# [3.33.0](https://git.panter.ch/catladder/catladder/compare/v3.32.1...v3.33.0) (2026-01-09)
+
+
+### Features
+
+* **catenv:** verbose mode and disable local ports ([71fce7b](https://git.panter.ch/catladder/catladder/commit/71fce7b1ccab8bc31f6c7b327598bceb32621f19))
+
 ## [3.32.1](https://git.panter.ch/catladder/catladder/compare/v3.32.0...v3.32.1) (2026-01-05)
 
 
