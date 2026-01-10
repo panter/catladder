@@ -1,3 +1,10 @@
+# [3.34.0](https://git.panter.ch/catladder/catladder/compare/v3.33.0...v3.34.0) (2026-01-10)
+
+
+### Features
+
+* always retry twice by default ([1303b0e](https://git.panter.ch/catladder/catladder/commit/1303b0e99a8c0c4dd353b911030f85ef044eb723))
+
 # [3.33.0](https://git.panter.ch/catladder/catladder/compare/v3.32.1...v3.33.0) (2026-01-09)
 
 
