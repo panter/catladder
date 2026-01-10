@@ -31,6 +31,8 @@ export const getNodeModulesCache = (
     context.type === "component" &&
     context.packageManagerInfo.componentIsInWorkspace;
 
+  const { isClassic } = context.packageManagerInfo;
+
   // We intentionally do not use the contents of yarn.lock as a cache key, as yarn install should always guarantee that the files are updated, but it can still use part of the cache if not all packages are up-to-date.
   // It would slow down all pipelines whenever one adds a new dependency as it will need to download all node_modules again.
   return [
@@ -50,8 +52,21 @@ export const getNodeModulesCache = (
               ...(context.packageManagerInfo.workspaces.map((w) =>
                 join(w.location, "node_modules"),
               ) ?? []),
+              ...(!isClassic
+                ? [
+                    ".yarn/install-state.gz",
+                    ...(context.packageManagerInfo.workspaces.map((w) =>
+                      join(w.location, ".yarn/install-state.gz"),
+                    ) ?? []),
+                  ]
+                : []),
             ])
-          : [join(context.build.dir, "node_modules")]),
+          : [
+              join(context.build.dir, "node_modules"),
+              ...(!isClassic
+                ? [join(context.build.dir, ".yarn/install-state.gz")]
+                : []),
+            ]),
       ],
     },
   ];
