@@ -7,7 +7,7 @@ import type { CloudSqlBackgroundProxy } from "../../../../../gcloud/cloudSql/sta
 import { startCloudSqlProxyInBackground } from "../../../../../gcloud/cloudSql/startProxy";
 import { envAndComponents } from "../utils/autocompletions";
 
-import { ConnectionStringParser } from "connection-string-parser";
+import { parseConnectionString } from "../../../../../gcloud/cloudSql/parseConnectionString";
 import { spawnCopyDb } from "../../../../../gcloud/cloudSql/copyDb";
 
 export default async (vorpal: Vorpal) =>
@@ -60,12 +60,7 @@ export default async (vorpal: Vorpal) =>
       };
 
       if (sourceEnv === "local") {
-        const parser = new ConnectionStringParser({
-          scheme: "postgres",
-          hosts: [],
-        });
-
-        const parsersResult = parser.parse(
+        const parsersResult = parseConnectionString(
           sourceEnvVars.DATABASE_URL.toString(),
         );
         sourcePort = parsersResult.hosts?.[0]?.port;
@@ -107,12 +102,7 @@ export default async (vorpal: Vorpal) =>
       );
 
       if (targetEnv === "local") {
-        const parser = new ConnectionStringParser({
-          scheme: "postgres",
-          hosts: [],
-        });
-
-        const parsersResult = parser.parse(
+        const parsersResult = parseConnectionString(
           targetEnvVars.DATABASE_URL.toString(),
         );
 
