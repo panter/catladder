@@ -1,3 +1,10 @@
+# [3.35.0](https://git.panter.ch/catladder/catladder/compare/v3.34.2...v3.35.0) (2026-01-22)
+
+
+### Features
+
+* **cli:** support postgresql:// schema for cloud-sql-restore-db command ([4a04eb1](https://git.panter.ch/catladder/catladder/commit/4a04eb13361155587495f4b47b486ecbc49442ae))
+
 ## [3.34.2](https://git.panter.ch/catladder/catladder/compare/v3.34.1...v3.34.2) (2026-01-10)
 
 
