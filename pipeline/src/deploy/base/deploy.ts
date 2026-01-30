@@ -69,40 +69,45 @@ export const createDeployJob = (
           })) ?? [])
         : []),
     ],
-    // we don't want to deploy when there is a broken test
-    needsStages: [
-      ...(componentContextHasWorkspaceBuild(context)
-        ? hasDocker // docker build is per component,
-          ? [
-              // we don't need artifacts, but have to wait for the component build
-              {
-                stage: "build" as BaseStage,
-                artifacts: false,
-              },
-            ]
-          : [
-              {
-                // pick build artifacts from workspace build
-                stage: "build" as BaseStage,
-                artifacts: true,
-                workspaceName: context.build.workspaceName,
-              },
-            ]
-        : [
+
+    needsStages:
+      // if the build is disabled, we don't need to wait for it
+      context.build.type !== "disabled"
+        ? [
+            ...(componentContextHasWorkspaceBuild(context)
+              ? hasDocker // docker build is per component,
+                ? [
+                    // we don't need artifacts, but have to wait for the component build
+                    {
+                      stage: "build" as BaseStage,
+                      artifacts: false,
+                    },
+                  ]
+                : [
+                    {
+                      // pick build artifacts from workspace build
+                      stage: "build" as BaseStage,
+                      artifacts: true,
+                      workspaceName: context.build.workspaceName,
+                    },
+                  ]
+              : [
+                  {
+                    stage: "build" as BaseStage,
+                    artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
+                  },
+                ]),
+            // we don't want to deploy when there is a broken test
             {
-              stage: "build" as BaseStage,
-              artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
+              stage: "test",
+              artifacts: false,
+              // use test from workspace build
+              workspaceName: componentContextHasWorkspaceBuild(context)
+                ? context.build.workspaceName
+                : undefined,
             },
-          ]),
-      {
-        stage: "test",
-        artifacts: false,
-        // use test from workspace build
-        workspaceName: componentContextHasWorkspaceBuild(context)
-          ? context.build.workspaceName
-          : undefined,
-      },
-    ],
+          ]
+        : [],
     when: whenDeploy === "auto" ? "on_success" : "manual",
 
     allow_failure: whenDeploy === "manual" ? true : false,
