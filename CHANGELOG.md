@@ -1,3 +1,10 @@
+# [3.36.0](https://git.panter.ch/catladder/catladder/compare/v3.35.0...v3.36.0) (2026-01-30)
+
+
+### Features
+
+* do not wait for build when build is disabled ([0eaf2ef](https://git.panter.ch/catladder/catladder/commit/0eaf2efe9d91eb8852b513fd6925ca5e429b1521))
+
 # [3.35.0](https://git.panter.ch/catladder/catladder/compare/v3.34.2...v3.35.0) (2026-01-22)
 
 
