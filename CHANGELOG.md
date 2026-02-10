@@ -1,3 +1,10 @@
+## [3.36.1](https://git.panter.ch/catladder/catladder/compare/v3.36.0...v3.36.1) (2026-02-10)
+
+
+### Bug Fixes
+
+* do not stop on hotfix branches ([f2af97c](https://git.panter.ch/catladder/catladder/commit/f2af97c3c250d01d46e3266d104691752ba1453b))
+
 # [3.36.0](https://git.panter.ch/catladder/catladder/compare/v3.35.0...v3.36.0) (2026-01-30)
 
 
