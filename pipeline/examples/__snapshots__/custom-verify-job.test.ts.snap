@@ -510,8 +510,6 @@ before_script:
     name: dev/www
     action: stop
   rules:
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
-      when: on_success
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
@@ -1001,8 +999,6 @@ before_script:
     name: review/$CI_COMMIT_REF_NAME/www
     action: stop
   rules:
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
-      when: on_success
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
@@ -1364,8 +1360,6 @@ before_script:
     name: stage/www
     action: stop
   rules:
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
-      when: on_success
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
@@ -1725,8 +1719,6 @@ before_script:
     name: prod/www
     action: stop
   rules:
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/
-      when: on_success
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual

@@ -16,12 +16,6 @@ export const createStopJob = (
     needs: [], // can be executed even if the deploy job failed
     allow_failure: true,
     when: "manual", // stop is always manual
-    rules: [
-      {
-        if: "$CI_COMMIT_BRANCH =~ /^[0-9]+\\.([0-9]+|x)\\.x$/", // automatic on hotfix branches
-        when: "on_success",
-      },
-    ],
     variables: {
       ...context.environment.jobOnlyVars.deploy.envVars,
       ...jobDefinition.variables,
