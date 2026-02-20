@@ -1,3 +1,10 @@
+# [3.37.0](https://git.panter.ch/catladder/catladder/compare/v3.36.1...v3.37.0) (2026-02-20)
+
+
+### Features
+
+* **cloudrun:** add session affinity to cloud run service ([3d6f804](https://git.panter.ch/catladder/catladder/commit/3d6f8045f9c32e2af9333635475af2cbcdcf3b51))
+
 ## [3.36.1](https://git.panter.ch/catladder/catladder/compare/v3.36.0...v3.36.1) (2026-02-10)
 
 
