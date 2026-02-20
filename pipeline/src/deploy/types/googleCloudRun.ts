@@ -203,6 +203,14 @@ export type DeployConfigCloudRunService = {
    */
   image?: string;
   /**
+   * whether to enable session affinity. When enabled, Cloud Run will try to route
+   * requests from the same client to the same instance.
+   *
+   * Passed as `--session-affinity` to gcloud.
+   */
+  sessionAffinity?: boolean;
+
+  /**
    * args to pass to the command
    */
   args?: string[];

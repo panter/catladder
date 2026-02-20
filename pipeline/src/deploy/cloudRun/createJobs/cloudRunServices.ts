@@ -65,6 +65,7 @@ export const getServiceDeployScript = (
       "use-http2": customConfig?.http2,
       "allow-unauthenticated": customConfig?.allowUnauthenticated ?? true,
       ingress: customConfig?.ingress ?? "all",
+      "session-affinity": customConfig?.sessionAffinity,
       "cpu-boost": true,
       "execution-environment": customConfig?.executionEnvironment,
       gpu: customConfig?.gpu,
