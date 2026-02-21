@@ -7,6 +7,7 @@ export * from "./context";
 export * from "./build";
 export * from "./deploy";
 export * from "./utils/writeFiles";
+export * from "./utils/measureTime";
 export * from "./variables/VariableValue";
 export * from "./bash";
 export * from "./catenv";
