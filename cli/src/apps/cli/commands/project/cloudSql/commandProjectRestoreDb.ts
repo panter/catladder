@@ -1,14 +1,27 @@
 import type Vorpal from "vorpal";
 import {
+  getAllPipelineContexts,
   getEnvVarsResolved,
   getPipelineContextByChoice,
 } from "../../../../../config/getProjectConfig";
 import type { CloudSqlBackgroundProxy } from "../../../../../gcloud/cloudSql/startProxy";
 import { startCloudSqlProxyInBackground } from "../../../../../gcloud/cloudSql/startProxy";
-import { envAndComponents } from "../utils/autocompletions";
 
 import { parseConnectionString } from "../../../../../gcloud/cloudSql/parseConnectionString";
 import { spawnCopyDb } from "../../../../../gcloud/cloudSql/copyDb";
+import type { ComponentContext } from "@catladder/pipeline";
+import { isOfDeployType } from "@catladder/pipeline";
+
+const hasCloudSql = (context: ComponentContext) => {
+  const deployConfig = context.deploy?.config;
+  if (isOfDeployType(deployConfig, "google-cloudrun")) {
+    return !!deployConfig.cloudSql;
+  }
+  if (isOfDeployType(deployConfig, "kubernetes")) {
+    return !!deployConfig.values?.cloudsql?.enabled;
+  }
+  return false;
+};
 
 export default async (vorpal: Vorpal) =>
   vorpal
@@ -17,7 +30,18 @@ export default async (vorpal: Vorpal) =>
       "restores a project db from one source to another target",
     )
     .action(async function restoreDb() {
-      const envs = await envAndComponents();
+      const allContexts = await getAllPipelineContexts(undefined, {
+        includeLocal: true,
+      });
+      const envs = allContexts
+        .filter(hasCloudSql)
+        .map((c) => `${c.env}:${c.name}`)
+        .sort((a, b) => {
+          const aLocal = a.startsWith("local:");
+          const bLocal = b.startsWith("local:");
+          if (aLocal !== bLocal) return aLocal ? 1 : -1;
+          return a.localeCompare(b);
+        });
 
       const { sourceEnvAndComponent } = await this.prompt({
         type: "list",

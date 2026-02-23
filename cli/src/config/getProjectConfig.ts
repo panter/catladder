@@ -94,6 +94,7 @@ export const getAllComponentsWithAllEnvsHierarchical = async (): Promise<{
 
 export const getAllPipelineContexts = async (
   onlyComponent?: string | string[],
+  { includeLocal = false }: { includeLocal?: boolean } = {},
 ) => {
   const onlyComponentsArray = onlyComponent
     ? Array.isArray(onlyComponent)
@@ -102,7 +103,7 @@ export const getAllPipelineContexts = async (
     : null;
   return Promise.all(
     (await getAllComponentsWithAllEnvsFlat())
-      .filter((c) => c.env !== "local")
+      .filter((c) => includeLocal || c.env !== "local")
       .filter(
         (c) =>
           !onlyComponentsArray || onlyComponentsArray.includes(c.componentName),
