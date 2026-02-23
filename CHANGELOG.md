@@ -1,3 +1,10 @@
+# [3.38.0](https://git.panter.ch/catladder/catladder/compare/v3.37.0...v3.38.0) (2026-02-23)
+
+
+### Features
+
+* **cli:** filter restore-db choices to cloudsql-enabled envs ([fa0b08b](https://git.panter.ch/catladder/catladder/commit/fa0b08b60f963a0584e5b92c51067313049596e6))
+
 # [3.37.0](https://git.panter.ch/catladder/catladder/compare/v3.36.1...v3.37.0) (2026-02-20)
 
 
