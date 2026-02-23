@@ -1,3 +1,10 @@
+# [3.39.0](https://git.panter.ch/catladder/catladder/compare/v3.38.0...v3.39.0) (2026-02-23)
+
+
+### Features
+
+* **cli:** show alert icon on prod environments in restore-db target list ([fae18d6](https://git.panter.ch/catladder/catladder/commit/fae18d6912aabfde70dd745059e7eb93e5672d74))
+
 # [3.38.0](https://git.panter.ch/catladder/catladder/compare/v3.37.0...v3.38.0) (2026-02-23)
 
 
