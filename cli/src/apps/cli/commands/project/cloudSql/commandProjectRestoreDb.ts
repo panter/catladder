@@ -33,15 +33,26 @@ export default async (vorpal: Vorpal) =>
       const allContexts = await getAllPipelineContexts(undefined, {
         includeLocal: true,
       });
-      const envs = allContexts
-        .filter(hasCloudSql)
+      const filteredContexts = allContexts.filter(hasCloudSql);
+      const sortByEnv = (a: string, b: string) => {
+        const aLocal = a.startsWith("local:");
+        const bLocal = b.startsWith("local:");
+        if (aLocal !== bLocal) return aLocal ? 1 : -1;
+        return a.localeCompare(b);
+      };
+      const envs = filteredContexts
         .map((c) => `${c.env}:${c.name}`)
-        .sort((a, b) => {
-          const aLocal = a.startsWith("local:");
-          const bLocal = b.startsWith("local:");
-          if (aLocal !== bLocal) return aLocal ? 1 : -1;
-          return a.localeCompare(b);
-        });
+        .sort(sortByEnv);
+      const targetEnvChoices = filteredContexts
+        .map((c) => {
+          const value = `${c.env}:${c.name}`;
+          const isProd = c.environment.envType === "prod";
+          return {
+            name: isProd ? `⚠️ ${value}` : value,
+            value,
+          };
+        })
+        .sort((a, b) => sortByEnv(a.value, b.value));
 
       const { sourceEnvAndComponent } = await this.prompt({
         type: "list",
@@ -107,7 +118,7 @@ export default async (vorpal: Vorpal) =>
       const { targetEnvAndComponent } = await this.prompt({
         type: "list",
         name: "targetEnvAndComponent",
-        choices: envs,
+        choices: targetEnvChoices,
 
         message: "target env? 🤔 ",
       });
