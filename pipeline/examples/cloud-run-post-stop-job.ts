@@ -29,7 +29,7 @@ const config = {
               },
             },
             execute: {
-              ["drop-db"]: {
+              ["drop-db-on-stop"]: {
                 type: "job",
                 job: "drop-db",
                 when: "postStop",

@@ -13,10 +13,9 @@ import {
   getCommonCloudRunArgs,
 } from "../common";
 
-type Execute = {
-  jobName: StringOrBashExpression;
-  config: DeployConfigCloudRunExecuteOnDeploy | DeployConfigBaseExecuteOnDeploy;
-};
+type Execute =
+  | DeployConfigCloudRunExecuteOnDeploy
+  | DeployConfigBaseExecuteOnDeploy;
 export const getOnDeployExecuteScript = (
   context: ComponentContext,
   when: DeployConfigCloudRunExecuteOnDeploy["when"],
@@ -24,7 +23,7 @@ export const getOnDeployExecuteScript = (
   const executes = getExecutes(context);
 
   return executes
-    .filter(({ config }) => config.when === when)
+    .filter((config) => config.when === when)
     .flatMap((execute) => {
       return getJobRunScriptForExecute(context, execute);
     });
@@ -39,12 +38,7 @@ const getExecutes = (context: ComponentContext): Execute[] => {
       if (!value) {
         return [];
       }
-      return [
-        {
-          jobName: key,
-          config: value,
-        } as Execute,
-      ];
+      return [value as Execute];
     }),
   ];
 };
@@ -61,25 +55,22 @@ const getLegacyExecutes = (context: ComponentContext): Execute[] => {
     }
     return [
       {
-        jobName,
-        config: {
-          job: jobName,
-          type: "job",
-          when: job.when,
-          ...(job.when === "preDeploy" || job.when === "postDeploy"
-            ? {
-                waitForCompletion: job.waitForCompletion,
-              }
-            : {}),
-        } as Execute["config"],
-      },
+        job: jobName,
+        type: "job",
+        when: job.when,
+        ...(job.when === "preDeploy" || job.when === "postDeploy"
+          ? {
+              waitForCompletion: job.waitForCompletion,
+            }
+          : {}),
+      } as Execute,
     ];
   });
 };
 
 const getJobRunScriptForExecute = (
   context: ComponentContext,
-  { jobName, config }: Execute,
+  config: Execute,
 ): string[] => {
   const type = config.type;
   if (type === "script") {
@@ -100,7 +91,7 @@ const getJobRunScriptForExecute = (
       wait: waitForCompletion === true ? true : undefined,
       args: getCloudRunServiceOrJobArgsArg(config.args),
     });
-    const fullJobName = getFullJobName(context, jobName);
+    const fullJobName = getFullJobName(context, config.job);
     return [
       `${gcloudRunCmd()} jobs execute ${fullJobName.toString()} ${argString}`,
     ];
