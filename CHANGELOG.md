@@ -1,3 +1,10 @@
+## [3.39.1](https://git.panter.ch/catladder/catladder/compare/v3.39.0...v3.39.1) (2026-02-26)
+
+
+### Bug Fixes
+
+* execute uses key on post/pre deploy/stop for job name instead of job ([23485ed](https://git.panter.ch/catladder/catladder/commit/23485eda746e0b6f09c7f2e1796c677f1b744da1))
+
 # [3.39.0](https://git.panter.ch/catladder/catladder/compare/v3.38.0...v3.39.0) (2026-02-23)
 
 
