@@ -63,7 +63,7 @@ export const createNodeTestJobs = (
                 : "yarn npm audit --environment production", // yarn 2
             ]),
           ],
-          allow_failure: true,
+          allow_failure: buildConfig.audit?.allowFailure ?? true,
           ...createArtifactsConfig(
             context.build.dir,
             buildConfig.audit?.artifactsReports,
@@ -88,6 +88,7 @@ export const createNodeTestJobs = (
             ...yarnInstall,
             ...(ensureArrayOrNull(buildConfig.lint?.command) ?? ["yarn lint"]),
           ],
+          allow_failure: buildConfig.lint?.allowFailure,
           ...createArtifactsConfig(
             context.build.dir,
             buildConfig.lint?.artifactsReports,
@@ -114,6 +115,7 @@ export const createNodeTestJobs = (
             ...yarnInstall,
             ...(ensureArrayOrNull(buildConfig.test?.command) ?? ["yarn test"]),
           ],
+          allow_failure: buildConfig.test?.allowFailure,
           ...createArtifactsConfig(
             context.build.dir,
             buildConfig.test?.artifactsReports,

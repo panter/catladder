@@ -57,7 +57,7 @@ export const createRailsTestJobs = (
               "bundle audit check",
             ]),
           ],
-          allow_failure: true,
+          allow_failure: buildConfig.audit?.allowFailure ?? true,
         }
       : null;
 
@@ -77,6 +77,7 @@ export const createRailsTestJobs = (
               "bundle exec rubocop",
             ]),
           ],
+          allow_failure: buildConfig.lint?.allowFailure,
         }
       : null;
   const testJob: CatladderJob | null =
@@ -97,6 +98,7 @@ export const createRailsTestJobs = (
               "bundle exec rspec",
             ]),
           ],
+          allow_failure: buildConfig.test?.allowFailure,
           runnerVariables: {
             RAILS_ENV: "test",
             DATABASE_URL: "postgresql://postgres@database",

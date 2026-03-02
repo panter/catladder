@@ -81,6 +81,12 @@ export type TestJobCustom = {
    * additional vars for this job runner
    */
   runnerVariables?: Record<string, string>;
+
+  /**
+   * Whether the job is allowed to fail without blocking the pipeline.
+   * Defaults to `true` for audit jobs, `undefined` (not set) for lint and test jobs.
+   */
+  allowFailure?: boolean;
 };
 
 export type BuildConfigBase = {
