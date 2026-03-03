@@ -1,3 +1,10 @@
+# [3.40.0](https://git.panter.ch/catladder/catladder/compare/v3.39.1...v3.40.0) (2026-03-03)
+
+
+### Features
+
+* allow failure configurable ([84a02ce](https://git.panter.ch/catladder/catladder/commit/84a02ce491543bb633e73f638cb1751db39332d5))
+
 ## [3.39.1](https://git.panter.ch/catladder/catladder/compare/v3.39.0...v3.39.1) (2026-02-26)
 
 
