@@ -1,3 +1,10 @@
+## [3.40.1](https://git.panter.ch/catladder/catladder/compare/v3.40.0...v3.40.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* **rails:** configure google as docker mirror to avoid rate limits ([339b48f](https://git.panter.ch/catladder/catladder/commit/339b48ff4368d1fb1665556c75d6238182712616))
+
 # [3.40.0](https://git.panter.ch/catladder/catladder/compare/v3.39.1...v3.40.0) (2026-03-03)
 
 
