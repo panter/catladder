@@ -52,6 +52,7 @@ export const createRailsBuildJobs = (
         `chmod +x /usr/local/bin/pack`,
         //  replace private git ssh gem sources with https to make bundler with credentials via env var work
         `sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock`,
+        `pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io`,
         `pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder '${
           cnbConf?.image
         }' --publish --cache-image "$DOCKER_CACHE_IMAGE" ${packEnvArgs} ${
