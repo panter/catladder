@@ -1,3 +1,10 @@
+# [3.41.0](https://git.panter.ch/catladder/catladder/compare/v3.40.1...v3.41.0) (2026-03-19)
+
+
+### Features
+
+* remove sbom ([a1bd384](https://git.panter.ch/catladder/catladder/commit/a1bd384a0b3e2ce7ebf984edf78bc2283ac68f3d))
+
 ## [3.40.1](https://git.panter.ch/catladder/catladder/compare/v3.40.0...v3.40.1) (2026-03-10)
 
 
