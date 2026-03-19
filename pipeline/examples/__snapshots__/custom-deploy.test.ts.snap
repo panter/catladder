@@ -345,28 +345,6 @@ before_script:
     - 'www 🔨 app | dev '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | dev ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | dev ':
   stage: deploy dev
   image: path/to/docker/jobs-default:the-version
@@ -396,8 +374,6 @@ before_script:
     - collapseable_section_end "injectvars"
     - cd www
     - echo 'would deploy'
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/www
@@ -419,8 +395,6 @@ before_script:
       artifacts: false
     - job: 'www 🧪 test | dev '
       artifacts: false
-    - job: 'www 🧾 sbom | dev '
-      artifacts: true
     - job: 'www 🛡 audit | dev '
       artifacts: false
   retry: *a1
@@ -681,28 +655,6 @@ before_script:
     - 'www 🔨 app | review '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | review ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | review ':
   stage: deploy review
   image: path/to/docker/jobs-default:the-version
@@ -732,8 +684,6 @@ before_script:
     - collapseable_section_end "injectvars"
     - cd www
     - ROOT_URL="$(my deploy command)"
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
@@ -757,8 +707,6 @@ before_script:
       artifacts: false
     - job: 'www 🧪 test | review '
       artifacts: false
-    - job: 'www 🧾 sbom | review '
-      artifacts: true
     - job: 'www 🛡 audit | review '
       artifacts: false
   retry: *a1
@@ -777,8 +725,6 @@ before_script:
     - export DEPLOY_API_KEY="$CL_review_www_DEPLOY_API_KEY"
     - collapseable_section_end "injectvars"
     - echo 'would stop'
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
     action: stop
@@ -929,28 +875,6 @@ before_script:
     - 'www 🔨 app | stage '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | stage ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | stage ':
   stage: deploy stage
   image: path/to/docker/jobs-default:the-version
@@ -980,8 +904,6 @@ before_script:
     - collapseable_section_end "injectvars"
     - cd www
     - echo 'would deploy'
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/www
@@ -999,8 +921,6 @@ before_script:
       artifacts: false
     - job: 'www 🔨 docker | stage '
       artifacts: false
-    - job: 'www 🧾 sbom | stage '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: false
@@ -1142,28 +1062,6 @@ before_script:
     - 'www 🔨 app | prod '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | prod ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | prod ':
   stage: deploy prod
   image: path/to/docker/jobs-default:the-version
@@ -1193,8 +1091,6 @@ before_script:
     - collapseable_section_end "injectvars"
     - cd www
     - echo 'would deploy'
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/www
@@ -1212,8 +1108,6 @@ before_script:
       artifacts: false
     - job: 'www 🔨 docker | prod '
       artifacts: false
-    - job: 'www 🧾 sbom | prod '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: true

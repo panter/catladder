@@ -1,4 +1,3 @@
-import { sbomDeactivated } from "../../deploy/sbom";
 import type {
   ComponentContextWithBuild,
   WorkspaceContext,
@@ -6,7 +5,6 @@ import type {
 import {
   componentContextHasWorkspaceBuild,
   componentContextIsStandaloneBuild,
-  type ComponentContext,
 } from "../../types/context";
 import type {
   AppBuildJobDefinition,
@@ -14,7 +12,6 @@ import type {
 } from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
 import { createDockerBuildJobBase, requiresDockerBuild } from "../docker";
-import { createSbomBuildJob } from "../sbom";
 import { APP_BUILD_JOB_NAME } from "./constants";
 import { createAppBuildJob } from "./createAppBuildJob";
 
@@ -51,7 +48,6 @@ export const createComponentBuildJobs = (
           }),
         ]
       : []),
-    ...(sbomDeactivated(context) ? [] : [createSbomBuildJob(context)]),
   ];
 };
 

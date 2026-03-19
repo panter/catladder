@@ -299,28 +299,6 @@ before_script:
   needs: []
   retry: *a1
   interruptible: true
-'api 🧾 sbom | dev ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🛡 audit | asdf ':
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -500,28 +478,6 @@ before_script:
   needs: []
   retry: *a1
   interruptible: true
-'api 🧾 sbom | asdf ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🛡 audit | bla ':
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -701,28 +657,6 @@ before_script:
   needs: []
   retry: *a1
   interruptible: true
-'api 🧾 sbom | bla ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🛡 audit | review ':
   stage: test
   image: path/to/docker/jobs-default:the-version
@@ -914,28 +848,6 @@ before_script:
   needs: []
   retry: *a1
   interruptible: true
-'api 🧾 sbom | review ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🔨 app | stage ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -1012,28 +924,6 @@ before_script:
   needs: []
   retry: *a1
   interruptible: true
-'api 🧾 sbom | stage ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🔨 app | prod ':
   stage: build
   image: path/to/docker/jobs-default:the-version
@@ -1110,28 +1000,6 @@ before_script:
   needs: []
   retry: *a1
   interruptible: true
-'api 🧾 sbom | prod ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 create release:
   stage: release
   image: path/to/docker/semantic-release:the-version

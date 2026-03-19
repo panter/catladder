@@ -3,14 +3,12 @@ import {
   getDockerImageVariables,
   requiresDockerBuild,
 } from "../../build/docker";
-import { SBOM_BUILD_JOB_NAME } from "../../build/sbom";
 import type { DeployJobDefinition } from "../../types";
 import {
   componentContextHasWorkspaceBuild,
   type ComponentContext,
 } from "../../types/context";
 import type { BaseStage, CatladderJob } from "../../types/jobs";
-import { sbomDeactivated } from "../sbom";
 import { contextIsStoppable } from "../utils";
 import { STOP_JOB_NAME } from "./stop";
 
@@ -58,9 +56,6 @@ export const createDeployJob = (
     envMode: "stagePerEnv", // makes it easier to run manual tasks er env
 
     needs: [
-      ...(sbomDeactivated(context)
-        ? []
-        : [{ job: SBOM_BUILD_JOB_NAME, artifacts: true }]),
       ...(deployConfig
         ? (deployConfig.waitFor?.map((c) => ({
             componentName: c,

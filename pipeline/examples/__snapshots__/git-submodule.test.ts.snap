@@ -354,28 +354,6 @@ before_script:
     - 'app 🔨 app | dev '
   retry: *a1
   interruptible: true
-'app 🧾 sbom | dev ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" app
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'app 🚀 Deploy | dev ':
   stage: deploy dev
   image: path/to/docker/gcloud:the-version
@@ -455,8 +433,6 @@ before_script:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/app
@@ -480,8 +456,6 @@ before_script:
       artifacts: false
     - job: 'app 🧪 test | dev '
       artifacts: false
-    - job: 'app 🧾 sbom | dev '
-      artifacts: true
     - job: 'app 🛡 audit | dev '
       artifacts: false
   retry: *a1
@@ -504,8 +478,6 @@ before_script:
     - gcloud run services delete pan-test-app-dev-app --project=my-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/dev/app --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: dev/app
@@ -782,28 +754,6 @@ before_script:
     - 'app 🔨 app | review '
   retry: *a1
   interruptible: true
-'app 🧾 sbom | review ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" app
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'app 🚀 Deploy | review ':
   stage: deploy review
   image: path/to/docker/gcloud:the-version
@@ -886,8 +836,6 @@ before_script:
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/app
@@ -911,8 +859,6 @@ before_script:
       artifacts: false
     - job: 'app 🧪 test | review '
       artifacts: false
-    - job: 'app 🧾 sbom | review '
-      artifacts: true
     - job: 'app 🛡 audit | review '
       artifacts: false
   retry: *a1
@@ -938,8 +884,6 @@ before_script:
     - set +e
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/review/app --quiet --delete-tags
     - set -e
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: review/$CI_COMMIT_REF_NAME/app
@@ -1099,28 +1043,6 @@ before_script:
     - 'app 🔨 app | stage '
   retry: *a1
   interruptible: true
-'app 🧾 sbom | stage ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" app
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'app 🚀 Deploy | stage ':
   stage: deploy stage
   image: path/to/docker/gcloud:the-version
@@ -1200,8 +1122,6 @@ before_script:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: stage/app
@@ -1220,8 +1140,6 @@ before_script:
       artifacts: false
     - job: 'app 🔨 docker | stage '
       artifacts: false
-    - job: 'app 🧾 sbom | stage '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: false
@@ -1242,8 +1160,6 @@ before_script:
     - gcloud run services delete pan-test-app-stage-app --project=my-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/stage/app --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: stage/app
@@ -1403,28 +1319,6 @@ before_script:
     - 'app 🔨 app | prod '
   retry: *a1
   interruptible: true
-'app 🧾 sbom | prod ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" app
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'app 🚀 Deploy | prod ':
   stage: deploy prod
   image: path/to/docker/gcloud:the-version
@@ -1504,8 +1398,6 @@ before_script:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/app" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: prod/app
@@ -1524,8 +1416,6 @@ before_script:
       artifacts: false
     - job: 'app 🔨 docker | prod '
       artifacts: false
-    - job: 'app 🧾 sbom | prod '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: true
@@ -1546,8 +1436,6 @@ before_script:
     - gcloud run services delete pan-test-app-prod-app --project=my-project-id --region=europe-west6
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/prod/app --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/my-project-id/catladder-deploy/pan-test-app/caches/app@$version --quiet --delete-tags; done
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/app" "$CI_ENVIRONMENT_URL" || true
     - set -e
   environment:
     name: prod/app

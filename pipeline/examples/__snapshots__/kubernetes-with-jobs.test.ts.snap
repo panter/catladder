@@ -334,28 +334,6 @@ before_script:
     - 'api 🔨 app | dev '
   retry: *a1
   interruptible: true
-'api 🧾 sbom | dev ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🚀 Deploy | dev ':
   stage: deploy dev
   image: path/to/docker/kubernetes:the-version
@@ -460,8 +438,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -486,8 +462,6 @@ before_script:
       artifacts: false
     - job: 'api 🧪 test | dev '
       artifacts: false
-    - job: 'api 🧾 sbom | dev '
-      artifacts: true
     - job: 'api 🛡 audit | dev '
       artifacts: false
   retry: *a1
@@ -529,8 +503,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"
     - kubectl config use-context "kube-pan-test-app-dev-api"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: dev/api
     action: stop
@@ -835,28 +807,6 @@ before_script:
     - 'api 🔨 app | review '
   retry: *a1
   interruptible: true
-'api 🧾 sbom | review ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🚀 Deploy | review ':
   stage: deploy review
   image: path/to/docker/kubernetes:the-version
@@ -957,8 +907,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -983,8 +931,6 @@ before_script:
       artifacts: false
     - job: 'api 🧪 test | review '
       artifacts: false
-    - job: 'api 🧾 sbom | review '
-      artifacts: true
     - job: 'api 🛡 audit | review '
       artifacts: false
   retry: *a1
@@ -1026,8 +972,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" --namespace="pan-test-app-review"
     - kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
     action: stop
@@ -1215,28 +1159,6 @@ before_script:
     - 'api 🔨 app | stage '
   retry: *a1
   interruptible: true
-'api 🧾 sbom | stage ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🚀 Deploy | stage ':
   stage: deploy stage
   image: path/to/docker/kubernetes:the-version
@@ -1341,8 +1263,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -1362,8 +1282,6 @@ before_script:
       artifacts: false
     - job: 'api 🔨 docker | stage '
       artifacts: false
-    - job: 'api 🧾 sbom | stage '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: false
@@ -1403,8 +1321,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"
     - kubectl config use-context "kube-pan-test-app-stage-api"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: stage/api
     action: stop
@@ -1592,28 +1508,6 @@ before_script:
     - 'api 🔨 app | prod '
   retry: *a1
   interruptible: true
-'api 🧾 sbom | prod ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" api
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'api 🚀 Deploy | prod ':
   stage: deploy prod
   image: path/to/docker/kubernetes:the-version
@@ -1718,8 +1612,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/api" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -1739,8 +1631,6 @@ before_script:
       artifacts: false
     - job: 'api 🔨 docker | prod '
       artifacts: false
-    - job: 'api 🧾 sbom | prod '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: true
@@ -1780,8 +1670,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"
     - kubectl config use-context "kube-pan-test-app-prod-api"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/api" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: prod/api
     action: stop
@@ -2089,28 +1977,6 @@ before_script:
     - 'www 🔨 app | dev '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | dev ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | dev ':
   stage: deploy dev
   image: path/to/docker/kubernetes:the-version
@@ -2205,8 +2071,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -2231,8 +2095,6 @@ before_script:
       artifacts: false
     - job: 'www 🧪 test | dev '
       artifacts: false
-    - job: 'www 🧾 sbom | dev '
-      artifacts: true
     - job: 'www 🛡 audit | dev '
       artifacts: false
   retry: *a1
@@ -2274,8 +2136,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-dev-www" --cluster="kube-pan-test-app-dev-www" --user="kube-pan-test-app-dev-www" --namespace="pan-test-app-dev"
     - kubectl config use-context "kube-pan-test-app-dev-www"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: dev/www
     action: stop
@@ -2597,28 +2457,6 @@ before_script:
     - 'www 🔨 app | review '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | review ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | review ':
   stage: deploy review
   image: path/to/docker/kubernetes:the-version
@@ -2714,8 +2552,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -2740,8 +2576,6 @@ before_script:
       artifacts: false
     - job: 'www 🧪 test | review '
       artifacts: false
-    - job: 'www 🧾 sbom | review '
-      artifacts: true
     - job: 'www 🛡 audit | review '
       artifacts: false
   retry: *a1
@@ -2783,8 +2617,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" --cluster="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" --user="kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" --namespace="pan-test-app-review"
     - kubectl config use-context "kube-pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: review/$CI_COMMIT_REF_NAME/www
     action: stop
@@ -2989,28 +2821,6 @@ before_script:
     - 'www 🔨 app | stage '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | stage ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | stage ':
   stage: deploy stage
   image: path/to/docker/kubernetes:the-version
@@ -3105,8 +2915,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -3126,8 +2934,6 @@ before_script:
       artifacts: false
     - job: 'www 🔨 docker | stage '
       artifacts: false
-    - job: 'www 🧾 sbom | stage '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: false
@@ -3167,8 +2973,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-stage-www" --cluster="kube-pan-test-app-stage-www" --user="kube-pan-test-app-stage-www" --namespace="pan-test-app-stage"
     - kubectl config use-context "kube-pan-test-app-stage-www"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: stage/www
     action: stop
@@ -3373,28 +3177,6 @@ before_script:
     - 'www 🔨 app | prod '
   retry: *a1
   interruptible: true
-'www 🧾 sbom | prod ':
-  stage: build
-  image:
-    name: aquasec/trivy:0.58.2
-    entrypoint:
-      - ''
-  variables: {}
-  script:
-    - collapseable_section_start "injectvars" "Injecting variables"
-    - collapseable_section_end "injectvars"
-    - trivy fs --quiet --format cyclonedx --output "__sbom.json" www
-  artifacts:
-    paths:
-      - __sbom.json
-  rules:
-    - when: never
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
-  interruptible: true
-  allow_failure: true
 'www 🚀 Deploy | prod ':
   stage: deploy prod
   image: path/to/docker/kubernetes:the-version
@@ -3489,8 +3271,6 @@ before_script:
     - collapseable_section_end "writeallvalues"
     - kubernetesCreateSecret
     - kubernetesDeploy
-    - echo 'Uploading SBOM to Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" upload "pan-test-app/www" "$ROOT_URL" "__sbom.json" vex.json || true
     - echo deployment successful 😻
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
@@ -3510,8 +3290,6 @@ before_script:
       artifacts: false
     - job: 'www 🔨 docker | prod '
       artifacts: false
-    - job: 'www 🧾 sbom | prod '
-      artifacts: true
   retry: *a1
   interruptible: true
   allow_failure: true
@@ -3551,8 +3329,6 @@ before_script:
     - kubectl config set-context "kube-pan-test-app-prod-www" --cluster="kube-pan-test-app-prod-www" --user="kube-pan-test-app-prod-www" --namespace="pan-test-app-prod"
     - kubectl config use-context "kube-pan-test-app-prod-www"
     - kubernetesDelete
-    - echo 'Disabling component in Dependency Track'
-    - /dtrackuploader https://dep.panter.swiss/ "$DT_KEY_PROD" disable "pan-test-app/www" "$CI_ENVIRONMENT_URL" || true
   environment:
     name: prod/www
     action: stop

@@ -1,5 +1,4 @@
 import type { ComponentContext } from "../../../types/context";
-import { getDependencyTrackDeleteScript } from "../../sbom";
 
 import { getRemoveOldRevisionsAndImagesCommand } from "../cleanup";
 import { getDatabaseDeleteScript } from "../utils/database";
@@ -27,6 +26,5 @@ export function getCloudRunStopScripts(context: ComponentContext) {
       : []),
 
     ...getRemoveOldRevisionsAndImagesCommand(context, "onStop"), // we cleanup inactive images both on deploy and stop
-    ...getDependencyTrackDeleteScript(context),
   ];
 }

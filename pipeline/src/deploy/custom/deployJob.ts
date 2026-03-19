@@ -4,10 +4,7 @@ import { getRunnerImage } from "../../runner";
 import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createDeployementJobs } from "../base";
-import {
-  getDependencyTrackDeleteScript,
-  getDependencyTrackUploadScript,
-} from "../sbom";
+
 import { isOfDeployType } from "../types";
 
 export const createCustomDeployJobs = (
@@ -32,17 +29,13 @@ export const createCustomDeployJobs = (
         `cd ${context.build.dir}`,
         ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
         ...deployConfig.script,
-        ...getDependencyTrackUploadScript(context),
       ],
       variables: {},
     },
     stop: deployConfig.stopScript
       ? {
           image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
-          script: [
-            ...deployConfig.stopScript,
-            ...getDependencyTrackDeleteScript(context),
-          ],
+          script: [...deployConfig.stopScript],
           variables: {},
         }
       : undefined,

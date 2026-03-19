@@ -1,7 +1,6 @@
 import { omit } from "lodash";
 import type { ComponentContext } from "../../../types/context";
 import { collapseableSection } from "../../../utils/gitlab";
-import { getDependencyTrackUploadScript } from "../../sbom";
 
 import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from "..";
 import { writeBashYamlToFileScript } from "../../../bash/bashYaml";
@@ -70,6 +69,5 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
     )(
       getRemoveOldRevisionsAndImagesCommand(context, "postDeploy"), // we cleanup inactive images both on deploy and stop
     ),
-    ...getDependencyTrackUploadScript(context),
   ];
 }

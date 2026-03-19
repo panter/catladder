@@ -19,5 +19,3 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | b
     /root/.nvm/nvm.sh install 18 && \
     /root/.nvm/nvm.sh install 20 && \
     /root/.nvm/nvm.sh install 22
-
-COPY --from=git.panter.ch:5001/open-source/dependency-track-uploader:dtrackuploader-v0.4.0 /dtrackuploader /

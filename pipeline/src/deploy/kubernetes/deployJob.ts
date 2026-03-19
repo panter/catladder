@@ -3,10 +3,7 @@ import { getRunnerImage } from "../../runner";
 import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
 import { createDeployementJobs } from "../base";
-import {
-  getDependencyTrackDeleteScript,
-  getDependencyTrackUploadScript,
-} from "../sbom";
+
 import { isOfDeployType } from "../types";
 import { createKubeValues } from "./kubeValues";
 
@@ -80,17 +77,13 @@ export const createKubernetesDeployJobs = (
         ),
         "kubernetesCreateSecret",
         "kubernetesDeploy",
-        ...getDependencyTrackUploadScript(context),
+
         "echo deployment successful 😻",
       ],
     },
     stop: {
       ...shared,
-      script: [
-        ...connectContext,
-        "kubernetesDelete",
-        ...getDependencyTrackDeleteScript(context),
-      ],
+      script: [...connectContext, "kubernetesDelete"],
     },
     rollback: {
       ...shared,
