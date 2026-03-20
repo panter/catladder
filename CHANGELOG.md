@@ -1,3 +1,10 @@
+## [3.42.1](https://git.panter.ch/catladder/catladder/compare/v3.42.0...v3.42.1) (2026-03-20)
+
+
+### Bug Fixes
+
+* audit command broken in yarn 2+ ([44c3ecb](https://git.panter.ch/catladder/catladder/commit/44c3ecb9dbb46d2614e5a9b13f89cb88453c4481))
+
 # [3.42.0](https://git.panter.ch/catladder/catladder/compare/v3.41.0...v3.42.0) (2026-03-19)
 
 
