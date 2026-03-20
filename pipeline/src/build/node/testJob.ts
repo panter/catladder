@@ -60,7 +60,7 @@ export const createNodeTestJobs = (
             ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
               context.packageManagerInfo.isClassic
                 ? "yarn audit --level critical"
-                : "yarn npm audit --environment production --level critical", // yarn 2
+                : "yarn npm audit --environment production --severity critical", // yarn 2
             ]),
           ],
           allow_failure: buildConfig.audit?.allowFailure ?? true,

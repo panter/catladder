@@ -115,7 +115,7 @@ before_script:
     - export APP_PATH="api"
     - collapseable_section_end "injectvars"
     - cd api
-    - yarn npm audit --environment production --level critical
+    - yarn npm audit --environment production --severity critical
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -484,7 +484,7 @@ before_script:
     - export APP_PATH="api"
     - collapseable_section_end "injectvars"
     - cd api
-    - yarn npm audit --environment production --level critical
+    - yarn npm audit --environment production --severity critical
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
