@@ -1,3 +1,10 @@
+# [3.43.0](https://git.panter.ch/catladder/catladder/compare/v3.42.1...v3.43.0) (2026-03-30)
+
+
+### Features
+
+* add Cloud Run worker pool support ([a9a7973](https://git.panter.ch/catladder/catladder/commit/a9a7973975cd162f1c47f51233a9c78049ab544d))
+
 ## [3.42.1](https://git.panter.ch/catladder/catladder/compare/v3.42.0...v3.42.1) (2026-03-20)
 
 
