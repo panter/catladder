@@ -1,3 +1,10 @@
+# [3.44.0](https://git.panter.ch/catladder/catladder/compare/v3.43.0...v3.44.0) (2026-04-14)
+
+
+### Features
+
+* no longer install healthcheck package in meteor build ([a5fa431](https://git.panter.ch/catladder/catladder/commit/a5fa4316287721eb476a240fd285bada891902a7))
+
 # [3.43.0](https://git.panter.ch/catladder/catladder/compare/v3.42.1...v3.43.0) (2026-03-30)
 
 
