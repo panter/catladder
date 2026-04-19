@@ -1,3 +1,10 @@
+# [3.45.0](https://git.panter.ch/catladder/catladder/compare/v3.44.0...v3.45.0) (2026-04-19)
+
+
+### Features
+
+* do not install meteor prod shell ([9568b1f](https://git.panter.ch/catladder/catladder/commit/9568b1fda38ba9593234d54523d5f09b9134e4be))
+
 # [3.44.0](https://git.panter.ch/catladder/catladder/compare/v3.43.0...v3.44.0) (2026-04-14)
 
 
