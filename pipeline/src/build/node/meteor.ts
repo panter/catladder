@@ -48,8 +48,6 @@ export const createMeteorBuildJobs = (
             script: [
               ...yarnInstall,
 
-              "meteor add qualia:prod-shell --allow-superuser",
-
               'TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory',
 
               "cp ./__build_info.json ./dist/bundle/programs/server",
