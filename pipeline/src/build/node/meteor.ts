@@ -1,3 +1,4 @@
+import { BashExpression } from "../../bash/BashExpression";
 import { getRunnerImage } from "../../runner";
 import type {
   ComponentContext,
@@ -25,6 +26,39 @@ const getMeteorCache = (context: ComponentContext): CacheConfig[] => [
     ],
   },
 ];
+const getMeteorDockerInstallScripts = (
+  context: ComponentContextWithBuild,
+): BashExpression => {
+  if (context.packageManagerInfo.isClassic) {
+    return new BashExpression(
+      `
+COPY $APP_DIR/package.json $APP_DIR/yarn.lock ./
+
+RUN yarn --frozen-lockfile --production=true --ignore-scripts --ignore-engines
+COPY $APP_DIR .
+RUN yarn --frozen-lockfile --production=true --ignore-engines
+      `.trim(),
+    );
+  }
+
+  // yarn >= 4 ships with built-in plugins, see https://github.com/yarnpkg/berry/pull/4253
+  const doesNotShipWithBuiltInPlugins = ["2", "3"].some((v) =>
+    context.packageManagerInfo.version.startsWith(v),
+  );
+  const maybeAddWorkspaceToolsCommand = doesNotShipWithBuiltInPlugins
+    ? "RUN yarn plugin import workspace-tools"
+    : "";
+
+  return new BashExpression(
+    `
+ENV YARN_ENABLE_INLINE_BUILDS=1
+COPY $APP_DIR .
+${maybeAddWorkspaceToolsCommand}
+RUN yarn workspaces focus --production
+    `.trim(),
+  );
+};
+
 export const createMeteorBuildJobs = (
   context: ComponentContextWithBuild,
 ): CatladderJob[] => {
@@ -57,7 +91,9 @@ export const createMeteorBuildJobs = (
     dockerBuild: {
       script: getDockerBuildScriptWithBuiltInDockerFile(context, "meteor"),
       variables: {
-        METEOR_INSTALL_SCRIPTS: buildConfig.installScripts ? "true" : "",
+        METEOR_INSTALL_SCRIPTS: buildConfig.installScripts
+          ? getMeteorDockerInstallScripts(context)
+          : "",
       },
     },
   });

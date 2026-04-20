@@ -23,18 +23,6 @@ if [ ! -f $APP_DIR/Dockerfile ]; then
     else
         DOCKER_IMAGE="node:$NODE_VERSION"
     fi
-    INSTALL_SCRIPTS=""
-    if [[ $METEOR_INSTALL_SCRIPTS == "true" ]]; then
-        read -d '' INSTALL_SCRIPTS <<EOF
-
-COPY $APP_DIR/package.json $APP_DIR/yarn.lock ./
-
-RUN yarn --frozen-lockfile --production=true --ignore-scripts --ignore-engines
-COPY $APP_DIR .
-RUN yarn --frozen-lockfile --production=true --ignore-engines
-EOF
-    fi
-
     cat >$APP_DIR/Dockerfile <<EOF
 FROM $DOCKER_IMAGE
 
@@ -48,7 +36,7 @@ $DOCKERFILE_ADDITIONS
 # we copy also source code and scripts for commands
 # This is technically not required for meteor, but useful if we have additional scripts 
 WORKDIR /src
-$INSTALL_SCRIPTS
+$METEOR_INSTALL_SCRIPTS
 
 
 # copy the bundle
