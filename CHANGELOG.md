@@ -1,3 +1,10 @@
+# [3.46.0](https://git.panter.ch/catladder/catladder/compare/v3.45.0...v3.46.0) (2026-04-20)
+
+
+### Features
+
+* **meteor:** support yarn 2+  for build scripts in meteor dockerfile ([b84a56a](https://git.panter.ch/catladder/catladder/commit/b84a56aa024aace284a716d51bdc408c2ce50d51))
+
 # [3.45.0](https://git.panter.ch/catladder/catladder/compare/v3.44.0...v3.45.0) (2026-04-19)
 
 
