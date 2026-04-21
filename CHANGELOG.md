@@ -1,3 +1,10 @@
+## [3.46.2](https://git.panter.ch/catladder/catladder/compare/v3.46.1...v3.46.2) (2026-04-21)
+
+
+### Bug Fixes
+
+* inline INLINE_PIPELINE_IMAGE_TAG so that it uses the correct image of that version ([8814f0c](https://git.panter.ch/catladder/catladder/commit/8814f0c20768ac1524f16569c1d99e7566fcc306))
+
 ## [3.46.1](https://git.panter.ch/catladder/catladder/compare/v3.46.0...v3.46.1) (2026-04-21)
 
 # [3.46.0](https://git.panter.ch/catladder/catladder/compare/v3.45.0...v3.46.0) (2026-04-20)
