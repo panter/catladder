@@ -1,3 +1,10 @@
+## [3.47.1](https://git.panter.ch/catladder/catladder/compare/v3.47.0...v3.47.1) (2026-05-12)
+
+
+### Bug Fixes
+
+* pin mcp-gitlab to v2.1.10 for work items support ([78af8dd](https://git.panter.ch/catladder/catladder/commit/78af8dd204022da19bab6ca9e15ac9c4d5c0c565))
+
 # [3.47.0](https://git.panter.ch/catladder/catladder/compare/v3.46.2...v3.47.0) (2026-05-12)
 
 
