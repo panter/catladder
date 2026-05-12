@@ -1,3 +1,10 @@
+# [3.47.0](https://git.panter.ch/catladder/catladder/compare/v3.46.2...v3.47.0) (2026-05-12)
+
+
+### Features
+
+* update claude code to 2.1.139 ([798796f](https://git.panter.ch/catladder/catladder/commit/798796f5f4e6b9b0156071e6b7b3f4e64b5eee2b))
+
 ## [3.46.2](https://git.panter.ch/catladder/catladder/compare/v3.46.1...v3.46.2) (2026-04-21)
 
 
