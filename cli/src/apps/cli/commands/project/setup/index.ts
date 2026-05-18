@@ -1,4 +1,4 @@
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { getAllPipelineContexts } from "../../../../../config/getProjectConfig";
 import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
@@ -7,7 +7,7 @@ import { setupAgents } from "./setupAgents";
 import { logSection } from "./logSection";
 
 export const setupProject = async (
-  instance: CommandInstance,
+  instance: IO,
   onlyComponents?: string | string[],
 ) => {
   const allContext = await getAllPipelineContexts(onlyComponents);

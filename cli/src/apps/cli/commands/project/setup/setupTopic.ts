@@ -1,9 +1,9 @@
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 
 const catladderTopic = "catladder";
 
-export const setupTopic = async (instance: CommandInstance) => {
+export const setupTopic = async (instance: IO) => {
   const { id: projectId } = await getProjectInfo(instance);
 
   const { topics } = await doGitlabRequest(instance, `projects/${projectId}`);

@@ -1,10 +1,10 @@
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { add, format } from "date-fns";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 
 const TOKEN_NAME = "semantic-release";
 
-export const setupAccessTokens = async (instance: CommandInstance) => {
+export const setupAccessTokens = async (instance: IO) => {
   const { id: projectId } = await getProjectInfo(instance);
 
   const projectTokens = await doGitlabRequest(

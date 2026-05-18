@@ -1,4 +1,4 @@
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 import { getProjectConfig } from "../../../../../config/getProjectConfig";
 import { getGitRemoteHostAndPath } from "../../../../../git/gitProjectInformation";
@@ -60,14 +60,14 @@ type WebhookData = {
 };
 
 const listTriggerTokens = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
 ): Promise<TriggerToken[]> => {
   return await doGitlabRequest(instance, `projects/${projectId}/triggers`);
 };
 
 const deleteTriggerToken = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
   triggerId: number,
 ): Promise<void> => {
@@ -80,7 +80,7 @@ const deleteTriggerToken = async (
 };
 
 const createTriggerToken = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
   description: string,
 ): Promise<TriggerToken> => {
@@ -93,14 +93,14 @@ const createTriggerToken = async (
 };
 
 const listWebhooks = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
 ): Promise<Webhook[]> => {
   return await doGitlabRequest(instance, `projects/${projectId}/hooks`);
 };
 
 const createWebhook = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
   webhookData: WebhookData,
 ): Promise<Webhook> => {
@@ -113,7 +113,7 @@ const createWebhook = async (
 };
 
 const updateWebhook = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
   hookId: number,
   webhookData: WebhookData,
@@ -127,7 +127,7 @@ const updateWebhook = async (
 };
 
 const setupAgentWebhook = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
   agentName: string,
   triggerToken: string,
@@ -231,7 +231,7 @@ const setupAgentWebhook = async (
 };
 
 const setupAgentTriggerToken = async (
-  instance: CommandInstance,
+  instance: IO,
   projectId: string,
   agentName: string,
 ): Promise<TriggerToken> => {
@@ -266,7 +266,7 @@ const setupAgentTriggerToken = async (
 };
 
 const setupAgent = async (
-  instance: CommandInstance,
+  instance: IO,
   agentName: string,
   agentConfig: AgentConfig,
 ) => {
@@ -287,7 +287,7 @@ const setupAgent = async (
   instance.log(`✅ Agent ${agentName} setup complete!`);
 };
 
-export const setupAgents = async (instance: CommandInstance) => {
+export const setupAgents = async (instance: IO) => {
   const config = await getProjectConfig();
 
   instance.log("");

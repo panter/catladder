@@ -45,27 +45,3 @@ export async function ensureCluster(
     }
   }
 }
-
-/**
- * @deprecated Use `ensureCluster(io, envComponent)` instead.
- * Backward-compatible version that works with Vorpal's `.call(this, envComponent)` pattern.
- */
-export default async function (this: any, envComponent: string) {
-  // Bridge: wrap Vorpal's CommandInstance as IO
-  const io: IO = {
-    log: (message: string) => this.log(message),
-    confirm: async (message: string) => {
-      const result = await this.prompt({
-        type: "confirm",
-        name: "confirmed",
-        message,
-      });
-      return result.confirmed;
-    },
-    promptDirect: async (spec) => {
-      const result = await this.prompt(spec);
-      return result[spec.name];
-    },
-  };
-  return ensureCluster(io, envComponent);
-}

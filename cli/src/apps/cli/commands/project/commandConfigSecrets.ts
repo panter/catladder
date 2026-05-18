@@ -1,8 +1,7 @@
 import { getSecretVarName } from "@catladder/pipeline";
 import { stripIndents } from "common-tags";
 import { difference } from "lodash";
-import type { CommandInstance } from "vorpal";
-import type Vorpal from "vorpal";
+import type { IO } from "../../../../core/types";
 import {
   getAllComponentsWithAllEnvsHierarchical,
   getEnvironment,
@@ -14,7 +13,6 @@ import {
 import { editAsFile } from "../../../../utils/editAsFile";
 import { upsertAllVariables } from "../../../../utils/gitlab";
 import { delay } from "../../../../utils/promise";
-import { allEnvsAndAllComponents } from "./utils/autocompletions";
 
 type Vars = {
   [env: string]: {
@@ -62,7 +60,7 @@ const getSecretEnvVarKeysToConfigure = async (
     .map((k) => k.key);
 };
 const getEnvVarsToEdit = async (
-  instance: CommandInstance,
+  instance: IO,
   env: string,
   componentName: string,
 ) => {
@@ -92,7 +90,7 @@ const getEnvVarsToEdit = async (
   );
 };
 const doItFor = async (
-  instance: CommandInstance,
+  instance: IO,
   envAndComponents: {
     [componentName: string]: string[];
   },
@@ -161,12 +159,7 @@ const doItFor = async (
           }
 
           await delay(1000);
-          const { shouldContinue } = await instance.prompt({
-            default: true,
-            message: "Try again? 🤔",
-            name: "shouldContinue",
-            type: "confirm",
-          });
+          const shouldContinue = await instance.confirm("Try again? 🤔");
 
           if (!shouldContinue) {
             throw new Error("abort");
@@ -197,40 +190,22 @@ const doItFor = async (
   instance.log("");
 };
 
-export const projectConfigSecrets = async (
-  vorpal: CommandInstance,
-  envComponent?: string,
-) => {
+export const projectConfigSecrets = async (io: IO, envComponent?: string) => {
   if (!envComponent) {
     const allEnvAndcomponents = await getAllComponentsWithAllEnvsHierarchical();
-    await doItFor(vorpal, allEnvAndcomponents);
+    await doItFor(io, allEnvAndcomponents);
   } else {
     const { env, componentName } = parseChoice(envComponent);
 
     // componentName can be null. in this case, iterate over all  components
     if (!componentName) {
       const components = await getProjectComponents();
-      await doItFor(
-        vorpal,
-        Object.fromEntries(components.map((c) => [c, [env]])),
-      );
+      await doItFor(io, Object.fromEntries(components.map((c) => [c, [env]])));
     }
     if (componentName) {
-      await doItFor(vorpal, {
+      await doItFor(io, {
         [componentName]: [env],
       });
     }
   }
-};
-
-export default async (vorpal: Vorpal) => {
-  vorpal
-    .command(
-      "project-config-secrets [envComponent]",
-      "setup/update secrets stored in pass",
-    )
-    .autocomplete(await allEnvsAndAllComponents())
-    .action(async function ({ envComponent }) {
-      return await projectConfigSecrets(this, envComponent);
-    });
 };

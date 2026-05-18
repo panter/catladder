@@ -86,7 +86,7 @@ export const commandProjectRestoreDb = defineCommand({
       sourceComponent,
     );
     const sourceEnvVars = await getEnvVarsResolved(
-      ctx as any,
+      ctx,
       sourceContext.env,
       sourceContext.name,
     );
@@ -135,7 +135,7 @@ export const commandProjectRestoreDb = defineCommand({
       targetComponent,
     );
     const targetEnvVars = await getEnvVarsResolved(
-      ctx as any,
+      ctx,
       targetContext.env,
       targetContext.name,
     );

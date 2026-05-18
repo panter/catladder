@@ -39,7 +39,7 @@ export const commandMongoPortForward = defineCommand({
 
     const localPort = await ctx.get("localPort");
     const { env, componentName } = parseChoice(envComponent);
-    const envVars = await getEnvVarsResolved(ctx as any, env, componentName);
+    const envVars = await getEnvVarsResolved(ctx, env, componentName);
     const MONGODB_ROOT_PASSWORD = envVars?.MONGODB_ROOT_PASSWORD;
     const connectionUrl = `mongodb://root:${MONGODB_ROOT_PASSWORD}@localhost:${localPort}`;
     clipboard.writeSync(connectionUrl);

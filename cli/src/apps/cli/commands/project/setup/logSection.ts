@@ -1,7 +1,7 @@
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 
 export const logSection = async (
-  instance: CommandInstance,
+  instance: IO,
   title: string,
   work: () => Promise<void>,
 ) => {

@@ -1,15 +1,12 @@
 import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { setupCloudRun } from "./setupCloudRun";
 
 import { setupKubernetes } from "./setupKubernetes";
 import { logSection } from "./logSection";
 
-export const setupContext = async (
-  instance: CommandInstance,
-  context: ComponentContext,
-) => {
+export const setupContext = async (instance: IO, context: ComponentContext) => {
   await logSection(
     instance,
     "setting up " + context.env + ":" + context.name,

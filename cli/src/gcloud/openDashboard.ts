@@ -1,8 +1,8 @@
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../core/types";
 import { getGoogleAuthUserNumber } from "../apps/cli/utils/getGoogleAuthUserNumber";
 import open from "open";
 export const openGoogleCloudDashboard = async (
-  instance: CommandInstance,
+  instance: IO,
   path: string,
   params: Record<string, string>,
 ) => {
@@ -12,7 +12,7 @@ export const openGoogleCloudDashboard = async (
     url.searchParams.set(key, value);
   }
 
-  const googleAuthUserNumber = await getGoogleAuthUserNumber.call(instance);
+  const googleAuthUserNumber = await getGoogleAuthUserNumber(instance);
   url.searchParams.set("authuser", googleAuthUserNumber);
 
   open(url.toString());

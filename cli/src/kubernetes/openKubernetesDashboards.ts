@@ -1,10 +1,10 @@
 import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../core/types";
 import { openGoogleCloudDashboard } from "../gcloud/openDashboard";
 
 export const openGoogleCloudLogs = async (
-  instance: CommandInstance,
+  instance: IO,
   context: ComponentContext,
 ) => {
   const deployConfig = context.deploy?.config;
@@ -30,7 +30,7 @@ export const openGoogleCloudLogs = async (
 };
 
 export const openGoogleCloudKubernetesDashboard = async (
-  instance: CommandInstance,
+  instance: IO,
   context: ComponentContext,
 ) => {
   const deployConfig = context.deploy?.config;

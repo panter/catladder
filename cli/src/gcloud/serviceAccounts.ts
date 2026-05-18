@@ -2,7 +2,7 @@ import type { ComponentContext } from "@catladder/pipeline";
 
 import { exec } from "child-process-promise";
 import { createHmac } from "crypto";
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../core/types";
 import { upsertAllVariables } from "../utils/gitlab";
 
 export const accountExists = async (fullIdentifier: string) => {
@@ -93,7 +93,7 @@ const upsertGcloudServiceAccount = async (
 };
 
 export const upsertGcloudServiceAccountAndSaveSecret = async (
-  instance: CommandInstance,
+  instance: IO,
   context: ComponentContext,
   account: ServiceAccount,
   secretName: string,

@@ -18,7 +18,7 @@ export const commandEnvVars = defineCommand({
     const envComponent = await ctx.get("envComponent");
     const { env, componentName } = parseChoice(envComponent);
     // Pass ctx as the logger (IO satisfies LoggerCmdInstance)
-    const envvars = await getEnvVarsResolved(ctx as any, env, componentName);
+    const envvars = await getEnvVarsResolved(ctx, env, componentName);
     Object.keys(envvars).forEach((key) => ctx.log(`${key}: ${envvars[key]}`));
   },
 });

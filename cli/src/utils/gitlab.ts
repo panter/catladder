@@ -3,36 +3,31 @@ import { has, isObject } from "lodash";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../core/types";
 import { getPreference, hasPreference, setPreference } from "./preferences";
 import { getGitRemoteHostAndPath } from "../git/gitProjectInformation";
 
 const TOKEN_KEY = "gitlab-personal-access-token";
 
 export const hasGitlabToken = async () => await hasPreference(TOKEN_KEY);
-export const setupGitlabToken = async (vorpal: CommandInstance) => {
-  vorpal.log("");
-  vorpal.log("☝ in order to access the api, we need a personal access token");
-  vorpal.log("Its best to create one specifically for catladder");
-  vorpal.log("Scopes needed: api");
-  vorpal.log("");
-  vorpal.log("☝ we open up the settings page for you!");
-  vorpal.log("");
-  const [{ shouldContinue }, { gitRemoteHost }] = await Promise.all([
-    vorpal.prompt({
-      default: true,
-      message: "Ok",
-      name: "shouldContinue",
-      type: "prompt",
-    }),
+export const setupGitlabToken = async (io: IO) => {
+  io.log("");
+  io.log("☝ in order to access the api, we need a personal access token");
+  io.log("Its best to create one specifically for catladder");
+  io.log("Scopes needed: api");
+  io.log("");
+  io.log("☝ we open up the settings page for you!");
+  io.log("");
+  const [shouldContinue, { gitRemoteHost }] = await Promise.all([
+    io.confirm("Ok"),
     getGitRemoteHostAndPath(),
   ]);
 
   open(`https://${gitRemoteHost}/-/user_settings/personal_access_tokens`);
 
-  vorpal.log("Please type in gitlab's personal access token");
+  io.log("Please type in gitlab's personal access token");
 
-  const { personalToken } = await vorpal.prompt({
+  const personalToken = await io.promptDirect({
     type: "string",
     name: "personalToken",
     default: "",
@@ -42,28 +37,28 @@ export const setupGitlabToken = async (vorpal: CommandInstance) => {
     await setPreference(TOKEN_KEY, personalToken);
   }
 };
-export const getGitlabToken = async (vorpal: CommandInstance | null) => {
+export const getGitlabToken = async (io: IO | null) => {
   if (!(await hasGitlabToken())) {
-    if (!vorpal) {
+    if (!io) {
       console.error(
         "⚠️ gitlab token missing, please run catladder to set it up",
       );
       process.exit(1);
     }
-    await setupGitlabToken(vorpal);
+    await setupGitlabToken(io);
   }
   return getPreference(TOKEN_KEY);
 };
 
 type Method = "GET" | "PUT" | "POST" | "DELETE";
 export const doGitlabRequest = async <T = any>(
-  vorpal: CommandInstance | null,
+  io: IO | null,
   path: string,
   data: any = undefined,
   method: Method = "GET",
 ): Promise<T> => {
   const [rootToken, { gitRemoteHost }] = await Promise.all([
-    getGitlabToken(vorpal),
+    getGitlabToken(io),
     getGitRemoteHostAndPath(),
   ]);
 
@@ -96,11 +91,11 @@ export const doGitlabRequest = async <T = any>(
 };
 
 export const getProjectInfo = async (
-  vorpal: CommandInstance | null,
+  io: IO | null,
 ): Promise<{ id: string; web_url: string }> => {
   const { gitRemotePath } = await getGitRemoteHostAndPath();
   const project = await doGitlabRequest(
-    vorpal,
+    io,
     `projects/${encodeURIComponent(gitRemotePath)}`,
   );
   return project;
@@ -116,10 +111,10 @@ type GitlabVariable = {
 };
 export const getAllVariables = memoizee(
   async (
-    vorpal: CommandInstance | null,
+    io: IO | null,
     n = 5, // how many requests to do in parallel, 5 seems a good value for many projects, ideally we would do one request in parallel per component
   ): Promise<Array<GitlabVariable>> => {
-    const { id } = await getProjectInfo(vorpal);
+    const { id } = await getProjectInfo(io);
 
     let all: Array<GitlabVariable> = [];
     let result: Array<Array<GitlabVariable>> = [];
@@ -129,7 +124,7 @@ export const getAllVariables = memoizee(
       // Create an array of promises for N pages
       const promises = Array.from({ length: n }, (_, i) => {
         return doGitlabRequest(
-          vorpal,
+          io,
           `projects/${id}/variables?per_page=100&page=${page + i}`,
         );
       });
@@ -150,11 +145,8 @@ export const getAllVariables = memoizee(
   { promise: true },
 );
 
-export const getVariableValueByRawName = async (
-  vorpal: CommandInstance,
-  rawName: string,
-) => {
-  const allVariables = await getAllVariables(vorpal);
+export const getVariableValueByRawName = async (io: IO, rawName: string) => {
+  const allVariables = await getAllVariables(io);
   return allVariables.find((v) => v.key === rawName)?.value;
 };
 
@@ -162,7 +154,7 @@ const maskableRegex = new RegExp("^[a-zA-Z0-9_+=/@:.~-]{8,}$"); // SEE https://g
 const isMaskable = (value: string): boolean => maskableRegex.test(value);
 
 const createVariable = async (
-  vorpal: CommandInstance,
+  io: IO,
   projectId: string,
   key: string,
   value: string,
@@ -170,7 +162,7 @@ const createVariable = async (
   environment_scope = "*",
 ) => {
   return await doGitlabRequest(
-    vorpal,
+    io,
     `projects/${projectId}/variables`,
     {
       key,
@@ -183,14 +175,14 @@ const createVariable = async (
 };
 
 const updateVariable = async (
-  vorpal: CommandInstance,
+  io: IO,
   projectId: string,
   key: string,
   value: string,
   masked = true,
 ) => {
   return await doGitlabRequest(
-    vorpal,
+    io,
     `projects/${projectId}/variables/${key}`,
     {
       value,
@@ -200,21 +192,17 @@ const updateVariable = async (
   );
 };
 
-const deleteVariable = async (
-  vorpal: CommandInstance,
-  projectId: string,
-  key: string,
-) => {
+const deleteVariable = async (io: IO, projectId: string, key: string) => {
   return await doGitlabRequest(
-    vorpal,
+    io,
     `projects/${projectId}/variables/${key}`,
     undefined,
     "DELETE",
   );
 };
 
-const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
-  const allVariables = await getAllVariables(vorpal).then((v) =>
+const getAllCatladderEnvVarsInGitlab = async (io: IO) => {
+  const allVariables = await getAllVariables(io).then((v) =>
     v.reduce<{
       [key: string]: {
         value?: string;
@@ -257,32 +245,32 @@ const getAllCatladderEnvVarsInGitlab = async (vorpal: CommandInstance) => {
 
 const getBackupKey = (fullKey: string, timestamp: number) =>
   `${fullKey}_backup_${timestamp}`;
-export const clearBackups = async (vorpal: CommandInstance, keep: number) => {
-  const existingVariables = await getAllCatladderEnvVarsInGitlab(vorpal);
-  const { id } = await getProjectInfo(vorpal);
+export const clearBackups = async (io: IO, keep: number) => {
+  const existingVariables = await getAllCatladderEnvVarsInGitlab(io);
+  const { id } = await getProjectInfo(io);
   for (const [key, { backups }] of Object.entries(existingVariables)) {
     const backupsSorted = backups.sort((a, b) => b - a);
     //const toKeep = backupsSorted.slice(0, keep);
     const toDelete = backupsSorted.slice(keep);
 
     for (const timestamp of toDelete) {
-      await deleteVariable(vorpal, id, getBackupKey(key, timestamp));
+      await deleteVariable(io, id, getBackupKey(key, timestamp));
     }
   }
 };
 
 export const upsertAllVariables = async (
-  vorpal: CommandInstance,
+  io: IO,
   variables: Record<string, any>,
   env: string,
   componentName: string,
   backup = true,
   masked = true, // FIXME: would be better to have this per variable
 ): Promise<void> => {
-  const { id } = await getProjectInfo(vorpal);
+  const { id } = await getProjectInfo(io);
 
   // we list all existing variables. We also gather backup versions, but its currently unused
-  const existingVariables = await getAllCatladderEnvVarsInGitlab(vorpal);
+  const existingVariables = await getAllCatladderEnvVarsInGitlab(io);
   for (const [key, value] of Object.entries(variables ?? {})) {
     const fullKey = getSecretVarName(env, componentName, key);
     const valueSanitized = isObject(value) ? JSON.stringify(value) : `${value}`;
@@ -292,13 +280,13 @@ export const upsertAllVariables = async (
     const changed = oldValue !== valueSanitized;
     if (changed) {
       if (exists) {
-        vorpal.log(`changed: ${key}`);
+        io.log(`changed: ${key}`);
 
-        await updateVariable(vorpal, id, fullKey, valueSanitized, masked);
+        await updateVariable(io, id, fullKey, valueSanitized, masked);
         // write backup
         if (backup) {
           await createVariable(
-            vorpal,
+            io,
             id,
             getBackupKey(fullKey, new Date().getTime()),
             oldValue,
@@ -307,11 +295,11 @@ export const upsertAllVariables = async (
           );
         }
       } else {
-        vorpal.log(`new    : ${key}`);
-        await createVariable(vorpal, id, fullKey, valueSanitized, masked);
+        io.log(`new    : ${key}`);
+        await createVariable(io, id, fullKey, valueSanitized, masked);
       }
     } else {
-      vorpal.log(`skip   : ${key}`);
+      io.log(`skip   : ${key}`);
     }
   }
   getAllVariables.clear();

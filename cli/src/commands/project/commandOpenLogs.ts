@@ -22,6 +22,6 @@ export const commandOpenLogs = defineCommand({
     const envComponent = await ctx.get("envComponent");
     const { env, componentName } = parseChoice(envComponent);
     const context = await getPipelineContextByChoice(env, componentName);
-    await openGoogleCloudLogs(ctx as any, context);
+    await openGoogleCloudLogs(ctx, context);
   },
 });

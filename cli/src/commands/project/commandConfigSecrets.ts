@@ -25,6 +25,6 @@ export const commandConfigSecrets = defineCommand({
     // internally (not ctx.prompt), we pass ctx which satisfies the
     // IO interface for logging. The interactive prompts inside
     // projectConfigSecrets will need a deeper migration later.
-    await projectConfigSecrets(ctx as any, envComponent);
+    await projectConfigSecrets(ctx, envComponent);
   },
 });

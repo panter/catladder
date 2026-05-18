@@ -5,7 +5,7 @@ import {
   isOfDeployType,
 } from "@catladder/pipeline";
 
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { upsertGcloudArtifactsRegistry } from "../../../../../gcloud/artifactsRegistry";
 import { getCloudRunDomainSuffix } from "../../../../../gcloud/cloudRun/getCloudRunDomainSuffix";
 import { enableGCloudServices } from "../../../../../gcloud/enableServices";
@@ -13,7 +13,7 @@ import { upsertGcloudServiceAccountAndSaveSecret } from "../../../../../gcloud/s
 import { upsertAllVariables } from "../../../../../utils/gitlab";
 
 export const setupCloudRun = async (
-  instance: CommandInstance,
+  instance: IO,
   context: ComponentContext,
 ) => {
   if (!isOfDeployType(context.deploy?.config, "google-cloudrun")) {

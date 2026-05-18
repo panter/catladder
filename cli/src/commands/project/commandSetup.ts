@@ -11,6 +11,6 @@ export const commandSetup = defineCommand({
   },
   execute: async (ctx) => {
     const component = await ctx.get("component");
-    await setupProject(ctx as any, component);
+    await setupProject(ctx, component);
   },
 });

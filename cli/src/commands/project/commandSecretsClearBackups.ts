@@ -14,6 +14,6 @@ export const commandSecretsClearBackups = defineCommand({
   },
   execute: async (ctx) => {
     const keep = await ctx.get("keep");
-    await clearBackups(ctx as any, keep);
+    await clearBackups(ctx, keep);
   },
 });

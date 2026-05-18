@@ -11,7 +11,7 @@ import {
   getSecretVarName,
 } from "@catladder/pipeline";
 
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../core/types";
 import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
 
 import { getGitRoot } from "../utils/projects";
@@ -121,20 +121,20 @@ export const getEnvironment = async (env: string, componentName: string) => {
 };
 
 export const getGitlabVar = async (
-  vorpal: CommandInstance,
+  io: IO,
   env: string,
   componentName: string,
   variableName: string,
 ) => {
   const rawVariableName = getSecretVarName(env, componentName, variableName);
-  return await getVariableValueByRawName(vorpal, rawVariableName);
+  return await getVariableValueByRawName(io, rawVariableName);
 };
 
 const resolveSecrets = async (
-  vorpal: CommandInstance | null,
+  io: IO | null,
   varSets: EnvironmentEnvVars[],
 ): Promise<Record<string, string>> => {
-  const allVariablesInGitlab = await getAllVariables(vorpal);
+  const allVariablesInGitlab = await getAllVariables(io);
 
   return Object.fromEntries(
     varSets.flatMap(({ envVars, secretEnvVarKeys }) =>
@@ -158,7 +158,7 @@ const resolveSecrets = async (
 };
 
 export const getEnvVarsResolved = async (
-  vorpal: CommandInstance | null,
+  io: IO | null,
   env: string,
   componentName: string | null,
 ) => {
@@ -170,7 +170,7 @@ export const getEnvVarsResolved = async (
 
   // in the pipeline the secrets alreadyy exists  and bash will expand them
   // but here we need to manually load them
-  return resolveSecrets(vorpal, [
+  return resolveSecrets(io, [
     {
       envVars: envionment.envVars,
       secretEnvVarKeys: envionment.secretEnvVarKeys,
@@ -183,12 +183,12 @@ export const getEnvVarsResolved = async (
  * is used to get job only vars that should also be editable locally with catladder.
  */
 export const getJobOnlyEnvVarsResolved = async (
-  vorpal: CommandInstance,
+  io: IO,
   env: string,
   componentName: string,
 ) => {
   const envionment = await getEnvironment(env, componentName);
-  return resolveSecrets(vorpal, [
+  return resolveSecrets(io, [
     envionment.jobOnlyVars.build,
     envionment.jobOnlyVars.deploy,
   ]);

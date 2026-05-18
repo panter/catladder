@@ -7,6 +7,6 @@ export const commandRenewToken = defineCommand({
   group: "project",
   inputs: {},
   execute: async (ctx) => {
-    await setupAccessTokens(ctx as any);
+    await setupAccessTokens(ctx);
   },
 });

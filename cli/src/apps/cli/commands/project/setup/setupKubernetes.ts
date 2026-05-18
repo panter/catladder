@@ -3,7 +3,7 @@ import {
   getFullKubernetesClusterName,
   isOfDeployType,
 } from "@catladder/pipeline";
-import type { CommandInstance } from "vorpal";
+import type { IO } from "../../../../../core/types";
 import { exec } from "child-process-promise";
 import { connectToCluster } from "../../../../../utils/cluster";
 import {
@@ -14,7 +14,7 @@ import {
 import ensureNamespace from "../utils/ensureNamespace";
 
 export const setupKubernetes = async (
-  instance: CommandInstance,
+  instance: IO,
   context: ComponentContext,
 ) => {
   const deployConfig = context.deploy?.config;

@@ -2,7 +2,6 @@ import { exec } from "child-process-promise";
 import { last } from "lodash";
 import open from "open";
 import { defineCommand } from "../../core/defineCommand";
-import type { IO } from "../../core/types";
 import {
   doGitlabRequest,
   getGitlabToken,
@@ -33,9 +32,9 @@ const getCurrentCommit = async () => {
 const delay = async (ms: any) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-const promptJob = async (io: IO, projectId: any) => {
-  const jobs = await doGitlabRequest(io as any, `projects/${projectId}/jobs`);
-
+const getJobChoices = async (io: any) => {
+  const { id: projectId } = await getProjectInfo(io);
+  const jobs = await doGitlabRequest(io, `projects/${projectId}/jobs`);
   const commitId = await getCurrentCommit();
 
   const jobsToName = (jo: any[]) =>
@@ -45,34 +44,36 @@ const promptJob = async (io: IO, projectId: any) => {
 
   const preferredJobs = jobs.filter((j: any) => j.commit.id === commitId);
   const moreJobs = jobs.filter((j: any) => !preferredJobs.includes(j.ref));
-  const sortedJobs =
-    preferredJobs.length > 1
-      ? [
-          ...jobsToName(preferredJobs),
-          "========================================================",
-          ...jobsToName(moreJobs),
-        ]
-      : jobsToName([...preferredJobs, ...moreJobs]);
+  return preferredJobs.length > 1
+    ? [
+        ...jobsToName(preferredJobs),
+        "========================================================",
+        ...jobsToName(moreJobs),
+      ]
+    : jobsToName([...preferredJobs, ...moreJobs]);
+};
 
-  const jobName = await io.promptDirect({
-    type: "string",
-    name: "jobName",
-    choices: () => sortedJobs,
-    message: "Which job? 🤔",
-  });
-
+const findJobById = async (io: any, jobName: string) => {
+  const { id: projectId } = await getProjectInfo(io);
+  const jobs = await doGitlabRequest(io, `projects/${projectId}/jobs`);
   const jobId = Number(last(jobName.split("-")));
-  return jobs.find((j: any) => j.id === jobId);
+  return { job: jobs.find((j: any) => j.id === jobId), projectId };
 };
 
 export const commandCiJobOpen = defineCommand({
   name: "project-ci-job-open",
   description: "Open a Job",
   group: "project",
-  inputs: {},
+  inputs: {
+    jobName: {
+      type: "string",
+      message: "Which job? 🤔",
+      choices: async (ctx) => getJobChoices(ctx),
+    },
+  },
   execute: async (ctx) => {
-    const { id: projectId } = await getProjectInfo(ctx as any);
-    const job = await promptJob(ctx, projectId);
+    const jobName = await ctx.get("jobName");
+    const { job } = await findJobById(ctx, jobName);
     open(job.web_url);
   },
 });
@@ -81,26 +82,32 @@ export const commandCiJobLog = defineCommand({
   name: "project-ci-job-log",
   description: "Show a job's log",
   group: "project",
-  inputs: {},
+  inputs: {
+    jobName: {
+      type: "string",
+      message: "Which job? 🤔",
+      choices: async (ctx) => getJobChoices(ctx),
+    },
+  },
   execute: async (ctx) => {
-    const { id: projectId } = await getProjectInfo(ctx as any);
-    const { id } = await promptJob(ctx, projectId);
+    const jobName = await ctx.get("jobName");
+    const { job: selectedJob, projectId } = await findJobById(ctx, jobName);
+    const id = selectedJob.id;
 
     let finished = false;
     while (!finished) {
       const trace = await exec(
         `curl -s --header "PRIVATE-TOKEN: ${await getGitlabToken(
-          ctx as any,
+          ctx,
         )}" "https://git.panter.ch/api/v4/projects/${projectId}/jobs/${id}/trace"`,
       );
 
       const job = await doGitlabRequest(
-        ctx as any,
+        ctx,
         `projects/${projectId}/jobs/${id}`,
       );
 
       if (trace.stdout) {
-        // In terminal mode, we just log (no vorpal.ui.redraw equivalent yet)
         ctx.log(trace.stdout);
       } else {
         ctx.log(`\n${statusTxt(job.status)}\n${job.web_url}\n`);

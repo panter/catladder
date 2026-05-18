@@ -33,11 +33,7 @@ const getProxyInfoForKubernetes = async (
   if (!isOfDeployType(context.deploy?.config, "kubernetes")) {
     throw new Error("unsupported");
   }
-  const envVars = await getEnvVarsResolved(
-    io as any,
-    context.env,
-    context.name,
-  );
+  const envVars = await getEnvVarsResolved(io, context.env, context.name);
   const cloudSqlValues = createKubernetesCloudsqlBaseValues(context);
   const DB_PASSWORD = (
     envVars?.DB_PASSWORD || envVars?.POSTGRESQL_PASSWORD
@@ -63,11 +59,7 @@ const getProxyInfoForCloudRun = async (
     logError(io, errorMessage);
     throw new Error(errorMessage);
   }
-  const envVars = await getEnvVarsResolved(
-    io as any,
-    context.env,
-    context.name,
-  );
+  const envVars = await getEnvVarsResolved(io, context.env, context.name);
   return {
     instanceName: context.deploy?.config.cloudSql.instanceConnectionName,
     DB_PASSWORD: envVars?.DB_PASSWORD?.toString(),
