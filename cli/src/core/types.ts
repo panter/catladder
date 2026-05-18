@@ -134,12 +134,3 @@ export class MissingInputError extends Error {
     this.name = "MissingInputError";
   }
 }
-
-// ─── Legacy compatibility aliases ────────────────────────────────────
-
-/** @deprecated Use InputDef */
-export type PromptDef = InputDef;
-/** @deprecated Use InputResultType */
-export type PromptResultType<P extends InputDef> = InputResultType<P>;
-/** @deprecated Use InputsSchema */
-export type PromptsSchema = InputsSchema;

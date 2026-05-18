@@ -11,10 +11,6 @@ export type {
   BooleanInputDef,
   PromptChoice,
   ChoicesFn,
-  // Legacy aliases
-  PromptDef,
-  PromptResultType,
-  PromptsSchema,
 } from "./types";
 export { MissingInputError } from "./types";
 export { defineCommand } from "./defineCommand";
