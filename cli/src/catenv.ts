@@ -1,24 +1,23 @@
+import { Command } from "commander";
 import catenv from "./apps/catenv/catenv";
-
 import { parseChoice } from "./config/parseChoice";
+import packageInfos from "./packageInfos";
 
-const args = process.argv.slice(2);
+const program = new Command();
 
-const helpFlags = ["--help", "-h", "help"];
-if (args.some((arg) => helpFlags.includes(arg))) {
-  const docLink =
-    "https://git.panter.ch/catladder/catladder/-/blob/main/docs/1_VARS.md";
-  console.log(
-    `\nUsage: catenv [env|env:component] [-v|--verbose]\n\nEnv variable and catenv documentation:\n${docLink}`,
-  );
-  process.exit(0);
-}
+program
+  .name("catenv")
+  .description("Environment variable and pipeline generation via direnv")
+  .version(packageInfos.version)
+  .argument("[envComponent]", "env or env:component")
+  .option("-v, --verbose", "verbose output")
+  .action((envComponent: string | undefined, opts: { verbose?: boolean }) => {
+    catenv(envComponent ? parseChoice(envComponent) : null, {
+      verbose: opts.verbose ?? false,
+    }).then(() => {
+      // we have to exit manually, because we have some file watches
+      process.exit();
+    });
+  });
 
-const verbose = args.some((arg) => arg === "-v" || arg === "--verbose");
-// choise arg is deprecated and will be removed in the future
-const choiceArg = args.find((arg) => arg !== "-v" && arg !== "--verbose");
-
-catenv(choiceArg ? parseChoice(choiceArg) : null, { verbose }).then(() => {
-  // we have to exit manually, because we have some file watches
-  process.exit();
-});
+program.parse();
