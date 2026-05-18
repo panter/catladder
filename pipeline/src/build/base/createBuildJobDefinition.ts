@@ -13,7 +13,8 @@ export const createBuildJobDefinition = (
     postscript?: string[];
   } = {},
 ): AppBuildJobDefinition | undefined => {
-  if (buildConfig.buildCommand === null) return undefined;
+  if (buildConfig.buildCommand === null || buildConfig.buildCommand === false)
+    return undefined;
 
   const defaultImage = getRunnerImage("jobs-default");
 

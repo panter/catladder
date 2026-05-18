@@ -110,7 +110,7 @@ export type BuildConfigBase = {
   /**
    * define the build command
    */
-  buildCommand?: string | string[] | null;
+  buildCommand?: string | string[] | null | false;
 
   /**
    * customize lint, set false to disable
@@ -432,7 +432,7 @@ export type WorkspaceBuildConfigBase = {
 
 export type WorkspaceBuildConfigNode = {
   type: "node";
-  buildCommand?: string | string[];
+  buildCommand?: string | string[] | null | false;
   /**
    * set docker config defaults for the node build type.
    * Currently not all options are supported.

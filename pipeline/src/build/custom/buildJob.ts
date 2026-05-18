@@ -17,7 +17,7 @@ export const createCustomBuildJobs = (
 
   return createComponentBuildJobs(context, {
     appBuild:
-      buildConfig.buildCommand !== null
+      buildConfig.buildCommand !== null && buildConfig.buildCommand !== false
         ? createBuildJobDefinition(context, buildConfig)
         : undefined,
     dockerBuild: {

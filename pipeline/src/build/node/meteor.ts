@@ -72,7 +72,7 @@ export const createMeteorBuildJobs = (
 
   return createComponentBuildJobs(context, {
     appBuild:
-      buildConfig.buildCommand !== null
+      buildConfig.buildCommand !== null && buildConfig.buildCommand !== false
         ? {
             cache: [...getNodeCache(context), ...getMeteorCache(context)],
             image: getRunnerImage("jobs-meteor"),
