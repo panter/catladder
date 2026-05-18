@@ -29,30 +29,17 @@ flowchart TD
 - `No audit yet`: if `SECURITY.md` does not exist yet or in other words Security Audit MR is not merged yet
 - `Audit is invalid`: if `SECURITY.md` table has zero topics answered - does not have responsible and is answered with placeholder value (✅/❌)
 
-## catci
+## Security audit commands
 
-`catci` is CLI tool with main purpose to be used in pipeline jobs. `catci` allows us to do complex operations inside CI/CD jobs which would be rather cumbersome to do in bash scripts. 
-
-Currently it contains commands to create and evaluate security audit document. Feel free to extend `catci` for other pipeline adjustments.
+The security audit commands are part of the `catladder` CLI:
 
 ```bash
-$ catci
-Usage: catci [options] [command]
-
-Catladder pipeline CI tools
-
-Options:
-  -V, --version                   output the version number
-  -h, --help                      display help for command
-
-Commands:
-  help [command...]               Provides help for a given command.
-  exit                            Exits application.
-  security-audit-ci-job ...
-  security-audit-evaluate ...
-  security-audit-create ...
-  ...
+catladder security-audit-evaluate <path>
+catladder security-audit-create <token> <mainBranch> <projectId> <userId>
+catladder security-audit-ci-job <path> <token> <mainBranch> <projectId> <userId>
 ```
+
+These commands can also be used non-interactively in CI/CD pipelines.
 
 ## FAQ
 

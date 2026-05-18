@@ -11,6 +11,7 @@ import {
 
 type Options = {
   verbose?: boolean;
+  printVariables?: boolean;
 };
 export default async (choice?: Choice, options?: Options) => {
   const config = await getProjectConfig();
@@ -28,7 +29,8 @@ export default async (choice?: Choice, options?: Options) => {
     writeDotEnvFiles(context, choice),
 
     writeDTsFiles(context, choice),
-
-    printVariables(context, choice),
+    options?.printVariables
+      ? printVariables(context, choice)
+      : Promise.resolve(),
   ]);
 };

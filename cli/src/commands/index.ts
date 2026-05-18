@@ -41,6 +41,11 @@ export { commandMongoDestroyMember } from "./mongodb/commandMongoDestroyMember";
 // CloudSQL commands
 export { commandRestoreDb } from "./cloudSQL/commandRestoreDb";
 
+// Security commands
+export { commandSecurityAuditCiJob } from "./security/commandSecurityAuditCiJob";
+export { commandSecurityAuditEvaluate } from "./security/commandSecurityAuditEvaluate";
+export { commandSecurityAuditCreate } from "./security/commandSecurityAuditCreate";
+
 // Fun commands
 export { commandDadjoke } from "./fun/commandDadjoke";
 export { commandStarwars } from "./fun/commandStarwars";

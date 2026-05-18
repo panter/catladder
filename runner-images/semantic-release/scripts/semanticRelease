@@ -9,7 +9,7 @@ set -e
 # better branches settings: https://github.com/semantic-release/semantic-release/issues/1581
 
 echo "doing security audit check"
-catci security-audit-ci-job -- ./ "$GL_TOKEN" "$CI_DEFAULT_BRANCH" "$CI_PROJECT_ID" "$GITLAB_USER_ID"
+catladder security-audit-ci-job ./ "$GL_TOKEN" "$CI_DEFAULT_BRANCH" "$CI_PROJECT_ID" "$GITLAB_USER_ID"
 
 echo "doing semantic release"
 

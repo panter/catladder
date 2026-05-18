@@ -1,3 +1,3 @@
-import { runCatCi } from "./apps/catci/catci";
-
-runCatCi();
+// catci commands have been merged into the main catladder CLI.
+// This entry point is kept for backward compatibility.
+import "./cli";
