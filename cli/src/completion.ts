@@ -1,3 +1,6 @@
+import { readFileSync, writeFileSync, existsSync } from "fs";
+import { join } from "path";
+import { homedir } from "os";
 import type { CommandDef, InputDef } from "./core/types";
 
 /**
@@ -142,4 +145,77 @@ _${funcName}_completions() {
 compdef _${funcName}_completions ${binaryName}
 ###-end-${funcName}-completions-###
 `.trim();
+}
+
+const BEGIN_MARKER = (name: string) =>
+  `###-begin-${name.replace(/-/g, "_")}-completions-###`;
+
+function getZshrcPath(): string {
+  return join(homedir(), ".zshrc");
+}
+
+/**
+ * Install completions by adding an eval line to .zshrc.
+ */
+export async function installCompletions(binaryName: string): Promise<void> {
+  const zshrcPath = getZshrcPath();
+  const evalLine = `eval "$(${binaryName} completion zsh)"`;
+  const marker = BEGIN_MARKER(binaryName);
+
+  let content = "";
+  if (existsSync(zshrcPath)) {
+    content = readFileSync(zshrcPath, "utf-8");
+  }
+
+  if (content.includes(marker)) {
+    console.log(
+      `Completions for ${binaryName} are already installed in ${zshrcPath}`,
+    );
+    return;
+  }
+
+  const addition = `\n# ${binaryName} shell completions\n${evalLine}\n`;
+  writeFileSync(zshrcPath, content + addition);
+  console.log(`Installed completions for ${binaryName} in ${zshrcPath}`);
+  console.log(`Restart your shell or run: source ${zshrcPath}`);
+}
+
+/**
+ * Remove completions from .zshrc.
+ */
+export async function uninstallCompletions(binaryName: string): Promise<void> {
+  const zshrcPath = getZshrcPath();
+  if (!existsSync(zshrcPath)) {
+    console.log("No .zshrc found");
+    return;
+  }
+
+  const content = readFileSync(zshrcPath, "utf-8");
+  const evalLine = `eval "$(${binaryName} completion zsh)"`;
+  const commentLine = `# ${binaryName} shell completions`;
+
+  if (!content.includes(evalLine)) {
+    console.log(`No completions for ${binaryName} found in ${zshrcPath}`);
+    return;
+  }
+
+  const cleaned = content
+    .replace(
+      new RegExp(
+        `\\n?${commentLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n?`,
+        "g",
+      ),
+      "\n",
+    )
+    .replace(
+      new RegExp(
+        `\\n?${evalLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n?`,
+        "g",
+      ),
+      "\n",
+    );
+
+  writeFileSync(zshrcPath, cleaned);
+  console.log(`Removed completions for ${binaryName} from ${zshrcPath}`);
+  console.log(`Restart your shell or run: source ${zshrcPath}`);
 }

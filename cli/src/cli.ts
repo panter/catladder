@@ -3,7 +3,12 @@ import packageInfos from "./packageInfos";
 import { stopAllPortForwards } from "./utils/portForwards";
 import { createTerminalContext } from "./adapters/terminal";
 import type { CommandDef } from "./core/types";
-import { getCompletions, generateZshCompletionScript } from "./completion";
+import {
+  getCompletions,
+  generateZshCompletionScript,
+  installCompletions,
+  uninstallCompletions,
+} from "./completion";
 
 // Import all commands
 import * as commands from "./commands";
@@ -151,19 +156,33 @@ program
     process.exit(0);
   });
 
-// completion command to output the shell script
-program
+// completion commands
+const completionCmd = program
   .command("completion")
-  .argument("<shell>", "shell type (zsh)")
-  .description("output shell completion script")
-  .action((shell: string) => {
-    if (shell === "zsh") {
-      const binaryName = process.argv[1].split("/").pop() ?? "catladder";
-      console.log(generateZshCompletionScript(binaryName));
-    } else {
-      console.error(`Unsupported shell: ${shell}. Only 'zsh' is supported.`);
-      process.exit(1);
-    }
+  .description("shell completion setup");
+
+completionCmd
+  .command("zsh")
+  .description("output zsh completion script")
+  .action(() => {
+    const binaryName = process.argv[1].split("/").pop() ?? "catladder";
+    console.log(generateZshCompletionScript(binaryName));
+  });
+
+completionCmd
+  .command("install")
+  .description("install shell completions into your .zshrc")
+  .action(async () => {
+    const binaryName = process.argv[1].split("/").pop() ?? "catladder";
+    await installCompletions(binaryName);
+  });
+
+completionCmd
+  .command("uninstall")
+  .description("remove shell completions from your .zshrc")
+  .action(async () => {
+    const binaryName = process.argv[1].split("/").pop() ?? "catladder";
+    await uninstallCompletions(binaryName);
   });
 
 // Cleanup on exit

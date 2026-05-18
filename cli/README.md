@@ -1,8 +1,6 @@
-# catladder 🐱 🔧
+# catladder CLI
 
-[Panter](https://panter.ch) cli tool for cloud CI/CD and DevOps.
-
-**It just works™**
+[Panter](https://panter.ch) CLI tool for cloud CI/CD and DevOps.
 
 ## Getting started
 
@@ -10,9 +8,29 @@
 
 [docs-getting-started]: https://catladder.git.panter.biz/catladder/docs/getting_started "Getting started"
 
+## Usage
+
+```bash
+catladder <command> [options]
+catladder --help
+catladder <command> --help
+```
+
+### Shell completions
+
+```bash
+catladder completion install
+```
+
+### Non-interactive mode
+
+```bash
+catladder project-port-forward dev:web --pod-name=web-abc --local-port=3000 --remote-port=3000
+catladder -y project-delete dev:web
+```
+
 ## Contribution
 
 [See contribution guide][docs-contribute].
 
 [docs-contribute]: https://catladder.git.panter.biz/catladder/docs/contribute "Contribution guide"
-
