@@ -2,8 +2,8 @@ import { defineCommand } from "../../core/defineCommand";
 import {
   evaluateSecurityAudit,
   makeSecurityAuditOverview,
-} from "../../apps/catci/commands/security/evaluateSecurityAudit";
-import { SECURITY_AUDIT_FILE_NAME } from "../../apps/catci/commands/security/createSecurityAuditMergeRequest";
+} from "../../security/evaluateSecurityAudit";
+import { SECURITY_AUDIT_FILE_NAME } from "../../security/createSecurityAuditMergeRequest";
 
 export const commandSecurityAuditEvaluate = defineCommand({
   name: "security-audit-evaluate",

@@ -11,7 +11,7 @@ Catladder is a TypeScript framework by Panter that generates GitLab CI/CD pipeli
 **Yarn 3.1.1 monorepo** with three workspaces:
 
 - **`pipeline/`** (`@catladder/pipeline`) — Core framework: pipeline generation, build/deploy types, environment management, agent integration
-- **`cli/`** (`@catladder/cli`) — CLI tools: `catladder` (environment/secret management), `catenv` (pipeline/env file generation via direnv), `catci` (security tooling)
+- **`cli/`** (`@catladder/cli`) — CLI tools: `catladder` (environment/secret management), `catenv` (pipeline/env file generation via direnv)
 - **`docs/`** — Docusaurus documentation site
 
 ## Common Commands
@@ -42,6 +42,7 @@ yarn catladder
 ```
 
 ### Workspace-specific builds
+
 ```bash
 yarn workspace @catladder/pipeline build    # tsc + babel variable inlining
 yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
@@ -89,7 +90,6 @@ yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 
 - `apps/cli/` — Main Vorpal-based REPL (`catladder` command)
 - `apps/catenv/` — Environment/pipeline generation (`catenv` command)
-- `apps/catci/` — Security tooling
 
 ## Code Style
 

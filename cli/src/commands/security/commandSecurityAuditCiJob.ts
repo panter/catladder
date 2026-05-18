@@ -3,11 +3,11 @@ import { Gitlab } from "@gitbeaker/rest";
 import {
   evaluateSecurityAudit,
   makeSecurityAuditOverview,
-} from "../../apps/catci/commands/security/evaluateSecurityAudit";
+} from "../../security/evaluateSecurityAudit";
 import {
   createSecurityAuditMergeRequest,
   SECURITY_AUDIT_FILE_NAME,
-} from "../../apps/catci/commands/security/createSecurityAuditMergeRequest";
+} from "../../security/createSecurityAuditMergeRequest";
 
 const GITLAB_HOST = "https://git.panter.ch";
 

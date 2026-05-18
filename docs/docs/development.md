@@ -11,8 +11,6 @@ You can run the project with `yarn start` which creates a local build of the pro
 
 The execuatble are in the `cli/bin` folder. They are:
 
-- `catci`
-- `catci-dev`
 - `catenv`
 - `catenv-dev`
 - `catladder`

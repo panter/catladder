@@ -21,21 +21,24 @@ Catladder simplifies and automates your CI/CD workflows by providing:
 This monorepo contains several key components:
 
 ### CLI (`@catladder/cli`)
+
 Command-line tools for interacting with catladder workflows:
 
 - **`catladder`** - CLI to interact with environments, updating secrets and many more
 - **`catenv`** - Generates pipelines and environment variables. Can be invoked by direnv to:
-  - Always have pipeline files (.catladder-generated, need to be checked in)  
+  - Always have pipeline files (.catladder-generated, need to be checked in)
   - Have .env files locally with shared secrets
-- **`catci`** - Experimental tool with currently only security tooling (maybe merged with catladder-cli later)
 
-### Pipeline (`@catladder/pipeline`)  
+### Pipeline (`@catladder/pipeline`)
+
 Core TypeScript framework for:
+
 - GitLab CI/CD pipeline configuration and generation
 - Workflow definitions and automation
 - Integration with cloud platforms and services
 
 ### Documentation (`docs/`)
+
 Comprehensive documentation and guides for using catladder in your projects.
 
 ## 🛠 Key Features

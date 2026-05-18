@@ -1,6 +1,6 @@
 import { defineCommand } from "../../core/defineCommand";
 import { Gitlab } from "@gitbeaker/rest";
-import { createSecurityAuditMergeRequest } from "../../apps/catci/commands/security/createSecurityAuditMergeRequest";
+import { createSecurityAuditMergeRequest } from "../../security/createSecurityAuditMergeRequest";
 
 const GITLAB_HOST = "https://git.panter.ch";
 
