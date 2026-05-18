@@ -1,3 +1,10 @@
+# [3.48.0](https://git.panter.ch/catladder/catladder/compare/v3.47.1...v3.48.0) (2026-05-18)
+
+
+### Features
+
+* allow build command to be [secure] or null ([017d962](https://git.panter.ch/catladder/catladder/commit/017d96256d9f41d016999346aaf3e889edb21a09))
+
 ## [3.47.1](https://git.panter.ch/catladder/catladder/compare/v3.47.0...v3.47.1) (2026-05-12)
 
 
