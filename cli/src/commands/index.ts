@@ -31,6 +31,7 @@ export { commandGetMyTotalWorktime } from "./project/commandGetMyTotalWorktime";
 export { commandSetup } from "./project/commandSetup";
 export { commandCiJobOpen, commandCiJobLog } from "./project/commandGitlabCi";
 export { commandProjectRestoreDb } from "./project/commandProjectRestoreDb";
+export { commandSecurityEvaluate } from "./project/commandSecurityEvaluate";
 
 // MongoDB commands
 export { commandMongoGetShell } from "./mongodb/commandMongoGetShell";
