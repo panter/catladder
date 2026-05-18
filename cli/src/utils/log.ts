@@ -1,4 +1,5 @@
 import type { CommandInstance } from "vorpal";
+import type { IO } from "../core/types";
 
 type AnyMessagesFn = (message?: any, ...optionalParams: any[]) => void;
 type StringMessagesFn = (message?: string, ...optionalParams: string[]) => void;
@@ -22,6 +23,7 @@ type HasSomeKindOfLogMethod = { log: SomeKindOfLogFn };
  */
 export type LoggerCmdInstance =
   | CommandInstance
+  | IO
   | Console
   | HasSomeKindOfLogMethod
   | null
