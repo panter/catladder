@@ -3,6 +3,7 @@ import packageInfos from "./packageInfos";
 import { stopAllPortForwards } from "./utils/portForwards";
 import { createTerminalContext } from "./adapters/terminal";
 import type { CommandDef } from "./core/types";
+import { getCompletions, generateZshCompletionScript } from "./completion";
 
 // Import all commands
 import * as commands from "./commands";
@@ -15,6 +16,9 @@ program
   .version(packageInfos.version)
   .option("-y, --yes", "skip all confirmation prompts");
 
+// Collect all command defs for completion
+const allCommandDefs: CommandDef[] = [];
+
 /**
  * Register a CommandDef with Commander.js.
  * - Inputs with `positional: true` become Commander positional args
@@ -22,6 +26,8 @@ program
  * - --inputs accepts JSON for programmatic use
  */
 function registerCommand(def: CommandDef): void {
+  allCommandDefs.push(def);
+
   // Separate positional inputs from flag inputs
   const positionalInputs: [string, (typeof def.inputs)[string]][] = [];
   const flagInputs: [string, (typeof def.inputs)[string]][] = [];
@@ -121,6 +127,44 @@ for (const cmd of Object.values(commands)) {
     registerCommand(cmd as CommandDef);
   }
 }
+
+// Hidden __complete command for shell completion
+program
+  .command("__complete", { hidden: true })
+  .argument("[words]", "words typed so far")
+  .argument("[cursor]", "word at cursor")
+  .action(async (wordsStr: string | undefined, cursor: string | undefined) => {
+    const words = wordsStr ? wordsStr.split(" ").filter(Boolean) : [];
+    const cursorWord = cursor ?? "";
+    try {
+      const completions = await getCompletions(
+        allCommandDefs,
+        words,
+        cursorWord,
+      );
+      for (const c of completions) {
+        console.log(c);
+      }
+    } catch {
+      // Silently fail -- completion should never break the shell
+    }
+    process.exit(0);
+  });
+
+// completion command to output the shell script
+program
+  .command("completion")
+  .argument("<shell>", "shell type (zsh)")
+  .description("output shell completion script")
+  .action((shell: string) => {
+    if (shell === "zsh") {
+      const binaryName = process.argv[1].split("/").pop() ?? "catladder";
+      console.log(generateZshCompletionScript(binaryName));
+    } else {
+      console.error(`Unsupported shell: ${shell}. Only 'zsh' is supported.`);
+      process.exit(1);
+    }
+  });
 
 // Cleanup on exit
 process.on("exit", () => {
