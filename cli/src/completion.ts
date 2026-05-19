@@ -16,27 +16,25 @@ export async function getCompletions(
   words: string[],
   cursorWord: string,
 ): Promise<string[]> {
-  // Try to match words against command names (which can be multi-word)
-  // Walk through words, consuming them as command name parts until we find
-  // an exact command match or need to suggest the next subcommand level.
+  // Try to find a command by matching the longest prefix of words.
+  // E.g., for words ["project", "cloudsql", "restore-db", "--source"],
+  // we match "project cloudsql restore-db" and treat ["--source"] as args.
+  const matched = findCommand(allCommands, words);
 
-  // Find all commands whose name starts with the words typed so far
-  const typed = words.join(" ");
+  if (matched) {
+    const { command, argsAfterCommand } = matched;
 
-  // Exact match: we've typed a full command name, now complete its inputs
-  const exactCommand = allCommands.find((c) => c.name === typed);
-  if (exactCommand) {
-    // Check if cursor is a --flag
+    // Check if cursor is a --flag name
     if (cursorWord.startsWith("--")) {
-      return getFlagCompletions(exactCommand, cursorWord);
+      return getFlagCompletions(command, cursorWord);
     }
 
     // Check if previous word was a --flag (complete its value)
-    const prevWord = words[words.length - 1];
+    const prevWord = argsAfterCommand[argsAfterCommand.length - 1];
     if (prevWord?.startsWith("--")) {
       const flagName = prevWord.replace(/^--/, "");
       const inputName = flagNameToInputName(flagName);
-      const inputDef = exactCommand.inputs[inputName];
+      const inputDef = command.inputs[inputName];
       if (inputDef && "choices" in inputDef && inputDef.choices) {
         return resolveChoicesForCompletion(inputDef, cursorWord);
       }
@@ -44,9 +42,7 @@ export async function getCompletions(
     }
 
     // Complete positional inputs
-    const positionalInputs = getPositionalInputs(exactCommand);
-    // Count non-flag args after the command name
-    const argsAfterCommand = words.slice(exactCommand.name.split(" ").length);
+    const positionalInputs = getPositionalInputs(command);
     const positionalArgs = argsAfterCommand.filter((w) => !w.startsWith("--"));
     const positionalIndex = positionalArgs.length;
     const targetInput = positionalInputs[positionalIndex];
@@ -60,15 +56,13 @@ export async function getCompletions(
     return [];
   }
 
-  // No exact match. Complete the next level of subcommand names.
-  // The prefix is what's been typed so far (words joined with space).
+  // No command matched. Complete subcommand names at the current level.
+  const typed = words.join(" ");
   const prefix = typed ? typed + " " : "";
 
-  // Find unique next-level subcommand names
   const nextParts = new Set<string>();
   for (const cmd of allCommands) {
     if (cmd.name.startsWith(prefix)) {
-      // Get the next word after the prefix
       const rest = cmd.name.slice(prefix.length);
       const nextPart = rest.split(" ")[0];
       if (nextPart && nextPart.startsWith(cursorWord)) {
@@ -78,6 +72,25 @@ export async function getCompletions(
   }
 
   return [...nextParts].sort();
+}
+
+/**
+ * Find a command by matching the longest prefix of words against command names.
+ * Returns the matched command and the remaining words (args/flags after the command name).
+ */
+function findCommand(
+  allCommands: CommandDef[],
+  words: string[],
+): { command: CommandDef; argsAfterCommand: string[] } | null {
+  // Try longest match first
+  for (let i = words.length; i >= 1; i--) {
+    const candidate = words.slice(0, i).join(" ");
+    const command = allCommands.find((c) => c.name === candidate);
+    if (command) {
+      return { command, argsAfterCommand: words.slice(i) };
+    }
+  }
+  return null;
 }
 
 function getPositionalInputs(command: CommandDef): [string, InputDef][] {
