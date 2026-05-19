@@ -23,7 +23,7 @@ const hasCloudSql = (context: ComponentContext) => {
 };
 
 export const commandProjectRestoreDb = defineCommand({
-  name: "project-cloud-sql-restore-db",
+  name: "project cloudsql restore-db",
   description: "restores a project db from one source to another target",
   group: "project",
   inputs: {

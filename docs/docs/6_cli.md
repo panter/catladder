@@ -26,16 +26,16 @@ Every command input can be passed as a CLI flag to skip interactive prompts:
 
 ```bash
 # Interactive: prompts for pod, local port, remote port
-catladder project-port-forward dev:web
+catladder project port-forward dev:web
 
 # Non-interactive: all inputs provided
-catladder project-port-forward dev:web --pod-name=web-abc --local-port=3000 --remote-port=3000
+catladder project port-forward dev:web --pod-name=web-abc --local-port=3000 --remote-port=3000
 ```
 
 You can also pass inputs as JSON:
 
 ```bash
-catladder project-port-forward dev:web --inputs='{"podName":"web-abc","localPort":3000,"remotePort":3000}'
+catladder project port-forward dev:web --inputs='{"podName":"web-abc","localPort":3000,"remotePort":3000}'
 ```
 
 ### Shell completions

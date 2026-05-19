@@ -24,8 +24,28 @@ program
 // Collect all command defs for completion
 const allCommandDefs: CommandDef[] = [];
 
+// Cache for intermediate subcommand groups (e.g., "project", "project cloudsql")
+const subcommandCache = new Map<string, Command>();
+
+/**
+ * Get or create a chain of nested subcommands.
+ * E.g., for ["project", "cloudsql"], ensures program.command("project").command("cloudsql") exists.
+ */
+function getOrCreateParent(parts: string[]): Command {
+  if (parts.length === 0) return program;
+
+  const key = parts.join(" ");
+  if (subcommandCache.has(key)) return subcommandCache.get(key)!;
+
+  const parent = getOrCreateParent(parts.slice(0, -1));
+  const cmd = parent.command(parts[parts.length - 1]);
+  subcommandCache.set(key, cmd);
+  return cmd;
+}
+
 /**
  * Register a CommandDef with Commander.js.
+ * - Command name can contain spaces for nesting (e.g., "project cloudsql proxy")
  * - Inputs with `positional: true` become Commander positional args
  * - Other inputs become optional --flags
  * - --inputs accepts JSON for programmatic use
@@ -45,15 +65,19 @@ function registerCommand(def: CommandDef): void {
     }
   }
 
-  // Build the command string with positional args.
-  // All positionals are registered as optional in Commander so that
-  // ctx.get() can prompt for them interactively when missing.
-  let cmdStr = def.name;
+  // Split name into parent groups + leaf command
+  const nameParts = def.name.split(" ");
+  const parentParts = nameParts.slice(0, -1);
+  const leafName = nameParts[nameParts.length - 1];
+
+  // Build leaf command string with positional args
+  let cmdStr = leafName;
   for (const [name] of positionalInputs) {
     cmdStr += ` [${name}]`;
   }
 
-  const cmd = program.command(cmdStr).description(def.description);
+  const parent = getOrCreateParent(parentParts);
+  const cmd = parent.command(cmdStr).description(def.description);
 
   // Add --flag for each non-positional input
   for (const [name, inputDef] of flagInputs) {

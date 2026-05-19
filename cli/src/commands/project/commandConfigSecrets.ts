@@ -7,7 +7,7 @@ import { envAndComponents } from "../../apps/cli/commands/project/utils/autocomp
 // Full migration to CommandIO would require reworking the editor flow,
 // so for now we bridge it.
 export const commandConfigSecrets = defineCommand({
-  name: "project-config-secrets",
+  name: "project config-secrets",
   description: "setup/update secrets stored in pass",
   group: "project",
   inputs: {

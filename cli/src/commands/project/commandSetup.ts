@@ -2,7 +2,7 @@ import { defineCommand } from "../../core/defineCommand";
 import { setupProject } from "../../apps/cli/commands/project/setup";
 
 export const commandSetup = defineCommand({
-  name: "project-setup",
+  name: "project setup",
   description:
     "Initializes all environments and creates required resources, service accounts, etc.",
   group: "project",

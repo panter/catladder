@@ -3,7 +3,7 @@ import { getProjectNamespace } from "../../utils/projects";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandNamespace = defineCommand({
-  name: "project-namespace",
+  name: "project namespace",
   description: "show namespace of local project",
   group: "project",
   inputs: {

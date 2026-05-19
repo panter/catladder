@@ -3,7 +3,7 @@ import { getk8sApi } from "../../k8sApi";
 import { startKubePortForward } from "../../kubernetes/portForward";
 
 export const commandKubePortForward = defineCommand({
-  name: "kube-port-forward",
+  name: "kube port-forward",
   description: "start port-forwarding",
   group: "general",
   inputs: {

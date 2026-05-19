@@ -5,7 +5,7 @@ import { createSecurityAuditMergeRequest } from "../../security/createSecurityAu
 const GITLAB_HOST = "https://git.panter.ch";
 
 export const commandSecurityAuditCreate = defineCommand({
-  name: "security-audit-create",
+  name: "security audit create",
   description: "Creates a MR with the latest security audit template document",
   group: "security",
   inputs: {

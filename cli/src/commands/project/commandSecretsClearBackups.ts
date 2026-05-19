@@ -2,7 +2,7 @@ import { defineCommand } from "../../core/defineCommand";
 import { clearBackups } from "../../utils/gitlab";
 
 export const commandSecretsClearBackups = defineCommand({
-  name: "project-secrets-clear-backups",
+  name: "project secrets-clear-backups",
   description: "clears all backups",
   group: "project",
   inputs: {

@@ -6,7 +6,7 @@ import {
 import { getGitRoot } from "../../utils/projects";
 
 export const commandSecurityEvaluate = defineCommand({
-  name: "project-security-evaluate",
+  name: "project security-evaluate",
   description: "evaluate project's security audit document",
   group: "project",
   inputs: {},

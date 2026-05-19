@@ -3,7 +3,7 @@ import { getEnvVarsResolved, parseChoice } from "../../config/getProjectConfig";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandEnvVars = defineCommand({
-  name: "project-env-vars",
+  name: "project env-vars",
   description: "list env vars",
   group: "project",
   inputs: {

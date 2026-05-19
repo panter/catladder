@@ -91,7 +91,7 @@ const getJdbcUrl = (
   `DATABASE_JDBC_URL="jdbc:postgresql://localhost:${localPort}/${DB_NAME}?schema=public&user=${DB_USER}&password=${DB_PASSWORD}"`;
 
 export const commandCloudSqlProxy = defineCommand({
-  name: "project-cloud-sql-proxy",
+  name: "project cloudsql proxy",
   description: "proxy to cloud sql db",
   group: "project",
   inputs: {

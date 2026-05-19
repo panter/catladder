@@ -6,7 +6,7 @@ import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureClust
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandListPods = defineCommand({
-  name: "project-list-pods",
+  name: "project list-pods",
   description: "list pods of local project",
   group: "project",
   inputs: {

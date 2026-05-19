@@ -12,7 +12,7 @@ import open from "open";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandPortForward = defineCommand({
-  name: "project-port-forward",
+  name: "project port-forward",
   description: "start port-forwarding",
   group: "project",
   inputs: {

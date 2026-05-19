@@ -7,7 +7,7 @@ import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureClust
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandGetShell = defineCommand({
-  name: "project-get-shell",
+  name: "project get-shell",
   description: "get a shell to a pod in the environment",
   group: "project",
   inputs: {

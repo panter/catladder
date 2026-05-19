@@ -61,7 +61,7 @@ const findJobById = async (io: any, jobName: string) => {
 };
 
 export const commandCiJobOpen = defineCommand({
-  name: "project-ci-job-open",
+  name: "project ci job-open",
   description: "Open a Job",
   group: "project",
   inputs: {
@@ -79,7 +79,7 @@ export const commandCiJobOpen = defineCommand({
 });
 
 export const commandCiJobLog = defineCommand({
-  name: "project-ci-job-log",
+  name: "project ci job-log",
   description: "Show a job's log",
   group: "project",
   inputs: {

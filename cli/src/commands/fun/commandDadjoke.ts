@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import { defineCommand } from "../../core/defineCommand";
 
 export const commandDadjoke = defineCommand({
-  name: "dadjoke",
+  name: "fun dadjoke",
   description: "something for jonas.",
   group: "fun",
   inputs: {},

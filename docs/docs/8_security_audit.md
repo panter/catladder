@@ -34,9 +34,9 @@ flowchart TD
 The security audit commands are part of the `catladder` CLI:
 
 ```bash
-catladder security-audit-evaluate <path>
-catladder security-audit-create <token> <mainBranch> <projectId> <userId>
-catladder security-audit-ci-job <path> <token> <mainBranch> <projectId> <userId>
+catladder security audit evaluate <path>
+catladder security audit create <token> <mainBranch> <projectId> <userId>
+catladder security audit ci-job <path> <token> <mainBranch> <projectId> <userId>
 ```
 
 These commands can also be used non-interactively in CI/CD pipelines.

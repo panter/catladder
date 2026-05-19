@@ -5,7 +5,7 @@ import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureClust
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandOpenEnv = defineCommand({
-  name: "project-open-env",
+  name: "project open env",
   description: "open the live environment",
   group: "project",
   inputs: {

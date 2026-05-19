@@ -16,60 +16,68 @@ export async function getCompletions(
   words: string[],
   cursorWord: string,
 ): Promise<string[]> {
-  // If no command yet, complete command names
-  if (words.length === 0) {
-    return allCommands
-      .map((c) => c.name)
-      .filter((name) => name.startsWith(cursorWord));
-  }
+  // Try to match words against command names (which can be multi-word)
+  // Walk through words, consuming them as command name parts until we find
+  // an exact command match or need to suggest the next subcommand level.
 
-  const commandName = words[0];
-  const command = allCommands.find((c) => c.name === commandName);
+  // Find all commands whose name starts with the words typed so far
+  const typed = words.join(" ");
 
-  // If the first word doesn't match a command, complete command names
-  if (!command) {
-    return allCommands
-      .map((c) => c.name)
-      .filter((name) => name.startsWith(commandName));
-  }
+  // Exact match: we've typed a full command name, now complete its inputs
+  const exactCommand = allCommands.find((c) => c.name === typed);
+  if (exactCommand) {
+    // Check if cursor is a --flag
+    if (cursorWord.startsWith("--")) {
+      return getFlagCompletions(exactCommand, cursorWord);
+    }
 
-  // We have a valid command. Figure out what to complete.
-  const argsAfterCommand = words.slice(1);
+    // Check if previous word was a --flag (complete its value)
+    const prevWord = words[words.length - 1];
+    if (prevWord?.startsWith("--")) {
+      const flagName = prevWord.replace(/^--/, "");
+      const inputName = flagNameToInputName(flagName);
+      const inputDef = exactCommand.inputs[inputName];
+      if (inputDef && "choices" in inputDef && inputDef.choices) {
+        return resolveChoicesForCompletion(inputDef, cursorWord);
+      }
+      return [];
+    }
 
-  // Check if we're completing a --flag value
-  const prevWord = argsAfterCommand[argsAfterCommand.length - 1];
-  if (prevWord?.startsWith("--")) {
-    // Previous word is a flag, complete its values
-    const flagName = prevWord.replace(/^--/, "");
-    const inputName = flagNameToInputName(flagName);
-    const inputDef = command.inputs[inputName];
-    if (inputDef && "choices" in inputDef && inputDef.choices) {
-      return resolveChoicesForCompletion(inputDef, cursorWord);
+    // Complete positional inputs
+    const positionalInputs = getPositionalInputs(exactCommand);
+    // Count non-flag args after the command name
+    const argsAfterCommand = words.slice(exactCommand.name.split(" ").length);
+    const positionalArgs = argsAfterCommand.filter((w) => !w.startsWith("--"));
+    const positionalIndex = positionalArgs.length;
+    const targetInput = positionalInputs[positionalIndex];
+
+    if (targetInput) {
+      const [, inputDef] = targetInput;
+      if ("choices" in inputDef && inputDef.choices) {
+        return resolveChoicesForCompletion(inputDef, cursorWord);
+      }
     }
     return [];
   }
 
-  // Check if we're typing a --flag name
-  if (cursorWord.startsWith("--")) {
-    return getFlagCompletions(command, cursorWord);
-  }
+  // No exact match. Complete the next level of subcommand names.
+  // The prefix is what's been typed so far (words joined with space).
+  const prefix = typed ? typed + " " : "";
 
-  // Otherwise, complete positional inputs
-  const positionalInputs = getPositionalInputs(command);
-  const positionalArgs = argsAfterCommand.filter((w) => !w.startsWith("--"));
-
-  // Which positional index are we on?
-  const positionalIndex = positionalArgs.length;
-  const targetInput = positionalInputs[positionalIndex];
-
-  if (targetInput) {
-    const [, inputDef] = targetInput;
-    if ("choices" in inputDef && inputDef.choices) {
-      return resolveChoicesForCompletion(inputDef, cursorWord);
+  // Find unique next-level subcommand names
+  const nextParts = new Set<string>();
+  for (const cmd of allCommands) {
+    if (cmd.name.startsWith(prefix)) {
+      // Get the next word after the prefix
+      const rest = cmd.name.slice(prefix.length);
+      const nextPart = rest.split(" ")[0];
+      if (nextPart && nextPart.startsWith(cursorWord)) {
+        nextParts.add(nextPart);
+      }
     }
   }
 
-  return [];
+  return [...nextParts].sort();
 }
 
 function getPositionalInputs(command: CommandDef): [string, InputDef][] {

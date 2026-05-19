@@ -12,7 +12,7 @@ import {
 const GITLAB_HOST = "https://git.panter.ch";
 
 export const commandSecurityAuditCiJob = defineCommand({
-  name: "security-audit-ci-job",
+  name: "security audit ci-job",
   description:
     "Evaluates security audit document. Creates MR with template if missing.",
   group: "security",

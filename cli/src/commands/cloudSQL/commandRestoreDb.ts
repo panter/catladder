@@ -4,7 +4,7 @@ import type { CloudSqlBackgroundProxy } from "../../gcloud/cloudSql/startProxy";
 import { startCloudSqlProxyInBackground } from "../../gcloud/cloudSql/startProxy";
 
 export const commandRestoreDb = defineCommand({
-  name: "cloud-sql-restore-db",
+  name: "cloudsql restore-db",
   description: "restore a db from one source to another target",
   group: "cloudSQL",
   inputs: {

@@ -9,7 +9,7 @@ import {
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandMongoGetShell = defineCommand({
-  name: "project-mongo-get-shell",
+  name: "project mongo get-shell",
   description: "get a shell to a mongodb in the environment",
   group: "mongodb",
   inputs: {

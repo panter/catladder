@@ -7,7 +7,7 @@ import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureClust
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandDeletePods = defineCommand({
-  name: "project-delete-pods",
+  name: "project delete-pods",
   description: "delete / restart pods",
   group: "project",
 

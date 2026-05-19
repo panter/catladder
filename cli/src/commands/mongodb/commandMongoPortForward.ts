@@ -9,7 +9,7 @@ import clipboard from "clipboardy";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandMongoPortForward = defineCommand({
-  name: "project-mongo-port-forward",
+  name: "project mongo port-forward",
   description: "port forward to a mongodb",
   group: "mongodb",
   inputs: {

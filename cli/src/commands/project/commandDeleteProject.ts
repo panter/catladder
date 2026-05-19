@@ -4,7 +4,7 @@ import { getProjectNamespace } from "../../utils/projects";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandDeleteProject = defineCommand({
-  name: "project-delete",
+  name: "project delete",
   description: "deletes a environment of a project (it deletes the namespace)",
   group: "project",
   inputs: {

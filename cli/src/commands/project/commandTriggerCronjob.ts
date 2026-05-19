@@ -46,7 +46,7 @@ const runCronjob = async (
 };
 
 export const commandTriggerCronjobGeneral = defineCommand({
-  name: "trigger-cronjob",
+  name: "kube trigger-cronjob",
   description: "trigger cronjob",
   group: "general",
   inputs: {
@@ -69,7 +69,7 @@ export const commandTriggerCronjobGeneral = defineCommand({
 });
 
 export const commandTriggerCronjobProject = defineCommand({
-  name: "project-trigger-cronjob",
+  name: "project trigger-cronjob",
   description: "trigger cronjob",
   group: "project",
   inputs: {

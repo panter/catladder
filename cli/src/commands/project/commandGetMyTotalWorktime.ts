@@ -2,7 +2,7 @@ import { spawn } from "child-process-promise";
 import { defineCommand } from "../../core/defineCommand";
 
 export const commandGetMyTotalWorktime = defineCommand({
-  name: "project-get-my-total-worktime",
+  name: "project worktime",
   description: "show the total worktime that you spent on a project",
   group: "project",
   inputs: {},

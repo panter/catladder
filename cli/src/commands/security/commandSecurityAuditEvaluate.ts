@@ -6,7 +6,7 @@ import {
 import { SECURITY_AUDIT_FILE_NAME } from "../../security/createSecurityAuditMergeRequest";
 
 export const commandSecurityAuditEvaluate = defineCommand({
-  name: "security-audit-evaluate",
+  name: "security audit evaluate",
   description: "Evaluates security audit document in given path",
   group: "security",
   inputs: {

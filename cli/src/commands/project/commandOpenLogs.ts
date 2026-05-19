@@ -7,7 +7,7 @@ import { openGoogleCloudLogs } from "../../kubernetes/openKubernetesDashboards";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandOpenLogs = defineCommand({
-  name: "project-open-logs",
+  name: "project open logs",
   description: "open google cloud logs (stackdriver logs)",
   group: "project",
   inputs: {

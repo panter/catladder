@@ -25,8 +25,8 @@ catladder completion install
 ### Non-interactive mode
 
 ```bash
-catladder project-port-forward dev:web --pod-name=web-abc --local-port=3000 --remote-port=3000
-catladder -y project-delete dev:web
+catladder project port-forward dev:web --pod-name=web-abc --local-port=3000 --remote-port=3000
+catladder -y project delete dev:web
 ```
 
 ## Contribution

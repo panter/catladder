@@ -2,7 +2,7 @@ import { spawn } from "child-process-promise";
 import { defineCommand } from "../../core/defineCommand";
 
 export const commandStarwars = defineCommand({
-  name: "starwars",
+  name: "fun starwars",
   description: "Long time ago... in a galaxy far far away...",
   group: "fun",
   inputs: {},

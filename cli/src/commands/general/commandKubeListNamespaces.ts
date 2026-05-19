@@ -2,7 +2,7 @@ import { defineCommand } from "../../core/defineCommand";
 import { getk8sApi } from "../../k8sApi";
 
 export const commandKubeListNamespaces = defineCommand({
-  name: "kube-list-namespaces",
+  name: "kube list-namespaces",
   description: "list all namespaces",
   group: "general",
   inputs: {},

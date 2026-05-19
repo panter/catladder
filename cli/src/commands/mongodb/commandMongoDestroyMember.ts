@@ -34,7 +34,7 @@ const removeFinalizerAndDelete = async (
 };
 
 export const commandMongoDestroyMember = defineCommand({
-  name: "project-mongo-destroy-member",
+  name: "project mongo destroy-member",
   description: "DESTROY a member of a replicaset in order to reinitialize it",
   group: "mongodb",
   inputs: {

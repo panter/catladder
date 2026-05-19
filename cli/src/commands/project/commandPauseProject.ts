@@ -4,7 +4,7 @@ import { getProjectNamespace } from "../../utils/projects";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
 
 export const commandPauseProject = defineCommand({
-  name: "project-pause",
+  name: "project pause",
   description: "halts all running pods (scales to 0)",
   group: "project",
   inputs: {

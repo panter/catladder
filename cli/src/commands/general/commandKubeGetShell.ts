@@ -4,7 +4,7 @@ import { getk8sApi } from "../../k8sApi";
 import { getShell } from "../../utils/shell";
 
 export const commandKubeGetShell = defineCommand({
-  name: "kube-get-shell",
+  name: "kube get-shell",
   description: "get a shell to a pod in the environment",
   group: "general",
   inputs: {
