@@ -8,7 +8,7 @@ export const commandRestoreDb = defineCommand({
   description: "restore a db from one source to another target",
   group: "cloudSQL",
   inputs: {
-    sourceInstance: {
+    source: {
       type: "string",
       message: "Source instance (connection string or 'local')? 🤔 ",
     },
@@ -24,7 +24,7 @@ export const commandRestoreDb = defineCommand({
     },
     sourcePassword: { type: "string", message: "Source Password? 🤔 " },
     sourceDbName: { type: "string", message: "Source DB name? 🤔 " },
-    targetInstance: {
+    target: {
       type: "string",
       message: "Target INSTANCE (connection string or 'local')? 🤔  ",
     },
@@ -42,19 +42,19 @@ export const commandRestoreDb = defineCommand({
     targetDbName: { type: "string", message: "Target DB name? 🤔 " },
   },
   execute: async (ctx) => {
-    const sourceInstance = await ctx.get("sourceInstance");
+    const source = await ctx.get("source");
 
     let sourceProxy: CloudSqlBackgroundProxy;
     let targetProxy: CloudSqlBackgroundProxy;
     let sourcePort: number;
     let targetPort: number;
 
-    if (sourceInstance === "local") {
+    if (source === "local") {
       sourcePort = await ctx.get("sourceLocalPort");
     } else {
       sourcePort = 54399;
       sourceProxy = await startCloudSqlProxyInBackground({
-        instanceName: sourceInstance,
+        instanceName: source,
         localPort: sourcePort,
       });
     }
@@ -63,14 +63,14 @@ export const commandRestoreDb = defineCommand({
     const sourcePassword = await ctx.get("sourcePassword");
     const sourceDbName = await ctx.get("sourceDbName");
 
-    const targetInstance = await ctx.get("targetInstance");
+    const target = await ctx.get("target");
 
-    if (targetInstance === "local") {
+    if (target === "local") {
       targetPort = await ctx.get("targetLocalPort");
     } else {
       targetPort = 54499;
       targetProxy = await startCloudSqlProxyInBackground({
-        instanceName: targetInstance,
+        instanceName: target,
         localPort: targetPort,
       });
     }
@@ -80,7 +80,7 @@ export const commandRestoreDb = defineCommand({
     const targetDbName = await ctx.get("targetDbName");
 
     const shouldContinue = await ctx.confirm(
-      `This will drop ${targetInstance}/${targetDbName} and replace it with ${sourceInstance}/${sourceDbName}. Continue? 🤔 `,
+      `This will drop ${target}/${targetDbName} and replace it with ${source}/${sourceDbName}. Continue? 🤔 `,
     );
     if (!shouldContinue) {
       return;
