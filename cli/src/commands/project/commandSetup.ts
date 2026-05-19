@@ -7,7 +7,12 @@ export const commandSetup = defineCommand({
     "Initializes all environments and creates required resources, service accounts, etc.",
   group: "project",
   inputs: {
-    component: { type: "string", message: "component name", positional: true },
+    component: {
+      type: "string",
+      message: "component name",
+      positional: true,
+      required: false,
+    },
   },
   execute: async (ctx) => {
     const component = await ctx.get("component");

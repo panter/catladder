@@ -103,12 +103,18 @@ export interface CommandContext<TInputs extends InputsSchema> extends IO {
    * Consume a declared input by name.
    * - Compile error if `name` is not in TInputs
    * - Return type matches the input's type (string, number, boolean, string[])
-   * - Resolution: pre-supplied value > choices function + interactive prompt > default > throw
+   * - If `required: false`, returns `undefined` when not provided (no prompt)
+   * - Otherwise: pre-supplied value > choices function + interactive prompt > default > throw
    */
   get<K extends keyof TInputs & string>(
     name: K,
-  ): Promise<InputResultType<TInputs[K]>>;
+  ): Promise<OptionalInput<TInputs[K]>>;
 }
+
+/** If the input has `required: false`, the result can be undefined */
+export type OptionalInput<T extends InputDef> = T extends { required: false }
+  ? InputResultType<T> | undefined
+  : InputResultType<T>;
 
 // ─── Command Definition ──────────────────────────────────────────────
 

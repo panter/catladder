@@ -4,6 +4,7 @@ import type {
   InputDef,
   InputResultType,
   InputsSchema,
+  OptionalInput,
 } from "../core/types";
 
 /**
@@ -32,7 +33,7 @@ export abstract class BaseContext<TInputs extends InputsSchema>
 
   get<K extends keyof TInputs & string>(
     name: K,
-  ): Promise<InputResultType<TInputs[K]>> {
+  ): Promise<OptionalInput<TInputs[K]>> {
     if (!this.cache.has(name)) {
       const spec = this.command.inputs[name];
       if (!spec) {
@@ -42,7 +43,19 @@ export abstract class BaseContext<TInputs extends InputsSchema>
           ),
         );
       }
-      this.cache.set(name, this.resolveInput(name, spec));
+      // For optional inputs (required: false), catch MissingInputError
+      // and return undefined instead of prompting
+      if (spec.required === false) {
+        this.cache.set(
+          name,
+          this.resolveInput(name, spec).catch((err) => {
+            if (err?.name === "MissingInputError") return undefined;
+            throw err;
+          }),
+        );
+      } else {
+        this.cache.set(name, this.resolveInput(name, spec));
+      }
     }
     return this.cache.get(name)!;
   }

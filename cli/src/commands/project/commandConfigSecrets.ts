@@ -15,6 +15,7 @@ export const commandConfigSecrets = defineCommand({
       type: "string",
       message: "environment:component",
       positional: true,
+      required: false,
       choices: async () => envAndComponents(),
     },
   },
