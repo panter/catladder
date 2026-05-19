@@ -90,7 +90,7 @@ export type PackageManagerInfoBase = YarnPackageManagerInfoBase;
 export type ContextBeforeConfig = {
   componentName: string;
   fullConfig: Config;
-  packageManagerInfo?: PackageManagerInfoComponent;
+  packageManagerInfo?: Promise<PackageManagerInfoComponent>;
 };
 
 export type BuildContextBase = {
@@ -175,7 +175,7 @@ export type ComponentContext<
   trigger?: PipelineTrigger;
   pipelineType?: PipelineType;
 
-  packageManagerInfo: PackageManagerInfoComponent;
+  packageManagerInfo: Promise<PackageManagerInfoComponent>;
 
   customJobs?: CatladderJob[];
 };
@@ -208,7 +208,7 @@ export type WorkspaceContext = {
   name: string;
   fullConfig: Config;
   workspaceConfig: WorkspaceBuildConfig;
-  packageManagerInfo: PackageManagerInfoBase;
+  packageManagerInfo: Promise<PackageManagerInfoBase>;
   components: Array<ComponentContext>;
   build: BuildContextWorkspace;
   trigger: PipelineTrigger;

@@ -7,9 +7,9 @@ import { createDeployementJobs } from "../base";
 
 import { isOfDeployType } from "../types";
 
-export const createCustomDeployJobs = (
+export const createCustomDeployJobs = async (
   context: ComponentContext,
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   const deployConfig = context.deploy?.config;
 
   if (!isOfDeployType(deployConfig, "custom")) {
@@ -17,7 +17,7 @@ export const createCustomDeployJobs = (
     throw new Error("deploy config is not custom");
   }
   // FIXME: custom deploy currently assumes yarn-based project
-  const yarnInstall = getYarnInstall(context, {
+  const yarnInstall = await getYarnInstall(context, {
     noCustomPostInstall: true,
   });
 

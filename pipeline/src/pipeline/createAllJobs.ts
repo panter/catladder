@@ -65,19 +65,21 @@ export const createAllJobs = async ({
 
             return {
               context: workspaceContext,
-              jobs: createJobsForWorkspace(workspaceContext),
+              jobs: await createJobsForWorkspace(workspaceContext),
             };
           }),
         );
       }),
     ).then((f) => f.flat()),
 
-    components: allComponentsContext.map((context) => {
-      return {
-        context,
-        jobs: createJobsForComponentContext(context),
-      };
-    }),
+    components: await Promise.all(
+      allComponentsContext.map(async (context) => {
+        return {
+          context,
+          jobs: await createJobsForComponentContext(context),
+        };
+      }),
+    ),
     agents: await Promise.all(
       Object.keys(config.agents ?? {}).map(async (agentName) => {
         const context = await createAgentContext({ agentName, config });

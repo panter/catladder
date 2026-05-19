@@ -157,7 +157,7 @@ before_script:
         - app/.yarn
     - key: app-node-modules
       policy: pull-push
-      paths:
+      paths: &a2
         - app/node_modules
         - app/.yarn/install-state.gz
   rules:
@@ -198,9 +198,7 @@ before_script:
         - app/.yarn
     - key: app-node-modules
       policy: pull-push
-      paths:
-        - app/node_modules
-        - app/.yarn/install-state.gz
+      paths: *a2
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -545,7 +543,7 @@ before_script:
         - app-yarn
     - key: app-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
+      paths: &a3
         - app/node_modules
         - app/.yarn/install-state.gz
       fallback_keys:
@@ -590,9 +588,7 @@ before_script:
         - app-yarn
     - key: app-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
-        - app/node_modules
-        - app/.yarn/install-state.gz
+      paths: *a3
       fallback_keys:
         - app-node-modules
   rules:
@@ -1457,13 +1453,13 @@ create release:
   after_script:
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - &a2
+    - &a4
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
-    - &a3
+    - &a5
       if: $CI_PIPELINE_SOURCE  == "trigger"
       when: never
-    - &a4
+    - &a6
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -1478,9 +1474,9 @@ create release:
   after_script:
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - *a2
-    - *a3
     - *a4
+    - *a5
+    - *a6
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/

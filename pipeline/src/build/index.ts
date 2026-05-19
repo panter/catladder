@@ -19,7 +19,9 @@ export * from "./types";
 
 export type BuildTypes = {
   [type in BuildConfigStandaloneType]: {
-    jobs: (context: ComponentContextWithBuild) => CatladderJob[];
+    jobs: (
+      context: ComponentContextWithBuild,
+    ) => CatladderJob[] | Promise<CatladderJob[]>;
     defaults: (
       envContext: EnvironmentContext,
     ) => Partial<Extract<BuildConfig, { type: type }>>;
@@ -76,7 +78,9 @@ export const BUILD_TYPES: BuildTypes = {
 
 export type WorkspaceBuildTypes = {
   [type in WorkspaceBuildConfig["type"]]: {
-    jobs: (context: WorkspaceContext) => CatladderJob[];
+    jobs: (
+      context: WorkspaceContext,
+    ) => CatladderJob[] | Promise<CatladderJob[]>;
     defaults: () => Partial<Extract<WorkspaceBuildConfig, { type: type }>>;
   };
 };

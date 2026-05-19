@@ -33,7 +33,7 @@ export const createComponentContext = async (
     );
   }
 
-  const packageManagerInfo = await getPackageManagerInfoForComponent(
+  const packageManagerInfoPromise = getPackageManagerInfoForComponent(
     ctx.config,
     ctx.componentName,
   );
@@ -75,7 +75,10 @@ export const createComponentContext = async (
     componentConfigWithoutDefaults,
   );
 
-  const environment = await getEnvironment(ctx);
+  const [environment, packageManagerInfo] = await Promise.all([
+    getEnvironment(ctx),
+    packageManagerInfoPromise,
+  ]);
   const { deploy, build, customJobs, dir } = componentConfig;
   const getComponentDirs: BuildContext["getComponentDirs"] = (mode) => [
     dir,
@@ -133,7 +136,7 @@ export const createComponentContext = async (
       : null,
 
     environment,
-    packageManagerInfo: packageManagerInfo,
+    packageManagerInfo: packageManagerInfoPromise,
     pipelineType: ctx.pipelineType,
     trigger: ctx.trigger,
   };

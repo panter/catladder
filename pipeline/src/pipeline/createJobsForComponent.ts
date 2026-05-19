@@ -24,19 +24,19 @@ const getCustomJobs = (context: ComponentContext) => {
   const rawJobs = context.customJobs;
   return injectDefaultVarsInCustomJobs(context, rawJobs);
 };
-export const createJobsForComponentContext = (
+export const createJobsForComponentContext = async (
   context: ComponentContext,
-): CatladderJob[] => {
-  const buildJobs =
+): Promise<CatladderJob[]> => {
+  const [buildJobs, deployJobs] = await Promise.all([
     context.build.type !== "disabled"
       ? BUILD_TYPES[context.build.buildType].jobs(
           context as ComponentContextWithBuild,
         )
-      : [];
-  const deployJobs =
+      : [],
     context.componentConfig.deploy !== false
       ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
-      : [];
+      : [],
+  ]);
 
   const customJobs = getCustomJobs(context);
 

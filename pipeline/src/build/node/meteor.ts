@@ -26,10 +26,11 @@ const getMeteorCache = (context: ComponentContext): CacheConfig[] => [
     ],
   },
 ];
-const getMeteorDockerInstallScripts = (
+const getMeteorDockerInstallScripts = async (
   context: ComponentContextWithBuild,
-): BashExpression => {
-  if (context.packageManagerInfo.isClassic) {
+): Promise<BashExpression> => {
+  const packageManagerInfo = await context.packageManagerInfo;
+  if (packageManagerInfo.isClassic) {
     return new BashExpression(
       `
 COPY $APP_DIR/package.json $APP_DIR/yarn.lock ./
@@ -43,7 +44,7 @@ RUN yarn --frozen-lockfile --production=true --ignore-engines
 
   // yarn >= 4 ships with built-in plugins, see https://github.com/yarnpkg/berry/pull/4253
   const doesNotShipWithBuiltInPlugins = ["2", "3"].some((v) =>
-    context.packageManagerInfo.version.startsWith(v),
+    packageManagerInfo.version.startsWith(v),
   );
   const maybeAddWorkspaceToolsCommand = doesNotShipWithBuiltInPlugins
     ? "RUN yarn plugin import workspace-tools"
@@ -59,22 +60,28 @@ RUN yarn workspaces focus --production
   );
 };
 
-export const createMeteorBuildJobs = (
+export const createMeteorBuildJobs = async (
   context: ComponentContextWithBuild,
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   const buildConfig = context.build.config;
 
   if (!isOfBuildType(buildConfig, "meteor")) {
     throw new Error("deploy config is not meteor");
   }
 
-  const yarnInstall = getYarnInstall(context);
+  const [yarnInstall, nodeCache, meteorInstallScripts] = await Promise.all([
+    getYarnInstall(context),
+    getNodeCache(context),
+    buildConfig.installScripts
+      ? getMeteorDockerInstallScripts(context)
+      : Promise.resolve("" as const),
+  ]);
 
   return createComponentBuildJobs(context, {
     appBuild:
       buildConfig.buildCommand !== null && buildConfig.buildCommand !== false
         ? {
-            cache: [...getNodeCache(context), ...getMeteorCache(context)],
+            cache: [...nodeCache, ...getMeteorCache(context)],
             image: getRunnerImage("jobs-meteor"),
             variables: {
               METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
@@ -91,9 +98,7 @@ export const createMeteorBuildJobs = (
     dockerBuild: {
       script: getDockerBuildScriptWithBuiltInDockerFile(context, "meteor"),
       variables: {
-        METEOR_INSTALL_SCRIPTS: buildConfig.installScripts
-          ? getMeteorDockerInstallScripts(context)
-          : "",
+        METEOR_INSTALL_SCRIPTS: meteorInstallScripts,
       },
     },
   });

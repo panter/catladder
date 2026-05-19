@@ -10,8 +10,9 @@ const YARN_BERRY_PROD_INSTALL = `yarn workspaces focus --production`;
 // FIXME: check why and when rebuild is needed
 const YARN_BERRY_PROD_REBUILD = `yarn rebuild`;
 
-const getYarnInstallCommand = (context: Context) => {
-  if (context.packageManagerInfo.isClassic) {
+const getYarnInstallCommand = async (context: Context) => {
+  const packageManagerInfo = await context.packageManagerInfo;
+  if (packageManagerInfo.isClassic) {
     return YARN_INSTALL_CLASSIC;
   }
   // inline builds make debugging easier as it prints it out in the logs, instead of writing it in temp files
@@ -27,7 +28,7 @@ export const ensureNodeVersion = (context: Context) =>
     "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
   ]);
 
-export const getYarnInstall = (
+export const getYarnInstall = async (
   context: Context,
   options?: {
     noCustomPostInstall: boolean;
@@ -44,7 +45,7 @@ export const getYarnInstall = (
     ...collapseableSection(
       "yarninstall",
       "Yarn install",
-    )([getYarnInstallCommand(context)]),
+    )([await getYarnInstallCommand(context)]),
     ...(postInstall && !options?.noCustomPostInstall
       ? collapseableSection(
           "postinstall",
@@ -56,15 +57,16 @@ export const getYarnInstall = (
 
 const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
 
-export const getDockerAppCopyAndBuildScript = (
+export const getDockerAppCopyAndBuildScript = async (
   context: ComponentContextWithBuild,
 ) => {
-  if (context.packageManagerInfo.isClassic) {
+  const packageManagerInfo = await context.packageManagerInfo;
+  if (packageManagerInfo.isClassic) {
     return new BashExpression(
       `
 RUN ${YARN_INSTALL_CLASSIC} --production --ignore-scripts
 ${DOCKER_COPY_FILES}
-RUN ${YARN_INSTALL_CLASSIC} --production 
+RUN ${YARN_INSTALL_CLASSIC} --production
     `.trim(),
     );
   }
@@ -86,7 +88,7 @@ RUN ${YARN_INSTALL_CLASSIC} --production
   // yarn >= 4 ships with build in plugins, see https://github.com/yarnpkg/berry/pull/4253
   // trying to import those fail on this version
   const doesNotShipWithBuiltInPlugins = ["2", "3"].some((v) =>
-    context.packageManagerInfo.version.startsWith(v),
+    packageManagerInfo.version.startsWith(v),
   );
   const maybeAddWorkspaceToolsCommand = doesNotShipWithBuiltInPlugins
     ? "RUN yarn plugin import workspace-tools"

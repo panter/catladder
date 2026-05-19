@@ -156,7 +156,7 @@ before_script:
         - app1/.yarn
     - key: app1-node-modules
       policy: pull-push
-      paths:
+      paths: &a2
         - app1/node_modules
         - app1/.yarn/install-state.gz
   rules:
@@ -197,9 +197,7 @@ before_script:
         - app1/.yarn
     - key: app1-node-modules
       policy: pull-push
-      paths:
-        - app1/node_modules
-        - app1/.yarn/install-state.gz
+      paths: *a2
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -569,7 +567,7 @@ before_script:
         - app1-yarn
     - key: app1-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
+      paths: &a3
         - app1/node_modules
         - app1/.yarn/install-state.gz
       fallback_keys:
@@ -614,9 +612,7 @@ before_script:
         - app1-yarn
     - key: app1-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
-        - app1/node_modules
-        - app1/.yarn/install-state.gz
+      paths: *a3
       fallback_keys:
         - app1-node-modules
   rules:
@@ -1600,7 +1596,7 @@ before_script:
         - app2/.yarn
     - key: app2-node-modules
       policy: pull-push
-      paths:
+      paths: &a4
         - app2/node_modules
         - app2/.yarn/install-state.gz
   rules:
@@ -1641,9 +1637,7 @@ before_script:
         - app2/.yarn
     - key: app2-node-modules
       policy: pull-push
-      paths:
-        - app2/node_modules
-        - app2/.yarn/install-state.gz
+      paths: *a4
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -2023,7 +2017,7 @@ before_script:
         - app2-yarn
     - key: app2-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
+      paths: &a5
         - app2/node_modules
         - app2/.yarn/install-state.gz
       fallback_keys:
@@ -2068,9 +2062,7 @@ before_script:
         - app2-yarn
     - key: app2-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
-        - app2/node_modules
-        - app2/.yarn/install-state.gz
+      paths: *a5
       fallback_keys:
         - app2-node-modules
   rules:
@@ -3084,7 +3076,7 @@ before_script:
         - kube/.yarn
     - key: kube-node-modules
       policy: pull-push
-      paths:
+      paths: &a6
         - kube/node_modules
         - kube/.yarn/install-state.gz
   rules:
@@ -3125,9 +3117,7 @@ before_script:
         - kube/.yarn
     - key: kube-node-modules
       policy: pull-push
-      paths:
-        - kube/node_modules
-        - kube/.yarn/install-state.gz
+      paths: *a6
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -3587,7 +3577,7 @@ before_script:
         - kube-yarn
     - key: kube-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
+      paths: &a7
         - kube/node_modules
         - kube/.yarn/install-state.gz
       fallback_keys:
@@ -3632,9 +3622,7 @@ before_script:
         - kube-yarn
     - key: kube-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
-      paths:
-        - kube/node_modules
-        - kube/.yarn/install-state.gz
+      paths: *a7
       fallback_keys:
         - kube-node-modules
   rules:
@@ -4839,13 +4827,13 @@ create release:
   after_script:
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - &a2
+    - &a8
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
-    - &a3
+    - &a9
       if: $CI_PIPELINE_SOURCE  == "trigger"
       when: never
-    - &a4
+    - &a10
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -4860,9 +4848,9 @@ create release:
   after_script:
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - *a2
-    - *a3
-    - *a4
+    - *a8
+    - *a9
+    - *a10
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/

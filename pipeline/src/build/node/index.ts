@@ -7,20 +7,28 @@ import { createNodeBuildJobs } from "./buildJob";
 import { createMeteorBuildJobs } from "./meteor";
 import { createNodeTestJobs } from "./testJob";
 
-export const createNodeJobs = (
+export const createNodeJobs = async (
   context: ComponentContextWithBuild | WorkspaceContext,
-): CatladderJob[] => {
-  return [...createNodeTestJobs(context), ...createNodeBuildJobs(context)];
+): Promise<CatladderJob[]> => {
+  const [testJobs, buildJobs] = await Promise.all([
+    createNodeTestJobs(context),
+    createNodeBuildJobs(context),
+  ]);
+  return [...testJobs, ...buildJobs];
 };
 
-export const createStorybookJobs = (
+export const createStorybookJobs = async (
   context: ComponentContextWithBuild,
-): CatladderJob[] => {
-  return [...createNodeBuildJobs(context)];
+): Promise<CatladderJob[]> => {
+  return [...(await createNodeBuildJobs(context))];
 };
 
-export const createMeteorJobs = (
+export const createMeteorJobs = async (
   context: ComponentContextWithBuild,
-): CatladderJob[] => {
-  return [...createNodeTestJobs(context), ...createMeteorBuildJobs(context)];
+): Promise<CatladderJob[]> => {
+  const [testJobs, buildJobs] = await Promise.all([
+    createNodeTestJobs(context),
+    createMeteorBuildJobs(context),
+  ]);
+  return [...testJobs, ...buildJobs];
 };

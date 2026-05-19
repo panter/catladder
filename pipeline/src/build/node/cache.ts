@@ -5,13 +5,15 @@ import slugify from "slugify";
 import type { Context, WorkspaceContext } from "../../types/context";
 import type { CacheConfig } from "../types";
 
-export const getYarnCache = (
+export const getYarnCache = async (
   context: Context,
   policy = "pull-push",
-): CacheConfig[] => {
+): Promise<CacheConfig[]> => {
+  const packageManagerInfo = await context.packageManagerInfo;
   const componentIsInWorkspace =
     context.type === "component" &&
-    context.packageManagerInfo.componentIsInWorkspace;
+    "componentIsInWorkspace" in packageManagerInfo &&
+    packageManagerInfo.componentIsInWorkspace;
   return [
     {
       scope: componentIsInWorkspace ? "global" : "buildDir",
@@ -23,15 +25,17 @@ export const getYarnCache = (
   ];
 };
 
-export const getNodeModulesCache = (
+export const getNodeModulesCache = async (
   context: Context,
   policy = "pull-push",
-): CacheConfig[] => {
+): Promise<CacheConfig[]> => {
+  const packageManagerInfo = await context.packageManagerInfo;
   const componentIsInWorkspace =
     context.type === "component" &&
-    context.packageManagerInfo.componentIsInWorkspace;
+    "componentIsInWorkspace" in packageManagerInfo &&
+    packageManagerInfo.componentIsInWorkspace;
 
-  const { isClassic } = context.packageManagerInfo;
+  const { isClassic, workspaces } = packageManagerInfo;
 
   // We intentionally do not use the contents of yarn.lock as a cache key, as yarn install should always guarantee that the files are updated, but it can still use part of the cache if not all packages are up-to-date.
   // It would slow down all pipelines whenever one adds a new dependency as it will need to download all node_modules again.
@@ -49,13 +53,12 @@ export const getNodeModulesCache = (
         ...(componentIsInWorkspace
           ? uniq([
               "node_modules",
-              ...(context.packageManagerInfo.workspaces.map((w) =>
-                join(w.location, "node_modules"),
-              ) ?? []),
+              ...(workspaces.map((w) => join(w.location, "node_modules")) ??
+                []),
               ...(!isClassic
                 ? [
                     ".yarn/install-state.gz",
-                    ...(context.packageManagerInfo.workspaces.map((w) =>
+                    ...(workspaces.map((w) =>
                       join(w.location, ".yarn/install-state.gz"),
                     ) ?? []),
                   ]
@@ -71,12 +74,12 @@ export const getNodeModulesCache = (
     },
   ];
 };
-export const getNodeCache = (
+export const getNodeCache = async (
   context: Context,
   policy = "pull-push",
-): CacheConfig[] => {
+): Promise<CacheConfig[]> => {
   return [
-    ...getYarnCache(context, policy),
-    ...getNodeModulesCache(context, policy),
+    ...(await getYarnCache(context, policy)),
+    ...(await getNodeModulesCache(context, policy)),
   ];
 };

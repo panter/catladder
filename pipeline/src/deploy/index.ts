@@ -19,7 +19,7 @@ export * from "./types";
 export * from "./utils";
 
 export type DeployTypeDefinition<D extends DeployConfig> = {
-  jobs: (context: ComponentContext) => CatladderJob[];
+  jobs: (context: ComponentContext) => CatladderJob[] | Promise<CatladderJob[]>;
   defaults: (envContext: EnvironmentContext<BuildConfig, D>) => PartialDeep<D>;
   additionalSecretKeys: (
     envContext: EnvironmentContext<BuildConfig, D>,

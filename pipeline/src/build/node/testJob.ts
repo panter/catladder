@@ -12,9 +12,9 @@ import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { ensureNodeVersion, getYarnInstall } from "./yarn";
 import { createJobCacheFromCacheConfigs } from "../cache/createJobCache";
 
-export const createNodeTestJobs = (
+export const createNodeTestJobs = async (
   context: ComponentContext | WorkspaceContext,
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   // don't run tests after release
   // TODO: this will be replaced by using rules
   if (context.trigger === "taggedRelease") {
@@ -43,7 +43,11 @@ export const createNodeTestJobs = (
     needs: [],
   };
   const buildConfig = context.build.config;
-  const yarnInstall = getYarnInstall(context);
+  const [yarnInstall, packageManagerInfo, nodeCache] = await Promise.all([
+    getYarnInstall(context),
+    context.packageManagerInfo,
+    getNodeCache(context),
+  ]);
   const auditJob: CatladderJob | null =
     buildConfig.audit !== false
       ? {
@@ -58,7 +62,7 @@ export const createNodeTestJobs = (
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
-              context.packageManagerInfo.isClassic
+              packageManagerInfo.isClassic
                 ? "yarn audit --level critical"
                 : "yarn npm audit --environment production --severity critical", // yarn 2
             ]),
@@ -81,7 +85,7 @@ export const createNodeTestJobs = (
             ...(buildConfig.lint?.runnerVariables ?? {}),
           },
           image: buildConfig.lint?.jobImage ?? defaultImage,
-          cache: createJobCacheFromCacheConfigs(context, getNodeCache(context)),
+          cache: createJobCacheFromCacheConfigs(context, nodeCache),
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
@@ -108,7 +112,7 @@ export const createNodeTestJobs = (
           },
           image:
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
-          cache: createJobCacheFromCacheConfigs(context, getNodeCache(context)),
+          cache: createJobCacheFromCacheConfigs(context, nodeCache),
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,

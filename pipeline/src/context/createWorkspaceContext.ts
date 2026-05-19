@@ -43,7 +43,7 @@ export async function createWorkspaceContext({
     env,
     components,
     fullConfig: config,
-    packageManagerInfo: await getPackageManagerInfoBase(),
+    packageManagerInfo: getPackageManagerInfoBase(),
     build: {
       type: "workspace",
       dir: workspaceConfig.dir ?? ".",

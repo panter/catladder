@@ -19,40 +19,43 @@ import type { BuildConfigDocker } from "../types";
 import { getNodeCache, getYarnCache } from "./cache";
 import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
 
-export const createNodeBuildJobs = (
+export const createNodeBuildJobs = async (
   context: ComponentContextWithBuild | WorkspaceContext,
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   if (context.type === "workspace") {
     return createWorkspaceBuildJobs(context, {
-      appBuild: createNodeBuildJobDefinition(context),
+      appBuild: await createNodeBuildJobDefinition(context),
     });
   }
   return createComponentBuildJobs(context, {
     appBuild: componentContextIsStandaloneBuild(context)
-      ? createNodeBuildJobDefinition(context)
+      ? await createNodeBuildJobDefinition(context)
       : undefined,
 
-    dockerBuild: createNodeDockerJobDefinition(context),
+    dockerBuild: await createNodeDockerJobDefinition(context),
   });
 };
 
-export const createNodeBuildJobDefinition = (
+export const createNodeBuildJobDefinition = async (
   context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
-): AppBuildJobDefinition | undefined => {
+): Promise<AppBuildJobDefinition | undefined> => {
   const buildConfig = context.build.config;
 
-  const yarnInstall = getYarnInstall(context);
+  const [yarnInstall, nodeCache] = await Promise.all([
+    getYarnInstall(context),
+    getNodeCache(context),
+  ]);
   return createBuildJobDefinition(context, buildConfig, {
     prescript: yarnInstall,
-    cache: getNodeCache(context),
+    cache: nodeCache,
   });
 };
 
 type NewType = ComponentContextWithBuild;
 
-export const createNodeDockerJobDefinition = (
+export const createNodeDockerJobDefinition = async (
   context: NewType,
-): DockerBuildJobDefinition => {
+): Promise<DockerBuildJobDefinition> => {
   // get the default docker built-in type based on the build type
   const dockerDefaultBuiltIn: BuildConfigDocker["type"] =
     context.build.buildType === "node-static" ||
@@ -60,19 +63,25 @@ export const createNodeDockerJobDefinition = (
       ? "nginx"
       : "node";
 
+  const [yarnCache, dockerAppCopyAndBuildScript, packageManagerInfo] =
+    await Promise.all([
+      getYarnCache(context, "pull"),
+      getDockerAppCopyAndBuildScript(context),
+      context.packageManagerInfo,
+    ]);
+
   return {
     script: getDockerBuildScriptWithBuiltInDockerFile(
       context,
       dockerDefaultBuiltIn,
     ),
-    cache: [...getYarnCache(context, "pull")],
+    cache: [...yarnCache],
     variables: {
       // only required for non static
-      DOCKER_COPY_AND_INSTALL_APP: getDockerAppCopyAndBuildScript(context),
-      DOCKER_COPY_WORKSPACE_FILES:
-        context.packageManagerInfo?.pathsToCopyInDocker
-          .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
-          ?.join("\n"),
+      DOCKER_COPY_AND_INSTALL_APP: dockerAppCopyAndBuildScript,
+      DOCKER_COPY_WORKSPACE_FILES: packageManagerInfo?.pathsToCopyInDocker
+        .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
+        ?.join("\n"),
     },
   };
 };
