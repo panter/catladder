@@ -66,7 +66,9 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
           ),
         ),
       ...Object.entries(deployConfig.workerPools ?? {})
-        .filter(([_, workerPool]) => workerPool !== false && workerPool !== null)
+        .filter(
+          ([_, workerPool]) => workerPool !== false && workerPool !== null,
+        )
         .map(([name, workerPool]) =>
           getWorkerPoolDeployScript(
             context,
