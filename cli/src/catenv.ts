@@ -11,13 +11,20 @@ program
   .version(packageInfos.version)
   .argument("[envComponent]", "env or env:component")
   .option("-v, --verbose", "verbose output")
-  .action((envComponent: string | undefined, opts: { verbose?: boolean }) => {
-    catenv(envComponent ? parseChoice(envComponent) : null, {
-      verbose: opts.verbose ?? false,
-    }).then(() => {
-      // we have to exit manually, because we have some file watches
-      process.exit();
-    });
-  });
+  .option("-p, --print-variables", "print variables")
+  .action(
+    (
+      envComponent: string | undefined,
+      opts: { verbose?: boolean; printVariables?: boolean },
+    ) => {
+      catenv(envComponent ? parseChoice(envComponent) : null, {
+        verbose: opts.verbose ?? false,
+        printVariables: opts.printVariables ?? false,
+      }).then(() => {
+        // we have to exit manually, because we have some file watches
+        process.exit();
+      });
+    },
+  );
 
 program.parse();
