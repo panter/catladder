@@ -166,7 +166,7 @@ test:
     - echo "Publishing version $VERSION"
 
     # Bump versions in all workspaces
-    - yarn workspaces foreach version "$VERSION" --deferred
+    - yarn workspaces foreach -A version "$VERSION" --deferred
     - yarn version apply -R --all
 
     # Move to the package directory to publish
