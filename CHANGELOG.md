@@ -1,3 +1,35 @@
+# [4.0.0](https://git.panter.ch/catladder/catladder/compare/v3.48.0...v4.0.0) (2026-05-20)
+
+
+### Bug Fixes
+
+* add -A flag to yarn workspaces foreach for Yarn 4 compat ([b2300dd](https://git.panter.ch/catladder/catladder/commit/b2300dd6756e13526070626dc393c7267e265b92))
+* completion engine handles flags after nested subcommands ([52525b5](https://git.panter.ch/catladder/catladder/commit/52525b58d116e785fff677d68886abace8e206f4))
+
+
+* feat!: replace Vorpal REPL with Commander.js single-command CLI ([80ac360](https://git.panter.ch/catladder/catladder/commit/80ac360a72d1ae620e0db771ee55f67c5a8d23f6))
+
+
+### Features
+
+* add completion install/uninstall commands and documentation ([81f2905](https://git.panter.ch/catladder/catladder/commit/81f29058f1c86b560f55c28b139a52d39e5d8426))
+* add print-variables option to catenv ([a1b7455](https://git.panter.ch/catladder/catladder/commit/a1b7455ef862411333714dbdfc8ece3c58927e77))
+* add zsh shell completion support ([dc2f1b7](https://git.panter.ch/catladder/catladder/commit/dc2f1b71e123ba5f83e28610cec96db5354b5be9))
+* group commands into nested subcommands ([a65ec26](https://git.panter.ch/catladder/catladder/commit/a65ec2620135f4bc6e1ea65ef915b9351f0a5cfb))
+* improve shell completions with dynamic binary discovery ([2270956](https://git.panter.ch/catladder/catladder/commit/2270956d83c2f137c273a96ccd64b749a70c3f44))
+* merge catci security commands into main CLI ([16b1ee6](https://git.panter.ch/catladder/catladder/commit/16b1ee6205a6d202bd6a193eff74aadf18d31114))
+* replace Vorpal with Commander.js CLI abstraction ([74494d6](https://git.panter.ch/catladder/catladder/commit/74494d6f95f4b6e9f719375eee73913979b6369c))
+* speed up package manager info resolution ([ac1bc69](https://git.panter.ch/catladder/catladder/commit/ac1bc69b1e0c1f66891d6252e8036a893e2b9edf))
+* support optional inputs with required: [secure] ([6d5f896](https://git.panter.ch/catladder/catladder/commit/6d5f896c4d892dd1f05882ef007eeab7b40c2b9f))
+
+
+### BREAKING CHANGES
+
+* catenv no longer prints variables by default. Use -p or --print-variables to print variables
+* The interactive REPL shell (Vorpal) has been removed. The CLI now uses single-command invocation instead of an interactive shell. All commands work the same but are invoked directly (e.g. `catladder project-namespace dev:web`) rather than from within a REPL. Interactive prompts still work for missing inputs.
+
+Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+
 # [3.48.0](https://git.panter.ch/catladder/catladder/compare/v3.47.1...v3.48.0) (2026-05-18)
 
 
