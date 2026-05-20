@@ -146,17 +146,22 @@ class TerminalContext<
       return jsonInputs[name] as InputResultType<P>;
     }
 
-    // 3. Interactive prompt
-    if (isInteractive) {
-      return promptInteractive({ ...spec, name }, this);
-    }
-
-    // 4. Default
+    // 3. Default (check before prompting, so optional inputs with defaults don't prompt)
     if ("default" in spec && spec.default !== undefined) {
       return spec.default as InputResultType<P>;
     }
 
-    // 5. Throw
+    // 4. Optional inputs: don't prompt, throw so baseContext returns undefined
+    if (spec.required === false) {
+      throw new MissingInputError(name, spec.message);
+    }
+
+    // 5. Interactive prompt
+    if (isInteractive) {
+      return promptInteractive({ ...spec, name }, this);
+    }
+
+    // 6. Throw
     throw new MissingInputError(name, spec.message);
   }
 }
