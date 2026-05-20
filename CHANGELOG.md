@@ -1,3 +1,10 @@
+## [4.0.1](https://git.panter.ch/catladder/catladder/compare/v4.0.0...v4.0.1) (2026-05-20)
+
+
+### Bug Fixes
+
+* don't prompt for optional inputs (required: [secure]) ([da0a101](https://git.panter.ch/catladder/catladder/commit/da0a101b8dd447d7e20cc2ca95959249872110de))
+
 # [4.0.0](https://git.panter.ch/catladder/catladder/compare/v3.48.0...v4.0.0) (2026-05-20)
 
 
