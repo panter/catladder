@@ -189,24 +189,21 @@ completionCmd
   .command("zsh")
   .description("output zsh completion script")
   .action(() => {
-    const binaryName = process.argv[1].split("/").pop() ?? "catladder";
-    console.log(generateZshCompletionScript(binaryName));
+    console.log(generateZshCompletionScript());
   });
 
 completionCmd
   .command("install")
   .description("install shell completions into your .zshrc")
   .action(async () => {
-    const binaryName = process.argv[1].split("/").pop() ?? "catladder";
-    await installCompletions(binaryName);
+    await installCompletions();
   });
 
 completionCmd
   .command("uninstall")
   .description("remove shell completions from your .zshrc")
   .action(async () => {
-    const binaryName = process.argv[1].split("/").pop() ?? "catladder";
-    await uninstallCompletions(binaryName);
+    await uninstallCompletions();
   });
 
 // Cleanup on exit

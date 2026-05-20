@@ -142,69 +142,110 @@ async function resolveChoicesForCompletion(
 
 /**
  * Generate the zsh completion script.
- * The user adds `eval "$(catladder completion zsh)"` to their .zshrc.
+ * The script discovers the local catladder binary at completion time,
+ * so it works without a global install.
  */
-export function generateZshCompletionScript(binaryName: string): string {
-  const funcName = binaryName.replace(/-/g, "_");
+export function generateZshCompletionScript(): string {
   return `
-###-begin-${funcName}-completions-###
-_${funcName}_completions() {
+###-begin-catladder-completions-###
+# Find catladder binary by walking up from cwd
+_catladder_find_binary() {
+  local dir="$PWD"
+  while [[ "$dir" != "/" ]]; do
+    if [[ -x "$dir/node_modules/.bin/catladder" ]]; then
+      echo "$dir/node_modules/.bin/catladder"
+      return
+    fi
+    # Also check for catladder-dev (monorepo development)
+    if [[ -x "$dir/cli/bin/catladder-dev" ]]; then
+      echo "$dir/cli/bin/catladder-dev"
+      return
+    fi
+    dir="\${dir:h}"
+  done
+  # Fall back to global
+  if command -v catladder &>/dev/null; then
+    echo "catladder"
+  elif command -v catladder-dev &>/dev/null; then
+    echo "catladder-dev"
+  fi
+}
+
+# Run completion with given offset (number of words to skip before CLI args)
+_catladder_do_complete() {
+  local skip=$1
+  local catladder_bin=$(_catladder_find_binary)
+  [[ -z "$catladder_bin" ]] && return
+
   local -a completions
   local current_word="\${words[$CURRENT]}"
+  local -a cmd_words=(\${words:$skip:$((CURRENT-skip-1))})
 
-  # Words after the binary name, excluding the current word being completed
-  local -a cmd_words=(\${words:1:$((CURRENT-2))})
-
-  # Call the CLI's __complete command
-  completions=(\${(f)"$(${binaryName} __complete -- "\${cmd_words[*]}" "$current_word" 2>/dev/null)"})
+  completions=(\${(f)"$($catladder_bin __complete -- "\${cmd_words[*]}" "$current_word" 2>/dev/null)"})
 
   if [[ \${#completions[@]} -gt 0 ]]; then
     compadd -a completions
   fi
 }
 
-compdef _${funcName}_completions ${binaryName}
-###-end-${funcName}-completions-###
+# catladder <TAB>
+_catladder_completions() { _catladder_do_complete 1; }
+
+# yarn catladder <TAB>
+_yarn_catladder_completions() {
+  [[ $CURRENT -le 2 || "\${words[2]}" != "catladder" ]] && return
+  _catladder_do_complete 2
+}
+
+compdef _catladder_completions catladder
+compdef _catladder_completions catladder-dev
+compdef _yarn_catladder_completions yarn
+###-end-catladder-completions-###
 `.trim();
 }
 
-const BEGIN_MARKER = (name: string) =>
-  `###-begin-${name.replace(/-/g, "_")}-completions-###`;
+const BEGIN_MARKER = "###-begin-catladder-completions-###";
+const END_MARKER = "###-end-catladder-completions-###";
 
 function getZshrcPath(): string {
   return join(homedir(), ".zshrc");
 }
 
 /**
- * Install completions by adding an eval line to .zshrc.
+ * Install completions by writing the script directly into .zshrc.
  */
-export async function installCompletions(binaryName: string): Promise<void> {
+export async function installCompletions(): Promise<void> {
   const zshrcPath = getZshrcPath();
-  const evalLine = `eval "$(${binaryName} completion zsh)"`;
-  const marker = BEGIN_MARKER(binaryName);
 
   let content = "";
   if (existsSync(zshrcPath)) {
     content = readFileSync(zshrcPath, "utf-8");
   }
 
-  if (content.includes(marker)) {
-    console.log(
-      `Completions for ${binaryName} are already installed in ${zshrcPath}`,
+  if (content.includes(BEGIN_MARKER)) {
+    // Replace existing
+    const startIdx = content.indexOf(BEGIN_MARKER);
+    const endIdx = content.indexOf(END_MARKER) + END_MARKER.length;
+    content =
+      content.slice(0, startIdx) +
+      generateZshCompletionScript() +
+      content.slice(endIdx);
+    writeFileSync(zshrcPath, content);
+    console.log(`Updated catladder completions in ${zshrcPath}`);
+  } else {
+    writeFileSync(
+      zshrcPath,
+      content + "\n" + generateZshCompletionScript() + "\n",
     );
-    return;
+    console.log(`Installed catladder completions in ${zshrcPath}`);
   }
-
-  const addition = `\n# ${binaryName} shell completions\n${evalLine}\n`;
-  writeFileSync(zshrcPath, content + addition);
-  console.log(`Installed completions for ${binaryName} in ${zshrcPath}`);
   console.log(`Restart your shell or run: source ${zshrcPath}`);
 }
 
 /**
  * Remove completions from .zshrc.
  */
-export async function uninstallCompletions(binaryName: string): Promise<void> {
+export async function uninstallCompletions(): Promise<void> {
   const zshrcPath = getZshrcPath();
   if (!existsSync(zshrcPath)) {
     console.log("No .zshrc found");
@@ -212,31 +253,20 @@ export async function uninstallCompletions(binaryName: string): Promise<void> {
   }
 
   const content = readFileSync(zshrcPath, "utf-8");
-  const evalLine = `eval "$(${binaryName} completion zsh)"`;
-  const commentLine = `# ${binaryName} shell completions`;
 
-  if (!content.includes(evalLine)) {
-    console.log(`No completions for ${binaryName} found in ${zshrcPath}`);
+  if (!content.includes(BEGIN_MARKER)) {
+    console.log("No catladder completions found in " + zshrcPath);
     return;
   }
 
-  const cleaned = content
-    .replace(
-      new RegExp(
-        `\\n?${commentLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n?`,
-        "g",
-      ),
-      "\n",
-    )
-    .replace(
-      new RegExp(
-        `\\n?${evalLine.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\n?`,
-        "g",
-      ),
-      "\n",
-    );
+  const startIdx = content.indexOf(BEGIN_MARKER);
+  const endIdx = content.indexOf(END_MARKER) + END_MARKER.length;
+  const cleaned = (content.slice(0, startIdx) + content.slice(endIdx)).replace(
+    /\n{3,}/g,
+    "\n\n",
+  );
 
   writeFileSync(zshrcPath, cleaned);
-  console.log(`Removed completions for ${binaryName} from ${zshrcPath}`);
+  console.log(`Removed catladder completions from ${zshrcPath}`);
   console.log(`Restart your shell or run: source ${zshrcPath}`);
 }
