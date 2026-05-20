@@ -65,12 +65,12 @@ test:
       - "*/dist"
 
 .docker-build-base:
-  image: docker:24
+  image: docker:29.5.1
   needs: []
   interruptible: true
   retry: 2 # ugly hack for https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27384
   services:
-    - name: docker:24.0.6-dind # https://github.com/docker-library/docker/issues/463
+    - name: docker:29.5.1-dind # https://github.com/docker-library/docker/issues/463
       command: ["--registry-mirror=https://mirror.gcr.io"]
   extends:
     - .base-rules

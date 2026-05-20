@@ -114,7 +114,7 @@ export const getDockerJobBaseProps = (): Pick<
     image: getRunnerImage("docker-build"),
     services: [
       {
-        name: "docker:24.0.6-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
+        name: "docker:29.5.1-dind", // see see https://gitlab.com/gitlab-org/gitlab-runner/-/issues/27300#note_466755332
         command: ["--tls=false", "--registry-mirror=https://mirror.gcr.io"],
       },
     ],
