@@ -1,3 +1,15 @@
+# [4.2.0](https://git.panter.ch/catladder/catladder/compare/v4.1.0...v4.2.0) (2026-05-22)
+
+
+### Bug Fixes
+
+* remove config file watcher so CLI exits after command completes ([c1b942c](https://git.panter.ch/catladder/catladder/commit/c1b942c1a9af35b61334310ebded3ed26bfc7bb2))
+
+
+### Features
+
+* add isAvailable to CLI commands and make getComponentDirs async ([f93519a](https://git.panter.ch/catladder/catladder/commit/f93519ad9c889b393b59979494f06b2fa3918350))
+
 # [4.1.0](https://git.panter.ch/catladder/catladder/compare/v4.0.1...v4.1.0) (2026-05-20)
 
 
