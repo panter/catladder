@@ -4,11 +4,13 @@ import { defineCommand } from "../../core/defineCommand";
 import { getProjectPods } from "../../kubernetes";
 import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureCluster";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandListPods = defineCommand({
   name: "project list-pods",
   description: "list pods of local project",
   group: "project",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

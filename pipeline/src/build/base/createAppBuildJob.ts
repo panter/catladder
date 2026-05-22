@@ -21,10 +21,10 @@ import {
   writeDotEnv,
 } from "./writeDotEnv";
 
-export const createAppBuildJob = (
+export const createAppBuildJob = async (
   context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
   { script, variables, runnerVariables, cache, ...def }: AppBuildJobDefinition,
-): CatladderJob => {
+): Promise<CatladderJob> => {
   return merge(
     {
       name: APP_BUILD_JOB_NAME,
@@ -63,7 +63,7 @@ export const createAppBuildJob = (
         `cd ${context.build.dir}`,
         ...ensureArray(script),
       ],
-      artifacts: createBuildJobArtifacts(context),
+      artifacts: await createBuildJobArtifacts(context),
     },
     def,
   );

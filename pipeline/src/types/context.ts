@@ -104,7 +104,7 @@ export type BuildContextBase = {
    *
    * in case of a workspace this contains all components in the workspace (+ yarn workspace dependencies if mode = all)
    */
-  getComponentDirs: (mode: "direct" | "all") => string[];
+  getComponentDirs: (mode: "direct" | "all") => Promise<string[]>;
 };
 
 export type BuildContextComponentBase = BuildContextBase;

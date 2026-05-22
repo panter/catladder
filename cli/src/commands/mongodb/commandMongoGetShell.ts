@@ -7,11 +7,13 @@ import {
   getProjectMongodbAllPodsSortedWithLabel,
 } from "../../apps/cli/commands/mongodb/utils";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandMongoGetShell = defineCommand({
   name: "project mongo get-shell",
   description: "get a shell to a mongodb in the environment",
   group: "mongodb",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

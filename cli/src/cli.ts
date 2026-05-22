@@ -1,14 +1,16 @@
+import type { ComponentContext } from "@catladder/pipeline";
 import { Command } from "commander";
-import packageInfos from "./packageInfos";
-import { stopAllPortForwards } from "./utils/portForwards";
 import { createTerminalContext } from "./adapters/terminal";
-import type { CommandDef } from "./core/types";
 import {
-  getCompletions,
   generateZshCompletionScript,
+  getCompletions,
   installCompletions,
   uninstallCompletions,
 } from "./completion";
+import { getAllPipelineContexts } from "./config/getProjectConfig";
+import type { CommandDef } from "./core/types";
+import packageInfos from "./packageInfos";
+import { stopAllPortForwards } from "./utils/portForwards";
 
 // Import all commands
 import * as commands from "./commands";
@@ -150,10 +152,24 @@ function registerCommand(def: CommandDef): void {
   });
 }
 
-// Register all commands
-for (const cmd of Object.values(commands)) {
-  if (cmd && typeof cmd === "object" && "name" in cmd && "execute" in cmd) {
-    registerCommand(cmd as CommandDef);
+// Register all commands (async to support isAvailable checks)
+async function registerAllCommands() {
+  // Fetch contexts once for all isAvailable checks
+  let contexts: ComponentContext[] = [];
+  try {
+    contexts = await getAllPipelineContexts();
+  } catch {
+    // No config available (e.g. outside a project) — contexts stays empty
+  }
+
+  for (const cmd of Object.values(commands)) {
+    if (cmd && typeof cmd === "object" && "name" in cmd && "execute" in cmd) {
+      const def = cmd as CommandDef;
+      if (def.isAvailable) {
+        if (!def.isAvailable(contexts)) continue;
+      }
+      registerCommand(def);
+    }
   }
 }
 
@@ -211,4 +227,4 @@ process.on("exit", () => {
   stopAllPortForwards();
 });
 
-program.parse();
+registerAllCommands().then(() => program.parse());

@@ -5,11 +5,13 @@ import { logError } from "../../utils/log";
 import { getProjectNamespace } from "../../utils/projects";
 import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureCluster";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandDeletePods = defineCommand({
   name: "project delete-pods",
   description: "delete / restart pods",
   group: "project",
+  isAvailable: hasDeployType("kubernetes"),
 
   inputs: {
     envComponent: {

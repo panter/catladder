@@ -3,8 +3,11 @@ import type { CatladderJob } from "../../types/jobs";
 import { createCustomBuildJobs } from "./buildJob";
 import { createCustomTestJobs } from "./testJob";
 
-export const createCustomJobs = (
+export const createCustomJobs = async (
   context: ComponentContextWithBuild,
-): CatladderJob[] => {
-  return [...createCustomTestJobs(context), ...createCustomBuildJobs(context)];
+): Promise<CatladderJob[]> => {
+  return [
+    ...createCustomTestJobs(context),
+    ...(await createCustomBuildJobs(context)),
+  ];
 };

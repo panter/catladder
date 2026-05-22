@@ -6,9 +6,9 @@ import type { CatladderJob } from "../../types/jobs";
 import { createComponentBuildJobs } from "../base";
 import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
 
-export const createCustomBuildJobs = (
+export const createCustomBuildJobs = async (
   context: ComponentContextWithBuild,
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   const buildConfig = context.build.config;
 
   if (!isOfBuildType(buildConfig, "custom")) {

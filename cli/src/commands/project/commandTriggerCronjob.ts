@@ -6,6 +6,7 @@ import { logError } from "../../utils/log";
 import { getProjectNamespace } from "../../utils/projects";
 import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureCluster";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 const getCronjobChoices = async (namespace: string) => {
   const {
@@ -72,6 +73,7 @@ export const commandTriggerCronjobProject = defineCommand({
   name: "project trigger-cronjob",
   description: "trigger cronjob",
   group: "project",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

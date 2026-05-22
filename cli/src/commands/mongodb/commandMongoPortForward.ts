@@ -7,11 +7,13 @@ import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureClust
 import { getProjectMongodbAllPodsSortedWithLabel } from "../../apps/cli/commands/mongodb/utils";
 import clipboard from "clipboardy";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandMongoPortForward = defineCommand({
   name: "project mongo port-forward",
   description: "port forward to a mongodb",
   group: "mongodb",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

@@ -2,11 +2,13 @@ import { exec } from "child-process-promise";
 import { defineCommand } from "../../core/defineCommand";
 import { getProjectNamespace } from "../../utils/projects";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandPauseProject = defineCommand({
   name: "project pause",
   description: "halts all running pods (scales to 0)",
   group: "project",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

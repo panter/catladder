@@ -11,20 +11,28 @@ import { componentContextNeedsBuildTimeDotEnv } from "../base/writeDotEnv";
 const uniqueAndAlphabeticalSort = (arr: string[]): string[] => {
   return uniq(arr).sort((a, b) => a.localeCompare(b));
 };
-export const createBuildJobArtifacts = (
+export const createBuildJobArtifacts = async (
   context: Context,
-): CatladderJob["artifacts"] => {
+): Promise<CatladderJob["artifacts"]> => {
   const paths =
     context.type === "workspace"
-      ? context.components.flatMap((c) => getArtifactsPathForComponent(c))
-      : getArtifactsPathForComponent(context, ["__build_info.json"]);
+      ? (
+          await Promise.all(
+            context.components.map((c) => getArtifactsPathForComponent(c)),
+          )
+        ).flat()
+      : await getArtifactsPathForComponent(context, ["__build_info.json"]);
 
   const exclude =
     context.type === "workspace"
-      ? context.components.flatMap((c) =>
-          getAllArtifactExcludePathsForComponent(c),
-        )
-      : getAllArtifactExcludePathsForComponent(context);
+      ? (
+          await Promise.all(
+            context.components.map((c) =>
+              getAllArtifactExcludePathsForComponent(c),
+            ),
+          )
+        ).flat()
+      : await getAllArtifactExcludePathsForComponent(context);
   return {
     paths: uniqueAndAlphabeticalSort(paths),
     ...(exclude.length > 0
@@ -43,44 +51,43 @@ export const createBuildJobArtifacts = (
         : {},
   };
 };
-const _getArtifactPathsForComponent = (
+const _getArtifactPathsForComponent = async (
   c: ComponentContext,
   configKey: "artifactsPaths" | "artifactsExcludePaths",
   additionalPaths?: string[],
-): string[] => {
+): Promise<string[]> => {
+  // in theory, we only need "direct",
+  // but in some cases project may have packages in the workspace that create build artifacts, which aren't components
+  // this highly depends on the build tool. To be safe, we get all
+  const componentDirs = await c.build.getComponentDirs("all");
   return [
     ...(c.build.type !== "disabled" ? (c.build.config[configKey] ?? []) : []),
     ...(additionalPaths ?? []),
   ]?.flatMap((artifact) =>
-    c.build
-      // in theory, we only need "direct",
-      // but in some cases project may have packages in the workspace that create build artifacts, which aren't components
-      // this highly depends on the build tool. To be safe, we get all
-      .getComponentDirs("all")
-      .flatMap((cDir) => join(cDir, artifact)),
+    componentDirs.flatMap((cDir: string) => join(cDir, artifact)),
   );
 };
 
 const getArtifactsPathForComponent = (
   c: ComponentContext,
   additionalPaths?: string[],
-): string[] => {
+): Promise<string[]> => {
   return _getArtifactPathsForComponent(c, "artifactsPaths", additionalPaths);
 };
 
-const getAllArtifactExcludePathsForComponent = (
+const getAllArtifactExcludePathsForComponent = async (
   c: ComponentContext,
-): string[] => {
+): Promise<string[]> => {
   return [
     ...getDotEnvPathsForComponent(c), // always exclude .env files
-    ...getArtifactExcludePathsForComponent(c),
+    ...(await getArtifactExcludePathsForComponent(c)),
   ];
 };
 
 const getArtifactExcludePathsForComponent = (
   c: ComponentContext,
   additionalPaths?: string[],
-): string[] => {
+): Promise<string[]> => {
   return _getArtifactPathsForComponent(
     c,
     "artifactsExcludePaths",

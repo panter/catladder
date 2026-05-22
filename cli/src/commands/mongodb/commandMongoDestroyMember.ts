@@ -6,6 +6,7 @@ import { getProjectNamespace } from "../../utils/projects";
 import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureCluster";
 import { getMongoDbPodsWithReplInfo } from "../../apps/cli/commands/mongodb/utils";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 const removeFinalizer = async (
   namespace: string,
@@ -37,6 +38,7 @@ export const commandMongoDestroyMember = defineCommand({
   name: "project mongo destroy-member",
   description: "DESTROY a member of a replicaset in order to reinitialize it",
   group: "mongodb",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

@@ -1,3 +1,5 @@
+import type { ComponentContext } from "@catladder/pipeline";
+
 // ─── Input Definitions ───────────────────────────────────────────────
 
 export type PromptChoice = string | { name: string; value: string };
@@ -123,6 +125,7 @@ export interface CommandDef<TInputs extends InputsSchema = InputsSchema> {
   description: string;
   group?: string;
   inputs: TInputs;
+  isAvailable?: (contexts: ComponentContext[]) => boolean;
   execute: (ctx: CommandContext<TInputs>) => Promise<void>;
 }
 

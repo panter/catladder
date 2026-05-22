@@ -5,11 +5,13 @@ import {
 } from "../../config/getProjectConfig";
 import { openGoogleCloudLogs } from "../../kubernetes/openKubernetesDashboards";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandOpenLogs = defineCommand({
   name: "project open logs",
   description: "open google cloud logs (stackdriver logs)",
   group: "project",
+  isAvailable: hasDeployType("kubernetes"),
   inputs: {
     envComponent: {
       type: "string",

@@ -75,16 +75,13 @@ export const createComponentContext = async (
     componentConfigWithoutDefaults,
   );
 
-  const [environment, packageManagerInfo] = await Promise.all([
-    getEnvironment(ctx),
-    packageManagerInfoPromise,
-  ]);
+  const environment = await getEnvironment(ctx);
   const { deploy, build, customJobs, dir } = componentConfig;
-  const getComponentDirs: BuildContext["getComponentDirs"] = (mode) => [
+  const getComponentDirs: BuildContext["getComponentDirs"] = async (mode) => [
     dir,
     // also copy workspace dependencies in monorepo if packages are shared and they create build artifacts
     ...(mode === "all"
-      ? (packageManagerInfo.currentWorkspaceDependencies ?? [])
+      ? ((await packageManagerInfoPromise).currentWorkspaceDependencies ?? [])
       : []),
   ];
   const _getBuildContext = (): BuildContextComponent => {

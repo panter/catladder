@@ -47,8 +47,14 @@ export async function createWorkspaceContext({
     build: {
       type: "workspace",
       dir: workspaceConfig.dir ?? ".",
-      getComponentDirs: (mode) =>
-        uniq(components.flatMap((c) => c.build.getComponentDirs(mode))),
+      getComponentDirs: async (mode) =>
+        uniq(
+          (
+            await Promise.all(
+              components.map((c) => c.build.getComponentDirs(mode)),
+            )
+          ).flat(),
+        ),
       buildType: workspaceConfig.type,
       config: workspaceConfig,
     },

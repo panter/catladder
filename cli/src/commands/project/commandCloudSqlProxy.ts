@@ -18,6 +18,7 @@ import {
 import { logError, logLines, logWarning } from "../../utils/log";
 import type { IO } from "../../core/types";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasCloudSql } from "../availability";
 
 type ProxyInfo = {
   instanceName: string;
@@ -94,6 +95,7 @@ export const commandCloudSqlProxy = defineCommand({
   name: "project cloudsql proxy",
   description: "proxy to cloud sql db",
   group: "project",
+  isAvailable: hasCloudSql(),
   inputs: {
     envComponent: {
       type: "string",

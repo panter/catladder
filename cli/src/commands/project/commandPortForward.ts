@@ -10,11 +10,13 @@ import { isOfDeployType } from "@catladder/pipeline";
 import { startPortForwardCommand } from "../../utils/portForwards";
 import open from "open";
 import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../availability";
 
 export const commandPortForward = defineCommand({
   name: "project port-forward",
   description: "start port-forwarding",
   group: "project",
+  isAvailable: hasDeployType("kubernetes", "google-cloudrun"),
   inputs: {
     envComponent: {
       type: "string",

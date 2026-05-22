@@ -4,6 +4,7 @@ import {
   getEnvVarsResolved,
   getPipelineContextByChoice,
 } from "../../config/getProjectConfig";
+import { hasCloudSql } from "../availability";
 import type { CloudSqlBackgroundProxy } from "../../gcloud/cloudSql/startProxy";
 import { startCloudSqlProxyInBackground } from "../../gcloud/cloudSql/startProxy";
 import { parseConnectionString } from "../../gcloud/cloudSql/parseConnectionString";
@@ -11,7 +12,7 @@ import { spawnCopyDb } from "../../gcloud/cloudSql/copyDb";
 import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 
-const hasCloudSql = (context: ComponentContext) => {
+const componentHasCloudSql = (context: ComponentContext) => {
   const deployConfig = context.deploy?.config;
   if (isOfDeployType(deployConfig, "google-cloudrun")) {
     return !!deployConfig.cloudSql;
@@ -26,6 +27,7 @@ export const commandProjectRestoreDb = defineCommand({
   name: "project cloudsql restore-db",
   description: "restores a project db from one source to another target",
   group: "project",
+  isAvailable: hasCloudSql(),
   inputs: {
     source: {
       type: "string",
@@ -41,7 +43,7 @@ export const commandProjectRestoreDb = defineCommand({
           return a.localeCompare(b);
         };
         return allContexts
-          .filter(hasCloudSql)
+          .filter(componentHasCloudSql)
           .map((c: any) => `${c.env}:${c.name}`)
           .sort(sortByEnv);
       },
@@ -60,7 +62,7 @@ export const commandProjectRestoreDb = defineCommand({
           return a.localeCompare(b);
         };
         return allContexts
-          .filter(hasCloudSql)
+          .filter(componentHasCloudSql)
           .map((c: any) => {
             const value = `${c.env}:${c.name}`;
             const isProd = c.environment.envType === "prod";

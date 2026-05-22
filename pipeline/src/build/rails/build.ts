@@ -9,9 +9,9 @@ import {
 } from "../docker";
 import { isOfBuildType } from "../types";
 
-export const createRailsBuildJobs = (
+export const createRailsBuildJobs = async (
   context: ComponentContextWithBuild,
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   const buildConfig = context.build.config;
   if (!isOfBuildType(buildConfig, "rails")) {
     // should not happen

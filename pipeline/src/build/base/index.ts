@@ -15,16 +15,16 @@ import { createDockerBuildJobBase, requiresDockerBuild } from "../docker";
 import { APP_BUILD_JOB_NAME } from "./constants";
 import { createAppBuildJob } from "./createAppBuildJob";
 
-export const createComponentBuildJobs = (
+export const createComponentBuildJobs = async (
   context: ComponentContextWithBuild,
   definitions: {
     appBuild?: AppBuildJobDefinition;
     dockerBuild: DockerBuildJobDefinition;
   },
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   return [
     ...(definitions.appBuild && componentContextIsStandaloneBuild(context)
-      ? [createAppBuildJob(context, definitions.appBuild)]
+      ? [await createAppBuildJob(context, definitions.appBuild)]
       : []),
     ...(requiresDockerBuild(context)
       ? [
@@ -51,13 +51,13 @@ export const createComponentBuildJobs = (
   ];
 };
 
-export const createWorkspaceBuildJobs = (
+export const createWorkspaceBuildJobs = async (
   context: WorkspaceContext,
   definitions: {
     appBuild?: AppBuildJobDefinition;
   },
-): CatladderJob[] => {
+): Promise<CatladderJob[]> => {
   return definitions.appBuild
-    ? [createAppBuildJob(context, definitions.appBuild)]
+    ? [await createAppBuildJob(context, definitions.appBuild)]
     : [];
 };
