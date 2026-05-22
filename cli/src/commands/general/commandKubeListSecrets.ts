@@ -2,7 +2,7 @@ import { defineCommand } from "../../core/defineCommand";
 import { getk8sApi } from "../../k8sApi";
 
 export const commandKubeListSecrets = defineCommand({
-  name: "kube list-secrets",
+  name: "k8s list-secrets",
   description: "show secrets",
   group: "general",
   inputs: {

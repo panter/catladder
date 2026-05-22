@@ -1,12 +1,12 @@
 import type { V1ObjectMeta } from "@kubernetes/client-node";
 import { V1Job } from "@kubernetes/client-node";
-import { defineCommand } from "../../core/defineCommand";
-import { getk8sApiBatch, getk8sApiBatchBeta } from "../../k8sApi";
-import { logError } from "../../utils/log";
-import { getProjectNamespace } from "../../utils/projects";
-import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureCluster";
-import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
-import { hasDeployType } from "../availability";
+import { defineCommand } from "../../../core/defineCommand";
+import { getk8sApiBatch, getk8sApiBatchBeta } from "../../../k8sApi";
+import { logError } from "../../../utils/log";
+import { getProjectNamespace } from "../../../utils/projects";
+import { ensureCluster } from "../../../apps/cli/commands/project/utils/ensureCluster";
+import { envAndComponents } from "../../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../../availability";
 
 const getCronjobChoices = async (namespace: string) => {
   const {
@@ -47,7 +47,7 @@ const runCronjob = async (
 };
 
 export const commandTriggerCronjobGeneral = defineCommand({
-  name: "kube trigger-cronjob",
+  name: "k8s trigger-cronjob",
   description: "trigger cronjob",
   group: "general",
   inputs: {
@@ -70,7 +70,7 @@ export const commandTriggerCronjobGeneral = defineCommand({
 });
 
 export const commandTriggerCronjobProject = defineCommand({
-  name: "project trigger-cronjob",
+  name: "project k8s trigger-cronjob",
   description: "trigger cronjob",
   group: "project",
   isAvailable: hasDeployType("kubernetes"),

@@ -1,14 +1,14 @@
-import { defineCommand } from "../../core/defineCommand";
-import { getProjectPods } from "../../kubernetes";
+import { defineCommand } from "../../../core/defineCommand";
+import { getProjectPods } from "../../../kubernetes";
 
-import { getProjectNamespace } from "../../utils/projects";
-import { getShell } from "../../utils/shell";
-import { ensureCluster } from "../../apps/cli/commands/project/utils/ensureCluster";
-import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
-import { hasDeployType } from "../availability";
+import { getProjectNamespace } from "../../../utils/projects";
+import { getShell } from "../../../utils/shell";
+import { ensureCluster } from "../../../apps/cli/commands/project/utils/ensureCluster";
+import { envAndComponents } from "../../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../../availability";
 
 export const commandGetShell = defineCommand({
-  name: "project get-shell",
+  name: "project k8s get-shell",
   description: "get a shell to a pod in the environment",
   group: "project",
   isAvailable: hasDeployType("kubernetes"),

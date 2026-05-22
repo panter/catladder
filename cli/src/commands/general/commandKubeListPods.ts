@@ -2,7 +2,7 @@ import { defineCommand } from "../../core/defineCommand";
 import { getk8sApi } from "../../k8sApi";
 
 export const commandKubeListPods = defineCommand({
-  name: "kube list-pods",
+  name: "k8s list-pods",
   description: "list all pods of namespace",
   group: "general",
   inputs: {

@@ -1,10 +1,10 @@
-import { defineCommand } from "../../core/defineCommand";
-import { getProjectNamespace } from "../../utils/projects";
-import { envAndComponents } from "../../apps/cli/commands/project/utils/autocompletions";
-import { hasDeployType } from "../availability";
+import { defineCommand } from "../../../core/defineCommand";
+import { getProjectNamespace } from "../../../utils/projects";
+import { envAndComponents } from "../../../apps/cli/commands/project/utils/autocompletions";
+import { hasDeployType } from "../../availability";
 
 export const commandNamespace = defineCommand({
-  name: "project namespace",
+  name: "project k8s namespace",
   description: "show namespace of local project",
   group: "project",
   isAvailable: hasDeployType("kubernetes"),

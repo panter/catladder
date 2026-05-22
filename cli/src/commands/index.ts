@@ -8,30 +8,30 @@ export { commandKubeGetShell } from "./general/commandKubeGetShell";
 export { commandKubePortForward } from "./general/commandKubePortForward";
 
 // Project commands
-export { commandNamespace } from "./project/commandNamespace";
 export { commandEnvVars } from "./project/commandEnvVars";
-export { commandListPods } from "./project/commandListPods";
-export { commandGetShell } from "./project/commandGetShell";
 export { commandPortForward } from "./project/commandPortForward";
-export { commandDeletePods } from "./project/commandDeletePods";
-export { commandPauseProject } from "./project/commandPauseProject";
-export { commandDeleteProject } from "./project/commandDeleteProject";
 export { commandOpenEnv } from "./project/commandOpenEnv";
-export { commandOpenLogs } from "./project/commandOpenLogs";
 export { commandOpenGit } from "./project/commandOpenGit";
 export { commandCloudSqlProxy } from "./project/commandCloudSqlProxy";
 export { commandConfigSecrets } from "./project/commandConfigSecrets";
 export { commandSecretsClearBackups } from "./project/commandSecretsClearBackups";
-export {
-  commandTriggerCronjobGeneral,
-  commandTriggerCronjobProject,
-} from "./project/commandTriggerCronjob";
+export { commandOpenLogs } from "./project/commandOpenLogs";
+export { commandTriggerCronjobGeneral } from "./project/k8s/commandTriggerCronjob";
 export { commandRenewToken } from "./project/commandRenewToken";
 export { commandGetMyTotalWorktime } from "./project/commandGetMyTotalWorktime";
 export { commandSetup } from "./project/commandSetup";
 export { commandCiJobOpen, commandCiJobLog } from "./project/commandGitlabCi";
 export { commandProjectRestoreDb } from "./project/commandProjectRestoreDb";
 export { commandSecurityEvaluate } from "./project/commandSecurityEvaluate";
+
+// Project k8s commands
+export { commandNamespace } from "./project/k8s/commandNamespace";
+export { commandListPods } from "./project/k8s/commandListPods";
+export { commandGetShell } from "./project/k8s/commandGetShell";
+export { commandDeletePods } from "./project/k8s/commandDeletePods";
+export { commandPauseProject } from "./project/k8s/commandPauseProject";
+export { commandDeleteProject } from "./project/k8s/commandDeleteProject";
+export { commandTriggerCronjobProject } from "./project/k8s/commandTriggerCronjob";
 
 // MongoDB commands
 export { commandMongoGetShell } from "./mongodb/commandMongoGetShell";

@@ -2,7 +2,7 @@ import { defineCommand } from "../../core/defineCommand";
 import { stopPortForward } from "../../utils/portForwards";
 
 export const commandKubeStopPortforward = defineCommand({
-  name: "kube stop-portforward",
+  name: "k8s stop-portforward",
   description: "stop a running port forward",
   group: "general",
   inputs: {
