@@ -16,35 +16,25 @@ import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
 
 import { getGitRoot } from "../utils/projects";
 
-import { watch } from "fs";
-
 export { parseChoice } from "./parseChoice";
 
 let currentConfig: Config | null = null;
 
-// reload the config on change
-const reloadConfigAndObserve = async () => {
+const loadConfig = async () => {
   const gitRoot = await getGitRoot();
   if (!gitRoot) {
     return;
   }
   const result = await readConfig(gitRoot);
   if (!result) {
-    // can't do anything, there is no config
     return;
   }
-  const { config, path } = result;
-  const watcher = watch(path, () => {
-    watcher.close();
-    reloadConfigAndObserve();
-  });
-  currentConfig = config;
+  currentConfig = result.config;
 };
 
 export const getProjectConfig = async () => {
   if (!currentConfig) {
-    // initially
-    await reloadConfigAndObserve();
+    await loadConfig();
   }
   return currentConfig as Config;
 };
