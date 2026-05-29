@@ -1,4 +1,4 @@
 #!/bin/bash
-ncc build dist/cli/src/catenv.js -o dist/bundles/catenv -e 'tsx/cjs/api' --source-map $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
+ncc build dist/cli/src/catenv.js -o dist/bundles/catenv -e 'tsx/cjs/api' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
 
-ncc build dist/cli/src/cli.js -o dist/bundles/cli -e 'tsx/cjs/api' --source-map $( ((SHOULD_MINIFY == 1)) && printf %s '-m')
+ncc build dist/cli/src/cli.js -o dist/bundles/cli -e 'tsx/cjs/api' $( ((SHOULD_MINIFY == 1)) && printf %s '-m')

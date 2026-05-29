@@ -27,4 +27,18 @@ program
     },
   );
 
+// Prevent Node.js from printing the (minified) source line on uncaught errors
+process.on("uncaughtException", (err) => {
+  console.error(err.stack ?? `${err.name}: ${err.message}`);
+  process.exit(1);
+});
+process.on("unhandledRejection", (reason) => {
+  if (reason instanceof Error) {
+    console.error(reason.stack ?? `${reason.name}: ${reason.message}`);
+  } else {
+    console.error(reason);
+  }
+  process.exit(1);
+});
+
 program.parse();
