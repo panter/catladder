@@ -1,4 +1,4 @@
-import { isNil, mergeWith } from "lodash";
+import { isNil, mergeWith } from "lodash-es";
 
 export function notNil<TValue>(
   value: TValue | null | undefined,

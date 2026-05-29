@@ -1,5 +1,5 @@
 import { stringify } from "yaml";
-import { pick } from "lodash";
+import { pick } from "lodash-es";
 import { defineCommand } from "../../../core/defineCommand";
 import { getProjectPods } from "../../../kubernetes";
 import { ensureCluster } from "../../../apps/cli/commands/project/utils/ensureCluster";

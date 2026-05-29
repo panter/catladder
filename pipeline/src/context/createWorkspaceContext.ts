@@ -7,7 +7,7 @@ import {
 } from "..";
 import { getPackageManagerInfoBase } from "../pipeline/packageManager";
 import { mergeWithMergingArrays } from "../utils";
-import { uniq } from "lodash";
+import { uniq } from "lodash-es";
 
 export async function createWorkspaceContext({
   env,

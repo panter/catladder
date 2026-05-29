@@ -1,7 +1,7 @@
 import { mkdir, rm, writeFile } from "fs/promises";
 import { createYamlLocalPipeline } from "./__utils__/helpers";
 import config from "./rails-k8s-with-worker";
-import { merge } from "lodash";
+import { merge } from "lodash-es";
 import { join } from "path";
 
 it("matches snapshot with a Dockerfile", async () => {

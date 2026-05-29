@@ -1,4 +1,4 @@
-import { isFunction } from "lodash";
+import { isFunction } from "lodash-es";
 import { BUILD_TYPES, isStandaloneBuildConfig } from "../build";
 import type { BuildConfig } from "../build/types";
 import { DEPLOY_TYPES } from "../deploy";

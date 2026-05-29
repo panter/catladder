@@ -1,4 +1,4 @@
-import { isEmpty, isObject, merge } from "lodash";
+import { isEmpty, isObject, merge } from "lodash-es";
 import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
 import { BASE_RETRY } from "../../defaults";
 import type {

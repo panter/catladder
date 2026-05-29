@@ -1,4 +1,4 @@
-import { isObject } from "lodash";
+import { isObject } from "lodash-es";
 import type { SecretEnvVar } from "../getEnvironmentVariables";
 import { getSecretVarName } from "../getEnvironmentVariables";
 import { getBashVariable } from "../../bash/BashExpression";

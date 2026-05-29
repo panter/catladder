@@ -1,4 +1,4 @@
-import { range } from "lodash";
+import { range } from "lodash-es";
 import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
 import type { ComponentContext } from "../../types/context";
 import { isOfDeployType } from "../types";

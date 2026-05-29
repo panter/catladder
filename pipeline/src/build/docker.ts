@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { merge } from "lodash";
+import { merge } from "lodash-es";
 import path from "path";
 import type { BuildConfig, BuildConfigDocker } from ".";
 import { isOfDeployType } from "../deploy";

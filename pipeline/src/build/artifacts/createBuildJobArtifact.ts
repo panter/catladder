@@ -5,7 +5,7 @@ import {
   type Context,
 } from "../../types";
 import type { CatladderJob } from "../../types/jobs";
-import { uniq } from "lodash";
+import { uniq } from "lodash-es";
 import { componentContextNeedsBuildTimeDotEnv } from "../base/writeDotEnv";
 
 const uniqueAndAlphabeticalSort = (arr: string[]): string[] => {

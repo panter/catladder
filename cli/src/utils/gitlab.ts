@@ -1,5 +1,5 @@
 import { getSecretVarName } from "@catladder/pipeline";
-import { has, isObject } from "lodash";
+import { has, isObject } from "lodash-es";
 import memoizee from "memoizee";
 import fetch from "node-fetch";
 import open from "open";

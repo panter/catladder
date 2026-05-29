@@ -1,5 +1,5 @@
 import { exec } from "child-process-promise";
-import { last } from "lodash";
+import { last } from "lodash-es";
 import open from "open";
 import { defineCommand } from "../../core/defineCommand";
 import {

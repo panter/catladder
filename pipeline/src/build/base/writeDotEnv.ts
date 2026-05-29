@@ -1,4 +1,4 @@
-import { isNil } from "lodash";
+import { isNil } from "lodash-es";
 import { escapeForDotEnv } from "../../bash/bashEscape";
 import { ALL_BUILD_VARIABLES } from "../../context/getBuildInfoVariables";
 import type { ComponentContext } from "../../types";

@@ -1,4 +1,4 @@
-import { omit } from "lodash";
+import { omit } from "lodash-es";
 import type { ComponentContext } from "../../../types/context";
 import { collapseableSection } from "../../../utils/gitlab";
 

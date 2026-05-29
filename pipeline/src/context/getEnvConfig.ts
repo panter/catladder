@@ -1,4 +1,4 @@
-import { cloneDeep, mergeWith } from "lodash";
+import { cloneDeep, mergeWith } from "lodash-es";
 import type { Config, EnvConfigWithComponent } from "../types/config";
 
 export const getEnvConfig = (

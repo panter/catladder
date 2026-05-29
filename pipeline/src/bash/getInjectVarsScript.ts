@@ -1,5 +1,5 @@
 import type { UnspecifiedEnvVars } from "../types";
-import { isNil } from "lodash";
+import { isNil } from "lodash-es";
 import { bashEscape } from "./bashEscape";
 
 export const getInjectVarsScript = (vars?: UnspecifiedEnvVars) => {

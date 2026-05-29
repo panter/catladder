@@ -1,6 +1,6 @@
 import { getSecretVarName } from "@catladder/pipeline";
 import { stripIndents } from "common-tags";
-import { difference } from "lodash";
+import { difference } from "lodash-es";
 import type { IO } from "../../../../core/types";
 import {
   getAllComponentsWithAllEnvsHierarchical,
