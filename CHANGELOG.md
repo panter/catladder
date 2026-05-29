@@ -1,3 +1,17 @@
+## [4.2.2](https://git.panter.ch/catladder/catladder/compare/v4.2.1...v4.2.2) (2026-05-29)
+
+
+### Bug Fixes
+
+* revert --no-deprecation shebang flag (breaks BusyBox) ([4f40fed](https://git.panter.ch/catladder/catladder/commit/4f40fed0654574155adcfcbec8f6e8584063ebd8))
+* suppress minified source dump on CLI errors ([98112de](https://git.panter.ch/catladder/catladder/commit/98112de78e35f5ac8464480b76e4c7bb3289f39b))
+* suppress punycode deprecation warning in CLI ([e965db8](https://git.panter.ch/catladder/catladder/commit/e965db8c01ee439cfe11fcbc1a09afb1f46e58f3))
+
+
+### Performance Improvements
+
+* replace tsx with jiti for config loading ([0f5d23b](https://git.panter.ch/catladder/catladder/commit/0f5d23b03e2c2405feadeebfe3ecc851f6680eff))
+
 ## [4.2.1](https://git.panter.ch/catladder/catladder/compare/v4.2.0...v4.2.1) (2026-05-29)
 
 
