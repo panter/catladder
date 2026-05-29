@@ -1,3 +1,10 @@
+## [4.2.1](https://git.panter.ch/catladder/catladder/compare/v4.2.0...v4.2.1) (2026-05-29)
+
+
+### Bug Fixes
+
+* enable source maps in bundled CLI for readable error stack traces ([4888e4d](https://git.panter.ch/catladder/catladder/commit/4888e4df6013652eccd98e4ff73a9b3bfce25821))
+
 # [4.2.0](https://git.panter.ch/catladder/catladder/compare/v4.1.0...v4.2.0) (2026-05-22)
 
 
