@@ -1,12 +1,8 @@
 import { existsSync, readFileSync } from "fs";
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const tsx = require("tsx/cjs/api");
+import { createJiti } from "jiti";
 
 import { parse } from "yaml";
 import type { Config } from "../types";
-
-// allows us to load ts files
 
 const fullPath = (directory: string, ext: string) =>
   directory + "/catladder." + ext;
@@ -21,14 +17,14 @@ const readConfigInternal = async (
   if (found) {
     const filePath = fullPath(directory, found);
     if (found === "ts" || found === "js") {
-      const result = await tsx.require(filePath, directory);
+      const jiti = createJiti(directory);
+      const result = await jiti.import(filePath);
 
-      // weird: if target project is esm, result is under result.default, but if its commonjs, its under result.default.default
-      const config = result.default.default || result.default;
+      const config = (result as any).default || result;
       return {
         path: filePath,
         ext: found,
-        config,
+        config: config as Config,
       };
     } else {
       return {
@@ -51,9 +47,8 @@ export const readConfig = async (
     console.error(`
 This may happen due to various reasons:
   - Syntax errors in your catladder.ts file
-  - tsx (the TypeScript loader used by catladder) needs to understand the syntax in your project.
-    If your project uses newer TypeScript/JavaScript syntax, you may need to update catladder
-    to get a newer version of tsx that supports it.
+  - The TypeScript loader (jiti) used by catladder needs to understand the syntax in your project.
+    If your project uses newer TypeScript/JavaScript syntax, you may need to update catladder.
   - Missing or incorrect dependencies in your project
   - TypeScript configuration issues in your tsconfig.json
 `);
