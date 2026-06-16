@@ -1,3 +1,10 @@
+# [4.3.0](https://git.panter.ch/catladder/catladder/compare/v4.2.2...v4.3.0) (2026-06-16)
+
+
+### Features
+
+* add Node.js 24 to jobs-default runner image ([13f38a8](https://git.panter.ch/catladder/catladder/commit/13f38a81ab46bcdcbd139c57d5dfd9553d453a6e))
+
 ## [4.2.2](https://git.panter.ch/catladder/catladder/compare/v4.2.1...v4.2.2) (2026-05-29)
 
 
