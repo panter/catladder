@@ -2,7 +2,7 @@ import { getRunnerImage } from "../../runner";
 import type { Pipeline } from "../../types";
 import { globalScriptFunctions } from "../../globalScriptFunctions";
 import {
-  RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
+  RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT_PUSH,
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
 } from "../../rules";
@@ -59,7 +59,7 @@ export const createGitlabPipelineWithDefaults = ({
           },
         },
         {
-          if: RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT.if,
+          if: RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT_PUSH.if,
           variables: {
             PIPELINE_ICON: "🐱🔨",
             PIPELINE_NAME: "Main - $CI_COMMIT_TITLE",

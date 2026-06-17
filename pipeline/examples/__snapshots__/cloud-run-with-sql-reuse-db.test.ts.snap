@@ -65,7 +65,7 @@ workflow:
       variables:
         PIPELINE_ICON: 🐱📦
         PIPELINE_NAME: Release $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
       variables:
         PIPELINE_ICON: 🐱🔨
         PIPELINE_NAME: Main - $CI_COMMIT_TITLE
@@ -119,7 +119,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: &a1
     max: 2
@@ -162,7 +162,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -201,7 +201,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -297,7 +297,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -358,7 +358,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs:
     - 'api 🔨 app | dev '
   retry: *a1
@@ -477,7 +477,7 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs:
     - job: 'api 👮 lint | dev '
       artifacts: false
@@ -517,7 +517,7 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -1599,7 +1599,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -1641,7 +1641,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -1680,7 +1680,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -1776,7 +1776,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
@@ -1837,7 +1837,7 @@ before_script:
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs:
     - 'worker 🔨 app | dev '
   retry: *a1
@@ -1956,7 +1956,7 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: on_success
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs:
     - job: 'worker 👮 lint | dev '
       artifacts: false
@@ -1996,7 +1996,7 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
-      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/
+      if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ && $CI_PIPELINE_SOURCE != "push")
   needs: []
   retry: *a1
   interruptible: true
