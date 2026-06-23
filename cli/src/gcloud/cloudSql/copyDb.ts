@@ -37,24 +37,26 @@ const createCopyDbScript = ({
   const copyDBScript = `
       set -e
 
-
-
-      dumptmp=$(mktemp /tmp/dump.XXXXXX)
-
-      echo "Dumping file to $dumptmp"
-      pg_dump --dbname=postgres://${encodedSourceUsername}:${encodedSourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges > $dumptmp
-      echo "dump done"
       ${targetPSQL(
         `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`,
       )}
       ${targetPSQL(`-c 'create database "${targetDbName}"' 1> /dev/null`)}
-          echo "Restoring dump..."
-      ${targetPSQL(`"${targetDbName}" < $dumptmp 1> /dev/null`)}
-  
+      echo "Estimating database size..."
+      DB_SIZE=$(PGPASSWORD=${encodedSourcePassword} psql --dbname=postgres://${encodedSourceUsername}:${encodedSourcePassword}@localhost:${sourcePort}/${sourceDbName} -t -A -c "SELECT pg_database_size('${sourceDbName}')")
+      # pg_database_size includes indexes, TOAST, and free space — pg_dump output is roughly 40% of that
+      ESTIMATED_DUMP_SIZE=$((DB_SIZE * 40 / 100))
+      echo "Estimated dump size: $((ESTIMATED_DUMP_SIZE / 1024 / 1024)) MB (~40% of $((DB_SIZE / 1024 / 1024)) MB database size)"
 
-      echo "Clean up..."
-      set +e
-      rm $dumptmp
+      PROGRESS=""
+      if command -v pv &> /dev/null; then
+        PROGRESS="pv -s $ESTIMATED_DUMP_SIZE |"
+      else
+        echo "(install 'pv' for progress info)"
+      fi
+
+      echo "Dumping and restoring via pipe..."
+      eval "pg_dump --dbname=postgres://${encodedSourceUsername}:${encodedSourcePassword}@localhost:${sourcePort}/${sourceDbName} --no-owner --no-privileges | $PROGRESS ${targetPSQL(`"${targetDbName}" 1> /dev/null`)}"
+
       echo "\n🐱 Done!"
       `;
   return copyDBScript;
