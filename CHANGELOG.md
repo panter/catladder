@@ -1,3 +1,11 @@
+# [4.4.0](https://git.panter.ch/catladder/catladder/compare/v4.3.0...v4.4.0) (2026-06-25)
+
+
+### Features
+
+* **pipeline:** allow running a main pipeline after release commit ([d30851e](https://git.panter.ch/catladder/catladder/commit/d30851e05ee1880de435f710afea2f8d8f32aafc))
+* speed up database copy by piping pg_dump directly into psql ([8545fb5](https://git.panter.ch/catladder/catladder/commit/8545fb5deef48aae61ea6e5e9c5707d1980d928e))
+
 # [4.3.0](https://git.panter.ch/catladder/catladder/compare/v4.2.2...v4.3.0) (2026-06-16)
 
 
