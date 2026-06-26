@@ -122,12 +122,13 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-dev-llm"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
     - export HF_TOKEN="$CL_dev_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -162,6 +163,8 @@ before_script:
         $(printf %s "$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-my-ai-app-dev-llm
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -171,7 +174,7 @@ before_script:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -253,12 +256,13 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
     - export HF_TOKEN="$CL_review_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_llm_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -293,6 +297,8 @@ before_script:
         $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-llm" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -302,7 +308,7 @@ before_script:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -389,12 +395,13 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-stage-llm"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
     - export HF_TOKEN="$CL_stage_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -429,6 +436,8 @@ before_script:
         $(printf %s "$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-my-ai-app-stage-llm
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -438,7 +447,7 @@ before_script:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -518,12 +527,13 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-prod-llm"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west4"
     - export HF_TOKEN="$CL_prod_llm_HF_TOKEN"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey"
     - export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
     - export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm"
     - export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
@@ -558,6 +568,8 @@ before_script:
         $(printf %s "$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-my-ai-app-prod-llm
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -567,7 +579,7 @@ before_script:
       GCLOUD_RUN_canonicalHostSuffix: |-
         $(printf %s "$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
 
       EOF
     - collapseable_section_end "writeenvvars"

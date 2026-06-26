@@ -15,6 +15,7 @@ import {
   getDatabaseConnectionString,
   getDatabaseJdbcUrl,
 } from "./utils/database";
+import { getServiceNameForEnvContext } from "./utils/getServiceName";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
 
@@ -127,6 +128,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
         HOSTNAME_INTERNAL,
         ...getCloudSqlVariables(ctx),
         ...jobTriggers,
+        DEPLOY_CLOUD_RUN_SERVICE_NAME: getServiceNameForEnvContext(ctx),
         DEPLOY_CLOUD_RUN_PROJECT_ID: deployConfigRaw
           ? deployConfigRaw.projectId
           : undefined,

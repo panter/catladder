@@ -224,6 +224,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -240,7 +241,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -252,6 +253,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -267,7 +269,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -393,6 +395,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -409,7 +412,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -444,6 +447,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-dev-app1-$CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-test-app-dev-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -464,7 +469,7 @@ before_script:
         app1 doouble quote: "
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -664,6 +669,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -680,7 +686,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -692,6 +698,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -707,7 +714,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -839,6 +846,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -855,7 +863,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app1/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -890,6 +898,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-$CL_review_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -910,7 +920,7 @@ before_script:
         app1 doouble quote: "
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1007,6 +1017,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -1023,7 +1034,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -1035,6 +1046,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -1050,7 +1062,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -1176,6 +1188,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -1192,7 +1205,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -1227,6 +1240,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-stage-app1-$CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-test-app-stage-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -1247,7 +1262,7 @@ before_script:
         app1 doouble quote: "
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1331,6 +1346,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -1347,7 +1363,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -1359,6 +1375,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -1374,7 +1391,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -1500,6 +1517,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey"
@@ -1516,7 +1534,7 @@ before_script:
       app1 single quote: '
       app1 doouble quote: \\"
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -1551,6 +1569,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-prod-app1-$CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-test-app-prod-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -1571,7 +1591,7 @@ before_script:
         app1 doouble quote: "
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -1756,6 +1776,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -1777,7 +1798,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -1789,6 +1810,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -1809,7 +1831,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -1935,6 +1957,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -1956,7 +1979,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -1991,6 +2014,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-dev-app2-$CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-test-app-dev-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -2016,7 +2041,7 @@ before_script:
         --------
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -2216,6 +2241,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -2237,7 +2263,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -2249,6 +2275,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -2269,7 +2296,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -2401,6 +2428,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -2422,7 +2450,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app2/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -2457,6 +2485,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2-$CL_review_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -2482,7 +2512,7 @@ before_script:
         --------
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -2579,6 +2609,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -2600,7 +2631,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -2612,6 +2643,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -2632,7 +2664,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -2758,6 +2790,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -2779,7 +2812,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -2814,6 +2847,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-stage-app2-$CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-test-app-stage-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -2839,7 +2874,7 @@ before_script:
         --------
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -2923,6 +2958,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -2944,7 +2980,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -2956,6 +2992,7 @@ before_script:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+      DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
@@ -2976,7 +3013,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       " | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -3102,6 +3139,7 @@ before_script:
     - export ROOT_URL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+    - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey"
@@ -3123,7 +3161,7 @@ before_script:
       Unresolvable reference: \${app2:multiline_from_app1}
       --------
       "
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\",\\"foo\\",\\"multiline\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -3158,6 +3196,8 @@ before_script:
         $(printf %s "$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-prod-app2-$CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+      DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+        pan-test-app-prod-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
@@ -3183,7 +3223,7 @@ before_script:
         --------
         
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix","foo","multiline"]
 
       EOF
     - collapseable_section_end "writeenvvars"
