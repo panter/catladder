@@ -1,3 +1,10 @@
+# [4.5.0](https://git.panter.ch/catladder/catladder/compare/v4.4.1...v4.5.0) (2026-06-26)
+
+
+### Features
+
+* expose cloud service name in env vars ([b046175](https://git.panter.ch/catladder/catladder/commit/b046175717030248c8df0dc54c13d426a7f1147c))
+
 ## [4.4.1](https://git.panter.ch/catladder/catladder/compare/v4.4.0...v4.4.1) (2026-06-26)
 
 # [4.4.0](https://git.panter.ch/catladder/catladder/compare/v4.3.0...v4.4.0) (2026-06-25)
