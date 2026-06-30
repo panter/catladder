@@ -1,3 +1,10 @@
+# [4.6.0](https://git.panter.ch/catladder/catladder/compare/v4.5.1...v4.6.0) (2026-06-30)
+
+
+### Features
+
+* **pipeline:** allow running a main pipeline after release commit ([14a907e](https://git.panter.ch/catladder/catladder/commit/14a907e6da3a90c34025d8c0abe9d97dd1975f02))
+
 ## [4.5.1](https://git.panter.ch/catladder/catladder/compare/v4.5.0...v4.5.1) (2026-06-30)
 
 # [4.5.0](https://git.panter.ch/catladder/catladder/compare/v4.4.1...v4.5.0) (2026-06-26)
