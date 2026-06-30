@@ -8,11 +8,19 @@ export const RULE_CONDITION_RELEASE_COMMIT =
 export const RULE_CONDITION_NOT_RELEASE_COMMIT =
   "$CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/";
 
+// NOT(release_commit AND push) — skip release commits on push, but allow
+// manually triggered (web/API) pipelines even on release commits.
+export const RULE_CONDITION_NOT_RELEASE_COMMIT_ON_PUSH =
+  '($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")';
+
 export const RULE_IS_MAIN_BRANCH: GitlabRule = {
   if: RULE_CONDITION_MAIN_BRANCH,
 };
 export const RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT: GitlabRule = {
-  if: RULE_CONDITION_MAIN_BRANCH + " && " + RULE_CONDITION_NOT_RELEASE_COMMIT,
+  if:
+    RULE_CONDITION_MAIN_BRANCH +
+    " && " +
+    RULE_CONDITION_NOT_RELEASE_COMMIT_ON_PUSH,
 };
 export const RULE_NEVER_ON_RELEASE_COMMIT: GitlabRule = {
   if: RULE_CONDITION_RELEASE_COMMIT,
