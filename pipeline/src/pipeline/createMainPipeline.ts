@@ -1,5 +1,5 @@
 import {
-  RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT_PUSH,
+  RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
   RULE_NEVER_ON_AGENT_TRIGGER,
@@ -124,7 +124,7 @@ function getGitlabRulesForTrigger(trigger: PipelineTrigger): GitlabRule[] {
     case "mainBranch":
       return [
         RULE_NEVER_ON_AGENT_TRIGGER,
-        RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT_PUSH,
+        RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
       ];
     case "mr":
       return [RULE_NEVER_ON_AGENT_TRIGGER, RULE_IS_MERGE_REQUEST];
