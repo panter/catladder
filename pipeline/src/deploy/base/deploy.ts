@@ -104,9 +104,7 @@ export class DeployJob extends CatladderJob {
               },
             ]
           : [],
-      when: whenDeploy === "auto" ? "on_success" : "manual",
-
-      allow_failure: whenDeploy === "manual" ? true : false,
+      gate: whenDeploy,
       stage: "deploy",
       variables: {
         ...context.environment.envVars,

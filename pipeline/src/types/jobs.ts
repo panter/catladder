@@ -54,6 +54,15 @@ export type CatladderJobCore<S = BaseStage> = {
   stage: S;
 
   /**
+   * whether the job starts automatically ("auto") or requires a manual
+   * action ("manual"). Each pipeline type translates this to its own
+   * mechanism (gitlab: `when` + `allow_failure`).
+   *
+   * Prefer this over the gitlab-specific `when`/`allow_failure` fields.
+   */
+  gate?: "auto" | "manual";
+
+  /**
    * script to run
    */
   script: (string | undefined)[];

@@ -12,8 +12,7 @@ export class StopJob extends CatladderJob {
       image: jobDefinition.image,
       envMode: "stagePerEnv", // makes it easier to run manual tasks er env
       needs: [], // can be executed even if the deploy job failed
-      allow_failure: true,
-      when: "manual", // stop is always manual
+      gate: "manual", // stop is always manual
       variables: {
         ...context.environment.jobOnlyVars.deploy.envVars,
         ...jobDefinition.variables,

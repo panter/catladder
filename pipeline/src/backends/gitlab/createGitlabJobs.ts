@@ -115,10 +115,21 @@ export const makeGitlabJob = (
 
     variables,
     runnerVariables,
-    when,
+    gate,
+    when: jobWhen,
+    allow_failure: jobAllowFailure,
     cache,
     ...rest
   } = job;
+
+  // the neutral `gate` translates to gitlab's when/allow_failure;
+  // explicitly set gitlab fields take precedence
+  const when =
+    jobWhen ??
+    (gate ? (gate === "manual" ? "manual" : "on_success") : undefined);
+  const allow_failure =
+    jobAllowFailure ?? (gate ? gate === "manual" : undefined);
+
   const stage =
     envMode === "stagePerEnv" && context.type !== "agent"
       ? `${job.stage} ${context.env}`
@@ -190,6 +201,7 @@ export const makeGitlabJob = (
     retry: BASE_RETRY,
     interruptible: true,
     ...rest,
+    allow_failure,
     cache: cache ? addCacheFallback(cache, context) : undefined,
     rules: rules.length > 0 ? rules : undefined,
     variables: {
