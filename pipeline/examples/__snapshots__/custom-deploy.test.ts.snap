@@ -1474,6 +1474,37 @@ catladder-review-stop.yml:
             collapseable_section_end "injectvars"
             echo 'would stop'
           shell: bash
+catladder-manual.yml:
+  name: catladder manual tasks
+  on:
+    workflow_dispatch:
+      inputs:
+        job:
+          description: the task to run
+          required: true
+          type: choice
+          options:
+            - create-release
+  env: *a1
+  jobs:
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/semantic-release:the-version
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ inputs.job == 'create-release' }}
 "
 `;
 

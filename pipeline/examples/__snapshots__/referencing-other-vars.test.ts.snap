@@ -5592,6 +5592,7 @@ catladder-manual.yml:
             - app2-stop-dev
             - app3-stop-dev
             - app3-rollback-dev
+            - create-release
             - app3-rollback-review
             - app1-stop-stage
             - app1-stop-prod
@@ -5851,6 +5852,24 @@ catladder-manual.yml:
             kubernetesRollback
           shell: bash
       if: \${{ inputs.job == 'app3-rollback-dev' }}
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/semantic-release:the-version
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ inputs.job == 'create-release' }}
     app3-rollback-review:
       name: app3 ↩️ Rollback ⚠️ | review
       runs-on: ubuntu-latest

@@ -602,6 +602,7 @@ catladder-manual.yml:
           type: choice
           options:
             - llm-stop-dev
+            - create-release
             - llm-stop-stage
             - llm-stop-prod
   env: *a1
@@ -658,6 +659,24 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'llm-stop-dev' }}
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/semantic-release:the-version
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ inputs.job == 'create-release' }}
     llm-stop-stage:
       name: llm 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest

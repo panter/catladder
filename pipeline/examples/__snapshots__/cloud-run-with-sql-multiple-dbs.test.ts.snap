@@ -5823,6 +5823,7 @@ catladder-manual.yml:
             - db1-stop-dev
             - db2-stop-dev
             - api-stop-dev
+            - create-release
             - db1-stop-stage
             - db1-stop-prod
             - db2-stop-stage
@@ -5989,6 +5990,24 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'api-stop-dev' }}
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/semantic-release:the-version
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ inputs.job == 'create-release' }}
     db1-stop-stage:
       name: db1 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest

@@ -8,6 +8,7 @@ import type { CatladderJob } from "../../types/jobs";
 import type { PipelineBackend, PipelineFile } from "../types";
 import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
 import { getUploadProviderIds, makeGithubJob } from "./createGithubJobs";
+import { getGithubReleaseJobs } from "./githubReleaseJobs";
 
 const WORKFLOWS_FOLDER = ".github/workflows";
 
@@ -101,6 +102,12 @@ export class GithubBackend implements PipelineBackend {
             }
           }),
       );
+
+      if (trigger === "mainBranch") {
+        const releaseJobs = getGithubReleaseJobs(config, Object.keys(jobs));
+        Object.assign(jobs, releaseJobs.main);
+        Object.assign(manualJobs, releaseJobs.manual);
+      }
 
       if (Object.keys(jobs).length > 0) {
         workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] = {

@@ -29,6 +29,7 @@ export type GithubJob = {
   services?: Record<string, GithubService>;
   environment?: { name: string; url?: string } | string;
   env?: Record<string, string>;
+  permissions?: Record<string, string>;
   if?: string;
   steps: GithubStep[];
 };
