@@ -1,5 +1,6 @@
 import { isEmpty, isObject, merge } from "lodash-es";
 import { getInjectVarsScript } from "../../bash/getInjectVarsScript";
+import { createJobCacheFromCacheConfigs } from "../../build/cache/createJobCache";
 import { BASE_RETRY } from "../../defaults";
 import type {
   AgentContext,
@@ -118,7 +119,8 @@ export const makeGitlabJob = (
     gate,
     when: jobWhen,
     allow_failure: jobAllowFailure,
-    cache,
+    cache: jobCache,
+    caches,
     ...rest
   } = job;
 
@@ -129,6 +131,14 @@ export const makeGitlabJob = (
     (gate ? (gate === "manual" ? "manual" : "on_success") : undefined);
   const allow_failure =
     jobAllowFailure ?? (gate ? gate === "manual" : undefined);
+
+  // the neutral `caches` declarations resolve to gitlab cache configs;
+  // an explicitly set gitlab `cache` takes precedence
+  const cache =
+    jobCache ??
+    (caches && context.type !== "agent"
+      ? createJobCacheFromCacheConfigs(context, caches)
+      : undefined);
 
   const stage =
     envMode === "stagePerEnv" && context.type !== "agent"

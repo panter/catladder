@@ -4,7 +4,7 @@ import type { CatladderJobSpec } from "../../types/jobs";
 import { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
-import { createJobCacheFromConfig } from "../cache/createJobCache";
+import { getAllCacheConfigsFromConfig } from "../cache/getAllCacheConfigsFromConfig";
 import { isOfBuildType } from "../types";
 
 const RUNNER_CUSTOM_TEST_VARIABLES = {
@@ -34,7 +34,7 @@ export const createCustomTestJobs = (
       ...context.environment.jobOnlyVars.build.envVars,
     },
     services: buildConfig.jobServices,
-    cache: createJobCacheFromConfig(context, buildConfig),
+    caches: getAllCacheConfigsFromConfig(context, buildConfig),
     stage: "test",
     needs: [],
   };
@@ -47,7 +47,7 @@ export const createCustomTestJobs = (
           ...(buildConfig.audit?.runnerVariables ?? {}),
         },
         image: buildConfig.audit?.jobImage ?? buildConfig.jobImage,
-        cache: undefined,
+        caches: undefined,
         script: [...ensureArray(buildConfig.audit?.command)],
         allow_failure: buildConfig.audit?.allowFailure ?? true,
         ...createArtifactsConfig(

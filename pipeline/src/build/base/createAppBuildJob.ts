@@ -11,7 +11,6 @@ import { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { removeUndefined } from "../../utils/removeUndefined";
 import { createBuildJobArtifacts } from "../artifacts/createBuildJobArtifact";
-import { createJobCacheFromCacheConfigs } from "../cache/createJobCache";
 import { ensureNodeVersion } from "../node/yarn";
 import {
   APP_BUILD_JOB_NAME,
@@ -41,7 +40,7 @@ export class AppBuildJob extends CatladderJob {
       stage: "build",
       image: getRunnerImage("jobs-default"),
       needs: [],
-      cache: cache ? createJobCacheFromCacheConfigs(context, cache) : undefined,
+      caches: cache,
       variables: {
         ...(variables ?? {}),
         ...(context.type === "component"

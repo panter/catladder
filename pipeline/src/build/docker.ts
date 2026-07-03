@@ -19,7 +19,6 @@ import type {
 import { CatladderJob } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { removeUndefined } from "../utils/removeUndefined";
-import { createJobCacheFromCacheConfigs } from "./cache/createJobCache";
 
 const DOCKER_BUILD_RUNNER_REQUESTS = {
   KUBERNETES_CPU_REQUEST: "0.45",
@@ -140,7 +139,7 @@ export class DockerBuildJob extends CatladderJob {
       name: DOCKER_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
-      cache: cache ? createJobCacheFromCacheConfigs(context, cache) : undefined,
+      caches: cache,
       ...getDockerJobBaseProps(),
       script: script || [],
       variables: {

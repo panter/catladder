@@ -1,4 +1,5 @@
 import type { UnspecifiedEnvVars } from "..";
+import type { CacheConfig } from "../build/types";
 import { removeUndefined } from "../utils/removeUndefined";
 import type {
   Artifacts,
@@ -80,6 +81,15 @@ export type CatladderJobCore<S = BaseStage> = {
    *
    */
   needs?: Array<CatladderJobNeed>;
+
+  /**
+   * platform-neutral cache declarations. Each pipeline type resolves
+   * them to its own cache mechanism (gitlab: the job `cache:` config).
+   *
+   * Prefer this over the gitlab-shaped `cache` field, which remains as
+   * an escape hatch and takes precedence when set.
+   */
+  caches?: CacheConfig[];
 
   /**
    * variables to pass

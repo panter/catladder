@@ -2,8 +2,6 @@ import { join } from "path";
 import type { CacheConfig, CacheConfigAdvanced, CacheConfigSimple } from "..";
 import type { Context } from "../../types";
 import type { CatladderJobCache } from "../../types/jobs";
-import type { WithCacheConfig } from "../types";
-import { getAllCacheConfigsFromConfig } from "./getAllCacheConfigsFromConfig";
 import slugify from "slugify";
 
 export const createJobCacheFromCacheConfigs = (
@@ -69,15 +67,4 @@ export const createJobCacheFromCacheConfigs = (
   );
 
   return [...advancedCaches, ...simpleCaches];
-};
-
-/** shortcut, used in some build types */
-export const createJobCacheFromConfig = (
-  context: Context,
-  configWithCache: WithCacheConfig,
-) => {
-  return createJobCacheFromCacheConfigs(
-    context,
-    getAllCacheConfigsFromConfig(context, configWithCache),
-  );
 };

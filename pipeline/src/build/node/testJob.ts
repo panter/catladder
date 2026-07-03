@@ -11,7 +11,6 @@ import { createArtifactsConfig } from "../base/createArtifactsConfig";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import { ensureNodeVersion, getYarnInstall } from "./yarn";
-import { createJobCacheFromCacheConfigs } from "../cache/createJobCache";
 
 export const createNodeTestJobs = async (
   context: ComponentContext | WorkspaceContext,
@@ -59,7 +58,7 @@ export const createNodeTestJobs = async (
             ...(buildConfig.audit?.runnerVariables ?? {}),
           },
           image: buildConfig.audit?.jobImage ?? defaultImage,
-          cache: undefined, // audit does not need yarn install and no cache
+          caches: undefined, // audit does not need yarn install and no cache
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
@@ -86,7 +85,7 @@ export const createNodeTestJobs = async (
             ...(buildConfig.lint?.runnerVariables ?? {}),
           },
           image: buildConfig.lint?.jobImage ?? defaultImage,
-          cache: createJobCacheFromCacheConfigs(context, nodeCache),
+          caches: nodeCache,
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
@@ -113,7 +112,7 @@ export const createNodeTestJobs = async (
           },
           image:
             buildConfig.test?.jobImage ?? getRunnerImage("jobs-testing-chrome"),
-          cache: createJobCacheFromCacheConfigs(context, nodeCache),
+          caches: nodeCache,
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,

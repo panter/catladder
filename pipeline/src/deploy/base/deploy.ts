@@ -1,4 +1,3 @@
-import { createJobCacheFromCacheConfigs } from "../../build/cache/createJobCache";
 import {
   getDockerImageVariables,
   requiresDockerBuild,
@@ -49,9 +48,7 @@ export class DeployJob extends CatladderJob {
       name: DEPLOY_JOB_NAME,
       script: jobDefinition.script,
       image: jobDefinition.image,
-      cache: jobDefinition.cache
-        ? createJobCacheFromCacheConfigs(context, jobDefinition.cache)
-        : undefined,
+      caches: jobDefinition.cache,
       artifacts: jobDefinition.artifacts,
       services: jobDefinition.services,
       envMode: "stagePerEnv", // makes it easier to run manual tasks er env
