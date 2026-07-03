@@ -25,7 +25,7 @@ export default async (choice?: Choice, options?: Options) => {
   }
 
   await Promise.all([
-    generatePipelineFiles(context, config.pipelineType ?? "gitlab"),
+    generatePipelineFiles(context),
     writeDotEnvFiles(context, choice),
 
     writeDTsFiles(context, choice),

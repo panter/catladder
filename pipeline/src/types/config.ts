@@ -196,11 +196,35 @@ export type ConfigProps = {
   CustomEnvs: string;
 };
 
+/**
+ * per-pipeline-type options. Currently empty, but gives per-backend
+ * settings a home (e.g. output folder, workflow naming) later.
+ */
+export type PipelineOutputOptions = Record<string, never>;
+
 export type Config<C extends ConfigProps = never> = {
   /**
    * the pipeline type to generate, defaults to gitlab
+   *
+   * @deprecated use `pipelines` instead
    */
   pipelineType?: PipelineType;
+
+  /**
+   * which pipelines to generate. Multiple pipeline types can be enabled
+   * at the same time (e.g. during a step-by-step migration from one CI
+   * system to another); each generates its own set of files.
+   *
+   * Defaults to `{ gitlab: true }` (or the deprecated `pipelineType`).
+   *
+   * @example
+   * pipelines: {
+   *   gitlab: true,
+   * }
+   */
+  pipelines?: {
+    [T in PipelineType]?: boolean | PipelineOutputOptions;
+  };
 
   /**
    * name of the customer or group

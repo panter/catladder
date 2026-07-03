@@ -2,16 +2,33 @@ import { mkdir, rm } from "fs/promises";
 import { dirname } from "path";
 import type { Config, PipelineType } from "../types";
 
-import { getPipelineBackend } from "../backends";
+import type { PipelineBackend } from "../backends";
+import { getEnabledPipelineTypes, getPipelineBackend } from "../backends";
 import { GitlabBackend } from "../backends/gitlab";
 import type { CatenvContext } from "../catenv";
 
-export async function generatePipelineFiles<T extends PipelineType>(
+/**
+ * generates the pipeline files of all pipeline types enabled in the
+ * config (see `pipelines`). Pass an explicit `pipelineType` to generate
+ * only that one.
+ */
+export async function generatePipelineFiles(
   context: CatenvContext,
-  pipelineType: T,
+  pipelineType?: PipelineType,
 ) {
-  const backend = getPipelineBackend(pipelineType);
+  const pipelineTypes = pipelineType
+    ? [pipelineType]
+    : getEnabledPipelineTypes(context.config);
 
+  for (const type of pipelineTypes) {
+    await generatePipelineFilesForBackend(context, getPipelineBackend(type));
+  }
+}
+
+async function generatePipelineFilesForBackend(
+  context: CatenvContext,
+  backend: PipelineBackend,
+) {
   const files = await backend.createFiles(context.config);
 
   // first clean up the folder
