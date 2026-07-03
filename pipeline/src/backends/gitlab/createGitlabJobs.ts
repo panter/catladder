@@ -108,7 +108,8 @@ export const makeGitlabJob = (
   const {
     environment,
     envMode,
-    needsStages,
+    requires,
+    provides,
     name,
     needs,
     jobTags,
@@ -349,53 +350,11 @@ function deduplicateNeeds(needs: GitlabJobDef["needs"]): GitlabJobDef["needs"] {
 
 function getGitlabNeedsForComponentJob(
   context: ComponentContext,
-  { needsStages, needs }: CatladderJob<string>,
+  { needs }: CatladderJob<string>,
   allJobs: AllCatladderJobs,
 ): GitlabJobDef["needs"] {
-  const needsFromStages = needsStages?.flatMap<CatladderJobNeed>((n) => {
-    const componentName = context.name;
-    if (!n.workspaceName) {
-      const allJobNamesFromThatStage =
-        allJobs.components
-          .filter(
-            (j) =>
-              j.context.name === componentName && j.context.env === context.env,
-          )
-          .flatMap((j) => j.jobs)
-          ?.filter((j) => j.stage === n.stage)
-          ?.map((j) => j.name) ?? [];
-
-      return allJobNamesFromThatStage.map((job) => ({
-        job,
-        artifacts: n.artifacts ?? false,
-        componentName,
-      }));
-    } else {
-      const allJobNamesFromThatStage =
-        allJobs.workspaces
-          .find(
-            (w) =>
-              w.context.name === n.workspaceName &&
-              w.context.env === context.env,
-          )
-          ?.jobs?.flatMap((j) => j)
-          ?.filter((j) => j.stage === n.stage)
-          ?.map((j) => j.name) ?? [];
-
-      return allJobNamesFromThatStage.map((job) => ({
-        job,
-        artifacts: n.artifacts ?? false,
-        workspaceName: n.workspaceName,
-      }));
-    }
-  });
-  const cleanedNeeds: CatladderJob["needs"] = [
-    ...(needsFromStages ?? []),
-    ...(needs ?? []),
-  ];
-
-  return cleanedNeeds
-    ?.map((n) =>
+  return (needs ?? [])
+    .map((n) =>
       isObject(n)
         ? "workspaceName" in n
           ? {
@@ -431,34 +390,11 @@ function getGitlabNeedsForComponentJob(
  */
 function getGitlabNeedsForWorkspaceJob(
   context: WorkspaceContext,
-  { needsStages, needs }: CatladderJob<string>,
+  { needs }: CatladderJob<string>,
   allJobs: AllCatladderJobs,
 ): GitlabJobDef["needs"] {
-  const needsFromStages = needsStages?.flatMap<CatladderJobNeed>((n) => {
-    const workspaceName = n.workspaceName ?? context.name;
-    const allJobNamesFromThatStage =
-      allJobs.workspaces
-        .filter(
-          (j) =>
-            j.context.name === workspaceName && j.context.env === context.env,
-        )
-        .flatMap((j) => j.jobs)
-        ?.filter((j) => j.stage === n.stage)
-        ?.map((j) => j.name) ?? [];
-
-    return allJobNamesFromThatStage.map((job) => ({
-      job,
-      artifacts: n.artifacts ?? false,
-      workspaceName: workspaceName,
-    }));
-  });
-  const cleanedNeeds: CatladderJob["needs"] = [
-    ...(needsFromStages ?? []),
-    ...(needs ?? []),
-  ];
-
-  return cleanedNeeds
-    ?.map((n) =>
+  return (needs ?? [])
+    .map((n) =>
       isObject(n)
         ? {
             job: getFullReferencedJobNameFromWorkspace(

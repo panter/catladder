@@ -12,6 +12,7 @@ import { createJobsForComponentContext } from "./createJobsForComponent";
 import { createJobsForWorkspace } from "./createJobsForWorkspace";
 import { createJobsForAgentContext } from "./agent/createJobsForAgentContext";
 import { createAgentContext } from "./agent/createAgentContext";
+import { resolveRequirements } from "./resolveRequirements";
 
 export type AllCatladderJobs = {
   workspaces: Array<{
@@ -39,7 +40,7 @@ export const createAllJobs = async ({
     pipelineType,
   });
 
-  return {
+  return resolveRequirements({
     workspaces: await Promise.all(
       Object.keys(config.builds ?? {}).map(async (workspaceName) => {
         const componentsInAllEnvs = allComponentsContext.filter(
@@ -89,5 +90,5 @@ export const createAllJobs = async ({
         };
       }),
     ).then((f) => f.flat()),
-  };
+  });
 };

@@ -7,7 +7,7 @@ import {
   componentContextHasWorkspaceBuild,
   type ComponentContext,
 } from "../../types/context";
-import type { BaseStage } from "../../types/jobs";
+import type { Requirement } from "../../types/jobs";
 import { CatladderJob } from "../../types/jobs";
 import { contextIsStoppable } from "../utils";
 import { STOP_JOB_NAME } from "./stop";
@@ -53,54 +53,50 @@ export class DeployJob extends CatladderJob {
       services: jobDefinition.services,
       envMode: "stagePerEnv", // makes it easier to run manual tasks er env
 
-      needs: [
-        ...(deployConfig
-          ? (deployConfig.waitFor?.map((c) => ({
-              componentName: c,
-              job: DEPLOY_JOB_NAME,
-              artifacts: false,
-            })) ?? [])
-          : []),
-      ],
+      needs: [],
 
-      needsStages:
+      requires: [
+        // wait for the deployment of other components first
+        ...(deployConfig?.waitFor?.map(
+          (c): Requirement => ({
+            capability: "deployment",
+            from: { component: c },
+            artifacts: false,
+            strict: true, // a component we wait for must have a deployment
+          }),
+        ) ?? []),
         // if the build is disabled, we don't need to wait for it
-        context.build.type !== "disabled"
-          ? [
-              ...(componentContextHasWorkspaceBuild(context)
+        ...(context.build.type !== "disabled"
+          ? ([
+              componentContextHasWorkspaceBuild(context)
                 ? hasDocker // docker build is per component,
-                  ? [
+                  ? {
                       // we don't need artifacts, but have to wait for the component build
-                      {
-                        stage: "build" as BaseStage,
-                        artifacts: false,
-                      },
-                    ]
-                  : [
-                      {
-                        // pick build artifacts from workspace build
-                        stage: "build" as BaseStage,
-                        artifacts: true,
-                        workspaceName: context.build.workspaceName,
-                      },
-                    ]
-                : [
-                    {
-                      stage: "build" as BaseStage,
-                      artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
-                    },
-                  ]),
+                      capability: "build",
+                      artifacts: false,
+                    }
+                  : {
+                      // pick build artifacts from workspace build
+                      capability: "build",
+                      artifacts: true,
+                      from: { workspace: context.build.workspaceName },
+                    }
+                : {
+                    capability: "build",
+                    artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
+                  },
               // we don't want to deploy when there is a broken test
               {
-                stage: "test",
+                capability: "qualityGate",
                 artifacts: false,
                 // use test from workspace build
-                workspaceName: componentContextHasWorkspaceBuild(context)
-                  ? context.build.workspaceName
+                from: componentContextHasWorkspaceBuild(context)
+                  ? { workspace: context.build.workspaceName }
                   : undefined,
               },
-            ]
-          : [],
+            ] satisfies Requirement[])
+          : []),
+      ],
       gate: whenDeploy,
       stage: "deploy",
       variables: {

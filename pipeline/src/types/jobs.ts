@@ -27,6 +27,40 @@ export type CatladderJobNeed =
   | { job: string; artifacts: boolean; componentName?: string }
   | { job: string; artifacts: boolean; workspaceName: string };
 
+export const CAPABILITIES = ["build", "qualityGate", "deployment"] as const;
+/**
+ * something a job provides to other jobs. Jobs declare what they require
+ * via {@link Requirement}s and a planner resolves them to concrete job
+ * dependencies over the whole pipeline.
+ */
+export type CapabilityName = (typeof CAPABILITIES)[number];
+
+/**
+ * a semantic dependency on a capability provided by other jobs
+ */
+export type Requirement = {
+  /**
+   * the capability the job requires
+   */
+  capability: CapabilityName;
+  /**
+   * whether the artifacts of the providing jobs are consumed
+   */
+  artifacts?: boolean;
+  /**
+   * where the capability must come from. Defaults to the job's own
+   * component (or workspace for workspace jobs).
+   */
+  from?: { component?: string; workspace?: string };
+  /**
+   * by default, a requirement nobody provides simply creates no
+   * dependency (e.g. quality gates don't run on tagged releases).
+   * Set strict to fail pipeline generation instead (e.g. when waiting
+   * for another component's deployment that has to exist).
+   */
+  strict?: boolean;
+};
+
 /**
  * how a job interacts with a deployment environment.
  * Each pipeline type translates this to its own mechanism
@@ -83,11 +117,19 @@ export type CatladderJobCore<S = BaseStage> = {
    */
   script: (string | undefined)[];
 
-  needsStages?: {
-    stage: S;
-    artifacts?: boolean;
-    workspaceName?: string;
-  }[];
+  /**
+   * semantic requirements on capabilities provided by other jobs.
+   * A planner resolves them to concrete job dependencies (`needs`)
+   * once all jobs of the pipeline are known.
+   */
+  requires?: Requirement[];
+
+  /**
+   * the capabilities this job provides to other jobs.
+   * If not set, it is derived from the stage:
+   * build -> "build", test -> "qualityGate", deploy -> "deployment"
+   */
+  provides?: CapabilityName[];
 
   /**
    * does this require another job (from the same component)?

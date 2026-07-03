@@ -25,7 +25,7 @@ const config = {
         {
           name: `e2e`,
           stage: "verify",
-          needsStages: [{ stage: "deploy" }],
+          requires: [{ capability: "deployment" }],
           envMode: "jobPerEnv",
           cache: {
             key: "cypress",
