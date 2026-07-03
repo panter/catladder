@@ -9,6 +9,7 @@ import {
   getArtifactsRegistryImageName,
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
+import { getCiVariable } from "../bash/ciVariables";
 import { getRunnerImage } from "../runner";
 import type {
   ComponentContext,
@@ -35,17 +36,17 @@ export const getDockerImageVariables = (context: ComponentContext) => {
           DOCKER_IMAGE: getArtifactsRegistryImageName(context),
           DOCKER_CACHE_IMAGE: getArtifactsRegistryBuildCacheImage(context),
         }
-      : // gitlab registry:
+      : // the registry of the CI system (e.g. the gitlab registry):
         {
-          DOCKER_REGISTRY: "$CI_REGISTRY",
+          DOCKER_REGISTRY: getCiVariable(context, "registry"),
 
-          DOCKER_CACHE_IMAGE: "$CI_REGISTRY_IMAGE/caches/" + context.name,
+          DOCKER_CACHE_IMAGE: `${getCiVariable(context, "registryImage")}/caches/${context.name}`,
           // ONLY USED IN KUBERNETES
           DOCKER_IMAGE_NAME: context.env + "/" + context.name,
-          DOCKER_IMAGE: "$CI_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME",
+          DOCKER_IMAGE: `${getCiVariable(context, "registryImage")}/$DOCKER_IMAGE_NAME`,
         }),
 
-    DOCKER_IMAGE_TAG: "$CI_COMMIT_SHA",
+    DOCKER_IMAGE_TAG: getCiVariable(context, "commitSha"),
   };
 };
 
@@ -167,7 +168,7 @@ export const gitlabDockerLogin = (context: ComponentContext) =>
         `gcloud auth configure-docker ${getArtifactsRegistryHost(context)}`,
       ]
     : [
-        "docker login --username gitlab-ci-token --password $CI_JOB_TOKEN $CI_REGISTRY",
+        `docker login --username gitlab-ci-token --password ${getCiVariable(context, "jobToken")} ${getCiVariable(context, "registry")}`,
       ];
 
 const BUILT_IN_ENSURE_DOCKERFILE_SCRIPTS = {

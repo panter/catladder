@@ -2,6 +2,7 @@ import {
   componentContextIsStandaloneBuild,
   type ComponentContext,
 } from "../..";
+import { getCiVariable } from "../../bash/ciVariables";
 import type { CatladderJobSpec } from "../../types/jobs";
 import { CatladderJob } from "../../types/jobs";
 import { ensureArrayOrNull, notNil } from "../../utils";
@@ -38,7 +39,7 @@ export const createRailsTestJobs = (
   const bundlerCache = {
     key: {
       files: ["Gemfile.lock"],
-      prefix: "$CI_JOB_IMAGE", // a changed image might have different OS libraries which no longer work with the cached gems
+      prefix: `${getCiVariable(context, "jobImage")}`, // a changed image might have different OS libraries which no longer work with the cached gems
     },
     paths: [bundlerCacheDir],
   };
