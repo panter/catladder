@@ -139,6 +139,7 @@ export class DockerBuildJob extends CatladderJob {
       name: DOCKER_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
+      provides: ["dockerImage"],
       caches: cache,
       ...getDockerJobBaseProps(),
       script: script || [],

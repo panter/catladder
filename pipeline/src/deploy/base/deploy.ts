@@ -44,6 +44,63 @@ export class DeployJob extends CatladderJob {
       ? whenDeployDefined
       : whenDeployDefault;
 
+    // wait for the deployment of other components first
+    const waitForRequirements: Requirement[] =
+      deployConfig?.waitFor?.map((c) => ({
+        capability: "deployment",
+        from: { component: c },
+        artifacts: false,
+        strict: true, // a component we wait for must have a deployment
+      })) ?? [];
+
+    const buildRequirements: Requirement[] = componentContextHasWorkspaceBuild(
+      context,
+    )
+      ? hasDocker // docker build is per component,
+        ? [
+            {
+              // the deployment needs the docker image, which must exist
+              capability: "dockerImage",
+              artifacts: false,
+              strict: true,
+            },
+          ]
+        : [
+            {
+              // pick build artifacts from workspace build
+              capability: "buildArtifacts",
+              artifacts: true,
+              from: { workspace: context.build.workspaceName },
+            },
+          ]
+      : [
+          {
+            // wait for all build jobs of the component
+            capability: "build",
+            artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
+          },
+          ...(hasDocker
+            ? [
+                {
+                  // the deployment needs the docker image, which must exist
+                  capability: "dockerImage" as const,
+                  artifacts: false,
+                  strict: true,
+                },
+              ]
+            : []),
+        ];
+
+    // we don't want to deploy when there is a broken test
+    const qualityGateRequirement: Requirement = {
+      capability: "qualityGate",
+      artifacts: false,
+      // use test from workspace build
+      from: componentContextHasWorkspaceBuild(context)
+        ? { workspace: context.build.workspaceName }
+        : undefined,
+    };
+
     super({
       name: DEPLOY_JOB_NAME,
       script: jobDefinition.script,
@@ -56,45 +113,10 @@ export class DeployJob extends CatladderJob {
       needs: [],
 
       requires: [
-        // wait for the deployment of other components first
-        ...(deployConfig?.waitFor?.map(
-          (c): Requirement => ({
-            capability: "deployment",
-            from: { component: c },
-            artifacts: false,
-            strict: true, // a component we wait for must have a deployment
-          }),
-        ) ?? []),
+        ...waitForRequirements,
         // if the build is disabled, we don't need to wait for it
         ...(context.build.type !== "disabled"
-          ? ([
-              componentContextHasWorkspaceBuild(context)
-                ? hasDocker // docker build is per component,
-                  ? {
-                      // we don't need artifacts, but have to wait for the component build
-                      capability: "build",
-                      artifacts: false,
-                    }
-                  : {
-                      // pick build artifacts from workspace build
-                      capability: "build",
-                      artifacts: true,
-                      from: { workspace: context.build.workspaceName },
-                    }
-                : {
-                    capability: "build",
-                    artifacts: hasDocker ? false : true, // we asume that no-docker deployments need build artifacts,
-                  },
-              // we don't want to deploy when there is a broken test
-              {
-                capability: "qualityGate",
-                artifacts: false,
-                // use test from workspace build
-                from: componentContextHasWorkspaceBuild(context)
-                  ? { workspace: context.build.workspaceName }
-                  : undefined,
-              },
-            ] satisfies Requirement[])
+          ? [...buildRequirements, qualityGateRequirement]
           : []),
       ],
       gate: whenDeploy,

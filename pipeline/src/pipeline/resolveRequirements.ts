@@ -19,10 +19,27 @@ const DEFAULT_STAGE_CAPABILITIES: Partial<Record<BaseStage, CapabilityName>> = {
   deploy: "deployment",
 };
 
-const providesCapability = (job: CatladderJob, capability: CapabilityName) =>
-  job.provides
-    ? job.provides.includes(capability)
-    : DEFAULT_STAGE_CAPABILITIES[job.stage] === capability;
+/**
+ * specific capabilities imply coarser ones, so that e.g. a requirement
+ * on "build" (all build-ish jobs) also matches jobs that declare the
+ * more specific "dockerImage"
+ */
+const CAPABILITY_IMPLICATIONS: Partial<
+  Record<CapabilityName, CapabilityName[]>
+> = {
+  buildArtifacts: ["build"],
+  dockerImage: ["build"],
+};
+
+const providesCapability = (job: CatladderJob, capability: CapabilityName) => {
+  const stageDefault = DEFAULT_STAGE_CAPABILITIES[job.stage];
+  const declared = job.provides ?? (stageDefault ? [stageDefault] : []);
+  return declared.some(
+    (c) =>
+      c === capability ||
+      (CAPABILITY_IMPLICATIONS[c] ?? []).includes(capability),
+  );
+};
 
 /**
  * the planner: resolves the semantic `requires` declarations of all jobs
@@ -94,7 +111,10 @@ const expandRequirement = (
       candidate !== job && providesCapability(candidate, capability),
   );
 
-  if (strict && providers.length === 0) {
+  // consuming artifacts from nobody is almost always a broken config
+  const isStrict = strict ?? artifacts ?? false;
+
+  if (isStrict && providers.length === 0) {
     throw new Error(
       `no job provides '${capability}' in '${env}:${
         workspaceName ?? from?.component ?? context.name

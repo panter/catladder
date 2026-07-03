@@ -27,7 +27,13 @@ export type CatladderJobNeed =
   | { job: string; artifacts: boolean; componentName?: string }
   | { job: string; artifacts: boolean; workspaceName: string };
 
-export const CAPABILITIES = ["build", "qualityGate", "deployment"] as const;
+export const CAPABILITIES = [
+  "build",
+  "buildArtifacts",
+  "dockerImage",
+  "qualityGate",
+  "deployment",
+] as const;
 /**
  * something a job provides to other jobs. Jobs declare what they require
  * via {@link Requirement}s and a planner resolves them to concrete job
@@ -53,10 +59,13 @@ export type Requirement = {
    */
   from?: { component?: string; workspace?: string };
   /**
-   * by default, a requirement nobody provides simply creates no
-   * dependency (e.g. quality gates don't run on tagged releases).
-   * Set strict to fail pipeline generation instead (e.g. when waiting
-   * for another component's deployment that has to exist).
+   * whether pipeline generation fails when no job provides the
+   * capability.
+   *
+   * Defaults to the value of `artifacts`: consuming artifacts from
+   * nobody is almost always a broken configuration, while a plain
+   * ordering requirement nobody provides simply creates no dependency
+   * (e.g. quality gates don't run on tagged releases).
    */
   strict?: boolean;
 };

@@ -38,6 +38,7 @@ export class AppBuildJob extends CatladderJob {
       name: APP_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
+      provides: ["buildArtifacts"],
       image: getRunnerImage("jobs-default"),
       needs: [],
       caches: cache,
