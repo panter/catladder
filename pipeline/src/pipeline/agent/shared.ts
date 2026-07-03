@@ -4,21 +4,40 @@ import {
   escapeNewlines,
 } from "../../bash/bashEscape";
 import { getRunnerImage } from "../../runner";
-import type { AgentContext, CatladderJob } from "../../types";
+import type { AgentContext, CatladderJobSpec } from "../../types";
+import { CatladderJob } from "../../types/jobs";
 
-export const createBaseAgentJob = (
-  context: AgentContext,
-): Omit<CatladderJob, "name" | "rules" | "script" | "envMode"> => ({
-  stage: "agents",
+export abstract class AgentJob extends CatladderJob {
+  constructor(
+    context: AgentContext,
+    def: Pick<CatladderJobSpec, "name" | "rules" | "script"> &
+      Partial<
+        Pick<
+          CatladderJobSpec,
+          "envMode" | "interruptible" | "allow_failure" | "variables"
+        >
+      >,
+  ) {
+    super({
+      interruptible: def.interruptible,
+      stage: "agents",
 
-  // image: "node:24-alpine3.21",
-  image: getRunnerImage("agent-claude"),
-  variables: {
-    MAX_MCP_OUTPUT_TOKENS: "75000",
-    GITLAB_PERSONAL_ACCESS_TOKEN: "$AGENT_GITLAB_PERSONAL_ACCESS_TOKEN", // TODO: we don't have global secret keys to configure yet
-    GITLAB_API_URL: "$CI_API_V4_URL",
-  },
-});
+      // image: "node:24-alpine3.21",
+      image: getRunnerImage("agent-claude"),
+      variables: {
+        MAX_MCP_OUTPUT_TOKENS: "75000",
+        GITLAB_PERSONAL_ACCESS_TOKEN: "$AGENT_GITLAB_PERSONAL_ACCESS_TOKEN", // TODO: we don't have global secret keys to configure yet
+        GITLAB_API_URL: "$CI_API_V4_URL",
+        ...def.variables,
+      },
+      envMode: def.envMode,
+      name: def.name,
+      allow_failure: def.allow_failure,
+      rules: def.rules,
+      script: def.script,
+    });
+  }
+}
 
 export const baseSetupScript = [
   // these are done in the image already

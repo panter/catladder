@@ -14,7 +14,7 @@ import type {
   EnvType,
   PipelineTrigger,
 } from "./config";
-import type { BaseStage, CatladderJob } from "./jobs";
+import type { BaseStage, CatladderJob, CatladderJobSpec } from "./jobs";
 import type { PipelineType } from "./pipeline";
 
 export type UnspecifiedEnvVars = Record<
@@ -177,7 +177,7 @@ export type ComponentContext<
 
   packageManagerInfo: Promise<PackageManagerInfoComponent>;
 
-  customJobs?: CatladderJob[];
+  customJobs?: CatladderJobSpec[];
 };
 
 export type ComponentContextWithBuild = ComponentContext<BuildContextWithBuild>;

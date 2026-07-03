@@ -5,9 +5,9 @@ import type {
   StopJobDefinition,
 } from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
-import { createDeployJob } from "./deploy";
-import { createRollbackJob } from "./rollback";
-import { createStopJob } from "./stop";
+import { DeployJob } from "./deploy";
+import { RollbackJob } from "./rollback";
+import { StopJob } from "./stop";
 
 export const createDeployementJobs = (
   context: ComponentContext,
@@ -18,10 +18,10 @@ export const createDeployementJobs = (
   },
 ): CatladderJob[] => {
   return [
-    createDeployJob(context, definitions.deploy),
-    ...(definitions.stop ? [createStopJob(context, definitions.stop)] : []),
+    new DeployJob(context, definitions.deploy),
+    ...(definitions.stop ? [new StopJob(context, definitions.stop)] : []),
     ...(definitions.rollback
-      ? [createRollbackJob(context, definitions.rollback)]
+      ? [new RollbackJob(context, definitions.rollback)]
       : []),
   ];
 };

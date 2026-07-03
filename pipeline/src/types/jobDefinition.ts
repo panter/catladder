@@ -1,10 +1,10 @@
 import type { CacheConfig } from "../build";
-import type { CatladderJob } from "./jobs";
+import type { CatladderJobSpec } from "./jobs";
 
 // new intermediate types. Currently not widely used, but we will built a bit  more abstraction on top of this
 
 export type AppBuildJobDefinition = Partial<
-  Omit<CatladderJob, "artifacts" | "cache">
+  Omit<CatladderJobSpec, "artifacts" | "cache">
 > & {
   cache?: CacheConfig[];
 };
@@ -12,7 +12,7 @@ export type AppBuildJobDefinition = Partial<
 export type DockerBuildJobDefinition = AppBuildJobDefinition; // currently the same
 
 export type DeployJobDefinition = Pick<
-  CatladderJob,
+  CatladderJobSpec,
   | "script"
   | "variables"
   | "image"
@@ -24,11 +24,11 @@ export type DeployJobDefinition = Pick<
 };
 
 export type StopJobDefinition = Pick<
-  CatladderJob,
+  CatladderJobSpec,
   "script" | "variables" | "image" | "runnerVariables"
 >;
 
 export type RollbackJobDefinition = Pick<
-  CatladderJob,
+  CatladderJobSpec,
   "script" | "variables" | "runnerVariables" | "image"
 >;

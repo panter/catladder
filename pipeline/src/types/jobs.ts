@@ -1,4 +1,5 @@
 import type { UnspecifiedEnvVars } from "..";
+import { removeUndefined } from "../utils/removeUndefined";
 import type {
   Artifacts,
   GitlabEnvironment,
@@ -31,7 +32,11 @@ export type CatladderJobEnvironmentConfig = {
   on_stop?: GitlabEnvironment["on_stop"];
   auto_stop_in?: string;
 };
-export type CatladderJob<S = BaseStage> = {
+
+/**
+ * the platform-agnostic properties of a job
+ */
+export type CatladderJobCore<S = BaseStage> = {
   /**
    * the name of the job (without any env or app prefix and suffix)
    */
@@ -47,9 +52,6 @@ export type CatladderJob<S = BaseStage> = {
    * the stage of the job
    */
   stage: S;
-  /**
-   * does this require another stage?
-   */
 
   /**
    * script to run
@@ -71,6 +73,26 @@ export type CatladderJob<S = BaseStage> = {
   needs?: Array<CatladderJobNeed>;
 
   /**
+   * variables to pass
+   */
+  variables: UnspecifiedEnvVars | undefined;
+
+  /**
+   * additional vars only for the runner.
+   * Also if you use services: that require env vars, you need to set them here.
+   *
+   */
+  runnerVariables?: Record<string, string>;
+};
+
+/**
+ * job properties that (still) use GitLab CI shapes or semantics directly.
+ *
+ * Long-term these should either be generalized into {@link CatladderJobCore}
+ * or be resolved by a pipeline-type specific renderer.
+ */
+export type GitlabJobFields = {
+  /**
    * cache config, we use here the same shape as gitlab itself
    */
   cache?: CatladderJobCache | CatladderJobCache[];
@@ -89,18 +111,6 @@ export type CatladderJob<S = BaseStage> = {
    * image to use
    */
   image?: GitlabJobImage;
-
-  /**
-   * variables to pass
-   */
-  variables: UnspecifiedEnvVars | undefined;
-
-  /**
-   * additional vars only for the runner.
-   * Also if you use services: that require env vars, you need to set them here.
-   *
-   */
-  runnerVariables?: Record<string, string>;
 
   /**
    * whether failures are allowed
@@ -135,3 +145,40 @@ export type CatladderJob<S = BaseStage> = {
    */
   interruptible?: boolean;
 };
+
+/**
+ * the plain-data shape of a job. This is what job creators resolve
+ * and what users can provide for e.g. `customJobs`.
+ */
+export type CatladderJobSpec<S = BaseStage> = CatladderJobCore<S> &
+  GitlabJobFields;
+
+// declaration merging: the class carries the spec properties without
+// re-declaring them; they are assigned in the constructor.
+
+export interface CatladderJob<S = BaseStage>
+  extends CatladderJobCore<S>,
+    GitlabJobFields {}
+
+/**
+ * a pipeline job. Subclasses encapsulate how a specific kind of job
+ * (build, deploy, ...) is resolved from its context and definition.
+ *
+ * Instances are plain-data compatible with {@link CatladderJobSpec}:
+ * only the spec's own (defined) properties are assigned, so spreading /
+ * destructuring an instance behaves exactly like the spec object.
+ */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging -- the merged interface declares exactly the properties the constructor assigns
+export class CatladderJob<S = BaseStage> {
+  constructor(spec: CatladderJobSpec<S>) {
+    // skip undefined values so that defaults applied later
+    // (e.g. when converting to a gitlab job) are not clobbered
+    Object.assign(this, removeUndefined(spec));
+  }
+
+  static from<Stage>(
+    job: CatladderJobSpec<Stage> | CatladderJob<Stage>,
+  ): CatladderJob<Stage> {
+    return job instanceof CatladderJob ? job : new CatladderJob(job);
+  }
+}

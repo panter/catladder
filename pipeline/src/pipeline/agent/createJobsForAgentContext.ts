@@ -1,7 +1,7 @@
 import type { AgentContext } from "../../types";
-import { createAgentEventJob } from "./createAgentEventJob";
-import { createAgentReviewJob } from "./createAgentReviewJob";
+import { AgentEventJob } from "./createAgentEventJob";
+import { AgentReviewJob } from "./createAgentReviewJob";
 
 export const createJobsForAgentContext = (context: AgentContext) => {
-  return [createAgentEventJob(context), createAgentReviewJob(context)];
+  return [new AgentEventJob(context), new AgentReviewJob(context)];
 };

@@ -4,19 +4,23 @@ import type {
   ComponentContext,
   ComponentContextWithBuild,
 } from "../types/context";
-import type { CatladderJob } from "../types/jobs";
+import type { CatladderJobSpec } from "../types/jobs";
+import { CatladderJob } from "../types/jobs";
 
 const injectDefaultVarsInCustomJobs = (
   context: ComponentContext,
-  jobs: CatladderJob[],
+  jobs: CatladderJobSpec[],
 ) =>
-  jobs.map(({ variables, ...job }) => ({
-    variables: {
-      ...(context.environment.envVars ?? {}),
-      ...(variables ?? {}),
-    },
-    ...job,
-  }));
+  jobs.map(
+    ({ variables, ...job }) =>
+      new CatladderJob({
+        variables: {
+          ...(context.environment.envVars ?? {}),
+          ...(variables ?? {}),
+        },
+        ...job,
+      }),
+  );
 const getCustomJobs = (context: ComponentContext) => {
   if (!context.customJobs) {
     return [];

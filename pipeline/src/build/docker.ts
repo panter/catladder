@@ -1,5 +1,5 @@
 import { existsSync } from "fs";
-import { merge } from "lodash-es";
+import { cloneDeep } from "lodash-es";
 import path from "path";
 import type { BuildConfig, BuildConfigDocker } from ".";
 import { isOfDeployType } from "../deploy";
@@ -15,8 +15,9 @@ import type {
   ComponentContextWithBuild,
   DockerBuildJobDefinition,
 } from "../types";
-import type { CatladderJob } from "../types/jobs";
+import { CatladderJob } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
+import { removeUndefined } from "../utils/removeUndefined";
 import { createJobCacheFromCacheConfigs } from "./cache/createJobCache";
 
 const DOCKER_BUILD_RUNNER_REQUESTS = {
@@ -123,29 +124,41 @@ export const getDockerJobBaseProps = (): Pick<
   };
 };
 
-export const createDockerBuildJobBase = (
-  context: ComponentContextWithBuild,
-  { script, cache, ...def }: DockerBuildJobDefinition,
-): CatladderJob => {
-  return merge(
+export class DockerBuildJob extends CatladderJob {
+  constructor(
+    context: ComponentContextWithBuild,
     {
+      script,
+      cache,
+      variables,
+      runnerVariables,
+      ...def
+    }: DockerBuildJobDefinition,
+  ) {
+    super({
       name: DOCKER_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
       cache: cache ? createJobCacheFromCacheConfigs(context, cache) : undefined,
       ...getDockerJobBaseProps(),
       script: script || [],
-    },
-    {
-      variables: getDockerBuildVariables(context),
-      runnerVariables: {
-        ...DOCKER_BUILD_RUNNER_REQUESTS,
-        ...getDockerBuildRunnerVariables(),
+      variables: {
+        ...removeUndefined(getDockerBuildVariables(context)),
+        ...removeUndefined(variables ?? {}),
       },
-    },
-    def,
-  );
-};
+      runnerVariables: {
+        ...getDockerBuildRunnerVariables(),
+        ...DOCKER_BUILD_RUNNER_REQUESTS,
+        ...removeUndefined(runnerVariables ?? {}),
+      },
+      // definition overrides the defaults above; undefined values are
+      // skipped and objects cloned to keep the previous lodash `merge`
+      // semantics (cloning avoids shared references, which would show up
+      // as anchors/aliases in the generated yaml)
+      ...cloneDeep(removeUndefined(def)),
+    });
+  }
+}
 
 export const gitlabDockerLogin = (context: ComponentContext) =>
   context.deploy && isOfDeployType(context.deploy.config, "google-cloudrun")

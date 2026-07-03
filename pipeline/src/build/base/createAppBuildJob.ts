@@ -1,4 +1,4 @@
-import { merge } from "lodash-es";
+import { cloneDeep } from "lodash-es";
 import type {
   BuildContextStandalone,
   ComponentContext,
@@ -6,8 +6,10 @@ import type {
 } from "../..";
 import { getRunnerImage } from "../..";
 import type { AppBuildJobDefinition } from "../../types/jobDefinition";
-import type { CatladderJob } from "../../types/jobs";
+import type { Artifacts } from "../../types/gitlab-types";
+import { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
+import { removeUndefined } from "../../utils/removeUndefined";
 import { createBuildJobArtifacts } from "../artifacts/createBuildJobArtifact";
 import { createJobCacheFromCacheConfigs } from "../cache/createJobCache";
 import { ensureNodeVersion } from "../node/yarn";
@@ -21,12 +23,19 @@ import {
   writeDotEnv,
 } from "./writeDotEnv";
 
-export const createAppBuildJob = async (
-  context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
-  { script, variables, runnerVariables, cache, ...def }: AppBuildJobDefinition,
-): Promise<CatladderJob> => {
-  return merge(
+export class AppBuildJob extends CatladderJob {
+  private constructor(
+    context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
     {
+      script,
+      variables,
+      runnerVariables,
+      cache,
+      ...def
+    }: AppBuildJobDefinition,
+    artifacts: Artifacts | undefined,
+  ) {
+    super({
       name: APP_BUILD_JOB_NAME,
       envMode: "jobPerEnv",
       stage: "build",
@@ -63,8 +72,23 @@ export const createAppBuildJob = async (
         `cd ${context.build.dir}`,
         ...ensureArray(script),
       ],
-      artifacts: await createBuildJobArtifacts(context),
-    },
-    def,
-  );
-};
+      artifacts,
+      // definition overrides the defaults above; undefined values are
+      // skipped and objects cloned to keep the previous lodash `merge`
+      // semantics (cloning avoids shared references, which would show up
+      // as anchors/aliases in the generated yaml)
+      ...cloneDeep(removeUndefined(def)),
+    });
+  }
+
+  static async create(
+    context: ComponentContext<BuildContextStandalone> | WorkspaceContext,
+    definition: AppBuildJobDefinition,
+  ): Promise<AppBuildJob> {
+    return new AppBuildJob(
+      context,
+      definition,
+      await createBuildJobArtifacts(context),
+    );
+  }
+}

@@ -1,7 +1,7 @@
 import type { BuildConfig } from "../build/types";
 import type { DeployConfig } from "../deploy/types";
 
-import type { CatladderJob } from "./jobs";
+import type { CatladderJobSpec } from "./jobs";
 import type { ComponentContext } from "./context";
 import type { PartialDeep } from "./utils";
 import type { PipelineType, WorkspaceBuildConfig } from "..";
@@ -163,8 +163,8 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * This feedback will help us to generalize use cases
    */
   customJobs?:
-    | CatladderJob[]
-    | ((context: Omit<ComponentContext, "customJobs">) => CatladderJob[]);
+    | CatladderJobSpec[]
+    | ((context: Omit<ComponentContext, "customJobs">) => CatladderJobSpec[]);
 
   /**
    * whether to create a .env

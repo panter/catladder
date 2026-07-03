@@ -1,6 +1,7 @@
 import type { Artifacts } from "../../types";
 import type { ComponentContextWithBuild } from "../../types/context";
-import type { CatladderJob } from "../../types/jobs";
+import type { CatladderJobSpec } from "../../types/jobs";
+import { CatladderJob } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
 import { createJobCacheFromConfig } from "../cache/createJobCache";
@@ -27,7 +28,7 @@ export const createCustomTestJobs = (
     throw new Error("deploy config is not custom");
   }
 
-  const base: Omit<CatladderJob, "script" | "name"> = {
+  const base: Omit<CatladderJobSpec, "script" | "name"> = {
     variables: {
       APP_PATH: context.build.dir,
       ...context.environment.jobOnlyVars.build.envVars,
@@ -38,7 +39,7 @@ export const createCustomTestJobs = (
     needs: [],
   };
   const auditJob: CatladderJob | null = buildConfig.audit
-    ? {
+    ? new CatladderJob({
         name: "🛡 audit",
         ...base,
         runnerVariables: {
@@ -54,11 +55,11 @@ export const createCustomTestJobs = (
           buildConfig.audit?.artifactsReports,
           buildConfig.audit?.artifacts,
         ),
-      }
+      })
     : null;
 
   const lintJob: CatladderJob | null = buildConfig.lint
-    ? {
+    ? new CatladderJob({
         name: "👮 lint",
 
         ...base,
@@ -74,10 +75,10 @@ export const createCustomTestJobs = (
           buildConfig.lint?.artifactsReports,
           buildConfig.lint?.artifacts,
         ),
-      }
+      })
     : null;
   const testJob: CatladderJob | null = buildConfig.test
-    ? {
+    ? new CatladderJob({
         name: "🧪 test",
 
         ...base,
@@ -93,7 +94,7 @@ export const createCustomTestJobs = (
           buildConfig.test?.artifactsReports,
           buildConfig.test?.artifacts,
         ),
-      }
+      })
     : null;
   return [auditJob, lintJob, testJob].filter(notNil);
 };

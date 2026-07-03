@@ -11,9 +11,9 @@ import type {
   DockerBuildJobDefinition,
 } from "../../types/jobDefinition";
 import type { CatladderJob } from "../../types/jobs";
-import { createDockerBuildJobBase, requiresDockerBuild } from "../docker";
+import { DockerBuildJob, requiresDockerBuild } from "../docker";
 import { APP_BUILD_JOB_NAME } from "./constants";
-import { createAppBuildJob } from "./createAppBuildJob";
+import { AppBuildJob } from "./createAppBuildJob";
 
 export const createComponentBuildJobs = async (
   context: ComponentContextWithBuild,
@@ -24,11 +24,11 @@ export const createComponentBuildJobs = async (
 ): Promise<CatladderJob[]> => {
   return [
     ...(definitions.appBuild && componentContextIsStandaloneBuild(context)
-      ? [await createAppBuildJob(context, definitions.appBuild)]
+      ? [await AppBuildJob.create(context, definitions.appBuild)]
       : []),
     ...(requiresDockerBuild(context)
       ? [
-          createDockerBuildJobBase(context, {
+          new DockerBuildJob(context, {
             ...definitions.dockerBuild,
             needs: [
               ...(definitions.dockerBuild.needs ?? []),
@@ -58,6 +58,6 @@ export const createWorkspaceBuildJobs = async (
   },
 ): Promise<CatladderJob[]> => {
   return definitions.appBuild
-    ? [await createAppBuildJob(context, definitions.appBuild)]
+    ? [await AppBuildJob.create(context, definitions.appBuild)]
     : [];
 };
