@@ -57,7 +57,7 @@ async function main() {
       const kebabName = basename(exampleFile, ".ts");
       const testFileContent = [
         `import { it, expect } from "vitest";`,
-        `import { createYamlLocalPipeline } from "./__utils__/helpers";`,
+        `import { createYamlGithubWorkflows, createYamlLocalPipeline } from "./__utils__/helpers";`,
         `import config from "./${kebabName}";`,
         `\n/**`,
         ` * This test is auto-generated.`,
@@ -66,6 +66,9 @@ async function main() {
 
         `it("matches snapshot for ${kebabName} local pipeline YAML", async () => {`,
         `  expect(await createYamlLocalPipeline(config)).toMatchSnapshot();`,
+        `});\n`,
+        `it("matches snapshot for ${kebabName} github workflows YAML", async () => {`,
+        `  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();`,
         `});\n`,
       ].join("\n");
       const formattedTest = await format(testFileContent, {

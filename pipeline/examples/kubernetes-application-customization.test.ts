@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { createYamlLocalPipeline } from "./__utils__/helpers";
+import {
+  createYamlGithubWorkflows,
+  createYamlLocalPipeline,
+} from "./__utils__/helpers";
 import config from "./kubernetes-application-customization";
 
 /**
@@ -9,4 +12,8 @@ import config from "./kubernetes-application-customization";
 
 it("matches snapshot for kubernetes-application-customization local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
+});
+
+it("matches snapshot for kubernetes-application-customization github workflows YAML", async () => {
+  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();
 });

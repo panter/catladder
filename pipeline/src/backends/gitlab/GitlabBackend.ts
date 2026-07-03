@@ -1,3 +1,4 @@
+import { rm } from "fs/promises";
 import {
   RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
@@ -31,6 +32,10 @@ export class GitlabBackend implements PipelineBackend {
   readonly type = "gitlab" as const;
 
   readonly generatedFolder = GITLAB_GENERATED_FOLDER;
+
+  async cleanup() {
+    await rm(this.generatedFolder, { force: true, recursive: true });
+  }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
     const includes = await this.createIncludes(config);

@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { createYamlLocalPipeline } from "./__utils__/helpers";
+import {
+  createYamlGithubWorkflows,
+  createYamlLocalPipeline,
+} from "./__utils__/helpers";
 import config from "./cloud-run-no-cpu-throttling";
 
 /**
@@ -9,4 +12,8 @@ import config from "./cloud-run-no-cpu-throttling";
 
 it("matches snapshot for cloud-run-no-cpu-throttling local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
+});
+
+it("matches snapshot for cloud-run-no-cpu-throttling github workflows YAML", async () => {
+  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();
 });

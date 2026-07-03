@@ -1,4 +1,4 @@
-import { mkdir, rm } from "fs/promises";
+import { mkdir } from "fs/promises";
 import { dirname } from "path";
 import type { Config, PipelineType } from "../types";
 
@@ -31,8 +31,8 @@ async function generatePipelineFilesForBackend(
 ) {
   const files = await backend.createFiles(context.config);
 
-  // first clean up the folder
-  await rm(backend.generatedFolder, { force: true, recursive: true });
+  // first clean up previously generated files
+  await backend.cleanup();
   // write files
   await Promise.all(
     files.map(async ({ path, content }) => {

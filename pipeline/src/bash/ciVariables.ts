@@ -1,3 +1,4 @@
+import { GITHUB_CI_VARIABLES } from "../backends/github/ciVariables";
 import { GITLAB_CI_VARIABLES } from "../backends/gitlab/ciVariables";
 import type { PipelineType } from "../types/pipeline";
 import { BashExpression } from "./BashExpression";
@@ -19,6 +20,7 @@ const CI_VARIABLES_PER_PIPELINE_TYPE: {
   [T in PipelineType]: Record<CiVariableName, string>;
 } = {
   gitlab: GITLAB_CI_VARIABLES,
+  github: GITHUB_CI_VARIABLES,
 };
 
 /**

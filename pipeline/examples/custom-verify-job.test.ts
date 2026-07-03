@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { createYamlLocalPipeline } from "./__utils__/helpers";
+import {
+  createYamlGithubWorkflows,
+  createYamlLocalPipeline,
+} from "./__utils__/helpers";
 import config from "./custom-verify-job";
 
 /**
@@ -9,4 +12,8 @@ import config from "./custom-verify-job";
 
 it("matches snapshot for custom-verify-job local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
+});
+
+it("matches snapshot for custom-verify-job github workflows YAML", async () => {
+  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();
 });

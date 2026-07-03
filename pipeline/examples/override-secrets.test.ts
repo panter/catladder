@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { createYamlLocalPipeline } from "./__utils__/helpers";
+import {
+  createYamlGithubWorkflows,
+  createYamlLocalPipeline,
+} from "./__utils__/helpers";
 import config from "./override-secrets";
 
 /**
@@ -9,4 +12,8 @@ import config from "./override-secrets";
 
 it("matches snapshot for override-secrets local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
+});
+
+it("matches snapshot for override-secrets github workflows YAML", async () => {
+  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();
 });

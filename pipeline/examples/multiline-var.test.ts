@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { createYamlLocalPipeline } from "./__utils__/helpers";
+import {
+  createYamlGithubWorkflows,
+  createYamlLocalPipeline,
+} from "./__utils__/helpers";
 import config from "./multiline-var";
 
 /**
@@ -9,4 +12,8 @@ import config from "./multiline-var";
 
 it("matches snapshot for multiline-var local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
+});
+
+it("matches snapshot for multiline-var github workflows YAML", async () => {
+  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();
 });

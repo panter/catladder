@@ -1,5 +1,2403 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
+"catladder-main.yml:
+  name: catladder main
+  on:
+    push:
+      branches:
+        - main
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    web-audit-dev:
+      name: web 🛡 audit | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🛡 audit
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="app"
+            collapseable_section_end "injectvars"
+            cd app
+            yarn npm audit --environment production --severity critical
+          shell: bash
+    web-lint-dev:
+      name: web 👮 lint | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: 👮 lint
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="app"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn lint
+          shell: bash
+    web-test-dev:
+      name: web 🧪 test | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-testing-chrome:the-version
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: 🧪 test
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="app"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn test
+          shell: bash
+    web-app-dev:
+      name: web 🔨 app | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/.meteor/local/resolver-result-cache.json
+              app/.meteor/local/plugin-cache
+              app/.meteor/local/isopacks
+              app/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="dev"
+            export APP_DIR="app"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-dev"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            collapseable_section_end "injectvars"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-dev
+            path: |-
+              app/__build_info.json
+              app/dist
+            if-no-files-found: warn
+    web-docker-dev:
+      name: web 🔨 docker | dev
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-dev
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-dev
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-dev
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="app"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="dev/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-dev:
+      name: web 🚀 Deploy | dev
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-dev
+        - web-audit-dev
+        - web-docker-dev
+        - web-lint-dev
+        - web-test-dev
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: dev-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="dev"
+            export APP_DIR="app"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-dev"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="dev/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export RELEASE_NAME="pan-my-app-dev-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-dev-web" --server="$CL_dev_web_KUBE_URL" --certificate-authority <(echo $CL_dev_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-dev-web" --token="$CL_dev_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"
+            kubectl config use-context "kube-pan-my-app-dev-web"
+            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+            cat > __all_values.yml <<EOF
+            env:
+              secret:
+                MONGODB_ROOT_PASSWORD: |-
+                  $(printf %s "$CL_dev_web_MONGODB_ROOT_PASSWORD" | sed '1!s/^/      /')
+                MONGO_URL: |-
+                  mongodb://root:$CL_dev_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-dev.svc.cluster.local:27017/app?authSource=admin
+              public:
+                ENV_SHORT: |-
+                  dev
+                APP_DIR: |-
+                  app
+                ENV_TYPE: |-
+                  dev
+                BUILD_INFO_BUILD_ID: |-
+                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+                BUILD_INFO_BUILD_TIME: |-
+                  unknown-build-time
+                BUILD_INFO_CURRENT_VERSION: |-
+                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+                HOSTNAME: |-
+                  web.dev.my-app.pan.panter.cloud
+                ROOT_URL: |-
+                  https://web.dev.my-app.pan.panter.cloud
+                HOSTNAME_INTERNAL: |-
+                  web.dev.my-app.pan.panter.cloud
+                ROOT_URL_INTERNAL: |-
+                  https://web.dev.my-app.pan.panter.cloud
+                KUBE_NAMESPACE: |-
+                  pan-my-app-dev
+                KUBE_APP_NAME: |-
+                  web
+                KUBE_APP_NAME_PREFIX: ""
+                _ALL_ENV_VAR_KEYS: |-
+                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
+            application:
+              host: |-
+                web.dev.my-app.pan.panter.cloud
+              command: |-
+                node main.js
+              livenessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              readinessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              startupProbe:
+                httpGet:
+                  path: |-
+                    __health
+              worker:
+                enabled: true
+            mongodb:
+              enabled: true
+              auth:
+                enabled: true
+                rootPassword: |-
+                  $CL_dev_web_MONGODB_ROOT_PASSWORD
+                replicaSetKey: |-
+                  $CL_dev_web_MONGODB_REPLICASET_KEY
+              persistence:
+                storageClass: |-
+                  standard-rwo
+              image:
+                registry: |-
+                  bitnamilegacy
+                repository: |-
+                  mongodb
+              backup:
+                enabled: false
+                hostToBackup: |-
+                  web-mongodb.pan-my-app-dev.svc.cluster.local:27017
+                pvcToBackup: |-
+                  web-mongodb
+                image: |-
+                  mrelite/kubectlmongoshell:v1.0
+                schedule: |-
+                  0 4 * * *
+                volumeSnapshotClass: |-
+                  snapshotclass
+              architecture: |-
+                standalone
+
+            EOF
+
+            collapseable_section_end "writeallvalues"
+            kubernetesCreateSecret
+            kubernetesDeploy
+            echo deployment successful 😻
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+catladder-review.yml:
+  name: catladder review
+  on:
+    pull_request:
+      types:
+        - opened
+        - synchronize
+        - reopened
+  concurrency:
+    group: catladder-review-\${{ github.event.number }}
+    cancel-in-progress: true
+  env: *a1
+  jobs:
+    web-audit-review:
+      name: web 🛡 audit | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🛡 audit
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="app"
+            collapseable_section_end "injectvars"
+            cd app
+            yarn npm audit --environment production --severity critical
+          shell: bash
+    web-lint-review:
+      name: web 👮 lint | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: 👮 lint
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="app"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn lint
+          shell: bash
+    web-test-review:
+      name: web 🧪 test | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-testing-chrome:the-version
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: 🧪 test
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="app"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn test
+          shell: bash
+    web-app-review:
+      name: web 🔨 app | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/.meteor/local/resolver-result-cache.json
+              app/.meteor/local/plugin-cache
+              app/.meteor/local/isopacks
+              app/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="review"
+            export APP_DIR="app"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-review"
+            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+            export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            collapseable_section_end "injectvars"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-review
+            path: |-
+              app/__build_info.json
+              app/dist
+            if-no-files-found: warn
+    web-docker-review:
+      name: web 🔨 docker | review
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-review
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-review
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-review
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="app"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="review/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-review:
+      name: web 🚀 Deploy | review
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-review
+        - web-audit-review
+        - web-docker-review
+        - web-lint-review
+        - web-test-review
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: review-pr\${{ github.event.number }}-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="review"
+            export APP_DIR="app"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-review"
+            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+            export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="review/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export RELEASE_NAME="pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --server="$CL_review_web_KUBE_URL" --certificate-authority <(echo $CL_review_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --token="$CL_review_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --cluster="kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --user="kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --namespace="pan-my-app-review"
+            kubectl config use-context "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+            cat > __all_values.yml <<EOF
+            env:
+              secret:
+                HOSTNAME: |-
+                  $(printf %s "web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud" | sed '1!s/^/      /')
+                ROOT_URL: |-
+                  $(printf %s "https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud" | sed '1!s/^/      /')
+                HOSTNAME_INTERNAL: |-
+                  $(printf %s "web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud" | sed '1!s/^/      /')
+                ROOT_URL_INTERNAL: |-
+                  $(printf %s "https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud" | sed '1!s/^/      /')
+                KUBE_APP_NAME: |-
+                  $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | sed '1!s/^/      /')
+                KUBE_APP_NAME_PREFIX: |-
+                  $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-" | sed '1!s/^/      /')
+                MONGODB_ROOT_PASSWORD: |-
+                  $(printf %s "$CL_review_web_MONGODB_ROOT_PASSWORD" | sed '1!s/^/      /')
+                MONGO_URL: |-
+                  mongodb://root:$CL_review_web_MONGODB_ROOT_PASSWORD@$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-mongodb.pan-my-app-review.svc.cluster.local:27017/app?authSource=admin
+              public:
+                ENV_SHORT: |-
+                  review
+                APP_DIR: |-
+                  app
+                ENV_TYPE: |-
+                  review
+                BUILD_INFO_BUILD_ID: |-
+                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+                BUILD_INFO_BUILD_TIME: |-
+                  unknown-build-time
+                BUILD_INFO_CURRENT_VERSION: |-
+                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+                KUBE_NAMESPACE: |-
+                  pan-my-app-review
+                _ALL_ENV_VAR_KEYS: |-
+                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
+            application:
+              host: |-
+                $(printf %s "web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud" | sed '1!s/^/    /')
+              command: |-
+                node main.js
+              livenessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              readinessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              startupProbe:
+                httpGet:
+                  path: |-
+                    __health
+              worker:
+                enabled: true
+            mongodb:
+              enabled: true
+              auth:
+                enabled: true
+                rootPassword: |-
+                  $CL_review_web_MONGODB_ROOT_PASSWORD
+                replicaSetKey: |-
+                  $CL_review_web_MONGODB_REPLICASET_KEY
+              persistence:
+                storageClass: |-
+                  standard-rwo
+              image:
+                registry: |-
+                  bitnamilegacy
+                repository: |-
+                  mongodb
+              backup:
+                enabled: false
+                hostToBackup: |-
+                  $([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-mongodb.pan-my-app-review.svc.cluster.local:27017
+                pvcToBackup: |-
+                  $([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-mongodb
+                image: |-
+                  mrelite/kubectlmongoshell:v1.0
+                schedule: |-
+                  0 4 * * *
+                volumeSnapshotClass: |-
+                  snapshotclass
+              architecture: |-
+                standalone
+
+            EOF
+
+            collapseable_section_end "writeallvalues"
+            kubernetesCreateSecret
+            kubernetesDeploy
+            echo deployment successful 😻
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+catladder-release.yml:
+  name: catladder release
+  on:
+    push:
+      tags:
+        - v*
+  env: *a1
+  jobs:
+    web-app-stage:
+      name: web 🔨 app | stage
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/.meteor/local/resolver-result-cache.json
+              app/.meteor/local/plugin-cache
+              app/.meteor/local/isopacks
+              app/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="stage"
+            export APP_DIR="app"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-stage"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            collapseable_section_end "injectvars"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-stage
+            path: |-
+              app/__build_info.json
+              app/dist
+            if-no-files-found: warn
+    web-docker-stage:
+      name: web 🔨 docker | stage
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-stage
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-stage
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-stage
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="app"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="stage/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-stage:
+      name: web 🚀 Deploy | stage
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-stage
+        - web-docker-stage
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: stage-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="stage"
+            export APP_DIR="app"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-stage"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="stage/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export RELEASE_NAME="pan-my-app-stage-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-stage-web" --server="$CL_stage_web_KUBE_URL" --certificate-authority <(echo $CL_stage_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-stage-web" --token="$CL_stage_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"
+            kubectl config use-context "kube-pan-my-app-stage-web"
+            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+            cat > __all_values.yml <<EOF
+            env:
+              secret:
+                MONGODB_ROOT_PASSWORD: |-
+                  $(printf %s "$CL_stage_web_MONGODB_ROOT_PASSWORD" | sed '1!s/^/      /')
+                MONGO_URL: |-
+                  mongodb://root:$CL_stage_web_MONGODB_ROOT_PASSWORD@web-mongodb.pan-my-app-stage.svc.cluster.local:27017/app?authSource=admin
+              public:
+                ENV_SHORT: |-
+                  stage
+                APP_DIR: |-
+                  app
+                ENV_TYPE: |-
+                  stage
+                BUILD_INFO_BUILD_ID: |-
+                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+                BUILD_INFO_BUILD_TIME: |-
+                  unknown-build-time
+                BUILD_INFO_CURRENT_VERSION: |-
+                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+                HOSTNAME: |-
+                  web.stage.my-app.pan.panter.cloud
+                ROOT_URL: |-
+                  https://web.stage.my-app.pan.panter.cloud
+                HOSTNAME_INTERNAL: |-
+                  web.stage.my-app.pan.panter.cloud
+                ROOT_URL_INTERNAL: |-
+                  https://web.stage.my-app.pan.panter.cloud
+                KUBE_NAMESPACE: |-
+                  pan-my-app-stage
+                KUBE_APP_NAME: |-
+                  web
+                KUBE_APP_NAME_PREFIX: ""
+                _ALL_ENV_VAR_KEYS: |-
+                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD"]
+            application:
+              host: |-
+                web.stage.my-app.pan.panter.cloud
+              command: |-
+                node main.js
+              livenessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              readinessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              startupProbe:
+                httpGet:
+                  path: |-
+                    __health
+              worker:
+                enabled: true
+            mongodb:
+              enabled: true
+              auth:
+                enabled: true
+                rootPassword: |-
+                  $CL_stage_web_MONGODB_ROOT_PASSWORD
+                replicaSetKey: |-
+                  $CL_stage_web_MONGODB_REPLICASET_KEY
+              persistence:
+                storageClass: |-
+                  standard-rwo
+              image:
+                registry: |-
+                  bitnamilegacy
+                repository: |-
+                  mongodb
+              backup:
+                enabled: true
+                hostToBackup: |-
+                  web-mongodb.pan-my-app-stage.svc.cluster.local:27017
+                pvcToBackup: |-
+                  web-mongodb
+                image: |-
+                  mrelite/kubectlmongoshell:v1.0
+                schedule: |-
+                  0 4 * * *
+                volumeSnapshotClass: |-
+                  snapshotclass
+              architecture: |-
+                standalone
+
+            EOF
+
+            collapseable_section_end "writeallvalues"
+            kubernetesCreateSecret
+            kubernetesDeploy
+            echo deployment successful 😻
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+    web-app-prod:
+      name: web 🔨 app | prod
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-yarn
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ github.run_id }}
+            restore-keys: app-yarn-
+        - name: Cache app-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ github.run_id }}
+            restore-keys: app-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/.meteor/local/resolver-result-cache.json
+              app/.meteor/local/plugin-cache
+              app/.meteor/local/isopacks
+              app/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="prod"
+            export APP_DIR="app"
+            export ENV_TYPE="prod"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="www.example.com"
+            export ROOT_URL="https://www.example.com"
+            export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-prod"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
+            export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+            collapseable_section_end "injectvars"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd app
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-prod
+            path: |-
+              app/__build_info.json
+              app/dist
+            if-no-files-found: warn
+    web-docker-prod:
+      name: web 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-prod
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-prod
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="app"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="prod/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-prod:
+      name: web 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-prod
+        - web-docker-prod
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: prod-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="prod"
+            export APP_DIR="app"
+            export ENV_TYPE="prod"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="www.example.com"
+            export ROOT_URL="https://www.example.com"
+            export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-prod"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
+            export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+            export DOCKER_REGISTRY="$CL_REGISTRY"
+            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/web"
+            export DOCKER_IMAGE_NAME="prod/web"
+            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export RELEASE_NAME="pan-my-app-prod-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-prod-web" --server="$CL_prod_web_KUBE_URL" --certificate-authority <(echo $CL_prod_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-prod-web" --token="$CL_prod_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"
+            kubectl config use-context "kube-pan-my-app-prod-web"
+            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+            cat > __all_values.yml <<EOF
+            env:
+              secret:
+                MONGODB_ROOT_PASSWORD: |-
+                  $(printf %s "$CL_prod_web_MONGODB_ROOT_PASSWORD" | sed '1!s/^/      /')
+                MONGODB_REPLICASET_KEY: |-
+                  $(printf %s "$CL_prod_web_MONGODB_REPLICASET_KEY" | sed '1!s/^/      /')
+                MONGO_URL: |-
+                  mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/app?replicaSet=rs0&authSource=admin
+                MONGO_OPLOG_URL: |-
+                  mongodb://root:$CL_prod_web_MONGODB_ROOT_PASSWORD@web-mongodb-0.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017,web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017/local?replicaSet=rs0&authSource=admin
+              public:
+                ENV_SHORT: |-
+                  prod
+                APP_DIR: |-
+                  app
+                ENV_TYPE: |-
+                  prod
+                BUILD_INFO_BUILD_ID: |-
+                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+                BUILD_INFO_BUILD_TIME: |-
+                  unknown-build-time
+                BUILD_INFO_CURRENT_VERSION: |-
+                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+                HOSTNAME: |-
+                  www.example.com
+                ROOT_URL: |-
+                  https://www.example.com
+                HOSTNAME_INTERNAL: |-
+                  web.prod.my-app.pan.panter.cloud
+                ROOT_URL_INTERNAL: |-
+                  https://web.prod.my-app.pan.panter.cloud
+                KUBE_NAMESPACE: |-
+                  pan-my-app-prod
+                KUBE_APP_NAME: |-
+                  web
+                KUBE_APP_NAME_PREFIX: ""
+                _ALL_ENV_VAR_KEYS: |-
+                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","MONGODB_ROOT_PASSWORD","MONGODB_REPLICASET_KEY"]
+            application:
+              host: |-
+                www.example.com
+              command: |-
+                node main.js
+              livenessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              readinessProbe:
+                httpGet:
+                  path: |-
+                    __health
+              startupProbe:
+                httpGet:
+                  path: |-
+                    __health
+              worker:
+                enabled: true
+              redirects:
+                - host: |-
+                    example.com
+            mongodb:
+              enabled: true
+              auth:
+                enabled: true
+                rootPassword: |-
+                  $CL_prod_web_MONGODB_ROOT_PASSWORD
+                replicaSetKey: |-
+                  $CL_prod_web_MONGODB_REPLICASET_KEY
+              persistence:
+                storageClass: |-
+                  premium-rwo
+                size: |-
+                  50Gi
+              image:
+                registry: |-
+                  bitnamilegacy
+                repository: |-
+                  mongodb
+              backup:
+                enabled: true
+                hostToBackup: |-
+                  web-mongodb-1.web-mongodb-headless.pan-my-app-prod.svc.cluster.local:27017
+                pvcToBackup: |-
+                  datadir-web-mongodb-1
+                image: |-
+                  mrelite/kubectlmongoshell:v1.0
+                schedule: |-
+                  0 4 * * *
+                volumeSnapshotClass: |-
+                  snapshotclass
+              architecture: |-
+                replicaset
+              replicaCount: 2
+              resources:
+                limits:
+                  memory: |-
+                    8Gi
+                requests:
+                  memory: |-
+                    8Gi
+
+            EOF
+
+            collapseable_section_end "writeallvalues"
+            kubernetesCreateSecret
+            kubernetesDeploy
+            echo deployment successful 😻
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+catladder-review-stop.yml:
+  name: catladder review stop
+  on:
+    pull_request:
+      types:
+        - closed
+  env: *a1
+  jobs:
+    web-stop-review:
+      name: web 🛑 Stop ⚠️ | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: review-pr\${{ github.event.number }}-web
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="review"
+            export APP_DIR="app"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-review"
+            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+            export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export RELEASE_NAME="pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --server="$CL_review_web_KUBE_URL" --certificate-authority <(echo $CL_review_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --token="$CL_review_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --cluster="kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --user="kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --namespace="pan-my-app-review"
+            kubectl config use-context "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            kubernetesDelete
+          shell: bash
+catladder-manual.yml:
+  name: catladder manual tasks
+  on:
+    workflow_dispatch:
+      inputs:
+        job:
+          description: the task to run
+          required: true
+          type: choice
+          options:
+            - web-stop-dev
+            - web-rollback-dev
+            - web-rollback-review
+            - web-stop-stage
+            - web-rollback-stage
+            - web-stop-prod
+            - web-rollback-prod
+  env: *a1
+  jobs:
+    web-stop-dev:
+      name: web 🛑 Stop ⚠️ | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: dev-web
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="dev"
+            export APP_DIR="app"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-dev"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export RELEASE_NAME="pan-my-app-dev-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-dev-web" --server="$CL_dev_web_KUBE_URL" --certificate-authority <(echo $CL_dev_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-dev-web" --token="$CL_dev_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"
+            kubectl config use-context "kube-pan-my-app-dev-web"
+            kubernetesDelete
+          shell: bash
+      if: \${{ inputs.job == 'web-stop-dev' }}
+    web-rollback-dev:
+      name: web ↩️ Rollback ⚠️ | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: dev-web
+      env:
+        CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="dev"
+            export APP_DIR="app"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.dev.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.dev.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.dev.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-dev"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_dev_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export RELEASE_NAME="pan-my-app-dev-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-dev-web" --server="$CL_dev_web_KUBE_URL" --certificate-authority <(echo $CL_dev_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-dev-web" --token="$CL_dev_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-dev-web" --cluster="kube-pan-my-app-dev-web" --user="kube-pan-my-app-dev-web" --namespace="pan-my-app-dev"
+            kubectl config use-context "kube-pan-my-app-dev-web"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'web-rollback-dev' }}
+    web-rollback-review:
+      name: web ↩️ Rollback ⚠️ | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: review-pr\${{ github.event.number }}-web
+      env:
+        CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="review"
+            export APP_DIR="app"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-review"
+            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+            export MONGODB_ROOT_PASSWORD="$CL_review_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export RELEASE_NAME="pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --server="$CL_review_web_KUBE_URL" --certificate-authority <(echo $CL_review_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --token="$CL_review_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --cluster="kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --user="kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" --namespace="pan-my-app-review"
+            kubectl config use-context "kube-pan-my-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'web-rollback-review' }}
+    web-stop-stage:
+      name: web 🛑 Stop ⚠️ | stage
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: stage-web
+      env:
+        CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="stage"
+            export APP_DIR="app"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-stage"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export RELEASE_NAME="pan-my-app-stage-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-stage-web" --server="$CL_stage_web_KUBE_URL" --certificate-authority <(echo $CL_stage_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-stage-web" --token="$CL_stage_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"
+            kubectl config use-context "kube-pan-my-app-stage-web"
+            kubernetesDelete
+          shell: bash
+      if: \${{ inputs.job == 'web-stop-stage' }}
+    web-rollback-stage:
+      name: web ↩️ Rollback ⚠️ | stage
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: stage-web
+      env:
+        CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="stage"
+            export APP_DIR="app"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL="https://web.stage.my-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="web.stage.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.stage.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-stage"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_stage_web_MONGODB_ROOT_PASSWORD"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\"]"
+            export RELEASE_NAME="pan-my-app-stage-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-stage-web" --server="$CL_stage_web_KUBE_URL" --certificate-authority <(echo $CL_stage_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-stage-web" --token="$CL_stage_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-stage-web" --cluster="kube-pan-my-app-stage-web" --user="kube-pan-my-app-stage-web" --namespace="pan-my-app-stage"
+            kubectl config use-context "kube-pan-my-app-stage-web"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'web-rollback-stage' }}
+    web-stop-prod:
+      name: web 🛑 Stop ⚠️ | prod
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: prod-web
+      env:
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="prod"
+            export APP_DIR="app"
+            export ENV_TYPE="prod"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="www.example.com"
+            export ROOT_URL="https://www.example.com"
+            export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-prod"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
+            export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+            export RELEASE_NAME="pan-my-app-prod-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-prod-web" --server="$CL_prod_web_KUBE_URL" --certificate-authority <(echo $CL_prod_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-prod-web" --token="$CL_prod_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"
+            kubectl config use-context "kube-pan-my-app-prod-web"
+            kubernetesDelete
+          shell: bash
+      if: \${{ inputs.job == 'web-stop-prod' }}
+    web-rollback-prod:
+      name: web ↩️ Rollback ⚠️ | prod
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/kubernetes:the-version
+      environment:
+        name: prod-web
+      env:
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="prod"
+            export APP_DIR="app"
+            export ENV_TYPE="prod"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="www.example.com"
+            export ROOT_URL="https://www.example.com"
+            export HOSTNAME_INTERNAL="web.prod.my-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://web.prod.my-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-my-app-prod"
+            export KUBE_APP_NAME="web"
+            export KUBE_APP_NAME_PREFIX=""
+            export MONGODB_ROOT_PASSWORD="$CL_prod_web_MONGODB_ROOT_PASSWORD"
+            export MONGODB_REPLICASET_KEY="$CL_prod_web_MONGODB_REPLICASET_KEY"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"MONGODB_ROOT_PASSWORD\\",\\"MONGODB_REPLICASET_KEY\\"]"
+            export RELEASE_NAME="pan-my-app-prod-web"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-web"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="web"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-my-app-prod-web" --server="$CL_prod_web_KUBE_URL" --certificate-authority <(echo $CL_prod_web_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-my-app-prod-web" --token="$CL_prod_web_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-my-app-prod-web" --cluster="kube-pan-my-app-prod-web" --user="kube-pan-my-app-prod-web" --namespace="pan-my-app-prod"
+            kubectl config use-context "kube-pan-my-app-prod-web"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'web-rollback-prod' }}
+"
+`;
+
 exports[`matches snapshot for meteor-kubernetes local pipeline YAML 1`] = `
 "image: path/to/docker/jobs-default:the-version
 stages:

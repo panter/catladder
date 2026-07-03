@@ -12,6 +12,10 @@ const REVIEW_SLUG: BashExpressionPerPipelineType = {
   gitlab: new BashExpression(
     `$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })`,
   ),
+  // CL_PR_NUMBER is injected by the github backend at the workflow level
+  github: new BashExpression(
+    `$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")`,
+  ),
 };
 
 export const getReviewSlug = (

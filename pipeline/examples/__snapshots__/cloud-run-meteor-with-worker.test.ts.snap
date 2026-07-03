@@ -1,5 +1,1928 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML 1`] = `
+"catladder-main.yml:
+  name: catladder main
+  on:
+    push:
+      branches:
+        - main
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    web-audit-dev:
+      name: web 🛡 audit | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🛡 audit
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="web"
+            collapseable_section_end "injectvars"
+            cd web
+            yarn npm audit --environment production --severity critical
+          shell: bash
+    web-lint-dev:
+      name: web 👮 lint | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: 👮 lint
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="web"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn lint
+          shell: bash
+    web-test-dev:
+      name: web 🧪 test | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-testing-chrome:the-version
+      env:
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: 🧪 test
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="web"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn test
+          shell: bash
+    web-app-dev:
+      name: web 🔨 app | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/.meteor/local/resolver-result-cache.json
+              web/.meteor/local/plugin-cache
+              web/.meteor/local/isopacks
+              web/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="dev"
+            export APP_DIR="web"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-web"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_dev_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "write-dotenv-web" "write dot env for web"
+            cat <<EOF > web/.env
+            ENV_SHORT=dev
+            APP_DIR=web
+            ENV_TYPE=dev
+            HOSTNAME=$(printf %s "$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-web
+            DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+            DEPLOY_CLOUD_RUN_REGION=europe-west6
+            GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_web_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+            GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
+            _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+            EOF
+            collapseable_section_end "write-dotenv-web"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > web/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-dev
+            path: |-
+              web/__build_info.json
+              web/dist
+            if-no-files-found: warn
+    web-docker-dev:
+      name: web 🔨 docker | dev
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-dev
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-dev
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-dev
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="web"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            gcloud auth activate-service-account --key-file=<(echo "$CL_dev_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud auth configure-docker europe-west6-docker.pkg.dev
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-dev:
+      name: web 🚀 Deploy | dev
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-dev
+        - web-audit-dev
+        - web-docker-dev
+        - web-lint-dev
+        - web-test-dev
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: dev-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="dev"
+            export APP_DIR="web"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-web"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_dev_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "prepare" "Prepare..."
+            gcloud auth activate-service-account --key-file=<(echo "$CL_dev_web_GCLOUD_DEPLOY_credentialsKey")
+            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+            collapseable_section_end "prepare"
+            collapseable_section_start "writeenvvars" "Write env vars to file"
+            cat > ____envvars.yaml <<EOF
+            ENV_SHORT: |-
+              dev
+            APP_DIR: |-
+              web
+            ENV_TYPE: |-
+              dev
+            BUILD_INFO_BUILD_ID: |-
+              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+            BUILD_INFO_BUILD_TIME: |-
+              unknown-build-time
+            BUILD_INFO_CURRENT_VERSION: |-
+              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+            HOSTNAME: |-
+              $(printf %s "$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            HOSTNAME_INTERNAL: |-
+              $(printf %s "$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL_INTERNAL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-dev-web-$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+              pan-test-app-dev-web
+            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+              google-project-id
+            DEPLOY_CLOUD_RUN_REGION: |-
+              europe-west6
+            GCLOUD_RUN_canonicalHostSuffix: |-
+              $(printf %s "$CL_dev_web_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+            _ALL_ENV_VAR_KEYS: |-
+              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+            EOF
+
+            collapseable_section_end "writeenvvars"
+            collapseable_section_start "deploy" "Deploy to cloud run"
+            gcloud run deploy pan-test-app-dev-web --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=dev,env-name=dev,build-type=meteor,cloud-run-service-name=pan-test-app-dev-web --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+            gcloud beta run worker-pools deploy pan-test-app-dev-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=dev,env-name=dev,build-type=meteor,cloud-run-worker-pool-name=pan-test-app-dev-web-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
+            collapseable_section_end "deploy"
+            collapseable_section_start "cleanup" "Cleanup"
+            set +e
+            gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-dev-web --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set -e
+            collapseable_section_end "cleanup"
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+catladder-review.yml:
+  name: catladder review
+  on:
+    pull_request:
+      types:
+        - opened
+        - synchronize
+        - reopened
+  concurrency:
+    group: catladder-review-\${{ github.event.number }}
+    cancel-in-progress: true
+  env: *a1
+  jobs:
+    web-audit-review:
+      name: web 🛡 audit | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🛡 audit
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="web"
+            collapseable_section_end "injectvars"
+            cd web
+            yarn npm audit --environment production --severity critical
+          shell: bash
+    web-lint-review:
+      name: web 👮 lint | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-default:the-version
+      env:
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: 👮 lint
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="web"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn lint
+          shell: bash
+    web-test-review:
+      name: web 🧪 test | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-testing-chrome:the-version
+      env:
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: 🧪 test
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_PATH="web"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            yarn test
+          shell: bash
+    web-app-review:
+      name: web 🔨 app | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/.meteor/local/resolver-result-cache.json
+              web/.meteor/local/plugin-cache
+              web/.meteor/local/isopacks
+              web/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="review"
+            export APP_DIR="web"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_review_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_review_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "write-dotenv-web" "write dot env for web"
+            cat <<EOF > web/.env
+            ENV_SHORT=review
+            APP_DIR=web
+            ENV_TYPE=review
+            HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+            DEPLOY_CLOUD_RUN_REGION=europe-west6
+            GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_web_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+            GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
+            _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+            EOF
+            collapseable_section_end "write-dotenv-web"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > web/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-review
+            path: |-
+              web/__build_info.json
+              web/dist
+            if-no-files-found: warn
+    web-docker-review:
+      name: web 🔨 docker | review
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-review
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-review
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-review
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="web"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            gcloud auth activate-service-account --key-file=<(echo "$CL_review_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud auth configure-docker europe-west6-docker.pkg.dev
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-review:
+      name: web 🚀 Deploy | review
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-review
+        - web-audit-review
+        - web-docker-review
+        - web-lint-review
+        - web-test-review
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: review-pr\${{ github.event.number }}-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="review"
+            export APP_DIR="web"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_review_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_review_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "prepare" "Prepare..."
+            gcloud auth activate-service-account --key-file=<(echo "$CL_review_web_GCLOUD_DEPLOY_credentialsKey")
+            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+            collapseable_section_end "prepare"
+            collapseable_section_start "writeenvvars" "Write env vars to file"
+            cat > ____envvars.yaml <<EOF
+            ENV_SHORT: |-
+              review
+            APP_DIR: |-
+              web
+            ENV_TYPE: |-
+              review
+            BUILD_INFO_BUILD_ID: |-
+              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+            BUILD_INFO_BUILD_TIME: |-
+              unknown-build-time
+            BUILD_INFO_CURRENT_VERSION: |-
+              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+            HOSTNAME: |-
+              $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            HOSTNAME_INTERNAL: |-
+              $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL_INTERNAL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web-$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+              $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+              google-project-id
+            DEPLOY_CLOUD_RUN_REGION: |-
+              europe-west6
+            GCLOUD_RUN_canonicalHostSuffix: |-
+              $(printf %s "$CL_review_web_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+            _ALL_ENV_VAR_KEYS: |-
+              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+            EOF
+
+            collapseable_section_end "writeenvvars"
+            collapseable_section_start "deploy" "Deploy to cloud run"
+            gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}') --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown"):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=review,env-name=review,build-type=meteor,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+            gcloud beta run worker-pools deploy $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown"):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=review,env-name=review,build-type=meteor,cloud-run-worker-pool-name=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
+            collapseable_section_end "deploy"
+            collapseable_section_start "cleanup" "Cleanup"
+            set +e
+            gcloud run revisions list --project=google-project-id --region=europe-west6 --service=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set +e
+            gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web --quiet --delete-tags
+            set -e
+            set -e
+            collapseable_section_end "cleanup"
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+catladder-release.yml:
+  name: catladder release
+  on:
+    push:
+      tags:
+        - v*
+  env: *a1
+  jobs:
+    web-app-stage:
+      name: web 🔨 app | stage
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_stage_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_stage_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/.meteor/local/resolver-result-cache.json
+              web/.meteor/local/plugin-cache
+              web/.meteor/local/isopacks
+              web/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="stage"
+            export APP_DIR="web"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-web"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_stage_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "write-dotenv-web" "write dot env for web"
+            cat <<EOF > web/.env
+            ENV_SHORT=stage
+            APP_DIR=web
+            ENV_TYPE=stage
+            HOSTNAME=$(printf %s "$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-web
+            DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+            DEPLOY_CLOUD_RUN_REGION=europe-west6
+            GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_web_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+            GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
+            _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+            EOF
+            collapseable_section_end "write-dotenv-web"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > web/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-stage
+            path: |-
+              web/__build_info.json
+              web/dist
+            if-no-files-found: warn
+    web-docker-stage:
+      name: web 🔨 docker | stage
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-stage
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_stage_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_stage_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-stage
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-stage
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="web"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            gcloud auth activate-service-account --key-file=<(echo "$CL_stage_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud auth configure-docker europe-west6-docker.pkg.dev
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-stage:
+      name: web 🚀 Deploy | stage
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-stage
+        - web-docker-stage
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: stage-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_stage_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_stage_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="stage"
+            export APP_DIR="web"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-web"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_stage_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "prepare" "Prepare..."
+            gcloud auth activate-service-account --key-file=<(echo "$CL_stage_web_GCLOUD_DEPLOY_credentialsKey")
+            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+            collapseable_section_end "prepare"
+            collapseable_section_start "writeenvvars" "Write env vars to file"
+            cat > ____envvars.yaml <<EOF
+            ENV_SHORT: |-
+              stage
+            APP_DIR: |-
+              web
+            ENV_TYPE: |-
+              stage
+            BUILD_INFO_BUILD_ID: |-
+              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+            BUILD_INFO_BUILD_TIME: |-
+              unknown-build-time
+            BUILD_INFO_CURRENT_VERSION: |-
+              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+            HOSTNAME: |-
+              $(printf %s "$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            HOSTNAME_INTERNAL: |-
+              $(printf %s "$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL_INTERNAL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-stage-web-$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+              pan-test-app-stage-web
+            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+              google-project-id
+            DEPLOY_CLOUD_RUN_REGION: |-
+              europe-west6
+            GCLOUD_RUN_canonicalHostSuffix: |-
+              $(printf %s "$CL_stage_web_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+            _ALL_ENV_VAR_KEYS: |-
+              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+            EOF
+
+            collapseable_section_end "writeenvvars"
+            collapseable_section_start "deploy" "Deploy to cloud run"
+            gcloud run deploy pan-test-app-stage-web --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=stage,env-name=stage,build-type=meteor,cloud-run-service-name=pan-test-app-stage-web --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+            gcloud beta run worker-pools deploy pan-test-app-stage-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=stage,env-name=stage,build-type=meteor,cloud-run-worker-pool-name=pan-test-app-stage-web-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
+            collapseable_section_end "deploy"
+            collapseable_section_start "cleanup" "Cleanup"
+            set +e
+            gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-stage-web --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set -e
+            collapseable_section_end "cleanup"
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+    web-app-prod:
+      name: web 🔨 app | prod
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/jobs-meteor:the-version
+      env:
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_prod_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/jobs-meteor:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-yarn
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ github.run_id }}
+            restore-keys: web-yarn-
+        - name: Cache web-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ github.run_id }}
+            restore-keys: web-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/.meteor/local/resolver-result-cache.json
+              web/.meteor/local/plugin-cache
+              web/.meteor/local/isopacks
+              web/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: 🔨 app
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export METEOR_DISABLE_OPTIMISTIC_CACHING="1"
+            export ENV_SHORT="prod"
+            export APP_DIR="web"
+            export ENV_TYPE="prod"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-web"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_prod_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "write-dotenv-web" "write dot env for web"
+            cat <<EOF > web/.env
+            ENV_SHORT=prod
+            APP_DIR=web
+            ENV_TYPE=prod
+            HOSTNAME=$(printf %s "$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | escapeForDotEnv)
+            DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-web
+            DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
+            DEPLOY_CLOUD_RUN_REGION=europe-west6
+            GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_web_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
+            GCLOUD_RUN_canonicalHostSuffix=$(printf %s "$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | escapeForDotEnv)
+            _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+            EOF
+            collapseable_section_end "write-dotenv-web"
+            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > web/__build_info.json
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            cd web
+            collapseable_section_start "nodeinstall" "Ensure node version"
+            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+            collapseable_section_end "nodeinstall"
+            collapseable_section_start "yarninstall" "Yarn install"
+            yarn install --immutable --inline-builds
+            collapseable_section_end "yarninstall"
+            TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory
+            cp ./__build_info.json ./dist/bundle/programs/server
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-prod
+            path: |-
+              web/__build_info.json
+              web/dist
+            if-no-files-found: warn
+    web-docker-prod:
+      name: web 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-prod
+      container:
+        image: path/to/docker/docker-build:the-version
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_prod_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-prod
+        - name: 🔨 docker
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export APP_DIR="web"
+            export DOCKER_BUILD_CONTEXT="."
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export METEOR_INSTALL_SCRIPTS=""
+            collapseable_section_end "injectvars"
+            ensureMeteorDockerfile
+            collapseable_section_start "docker-login" "Docker Login"
+            gcloud auth activate-service-account --key-file=<(echo "$CL_prod_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud auth configure-docker europe-west6-docker.pkg.dev
+            collapseable_section_end "docker-login"
+            collapseable_section_start "docker-build" "Docker build"
+            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Docker push and tag"
+            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+            docker push $DOCKER_CACHE_IMAGE
+            collapseable_section_end "docker-push"
+          shell: bash
+    web-deploy-prod:
+      name: web 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - web-app-prod
+        - web-docker-prod
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: prod-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_prod_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="prod"
+            export APP_DIR="web"
+            export ENV_TYPE="prod"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL="https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-web"
+            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+            export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+            export GCLOUD_DEPLOY_credentialsKey="$CL_prod_web_GCLOUD_DEPLOY_credentialsKey"
+            export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+            export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
+            export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web"
+            export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web"
+            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            collapseable_section_start "prepare" "Prepare..."
+            gcloud auth activate-service-account --key-file=<(echo "$CL_prod_web_GCLOUD_DEPLOY_credentialsKey")
+            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+            collapseable_section_end "prepare"
+            collapseable_section_start "writeenvvars" "Write env vars to file"
+            cat > ____envvars.yaml <<EOF
+            ENV_SHORT: |-
+              prod
+            APP_DIR: |-
+              web
+            ENV_TYPE: |-
+              prod
+            BUILD_INFO_BUILD_ID: |-
+              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+            BUILD_INFO_BUILD_TIME: |-
+              unknown-build-time
+            BUILD_INFO_CURRENT_VERSION: |-
+              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+            HOSTNAME: |-
+              $(printf %s "$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            HOSTNAME_INTERNAL: |-
+              $(printf %s "$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            ROOT_URL_INTERNAL: |-
+              $(printf %s "https://$(printf %s "pan-test-app-prod-web-$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+              pan-test-app-prod-web
+            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+              google-project-id
+            DEPLOY_CLOUD_RUN_REGION: |-
+              europe-west6
+            GCLOUD_RUN_canonicalHostSuffix: |-
+              $(printf %s "$CL_prod_web_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+            _ALL_ENV_VAR_KEYS: |-
+              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+            EOF
+
+            collapseable_section_end "writeenvvars"
+            collapseable_section_start "deploy" "Deploy to cloud run"
+            gcloud run deploy pan-test-app-prod-web --command="node,main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=prod,env-name=prod,build-type=meteor,cloud-run-service-name=pan-test-app-prod-web --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+            gcloud beta run worker-pools deploy pan-test-app-prod-web-worker --command="/bin/sh,-c,BACKGROUND_JOBS_ENABLED=1 node main.js" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=web,app-name=test-app,env-type=prod,env-name=prod,build-type=meteor,cloud-run-worker-pool-name=pan-test-app-prod-web-worker --env-vars-file=____envvars.yaml --instances=1 --cpu=1 --memory=512Mi
+            collapseable_section_end "deploy"
+            collapseable_section_start "cleanup" "Cleanup"
+            set +e
+            gcloud run revisions list --project=google-project-id --region=europe-west6 --service=pan-test-app-prod-web --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west6 --quiet $revisionname ; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web@$version --quiet --delete-tags; done
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set -e
+            collapseable_section_end "cleanup"
+            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          shell: bash
+catladder-review-stop.yml:
+  name: catladder review stop
+  on:
+    pull_request:
+      types:
+        - closed
+  env: *a1
+  jobs:
+    web-stop-review:
+      name: web 🛑 Stop ⚠️ | review
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: review-pr\${{ github.event.number }}-web
+      env:
+        CL_review_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            set +e
+            gcloud auth activate-service-account --key-file=<(echo "$CL_review_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud run services delete $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}') --project=google-project-id --region=europe-west6
+            gcloud beta run worker-pools delete $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-web" | awk '{print tolower($0)}')-worker --project=google-project-id --region=europe-west6
+            gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --quiet --delete-tags
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set +e
+            gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/web --quiet --delete-tags
+            set -e
+            set -e
+          shell: bash
+catladder-manual.yml:
+  name: catladder manual tasks
+  on:
+    workflow_dispatch:
+      inputs:
+        job:
+          description: the task to run
+          required: true
+          type: choice
+          options:
+            - web-stop-dev
+            - web-stop-stage
+            - web-stop-prod
+  env: *a1
+  jobs:
+    web-stop-dev:
+      name: web 🛑 Stop ⚠️ | dev
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: dev-web
+      env:
+        CL_dev_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            set +e
+            gcloud auth activate-service-account --key-file=<(echo "$CL_dev_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud run services delete pan-test-app-dev-web --project=google-project-id --region=europe-west6
+            gcloud beta run worker-pools delete pan-test-app-dev-web-worker --project=google-project-id --region=europe-west6
+            gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/web --quiet --delete-tags
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set -e
+          shell: bash
+      if: \${{ inputs.job == 'web-stop-dev' }}
+    web-stop-stage:
+      name: web 🛑 Stop ⚠️ | stage
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: stage-web
+      env:
+        CL_stage_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_stage_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            set +e
+            gcloud auth activate-service-account --key-file=<(echo "$CL_stage_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud run services delete pan-test-app-stage-web --project=google-project-id --region=europe-west6
+            gcloud beta run worker-pools delete pan-test-app-stage-web-worker --project=google-project-id --region=europe-west6
+            gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/web --quiet --delete-tags
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set -e
+          shell: bash
+      if: \${{ inputs.job == 'web-stop-stage' }}
+    web-stop-prod:
+      name: web 🛑 Stop ⚠️ | prod
+      runs-on: ubuntu-latest
+      container:
+        image: path/to/docker/gcloud:the-version
+      environment:
+        name: prod-web
+      env:
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_prod_web_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_web_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+      steps:
+        - name: 🛑 Stop ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+            collapseable_section_end "injectvars"
+            set +e
+            gcloud auth activate-service-account --key-file=<(echo "$CL_prod_web_GCLOUD_DEPLOY_credentialsKey")
+            gcloud run services delete pan-test-app-prod-web --project=google-project-id --region=europe-west6
+            gcloud beta run worker-pools delete pan-test-app-prod-web-worker --project=google-project-id --region=europe-west6
+            gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/web --quiet --delete-tags
+            gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/web@$version --quiet --delete-tags; done
+            set -e
+          shell: bash
+      if: \${{ inputs.job == 'web-stop-prod' }}
+"
+`;
+
 exports[`matches snapshot for cloud-run-meteor-with-worker local pipeline YAML 1`] = `
 "image: path/to/docker/jobs-default:the-version
 stages:

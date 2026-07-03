@@ -1,5 +1,8 @@
 import { it, expect } from "vitest";
-import { createYamlLocalPipeline } from "./__utils__/helpers";
+import {
+  createYamlGithubWorkflows,
+  createYamlLocalPipeline,
+} from "./__utils__/helpers";
 import config from "./cloud-run-with-sql-legacy-jobs";
 
 /**
@@ -9,4 +12,8 @@ import config from "./cloud-run-with-sql-legacy-jobs";
 
 it("matches snapshot for cloud-run-with-sql-legacy-jobs local pipeline YAML", async () => {
   expect(await createYamlLocalPipeline(config)).toMatchSnapshot();
+});
+
+it("matches snapshot for cloud-run-with-sql-legacy-jobs github workflows YAML", async () => {
+  expect(await createYamlGithubWorkflows(config)).toMatchSnapshot();
 });

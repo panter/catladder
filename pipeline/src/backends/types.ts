@@ -21,10 +21,14 @@ export interface PipelineBackend {
   readonly type: PipelineType;
 
   /**
-   * the folder where the generated files are placed.
-   * It is cleaned before the files are written.
+   * removes previously generated files of this backend.
+   * Called before the files are written.
+   *
+   * Backends must only remove files they own (e.g. the github backend
+   * shares `.github/workflows` with user-maintained workflows and only
+   * removes its own, prefixed files).
    */
-  readonly generatedFolder: string;
+  cleanup(): Promise<void>;
 
   /**
    * create all pipeline files for this backend.

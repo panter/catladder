@@ -1,12 +1,15 @@
 import type { Config, PipelineType } from "../types";
+import { GithubBackend } from "./github";
 import { GitlabBackend } from "./gitlab";
 import type { PipelineBackend } from "./types";
 
 export * from "./types";
 export * from "./gitlab";
+export * from "./github";
 
 const BACKENDS: { [T in PipelineType]: () => PipelineBackend } = {
   gitlab: () => new GitlabBackend(),
+  github: () => new GithubBackend(),
 };
 
 export const getPipelineBackend = (type: PipelineType): PipelineBackend => {
