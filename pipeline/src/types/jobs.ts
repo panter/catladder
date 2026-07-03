@@ -3,7 +3,6 @@ import type { CacheConfig } from "../build/types";
 import { removeUndefined } from "../utils/removeUndefined";
 import type {
   Artifacts,
-  GitlabEnvironment,
   GitlabJobCache,
   GitlabJobDef,
   GitlabJobImage,
@@ -28,10 +27,26 @@ export type CatladderJobNeed =
   | { job: string; artifacts: boolean; componentName?: string }
   | { job: string; artifacts: boolean; workspaceName: string };
 
+/**
+ * how a job interacts with a deployment environment.
+ * Each pipeline type translates this to its own mechanism
+ * (gitlab: the job `environment:` config incl. name and url).
+ */
 export type CatladderJobEnvironmentConfig = {
-  action?: GitlabEnvironment["action"];
-  on_stop?: GitlabEnvironment["on_stop"];
-  auto_stop_in?: string;
+  /**
+   * - start (default): the job creates/deploys the environment
+   * - stop: the job tears the environment down
+   * - access: the job uses the environment without changing it
+   */
+  action?: "start" | "stop" | "access";
+  /**
+   * name of the job (of the same component) that stops this environment
+   */
+  onStop?: string;
+  /**
+   * automatically stop the environment after this duration (e.g. "1 week")
+   */
+  autoStopIn?: string;
 };
 
 /**
@@ -92,6 +107,11 @@ export type CatladderJobCore<S = BaseStage> = {
   caches?: CacheConfig[];
 
   /**
+   * declares that this job interacts with a deployment environment
+   */
+  environment?: CatladderJobEnvironmentConfig;
+
+  /**
    * variables to pass
    */
   variables: UnspecifiedEnvVars | undefined;
@@ -135,11 +155,6 @@ export type GitlabJobFields = {
    * whether failures are allowed
    */
   allow_failure?: boolean;
-
-  /**
-   * gitlab environment config, subject to change
-   */
-  environment?: CatladderJobEnvironmentConfig;
 
   /** */
 

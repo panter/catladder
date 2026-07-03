@@ -250,7 +250,7 @@ const addGitlabEnvironment = (
   }
   const { env, name, environment } = context;
   const { envVars, envType } = environment;
-  const { on_stop, ...restEnvironment } = catladderJobEnvironment;
+  const { onStop, autoStopIn, action } = catladderJobEnvironment;
   // those can be dynamic, so we therefore have to do this: https://docs.gitlab.com/ee/ci/environments/#set-a-dynamic-environment-url
 
   const dotEnvFile = "gitlab_environment.env";
@@ -284,17 +284,18 @@ const addGitlabEnvironment = (
     environment: {
       name: gitlabEnvironmentName,
       ...(createsJobEnv ? { url: `$${GITLAB_ENVIRONMENT_URL_VARIABLE}` } : {}),
-      ...(on_stop
+      ...(onStop
         ? {
             on_stop: getFullReferencedJobNameFromComponent(
-              on_stop,
+              onStop,
               name,
               env,
               allJobs,
             ),
           }
         : {}),
-      ...restEnvironment,
+      ...(action ? { action } : {}),
+      ...(autoStopIn ? { auto_stop_in: autoStopIn } : {}),
     },
     ...(!isEmpty(artifacts) ? { artifacts } : {}),
     script: [...(job.script ?? []), ...(createsJobEnv ? scriptToAdd : [])],

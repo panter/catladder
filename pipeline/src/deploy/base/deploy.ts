@@ -117,8 +117,8 @@ export class DeployJob extends CatladderJob {
       },
       environment: isStoppable
         ? {
-            on_stop: STOP_JOB_NAME,
-            auto_stop_in: autoStop,
+            onStop: STOP_JOB_NAME,
+            autoStopIn: autoStop,
           }
         : {},
       jobTags: deployConfig ? deployConfig.jobTags : undefined,
