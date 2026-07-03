@@ -3,37 +3,116 @@ import {
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
   RULE_NEVER_ON_AGENT_TRIGGER,
-} from "../rules";
+} from "../../rules";
 import type {
   ComponentContext,
+  Config,
+  GitlabJobDef,
   GitlabRule,
   Pipeline,
   PipelineTrigger,
-  PipelineType,
   WorkspaceContext,
-} from "../types";
-import { ALL_PIPELINE_TRIGGERS, type Config } from "../types/config";
-import { createAllJobs } from "./createAllJobs";
+} from "../../types";
+import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
+import { createAllJobs } from "../../pipeline/createAllJobs";
+import type { PipelineBackend, PipelineFile } from "../types";
+import type { GitlabJobWithContext } from "./createGitlabJobs";
+import { createGitlabJobs } from "./createGitlabJobs";
+import { createGitlabPipelineWithDefaults } from "./createGitlabPipeline";
+import { getGitlabReleaseJobs } from "./gitlabReleaseJobs";
 import { getPipelineStages } from "./getPipelineStages";
-import type { GitlabJobWithContext } from "./gitlab/createGitlabJobs";
-import { createGitlabJobs } from "./gitlab/createGitlabJobs";
-import { createGitlabPipelineWithDefaults } from "./gitlab/createGitlabPipeline";
-import { getGitlabReleaseJobs } from "./gitlab/gitlabReleaseJobs";
+import { sortGitLabJobDefProps } from "./sortGitLabJobDefProps";
 
-export const createMainPipeline = async <T extends PipelineType>(
-  pipelineType: T,
-  config: Config,
-): Promise<Pipeline<T>> => {
-  const stages = getPipelineStages(config);
+const CATLADDER_GENERATED_FOLDER = ".catladder-generated";
 
-  if (pipelineType === "gitlab") {
+const GITLAB_GENERATED_FOLDER = CATLADDER_GENERATED_FOLDER + "/gitlab";
+
+export class GitlabBackend implements PipelineBackend {
+  readonly type = "gitlab" as const;
+
+  readonly generatedFolder = GITLAB_GENERATED_FOLDER;
+
+  async createFiles(config: Config): Promise<PipelineFile[]> {
+    const includes = await this.createIncludes(config);
+
+    const mainFile: PipelineFile = {
+      path: ".gitlab-ci.yml",
+      content: {
+        include: includes.map((i) => i.path),
+      },
+    };
+
+    return [mainFile, ...includes];
+  }
+
+  /**
+   * the complete pipeline as one object (all includes merged into one),
+   * mainly for testing purposes
+   */
+  async createCompletePipeline(
+    config: Config,
+  ): Promise<Record<string, unknown>> {
+    const includes = await this.createIncludes(config);
+
+    return includes.reduce((acc, { content }) => {
+      return {
+        ...acc,
+        ...content, // merge all includes into one object
+      };
+    }, {});
+  }
+
+  private async createIncludes(config: Config): Promise<PipelineFile[]> {
+    const { jobs, image, stages, variables, workflow, ...pipelineRest } =
+      await this.createPipeline(config);
+    // we will create 1 include per component or workspace
+    // this is for better readability in git diffs and to avoid problems with yaml files beeing too large
+    // group by context
+    const groups = Object.entries(jobs).reduce(
+      (acc, [jobName, { gitlabJob, context }]) => {
+        const group = !context
+          ? "global-jobs"
+          : context?.type + "/" + context.name;
+        if (!acc[group]) {
+          acc[group] = {};
+        }
+
+        acc[group][jobName] = sortGitLabJobDefProps(gitlabJob); // also sort properties for more consistent diffing
+        return acc;
+      },
+      {} as Record<string, Record<string, GitlabJobDef>>,
+    );
+
+    const componentIncludes = Object.entries(groups).map(([group, jobs]) => {
+      return {
+        path: GITLAB_GENERATED_FOLDER + "/" + group + ".yaml",
+        content: jobs,
+      };
+    });
+
+    const mainInclude: PipelineFile = {
+      path: GITLAB_GENERATED_FOLDER + "/main.yaml",
+      content: {
+        image,
+        stages,
+        variables,
+        workflow,
+        ...pipelineRest,
+      },
+    };
+
+    return [mainInclude, ...componentIncludes];
+  }
+
+  private async createPipeline(config: Config): Promise<Pipeline<"gitlab">> {
+    const stages = getPipelineStages(config);
+
     // for all triggers create jobs and add base rules
-
     const allJobsPerTrigger = await Promise.all(
       ALL_PIPELINE_TRIGGERS.map(
         async (trigger) =>
           await createGitlabJobs(
-            await createAllJobs({ config, trigger, pipelineType }),
+            await createAllJobs({ config, trigger, pipelineType: this.type }),
             getGitlabRulesForTrigger(trigger),
           ),
       ),
@@ -112,10 +191,10 @@ export const createMainPipeline = async <T extends PipelineType>(
         ),
       },
       variables: config.runnerVariables,
-    }) as Pipeline<T>;
+    });
   }
-  throw new Error(`${pipelineType} is not supported`);
-};
+}
+
 function getGitlabRulesForTrigger(trigger: PipelineTrigger): GitlabRule[] {
   // mainBranch: on push to main branch except it's a release commit
   // mr: on merge request

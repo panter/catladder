@@ -1,4 +1,4 @@
-import type { GitlabJobWithContext } from "../pipeline/gitlab/createGitlabJobs";
+import type { GitlabJobWithContext } from "../backends/gitlab/createGitlabJobs";
 import type {
   Artifacts as GitlabCiArtifacts,
   JobTemplate,

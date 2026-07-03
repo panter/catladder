@@ -1,6 +1,6 @@
-import { getAllEnvsInAllComponents } from "../config";
-import type { Config } from "../types/config";
-import { BASE_STAGES } from "../types/jobs";
+import { getAllEnvsInAllComponents } from "../../config";
+import type { Config } from "../../types/config";
+import { BASE_STAGES } from "../../types/jobs";
 
 /**
  * while technically not required, we group different envs in its own stage

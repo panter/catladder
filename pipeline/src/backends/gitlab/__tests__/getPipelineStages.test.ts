@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { type DeployConfigKubernetesCluster } from "../..";
-import type { Config } from "../../types";
+import { type DeployConfigKubernetesCluster } from "../../..";
+import type { Config } from "../../../types";
 import { getPipelineStages } from "../getPipelineStages";
 
 describe("getPipelineStages()", () => {

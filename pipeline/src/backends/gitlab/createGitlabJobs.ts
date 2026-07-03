@@ -13,7 +13,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
-import type { AllCatladderJobs } from "../createAllJobs";
+import type { AllCatladderJobs } from "../../pipeline/createAllJobs";
 import { getBashVariable } from "../../bash/BashExpression";
 import { addCacheFallback } from "./cache";
 

@@ -1,4 +1,5 @@
 export * from "./pipeline";
+export * from "./backends";
 export * from "./types";
 export * from "./rules";
 export * from "./runner";

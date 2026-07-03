@@ -1,3 +1,3 @@
 export * from "./createJobsForComponent";
 export * from "./generatePipelineFiles";
-export * from "./gitlab/gitlabReleaseJobs";
+export * from "../backends/gitlab/gitlabReleaseJobs";
