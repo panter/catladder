@@ -7,6 +7,7 @@ import type {
 } from "../core/types";
 import { MissingInputError } from "../core/types";
 import { BaseContext } from "./baseContext";
+import { createVaultManagerGetter } from "./vaultManagerAccess";
 
 export interface ProgrammaticOptions {
   /** Pre-supplied values keyed by input name */
@@ -20,6 +21,8 @@ class ProgrammaticContext<
 > extends BaseContext<TInputs> {
   private inputs: Record<string, unknown>;
   private onLog?: (message: string) => void;
+
+  readonly interactive = false;
 
   constructor(command: CommandDef<TInputs>, options: ProgrammaticOptions) {
     super(command);
@@ -66,7 +69,9 @@ export function createProgrammaticContext<TInputs extends InputsSchema>(
 export function createProgrammaticIO(options: ProgrammaticOptions = {}): IO {
   const { inputs = {}, onLog } = options;
 
-  return {
+  const io: IO = {
+    interactive: false,
+    getVaultManager: createVaultManagerGetter(() => io),
     log(message: string): void {
       onLog?.(message);
     },
@@ -85,4 +90,5 @@ export function createProgrammaticIO(options: ProgrammaticOptions = {}): IO {
       throw new MissingInputError(spec.name, spec.message);
     },
   };
+  return io;
 }

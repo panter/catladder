@@ -197,10 +197,43 @@ export type ConfigProps = {
 };
 
 /**
- * per-pipeline-type options. Currently empty, but gives per-backend
- * settings a home (e.g. output folder, workflow naming) later.
+ * per-pipeline-type options
  */
-export type PipelineOutputOptions = Record<string, never>;
+export type PipelineOutputOptions = {
+  /**
+   * the git remote that points to this CI system's repository.
+   * Relevant during migrations, where e.g. gitlab is `origin` and
+   * github is a second remote.
+   *
+   * defaults to "origin"
+   */
+  gitRemote?: string;
+};
+
+/**
+ * where secret values are stored and edited (the readable source of
+ * truth). CI backends only receive mirrored copies.
+ *
+ * - "gitlab" (default): the gitlab project variables double as the
+ *   secret store (legacy behavior; requires a gitlab project)
+ * - bitwarden: secrets live in bitwarden as one yaml note per
+ *   env/component (`<customer>/<app>/<env>/<component>/secrets.yml`)
+ */
+export type SecretsVaultConfig =
+  | "gitlab"
+  | { type: "gitlab" }
+  | {
+      type: "bitwarden";
+      /**
+       * the bitwarden collection holding the secret notes
+       * @default "catladder"
+       */
+      collection?: string;
+    };
+
+export type SecretsConfig = {
+  vault?: SecretsVaultConfig;
+};
 
 export type Config<C extends ConfigProps = never> = {
   /**
@@ -225,6 +258,11 @@ export type Config<C extends ConfigProps = never> = {
   pipelines?: {
     [T in PipelineType]?: boolean | PipelineOutputOptions;
   };
+
+  /**
+   * how secrets are stored and shared (see {@link SecretsConfig})
+   */
+  secrets?: SecretsConfig;
 
   /**
    * name of the customer or group

@@ -7,10 +7,10 @@ import {
   getCurrentComponentAndEnvFromChoice,
   makeKeyValueString,
 } from "./utils";
-import type { CatenvContext } from "@catladder/pipeline";
+import type { CatenvCliContext } from "./types";
 
 export const writeDotEnvFiles = async (
-  context: CatenvContext,
+  context: CatenvCliContext,
   choice?: Choice,
 ) => {
   const { env, currentComponent } = await getCurrentComponentAndEnvFromChoice(
@@ -32,7 +32,7 @@ export const writeDotEnvFiles = async (
   const gitRoot = await getGitRoot();
 
   for (const componentName of componentsToActuallyWriteDotEnvNow) {
-    const variables = await getEnvVarsResolved(null, env, componentName);
+    const variables = await getEnvVarsResolved(context.io, env, componentName);
     delete variables["_ALL_ENV_VAR_KEYS"];
     const componentDir = getComponentFullPath(
       gitRoot,

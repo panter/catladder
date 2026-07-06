@@ -8,6 +8,7 @@ import type {
 } from "../core/types";
 import { MissingInputError } from "../core/types";
 import { BaseContext } from "./baseContext";
+import { createVaultManagerGetter } from "./vaultManagerAccess";
 
 /**
  * Resolve choices from a choices function.
@@ -91,6 +92,10 @@ class TerminalContext<
     private options: TerminalOptions,
   ) {
     super(command);
+  }
+
+  get interactive(): boolean {
+    return this.options.interactive ?? process.stdin.isTTY === true;
   }
 
   log(message: string): void {
@@ -180,7 +185,9 @@ export function createTerminalContext<TInputs extends InputsSchema>(
  * Create a bare IO instance for terminal helper functions.
  */
 export function createTerminalIO(options: TerminalOptions = {}): IO {
-  return {
+  const io: IO = {
+    interactive: options.interactive ?? process.stdin.isTTY === true,
+    getVaultManager: createVaultManagerGetter(() => io),
     log(message: string): void {
       console.log(message);
     },
@@ -204,4 +211,5 @@ export function createTerminalIO(options: TerminalOptions = {}): IO {
       throw new MissingInputError(spec.name, spec.message);
     },
   };
+  return io;
 }

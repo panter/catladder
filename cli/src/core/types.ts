@@ -1,3 +1,4 @@
+import type { VaultManager } from "../vault/VaultManager";
 import type { ComponentContext } from "@catladder/pipeline";
 
 // ─── Input Definitions ───────────────────────────────────────────────
@@ -76,6 +77,19 @@ export type InputsSchema = Record<string, InputDef>;
  * that are NOT part of a command's declared input schema.
  */
 export interface IO {
+  /**
+   * whether this context can interact with the user (prompts, editors).
+   * Non-interactive contexts throw {@link NonInteractiveError} when an
+   * interaction would be required.
+   */
+  readonly interactive: boolean;
+
+  /**
+   * the secrets vault of this context, created lazily from the project
+   * config
+   */
+  getVaultManager(): Promise<VaultManager>;
+
   log(message: string): void;
   /**
    * Ask for confirmation. Returns true/false.
@@ -130,6 +144,15 @@ export interface CommandDef<TInputs extends InputsSchema = InputsSchema> {
 }
 
 // ─── Errors ──────────────────────────────────────────────────────────
+
+export class NonInteractiveError extends Error {
+  constructor(interaction: string) {
+    super(
+      `${interaction} requires an interactive terminal, but this context is not interactive`,
+    );
+    this.name = "NonInteractiveError";
+  }
+}
 
 export class MissingInputError extends Error {
   constructor(

@@ -12,7 +12,7 @@ import {
 } from "@catladder/pipeline";
 
 import type { IO } from "../core/types";
-import { getAllVariables, getVariableValueByRawName } from "../utils/gitlab";
+import { getVariableValueByRawName } from "../utils/gitlab";
 
 import { getGitRoot } from "../utils/projects";
 
@@ -121,10 +121,24 @@ export const getGitlabVar = async (
 };
 
 const resolveSecrets = async (
-  io: IO | null,
+  io: IO,
   varSets: EnvironmentEnvVars[],
 ): Promise<Record<string, string>> => {
-  const allVariablesInGitlab = await getAllVariables(io);
+  // the secret variables actually referenced by the env var values —
+  // when they are all in the local cache, the vault is not contacted
+  const referencedNames = [
+    ...new Set(
+      varSets.flatMap(({ envVars }) =>
+        Object.values(envVars).flatMap(
+          (value) => `${value}`.match(/\$CL_\w+/g) ?? [],
+        ),
+      ),
+    ),
+  ].map((reference) => reference.slice(1));
+
+  const vaultManager = await io.getVaultManager();
+  const secrets = await vaultManager.readSecrets(referencedNames, io);
+  const secretEntries = Object.entries(secrets);
 
   return Object.fromEntries(
     varSets.flatMap(({ envVars, secretEnvVarKeys }) =>
@@ -137,9 +151,9 @@ const resolveSecrets = async (
         )
         .map(([key, value]) => [
           key,
-          allVariablesInGitlab.reduce(
-            (acc, curr) =>
-              acc.replace(new RegExp("\\$" + curr.key, "g"), curr.value),
+          secretEntries.reduce(
+            (acc, [name, secretValue]) =>
+              acc.replace(new RegExp("\\$" + name, "g"), secretValue),
             `${value}`,
           ),
         ]),
@@ -148,7 +162,7 @@ const resolveSecrets = async (
 };
 
 export const getEnvVarsResolved = async (
-  io: IO | null,
+  io: IO,
   env: string,
   componentName: string | null,
 ) => {

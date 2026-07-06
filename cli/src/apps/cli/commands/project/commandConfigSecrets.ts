@@ -1,4 +1,9 @@
-import { getSecretVarName } from "@catladder/pipeline";
+import {
+  getEnabledPipelineTypes,
+  getSecretVarName,
+  getVaultConfig,
+} from "@catladder/pipeline";
+import type { Config } from "@catladder/pipeline";
 import { stripIndents } from "common-tags";
 import { difference } from "lodash-es";
 import type { IO } from "../../../../core/types";
@@ -8,9 +13,15 @@ import {
   getEnvVarsResolved,
   getJobOnlyEnvVarsResolved,
   getProjectComponents,
+  getProjectConfig,
   parseChoice,
 } from "../../../../config/getProjectConfig";
+import {
+  getConfiguredGithubRepo,
+  pushSecretsToGithub,
+} from "../../../../commands/project/commandSecretsSyncGithub";
 import { editAsFile } from "../../../../utils/editAsFile";
+import { isGhAuthenticated } from "../../../../utils/github";
 import { upsertAllVariables } from "../../../../utils/gitlab";
 import { delay } from "../../../../utils/promise";
 
@@ -169,25 +180,99 @@ const doItFor = async (
       }
     }
   }
+  const config = await getProjectConfig();
+  if (!config) {
+    throw new Error("no catladder config found");
+  }
+
   instance.log("");
-  instance.log("upserting all variables, please wait...");
+  instance.log("writing all secrets to the vault, please wait...");
   instance.log("");
   for (const [componentName, envs] of Object.entries(envAndComponents)) {
     for (const env of envs) {
-      instance.log("upserting " + env + ":" + componentName + "...\n");
-      await upsertAllVariables(
-        instance,
-        valuesToEdit[componentName][env],
-        env,
-        componentName,
-      );
+      instance.log("writing " + env + ":" + componentName + "...\n");
+      await (
+        await instance.getVaultManager()
+      ).writeSecrets(env, componentName, valuesToEdit[componentName][env]);
       instance.log("");
       instance.log("✅ " + env + ":" + componentName);
       instance.log("--------------------------------\n");
     }
   }
+
+  await mirrorSecretsToCiBackends(
+    instance,
+    config,
+    envAndComponents,
+    valuesToEdit,
+  );
+
   instance.log("done! 😻");
   instance.log("");
+};
+
+/**
+ * the vault is the source of truth; every enabled CI backend receives
+ * a mirrored copy of the edited secrets (gitlab variables, github
+ * secrets), so all CI systems stay in sync
+ */
+const mirrorSecretsToCiBackends = async (
+  instance: IO,
+  config: Config,
+  envAndComponents: { [componentName: string]: string[] },
+  valuesToEdit: Vars,
+) => {
+  const enabled = getEnabledPipelineTypes(config);
+
+  // gitlab mirror (unless gitlab is the vault itself, then it is
+  // already written)
+  if (getVaultConfig(config).type !== "gitlab" && enabled.includes("gitlab")) {
+    for (const [componentName, envs] of Object.entries(envAndComponents)) {
+      for (const env of envs) {
+        await upsertAllVariables(
+          instance,
+          valuesToEdit[componentName][env],
+          env,
+          componentName,
+        );
+      }
+    }
+    instance.log("✅ mirrored to gitlab");
+  }
+
+  if (!enabled.includes("github")) {
+    return;
+  }
+  const secrets = Object.entries(envAndComponents).flatMap(
+    ([componentName, envs]) =>
+      envs.flatMap((env) =>
+        Object.entries(valuesToEdit[componentName][env] ?? {}).map(
+          ([key, value]) => ({
+            name: getSecretVarName(env, componentName, key),
+            value:
+              typeof value === "string" ? value : JSON.stringify(value ?? ""),
+          }),
+        ),
+      ),
+  );
+  if (secrets.length === 0) {
+    return;
+  }
+  if (!(await isGhAuthenticated())) {
+    instance.log(
+      "⚠️ github pipeline is enabled, but the github cli (gh) is not authenticated — run `project secrets-sync-github` later to mirror the secrets",
+    );
+    return;
+  }
+  const repo = await getConfiguredGithubRepo();
+  if (!repo) {
+    instance.log(
+      "⚠️ github pipeline is enabled, but no github repository was found — run `project secrets-sync-github` later to mirror the secrets",
+    );
+    return;
+  }
+  instance.log(`mirroring ${secrets.length} secrets to github ('${repo}')...`);
+  await pushSecretsToGithub(instance, repo, secrets);
 };
 
 export const projectConfigSecrets = async (io: IO, envComponent?: string) => {

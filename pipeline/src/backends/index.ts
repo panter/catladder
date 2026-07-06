@@ -1,4 +1,9 @@
-import type { Config, PipelineType } from "../types";
+import type {
+  Config,
+  PipelineOutputOptions,
+  PipelineType,
+  SecretsVaultConfig,
+} from "../types";
 import { GithubBackend } from "./github";
 import { GitlabBackend } from "./gitlab";
 import type { PipelineBackend } from "./types";
@@ -18,6 +23,39 @@ export const getPipelineBackend = (type: PipelineType): PipelineBackend => {
     throw new Error(`Pipeline type not supported: ${type}`);
   }
   return createBackend();
+};
+
+/**
+ * the options of an enabled pipeline type (empty object when enabled
+ * with `true`)
+ */
+export const getPipelineOptions = (
+  config: Config,
+  type: PipelineType,
+): PipelineOutputOptions => {
+  const value = config.pipelines?.[type];
+  return typeof value === "object" ? value : {};
+};
+
+/**
+ * the git remote pointing to the repository of this pipeline type's CI
+ * system (e.g. during a migration, gitlab may be `origin` and github a
+ * second remote)
+ */
+export const getPipelineGitRemote = (
+  config: Config,
+  type: PipelineType,
+): string => getPipelineOptions(config, type).gitRemote ?? "origin";
+
+/**
+ * the normalized secrets vault of a config (string shorthands resolved
+ * to their object form; defaults to the legacy gitlab store)
+ */
+export const getVaultConfig = (
+  config: Config,
+): Exclude<SecretsVaultConfig, string> => {
+  const vault = config.secrets?.vault ?? "gitlab";
+  return typeof vault === "string" ? { type: vault } : vault;
 };
 
 /**

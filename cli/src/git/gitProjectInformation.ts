@@ -12,17 +12,19 @@ export const getProjectRootPath = async (): Promise<string> => {
 /**
  * Get the git remote hostname and project path from the git config.
  */
-export const getGitRemoteHostAndPath = async (): Promise<{
+export const getGitRemoteHostAndPath = async (
+  remoteName = "origin",
+): Promise<{
   gitRemoteHost: string;
   gitRemotePath: string;
 }> => {
-  const remoteUrl = await gitConfigGet("remote.origin.url");
+  const remoteUrl = await gitConfigGet(`remote.${remoteName}.url`);
   const remoteReg = /(https:\/\/|git@)([^:/]+)[:/]([^.]*)(\.git)?/;
   const match = remoteUrl.match(remoteReg) ?? [];
   const [, , gitRemoteHost, gitRemotePath] = match;
   if (!gitRemoteHost?.length || !gitRemotePath?.length) {
     throw new Error(
-      `Failed to parse git remote hostname and path from git configs remote.origin.url! ${remoteUrl}`,
+      `Failed to parse git remote hostname and path from git configs remote.${remoteName}.url! ${remoteUrl}`,
     );
   }
   return { gitRemoteHost, gitRemotePath };

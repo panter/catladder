@@ -6,6 +6,8 @@ import type {
   InputsSchema,
   OptionalInput,
 } from "../core/types";
+import type { VaultManager } from "../vault/VaultManager";
+import { createVaultManagerGetter } from "./vaultManagerAccess";
 
 /**
  * Base class for CommandContext implementations.
@@ -19,8 +21,16 @@ export abstract class BaseContext<TInputs extends InputsSchema>
 
   constructor(protected readonly command: CommandDef<TInputs>) {}
 
+  abstract readonly interactive: boolean;
+
   abstract log(message: string): void;
   abstract confirm(message: string): Promise<boolean>;
+
+  private readonly vaultManagerGetter = createVaultManagerGetter(() => this);
+
+  getVaultManager(): Promise<VaultManager> {
+    return this.vaultManagerGetter();
+  }
 
   /**
    * Resolve a single input value. Called once per input (result is cached).

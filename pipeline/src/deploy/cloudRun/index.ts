@@ -80,20 +80,25 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
       return {};
     },
     additionalSecretKeys: (ctx) => [
-      {
-        key: GCLOUD_DEPLOY_CREDENTIALS_KEY,
-        hidden: true,
-      },
-      {
-        key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
-        hidden: true,
-      },
+      // deploy-time credentials don't exist for the local env
+      ...(ctx.envType !== "local"
+        ? [
+            {
+              key: GCLOUD_DEPLOY_CREDENTIALS_KEY,
+              hidden: true,
+            },
+            {
+              key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
+              hidden: true,
+            },
+          ]
+        : []),
       ...(ctx.deployConfigRaw && ctx.deployConfigRaw.cloudSql
         ? [{ key: "DB_PASSWORD" }]
         : []),
     ],
     getAdditionalEnvVars: (ctx) => {
-      const { fullName, env, componentName, deployConfigRaw } = ctx;
+      const { fullName, env, componentName, deployConfigRaw, envType } = ctx;
 
       const HOSTNAME_INTERNAL = joinBashExpressions(
         [
@@ -125,7 +130,9 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
           : {};
 
       return {
-        HOSTNAME_INTERNAL,
+        // references the canonical host suffix secret, which doesn't
+        // exist for the local env
+        ...(envType !== "local" ? { HOSTNAME_INTERNAL } : {}),
         ...getCloudSqlVariables(ctx),
         ...jobTriggers,
         DEPLOY_CLOUD_RUN_SERVICE_NAME: getServiceNameForEnvContext(ctx),

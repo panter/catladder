@@ -15,6 +15,7 @@ export { commandOpenGit } from "./project/commandOpenGit";
 export { commandCloudSqlProxy } from "./project/commandCloudSqlProxy";
 export { commandConfigSecrets } from "./project/commandConfigSecrets";
 export { commandSecretsClearBackups } from "./project/commandSecretsClearBackups";
+export { commandSecretsSyncGithub } from "./project/commandSecretsSyncGithub";
 export { commandOpenLogs } from "./project/commandOpenLogs";
 export { commandTriggerCronjobGeneral } from "./project/k8s/commandTriggerCronjob";
 export { commandRenewToken } from "./project/commandRenewToken";

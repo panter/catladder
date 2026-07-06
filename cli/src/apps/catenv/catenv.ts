@@ -8,10 +8,13 @@ import {
   createCatenvContext,
   generatePipelineFiles,
 } from "@catladder/pipeline";
+import type { SecretsMode } from "../../vault";
+import { createNonInteractiveIO } from "../../adapters/nonInteractive";
 
 type Options = {
   verbose?: boolean;
   printVariables?: boolean;
+  vaultMode?: SecretsMode;
 };
 export default async (choice?: Choice, options?: Options) => {
   const config = await getProjectConfig();
@@ -19,7 +22,8 @@ export default async (choice?: Choice, options?: Options) => {
     return;
   }
 
-  const context = createCatenvContext(config);
+  const io = createNonInteractiveIO({ vaultMode: options?.vaultMode });
+  const context = { ...createCatenvContext(config), io };
   if (options?.verbose) {
     printVerboseBanner();
   }
