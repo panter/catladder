@@ -9,6 +9,7 @@ import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { computeCustomImageHash } from "./hash";
 import {
+  CENTRAL_ONLY_IMAGES,
   getShippedImageDir,
   RUNNER_IMAGE_BUILD_CONTEXT,
   RUNNER_IMAGE_DEPENDENCIES,
@@ -76,7 +77,7 @@ export class JobImagesPlan {
 
   resolveRef(ref: CatladderImageRef): ResolvedJobImage {
     const name = ref.catladderImage;
-    if (this.mode === "central") {
+    if (this.mode === "central" || CENTRAL_ONLY_IMAGES.has(name)) {
       return { image: getCentralRunnerImageUrl(name) };
     }
     const { hash } = this.use(name);

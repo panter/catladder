@@ -20,6 +20,16 @@ export const RUNNER_IMAGE_DEPENDENCIES: Partial<
  * Dockerfiles INCLUDE sibling images), the others from their own dir
  * (their COPY paths are relative to it)
  */
+/**
+ * images that cannot be built from the shipped definitions and always
+ * come from the central registry: semantic-release bakes catladder's
+ * own cli sources into the image (repo-root build context).
+ * TODO: make the semantic-release image self-contained.
+ */
+export const CENTRAL_ONLY_IMAGES: ReadonlySet<RunnerImageName> = new Set([
+  "semantic-release",
+]);
+
 export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
   RunnerImageName,
   "root" | "self"
