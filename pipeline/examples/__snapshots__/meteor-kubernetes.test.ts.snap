@@ -105,16 +105,16 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-meteor:
@@ -155,16 +155,16 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -448,13 +448,13 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
       needs:
         - job-image-jobs-testing-chrome
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -523,13 +523,13 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
       needs:
         - job-image-jobs-meteor
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -977,16 +977,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-meteor:
@@ -1027,16 +1027,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -1320,13 +1320,13 @@ catladder-review.yml:
       needs:
         - job-image-jobs-testing-chrome
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1395,13 +1395,13 @@ catladder-review.yml:
       needs:
         - job-image-jobs-meteor
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1845,16 +1845,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-meteor:
@@ -1895,16 +1895,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -2063,13 +2063,13 @@ catladder-release.yml:
       needs:
         - job-image-jobs-meteor
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2416,14 +2416,14 @@ catladder-release.yml:
       needs:
         - job-image-jobs-meteor
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
         CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2884,16 +2884,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-meteor:
@@ -2934,16 +2934,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -3280,16 +3280,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-meteor:
@@ -3330,16 +3330,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829 -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d -f .catladder-generated/images/jobs-meteor/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:81dfaa7c5829
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:

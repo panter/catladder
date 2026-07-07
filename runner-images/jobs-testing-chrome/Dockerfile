@@ -1,6 +1,6 @@
-# syntax = edrevo/dockerfile-plus
+# syntax = docker.io/devthefuture/dockerfile-x
 
-INCLUDE+ ./jobs-default/Dockerfile
+INCLUDE ./jobs-default/Dockerfile
 
 # add sources
 # Google Chrome (for testing purposes)
