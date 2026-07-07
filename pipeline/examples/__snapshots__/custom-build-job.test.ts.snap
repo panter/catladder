@@ -194,7 +194,7 @@ exports[`matches snapshot for custom-build-job github workflows YAML 1`] = `
             collapseable_section_end "write-dotenv-www"
             echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
             collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
             if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
             collapseable_section_end "nodeinstall"
             cd www
@@ -594,7 +594,7 @@ catladder-review.yml:
             collapseable_section_end "write-dotenv-www"
             echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
             collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
             if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
             collapseable_section_end "nodeinstall"
             cd www
@@ -992,7 +992,7 @@ catladder-release.yml:
             collapseable_section_end "write-dotenv-www"
             echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
             collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
             if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
             collapseable_section_end "nodeinstall"
             cd www
@@ -1276,7 +1276,7 @@ catladder-release.yml:
             collapseable_section_end "write-dotenv-www"
             echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
             collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
             if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
             collapseable_section_end "nodeinstall"
             cd www
@@ -2109,7 +2109,7 @@ before_script:
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - collapseable_section_start "nodeinstall" "Ensure node version"
-    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - cd www
@@ -2356,7 +2356,7 @@ before_script:
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - collapseable_section_start "nodeinstall" "Ensure node version"
-    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - cd www
@@ -2608,7 +2608,7 @@ before_script:
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - collapseable_section_start "nodeinstall" "Ensure node version"
-    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - cd www
@@ -2853,7 +2853,7 @@ before_script:
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
     - collapseable_section_start "nodeinstall" "Ensure node version"
-    - if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
     - cd www

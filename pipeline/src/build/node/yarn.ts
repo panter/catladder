@@ -24,7 +24,9 @@ export const ensureNodeVersion = (context: Context) =>
     "nodeinstall",
     "Ensure node version",
   )([
-    "if [ -f ~/.nvm/nvm.sh ];  then source ~/.nvm/nvm.sh; fi",
+    // github actions overrides HOME in container jobs, so also look
+    // for nvm where the catladder images install it (/root/.nvm)
+    'if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi',
     "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
   ]);
 
