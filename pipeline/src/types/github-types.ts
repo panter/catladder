@@ -25,7 +25,12 @@ export type GithubJob = {
   name?: string;
   "runs-on": string;
   needs?: string[];
-  container?: { image: string } | string;
+  container?:
+    | {
+        image: string;
+        credentials?: { username: string; password: string };
+      }
+    | string;
   services?: Record<string, GithubService>;
   environment?: { name: string; url?: string } | string;
   env?: Record<string, string>;
@@ -37,6 +42,7 @@ export type GithubJob = {
 export type GithubWorkflow = {
   name: string;
   on: Record<string, unknown>;
+  permissions?: Record<string, string>;
   concurrency?: { group: string; "cancel-in-progress"?: boolean };
   env?: Record<string, string>;
   jobs: Record<string, GithubJob>;

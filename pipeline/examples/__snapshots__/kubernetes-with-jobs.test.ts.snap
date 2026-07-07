@@ -7,19 +7,278 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     push:
       branches:
         - main
+  permissions:
+    contents: read
+    packages: write
   env: &a1
     CL_JOB_TOKEN: \${{ github.token }}
     CL_REGISTRY: ghcr.io
     CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
+    job-image-jobs-default:
+      name: 🐳 job image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-jobs-testing-chrome:
+      name: 🐳 job image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-docker-build:
+      name: 🐳 job image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-kubernetes:
+      name: 🐳 job image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     api-audit-dev:
       name: api 🛡 audit | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -60,10 +319,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     api-lint-dev:
       name: api 👮 lint | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -129,10 +393,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     api-test-dev:
       name: api 🧪 test | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-testing-chrome
       container:
-        image: path/to/docker/jobs-testing-chrome:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -198,10 +467,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     api-app-dev:
       name: api 🔨 app | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -292,11 +566,10 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       runs-on: ubuntu-latest
       needs:
         - api-app-dev
-      container:
-        image: path/to/docker/docker-build:the-version
+        - job-image-docker-build
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -378,13 +651,17 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - api-docker-dev
         - api-lint-dev
         - api-test-dev
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-api
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -518,10 +795,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     www-audit-dev:
       name: www 🛡 audit | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -562,10 +844,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     www-lint-dev:
       name: www 👮 lint | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -631,10 +918,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     www-test-dev:
       name: www 🧪 test | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-testing-chrome
       container:
-        image: path/to/docker/jobs-testing-chrome:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -700,10 +992,15 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
     www-app-dev:
       name: www 🔨 app | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -808,12 +1105,11 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       name: www 🔨 docker | dev
       runs-on: ubuntu-latest
       needs:
+        - job-image-docker-build
         - www-app-dev
-      container:
-        image: path/to/docker/docker-build:the-version
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -890,18 +1186,22 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       name: www 🚀 Deploy | dev
       runs-on: ubuntu-latest
       needs:
+        - job-image-kubernetes
         - www-app-dev
         - www-audit-dev
         - www-docker-dev
         - www-lint-dev
         - www-test-dev
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-www
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1033,15 +1333,273 @@ catladder-review.yml:
   concurrency:
     group: catladder-review-\${{ github.event.number }}
     cancel-in-progress: true
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-jobs-default:
+      name: 🐳 job image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-jobs-testing-chrome:
+      name: 🐳 job image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-docker-build:
+      name: 🐳 job image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-kubernetes:
+      name: 🐳 job image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     api-audit-review:
       name: api 🛡 audit | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1082,10 +1640,15 @@ catladder-review.yml:
     api-lint-review:
       name: api 👮 lint | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1151,10 +1714,15 @@ catladder-review.yml:
     api-test-review:
       name: api 🧪 test | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-testing-chrome
       container:
-        image: path/to/docker/jobs-testing-chrome:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1220,10 +1788,15 @@ catladder-review.yml:
     api-app-review:
       name: api 🔨 app | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1314,11 +1887,10 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-review
-      container:
-        image: path/to/docker/docker-build:the-version
+        - job-image-docker-build
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1400,13 +1972,17 @@ catladder-review.yml:
         - api-docker-review
         - api-lint-review
         - api-test-review
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-api
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1536,10 +2112,15 @@ catladder-review.yml:
     www-audit-review:
       name: www 🛡 audit | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1580,10 +2161,15 @@ catladder-review.yml:
     www-lint-review:
       name: www 👮 lint | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1649,10 +2235,15 @@ catladder-review.yml:
     www-test-review:
       name: www 🧪 test | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-testing-chrome
       container:
-        image: path/to/docker/jobs-testing-chrome:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-testing-chrome:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1718,10 +2309,15 @@ catladder-review.yml:
     www-app-review:
       name: www 🔨 app | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1826,12 +2422,11 @@ catladder-review.yml:
       name: www 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
+        - job-image-docker-build
         - www-app-review
-      container:
-        image: path/to/docker/docker-build:the-version
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1908,18 +2503,22 @@ catladder-review.yml:
       name: www 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
+        - job-image-kubernetes
         - www-app-review
         - www-audit-review
         - www-docker-review
         - www-lint-review
         - www-test-review
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-www
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2047,15 +2646,273 @@ catladder-release.yml:
     push:
       tags:
         - v*
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-jobs-default:
+      name: 🐳 job image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-jobs-testing-chrome:
+      name: 🐳 job image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-docker-build:
+      name: 🐳 job image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-kubernetes:
+      name: 🐳 job image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     api-app-stage:
       name: api 🔨 app | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2146,11 +3003,10 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-stage
-      container:
-        image: path/to/docker/docker-build:the-version
+        - job-image-docker-build
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2229,13 +3085,17 @@ catladder-release.yml:
       needs:
         - api-app-stage
         - api-docker-stage
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-api
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2369,10 +3229,15 @@ catladder-release.yml:
     api-app-prod:
       name: api 🔨 app | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2463,11 +3328,10 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-prod
-      container:
-        image: path/to/docker/docker-build:the-version
+        - job-image-docker-build
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2546,13 +3410,17 @@ catladder-release.yml:
       needs:
         - api-app-prod
         - api-docker-prod
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-api
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2686,10 +3554,15 @@ catladder-release.yml:
     www-app-stage:
       name: www 🔨 app | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2794,12 +3667,11 @@ catladder-release.yml:
       name: www 🔨 docker | stage
       runs-on: ubuntu-latest
       needs:
+        - job-image-docker-build
         - www-app-stage
-      container:
-        image: path/to/docker/docker-build:the-version
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2876,15 +3748,19 @@ catladder-release.yml:
       name: www 🚀 Deploy | stage
       runs-on: ubuntu-latest
       needs:
+        - job-image-kubernetes
         - www-app-stage
         - www-docker-stage
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-www
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3008,10 +3884,15 @@ catladder-release.yml:
     www-app-prod:
       name: www 🔨 app | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
       container:
-        image: path/to/docker/jobs-default:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: path/to/docker/jobs-default:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3116,12 +3997,11 @@ catladder-release.yml:
       name: www 🔨 docker | prod
       runs-on: ubuntu-latest
       needs:
+        - job-image-docker-build
         - www-app-prod
-      container:
-        image: path/to/docker/docker-build:the-version
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: path/to/docker/docker-build:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3198,15 +4078,19 @@ catladder-release.yml:
       name: www 🚀 Deploy | prod
       runs-on: ubuntu-latest
       needs:
+        - job-image-kubernetes
         - www-app-prod
         - www-docker-prod
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-www
         url: \${{ steps.main.outputs.url }}
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3333,17 +4217,275 @@ catladder-review-stop.yml:
     pull_request:
       types:
         - closed
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-jobs-default:
+      name: 🐳 job image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-jobs-testing-chrome:
+      name: 🐳 job image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-docker-build:
+      name: 🐳 job image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-kubernetes:
+      name: 🐳 job image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     api-stop-review:
       name: api 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3404,12 +4546,17 @@ catladder-review-stop.yml:
     www-stop-review:
       name: www 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3492,17 +4639,275 @@ catladder-manual.yml:
             - www-rollback-stage
             - www-stop-prod
             - www-rollback-prod
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-jobs-default:
+      name: 🐳 job image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-jobs-testing-chrome:
+      name: 🐳 job image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:2771d30e10a7
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-docker-build:
+      name: 🐳 job image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-kubernetes:
+      name: 🐳 job image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     api-stop-dev:
       name: api 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3564,12 +4969,17 @@ catladder-manual.yml:
     api-rollback-dev:
       name: api ↩️ Rollback ⚠️ | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3631,12 +5041,17 @@ catladder-manual.yml:
     www-stop-dev:
       name: www 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3698,12 +5113,17 @@ catladder-manual.yml:
     www-rollback-dev:
       name: www ↩️ Rollback ⚠️ | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3766,9 +5186,14 @@ catladder-manual.yml:
       name: create release
       runs-on: ubuntu-latest
       container:
-        image: path/to/docker/semantic-release:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       permissions:
         contents: write
+      needs:
+        - job-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
       steps:
@@ -3783,12 +5208,17 @@ catladder-manual.yml:
     api-rollback-review:
       name: api ↩️ Rollback ⚠️ | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3850,12 +5280,17 @@ catladder-manual.yml:
     www-rollback-review:
       name: www ↩️ Rollback ⚠️ | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3917,12 +5352,17 @@ catladder-manual.yml:
     api-stop-stage:
       name: api 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3984,12 +5424,17 @@ catladder-manual.yml:
     api-rollback-stage:
       name: api ↩️ Rollback ⚠️ | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4051,12 +5496,17 @@ catladder-manual.yml:
     api-stop-prod:
       name: api 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -4118,12 +5568,17 @@ catladder-manual.yml:
     api-rollback-prod:
       name: api ↩️ Rollback ⚠️ | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-api
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4185,12 +5640,17 @@ catladder-manual.yml:
     www-stop-stage:
       name: www 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -4252,12 +5712,17 @@ catladder-manual.yml:
     www-rollback-stage:
       name: www ↩️ Rollback ⚠️ | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4319,12 +5784,17 @@ catladder-manual.yml:
     www-stop-prod:
       name: www 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -4386,12 +5856,17 @@ catladder-manual.yml:
     www-rollback-prod:
       name: www ↩️ Rollback ⚠️ | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
       container:
-        image: path/to/docker/kubernetes:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-www
       env:
-        CL_JOB_IMAGE: path/to/docker/kubernetes:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
       steps:
         - name: ↩️ Rollback ⚠️
           id: main

@@ -49,6 +49,15 @@ export class FileWriter {
     };
   }
 
+  /**
+   * writes content verbatim (no auto-generated header) — e.g. for
+   * materialized dockerfiles, where a leading comment would break
+   * parser directives like `# syntax = ...`
+   */
+  public async writeGeneratedFileRaw(path: string, content: string) {
+    await this.writeTheFile(path, content);
+  }
+
   public async writeGeneratedFile(
     path: string,
     content: string,

@@ -14,7 +14,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
-import { getCentralRunnerImageUrl, isCatladderImageRef } from "../../runner";
+import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { AllCatladderJobs } from "../../pipeline/createAllJobs";
 import { getBashVariable } from "../../bash/BashExpression";
 import { addCacheFallback } from "./cache";
@@ -104,6 +104,7 @@ export const makeGitlabJob = (
   context: Context | AgentContext,
   job: CatladderJob<string>,
   allJobs: AllCatladderJobs,
+  images: JobImagesPlan,
   baseRules?: GitlabRule[],
 ): [fullName: string, job: GitlabJobDef] => {
   const {
@@ -127,11 +128,11 @@ export const makeGitlabJob = (
     ...rest
   } = job;
 
-  // catladder image references resolve according to the jobImages mode
-  // (repo mode lands with the image build mechanism; central for now)
-  const image = isCatladderImageRef(jobImage)
-    ? getCentralRunnerImageUrl(jobImage.catladderImage)
-    : jobImage;
+  // catladder image references resolve according to the jobImages mode;
+  // in repo mode the job additionally depends on the image build job
+  const resolvedImage = images.resolve(jobImage);
+  const image = resolvedImage.image;
+  const imageNeeds = resolvedImage.need ? [resolvedImage.need] : [];
 
   // the neutral `gate` translates to gitlab's when/allow_failure;
   // explicitly set gitlab fields take precedence
@@ -158,6 +159,7 @@ export const makeGitlabJob = (
     context,
     job,
     allJobs,
+    imageNeeds,
   );
 
   const fullJobName = getFullJobName({
@@ -314,9 +316,10 @@ const addGitlabEnvironment = (
 
 export const createGitlabJobs = async (
   allJobs: AllCatladderJobs,
+  images: JobImagesPlan,
   baseRules?: GitlabRule[],
 ): Promise<AllGitlabJobs> => {
-  return [
+  const contextualJobs = [
     ...allJobs.workspaces,
     ...allJobs.components,
     ...allJobs.agents,
@@ -326,6 +329,7 @@ export const createGitlabJobs = async (
         context,
         job,
         allJobs,
+        images,
         baseRules,
       );
       return {
@@ -335,21 +339,83 @@ export const createGitlabJobs = async (
       };
     });
   });
+
+  // image build jobs (repo mode): no context, plain names, their
+  // rules:changes combined with the trigger rules
+  const imageJobs: AllGitlabJobs = images.getEnsureJobs().map((job) => ({
+    name: job.name,
+    gitlabJob: makeEnsureImageGitlabJob(job, baseRules),
+    context: null,
+  }));
+
+  return [...imageJobs, ...contextualJobs];
+};
+
+/**
+ * lowers an image build job: only runs when the (generated) image
+ * definition changed, within the trigger's base rules
+ */
+const makeEnsureImageGitlabJob = (
+  job: CatladderJob,
+  baseRules?: GitlabRule[],
+): GitlabJobDef => {
+  const changes = job.rules?.[0]?.changes;
+  const rules = (baseRules ?? []).map((baseRule) =>
+    baseRule.when === "never" ? baseRule : { ...baseRule, changes },
+  );
+
+  return removeUndefined({
+    retry: BASE_RETRY,
+    interruptible: true,
+    image: job.image as GitlabJobDef["image"],
+    services: job.services,
+    rules: rules.length > 0 ? rules : [{ changes }],
+    variables: job.runnerVariables,
+    script: job.script?.filter(notNil) ?? [],
+    stage: job.stage,
+    needs: [],
+  });
 };
 
 function getGitlabNeeds(
   context: Context | AgentContext,
   job: CatladderJob<string>,
   allJobs: AllCatladderJobs,
+  extraNeeds: CatladderJobNeed[] = [],
 ): GitlabJobDef["needs"] {
+  const jobWithExtraNeeds =
+    extraNeeds.length > 0
+      ? { ...job, needs: [...extraNeeds, ...(job.needs ?? [])] }
+      : job;
   const needs =
     context.type === "workspace"
-      ? getGitlabNeedsForWorkspaceJob(context, job, allJobs)
+      ? getGitlabNeedsForWorkspaceJob(context, jobWithExtraNeeds, allJobs)
       : context.type === "agent"
-        ? (job.needs ?? null)
-        : getGitlabNeedsForComponentJob(context, job, allJobs);
+        ? mapAgentNeeds(jobWithExtraNeeds.needs)
+        : getGitlabNeedsForComponentJob(context, jobWithExtraNeeds, allJobs);
 
   return needs ? deduplicateNeeds(needs) : undefined;
+}
+
+/**
+ * agent jobs use their needs as-is; global needs (image build jobs)
+ * keep their plain name and optional flag
+ */
+function mapAgentNeeds(
+  needs: CatladderJobNeed[] | undefined,
+): GitlabJobDef["needs"] | null {
+  if (!needs) {
+    return null;
+  }
+  return needs.map((n) =>
+    isObject(n) && "global" in n && n.global
+      ? {
+          job: n.job,
+          artifacts: n.artifacts,
+          ...(n.optional ? { optional: true } : {}),
+        }
+      : (n as string | { job: string; artifacts: boolean }),
+  );
 }
 function deduplicateNeeds(needs: GitlabJobDef["needs"]): GitlabJobDef["needs"] {
   return needs
@@ -365,25 +431,34 @@ function getGitlabNeedsForComponentJob(
   return (needs ?? [])
     .map((n) =>
       isObject(n)
-        ? "workspaceName" in n
-          ? {
-              job: getFullReferencedJobNameFromWorkspace(
-                n.job,
-                n.workspaceName,
-                context.env,
-                allJobs,
-              ),
+        ? "global" in n && n.global
+          ? // global jobs (e.g. image builds) keep their plain name
+            {
+              job: n.job,
               artifacts: n.artifacts,
+              ...(n.optional ? { optional: true } : {}),
             }
-          : {
-              job: getFullReferencedJobNameFromComponent(
-                n.job,
-                n.componentName ?? context.name,
-                context.env,
-                allJobs,
-              ),
-              artifacts: n.artifacts,
-            }
+          : "workspaceName" in n && n.workspaceName
+            ? {
+                job: getFullReferencedJobNameFromWorkspace(
+                  n.job,
+                  n.workspaceName,
+                  context.env,
+                  allJobs,
+                ),
+                artifacts: n.artifacts,
+              }
+            : {
+                job: getFullReferencedJobNameFromComponent(
+                  n.job,
+                  "componentName" in n
+                    ? (n.componentName ?? context.name)
+                    : context.name,
+                  context.env,
+                  allJobs,
+                ),
+                artifacts: n.artifacts,
+              }
         : getFullReferencedJobNameFromComponent(
             n,
             context.name,
@@ -405,17 +480,23 @@ function getGitlabNeedsForWorkspaceJob(
   return (needs ?? [])
     .map((n) =>
       isObject(n)
-        ? {
-            job: getFullReferencedJobNameFromWorkspace(
-              n.job,
-              "workspaceName" in n && n.workspaceName
-                ? n.workspaceName
-                : context.name,
-              context.env,
-              allJobs,
-            ),
-            artifacts: n.artifacts,
-          }
+        ? "global" in n && n.global
+          ? {
+              job: n.job,
+              artifacts: n.artifacts,
+              ...(n.optional ? { optional: true } : {}),
+            }
+          : {
+              job: getFullReferencedJobNameFromWorkspace(
+                n.job,
+                "workspaceName" in n && n.workspaceName
+                  ? n.workspaceName
+                  : context.name,
+                context.env,
+                allJobs,
+              ),
+              artifacts: n.artifacts,
+            }
         : getFullReferencedJobNameFromWorkspace(
             n,
             context.name,

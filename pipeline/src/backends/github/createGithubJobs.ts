@@ -13,7 +13,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
-import { getCentralRunnerImageUrl, isCatladderImageRef } from "../../runner";
+import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 
 /**
  * runner variables that only make sense on gitlab runners and must not
@@ -50,6 +50,9 @@ export const githubJobId = (context: Context, jobName: string) =>
   slug(
     `${context.type === "workspace" ? "ws-" : ""}${context.name}-${jobName}-${context.env}`,
   );
+
+/** id of a job without component/workspace context (e.g. image builds) */
+export const githubGlobalJobId = (jobName: string) => slug(jobName);
 
 const githubJobName = (context: Context, jobName: string) =>
   `${context.name} ${jobName} | ${context.env}`;
@@ -90,6 +93,9 @@ const resolveNeed = (
   };
 
   if (isObject(need)) {
+    if ("global" in need && need.global) {
+      return { id: githubGlobalJobId(need.job), artifacts: need.artifacts };
+    }
     if ("workspaceName" in need && need.workspaceName) {
       return {
         id: findWorkspaceJob(need.workspaceName, need.job),
@@ -119,8 +125,9 @@ export const resolveGithubNeeds = (
   context: Context,
   job: CatladderJob,
   allJobs: AllCatladderJobs,
+  extraNeeds: CatladderJobNeed[] = [],
 ): ResolvedNeed[] => {
-  const resolved = (job.needs ?? []).map((need) =>
+  const resolved = [...extraNeeds, ...(job.needs ?? [])].map((need) =>
     resolveNeed(context, need, allJobs),
   );
   // deduplicate by provider id, explicit entries win (they come last)
@@ -192,6 +199,7 @@ export const makeGithubJob = (
   job: CatladderJob,
   allJobs: AllCatladderJobs,
   uploadProviderIds: Set<string>,
+  images: JobImagesPlan,
 ): [id: string, githubJob: GithubJob] => {
   const id = githubJobId(context, job.name);
   const isComponent = context.type === "component";
@@ -203,17 +211,20 @@ export const makeGithubJob = (
 
   const skipCheckout = job.runnerVariables?.GIT_STRATEGY === "none";
 
-  const needs = resolveGithubNeeds(context, job, allJobs);
+  const resolved = images.resolve(job.image);
+  const needs = resolveGithubNeeds(
+    context,
+    job,
+    allJobs,
+    resolved.need ? [resolved.need] : [],
+  );
 
-  const resolvedImage = isCatladderImageRef(job.image)
-    ? getCentralRunnerImageUrl(job.image.catladderImage)
-    : job.image;
   const image =
-    typeof resolvedImage === "string"
-      ? resolvedImage
-      : Array.isArray(resolvedImage)
-        ? resolvedImage[0]
-        : resolvedImage?.name;
+    typeof resolved.image === "string"
+      ? resolved.image
+      : Array.isArray(resolved.image)
+        ? resolved.image[0]
+        : resolved.image?.name;
 
   const runScript = [
     ...getGithubScriptFunctionDefinitions(),
@@ -227,11 +238,17 @@ export const makeGithubJob = (
 
   const artifactPaths = job.artifacts?.paths ?? [];
 
+  const declaredServices = (job.services ?? []).map((service) =>
+    typeof service === "string" ? { name: service } : service,
+  );
+  // docker runs natively on github runners: jobs that use a
+  // docker-in-docker service on gitlab run directly on the runner here
+  const usesHostDocker = declaredServices.some((service) =>
+    isDindService(service.name),
+  );
+
   const services = Object.fromEntries(
-    (job.services ?? [])
-      .map((service) =>
-        typeof service === "string" ? { name: service } : service,
-      )
+    declaredServices
       .filter((service) => !isDindService(service.name))
       .map((service): [string, GithubService] => [
         slug(
@@ -260,7 +277,22 @@ export const makeGithubJob = (
     name: githubJobName(context, job.name),
     "runs-on": "ubuntu-latest",
     ...(needs.length > 0 ? { needs: needs.map((n) => n.id) } : {}),
-    ...(image ? { container: { image } } : {}),
+    ...(image && !usesHostDocker
+      ? {
+          container: {
+            image,
+            // private images in the repo's registry need credentials
+            ...(resolved.fromRepoRegistry
+              ? {
+                  credentials: {
+                    username: "${{ github.actor }}",
+                    password: "${{ github.token }}",
+                  },
+                }
+              : {}),
+          },
+        }
+      : {}),
     ...(Object.keys(services).length > 0 ? { services } : {}),
     ...(job.environment && isComponent
       ? {

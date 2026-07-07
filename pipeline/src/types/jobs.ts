@@ -26,7 +26,10 @@ export type BaseStage = (typeof BASE_STAGES)[number];
 export type CatladderJobNeed =
   | string
   | { job: string; artifacts: boolean; componentName?: string }
-  | { job: string; artifacts: boolean; workspaceName: string };
+  | { job: string; artifacts: boolean; workspaceName: string }
+  // a job without component/workspace context (e.g. image build jobs);
+  // optional needs tolerate the job being absent from the pipeline
+  | { job: string; artifacts: boolean; optional?: boolean; global: true };
 
 export const CAPABILITIES = [
   "build",

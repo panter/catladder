@@ -13,6 +13,7 @@ export const GITHUB_CI_VARIABLES: Record<CiVariableName, string> = {
   jobImage: "CL_JOB_IMAGE",
   registry: "CL_REGISTRY",
   registryImage: "CL_REGISTRY_IMAGE",
+  registryUser: "CL_REGISTRY_USER",
 };
 
 /**
@@ -23,6 +24,7 @@ export const GITHUB_INJECTED_WORKFLOW_ENV: Record<string, string> = {
   CL_JOB_TOKEN: "${{ github.token }}",
   CL_REGISTRY: "ghcr.io",
   CL_REGISTRY_IMAGE: "ghcr.io/${{ github.repository }}",
+  CL_REGISTRY_USER: "${{ github.actor }}",
   // empty outside of pull request events
   CL_PR_NUMBER: "${{ github.event.number }}",
 };

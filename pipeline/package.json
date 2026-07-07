@@ -32,7 +32,7 @@
       "email": "leu@panter.ch"
     },
     {
-      "name": "Luboš Matejčík",
+      "name": "Lubo\u0161 Matej\u010d\u00edk",
       "email": "lma@panter.ch"
     },
     {
@@ -57,14 +57,15 @@
   "stableVersion": "0.1.0",
   "scripts": {
     "build:tsc": "yarn tsc",
-    "build": "yarn build:compile && yarn build:inline-variables",
+    "build": "yarn build:compile && yarn build:inline-variables && yarn build:copy-images",
     "build:compile": "yarn tsc",
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
     "build:watch": "yarn tsc -w",
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "generate:gitlab-ci-yml-types": "ts-node ./scripts/generate-gitlab-ci-types.ts",
-    "generate:examples-test": "jiti scripts/generate-examples-test.ts"
+    "generate:examples-test": "jiti scripts/generate-examples-test.ts",
+    "build:copy-images": "rm -rf dist/runner-images && cp -R ../runner-images dist/runner-images"
   },
   "types": "dist/index.d.ts",
   "main": "dist/index.js",

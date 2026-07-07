@@ -10,4 +10,5 @@ export const GITLAB_CI_VARIABLES: Record<CiVariableName, string> = {
   jobImage: "CI_JOB_IMAGE",
   registry: "CI_REGISTRY",
   registryImage: "CI_REGISTRY_IMAGE",
+  registryUser: "CI_REGISTRY_USER",
 };

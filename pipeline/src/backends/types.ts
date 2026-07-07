@@ -2,7 +2,8 @@ import type { Config, PipelineType } from "../types";
 
 export type PipelineFile = {
   path: string;
-  content: Record<string, unknown>;
+  /** yaml data, or a verbatim string (e.g. materialized dockerfiles) */
+  content: Record<string, unknown> | string;
 };
 
 /**

@@ -7,17 +7,126 @@ exports[`matches snapshot for cloud-run-llama github workflows YAML 1`] = `
     push:
       branches:
         - main
+  permissions:
+    contents: read
+    packages: write
   env: &a1
     CL_JOB_TOKEN: \${{ github.token }}
     CL_REGISTRY: ghcr.io
     CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
+    job-image-gcloud:
+      name: 🐳 job image gcloud
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image gcloud
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     llm-deploy-dev:
       name: llm 🚀 Deploy | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-llm
         url: \${{ steps.main.outputs.url }}
@@ -25,7 +134,7 @@ exports[`matches snapshot for cloud-run-llama github workflows YAML 1`] = `
         CL_dev_llm_HF_TOKEN: \${{ secrets.CL_dev_llm_HF_TOKEN }}
         CL_dev_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -147,13 +256,121 @@ catladder-review.yml:
   concurrency:
     group: catladder-review-\${{ github.event.number }}
     cancel-in-progress: true
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-gcloud:
+      name: 🐳 job image gcloud
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image gcloud
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     llm-deploy-review:
       name: llm 🚀 Deploy | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-llm
         url: \${{ steps.main.outputs.url }}
@@ -161,7 +378,7 @@ catladder-review.yml:
         CL_review_llm_HF_TOKEN: \${{ secrets.CL_review_llm_HF_TOKEN }}
         CL_review_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -281,13 +498,121 @@ catladder-release.yml:
     push:
       tags:
         - v*
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-gcloud:
+      name: 🐳 job image gcloud
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image gcloud
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     llm-deploy-stage:
       name: llm 🚀 Deploy | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-llm
         url: \${{ steps.main.outputs.url }}
@@ -295,7 +620,7 @@ catladder-release.yml:
         CL_stage_llm_HF_TOKEN: \${{ secrets.CL_stage_llm_HF_TOKEN }}
         CL_stage_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -409,8 +734,13 @@ catladder-release.yml:
     llm-deploy-prod:
       name: llm 🚀 Deploy | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-llm
         url: \${{ steps.main.outputs.url }}
@@ -418,7 +748,7 @@ catladder-release.yml:
         CL_prod_llm_HF_TOKEN: \${{ secrets.CL_prod_llm_HF_TOKEN }}
         CL_prod_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -535,20 +865,128 @@ catladder-review-stop.yml:
     pull_request:
       types:
         - closed
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-gcloud:
+      name: 🐳 job image gcloud
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image gcloud
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     llm-stop-review:
       name: llm 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: review-pr\${{ github.event.number }}-llm
       env:
         CL_review_llm_HF_TOKEN: \${{ secrets.CL_review_llm_HF_TOKEN }}
         CL_review_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -605,20 +1043,128 @@ catladder-manual.yml:
             - create-release
             - llm-stop-stage
             - llm-stop-prod
+  permissions:
+    contents: read
+    packages: write
   env: *a1
   jobs:
+    job-image-gcloud:
+      name: 🐳 job image gcloud
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image gcloud
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+            collapseable_section_end "docker-push"
+          shell: bash
+    job-image-semantic-release:
+      name: 🐳 job image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 job image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+            collapseable_section_end "docker-push"
+          shell: bash
     llm-stop-dev:
       name: llm 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: dev-llm
       env:
         CL_dev_llm_HF_TOKEN: \${{ secrets.CL_dev_llm_HF_TOKEN }}
         CL_dev_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -663,9 +1209,14 @@ catladder-manual.yml:
       name: create release
       runs-on: ubuntu-latest
       container:
-        image: path/to/docker/semantic-release:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:96e4371b01df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       permissions:
         contents: write
+      needs:
+        - job-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
       steps:
@@ -680,15 +1231,20 @@ catladder-manual.yml:
     llm-stop-stage:
       name: llm 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: stage-llm
       env:
         CL_stage_llm_HF_TOKEN: \${{ secrets.CL_stage_llm_HF_TOKEN }}
         CL_stage_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -732,15 +1288,20 @@ catladder-manual.yml:
     llm-stop-prod:
       name: llm 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
       container:
-        image: path/to/docker/gcloud:the-version
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       environment:
         name: prod-llm
       env:
         CL_prod_llm_HF_TOKEN: \${{ secrets.CL_prod_llm_HF_TOKEN }}
         CL_prod_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_llm_GCLOUD_DEPLOY_credentialsKey }}
         CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix }}
-        CL_JOB_IMAGE: path/to/docker/gcloud:the-version
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
           id: main

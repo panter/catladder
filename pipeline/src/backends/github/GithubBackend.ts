@@ -7,7 +7,17 @@ import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 import type { CatladderJob } from "../../types/jobs";
 import type { PipelineBackend, PipelineFile } from "../types";
 import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
-import { getUploadProviderIds, makeGithubJob } from "./createGithubJobs";
+import {
+  getUploadProviderIds,
+  githubGlobalJobId,
+  makeGithubJob,
+} from "./createGithubJobs";
+import {
+  getJobImagesMode,
+  JobImagesPlan,
+} from "../../customImages/jobImagesPlan";
+import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
+import { notNil } from "../../utils";
 import { getGithubReleaseJobs } from "./githubReleaseJobs";
 
 const WORKFLOWS_FOLDER = ".github/workflows";
@@ -54,12 +64,21 @@ export class GithubBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const workflows = await this.createWorkflows(config);
+    const images = this.createImagesPlan(config);
+    const workflows = await this.createWorkflows(config, images);
 
-    return Object.entries(workflows).map(([fileName, workflow]) => ({
-      path: join(WORKFLOWS_FOLDER, fileName),
-      content: workflow as unknown as Record<string, unknown>,
-    }));
+    return [
+      ...Object.entries(workflows).map(([fileName, workflow]) => ({
+        path: join(WORKFLOWS_FOLDER, fileName),
+        content: workflow as unknown as Record<string, unknown>,
+      })),
+      // materialized image definitions (repo mode)
+      ...images.getGeneratedFiles(),
+    ];
+  }
+
+  private createImagesPlan(config: Config): JobImagesPlan {
+    return new JobImagesPlan(getJobImagesMode(config, this.type), this.type);
   }
 
   /**
@@ -67,6 +86,7 @@ export class GithubBackend implements PipelineBackend {
    */
   async createWorkflows(
     config: Config,
+    images: JobImagesPlan = this.createImagesPlan(config),
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};
 
@@ -92,6 +112,7 @@ export class GithubBackend implements PipelineBackend {
               job,
               allJobs,
               uploadProviderIds,
+              images,
             );
             if (isReviewStopJob(context, job)) {
               reviewStopJobs[id] = githubJob;
@@ -104,7 +125,11 @@ export class GithubBackend implements PipelineBackend {
       );
 
       if (trigger === "mainBranch") {
-        const releaseJobs = getGithubReleaseJobs(config, Object.keys(jobs));
+        const releaseJobs = getGithubReleaseJobs(
+          config,
+          Object.keys(jobs),
+          images,
+        );
         Object.assign(jobs, releaseJobs.main);
         Object.assign(manualJobs, releaseJobs.manual);
       }
@@ -112,8 +137,9 @@ export class GithubBackend implements PipelineBackend {
       if (Object.keys(jobs).length > 0) {
         workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] = {
           ...TRIGGER_WORKFLOWS[trigger],
+          ...workflowPermissions(images),
           env: GITHUB_INJECTED_WORKFLOW_ENV,
-          jobs,
+          jobs: { ...makeEnsureImageGithubJobs(images), ...jobs },
         };
       }
     }
@@ -122,8 +148,9 @@ export class GithubBackend implements PipelineBackend {
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = {
         name: "catladder review stop",
         on: { pull_request: { types: ["closed"] } },
+        ...workflowPermissions(images),
         env: GITHUB_INJECTED_WORKFLOW_ENV,
-        jobs: reviewStopJobs,
+        jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
       };
     }
 
@@ -142,19 +169,61 @@ export class GithubBackend implements PipelineBackend {
             },
           },
         },
+        ...workflowPermissions(images),
         env: GITHUB_INJECTED_WORKFLOW_ENV,
-        jobs: Object.fromEntries(
-          Object.entries(manualJobs).map(([id, job]) => [
-            id,
-            { ...job, if: `\${{ inputs.job == '${id}' }}` },
-          ]),
-        ),
+        jobs: {
+          ...makeEnsureImageGithubJobs(images),
+          ...Object.fromEntries(
+            Object.entries(manualJobs).map(([id, job]) => [
+              id,
+              { ...job, if: `\${{ inputs.job == '${id}' }}` },
+            ]),
+          ),
+        },
       };
     }
 
     return workflows;
   }
 }
+
+/**
+ * repo mode needs packages:write for pushing job images to ghcr
+ */
+const workflowPermissions = (images: JobImagesPlan) =>
+  images.mode === "repo"
+    ? { permissions: { contents: "read", packages: "write" } }
+    : {};
+
+/**
+ * the image build jobs: always run (github has no server-side
+ * changes-filter), the existence check makes unchanged runs fast.
+ * Docker is native on github runners — no container, no dind.
+ */
+const makeEnsureImageGithubJobs = (
+  images: JobImagesPlan,
+): Record<string, GithubJob> =>
+  Object.fromEntries(
+    images.getEnsureJobs().map((job) => [
+      githubGlobalJobId(job.name),
+      {
+        name: job.name,
+        "runs-on": "ubuntu-latest",
+        steps: [
+          { name: "Checkout", uses: "actions/checkout@v4" },
+          {
+            name: job.name,
+            id: "main",
+            run: [
+              ...getGithubScriptFunctionDefinitions(),
+              ...(job.script?.filter(notNil) ?? []),
+            ].join("\n"),
+            shell: "bash",
+          },
+        ],
+      } satisfies GithubJob,
+    ]),
+  );
 
 const workflowFileName = (trigger: PipelineTrigger): string => {
   switch (trigger) {

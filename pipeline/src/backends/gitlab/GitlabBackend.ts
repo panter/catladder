@@ -16,6 +16,10 @@ import type {
 } from "../../types";
 import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
 import { createAllJobs } from "../../pipeline/createAllJobs";
+import {
+  getJobImagesMode,
+  JobImagesPlan,
+} from "../../customImages/jobImagesPlan";
 import type { PipelineBackend, PipelineFile } from "../types";
 import type { GitlabJobWithContext } from "./createGitlabJobs";
 import { createGitlabJobs } from "./createGitlabJobs";
@@ -38,7 +42,8 @@ export class GitlabBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const includes = await this.createIncludes(config);
+    const images = this.createImagesPlan(config);
+    const includes = await this.createIncludes(config, images);
 
     const mainFile: PipelineFile = {
       path: ".gitlab-ci.yml",
@@ -47,7 +52,16 @@ export class GitlabBackend implements PipelineBackend {
       },
     };
 
-    return [mainFile, ...includes];
+    return [
+      mainFile,
+      ...includes,
+      // materialized image definitions (repo mode)
+      ...images.getGeneratedFiles(),
+    ];
+  }
+
+  private createImagesPlan(config: Config): JobImagesPlan {
+    return new JobImagesPlan(getJobImagesMode(config, this.type), this.type);
   }
 
   /**
@@ -57,19 +71,26 @@ export class GitlabBackend implements PipelineBackend {
   async createCompletePipeline(
     config: Config,
   ): Promise<Record<string, unknown>> {
-    const includes = await this.createIncludes(config);
+    const includes = await this.createIncludes(
+      config,
+      this.createImagesPlan(config),
+    );
 
     return includes.reduce((acc, { content }) => {
       return {
         ...acc,
-        ...content, // merge all includes into one object
+        // includes are always yaml objects
+        ...(content as Record<string, unknown>), // merge all includes into one object
       };
     }, {});
   }
 
-  private async createIncludes(config: Config): Promise<PipelineFile[]> {
+  private async createIncludes(
+    config: Config,
+    images: JobImagesPlan,
+  ): Promise<PipelineFile[]> {
     const { jobs, image, stages, variables, workflow, ...pipelineRest } =
-      await this.createPipeline(config);
+      await this.createPipeline(config, images);
     // we will create 1 include per component or workspace
     // this is for better readability in git diffs and to avoid problems with yaml files beeing too large
     // group by context
@@ -109,7 +130,10 @@ export class GitlabBackend implements PipelineBackend {
     return [mainInclude, ...componentIncludes];
   }
 
-  private async createPipeline(config: Config): Promise<Pipeline<"gitlab">> {
+  private async createPipeline(
+    config: Config,
+    images: JobImagesPlan,
+  ): Promise<Pipeline<"gitlab">> {
     const stages = getPipelineStages(config);
 
     // for all triggers create jobs and add base rules
@@ -118,6 +142,7 @@ export class GitlabBackend implements PipelineBackend {
         async (trigger) =>
           await createGitlabJobs(
             await createAllJobs({ config, trigger, pipelineType: this.type }),
+            images,
             getGitlabRulesForTrigger(trigger),
           ),
       ),
