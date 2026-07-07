@@ -17,11 +17,20 @@ export type CustomImageHashResult = {
   watchedPaths: string[];
 };
 
+const IGNORED_FILES = new Set([".DS_Store", "Thumbs.db"]);
+const isIgnoredFile = (path: string) =>
+  IGNORED_FILES.has(path.split("/").pop() ?? "");
+
 function listFilesRecursive(dir: string): string[] {
   const resolved = resolve(dir);
   const entries = readdirSync(resolved, { recursive: true, encoding: "utf-8" });
   return entries
     .filter((entry) => {
+      if (isIgnoredFile(entry)) {
+        // OS junk files exist locally but not in CI checkouts — they
+        // must never influence the content hash
+        return false;
+      }
       const fullPath = join(resolved, entry);
       return statSync(fullPath).isFile();
     })

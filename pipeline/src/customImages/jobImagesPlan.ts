@@ -202,7 +202,14 @@ export class JobImagesPlan {
   }
 }
 
+const IGNORED_FILES = new Set([".DS_Store", "Thumbs.db"]);
+
 const listFilesRecursive = (dir: string): string[] =>
   readdirSync(dir, { recursive: true, encoding: "utf-8" })
-    .filter((entry) => statSync(join(dir, entry)).isFile())
+    .filter(
+      (entry) =>
+        // OS junk files exist locally but not in CI checkouts
+        !IGNORED_FILES.has(entry.split("/").pop() ?? "") &&
+        statSync(join(dir, entry)).isFile(),
+    )
     .sort();

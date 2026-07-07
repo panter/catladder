@@ -205,16 +205,16 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -665,7 +665,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
         - api-test-dev
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -675,7 +675,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
       env:
         CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
         CL_dev_api_cloudsqlProxyCredentials: \${{ secrets.CL_dev_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1018,16 +1018,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -1478,7 +1478,7 @@ catladder-review.yml:
         - api-test-review
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1488,7 +1488,7 @@ catladder-review.yml:
       env:
         CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
         CL_review_api_cloudsqlProxyCredentials: \${{ secrets.CL_review_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1827,16 +1827,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -2081,7 +2081,7 @@ catladder-release.yml:
         - api-docker-stage
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2091,7 +2091,7 @@ catladder-release.yml:
       env:
         CL_stage_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_api_POSTGRESQL_PASSWORD }}
         CL_stage_api_cloudsqlProxyCredentials: \${{ secrets.CL_stage_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2422,7 +2422,7 @@ catladder-release.yml:
         - api-docker-prod
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2432,7 +2432,7 @@ catladder-release.yml:
       env:
         CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
         CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2770,16 +2770,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -2838,7 +2838,7 @@ catladder-review-stop.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2847,7 +2847,7 @@ catladder-review-stop.yml:
       env:
         CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
         CL_review_api_cloudsqlProxyCredentials: \${{ secrets.CL_review_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3118,16 +3118,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -3186,7 +3186,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3195,7 +3195,7 @@ catladder-manual.yml:
       env:
         CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
         CL_dev_api_cloudsqlProxyCredentials: \${{ secrets.CL_dev_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3262,7 +3262,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3271,7 +3271,7 @@ catladder-manual.yml:
       env:
         CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
         CL_dev_api_cloudsqlProxyCredentials: \${{ secrets.CL_dev_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3361,7 +3361,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3370,7 +3370,7 @@ catladder-manual.yml:
       env:
         CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
         CL_review_api_cloudsqlProxyCredentials: \${{ secrets.CL_review_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3437,7 +3437,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3446,7 +3446,7 @@ catladder-manual.yml:
       env:
         CL_stage_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_api_POSTGRESQL_PASSWORD }}
         CL_stage_api_cloudsqlProxyCredentials: \${{ secrets.CL_stage_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3513,7 +3513,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3522,7 +3522,7 @@ catladder-manual.yml:
       env:
         CL_stage_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_api_POSTGRESQL_PASSWORD }}
         CL_stage_api_cloudsqlProxyCredentials: \${{ secrets.CL_stage_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3589,7 +3589,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3598,7 +3598,7 @@ catladder-manual.yml:
       env:
         CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
         CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3665,7 +3665,7 @@ catladder-manual.yml:
       needs:
         - job-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3674,7 +3674,7 @@ catladder-manual.yml:
       env:
         CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
         CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:cf440ff54b13
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
