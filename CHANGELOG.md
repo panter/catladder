@@ -1,3 +1,10 @@
+## [4.6.1](https://git.panter.ch/catladder/catladder/compare/v4.6.0...v4.6.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* body broke in http schedules ([3707c6a](https://git.panter.ch/catladder/catladder/commit/3707c6a08267b03658eb3574a08a6757b540754c))
+
 # [4.6.0](https://git.panter.ch/catladder/catladder/compare/v4.5.1...v4.6.0) (2026-06-30)
 
 
