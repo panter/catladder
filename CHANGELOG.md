@@ -1,3 +1,10 @@
+## [4.6.2](https://git.panter.ch/catladder/catladder/compare/v4.6.1...v4.6.2) (2026-07-07)
+
+
+### Bug Fixes
+
+* **cloudRun:** correct headers flag for http scheduler updates ([14ffda6](https://git.panter.ch/catladder/catladder/commit/14ffda6e1903fc2e6949431fdc61ce287280c613))
+
 ## [4.6.1](https://git.panter.ch/catladder/catladder/compare/v4.6.0...v4.6.1) (2026-07-07)
 
 
