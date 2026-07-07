@@ -27,7 +27,7 @@
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03 -f .catladder-generated/images/agent-claude/Dockerfile .catladder-generated/images
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03 -f .catladder-generated/images/agent-claude/Dockerfile .catladder-generated/images/agent-claude
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
     - docker push $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03

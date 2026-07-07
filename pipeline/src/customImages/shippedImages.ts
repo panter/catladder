@@ -15,6 +15,26 @@ export const RUNNER_IMAGE_DEPENDENCIES: Partial<
 };
 
 /**
+ * the docker build context of each image, mirroring the central image
+ * builds: the jobs family builds from the images root (their
+ * Dockerfiles INCLUDE sibling images), the others from their own dir
+ * (their COPY paths are relative to it)
+ */
+export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
+  RunnerImageName,
+  "root" | "self"
+> = {
+  "jobs-default": "root",
+  "jobs-meteor": "root",
+  "jobs-testing-chrome": "root",
+  kubernetes: "self",
+  "docker-build": "self",
+  gcloud: "self",
+  "semantic-release": "self",
+  "agent-claude": "self",
+};
+
+/**
  * the directory containing the image definitions shipped with the
  * package (copied into dist at build time; the repository layout is
  * the fallback for development and tests)

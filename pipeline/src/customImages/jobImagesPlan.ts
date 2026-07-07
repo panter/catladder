@@ -8,7 +8,11 @@ import type { Config, GitlabJobImage, PipelineType } from "../types";
 import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { computeCustomImageHash } from "./hash";
-import { getShippedImageDir, RUNNER_IMAGE_DEPENDENCIES } from "./shippedImages";
+import {
+  getShippedImageDir,
+  RUNNER_IMAGE_BUILD_CONTEXT,
+  RUNNER_IMAGE_DEPENDENCIES,
+} from "./shippedImages";
 
 const GENERATED_IMAGES_FOLDER = ".catladder-generated/images";
 
@@ -176,7 +180,11 @@ export class JobImagesPlan {
           "docker-build",
           "Building image",
         )([
-          `DOCKER_BUILDKIT=1 docker build -t ${imageRef} -f ${GENERATED_IMAGES_FOLDER}/${name}/Dockerfile ${GENERATED_IMAGES_FOLDER}`,
+          `DOCKER_BUILDKIT=1 docker build -t ${imageRef} -f ${GENERATED_IMAGES_FOLDER}/${name}/Dockerfile ${
+            RUNNER_IMAGE_BUILD_CONTEXT[name] === "root"
+              ? GENERATED_IMAGES_FOLDER
+              : `${GENERATED_IMAGES_FOLDER}/${name}`
+          }`,
         ]),
         ...collapseableSection(
           "docker-push",
