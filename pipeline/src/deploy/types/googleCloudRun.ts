@@ -630,7 +630,11 @@ export type DeployConfigCloudRunExecuteHttp = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "PURGE";
 
   /**
-   * the body to send
+   * the body to send.
+   *
+   * When a body is set and no `Content-Type` header is provided, it defaults to
+   * `application/json` (Cloud Scheduler would otherwise fall back to
+   * `application/octet-stream`).
    */
   body?: string;
 

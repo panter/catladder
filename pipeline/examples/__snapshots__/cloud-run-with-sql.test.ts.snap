@@ -498,9 +498,9 @@ before_script:
       current_job_uri="\${ROOT_URL}/myEndpoint"
       current_scheduler_name="pan-test-app-dev-api-call-http-endpoint"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --update-headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       fi
     - |-
       exist_job_names="$(
@@ -1003,9 +1003,9 @@ before_script:
       current_job_uri="\${ROOT_URL}/myEndpoint"
       current_scheduler_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-call-http-endpoint"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --update-headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       fi
     - |-
       exist_job_names="$(
@@ -1410,9 +1410,9 @@ before_script:
       current_job_uri="\${ROOT_URL}/myEndpoint"
       current_scheduler_name="pan-test-app-stage-api-call-http-endpoint"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --update-headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       fi
     - |-
       exist_job_names="$(
@@ -1796,9 +1796,9 @@ before_script:
       current_job_uri="\${ROOT_URL}/myEndpoint"
       current_scheduler_name="pan-test-app-prod-api-call-http-endpoint"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --update-headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --http-method=GET --oidc-service-account-email="$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0 --headers="Content-Type=application/json,Authorization=Bearer \${MY_TOKEN}"
       fi
     - |-
       exist_job_names="$(
