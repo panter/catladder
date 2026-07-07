@@ -15,6 +15,8 @@ const config: Config = {
   releases: {
     when: "auto",
   },
+  // dogfood the repo-built job images (MR !399) on gitlab
+  jobImages: "repo",
   components: {}, // currently we use custom gitlab
   hooks: {
     transformYamlBeforeWrite: async ({ filename, data }) => {
