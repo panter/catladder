@@ -1,4 +1,5 @@
 import type { UnspecifiedEnvVars } from "..";
+import type { CatladderImageRef } from "../runner";
 import type { CacheConfig } from "../build/types";
 import { removeUndefined } from "../utils/removeUndefined";
 import type {
@@ -198,9 +199,11 @@ export type GitlabJobFields = {
   services?: GitlabJobDef["services"];
 
   /**
-   * image to use
+   * image to use: a concrete image or a reference to a
+   * catladder-provided job image (resolved by the backend according to
+   * the `jobImages` mode)
    */
-  image?: GitlabJobImage;
+  image?: GitlabJobImage | CatladderImageRef;
 
   /**
    * whether failures are allowed

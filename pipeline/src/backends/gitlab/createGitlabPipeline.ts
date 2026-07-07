@@ -1,4 +1,4 @@
-import { getRunnerImage } from "../../runner";
+import { getCentralRunnerImageUrl } from "../../runner";
 import type { Pipeline } from "../../types";
 import { globalScriptFunctions } from "../../globalScriptFunctions";
 import {
@@ -18,7 +18,7 @@ export const createGitlabPipelineWithDefaults = ({
   "stages" | "jobs"
 >): Pipeline<"gitlab"> => {
   return {
-    image: image ?? getRunnerImage("jobs-default"), // default image
+    image: image ?? getCentralRunnerImageUrl("jobs-default"), // default image
     variables: {
       FF_USE_FASTZIP: "true", // enable fastzip - a faster zip implementation that also supports level configuration.
       ARTIFACT_COMPRESSION_LEVEL: "fast", // we value speed over compression

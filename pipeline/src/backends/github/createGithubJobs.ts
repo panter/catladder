@@ -13,6 +13,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { ensureArray, notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
+import { getCentralRunnerImageUrl, isCatladderImageRef } from "../../runner";
 
 /**
  * runner variables that only make sense on gitlab runners and must not
@@ -204,12 +205,15 @@ export const makeGithubJob = (
 
   const needs = resolveGithubNeeds(context, job, allJobs);
 
+  const resolvedImage = isCatladderImageRef(job.image)
+    ? getCentralRunnerImageUrl(job.image.catladderImage)
+    : job.image;
   const image =
-    typeof job.image === "string"
-      ? job.image
-      : Array.isArray(job.image)
-        ? job.image[0]
-        : job.image?.name;
+    typeof resolvedImage === "string"
+      ? resolvedImage
+      : Array.isArray(resolvedImage)
+        ? resolvedImage[0]
+        : resolvedImage?.name;
 
   const runScript = [
     ...getGithubScriptFunctionDefinitions(),

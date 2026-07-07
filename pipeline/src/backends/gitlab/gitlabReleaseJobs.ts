@@ -5,7 +5,7 @@ import {
   RULE_NEVER_ON_RELEASE_COMMIT,
   RULE_NEVER_ON_SCHEDULE,
 } from "../../rules";
-import { getRunnerImage } from "../../runner";
+import { getCentralRunnerImageUrl } from "../../runner";
 import type { Config } from "../../types/config";
 import type { GitlabRule } from "../../types";
 
@@ -21,7 +21,7 @@ export const getGitlabReleaseJobs = (config: Config) => {
   return {
     ["create release"]: {
       stage: "release",
-      image: getRunnerImage("semantic-release"),
+      image: getCentralRunnerImageUrl("semantic-release"),
       script: ["semanticRelease"],
       after_script: [EXPIRED_TOKEN_HELP],
       rules: [
@@ -38,7 +38,7 @@ export const getGitlabReleaseJobs = (config: Config) => {
     },
     ["⚠️ force create release"]: {
       stage: "release",
-      image: getRunnerImage("semantic-release"),
+      image: getCentralRunnerImageUrl("semantic-release"),
       script: ["semanticRelease"],
       after_script: [EXPIRED_TOKEN_HELP],
       needs: [],

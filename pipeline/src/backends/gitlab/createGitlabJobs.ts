@@ -14,6 +14,7 @@ import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
+import { getCentralRunnerImageUrl, isCatladderImageRef } from "../../runner";
 import type { AllCatladderJobs } from "../../pipeline/createAllJobs";
 import { getBashVariable } from "../../bash/BashExpression";
 import { addCacheFallback } from "./cache";
@@ -122,8 +123,15 @@ export const makeGitlabJob = (
     allow_failure: jobAllowFailure,
     cache: jobCache,
     caches,
+    image: jobImage,
     ...rest
   } = job;
+
+  // catladder image references resolve according to the jobImages mode
+  // (repo mode lands with the image build mechanism; central for now)
+  const image = isCatladderImageRef(jobImage)
+    ? getCentralRunnerImageUrl(jobImage.catladderImage)
+    : jobImage;
 
   // the neutral `gate` translates to gitlab's when/allow_failure;
   // explicitly set gitlab fields take precedence
@@ -212,6 +220,7 @@ export const makeGitlabJob = (
     retry: BASE_RETRY,
     interruptible: true,
     ...rest,
+    image,
     allow_failure,
     cache: cache ? addCacheFallback(cache, context) : undefined,
     rules: rules.length > 0 ? rules : undefined,

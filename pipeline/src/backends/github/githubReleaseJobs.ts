@@ -1,11 +1,11 @@
-import { getRunnerImage } from "../../runner";
+import { getCentralRunnerImageUrl } from "../../runner";
 import type { Config } from "../../types";
 import type { GithubJob } from "../../types/github-types";
 
 const createReleaseJob = (needs?: string[]): GithubJob => ({
   name: "create release",
   "runs-on": "ubuntu-latest",
-  container: { image: getRunnerImage("semantic-release") },
+  container: { image: getCentralRunnerImageUrl("semantic-release") },
   // semantic-release pushes the version tag and release commit
   permissions: { contents: "write" },
   ...(needs && needs.length > 0 ? { needs } : {}),
