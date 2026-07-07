@@ -14,6 +14,7 @@ import { ensureArray, notNil } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
+import type { GithubScriptFiles } from "./scriptFiles";
 
 /**
  * runner variables that only make sense on gitlab runners and must not
@@ -200,6 +201,7 @@ export const makeGithubJob = (
   allJobs: AllCatladderJobs,
   uploadProviderIds: Set<string>,
   images: JobImagesPlan,
+  scripts: GithubScriptFiles,
 ): [id: string, githubJob: GithubJob] => {
   const id = githubJobId(context, job.name);
   const isComponent = context.type === "component";
@@ -235,6 +237,15 @@ export const makeGithubJob = (
     ...(job.script?.filter(notNil) ?? []),
     ...(createsJobEnv ? [`echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"`] : []),
   ].join("\n");
+
+  // scripts live in committed files to keep workflows under github's
+  // 512 KB limit. Two classes of jobs must keep their script inline:
+  // jobs without a checkout have no repo files, and `${{ }}` expressions
+  // are only interpolated inside the workflow file itself.
+  const run =
+    skipCheckout || runScript.includes("${{")
+      ? runScript
+      : scripts.add(id, runScript);
 
   const artifactPaths = job.artifacts?.paths ?? [];
 
@@ -321,7 +332,7 @@ export const makeGithubJob = (
       {
         name: job.name,
         id: "main",
-        run: runScript,
+        run,
         shell: "bash",
       },
       ...(uploadProviderIds.has(id) || artifactPaths.length > 0

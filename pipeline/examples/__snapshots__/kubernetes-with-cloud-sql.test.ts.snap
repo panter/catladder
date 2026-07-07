@@ -236,37 +236,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
           uses: actions/checkout@v4
         - name: 🛡 audit
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_PATH="api"
-            collapseable_section_end "injectvars"
-            cd api
-            yarn npm audit --environment production --severity critical
+          run: bash .catladder-generated/github/scripts/api-audit-dev.sh
           shell: bash
     api-lint-dev:
       name: api 👮 lint | dev
@@ -301,48 +271,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
             restore-keys: api-node-modules-
         - name: 👮 lint
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_PATH="api"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn lint
+          run: bash .catladder-generated/github/scripts/api-lint-dev.sh
           shell: bash
     api-test-dev:
       name: api 🧪 test | dev
@@ -377,48 +306,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
             restore-keys: api-node-modules-
         - name: 🧪 test
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_PATH="api"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn test
+          run: bash .catladder-generated/github/scripts/api-test-dev.sh
           shell: bash
     api-app-dev:
       name: api 🔨 app | dev
@@ -453,64 +341,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="dev"
-            export APP_DIR="api"
-            export ENV_TYPE="dev"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.dev.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.dev.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-dev"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            collapseable_section_end "injectvars"
-            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn build
+          run: bash .catladder-generated/github/scripts/api-app-dev.sh
           shell: bash
         - name: Upload artifacts
           uses: actions/upload-artifact@v4
@@ -547,62 +378,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
             name: api-app-dev
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="api"
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="dev/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
-            COPY --chown=node:node $APP_DIR .
-            RUN yarn plugin import workspace-tools
-            RUN yarn workspaces focus --production
-            RUN yarn rebuild"
-            export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-            COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-            COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-            COPY --chown=node:node .yarn /app/.yarn"
-            collapseable_section_end "injectvars"
-            ensureNodeDockerfile
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "docker-build" "Docker build"
-            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Docker push and tag"
-            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
-            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
-            docker push $DOCKER_CACHE_IMAGE
-            collapseable_section_end "docker-push"
+          run: bash .catladder-generated/github/scripts/api-docker-dev.sh
           shell: bash
     api-deploy-dev:
       name: api 🚀 Deploy | dev
@@ -631,138 +407,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="dev"
-            export APP_DIR="api"
-            export ENV_TYPE="dev"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.dev.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.dev.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-dev"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="dev/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-dev-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"
-            kubectl config use-context "kube-pan-test-app-dev-api"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_dev_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_dev_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  dev
-                APP_DIR: |-
-                  api
-                ENV_TYPE: |-
-                  dev
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                HOSTNAME: |-
-                  api.dev.test-app.pan.panter.cloud
-                ROOT_URL: |-
-                  https://api.dev.test-app.pan.panter.cloud
-                HOSTNAME_INTERNAL: |-
-                  api.dev.test-app.pan.panter.cloud
-                ROOT_URL_INTERNAL: |-
-                  https://api.dev.test-app.pan.panter.cloud
-                KUBE_NAMESPACE: |-
-                  pan-test-app-dev
-                KUBE_APP_NAME: |-
-                  api
-                KUBE_APP_NAME_PREFIX: ""
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
-            application:
-              host: |-
-                api.dev.test-app.pan.panter.cloud
-              command: |-
-                yarn start
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_dev_api_cloudsqlProxyCredentials
-              fullDbName: |-
-                pan-test-app-dev-api
-              type: |-
-                unmanaged
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/api-deploy-dev.sh
           shell: bash
 catladder-review.yml:
   name: catladder review
@@ -999,37 +644,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🛡 audit
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_PATH="api"
-            collapseable_section_end "injectvars"
-            cd api
-            yarn npm audit --environment production --severity critical
+          run: bash .catladder-generated/github/scripts/api-audit-review.sh
           shell: bash
     api-lint-review:
       name: api 👮 lint | review
@@ -1064,48 +679,7 @@ catladder-review.yml:
             restore-keys: api-node-modules-
         - name: 👮 lint
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_PATH="api"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn lint
+          run: bash .catladder-generated/github/scripts/api-lint-review.sh
           shell: bash
     api-test-review:
       name: api 🧪 test | review
@@ -1140,48 +714,7 @@ catladder-review.yml:
             restore-keys: api-node-modules-
         - name: 🧪 test
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_PATH="api"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn test
+          run: bash .catladder-generated/github/scripts/api-test-review.sh
           shell: bash
     api-app-review:
       name: api 🔨 app | review
@@ -1216,64 +749,7 @@ catladder-review.yml:
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="review"
-            export APP_DIR="api"
-            export ENV_TYPE="review"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-review"
-            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
-            export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            collapseable_section_end "injectvars"
-            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn build
+          run: bash .catladder-generated/github/scripts/api-app-review.sh
           shell: bash
         - name: Upload artifacts
           uses: actions/upload-artifact@v4
@@ -1310,62 +786,7 @@ catladder-review.yml:
             name: api-app-review
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="api"
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="review/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
-            COPY --chown=node:node $APP_DIR .
-            RUN yarn plugin import workspace-tools
-            RUN yarn workspaces focus --production
-            RUN yarn rebuild"
-            export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-            COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-            COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-            COPY --chown=node:node .yarn /app/.yarn"
-            collapseable_section_end "injectvars"
-            ensureNodeDockerfile
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "docker-build" "Docker build"
-            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Docker push and tag"
-            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
-            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
-            docker push $DOCKER_CACHE_IMAGE
-            collapseable_section_end "docker-push"
+          run: bash .catladder-generated/github/scripts/api-docker-review.sh
           shell: bash
     api-deploy-review:
       name: api 🚀 Deploy | review
@@ -1394,139 +815,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="review"
-            export APP_DIR="api"
-            export ENV_TYPE="review"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-review"
-            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
-            export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="review/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --token="$CL_review_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --namespace="pan-test-app-review"
-            kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                HOSTNAME: |-
-                  $(printf %s "api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                ROOT_URL: |-
-                  $(printf %s "https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                HOSTNAME_INTERNAL: |-
-                  $(printf %s "api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                ROOT_URL_INTERNAL: |-
-                  $(printf %s "https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                KUBE_APP_NAME: |-
-                  $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | sed '1!s/^/      /')
-                KUBE_APP_NAME_PREFIX: |-
-                  $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-" | sed '1!s/^/      /')
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_review_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_review_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  review
-                APP_DIR: |-
-                  api
-                ENV_TYPE: |-
-                  review
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                KUBE_NAMESPACE: |-
-                  pan-test-app-review
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
-            application:
-              host: |-
-                $(printf %s "api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
-              command: |-
-                yarn start
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_review_api_cloudsqlProxyCredentials
-              fullDbName: |-
-                $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | sed '1!s/^/    /')
-              type: |-
-                unmanaged
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/api-deploy-review.sh
           shell: bash
 catladder-release.yml:
   name: catladder release
@@ -1772,64 +1061,7 @@ catladder-release.yml:
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="stage"
-            export APP_DIR="api"
-            export ENV_TYPE="stage"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.stage.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.stage.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-stage"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            collapseable_section_end "injectvars"
-            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn build
+          run: bash .catladder-generated/github/scripts/api-app-stage.sh
           shell: bash
         - name: Upload artifacts
           uses: actions/upload-artifact@v4
@@ -1866,62 +1098,7 @@ catladder-release.yml:
             name: api-app-stage
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="api"
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="stage/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
-            COPY --chown=node:node $APP_DIR .
-            RUN yarn plugin import workspace-tools
-            RUN yarn workspaces focus --production
-            RUN yarn rebuild"
-            export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-            COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-            COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-            COPY --chown=node:node .yarn /app/.yarn"
-            collapseable_section_end "injectvars"
-            ensureNodeDockerfile
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "docker-build" "Docker build"
-            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Docker push and tag"
-            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
-            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
-            docker push $DOCKER_CACHE_IMAGE
-            collapseable_section_end "docker-push"
+          run: bash .catladder-generated/github/scripts/api-docker-stage.sh
           shell: bash
     api-deploy-stage:
       name: api 🚀 Deploy | stage
@@ -1947,138 +1124,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="stage"
-            export APP_DIR="api"
-            export ENV_TYPE="stage"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.stage.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.stage.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-stage"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="stage/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-stage-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"
-            kubectl config use-context "kube-pan-test-app-stage-api"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_stage_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_stage_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  stage
-                APP_DIR: |-
-                  api
-                ENV_TYPE: |-
-                  stage
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                HOSTNAME: |-
-                  api.stage.test-app.pan.panter.cloud
-                ROOT_URL: |-
-                  https://api.stage.test-app.pan.panter.cloud
-                HOSTNAME_INTERNAL: |-
-                  api.stage.test-app.pan.panter.cloud
-                ROOT_URL_INTERNAL: |-
-                  https://api.stage.test-app.pan.panter.cloud
-                KUBE_NAMESPACE: |-
-                  pan-test-app-stage
-                KUBE_APP_NAME: |-
-                  api
-                KUBE_APP_NAME_PREFIX: ""
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
-            application:
-              host: |-
-                api.stage.test-app.pan.panter.cloud
-              command: |-
-                yarn start
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_stage_api_cloudsqlProxyCredentials
-              fullDbName: |-
-                pan-test-app-stage-api
-              type: |-
-                unmanaged
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/api-deploy-stage.sh
           shell: bash
     api-app-prod:
       name: api 🔨 app | prod
@@ -2113,64 +1159,7 @@ catladder-release.yml:
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="prod"
-            export APP_DIR="api"
-            export ENV_TYPE="prod"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.prod.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.prod.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-prod"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            collapseable_section_end "injectvars"
-            echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            cd api
-            collapseable_section_start "nodeinstall" "Ensure node version"
-            if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
-            if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
-            collapseable_section_end "nodeinstall"
-            collapseable_section_start "yarninstall" "Yarn install"
-            yarn install --immutable --inline-builds
-            collapseable_section_end "yarninstall"
-            yarn build
+          run: bash .catladder-generated/github/scripts/api-app-prod.sh
           shell: bash
         - name: Upload artifacts
           uses: actions/upload-artifact@v4
@@ -2207,62 +1196,7 @@ catladder-release.yml:
             name: api-app-prod
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="api"
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="prod/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
-            COPY --chown=node:node $APP_DIR .
-            RUN yarn plugin import workspace-tools
-            RUN yarn workspaces focus --production
-            RUN yarn rebuild"
-            export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-            COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-            COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-            COPY --chown=node:node .yarn /app/.yarn"
-            collapseable_section_end "injectvars"
-            ensureNodeDockerfile
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "docker-build" "Docker build"
-            docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Docker push and tag"
-            docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
-            docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
-            docker push $DOCKER_CACHE_IMAGE
-            collapseable_section_end "docker-push"
+          run: bash .catladder-generated/github/scripts/api-docker-prod.sh
           shell: bash
     api-deploy-prod:
       name: api 🚀 Deploy | prod
@@ -2288,138 +1222,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="prod"
-            export APP_DIR="api"
-            export ENV_TYPE="prod"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.prod.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.prod.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-prod"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
-            export DOCKER_IMAGE_NAME="prod/api"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-prod-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"
-            kubectl config use-context "kube-pan-test-app-prod-api"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_prod_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_prod_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  prod
-                APP_DIR: |-
-                  api
-                ENV_TYPE: |-
-                  prod
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                HOSTNAME: |-
-                  api.prod.test-app.pan.panter.cloud
-                ROOT_URL: |-
-                  https://api.prod.test-app.pan.panter.cloud
-                HOSTNAME_INTERNAL: |-
-                  api.prod.test-app.pan.panter.cloud
-                ROOT_URL_INTERNAL: |-
-                  https://api.prod.test-app.pan.panter.cloud
-                KUBE_NAMESPACE: |-
-                  pan-test-app-prod
-                KUBE_APP_NAME: |-
-                  api
-                KUBE_APP_NAME_PREFIX: ""
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
-            application:
-              host: |-
-                api.prod.test-app.pan.panter.cloud
-              command: |-
-                yarn start
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_prod_api_cloudsqlProxyCredentials
-              fullDbName: |-
-                pan-test-app-prod-api
-              type: |-
-                unmanaged
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
           shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
@@ -3480,6 +2283,1293 @@ catladder-manual.yml:
             kubernetesRollback
           shell: bash
       if: \${{ inputs.job == 'api-rollback-prod' }}
+
+# ===== .catladder-generated/github/scripts/api-audit-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+cd api
+yarn npm audit --environment production --severity critical
+
+# ===== .catladder-generated/github/scripts/api-lint-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn lint
+
+# ===== .catladder-generated/github/scripts/api-test-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn test
+
+# ===== .catladder-generated/github/scripts/api-app-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="dev"
+export APP_DIR="api"
+export ENV_TYPE="dev"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.dev.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.dev.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-dev"
+export KUBE_APP_NAME="api"
+export KUBE_APP_NAME_PREFIX=""
+export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+collapseable_section_end "injectvars"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-docker-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="api"
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="dev/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production
+RUN yarn rebuild"
+export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"
+collapseable_section_end "injectvars"
+ensureNodeDockerfile
+collapseable_section_start "docker-login" "Docker Login"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+collapseable_section_end "docker-login"
+collapseable_section_start "docker-build" "Docker build"
+docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+collapseable_section_end "docker-build"
+collapseable_section_start "docker-push" "Docker push and tag"
+docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+docker push $DOCKER_CACHE_IMAGE
+collapseable_section_end "docker-push"
+
+# ===== .catladder-generated/github/scripts/api-deploy-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="dev"
+export APP_DIR="api"
+export ENV_TYPE="dev"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.dev.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.dev.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-dev"
+export KUBE_APP_NAME="api"
+export KUBE_APP_NAME_PREFIX=""
+export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="dev/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-dev-api"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="api"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"
+kubectl config use-context "kube-pan-test-app-dev-api"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_dev_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_dev_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      dev
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      dev
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    HOSTNAME: |-
+      api.dev.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://api.dev.test-app.pan.panter.cloud
+    HOSTNAME_INTERNAL: |-
+      api.dev.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://api.dev.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-dev
+    KUBE_APP_NAME: |-
+      api
+    KUBE_APP_NAME_PREFIX: ""
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    api.dev.test-app.pan.panter.cloud
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_dev_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-dev-api
+  type: |-
+    unmanaged
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/api-audit-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+cd api
+yarn npm audit --environment production --severity critical
+
+# ===== .catladder-generated/github/scripts/api-lint-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn lint
+
+# ===== .catladder-generated/github/scripts/api-test-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn test
+
+# ===== .catladder-generated/github/scripts/api-app-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="review"
+export APP_DIR="api"
+export ENV_TYPE="review"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-review"
+export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+collapseable_section_end "injectvars"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-docker-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="api"
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="review/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production
+RUN yarn rebuild"
+export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"
+collapseable_section_end "injectvars"
+ensureNodeDockerfile
+collapseable_section_start "docker-login" "Docker Login"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+collapseable_section_end "docker-login"
+collapseable_section_start "docker-build" "Docker build"
+docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+collapseable_section_end "docker-build"
+collapseable_section_start "docker-push" "Docker push and tag"
+docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+docker push $DOCKER_CACHE_IMAGE
+collapseable_section_end "docker-push"
+
+# ===== .catladder-generated/github/scripts/api-deploy-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="review"
+export APP_DIR="api"
+export ENV_TYPE="review"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-review"
+export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="review/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="api"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --token="$CL_review_api_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --namespace="pan-test-app-review"
+kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    HOSTNAME: |-
+      $(printf %s "api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    ROOT_URL: |-
+      $(printf %s "https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    HOSTNAME_INTERNAL: |-
+      $(printf %s "api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    ROOT_URL_INTERNAL: |-
+      $(printf %s "https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    KUBE_APP_NAME: |-
+      $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | sed '1!s/^/      /')
+    KUBE_APP_NAME_PREFIX: |-
+      $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-" | sed '1!s/^/      /')
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_review_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_review_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      review
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      review
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    KUBE_NAMESPACE: |-
+      pan-test-app-review
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    $(printf %s "api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_review_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | sed '1!s/^/    /')
+  type: |-
+    unmanaged
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/api-app-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="stage"
+export APP_DIR="api"
+export ENV_TYPE="stage"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.stage.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.stage.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-stage"
+export KUBE_APP_NAME="api"
+export KUBE_APP_NAME_PREFIX=""
+export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+collapseable_section_end "injectvars"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-docker-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="api"
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="stage/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production
+RUN yarn rebuild"
+export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"
+collapseable_section_end "injectvars"
+ensureNodeDockerfile
+collapseable_section_start "docker-login" "Docker Login"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+collapseable_section_end "docker-login"
+collapseable_section_start "docker-build" "Docker build"
+docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+collapseable_section_end "docker-build"
+collapseable_section_start "docker-push" "Docker push and tag"
+docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+docker push $DOCKER_CACHE_IMAGE
+collapseable_section_end "docker-push"
+
+# ===== .catladder-generated/github/scripts/api-deploy-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="stage"
+export APP_DIR="api"
+export ENV_TYPE="stage"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.stage.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.stage.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-stage"
+export KUBE_APP_NAME="api"
+export KUBE_APP_NAME_PREFIX=""
+export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="stage/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-stage-api"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="api"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"
+kubectl config use-context "kube-pan-test-app-stage-api"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_stage_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_stage_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      stage
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      stage
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    HOSTNAME: |-
+      api.stage.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://api.stage.test-app.pan.panter.cloud
+    HOSTNAME_INTERNAL: |-
+      api.stage.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://api.stage.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-stage
+    KUBE_APP_NAME: |-
+      api
+    KUBE_APP_NAME_PREFIX: ""
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    api.stage.test-app.pan.panter.cloud
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_stage_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-stage-api
+  type: |-
+    unmanaged
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/api-app-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="prod"
+export APP_DIR="api"
+export ENV_TYPE="prod"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.prod.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.prod.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-prod"
+export KUBE_APP_NAME="api"
+export KUBE_APP_NAME_PREFIX=""
+export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+collapseable_section_end "injectvars"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-docker-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="api"
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="prod/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+COPY --chown=node:node $APP_DIR .
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus --production
+RUN yarn rebuild"
+export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
+COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
+COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
+COPY --chown=node:node .yarn /app/.yarn"
+collapseable_section_end "injectvars"
+ensureNodeDockerfile
+collapseable_section_start "docker-login" "Docker Login"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+collapseable_section_end "docker-login"
+collapseable_section_start "docker-build" "Docker build"
+docker build --network host --cache-from $DOCKER_CACHE_IMAGE --tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG -f $APP_DIR/Dockerfile $DOCKER_BUILD_CONTEXT --build-arg BUILDKIT_INLINE_CACHE=1
+collapseable_section_end "docker-build"
+collapseable_section_start "docker-push" "Docker push and tag"
+docker push $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
+docker push $DOCKER_CACHE_IMAGE
+collapseable_section_end "docker-push"
+
+# ===== .catladder-generated/github/scripts/api-deploy-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="prod"
+export APP_DIR="api"
+export ENV_TYPE="prod"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="api.prod.test-app.pan.panter.cloud"
+export ROOT_URL="https://api.prod.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="api.prod.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://api.prod.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-prod"
+export KUBE_APP_NAME="api"
+export KUBE_APP_NAME_PREFIX=""
+export POSTGRESQL_PASSWORD="$CL_prod_api_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_prod_api_cloudsqlProxyCredentials"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/api"
+export DOCKER_IMAGE_NAME="prod/api"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-prod-api"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="api"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-prod-api" --server="$CL_prod_api_KUBE_URL" --certificate-authority <(echo $CL_prod_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-prod-api" --token="$CL_prod_api_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-prod-api" --cluster="kube-pan-test-app-prod-api" --user="kube-pan-test-app-prod-api" --namespace="pan-test-app-prod"
+kubectl config use-context "kube-pan-test-app-prod-api"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_prod_api_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_prod_api_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      prod
+    APP_DIR: |-
+      api
+    ENV_TYPE: |-
+      prod
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    HOSTNAME: |-
+      api.prod.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://api.prod.test-app.pan.panter.cloud
+    HOSTNAME_INTERNAL: |-
+      api.prod.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://api.prod.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-prod
+    KUBE_APP_NAME: |-
+      api
+    KUBE_APP_NAME_PREFIX: ""
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials"]
+application:
+  host: |-
+    api.prod.test-app.pan.panter.cloud
+  command: |-
+    yarn start
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_prod_api_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-prod-api
+  type: |-
+    unmanaged
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 "
 `;
 

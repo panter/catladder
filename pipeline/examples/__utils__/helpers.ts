@@ -4,6 +4,7 @@ import type { Config } from "../../src";
 import {
   getGitlabCompletePipeline,
   GithubBackend,
+  GithubScriptFiles,
   yamlStringifyOptions,
 } from "../../src";
 
@@ -24,6 +25,14 @@ export const createYamlLocalPipeline = async (
 export const createYamlGithubWorkflows = async (
   config: Config,
 ): Promise<string> => {
-  const workflows = await new GithubBackend().createWorkflows(config);
-  return stringify(workflows, yamlStringifyOptions);
+  const backend = new GithubBackend();
+  const scripts = new GithubScriptFiles();
+  const workflows = await backend.createWorkflows(config, undefined, scripts);
+  return [
+    stringify(workflows, yamlStringifyOptions),
+    // the materialized job scripts, so their content stays snapshotted
+    ...scripts
+      .getGeneratedFiles()
+      .map(({ path, content }) => `# ===== ${path} =====\n${content}`),
+  ].join("\n");
 };

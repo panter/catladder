@@ -132,37 +132,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
           uses: actions/checkout@v4
         - name: 🛡 audit
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            collapseable_section_end "injectvars"
-            cd .
-            gem install bundler-audit
-            bundle audit check
+          run: bash .catladder-generated/github/scripts/app-audit-dev.sh
           shell: bash
     app-lint-dev:
       name: app 👮 lint | dev
@@ -179,38 +149,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
           uses: actions/checkout@v4
         - name: 👮 lint
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            collapseable_section_end "injectvars"
-            cd .
-            bundle config set path 'tmp/cache'
-            bundle install -j $(nproc)
-            bundle exec rubocop
+          run: bash .catladder-generated/github/scripts/app-lint-dev.sh
           shell: bash
     app-test-dev:
       name: app 🧪 test | dev
@@ -234,40 +173,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
           uses: actions/checkout@v4
         - name: 🧪 test
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            collapseable_section_end "injectvars"
-            cd .
-            bundle config set path 'tmp/cache'
-            bundle install -j $(nproc)
-            bundle exec rake db:test:prepare
-            bundle exec rake assets:precompile assets:clean
-            bundle exec rspec
+          run: bash .catladder-generated/github/scripts/app-test-dev.sh
           shell: bash
     app-docker-dev:
       name: app 🔨 docker | dev
@@ -285,48 +191,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
           uses: actions/checkout@v4
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="."
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="dev/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            collapseable_section_end "injectvars"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            cd .
-            wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
-            chmod +x /usr/local/bin/pack
-            sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-            pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
-            pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+          run: bash .catladder-generated/github/scripts/app-docker-dev.sh
           shell: bash
     app-deploy-dev:
       name: app 🚀 Deploy | dev
@@ -355,153 +220,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="dev"
-            export APP_DIR="."
-            export ENV_TYPE="dev"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="app.dev.test-app.pan.panter.cloud"
-            export ROOT_URL="https://app.dev.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="app.dev.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://app.dev.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-dev"
-            export KUBE_APP_NAME="app"
-            export KUBE_APP_NAME_PREFIX=""
-            export SECRET_KEY_BASE="$CL_dev_app_SECRET_KEY_BASE"
-            export POSTGRESQL_PASSWORD="$CL_dev_app_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_dev_app_cloudsqlProxyCredentials"
-            export RAILS_ENV="production"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="dev/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-dev-app"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="app"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-dev-app" --cluster="kube-pan-test-app-dev-app" --user="kube-pan-test-app-dev-app" --namespace="pan-test-app-dev"
-            kubectl config use-context "kube-pan-test-app-dev-app"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                SECRET_KEY_BASE: |-
-                  $(printf %s "$CL_dev_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_dev_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_dev_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  dev
-                APP_DIR: |-
-                  .
-                ENV_TYPE: |-
-                  dev
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                HOSTNAME: |-
-                  app.dev.test-app.pan.panter.cloud
-                ROOT_URL: |-
-                  https://app.dev.test-app.pan.panter.cloud
-                HOSTNAME_INTERNAL: |-
-                  app.dev.test-app.pan.panter.cloud
-                ROOT_URL_INTERNAL: |-
-                  https://app.dev.test-app.pan.panter.cloud
-                KUBE_NAMESPACE: |-
-                  pan-test-app-dev
-                KUBE_APP_NAME: |-
-                  app
-                KUBE_APP_NAME_PREFIX: ""
-                RAILS_ENV: |-
-                  production
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
-            application:
-              host: |-
-                app.dev.test-app.pan.panter.cloud
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-              worker:
-                enabled: true
-                command: |-
-                  launcher bundle exec rake jobs:work
-                livenessProbe: false
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_dev_app_cloudsqlProxyCredentials
-              fullDbName: |-
-                pan-test-app-dev-app
-              type: |-
-                unmanaged
-            jobs:
-              db-migrate:
-                hook: |-
-                  post-install,post-upgrade
-                command: |-
-                  launcher bundle exec rake db:migrate
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/app-deploy-dev.sh
           shell: bash
 catladder-review.yml:
   name: catladder review
@@ -634,37 +353,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🛡 audit
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            collapseable_section_end "injectvars"
-            cd .
-            gem install bundler-audit
-            bundle audit check
+          run: bash .catladder-generated/github/scripts/app-audit-review.sh
           shell: bash
     app-lint-review:
       name: app 👮 lint | review
@@ -681,38 +370,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 👮 lint
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            collapseable_section_end "injectvars"
-            cd .
-            bundle config set path 'tmp/cache'
-            bundle install -j $(nproc)
-            bundle exec rubocop
+          run: bash .catladder-generated/github/scripts/app-lint-review.sh
           shell: bash
     app-test-review:
       name: app 🧪 test | review
@@ -736,40 +394,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🧪 test
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            collapseable_section_end "injectvars"
-            cd .
-            bundle config set path 'tmp/cache'
-            bundle install -j $(nproc)
-            bundle exec rake db:test:prepare
-            bundle exec rake assets:precompile assets:clean
-            bundle exec rspec
+          run: bash .catladder-generated/github/scripts/app-test-review.sh
           shell: bash
     app-docker-review:
       name: app 🔨 docker | review
@@ -787,48 +412,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="."
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="review/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            collapseable_section_end "injectvars"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            cd .
-            wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
-            chmod +x /usr/local/bin/pack
-            sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-            pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
-            pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+          run: bash .catladder-generated/github/scripts/app-docker-review.sh
           shell: bash
     app-deploy-review:
       name: app 🚀 Deploy | review
@@ -857,159 +441,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="review"
-            export APP_DIR="."
-            export ENV_TYPE="review"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL="https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-review"
-            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
-            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
-            export SECRET_KEY_BASE="$CL_review_app_SECRET_KEY_BASE"
-            export POSTGRESQL_PASSWORD="$CL_review_app_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_review_app_cloudsqlProxyCredentials"
-            export RAILS_ENV="production"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="review/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="app"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --token="$CL_review_app_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --namespace="pan-test-app-review"
-            kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                HOSTNAME: |-
-                  $(printf %s "app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                ROOT_URL: |-
-                  $(printf %s "https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                HOSTNAME_INTERNAL: |-
-                  $(printf %s "app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                ROOT_URL_INTERNAL: |-
-                  $(printf %s "https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
-                KUBE_APP_NAME: |-
-                  $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" | sed '1!s/^/      /')
-                KUBE_APP_NAME_PREFIX: |-
-                  $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-" | sed '1!s/^/      /')
-                SECRET_KEY_BASE: |-
-                  $(printf %s "$CL_review_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_review_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_review_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  review
-                APP_DIR: |-
-                  .
-                ENV_TYPE: |-
-                  review
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                KUBE_NAMESPACE: |-
-                  pan-test-app-review
-                RAILS_ENV: |-
-                  production
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
-            application:
-              host: |-
-                $(printf %s "app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-              worker:
-                enabled: true
-                command: |-
-                  launcher bundle exec rake jobs:work
-                livenessProbe: false
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_review_app_cloudsqlProxyCredentials
-              fullDbName: |-
-                $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" | sed '1!s/^/    /')
-              type: |-
-                unmanaged
-            jobs:
-              db-migrate:
-                hook: |-
-                  post-upgrade
-                command: |-
-                  launcher bundle exec rake db:migrate
-              db-prepare-seed:
-                hook: |-
-                  post-install
-                command: |-
-                  launcher bundle exec rake db:prepare db:seed
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/app-deploy-review.sh
           shell: bash
 catladder-release.yml:
   name: catladder release
@@ -1138,48 +570,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="."
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="stage/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            collapseable_section_end "injectvars"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            cd .
-            wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
-            chmod +x /usr/local/bin/pack
-            sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-            pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
-            pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+          run: bash .catladder-generated/github/scripts/app-docker-stage.sh
           shell: bash
     app-deploy-stage:
       name: app 🚀 Deploy | stage
@@ -1205,153 +596,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="stage"
-            export APP_DIR="."
-            export ENV_TYPE="stage"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="app.stage.test-app.pan.panter.cloud"
-            export ROOT_URL="https://app.stage.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="app.stage.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://app.stage.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-stage"
-            export KUBE_APP_NAME="app"
-            export KUBE_APP_NAME_PREFIX=""
-            export SECRET_KEY_BASE="$CL_stage_app_SECRET_KEY_BASE"
-            export POSTGRESQL_PASSWORD="$CL_stage_app_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_stage_app_cloudsqlProxyCredentials"
-            export RAILS_ENV="production"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="stage/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-stage-app"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="app"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-stage-app" --cluster="kube-pan-test-app-stage-app" --user="kube-pan-test-app-stage-app" --namespace="pan-test-app-stage"
-            kubectl config use-context "kube-pan-test-app-stage-app"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                SECRET_KEY_BASE: |-
-                  $(printf %s "$CL_stage_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_stage_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_stage_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  stage
-                APP_DIR: |-
-                  .
-                ENV_TYPE: |-
-                  stage
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                HOSTNAME: |-
-                  app.stage.test-app.pan.panter.cloud
-                ROOT_URL: |-
-                  https://app.stage.test-app.pan.panter.cloud
-                HOSTNAME_INTERNAL: |-
-                  app.stage.test-app.pan.panter.cloud
-                ROOT_URL_INTERNAL: |-
-                  https://app.stage.test-app.pan.panter.cloud
-                KUBE_NAMESPACE: |-
-                  pan-test-app-stage
-                KUBE_APP_NAME: |-
-                  app
-                KUBE_APP_NAME_PREFIX: ""
-                RAILS_ENV: |-
-                  production
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
-            application:
-              host: |-
-                app.stage.test-app.pan.panter.cloud
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-              worker:
-                enabled: true
-                command: |-
-                  launcher bundle exec rake jobs:work
-                livenessProbe: false
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_stage_app_cloudsqlProxyCredentials
-              fullDbName: |-
-                pan-test-app-stage-app
-              type: |-
-                unmanaged
-            jobs:
-              db-migrate:
-                hook: |-
-                  post-install,post-upgrade
-                command: |-
-                  launcher bundle exec rake db:migrate
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/app-deploy-stage.sh
           shell: bash
     app-docker-prod:
       name: app 🔨 docker | prod
@@ -1369,48 +614,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🔨 docker
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export APP_DIR="."
-            export DOCKER_BUILD_CONTEXT="."
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="prod/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            collapseable_section_end "injectvars"
-            docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
-            cd .
-            wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
-            chmod +x /usr/local/bin/pack
-            sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
-            pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
-            pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+          run: bash .catladder-generated/github/scripts/app-docker-prod.sh
           shell: bash
     app-deploy-prod:
       name: app 🚀 Deploy | prod
@@ -1436,153 +640,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="prod"
-            export APP_DIR="."
-            export ENV_TYPE="prod"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="my-fancy-website.com"
-            export ROOT_URL="https://my-fancy-website.com"
-            export HOSTNAME_INTERNAL="app.prod.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://app.prod.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-prod"
-            export KUBE_APP_NAME="app"
-            export KUBE_APP_NAME_PREFIX=""
-            export SECRET_KEY_BASE="$CL_prod_app_SECRET_KEY_BASE"
-            export POSTGRESQL_PASSWORD="$CL_prod_app_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_prod_app_cloudsqlProxyCredentials"
-            export RAILS_ENV="production"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
-            export DOCKER_REGISTRY="$CL_REGISTRY"
-            export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
-            export DOCKER_IMAGE_NAME="prod/app"
-            export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export RELEASE_NAME="pan-test-app-prod-app"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="app"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-prod-app" --cluster="kube-pan-test-app-prod-app" --user="kube-pan-test-app-prod-app" --namespace="pan-test-app-prod"
-            kubectl config use-context "kube-pan-test-app-prod-app"
-            collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
-            cat > __all_values.yml <<EOF
-            env:
-              secret:
-                SECRET_KEY_BASE: |-
-                  $(printf %s "$CL_prod_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
-                POSTGRESQL_PASSWORD: |-
-                  $(printf %s "$CL_prod_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
-                cloudsqlProxyCredentials: |-
-                  $(printf %s "$CL_prod_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
-              public:
-                ENV_SHORT: |-
-                  prod
-                APP_DIR: |-
-                  .
-                ENV_TYPE: |-
-                  prod
-                BUILD_INFO_BUILD_ID: |-
-                  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
-                BUILD_INFO_BUILD_TIME: |-
-                  unknown-build-time
-                BUILD_INFO_CURRENT_VERSION: |-
-                  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
-                HOSTNAME: |-
-                  my-fancy-website.com
-                ROOT_URL: |-
-                  https://my-fancy-website.com
-                HOSTNAME_INTERNAL: |-
-                  app.prod.test-app.pan.panter.cloud
-                ROOT_URL_INTERNAL: |-
-                  https://app.prod.test-app.pan.panter.cloud
-                KUBE_NAMESPACE: |-
-                  pan-test-app-prod
-                KUBE_APP_NAME: |-
-                  app
-                KUBE_APP_NAME_PREFIX: ""
-                RAILS_ENV: |-
-                  production
-                _ALL_ENV_VAR_KEYS: |-
-                  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
-            application:
-              host: |-
-                my-fancy-website.com
-              livenessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              readinessProbe:
-                httpGet:
-                  path: |-
-                    __health
-              startupProbe:
-                httpGet:
-                  path: |-
-                    __health
-              worker:
-                enabled: true
-                command: |-
-                  launcher bundle exec rake jobs:work
-                livenessProbe: false
-            cloudsql:
-              enabled: true
-              dbUser: |-
-                postgres
-              instanceConnectionName: |-
-                myproject:europe-west6:instance-name
-              proxyCredentials: |-
-                $CL_prod_app_cloudsqlProxyCredentials
-              fullDbName: |-
-                pan-test-app-prod-app
-              type: |-
-                unmanaged
-            jobs:
-              db-migrate:
-                hook: |-
-                  post-install,post-upgrade
-                command: |-
-                  launcher bundle exec rake db:migrate
-
-            EOF
-
-            collapseable_section_end "writeallvalues"
-            kubernetesCreateSecret
-            kubernetesDeploy
-            echo deployment successful 😻
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/app-deploy-prod.sh
           shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
@@ -2467,6 +1525,1018 @@ catladder-manual.yml:
             kubernetesRollback
           shell: bash
       if: \${{ inputs.job == 'app-rollback-prod' }}
+
+# ===== .catladder-generated/github/scripts/app-audit-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+collapseable_section_end "injectvars"
+cd .
+gem install bundler-audit
+bundle audit check
+
+# ===== .catladder-generated/github/scripts/app-lint-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+collapseable_section_end "injectvars"
+cd .
+bundle config set path 'tmp/cache'
+bundle install -j $(nproc)
+bundle exec rubocop
+
+# ===== .catladder-generated/github/scripts/app-test-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+collapseable_section_end "injectvars"
+cd .
+bundle config set path 'tmp/cache'
+bundle install -j $(nproc)
+bundle exec rake db:test:prepare
+bundle exec rake assets:precompile assets:clean
+bundle exec rspec
+
+# ===== .catladder-generated/github/scripts/app-docker-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="."
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="dev/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+collapseable_section_end "injectvars"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+cd .
+wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
+chmod +x /usr/local/bin/pack
+sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
+pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
+pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+
+# ===== .catladder-generated/github/scripts/app-deploy-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="dev"
+export APP_DIR="."
+export ENV_TYPE="dev"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="app.dev.test-app.pan.panter.cloud"
+export ROOT_URL="https://app.dev.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="app.dev.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://app.dev.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-dev"
+export KUBE_APP_NAME="app"
+export KUBE_APP_NAME_PREFIX=""
+export SECRET_KEY_BASE="$CL_dev_app_SECRET_KEY_BASE"
+export POSTGRESQL_PASSWORD="$CL_dev_app_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_dev_app_cloudsqlProxyCredentials"
+export RAILS_ENV="production"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="dev/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-dev-app"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="app"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-dev-app" --server="$CL_dev_app_KUBE_URL" --certificate-authority <(echo $CL_dev_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-dev-app" --token="$CL_dev_app_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-dev-app" --cluster="kube-pan-test-app-dev-app" --user="kube-pan-test-app-dev-app" --namespace="pan-test-app-dev"
+kubectl config use-context "kube-pan-test-app-dev-app"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    SECRET_KEY_BASE: |-
+      $(printf %s "$CL_dev_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_dev_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_dev_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      dev
+    APP_DIR: |-
+      .
+    ENV_TYPE: |-
+      dev
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    HOSTNAME: |-
+      app.dev.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://app.dev.test-app.pan.panter.cloud
+    HOSTNAME_INTERNAL: |-
+      app.dev.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://app.dev.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-dev
+    KUBE_APP_NAME: |-
+      app
+    KUBE_APP_NAME_PREFIX: ""
+    RAILS_ENV: |-
+      production
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+application:
+  host: |-
+    app.dev.test-app.pan.panter.cloud
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+  worker:
+    enabled: true
+    command: |-
+      launcher bundle exec rake jobs:work
+    livenessProbe: false
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_dev_app_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-dev-app
+  type: |-
+    unmanaged
+jobs:
+  db-migrate:
+    hook: |-
+      post-install,post-upgrade
+    command: |-
+      launcher bundle exec rake db:migrate
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/app-audit-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+collapseable_section_end "injectvars"
+cd .
+gem install bundler-audit
+bundle audit check
+
+# ===== .catladder-generated/github/scripts/app-lint-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+collapseable_section_end "injectvars"
+cd .
+bundle config set path 'tmp/cache'
+bundle install -j $(nproc)
+bundle exec rubocop
+
+# ===== .catladder-generated/github/scripts/app-test-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+collapseable_section_end "injectvars"
+cd .
+bundle config set path 'tmp/cache'
+bundle install -j $(nproc)
+bundle exec rake db:test:prepare
+bundle exec rake assets:precompile assets:clean
+bundle exec rspec
+
+# ===== .catladder-generated/github/scripts/app-docker-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="."
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="review/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+collapseable_section_end "injectvars"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+cd .
+wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
+chmod +x /usr/local/bin/pack
+sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
+pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
+pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+
+# ===== .catladder-generated/github/scripts/app-deploy-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="review"
+export APP_DIR="."
+export ENV_TYPE="review"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export ROOT_URL="https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-review"
+export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
+export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+export SECRET_KEY_BASE="$CL_review_app_SECRET_KEY_BASE"
+export POSTGRESQL_PASSWORD="$CL_review_app_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_review_app_cloudsqlProxyCredentials"
+export RAILS_ENV="production"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="review/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="app"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --server="$CL_review_app_KUBE_URL" --certificate-authority <(echo $CL_review_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --token="$CL_review_app_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" --namespace="pan-test-app-review"
+kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    HOSTNAME: |-
+      $(printf %s "app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    ROOT_URL: |-
+      $(printf %s "https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    HOSTNAME_INTERNAL: |-
+      $(printf %s "app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    ROOT_URL_INTERNAL: |-
+      $(printf %s "https://app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/      /')
+    KUBE_APP_NAME: |-
+      $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" | sed '1!s/^/      /')
+    KUBE_APP_NAME_PREFIX: |-
+      $(printf %s "$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-" | sed '1!s/^/      /')
+    SECRET_KEY_BASE: |-
+      $(printf %s "$CL_review_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_review_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_review_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      review
+    APP_DIR: |-
+      .
+    ENV_TYPE: |-
+      review
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    KUBE_NAMESPACE: |-
+      pan-test-app-review
+    RAILS_ENV: |-
+      production
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+application:
+  host: |-
+    $(printf %s "app.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud" | sed '1!s/^/    /')
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+  worker:
+    enabled: true
+    command: |-
+      launcher bundle exec rake jobs:work
+    livenessProbe: false
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_review_app_cloudsqlProxyCredentials
+  fullDbName: |-
+    $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app" | sed '1!s/^/    /')
+  type: |-
+    unmanaged
+jobs:
+  db-migrate:
+    hook: |-
+      post-upgrade
+    command: |-
+      launcher bundle exec rake db:migrate
+  db-prepare-seed:
+    hook: |-
+      post-install
+    command: |-
+      launcher bundle exec rake db:prepare db:seed
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/app-docker-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="."
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="stage/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+collapseable_section_end "injectvars"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+cd .
+wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
+chmod +x /usr/local/bin/pack
+sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
+pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
+pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+
+# ===== .catladder-generated/github/scripts/app-deploy-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="stage"
+export APP_DIR="."
+export ENV_TYPE="stage"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="app.stage.test-app.pan.panter.cloud"
+export ROOT_URL="https://app.stage.test-app.pan.panter.cloud"
+export HOSTNAME_INTERNAL="app.stage.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://app.stage.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-stage"
+export KUBE_APP_NAME="app"
+export KUBE_APP_NAME_PREFIX=""
+export SECRET_KEY_BASE="$CL_stage_app_SECRET_KEY_BASE"
+export POSTGRESQL_PASSWORD="$CL_stage_app_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_stage_app_cloudsqlProxyCredentials"
+export RAILS_ENV="production"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="stage/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-stage-app"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="app"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-stage-app" --server="$CL_stage_app_KUBE_URL" --certificate-authority <(echo $CL_stage_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-stage-app" --token="$CL_stage_app_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-stage-app" --cluster="kube-pan-test-app-stage-app" --user="kube-pan-test-app-stage-app" --namespace="pan-test-app-stage"
+kubectl config use-context "kube-pan-test-app-stage-app"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    SECRET_KEY_BASE: |-
+      $(printf %s "$CL_stage_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_stage_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_stage_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      stage
+    APP_DIR: |-
+      .
+    ENV_TYPE: |-
+      stage
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    HOSTNAME: |-
+      app.stage.test-app.pan.panter.cloud
+    ROOT_URL: |-
+      https://app.stage.test-app.pan.panter.cloud
+    HOSTNAME_INTERNAL: |-
+      app.stage.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://app.stage.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-stage
+    KUBE_APP_NAME: |-
+      app
+    KUBE_APP_NAME_PREFIX: ""
+    RAILS_ENV: |-
+      production
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+application:
+  host: |-
+    app.stage.test-app.pan.panter.cloud
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+  worker:
+    enabled: true
+    command: |-
+      launcher bundle exec rake jobs:work
+    livenessProbe: false
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_stage_app_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-stage-app
+  type: |-
+    unmanaged
+jobs:
+  db-migrate:
+    hook: |-
+      post-install,post-upgrade
+    command: |-
+      launcher bundle exec rake db:migrate
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/app-docker-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_DIR="."
+export DOCKER_BUILD_CONTEXT="."
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="prod/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+collapseable_section_end "injectvars"
+docker login --username gitlab-ci-token --password $CL_JOB_TOKEN $CL_REGISTRY
+cd .
+wget --output-document=- https://github.com/buildpacks/pack/releases/download/v0.36.4/pack-v0.36.4-linux.tgz | tar -zx --directory /usr/local/bin pack
+chmod +x /usr/local/bin/pack
+sed --in-place 's|git@\\([^:]*\\):|https://\\1/|g' Gemfile Gemfile.lock
+pack config registry-mirrors add index.docker.io --mirror mirror.gcr.io
+pack build "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" --builder 'heroku/builder:24' --publish --cache-image "$DOCKER_CACHE_IMAGE" --env 'SECRET_KEY_BASE=dummy-value' 
+
+# ===== .catladder-generated/github/scripts/app-deploy-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="prod"
+export APP_DIR="."
+export ENV_TYPE="prod"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="my-fancy-website.com"
+export ROOT_URL="https://my-fancy-website.com"
+export HOSTNAME_INTERNAL="app.prod.test-app.pan.panter.cloud"
+export ROOT_URL_INTERNAL="https://app.prod.test-app.pan.panter.cloud"
+export KUBE_NAMESPACE="pan-test-app-prod"
+export KUBE_APP_NAME="app"
+export KUBE_APP_NAME_PREFIX=""
+export SECRET_KEY_BASE="$CL_prod_app_SECRET_KEY_BASE"
+export POSTGRESQL_PASSWORD="$CL_prod_app_POSTGRESQL_PASSWORD"
+export cloudsqlProxyCredentials="$CL_prod_app_cloudsqlProxyCredentials"
+export RAILS_ENV="production"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"SECRET_KEY_BASE\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\",\\"RAILS_ENV\\"]"
+export DOCKER_REGISTRY="$CL_REGISTRY"
+export DOCKER_CACHE_IMAGE="$CL_REGISTRY_IMAGE/caches/app"
+export DOCKER_IMAGE_NAME="prod/app"
+export DOCKER_IMAGE="$CL_REGISTRY_IMAGE/$DOCKER_IMAGE_NAME"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export RELEASE_NAME="pan-test-app-prod-app"
+export HELM_EXPERIMENTAL_OCI="1"
+export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+export HELM_ARGS=""
+export COMPONENT_NAME="app"
+collapseable_section_end "injectvars"
+kubectl config set-cluster "kube-pan-test-app-prod-app" --server="$CL_prod_app_KUBE_URL" --certificate-authority <(echo $CL_prod_app_KUBE_CA_PEM | base64 -d) --embed-certs=true
+kubectl config set-credentials "kube-pan-test-app-prod-app" --token="$CL_prod_app_KUBE_TOKEN"
+kubectl config set-context "kube-pan-test-app-prod-app" --cluster="kube-pan-test-app-prod-app" --user="kube-pan-test-app-prod-app" --namespace="pan-test-app-prod"
+kubectl config use-context "kube-pan-test-app-prod-app"
+collapseable_section_start "writeallvalues" "Write __all_values.yml for helm deployment"
+cat > __all_values.yml <<EOF
+env:
+  secret:
+    SECRET_KEY_BASE: |-
+      $(printf %s "$CL_prod_app_SECRET_KEY_BASE" | sed '1!s/^/      /')
+    POSTGRESQL_PASSWORD: |-
+      $(printf %s "$CL_prod_app_POSTGRESQL_PASSWORD" | sed '1!s/^/      /')
+    cloudsqlProxyCredentials: |-
+      $(printf %s "$CL_prod_app_cloudsqlProxyCredentials" | sed '1!s/^/      /')
+  public:
+    ENV_SHORT: |-
+      prod
+    APP_DIR: |-
+      .
+    ENV_TYPE: |-
+      prod
+    BUILD_INFO_BUILD_ID: |-
+      $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/      /')
+    BUILD_INFO_BUILD_TIME: |-
+      unknown-build-time
+    BUILD_INFO_CURRENT_VERSION: |-
+      $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/      /')
+    HOSTNAME: |-
+      my-fancy-website.com
+    ROOT_URL: |-
+      https://my-fancy-website.com
+    HOSTNAME_INTERNAL: |-
+      app.prod.test-app.pan.panter.cloud
+    ROOT_URL_INTERNAL: |-
+      https://app.prod.test-app.pan.panter.cloud
+    KUBE_NAMESPACE: |-
+      pan-test-app-prod
+    KUBE_APP_NAME: |-
+      app
+    KUBE_APP_NAME_PREFIX: ""
+    RAILS_ENV: |-
+      production
+    _ALL_ENV_VAR_KEYS: |-
+      ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","SECRET_KEY_BASE","POSTGRESQL_PASSWORD","cloudsqlProxyCredentials","RAILS_ENV"]
+application:
+  host: |-
+    my-fancy-website.com
+  livenessProbe:
+    httpGet:
+      path: |-
+        __health
+  readinessProbe:
+    httpGet:
+      path: |-
+        __health
+  startupProbe:
+    httpGet:
+      path: |-
+        __health
+  worker:
+    enabled: true
+    command: |-
+      launcher bundle exec rake jobs:work
+    livenessProbe: false
+cloudsql:
+  enabled: true
+  dbUser: |-
+    postgres
+  instanceConnectionName: |-
+    myproject:europe-west6:instance-name
+  proxyCredentials: |-
+    $CL_prod_app_cloudsqlProxyCredentials
+  fullDbName: |-
+    pan-test-app-prod-app
+  type: |-
+    unmanaged
+jobs:
+  db-migrate:
+    hook: |-
+      post-install,post-upgrade
+    command: |-
+      launcher bundle exec rake db:migrate
+
+EOF
+
+collapseable_section_end "writeallvalues"
+kubernetesCreateSecret
+kubernetesDeploy
+echo deployment successful 😻
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 "
 `;
 

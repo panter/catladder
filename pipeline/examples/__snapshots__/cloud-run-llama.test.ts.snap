@@ -90,110 +90,7 @@ exports[`matches snapshot for cloud-run-llama github workflows YAML 1`] = `
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="dev"
-            export APP_DIR="llm"
-            export ENV_TYPE="dev"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL="https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-dev-llm"
-            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
-            export DEPLOY_CLOUD_RUN_REGION="europe-west4"
-            export HF_TOKEN="$CL_dev_llm_HF_TOKEN"
-            export GCLOUD_DEPLOY_credentialsKey="$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey"
-            export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
-            export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
-            export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm"
-            export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "prepare" "Prepare..."
-            gcloud auth activate-service-account --key-file=<(echo "$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey")
-            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
-            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
-            collapseable_section_end "prepare"
-            collapseable_section_start "writeenvvars" "Write env vars to file"
-            cat > ____envvars.yaml <<EOF
-            ENV_SHORT: |-
-              dev
-            APP_DIR: |-
-              llm
-            ENV_TYPE: |-
-              dev
-            BUILD_INFO_BUILD_ID: |-
-              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
-            BUILD_INFO_BUILD_TIME: |-
-              unknown-build-time
-            BUILD_INFO_CURRENT_VERSION: |-
-              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
-            HOSTNAME: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            HOSTNAME_INTERNAL: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL_INTERNAL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
-              pan-my-ai-app-dev-llm
-            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
-              google-project-id
-            DEPLOY_CLOUD_RUN_REGION: |-
-              europe-west4
-            HF_TOKEN: |-
-              $(printf %s "$CL_dev_llm_HF_TOKEN" | sed '1!s/^/  /')
-            GCLOUD_RUN_canonicalHostSuffix: |-
-              $(printf %s "$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
-            _ALL_ENV_VAR_KEYS: |-
-              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
-
-            EOF
-
-            collapseable_section_end "writeenvvars"
-            collapseable_section_start "deploy" "Deploy to cloud run"
-            gcloud beta run deploy pan-my-ai-app-dev-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=dev,env-name=dev,build-type=disabled,cloud-run-service-name=pan-my-ai-app-dev-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
-            collapseable_section_end "deploy"
-            collapseable_section_start "cleanup" "Cleanup"
-            set +e
-            gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-dev-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm@$version --quiet --delete-tags; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
-            set -e
-            collapseable_section_end "cleanup"
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/llm-deploy-dev.sh
           shell: bash
 catladder-review.yml:
   name: catladder review
@@ -284,113 +181,7 @@ catladder-review.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="review"
-            export APP_DIR="llm"
-            export ENV_TYPE="review"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}')"
-            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
-            export DEPLOY_CLOUD_RUN_REGION="europe-west4"
-            export HF_TOKEN="$CL_review_llm_HF_TOKEN"
-            export GCLOUD_DEPLOY_credentialsKey="$CL_review_llm_GCLOUD_DEPLOY_credentialsKey"
-            export GCLOUD_RUN_canonicalHostSuffix="$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
-            export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
-            export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
-            export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "prepare" "Prepare..."
-            gcloud auth activate-service-account --key-file=<(echo "$CL_review_llm_GCLOUD_DEPLOY_credentialsKey")
-            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
-            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
-            collapseable_section_end "prepare"
-            collapseable_section_start "writeenvvars" "Write env vars to file"
-            cat > ____envvars.yaml <<EOF
-            ENV_SHORT: |-
-              review
-            APP_DIR: |-
-              llm
-            ENV_TYPE: |-
-              review
-            BUILD_INFO_BUILD_ID: |-
-              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
-            BUILD_INFO_BUILD_TIME: |-
-              unknown-build-time
-            BUILD_INFO_CURRENT_VERSION: |-
-              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
-            HOSTNAME: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            HOSTNAME_INTERNAL: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL_INTERNAL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
-              google-project-id
-            DEPLOY_CLOUD_RUN_REGION: |-
-              europe-west4
-            HF_TOKEN: |-
-              $(printf %s "$CL_review_llm_HF_TOKEN" | sed '1!s/^/  /')
-            GCLOUD_RUN_canonicalHostSuffix: |-
-              $(printf %s "$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
-            _ALL_ENV_VAR_KEYS: |-
-              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
-
-            EOF
-
-            collapseable_section_end "writeenvvars"
-            collapseable_section_start "deploy" "Deploy to cloud run"
-            gcloud beta run deploy $(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}') --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=review,env-name=review,build-type=disabled,cloud-run-service-name=$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
-            collapseable_section_end "deploy"
-            collapseable_section_start "cleanup" "Cleanup"
-            set +e
-            gcloud run revisions list --project=google-project-id --region=europe-west4 --service=$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")@$version --quiet --delete-tags; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
-            set +e
-            gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm --quiet --delete-tags
-            set -e
-            set -e
-            collapseable_section_end "cleanup"
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/llm-deploy-review.sh
           shell: bash
 catladder-release.yml:
   name: catladder release
@@ -476,110 +267,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="stage"
-            export APP_DIR="llm"
-            export ENV_TYPE="stage"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL="https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-stage-llm"
-            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
-            export DEPLOY_CLOUD_RUN_REGION="europe-west4"
-            export HF_TOKEN="$CL_stage_llm_HF_TOKEN"
-            export GCLOUD_DEPLOY_credentialsKey="$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey"
-            export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
-            export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
-            export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm"
-            export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "prepare" "Prepare..."
-            gcloud auth activate-service-account --key-file=<(echo "$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey")
-            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
-            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
-            collapseable_section_end "prepare"
-            collapseable_section_start "writeenvvars" "Write env vars to file"
-            cat > ____envvars.yaml <<EOF
-            ENV_SHORT: |-
-              stage
-            APP_DIR: |-
-              llm
-            ENV_TYPE: |-
-              stage
-            BUILD_INFO_BUILD_ID: |-
-              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
-            BUILD_INFO_BUILD_TIME: |-
-              unknown-build-time
-            BUILD_INFO_CURRENT_VERSION: |-
-              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
-            HOSTNAME: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            HOSTNAME_INTERNAL: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL_INTERNAL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
-              pan-my-ai-app-stage-llm
-            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
-              google-project-id
-            DEPLOY_CLOUD_RUN_REGION: |-
-              europe-west4
-            HF_TOKEN: |-
-              $(printf %s "$CL_stage_llm_HF_TOKEN" | sed '1!s/^/  /')
-            GCLOUD_RUN_canonicalHostSuffix: |-
-              $(printf %s "$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
-            _ALL_ENV_VAR_KEYS: |-
-              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
-
-            EOF
-
-            collapseable_section_end "writeenvvars"
-            collapseable_section_start "deploy" "Deploy to cloud run"
-            gcloud beta run deploy pan-my-ai-app-stage-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=stage,env-name=stage,build-type=disabled,cloud-run-service-name=pan-my-ai-app-stage-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
-            collapseable_section_end "deploy"
-            collapseable_section_start "cleanup" "Cleanup"
-            set +e
-            gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-stage-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm@$version --quiet --delete-tags; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
-            set -e
-            collapseable_section_end "cleanup"
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/llm-deploy-stage.sh
           shell: bash
     llm-deploy-prod:
       name: llm 🚀 Deploy | prod
@@ -604,110 +292,7 @@ catladder-release.yml:
           uses: actions/checkout@v4
         - name: 🚀 Deploy
           id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="prod"
-            export APP_DIR="llm"
-            export ENV_TYPE="prod"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL="https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
-            export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-prod-llm"
-            export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
-            export DEPLOY_CLOUD_RUN_REGION="europe-west4"
-            export HF_TOKEN="$CL_prod_llm_HF_TOKEN"
-            export GCLOUD_DEPLOY_credentialsKey="$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey"
-            export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
-            export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
-            export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm"
-            export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
-            export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-            export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
-            collapseable_section_end "injectvars"
-            collapseable_section_start "prepare" "Prepare..."
-            gcloud auth activate-service-account --key-file=<(echo "$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey")
-            export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
-            echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
-            collapseable_section_end "prepare"
-            collapseable_section_start "writeenvvars" "Write env vars to file"
-            cat > ____envvars.yaml <<EOF
-            ENV_SHORT: |-
-              prod
-            APP_DIR: |-
-              llm
-            ENV_TYPE: |-
-              prod
-            BUILD_INFO_BUILD_ID: |-
-              $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
-            BUILD_INFO_BUILD_TIME: |-
-              unknown-build-time
-            BUILD_INFO_CURRENT_VERSION: |-
-              $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
-            HOSTNAME: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            HOSTNAME_INTERNAL: |-
-              $(printf %s "$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            ROOT_URL_INTERNAL: |-
-              $(printf %s "https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
-            DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
-              pan-my-ai-app-prod-llm
-            DEPLOY_CLOUD_RUN_PROJECT_ID: |-
-              google-project-id
-            DEPLOY_CLOUD_RUN_REGION: |-
-              europe-west4
-            HF_TOKEN: |-
-              $(printf %s "$CL_prod_llm_HF_TOKEN" | sed '1!s/^/  /')
-            GCLOUD_RUN_canonicalHostSuffix: |-
-              $(printf %s "$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
-            _ALL_ENV_VAR_KEYS: |-
-              ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
-
-            EOF
-
-            collapseable_section_end "writeenvvars"
-            collapseable_section_start "deploy" "Deploy to cloud run"
-            gcloud beta run deploy pan-my-ai-app-prod-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=prod,env-name=prod,build-type=disabled,cloud-run-service-name=pan-my-ai-app-prod-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
-            collapseable_section_end "deploy"
-            collapseable_section_start "cleanup" "Cleanup"
-            set +e
-            gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-prod-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm@$version --quiet --delete-tags; done
-            gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
-            set -e
-            collapseable_section_end "cleanup"
-            echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+          run: bash .catladder-generated/github/scripts/llm-deploy-prod.sh
           shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
@@ -1087,6 +672,441 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'llm-stop-prod' }}
+
+# ===== .catladder-generated/github/scripts/llm-deploy-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="dev"
+export APP_DIR="llm"
+export ENV_TYPE="dev"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL="https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-dev-llm"
+export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export HF_TOKEN="$CL_dev_llm_HF_TOKEN"
+export GCLOUD_DEPLOY_credentialsKey="$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey"
+export GCLOUD_RUN_canonicalHostSuffix="$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
+export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm"
+export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+collapseable_section_end "injectvars"
+collapseable_section_start "prepare" "Prepare..."
+gcloud auth activate-service-account --key-file=<(echo "$CL_dev_llm_GCLOUD_DEPLOY_credentialsKey")
+export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+collapseable_section_end "prepare"
+collapseable_section_start "writeenvvars" "Write env vars to file"
+cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  dev
+APP_DIR: |-
+  llm
+ENV_TYPE: |-
+  dev
+BUILD_INFO_BUILD_ID: |-
+  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+  unknown-build-time
+BUILD_INFO_CURRENT_VERSION: |-
+  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+HOSTNAME: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+HOSTNAME_INTERNAL: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL_INTERNAL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-dev-llm-$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+  pan-my-ai-app-dev-llm
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  google-project-id
+DEPLOY_CLOUD_RUN_REGION: |-
+  europe-west4
+HF_TOKEN: |-
+  $(printf %s "$CL_dev_llm_HF_TOKEN" | sed '1!s/^/  /')
+GCLOUD_RUN_canonicalHostSuffix: |-
+  $(printf %s "$CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+
+collapseable_section_end "writeenvvars"
+collapseable_section_start "deploy" "Deploy to cloud run"
+gcloud beta run deploy pan-my-ai-app-dev-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=dev,env-name=dev,build-type=disabled,cloud-run-service-name=pan-my-ai-app-dev-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
+collapseable_section_end "deploy"
+collapseable_section_start "cleanup" "Cleanup"
+set +e
+gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-dev-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/dev/llm@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+set -e
+collapseable_section_end "cleanup"
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/llm-deploy-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="review"
+export APP_DIR="llm"
+export ENV_TYPE="review"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}')"
+export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export HF_TOKEN="$CL_review_llm_HF_TOKEN"
+export GCLOUD_DEPLOY_credentialsKey="$CL_review_llm_GCLOUD_DEPLOY_credentialsKey"
+export GCLOUD_RUN_canonicalHostSuffix="$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
+export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
+export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+collapseable_section_end "injectvars"
+collapseable_section_start "prepare" "Prepare..."
+gcloud auth activate-service-account --key-file=<(echo "$CL_review_llm_GCLOUD_DEPLOY_credentialsKey")
+export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+collapseable_section_end "prepare"
+collapseable_section_start "writeenvvars" "Write env vars to file"
+cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  review
+APP_DIR: |-
+  llm
+ENV_TYPE: |-
+  review
+BUILD_INFO_BUILD_ID: |-
+  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+  unknown-build-time
+BUILD_INFO_CURRENT_VERSION: |-
+  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+HOSTNAME: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+HOSTNAME_INTERNAL: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL_INTERNAL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm-$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  google-project-id
+DEPLOY_CLOUD_RUN_REGION: |-
+  europe-west4
+HF_TOKEN: |-
+  $(printf %s "$CL_review_llm_HF_TOKEN" | sed '1!s/^/  /')
+GCLOUD_RUN_canonicalHostSuffix: |-
+  $(printf %s "$CL_review_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+
+collapseable_section_end "writeenvvars"
+collapseable_section_start "deploy" "Deploy to cloud run"
+gcloud beta run deploy $(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}') --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=review,env-name=review,build-type=disabled,cloud-run-service-name=$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
+collapseable_section_end "deploy"
+collapseable_section_start "cleanup" "Cleanup"
+set +e
+gcloud run revisions list --project=google-project-id --region=europe-west4 --service=$(printf %s "pan-my-ai-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-llm" | awk '{print tolower($0)}') --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown") --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+set +e
+gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/review/llm --quiet --delete-tags
+set -e
+set -e
+collapseable_section_end "cleanup"
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/llm-deploy-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="stage"
+export APP_DIR="llm"
+export ENV_TYPE="stage"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL="https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-stage-llm"
+export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export HF_TOKEN="$CL_stage_llm_HF_TOKEN"
+export GCLOUD_DEPLOY_credentialsKey="$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey"
+export GCLOUD_RUN_canonicalHostSuffix="$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
+export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm"
+export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+collapseable_section_end "injectvars"
+collapseable_section_start "prepare" "Prepare..."
+gcloud auth activate-service-account --key-file=<(echo "$CL_stage_llm_GCLOUD_DEPLOY_credentialsKey")
+export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+collapseable_section_end "prepare"
+collapseable_section_start "writeenvvars" "Write env vars to file"
+cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  stage
+APP_DIR: |-
+  llm
+ENV_TYPE: |-
+  stage
+BUILD_INFO_BUILD_ID: |-
+  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+  unknown-build-time
+BUILD_INFO_CURRENT_VERSION: |-
+  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+HOSTNAME: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+HOSTNAME_INTERNAL: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL_INTERNAL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-stage-llm-$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+  pan-my-ai-app-stage-llm
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  google-project-id
+DEPLOY_CLOUD_RUN_REGION: |-
+  europe-west4
+HF_TOKEN: |-
+  $(printf %s "$CL_stage_llm_HF_TOKEN" | sed '1!s/^/  /')
+GCLOUD_RUN_canonicalHostSuffix: |-
+  $(printf %s "$CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+
+collapseable_section_end "writeenvvars"
+collapseable_section_start "deploy" "Deploy to cloud run"
+gcloud beta run deploy pan-my-ai-app-stage-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=stage,env-name=stage,build-type=disabled,cloud-run-service-name=pan-my-ai-app-stage-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
+collapseable_section_end "deploy"
+collapseable_section_start "cleanup" "Cleanup"
+set +e
+gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-stage-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/stage/llm@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+set -e
+collapseable_section_end "cleanup"
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/llm-deploy-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="prod"
+export APP_DIR="llm"
+export ENV_TYPE="prod"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL="https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export HOSTNAME_INTERNAL="$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export ROOT_URL_INTERNAL="https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')"
+export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-ai-app-prod-llm"
+export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
+export DEPLOY_CLOUD_RUN_REGION="europe-west4"
+export HF_TOKEN="$CL_prod_llm_HF_TOKEN"
+export GCLOUD_DEPLOY_credentialsKey="$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey"
+export GCLOUD_RUN_canonicalHostSuffix="$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"HF_TOKEN\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"GCLOUD_RUN_canonicalHostSuffix\\"]"
+export DOCKER_REGISTRY="europe-west4-docker.pkg.dev"
+export DOCKER_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm"
+export DOCKER_CACHE_IMAGE="europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm"
+export DOCKER_IMAGE_TAG="$GITHUB_SHA"
+export CLOUDSDK_CORE_DISABLE_PROMPTS="1"
+collapseable_section_end "injectvars"
+collapseable_section_start "prepare" "Prepare..."
+gcloud auth activate-service-account --key-file=<(echo "$CL_prod_llm_GCLOUD_DEPLOY_credentialsKey")
+export GCLOUD_PROJECT_NUMBER=$(gcloud projects describe google-project-id --format="value(projectNumber)")
+echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"
+collapseable_section_end "prepare"
+collapseable_section_start "writeenvvars" "Write env vars to file"
+cat > ____envvars.yaml <<EOF
+ENV_SHORT: |-
+  prod
+APP_DIR: |-
+  llm
+ENV_TYPE: |-
+  prod
+BUILD_INFO_BUILD_ID: |-
+  $(printf %s "$(git describe --tags 2>/dev/null || git rev-parse HEAD)" | sed '1!s/^/  /')
+BUILD_INFO_BUILD_TIME: |-
+  unknown-build-time
+BUILD_INFO_CURRENT_VERSION: |-
+  $(printf %s "$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")" | sed '1!s/^/  /')
+HOSTNAME: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+HOSTNAME_INTERNAL: |-
+  $(printf %s "$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+ROOT_URL_INTERNAL: |-
+  $(printf %s "https://$(printf %s "pan-my-ai-app-prod-llm-$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
+DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
+  pan-my-ai-app-prod-llm
+DEPLOY_CLOUD_RUN_PROJECT_ID: |-
+  google-project-id
+DEPLOY_CLOUD_RUN_REGION: |-
+  europe-west4
+HF_TOKEN: |-
+  $(printf %s "$CL_prod_llm_HF_TOKEN" | sed '1!s/^/  /')
+GCLOUD_RUN_canonicalHostSuffix: |-
+  $(printf %s "$CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix" | sed '1!s/^/  /')
+_ALL_ENV_VAR_KEYS: |-
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","HF_TOKEN","GCLOUD_DEPLOY_credentialsKey","GCLOUD_RUN_canonicalHostSuffix"]
+
+EOF
+
+collapseable_section_end "writeenvvars"
+collapseable_section_start "deploy" "Deploy to cloud run"
+gcloud beta run deploy pan-my-ai-app-prod-llm --command="" --args="--model-id=meta-llama/Llama-3.2-1B-Instruct","--max-concurrent-requests=1" --image=us-docker.pkg.dev/deeplearning-platform-release/gcr.io/huggingface-text-generation-inference-cu124.2-3.ubuntu2204.py311 --project=google-project-id --region=europe-west4 --labels=customer-name=pan,component-name=llm,app-name=my-ai-app,env-type=prod,env-name=prod,build-type=disabled,cloud-run-service-name=pan-my-ai-app-prod-llm --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --no-cpu-throttling --cpu=8 --memory=32Gi --allow-unauthenticated --ingress=all --cpu-boost --gpu=1 --gpu-type=nvidia-l4
+collapseable_section_end "deploy"
+collapseable_section_start "cleanup" "Cleanup"
+set +e
+gcloud run revisions list --project=google-project-id --region=europe-west4 --service=pan-my-ai-app-prod-llm --limit=unlimited --sort-by=metadata.creationTimestamp --format="value(name)" --filter='(status.conditions.status=False OR status.conditions.status=Unknown)' | tail -n +6 | while read -r revisionname; do gcloud run revisions delete --project=google-project-id --region=europe-west4 --quiet $revisionname ; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +7 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/prod/llm@$version --quiet --delete-tags; done
+gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
+set -e
+collapseable_section_end "cleanup"
+echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 "
 `;
 

@@ -1,4 +1,4 @@
-import { readdir, unlink } from "fs/promises";
+import { readdir, rm, unlink } from "fs/promises";
 import { join } from "path";
 import { createAllJobs } from "../../pipeline/createAllJobs";
 import type { Config, Context, PipelineTrigger } from "../../types";
@@ -19,6 +19,7 @@ import {
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import { notNil } from "../../utils";
 import { getGithubReleaseJobs } from "./githubReleaseJobs";
+import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
 
 const WORKFLOWS_FOLDER = ".github/workflows";
 
@@ -61,18 +62,21 @@ export class GithubBackend implements PipelineBackend {
         .filter((file) => file.startsWith(GENERATED_FILE_PREFIX))
         .map((file) => unlink(join(WORKFLOWS_FOLDER, file))),
     );
+    await rm(GITHUB_SCRIPTS_FOLDER, { recursive: true, force: true });
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
     const images = this.createImagesPlan(config);
-    const workflows = await this.createWorkflows(config, images);
+    const scripts = new GithubScriptFiles();
+    const workflows = await this.createWorkflows(config, images, scripts);
 
     return [
       ...Object.entries(workflows).map(([fileName, workflow]) => ({
         path: join(WORKFLOWS_FOLDER, fileName),
         content: workflow as unknown as Record<string, unknown>,
       })),
-      // materialized image definitions (repo mode)
+      // materialized job scripts and image definitions (repo mode)
+      ...scripts.getGeneratedFiles(),
       ...images.getGeneratedFiles(),
     ];
   }
@@ -87,6 +91,7 @@ export class GithubBackend implements PipelineBackend {
   async createWorkflows(
     config: Config,
     images: JobImagesPlan = this.createImagesPlan(config),
+    scripts: GithubScriptFiles = new GithubScriptFiles(),
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};
 
@@ -113,6 +118,7 @@ export class GithubBackend implements PipelineBackend {
               allJobs,
               uploadProviderIds,
               images,
+              scripts,
             );
             if (isReviewStopJob(context, job)) {
               reviewStopJobs[id] = githubJob;
