@@ -22,7 +22,7 @@ claude claude-agent-event:
     - when: never
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ && $CI_PIPELINE_SOURCE != "push")
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ || $CI_PIPELINE_SOURCE != "push")
     - if: $CI_PIPELINE_SOURCE  == "trigger" && ($ASSIGNEE_USER_ID == $DEFAULT_AGENT_USER_ID || $OBJECT_DESCRIPTION =~ /@agent.claude/)
       when: always
     - when: never
@@ -59,7 +59,7 @@ claude claude-agent-review:
     - when: never
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ && $CI_PIPELINE_SOURCE != "push")
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ || $CI_PIPELINE_SOURCE != "push")
     - if: $CI_MERGE_REQUEST_ID && $GITLAB_USER_LOGIN == "agent.claude"
       when: always
     - if: $CI_MERGE_REQUEST_ID

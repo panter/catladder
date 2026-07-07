@@ -111,7 +111,9 @@ const getSchedulerArgs = (
   if (scheduler.type === "http") {
     return {
       uri: scheduler.url,
-      "message-body": scheduler.body,
+      "message-body": scheduler.body
+        ? '"' + bashEscape(scheduler.body) + '"'
+        : undefined,
       "http-method": scheduler.method,
       "oidc-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
     };
