@@ -181,7 +181,13 @@ export class GitlabBackend implements PipelineBackend {
       (j) => j.context?.type === "agent",
     );
 
+    // context-less jobs (image build jobs)
+    const allContextlessJobs = allJobsPerTrigger.filter(
+      (j) => j.context === null,
+    );
+
     const allJobs = [
+      ...allContextlessJobs,
       ...allWorkspaceJobs,
       ...allComponentJobs,
       ...allGlobalJobs,
