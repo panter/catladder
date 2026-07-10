@@ -358,6 +358,11 @@ exports[`matches snapshot for cloud-run-execute-script-on-deploy github workflow
       needs:
         - app-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app_GCLOUD_DEPLOY_credentialsKey }}
@@ -766,6 +771,11 @@ catladder-review.yml:
       needs:
         - app-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app_GCLOUD_DEPLOY_credentialsKey }}
@@ -1078,6 +1088,11 @@ catladder-release.yml:
       needs:
         - app-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app_GCLOUD_DEPLOY_credentialsKey }}
@@ -1176,6 +1191,11 @@ catladder-release.yml:
       needs:
         - app-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app_GCLOUD_DEPLOY_credentialsKey }}

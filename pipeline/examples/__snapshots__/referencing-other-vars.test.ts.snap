@@ -412,6 +412,11 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
       needs:
         - app1-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app1_SECRET1: \${{ secrets.CL_dev_app1_SECRET1 }}
@@ -612,6 +617,11 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
       needs:
         - app2-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app2_SECRET2: \${{ secrets.CL_dev_app2_SECRET2 }}
@@ -804,6 +814,11 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
       needs:
         - app3-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
@@ -1269,6 +1284,11 @@ catladder-review.yml:
       needs:
         - app1-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app1_SECRET1: \${{ secrets.CL_review_app1_SECRET1 }}
@@ -1469,6 +1489,11 @@ catladder-review.yml:
       needs:
         - app2-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app2_SECRET2: \${{ secrets.CL_review_app2_SECRET2 }}
@@ -1661,6 +1686,11 @@ catladder-review.yml:
       needs:
         - app3-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
@@ -2027,6 +2057,11 @@ catladder-release.yml:
       needs:
         - app1-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app1_SECRET1: \${{ secrets.CL_stage_app1_SECRET1 }}
@@ -2128,6 +2163,11 @@ catladder-release.yml:
       needs:
         - app1-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app1_SECRET1: \${{ secrets.CL_prod_app1_SECRET1 }}
@@ -2231,6 +2271,11 @@ catladder-release.yml:
       needs:
         - app2-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app2_SECRET2: \${{ secrets.CL_stage_app2_SECRET2 }}
@@ -2336,6 +2381,11 @@ catladder-release.yml:
       needs:
         - app2-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app2_SECRET2: \${{ secrets.CL_prod_app2_SECRET2 }}
@@ -2440,6 +2490,11 @@ catladder-release.yml:
       needs:
         - app3-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
@@ -2543,6 +2598,11 @@ catladder-release.yml:
       needs:
         - app3-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5

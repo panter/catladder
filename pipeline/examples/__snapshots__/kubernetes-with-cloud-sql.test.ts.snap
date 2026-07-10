@@ -358,6 +358,11 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
       needs:
         - api-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
@@ -769,6 +774,11 @@ catladder-review.yml:
       needs:
         - api-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
@@ -1084,6 +1094,11 @@ catladder-release.yml:
       needs:
         - api-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_api_POSTGRESQL_PASSWORD }}
@@ -1185,6 +1200,11 @@ catladder-release.yml:
       needs:
         - api-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}

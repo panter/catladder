@@ -180,6 +180,11 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
       runs-on: ubuntu-latest
       needs:
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
@@ -404,6 +409,11 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       needs:
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
@@ -565,6 +575,11 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app_SECRET_KEY_BASE: \${{ secrets.CL_stage_app_SECRET_KEY_BASE }}
@@ -612,6 +627,11 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}

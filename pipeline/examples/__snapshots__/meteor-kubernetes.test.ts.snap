@@ -413,6 +413,11 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
       needs:
         - job-image-docker-build
         - web-app-dev
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
@@ -872,6 +877,11 @@ catladder-review.yml:
       needs:
         - job-image-docker-build
         - web-app-review
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
@@ -1238,6 +1248,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - web-app-stage
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
@@ -1341,6 +1356,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - web-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}

@@ -361,6 +361,11 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-dev
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -417,6 +422,11 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-dev
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -828,6 +838,11 @@ catladder-review.yml:
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-review
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -884,6 +899,11 @@ catladder-review.yml:
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-review
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -1258,6 +1278,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-stage
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -1311,6 +1336,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -1364,6 +1394,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-stage
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -1418,6 +1453,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - ws-myworkspace-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}

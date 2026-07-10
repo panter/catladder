@@ -268,11 +268,10 @@ export const makeGithubJob = (
   const declaredServices = (job.services ?? []).map((service) =>
     typeof service === "string" ? { name: service } : service,
   );
-  // docker runs natively on github runners: jobs that use a
-  // docker-in-docker service on gitlab run directly on the runner here
-  const usesHostDocker = declaredServices.some((service) =>
-    isDindService(service.name),
-  );
+  // docker runs natively on github runners, so gitlab's docker-in-docker
+  // services are dropped. The job container stays: the runner mounts the
+  // host's docker socket into it, and images like docker-build carry the
+  // helper scripts (ensure*Dockerfile etc.) the job scripts rely on.
 
   const services = Object.fromEntries(
     declaredServices
@@ -305,7 +304,7 @@ export const makeGithubJob = (
     name: githubJobName(context, job.name),
     "runs-on": "ubuntu-latest",
     ...(needs.length > 0 ? { needs: needs.map((n) => n.id) } : {}),
-    ...(image && !usesHostDocker
+    ...(image
       ? {
           container: {
             image,

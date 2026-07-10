@@ -408,6 +408,11 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       needs:
         - app1-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app1_GCLOUD_DEPLOY_credentialsKey }}
@@ -601,6 +606,11 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       needs:
         - app2-app-dev
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app2_GCLOUD_DEPLOY_credentialsKey }}
@@ -787,6 +797,11 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       needs:
         - job-image-docker-build
         - kube-app-dev
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
@@ -1245,6 +1260,11 @@ catladder-review.yml:
       needs:
         - app1-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app1_GCLOUD_DEPLOY_credentialsKey }}
@@ -1438,6 +1458,11 @@ catladder-review.yml:
       needs:
         - app2-app-review
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app2_GCLOUD_DEPLOY_credentialsKey }}
@@ -1624,6 +1649,11 @@ catladder-review.yml:
       needs:
         - job-image-docker-build
         - kube-app-review
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
@@ -1986,6 +2016,11 @@ catladder-release.yml:
       needs:
         - app1-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app1_GCLOUD_DEPLOY_credentialsKey }}
@@ -2084,6 +2119,11 @@ catladder-release.yml:
       needs:
         - app1-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
@@ -2183,6 +2223,11 @@ catladder-release.yml:
       needs:
         - app2-app-stage
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app2_GCLOUD_DEPLOY_credentialsKey }}
@@ -2283,6 +2328,11 @@ catladder-release.yml:
       needs:
         - app2-app-prod
         - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
@@ -2381,6 +2431,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - kube-app-stage
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
@@ -2478,6 +2533,11 @@ catladder-release.yml:
       needs:
         - job-image-docker-build
         - kube-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
