@@ -20,12 +20,15 @@ import {
  * all secrets declared in the config, with their values read from the
  * vault (github secrets are write-only and can never act as a source)
  */
-export const collectSecretsFromVault = async (io: IO) => {
+export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
   const envAndComponents = await getAllComponentsWithAllEnvsHierarchical();
 
   const names: string[] = [];
   for (const [componentName, envs] of Object.entries(envAndComponents)) {
     for (const env of envs) {
+      if (envFilter && !envFilter.includes(env)) {
+        continue;
+      }
       const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment(
         env,
         componentName,
@@ -94,6 +97,13 @@ export const commandSecretsSyncGithub = defineCommand({
       positional: true,
       required: false,
     },
+    env: {
+      type: "string",
+      message:
+        "only sync these environments (comma-separated, e.g. review,dev) — github allows at most 100 repo secrets",
+      positional: true,
+      required: false,
+    },
   },
   execute: async (ctx) => {
     const config = await getProjectConfig();
@@ -118,7 +128,8 @@ export const commandSecretsSyncGithub = defineCommand({
       );
     }
 
-    const { secrets, missing } = await collectSecretsFromVault(ctx);
+    const envFilter = (await ctx.get("env"))?.split(",").map((e) => e.trim());
+    const { secrets, missing } = await collectSecretsFromVault(ctx, envFilter);
 
     if (missing.length > 0) {
       ctx.log(
