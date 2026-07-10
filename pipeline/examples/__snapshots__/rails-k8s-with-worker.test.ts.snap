@@ -214,6 +214,9 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
         CL_dev_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_app_POSTGRESQL_PASSWORD }}
         CL_dev_app_cloudsqlProxyCredentials: \${{ secrets.CL_dev_app_cloudsqlProxyCredentials }}
+        CL_dev_app_KUBE_URL: \${{ secrets.CL_dev_app_KUBE_URL }}
+        CL_dev_app_KUBE_CA_PEM: \${{ secrets.CL_dev_app_KUBE_CA_PEM }}
+        CL_dev_app_KUBE_TOKEN: \${{ secrets.CL_dev_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -435,6 +438,9 @@ catladder-review.yml:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}
         CL_review_app_cloudsqlProxyCredentials: \${{ secrets.CL_review_app_cloudsqlProxyCredentials }}
+        CL_review_app_KUBE_URL: \${{ secrets.CL_review_app_KUBE_URL }}
+        CL_review_app_KUBE_CA_PEM: \${{ secrets.CL_review_app_KUBE_CA_PEM }}
+        CL_review_app_KUBE_TOKEN: \${{ secrets.CL_review_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -590,6 +596,9 @@ catladder-release.yml:
         CL_stage_app_SECRET_KEY_BASE: \${{ secrets.CL_stage_app_SECRET_KEY_BASE }}
         CL_stage_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_app_POSTGRESQL_PASSWORD }}
         CL_stage_app_cloudsqlProxyCredentials: \${{ secrets.CL_stage_app_cloudsqlProxyCredentials }}
+        CL_stage_app_KUBE_URL: \${{ secrets.CL_stage_app_KUBE_URL }}
+        CL_stage_app_KUBE_CA_PEM: \${{ secrets.CL_stage_app_KUBE_CA_PEM }}
+        CL_stage_app_KUBE_TOKEN: \${{ secrets.CL_stage_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -634,6 +643,9 @@ catladder-release.yml:
         CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
         CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
         CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
+        CL_prod_app_KUBE_URL: \${{ secrets.CL_prod_app_KUBE_URL }}
+        CL_prod_app_KUBE_CA_PEM: \${{ secrets.CL_prod_app_KUBE_CA_PEM }}
+        CL_prod_app_KUBE_TOKEN: \${{ secrets.CL_prod_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -769,6 +781,9 @@ catladder-review-stop.yml:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}
         CL_review_app_cloudsqlProxyCredentials: \${{ secrets.CL_review_app_cloudsqlProxyCredentials }}
+        CL_review_app_KUBE_URL: \${{ secrets.CL_review_app_KUBE_URL }}
+        CL_review_app_KUBE_CA_PEM: \${{ secrets.CL_review_app_KUBE_CA_PEM }}
+        CL_review_app_KUBE_TOKEN: \${{ secrets.CL_review_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -970,6 +985,9 @@ catladder-manual.yml:
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
         CL_dev_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_app_POSTGRESQL_PASSWORD }}
         CL_dev_app_cloudsqlProxyCredentials: \${{ secrets.CL_dev_app_cloudsqlProxyCredentials }}
+        CL_dev_app_KUBE_URL: \${{ secrets.CL_dev_app_KUBE_URL }}
+        CL_dev_app_KUBE_CA_PEM: \${{ secrets.CL_dev_app_KUBE_CA_PEM }}
+        CL_dev_app_KUBE_TOKEN: \${{ secrets.CL_dev_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -1049,6 +1067,9 @@ catladder-manual.yml:
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
         CL_dev_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_app_POSTGRESQL_PASSWORD }}
         CL_dev_app_cloudsqlProxyCredentials: \${{ secrets.CL_dev_app_cloudsqlProxyCredentials }}
+        CL_dev_app_KUBE_URL: \${{ secrets.CL_dev_app_KUBE_URL }}
+        CL_dev_app_KUBE_CA_PEM: \${{ secrets.CL_dev_app_KUBE_CA_PEM }}
+        CL_dev_app_KUBE_TOKEN: \${{ secrets.CL_dev_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -1146,6 +1167,9 @@ catladder-manual.yml:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}
         CL_review_app_cloudsqlProxyCredentials: \${{ secrets.CL_review_app_cloudsqlProxyCredentials }}
+        CL_review_app_KUBE_URL: \${{ secrets.CL_review_app_KUBE_URL }}
+        CL_review_app_KUBE_CA_PEM: \${{ secrets.CL_review_app_KUBE_CA_PEM }}
+        CL_review_app_KUBE_TOKEN: \${{ secrets.CL_review_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -1225,6 +1249,9 @@ catladder-manual.yml:
         CL_stage_app_SECRET_KEY_BASE: \${{ secrets.CL_stage_app_SECRET_KEY_BASE }}
         CL_stage_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_app_POSTGRESQL_PASSWORD }}
         CL_stage_app_cloudsqlProxyCredentials: \${{ secrets.CL_stage_app_cloudsqlProxyCredentials }}
+        CL_stage_app_KUBE_URL: \${{ secrets.CL_stage_app_KUBE_URL }}
+        CL_stage_app_KUBE_CA_PEM: \${{ secrets.CL_stage_app_KUBE_CA_PEM }}
+        CL_stage_app_KUBE_TOKEN: \${{ secrets.CL_stage_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -1304,6 +1331,9 @@ catladder-manual.yml:
         CL_stage_app_SECRET_KEY_BASE: \${{ secrets.CL_stage_app_SECRET_KEY_BASE }}
         CL_stage_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_app_POSTGRESQL_PASSWORD }}
         CL_stage_app_cloudsqlProxyCredentials: \${{ secrets.CL_stage_app_cloudsqlProxyCredentials }}
+        CL_stage_app_KUBE_URL: \${{ secrets.CL_stage_app_KUBE_URL }}
+        CL_stage_app_KUBE_CA_PEM: \${{ secrets.CL_stage_app_KUBE_CA_PEM }}
+        CL_stage_app_KUBE_TOKEN: \${{ secrets.CL_stage_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -1383,6 +1413,9 @@ catladder-manual.yml:
         CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
         CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
         CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
+        CL_prod_app_KUBE_URL: \${{ secrets.CL_prod_app_KUBE_URL }}
+        CL_prod_app_KUBE_CA_PEM: \${{ secrets.CL_prod_app_KUBE_CA_PEM }}
+        CL_prod_app_KUBE_TOKEN: \${{ secrets.CL_prod_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -1462,6 +1495,9 @@ catladder-manual.yml:
         CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
         CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
         CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
+        CL_prod_app_KUBE_URL: \${{ secrets.CL_prod_app_KUBE_URL }}
+        CL_prod_app_KUBE_CA_PEM: \${{ secrets.CL_prod_app_KUBE_CA_PEM }}
+        CL_prod_app_KUBE_TOKEN: \${{ secrets.CL_prod_app_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️

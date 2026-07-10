@@ -15,6 +15,7 @@ import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { GithubScriptFiles } from "./scriptFiles";
+import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
 
 /**
  * runner variables that only make sense on gitlab runners and must not
@@ -195,6 +196,21 @@ const getSecretsEnv = (context: ComponentContext): Record<string, string> => {
   );
 };
 
+/**
+ * every CL_* variable the job script reads must exist in the job env.
+ * On gitlab all project variables are implicitly available in every
+ * job — cross-component references (`${other-component:KEY}`) rely on
+ * that. Github jobs only see what is injected explicitly, so the
+ * script is scanned for the names it actually references.
+ */
+const getReferencedSecretsEnv = (script: string): Record<string, string> =>
+  Object.fromEntries(
+    [...script.matchAll(/\$\{?(CL_[A-Za-z0-9_]+)\}?/g)]
+      .map((match) => match[1])
+      .filter((name) => !(name in GITHUB_INJECTED_WORKFLOW_ENV))
+      .map((name) => [name, `\${{ secrets.${name} }}`]),
+  );
+
 export const makeGithubJob = (
   context: Context,
   job: CatladderJob,
@@ -281,6 +297,7 @@ export const makeGithubJob = (
       ),
     ),
     ...(isComponent ? getSecretsEnv(context) : {}),
+    ...getReferencedSecretsEnv(runScript),
     CL_JOB_IMAGE: image ?? "runner",
   };
 

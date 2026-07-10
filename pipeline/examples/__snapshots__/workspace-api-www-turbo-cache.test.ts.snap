@@ -313,6 +313,10 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_dev_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -458,6 +462,7 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -778,6 +783,10 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_review_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -923,6 +932,7 @@ catladder-review.yml:
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -1153,6 +1163,10 @@ catladder-release.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_stage_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -1205,6 +1219,10 @@ catladder-release.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_prod_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -1397,6 +1415,7 @@ catladder-release.yml:
       env:
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_stage_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -1450,6 +1469,7 @@ catladder-release.yml:
       env:
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_prod_www_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_www_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout

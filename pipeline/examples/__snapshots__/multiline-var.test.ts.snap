@@ -563,6 +563,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       env:
         CL_dev_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -643,6 +644,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       env:
         CL_dev_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -747,6 +749,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -823,6 +826,10 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
         name: dev-kube
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_kube_KUBE_URL: \${{ secrets.CL_dev_kube_KUBE_URL }}
+        CL_dev_kube_KUBE_CA_PEM: \${{ secrets.CL_dev_kube_KUBE_CA_PEM }}
+        CL_dev_kube_KUBE_TOKEN: \${{ secrets.CL_dev_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1393,6 +1400,7 @@ catladder-review.yml:
       env:
         CL_review_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -1473,6 +1481,7 @@ catladder-review.yml:
       env:
         CL_review_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -1577,6 +1586,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_review_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -1653,6 +1663,10 @@ catladder-review.yml:
         name: review-pr\${{ github.event.number }}-kube
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_review_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_kube_KUBE_URL: \${{ secrets.CL_review_kube_KUBE_URL }}
+        CL_review_kube_KUBE_CA_PEM: \${{ secrets.CL_review_kube_KUBE_CA_PEM }}
+        CL_review_kube_KUBE_TOKEN: \${{ secrets.CL_review_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -2131,6 +2145,7 @@ catladder-release.yml:
       env:
         CL_stage_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -2208,6 +2223,7 @@ catladder-release.yml:
       env:
         CL_stage_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -2229,6 +2245,7 @@ catladder-release.yml:
       env:
         CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -2306,6 +2323,7 @@ catladder-release.yml:
       env:
         CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
         CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app2_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -2325,6 +2343,7 @@ catladder-release.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -2398,6 +2417,10 @@ catladder-release.yml:
         name: stage-kube
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_kube_KUBE_URL: \${{ secrets.CL_stage_kube_KUBE_URL }}
+        CL_stage_kube_KUBE_CA_PEM: \${{ secrets.CL_stage_kube_KUBE_CA_PEM }}
+        CL_stage_kube_KUBE_TOKEN: \${{ secrets.CL_stage_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -2417,6 +2440,7 @@ catladder-release.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
+        CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -2490,6 +2514,10 @@ catladder-release.yml:
         name: prod-kube
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_kube_KUBE_URL: \${{ secrets.CL_prod_kube_KUBE_URL }}
+        CL_prod_kube_KUBE_CA_PEM: \${{ secrets.CL_prod_kube_KUBE_CA_PEM }}
+        CL_prod_kube_KUBE_TOKEN: \${{ secrets.CL_prod_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -2888,6 +2916,10 @@ catladder-review-stop.yml:
       environment:
         name: review-pr\${{ github.event.number }}-kube
       env:
+        CL_review_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_kube_KUBE_URL: \${{ secrets.CL_review_kube_KUBE_URL }}
+        CL_review_kube_KUBE_CA_PEM: \${{ secrets.CL_review_kube_KUBE_CA_PEM }}
+        CL_review_kube_KUBE_TOKEN: \${{ secrets.CL_review_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -3384,6 +3416,10 @@ catladder-manual.yml:
       environment:
         name: dev-kube
       env:
+        CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_kube_KUBE_URL: \${{ secrets.CL_dev_kube_KUBE_URL }}
+        CL_dev_kube_KUBE_CA_PEM: \${{ secrets.CL_dev_kube_KUBE_CA_PEM }}
+        CL_dev_kube_KUBE_TOKEN: \${{ secrets.CL_dev_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -3490,6 +3526,10 @@ catladder-manual.yml:
       environment:
         name: dev-kube
       env:
+        CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_kube_KUBE_URL: \${{ secrets.CL_dev_kube_KUBE_URL }}
+        CL_dev_kube_KUBE_CA_PEM: \${{ secrets.CL_dev_kube_KUBE_CA_PEM }}
+        CL_dev_kube_KUBE_TOKEN: \${{ secrets.CL_dev_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -3614,6 +3654,10 @@ catladder-manual.yml:
       environment:
         name: review-pr\${{ github.event.number }}-kube
       env:
+        CL_review_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_kube_KUBE_URL: \${{ secrets.CL_review_kube_KUBE_URL }}
+        CL_review_kube_KUBE_CA_PEM: \${{ secrets.CL_review_kube_KUBE_CA_PEM }}
+        CL_review_kube_KUBE_TOKEN: \${{ secrets.CL_review_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -3944,6 +3988,10 @@ catladder-manual.yml:
       environment:
         name: stage-kube
       env:
+        CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_kube_KUBE_URL: \${{ secrets.CL_stage_kube_KUBE_URL }}
+        CL_stage_kube_KUBE_CA_PEM: \${{ secrets.CL_stage_kube_KUBE_CA_PEM }}
+        CL_stage_kube_KUBE_TOKEN: \${{ secrets.CL_stage_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -4050,6 +4098,10 @@ catladder-manual.yml:
       environment:
         name: stage-kube
       env:
+        CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_kube_KUBE_URL: \${{ secrets.CL_stage_kube_KUBE_URL }}
+        CL_stage_kube_KUBE_CA_PEM: \${{ secrets.CL_stage_kube_KUBE_CA_PEM }}
+        CL_stage_kube_KUBE_TOKEN: \${{ secrets.CL_stage_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -4156,6 +4208,10 @@ catladder-manual.yml:
       environment:
         name: prod-kube
       env:
+        CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_kube_KUBE_URL: \${{ secrets.CL_prod_kube_KUBE_URL }}
+        CL_prod_kube_KUBE_CA_PEM: \${{ secrets.CL_prod_kube_KUBE_CA_PEM }}
+        CL_prod_kube_KUBE_TOKEN: \${{ secrets.CL_prod_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -4262,6 +4318,10 @@ catladder-manual.yml:
       environment:
         name: prod-kube
       env:
+        CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_app1_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_kube_KUBE_URL: \${{ secrets.CL_prod_kube_KUBE_URL }}
+        CL_prod_kube_KUBE_CA_PEM: \${{ secrets.CL_prod_kube_KUBE_CA_PEM }}
+        CL_prod_kube_KUBE_TOKEN: \${{ secrets.CL_prod_kube_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️

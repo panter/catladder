@@ -448,6 +448,10 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
         url: \${{ steps.main.outputs.url }}
       env:
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_dev_web_KUBE_URL: \${{ secrets.CL_dev_web_KUBE_URL }}
+        CL_dev_web_KUBE_CA_PEM: \${{ secrets.CL_dev_web_KUBE_CA_PEM }}
+        CL_dev_web_KUBE_TOKEN: \${{ secrets.CL_dev_web_KUBE_TOKEN }}
+        CL_dev_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_dev_web_MONGODB_REPLICASET_KEY }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -903,6 +907,10 @@ catladder-review.yml:
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_review_web_KUBE_URL: \${{ secrets.CL_review_web_KUBE_URL }}
+        CL_review_web_KUBE_CA_PEM: \${{ secrets.CL_review_web_KUBE_CA_PEM }}
+        CL_review_web_KUBE_TOKEN: \${{ secrets.CL_review_web_KUBE_TOKEN }}
+        CL_review_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_review_web_MONGODB_REPLICASET_KEY }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1262,6 +1270,10 @@ catladder-release.yml:
         url: \${{ steps.main.outputs.url }}
       env:
         CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_stage_web_KUBE_URL: \${{ secrets.CL_stage_web_KUBE_URL }}
+        CL_stage_web_KUBE_CA_PEM: \${{ secrets.CL_stage_web_KUBE_CA_PEM }}
+        CL_stage_web_KUBE_TOKEN: \${{ secrets.CL_stage_web_KUBE_TOKEN }}
+        CL_stage_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_stage_web_MONGODB_REPLICASET_KEY }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1363,6 +1375,9 @@ catladder-release.yml:
       env:
         CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
         CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_prod_web_KUBE_URL: \${{ secrets.CL_prod_web_KUBE_URL }}
+        CL_prod_web_KUBE_CA_PEM: \${{ secrets.CL_prod_web_KUBE_CA_PEM }}
+        CL_prod_web_KUBE_TOKEN: \${{ secrets.CL_prod_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1646,6 +1661,9 @@ catladder-review-stop.yml:
         name: review-pr\${{ github.event.number }}-web
       env:
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_review_web_KUBE_URL: \${{ secrets.CL_review_web_KUBE_URL }}
+        CL_review_web_KUBE_CA_PEM: \${{ secrets.CL_review_web_KUBE_CA_PEM }}
+        CL_review_web_KUBE_TOKEN: \${{ secrets.CL_review_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -1992,6 +2010,9 @@ catladder-manual.yml:
         name: dev-web
       env:
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_dev_web_KUBE_URL: \${{ secrets.CL_dev_web_KUBE_URL }}
+        CL_dev_web_KUBE_CA_PEM: \${{ secrets.CL_dev_web_KUBE_CA_PEM }}
+        CL_dev_web_KUBE_TOKEN: \${{ secrets.CL_dev_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -2066,6 +2087,9 @@ catladder-manual.yml:
         name: dev-web
       env:
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
+        CL_dev_web_KUBE_URL: \${{ secrets.CL_dev_web_KUBE_URL }}
+        CL_dev_web_KUBE_CA_PEM: \${{ secrets.CL_dev_web_KUBE_CA_PEM }}
+        CL_dev_web_KUBE_TOKEN: \${{ secrets.CL_dev_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -2158,6 +2182,9 @@ catladder-manual.yml:
         name: review-pr\${{ github.event.number }}-web
       env:
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
+        CL_review_web_KUBE_URL: \${{ secrets.CL_review_web_KUBE_URL }}
+        CL_review_web_KUBE_CA_PEM: \${{ secrets.CL_review_web_KUBE_CA_PEM }}
+        CL_review_web_KUBE_TOKEN: \${{ secrets.CL_review_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -2232,6 +2259,9 @@ catladder-manual.yml:
         name: stage-web
       env:
         CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_stage_web_KUBE_URL: \${{ secrets.CL_stage_web_KUBE_URL }}
+        CL_stage_web_KUBE_CA_PEM: \${{ secrets.CL_stage_web_KUBE_CA_PEM }}
+        CL_stage_web_KUBE_TOKEN: \${{ secrets.CL_stage_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -2306,6 +2336,9 @@ catladder-manual.yml:
         name: stage-web
       env:
         CL_stage_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_stage_web_MONGODB_ROOT_PASSWORD }}
+        CL_stage_web_KUBE_URL: \${{ secrets.CL_stage_web_KUBE_URL }}
+        CL_stage_web_KUBE_CA_PEM: \${{ secrets.CL_stage_web_KUBE_CA_PEM }}
+        CL_stage_web_KUBE_TOKEN: \${{ secrets.CL_stage_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -2381,6 +2414,9 @@ catladder-manual.yml:
       env:
         CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
         CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_prod_web_KUBE_URL: \${{ secrets.CL_prod_web_KUBE_URL }}
+        CL_prod_web_KUBE_CA_PEM: \${{ secrets.CL_prod_web_KUBE_CA_PEM }}
+        CL_prod_web_KUBE_TOKEN: \${{ secrets.CL_prod_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -2457,6 +2493,9 @@ catladder-manual.yml:
       env:
         CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
         CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_prod_web_KUBE_URL: \${{ secrets.CL_prod_web_KUBE_URL }}
+        CL_prod_web_KUBE_CA_PEM: \${{ secrets.CL_prod_web_KUBE_CA_PEM }}
+        CL_prod_web_KUBE_TOKEN: \${{ secrets.CL_prod_web_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️

@@ -389,6 +389,9 @@ exports[`matches snapshot for kubernetes-application-customization github workfl
         name: dev-api
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
+        CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
+        CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -785,6 +788,9 @@ catladder-review.yml:
         name: review-pr\${{ github.event.number }}-api
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
+        CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
+        CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1088,6 +1094,9 @@ catladder-release.yml:
         name: stage-api
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
+        CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
+        CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1180,6 +1189,9 @@ catladder-release.yml:
         name: prod-api
         url: \${{ steps.main.outputs.url }}
       env:
+        CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
+        CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
+        CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: Checkout
@@ -1412,6 +1424,9 @@ catladder-review-stop.yml:
       environment:
         name: review-pr\${{ github.event.number }}-api
       env:
+        CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
+        CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
+        CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -1706,6 +1721,9 @@ catladder-manual.yml:
       environment:
         name: dev-api
       env:
+        CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
+        CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
+        CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -1778,6 +1796,9 @@ catladder-manual.yml:
       environment:
         name: dev-api
       env:
+        CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
+        CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
+        CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -1868,6 +1889,9 @@ catladder-manual.yml:
       environment:
         name: review-pr\${{ github.event.number }}-api
       env:
+        CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
+        CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
+        CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -1940,6 +1964,9 @@ catladder-manual.yml:
       environment:
         name: stage-api
       env:
+        CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
+        CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
+        CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -2012,6 +2039,9 @@ catladder-manual.yml:
       environment:
         name: stage-api
       env:
+        CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
+        CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
+        CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
@@ -2084,6 +2114,9 @@ catladder-manual.yml:
       environment:
         name: prod-api
       env:
+        CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
+        CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
+        CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: 🛑 Stop ⚠️
@@ -2156,6 +2189,9 @@ catladder-manual.yml:
       environment:
         name: prod-api
       env:
+        CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
+        CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
+        CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
       steps:
         - name: ↩️ Rollback ⚠️
