@@ -402,6 +402,10 @@ export const makeGithubJob = (
                   name: id,
                   path: artifactPaths.join("\n"),
                   "if-no-files-found": "warn",
+                  // gitlab artifacts include everything; upload-artifact
+                  // silently drops hidden files by default — which is
+                  // exactly where next.js builds live (.next)
+                  "include-hidden-files": true,
                 },
               },
             ]
