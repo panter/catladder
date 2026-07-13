@@ -73,9 +73,27 @@ export type EnvVars = {
 
   public?: Record<string, any>;
   /**
-   * secret env vars. These vars can be managed with catladder/cli
+   * env vars whose values live in the vault (managed with catladder/cli).
+   *
+   * Preferred form is a record with the kind per key:
+   * - "secret": sensitive — masked where the platform supports it
+   * - "variable": vault-stored but not sensitive (ids, host suffixes) —
+   *   never masked, so log links stay clickable and environment urls work
+   * - an object for additional per-key config
+   *
+   * EXAMPLE: secret: { API_KEY: "secret", PROJECT_ID: "variable" }
+   *
+   * The plain string[] form (all keys secret) is deprecated.
    */
-  secret?: string[];
+  secret?: string[] | Record<string, SecretVarKind | SecretVarConfig>;
+};
+
+export type SecretVarKind = "secret" | "variable";
+
+export type SecretVarConfig = {
+  kind?: SecretVarKind;
+  /** hidden env vars are not shown in config-secrets */
+  hidden?: boolean;
 };
 
 export type DefaultEnvConfig = {

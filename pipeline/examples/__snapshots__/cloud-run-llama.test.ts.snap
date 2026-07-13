@@ -83,7 +83,7 @@ exports[`matches snapshot for cloud-run-llama github workflows YAML 1`] = `
       env:
         CL_dev_llm_HF_TOKEN: \${{ secrets.CL_dev_llm_HF_TOKEN }}
         CL_dev_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -174,7 +174,7 @@ catladder-review.yml:
       env:
         CL_review_llm_HF_TOKEN: \${{ secrets.CL_review_llm_HF_TOKEN }}
         CL_review_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_review_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_review_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -260,7 +260,7 @@ catladder-release.yml:
       env:
         CL_stage_llm_HF_TOKEN: \${{ secrets.CL_stage_llm_HF_TOKEN }}
         CL_stage_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -285,7 +285,7 @@ catladder-release.yml:
       env:
         CL_prod_llm_HF_TOKEN: \${{ secrets.CL_prod_llm_HF_TOKEN }}
         CL_prod_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -370,7 +370,7 @@ catladder-review-stop.yml:
       env:
         CL_review_llm_HF_TOKEN: \${{ secrets.CL_review_llm_HF_TOKEN }}
         CL_review_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_review_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_review_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
@@ -498,7 +498,7 @@ catladder-manual.yml:
       env:
         CL_dev_llm_HF_TOKEN: \${{ secrets.CL_dev_llm_HF_TOKEN }}
         CL_dev_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_dev_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
@@ -573,7 +573,7 @@ catladder-manual.yml:
       env:
         CL_stage_llm_HF_TOKEN: \${{ secrets.CL_stage_llm_HF_TOKEN }}
         CL_stage_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_stage_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
@@ -630,7 +630,7 @@ catladder-manual.yml:
       env:
         CL_prod_llm_HF_TOKEN: \${{ secrets.CL_prod_llm_HF_TOKEN }}
         CL_prod_llm_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_llm_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_prod_llm_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️

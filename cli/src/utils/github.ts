@@ -34,17 +34,14 @@ export const getGithubRepoFromRemote = async (
   }
 };
 
-/**
- * sets a github actions repository secret via the gh cli.
- * The value is passed via stdin so it never shows up in a process list.
- */
-export const setGithubSecret = async (
+const ghSetViaStdin = (
+  kind: "secret" | "variable",
   repo: string,
   name: string,
   value: string,
 ): Promise<void> =>
   new Promise<void>((resolve, reject) => {
-    const child = spawn("gh", ["secret", "set", name, "--repo", repo], {
+    const child = spawn("gh", [kind, "set", name, "--repo", repo], {
       stdio: ["pipe", "ignore", "pipe"],
     });
     let stderr = "";
@@ -53,7 +50,27 @@ export const setGithubSecret = async (
     child.on("close", (code) =>
       code === 0
         ? resolve()
-        : reject(new Error(`gh secret set ${name} failed: ${stderr.trim()}`)),
+        : reject(new Error(`gh ${kind} set ${name} failed: ${stderr.trim()}`)),
     );
     child.stdin?.end(value);
   });
+
+/**
+ * sets a github actions repository secret via the gh cli.
+ * The value is passed via stdin so it never shows up in a process list.
+ */
+export const setGithubSecret = async (
+  repo: string,
+  name: string,
+  value: string,
+): Promise<void> => ghSetViaStdin("secret", repo, name, value);
+
+/**
+ * sets a github actions repository variable (plain, unmasked) via the
+ * gh cli — for vault values classified as not sensitive
+ */
+export const setGithubVariable = async (
+  repo: string,
+  name: string,
+  value: string,
+): Promise<void> => ghSetViaStdin("variable", repo, name, value);

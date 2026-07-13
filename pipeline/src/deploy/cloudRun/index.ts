@@ -90,6 +90,9 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
             {
               key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
               hidden: true,
+              // a public url fragment, not sensitive: masking it would
+              // suppress environment urls on github and break log links
+              kind: "variable" as const,
             },
           ]
         : []),

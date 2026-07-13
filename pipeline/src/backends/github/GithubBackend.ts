@@ -8,6 +8,7 @@ import type { CatladderJob } from "../../types/jobs";
 import type { PipelineBackend, PipelineFile } from "../types";
 import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
 import {
+  collectSecretKinds,
   getUploadProviderIds,
   githubGlobalJobId,
   makeGithubJob,
@@ -106,6 +107,7 @@ export class GithubBackend implements PipelineBackend {
       });
 
       const uploadProviderIds = getUploadProviderIds(allJobs);
+      const secretKinds = collectSecretKinds(allJobs);
       const jobs: Record<string, GithubJob> = {};
 
       // NOTE: agent jobs are gitlab-only and skipped on github
@@ -119,6 +121,7 @@ export class GithubBackend implements PipelineBackend {
               uploadProviderIds,
               images,
               scripts,
+              secretKinds,
             );
             if (isReviewStopJob(context, job)) {
               reviewStopJobs[id] = githubJob;

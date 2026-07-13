@@ -243,15 +243,35 @@ const mirrorSecretsToCiBackends = async (
   if (!enabled.includes("github")) {
     return;
   }
+  const kinds = new Map<string, "secret" | "variable">();
+  for (const [componentName, envs] of Object.entries(envAndComponents)) {
+    for (const env of envs) {
+      const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment(
+        env,
+        componentName,
+      );
+      [
+        ...secretEnvVarKeys,
+        ...jobOnlyVars.build.secretEnvVarKeys,
+        ...jobOnlyVars.deploy.secretEnvVarKeys,
+      ].forEach(({ key, kind }) =>
+        kinds.set(getSecretVarName(env, componentName, key), kind ?? "secret"),
+      );
+    }
+  }
   const secrets = Object.entries(envAndComponents).flatMap(
     ([componentName, envs]) =>
       envs.flatMap((env) =>
         Object.entries(valuesToEdit[componentName][env] ?? {}).map(
-          ([key, value]) => ({
-            name: getSecretVarName(env, componentName, key),
-            value:
-              typeof value === "string" ? value : JSON.stringify(value ?? ""),
-          }),
+          ([key, value]) => {
+            const name = getSecretVarName(env, componentName, key);
+            return {
+              name,
+              value:
+                typeof value === "string" ? value : JSON.stringify(value ?? ""),
+              kind: kinds.get(name) ?? ("secret" as const),
+            };
+          },
         ),
       ),
   );

@@ -2,7 +2,7 @@ import type { SecretEnvVar, UnspecifiedEnvVars } from "..";
 import type { EnvVars } from "../types/config";
 import {
   makeSecretEnvVarMapping,
-  stringListToSecreteEnvVarList,
+  normalizeSecretVarsConfig,
   stringifyValues,
 } from "./utils/envVars";
 
@@ -29,7 +29,7 @@ export const transformJobOnlyVars = async (
   }
 
   const publicVars = stringifyValues(vars?.public ?? {});
-  const secretEnvVarKeys = stringListToSecreteEnvVarList(vars?.secret ?? []);
+  const secretEnvVarKeys = normalizeSecretVarsConfig(vars?.secret);
   const deployJobOnlySecretEnvVars = vars?.secret
     ? makeSecretEnvVarMapping(env, componentName, secretEnvVarKeys)
     : {};

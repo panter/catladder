@@ -182,7 +182,44 @@ const createCacheSteps = (
   });
 };
 
-const getSecretsEnv = (context: ComponentContext): Record<string, string> => {
+export type SecretKinds = Map<string, "secret" | "variable">;
+
+/**
+ * how a vault-stored value reaches the job env: masked github secret,
+ * or plain (unmasked) github variable for non-sensitive values — those
+ * stay readable in logs and usable in environment urls
+ */
+const vaultValueExpression = (name: string, kinds: SecretKinds): string =>
+  kinds.get(name) === "variable"
+    ? `\${{ vars.${name} }}`
+    : `\${{ secrets.${name} }}`;
+
+/**
+ * the kind of every vault-stored var of all components, keyed by its
+ * CL_* name — the lookup for cross-component references
+ */
+export const collectSecretKinds = (allJobs: AllCatladderJobs): SecretKinds => {
+  const kinds: SecretKinds = new Map();
+  allJobs.components.forEach(({ context }) => {
+    const entries = [
+      ...context.environment.secretEnvVarKeys,
+      ...(context.environment.jobOnlyVars.build.secretEnvVarKeys ?? []),
+      ...(context.environment.jobOnlyVars.deploy.secretEnvVarKeys ?? []),
+    ];
+    entries.forEach(({ key, kind }) =>
+      kinds.set(
+        getSecretVarName(context.env, context.name, key),
+        kind ?? "secret",
+      ),
+    );
+  });
+  return kinds;
+};
+
+const getSecretsEnv = (
+  context: ComponentContext,
+  kinds: SecretKinds,
+): Record<string, string> => {
   const keys = [
     ...context.environment.secretEnvVarKeys,
     ...(context.environment.jobOnlyVars.build.secretEnvVarKeys ?? []),
@@ -191,7 +228,7 @@ const getSecretsEnv = (context: ComponentContext): Record<string, string> => {
   return Object.fromEntries(
     keys.map(({ key }) => {
       const name = getSecretVarName(context.env, context.name, key);
-      return [name, `\${{ secrets.${name} }}`];
+      return [name, vaultValueExpression(name, kinds)];
     }),
   );
 };
@@ -203,12 +240,15 @@ const getSecretsEnv = (context: ComponentContext): Record<string, string> => {
  * that. Github jobs only see what is injected explicitly, so the
  * script is scanned for the names it actually references.
  */
-const getReferencedSecretsEnv = (script: string): Record<string, string> =>
+const getReferencedSecretsEnv = (
+  script: string,
+  kinds: SecretKinds,
+): Record<string, string> =>
   Object.fromEntries(
     [...script.matchAll(/\$\{?(CL_[A-Za-z0-9_]+)\}?/g)]
       .map((match) => match[1])
       .filter((name) => !(name in GITHUB_INJECTED_WORKFLOW_ENV))
-      .map((name) => [name, `\${{ secrets.${name} }}`]),
+      .map((name) => [name, vaultValueExpression(name, kinds)]),
   );
 
 export const makeGithubJob = (
@@ -218,6 +258,7 @@ export const makeGithubJob = (
   uploadProviderIds: Set<string>,
   images: JobImagesPlan,
   scripts: GithubScriptFiles,
+  secretKinds: SecretKinds = new Map(),
 ): [id: string, githubJob: GithubJob] => {
   const id = githubJobId(context, job.name);
   const isComponent = context.type === "component";
@@ -295,8 +336,8 @@ export const makeGithubJob = (
         ([key]) => !GITLAB_ONLY_RUNNER_VARIABLES.has(key),
       ),
     ),
-    ...(isComponent ? getSecretsEnv(context) : {}),
-    ...getReferencedSecretsEnv(runScript),
+    ...(isComponent ? getSecretsEnv(context, secretKinds) : {}),
+    ...getReferencedSecretsEnv(runScript, secretKinds),
     CL_JOB_IMAGE: image ?? "runner",
   };
 

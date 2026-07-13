@@ -14,6 +14,7 @@ import {
   getGithubRepoFromRemote,
   isGhAuthenticated,
   setGithubSecret,
+  setGithubVariable,
 } from "../../utils/github";
 
 /**
@@ -23,7 +24,7 @@ import {
 export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
   const envAndComponents = await getAllComponentsWithAllEnvsHierarchical();
 
-  const names: string[] = [];
+  const kinds = new Map<string, "secret" | "variable">();
   for (const [componentName, envs] of Object.entries(envAndComponents)) {
     for (const env of envs) {
       if (envFilter && !envFilter.includes(env)) {
@@ -38,31 +39,42 @@ export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
         ...jobOnlyVars.build.secretEnvVarKeys,
         ...jobOnlyVars.deploy.secretEnvVarKeys,
       ];
-      keys.forEach(({ key }) =>
-        names.push(getSecretVarName(env, componentName, key)),
+      keys.forEach(({ key, kind }) =>
+        kinds.set(getSecretVarName(env, componentName, key), kind ?? "secret"),
       );
     }
   }
 
+  const names = [...kinds.keys()];
   const values = await (await io.getVaultManager()).readSecrets(names, io);
   const secrets = names
     .filter((name) => values[name] !== undefined)
-    .map((name) => ({ name, value: values[name] }));
+    .map((name) => ({
+      name,
+      value: values[name],
+      kind: kinds.get(name) ?? ("secret" as const),
+    }));
   const missing = names.filter((name) => values[name] === undefined);
   return { secrets, missing };
 };
 
 /**
- * pushes secrets to github repository secrets via the gh cli
+ * pushes vault values to github via the gh cli: sensitive ones as repo
+ * secrets (masked), "variable"-kind ones as repo variables (plain)
  */
 export const pushSecretsToGithub = async (
   io: IO,
   repo: string,
-  secrets: { name: string; value: string }[],
+  secrets: { name: string; value: string; kind: "secret" | "variable" }[],
 ) => {
-  for (const { name, value } of secrets) {
-    await setGithubSecret(repo, name, value);
-    io.log(`✅ ${name}`);
+  for (const { name, value, kind } of secrets) {
+    if (kind === "variable") {
+      await setGithubVariable(repo, name, value);
+      io.log(`📖 ${name} (variable)`);
+    } else {
+      await setGithubSecret(repo, name, value);
+      io.log(`✅ ${name}`);
+    }
   }
 };
 

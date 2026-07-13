@@ -17,7 +17,7 @@ import { getEnvironmentContext } from "./getEnvironmentContext";
 import { transformJobOnlyVars } from "./transformJobOnlyVars";
 import {
   makeSecretEnvVarMapping,
-  stringListToSecreteEnvVarList,
+  normalizeSecretVarsConfig,
   stringifyValues,
 } from "./utils/envVars";
 
@@ -25,6 +25,14 @@ export type SecretEnvVar = {
   key: string;
   // hidden env vars are not shown in config-secrets
   hidden?: boolean;
+  /**
+   * whether the value is sensitive. Both kinds live in the vault and are
+   * provided to jobs the same way; platforms that distinguish masked
+   * secrets from plain variables (github) treat them differently:
+   * "variable" values are unmasked (visible in logs, usable in
+   * environment urls) and don't count against secret limits.
+   */
+  kind?: "secret" | "variable";
 };
 
 const getBasePredefinedVariables = (ctx: EnvironmentContext) => {
@@ -109,7 +117,7 @@ export const getEnvironmentVariables = async (
     : [];
 
   const secretEnvVarKeys: SecretEnvVar[] = [
-    ...stringListToSecreteEnvVarList(envConfigRaw.vars?.secret ?? []),
+    ...normalizeSecretVarsConfig(envConfigRaw.vars?.secret),
     ...additionalSecretKeys,
   ];
   const secretEnvVars = makeSecretEnvVarMapping(

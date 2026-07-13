@@ -179,7 +179,7 @@ exports[`matches snapshot for cloud-run-storybook github workflows YAML 1`] = `
           password: \${{ github.token }}
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -225,7 +225,7 @@ exports[`matches snapshot for cloud-run-storybook github workflows YAML 1`] = `
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
@@ -261,7 +261,7 @@ exports[`matches snapshot for cloud-run-storybook github workflows YAML 1`] = `
         url: \${{ steps.main.outputs.url }}
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -448,7 +448,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -494,7 +494,7 @@ catladder-review.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
@@ -530,7 +530,7 @@ catladder-review.yml:
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -712,7 +712,7 @@ catladder-release.yml:
           password: \${{ github.token }}
       env:
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -758,7 +758,7 @@ catladder-release.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
@@ -794,7 +794,7 @@ catladder-release.yml:
         url: \${{ steps.main.outputs.url }}
       env:
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -815,7 +815,7 @@ catladder-release.yml:
           password: \${{ github.token }}
       env:
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
       steps:
         - name: Checkout
@@ -861,7 +861,7 @@ catladder-release.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
       steps:
         - name: Checkout
@@ -897,7 +897,7 @@ catladder-release.yml:
         url: \${{ steps.main.outputs.url }}
       env:
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: Checkout
@@ -1081,7 +1081,7 @@ catladder-review-stop.yml:
         name: review-pr\${{ github.event.number }}-api
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_review_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_review_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
@@ -1308,7 +1308,7 @@ catladder-manual.yml:
         name: dev-api
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_dev_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_dev_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
@@ -1382,7 +1382,7 @@ catladder-manual.yml:
         name: stage-api
       env:
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_stage_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_stage_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
@@ -1438,7 +1438,7 @@ catladder-manual.yml:
         name: prod-api
       env:
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ secrets.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
+        CL_prod_api_GCLOUD_RUN_canonicalHostSuffix: \${{ vars.CL_prod_api_GCLOUD_RUN_canonicalHostSuffix }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
       steps:
         - name: 🛑 Stop ⚠️
