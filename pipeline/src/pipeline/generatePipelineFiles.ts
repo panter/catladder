@@ -1,4 +1,4 @@
-import { mkdir } from "fs/promises";
+import { mkdir, rm } from "fs/promises";
 import { dirname } from "path";
 import type { Config, PipelineType } from "../types";
 
@@ -6,6 +6,7 @@ import type { PipelineBackend } from "../backends";
 import { getEnabledPipelineTypes, getPipelineBackend } from "../backends";
 import { GitlabBackend } from "../backends/gitlab";
 import type { CatenvContext } from "../catenv";
+import { GENERATED_IMAGES_FOLDER } from "../customImages/jobImagesPlan";
 
 /**
  * generates the pipeline files of all pipeline types enabled in the
@@ -19,6 +20,14 @@ export async function generatePipelineFiles(
   const pipelineTypes = pipelineType
     ? [pipelineType]
     : getEnabledPipelineTypes(context.config);
+
+  if (!pipelineType) {
+    // the materialized image definitions are a union across all enabled
+    // backends and no single backend may wipe them — cleaned once per
+    // full generation, so images that fell out of use don't linger (and
+    // keep triggering gitlab's rules:changes)
+    await rm(GENERATED_IMAGES_FOLDER, { recursive: true, force: true });
+  }
 
   for (const type of pipelineTypes) {
     await generatePipelineFilesForBackend(context, getPipelineBackend(type));

@@ -15,7 +15,7 @@ import {
   RUNNER_IMAGE_DEPENDENCIES,
 } from "./shippedImages";
 
-const GENERATED_IMAGES_FOLDER = ".catladder-generated/images";
+export const GENERATED_IMAGES_FOLDER = ".catladder-generated/images";
 
 /**
  * the official docker cli image used to build the job images — NOT a
