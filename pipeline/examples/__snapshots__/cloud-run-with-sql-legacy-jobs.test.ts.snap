@@ -1537,8 +1537,14 @@ catladder-review-stop.yml:
             echo "deleting database pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api..."
             echo "👆 this can take multiple attemps (3-5min), because google cloud run may still have a connection to the database after the cloud run service is shut down"
 
+                _attempt=0
                 until gcloud sql databases delete pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api --instance=instancename --project projectId
                 do
+                  _attempt=$((_attempt+1))
+                  if [ "$_attempt" -ge 30 ]; then
+                    echo "giving up after 30 attempts"
+                    exit 1
+                  fi
                   echo "Trying again."
                   sleep 10
                 done
@@ -4531,7 +4537,7 @@ before_script:
     - gcloud run jobs delete $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders --project=google-project-id --region=europe-west6
     - echo "deleting database pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api..."
     - echo "👆 this can take multiple attemps (3-5min), because google cloud run may still have a connection to the database after the cloud run service is shut down"
-    - "\\n    until gcloud sql databases delete pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api --instance=instancename --project projectId\\n    do\\n      echo \\"Trying again.\\"\\n      sleep 10\\n    done\\n  "
+    - "\\n    _attempt=0\\n    until gcloud sql databases delete pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api --instance=instancename --project projectId\\n    do\\n      _attempt=$((_attempt+1))\\n      if [ \\"$_attempt\\" -ge 30 ]; then\\n        echo \\"giving up after 30 attempts\\"\\n        exit 1\\n      fi\\n      echo \\"Trying again.\\"\\n      sleep 10\\n    done\\n  "
     - gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }) --quiet --delete-tags
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set +e

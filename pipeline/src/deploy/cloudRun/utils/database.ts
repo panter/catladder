@@ -34,6 +34,9 @@ export const getDatabaseDeleteScript = (
       `gcloud sql databases delete ${DB_NAME} --instance=${instanceId} --project ${projectId}`,
       {
         pauseInSeconds: 10,
+        // connections normally clear within 3-5min; anything beyond is
+        // a permanent error (missing permission, wrong instance, ...)
+        maxAttempts: 30,
       },
     ),
   ];

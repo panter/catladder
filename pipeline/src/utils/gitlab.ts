@@ -13,11 +13,22 @@ export const repeatOnFailure = (
   command: string,
   options: {
     pauseInSeconds: number;
+    /**
+     * fail the job after this many attempts — permanent errors (e.g. a
+     * 403) must fail loudly instead of retrying until the job timeout
+     */
+    maxAttempts: number;
   },
 ): string => {
   return `
+    _attempt=0
     until ${command}
     do
+      _attempt=$((_attempt+1))
+      if [ "$_attempt" -ge ${options.maxAttempts} ]; then
+        echo "giving up after ${options.maxAttempts} attempts"
+        exit 1
+      fi
       echo "Trying again."
       sleep ${options.pauseInSeconds}
     done
