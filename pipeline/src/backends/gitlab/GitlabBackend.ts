@@ -20,6 +20,7 @@ import {
   getJobImagesMode,
   JobImagesPlan,
 } from "../../customImages/jobImagesPlan";
+import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import type { PipelineBackend, PipelineFile } from "../types";
 import type { GitlabJobWithContext } from "./createGitlabJobs";
 import { createGitlabJobs } from "./createGitlabJobs";
@@ -57,6 +58,8 @@ export class GitlabBackend implements PipelineBackend {
       ...includes,
       // materialized image definitions (repo mode)
       ...images.getGeneratedFiles(),
+      // catci: the CI companion the release job's security audit runs
+      ...getCatciGeneratedFiles(),
     ];
   }
 
@@ -135,6 +138,11 @@ export class GitlabBackend implements PipelineBackend {
     images: JobImagesPlan,
   ): Promise<Pipeline<"gitlab">> {
     const stages = getPipelineStages(config);
+
+    // release jobs first: they register their image on the plan, and the
+    // per-trigger job creation below emits the build jobs of all images
+    // registered so far
+    const releaseJobs = getGitlabReleaseJobs(config, images);
 
     // for all triggers create jobs and add base rules
     const allJobsPerTrigger = await Promise.all(
@@ -215,15 +223,13 @@ export class GitlabBackend implements PipelineBackend {
       jobs: {
         ...allJobs,
         ...Object.fromEntries(
-          Object.entries(getGitlabReleaseJobs(config)).map(
-            ([name, gitlabJob]) => [
-              name,
-              {
-                gitlabJob,
-                context: null,
-              },
-            ],
-          ),
+          Object.entries(releaseJobs).map(([name, gitlabJob]) => [
+            name,
+            {
+              gitlabJob,
+              context: null,
+            },
+          ]),
         ),
       },
       variables: config.runnerVariables,

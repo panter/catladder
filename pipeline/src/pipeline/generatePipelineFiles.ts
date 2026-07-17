@@ -7,6 +7,7 @@ import { getEnabledPipelineTypes, getPipelineBackend } from "../backends";
 import { GitlabBackend } from "../backends/gitlab";
 import type { CatenvContext } from "../catenv";
 import { GENERATED_IMAGES_FOLDER } from "../customImages/jobImagesPlan";
+import { GENERATED_CATCI_FOLDER } from "../catci/shippedCatci";
 
 /**
  * generates the pipeline files of all pipeline types enabled in the
@@ -27,6 +28,8 @@ export async function generatePipelineFiles(
     // full generation, so images that fell out of use don't linger (and
     // keep triggering gitlab's rules:changes)
     await rm(GENERATED_IMAGES_FOLDER, { recursive: true, force: true });
+    // same for the materialized catci bundle (union across backends)
+    await rm(GENERATED_CATCI_FOLDER, { recursive: true, force: true });
   }
 
   for (const type of pipelineTypes) {

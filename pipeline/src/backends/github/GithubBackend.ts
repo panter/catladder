@@ -18,6 +18,7 @@ import {
   JobImagesPlan,
 } from "../../customImages/jobImagesPlan";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
+import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import { notNil } from "../../utils";
 import { getGithubReleaseJobs } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
@@ -79,6 +80,8 @@ export class GithubBackend implements PipelineBackend {
       // materialized job scripts and image definitions (repo mode)
       ...scripts.getGeneratedFiles(),
       ...images.getGeneratedFiles(),
+      // catci: the CI companion the release job's security audit runs
+      ...getCatciGeneratedFiles(),
     ];
   }
 
