@@ -302,13 +302,13 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache api-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: api/.yarn
             key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               api/node_modules
@@ -335,13 +335,13 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache api-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: api/.yarn
             key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               api/node_modules
@@ -491,13 +491,13 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache www-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: www/.yarn
             key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               www/node_modules
@@ -524,13 +524,13 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache www-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: www/.yarn
             key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               www/node_modules
@@ -946,13 +946,13 @@ catladder-review.yml:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache api-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: api/.yarn
             key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               api/node_modules
@@ -979,13 +979,13 @@ catladder-review.yml:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache api-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: api/.yarn
             key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               api/node_modules
@@ -1135,13 +1135,13 @@ catladder-review.yml:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache www-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: www/.yarn
             key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               www/node_modules
@@ -1168,13 +1168,13 @@ catladder-review.yml:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache www-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: www/.yarn
             key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               www/node_modules
@@ -6379,11 +6379,11 @@ before_script:
     - yarn lint
   cache:
     - key: api-yarn
-      policy: pull-push
+      policy: pull
       paths:
         - api/.yarn
     - key: api-node-modules
-      policy: pull-push
+      policy: pull
       paths: &a2
         - api/node_modules
         - api/.yarn/install-state.gz
@@ -6420,11 +6420,11 @@ before_script:
     - yarn test
   cache:
     - key: api-yarn
-      policy: pull-push
+      policy: pull
       paths:
         - api/.yarn
     - key: api-node-modules
-      policy: pull-push
+      policy: pull
       paths: *a2
   rules:
     - when: never
@@ -6836,13 +6836,13 @@ before_script:
     - yarn lint
   cache:
     - key: api-yarn-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths:
         - api/.yarn
       fallback_keys:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths: &a3
         - api/node_modules
         - api/.yarn/install-state.gz
@@ -6881,13 +6881,13 @@ before_script:
     - yarn test
   cache:
     - key: api-yarn-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths:
         - api/.yarn
       fallback_keys:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths: *a3
       fallback_keys:
         - api-node-modules
@@ -8001,11 +8001,11 @@ before_script:
     - yarn lint
   cache:
     - key: www-yarn
-      policy: pull-push
+      policy: pull
       paths:
         - www/.yarn
     - key: www-node-modules
-      policy: pull-push
+      policy: pull
       paths: &a4
         - www/node_modules
         - www/.yarn/install-state.gz
@@ -8042,11 +8042,11 @@ before_script:
     - yarn test
   cache:
     - key: www-yarn
-      policy: pull-push
+      policy: pull
       paths:
         - www/.yarn
     - key: www-node-modules
-      policy: pull-push
+      policy: pull
       paths: *a4
   rules:
     - when: never
@@ -8465,13 +8465,13 @@ before_script:
     - yarn lint
   cache:
     - key: www-yarn-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths:
         - www/.yarn
       fallback_keys:
         - www-yarn
     - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths: &a5
         - www/node_modules
         - www/.yarn/install-state.gz
@@ -8510,13 +8510,13 @@ before_script:
     - yarn test
   cache:
     - key: www-yarn-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths:
         - www/.yarn
       fallback_keys:
         - www-yarn
     - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths: *a5
       fallback_keys:
         - www-node-modules

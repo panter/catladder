@@ -358,13 +358,13 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache app-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: app/.yarn
             key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
             restore-keys: app-yarn-
         - name: Cache app-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               app/node_modules
@@ -394,13 +394,13 @@ exports[`matches snapshot for meteor-kubernetes github workflows YAML 1`] = `
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache app-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: app/.yarn
             key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
             restore-keys: app-yarn-
         - name: Cache app-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               app/node_modules
@@ -883,13 +883,13 @@ catladder-review.yml:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache app-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: app/.yarn
             key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
             restore-keys: app-yarn-
         - name: Cache app-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               app/node_modules
@@ -919,13 +919,13 @@ catladder-review.yml:
         - name: Checkout
           uses: actions/checkout@v4
         - name: Cache app-yarn
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: app/.yarn
             key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
             restore-keys: app-yarn-
         - name: Cache app-node-modules
-          uses: actions/cache@v4
+          uses: actions/cache/restore@v4
           with:
             path: |-
               app/node_modules
@@ -4372,11 +4372,11 @@ before_script:
     - yarn lint
   cache:
     - key: app-yarn
-      policy: pull-push
+      policy: pull
       paths:
         - app/.yarn
     - key: app-node-modules
-      policy: pull-push
+      policy: pull
       paths: &a2
         - app/node_modules
         - app/.yarn/install-state.gz
@@ -4413,11 +4413,11 @@ before_script:
     - yarn test
   cache:
     - key: app-yarn
-      policy: pull-push
+      policy: pull
       paths:
         - app/.yarn
     - key: app-node-modules
-      policy: pull-push
+      policy: pull
       paths: *a2
   rules:
     - when: never
@@ -4850,13 +4850,13 @@ before_script:
     - yarn lint
   cache:
     - key: app-yarn-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths:
         - app/.yarn
       fallback_keys:
         - app-yarn
     - key: app-node-modules-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths: &a3
         - app/node_modules
         - app/.yarn/install-state.gz
@@ -4895,13 +4895,13 @@ before_script:
     - yarn test
   cache:
     - key: app-yarn-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths:
         - app/.yarn
       fallback_keys:
         - app-yarn
     - key: app-node-modules-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
+      policy: pull
       paths: *a3
       fallback_keys:
         - app-node-modules

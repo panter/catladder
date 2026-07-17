@@ -46,7 +46,10 @@ export const createNodeTestJobs = async (
   const [yarnInstall, packageManagerInfo, nodeCache] = await Promise.all([
     getYarnInstall(context),
     context.packageManagerInfo,
-    getNodeCache(context),
+    // pull-only: the build job is the designated cache writer — lint and
+    // test produce equivalent content from the same lockfile, so their
+    // uploads were pure redundancy (same multi-GB archive, last wins)
+    getNodeCache(context, "pull"),
   ]);
   const auditJob: CatladderJob | null =
     buildConfig.audit !== false
