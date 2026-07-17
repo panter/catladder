@@ -10,6 +10,14 @@ const config = {
   // generates its own set of files.
   pipelines: {
     gitlab: true,
+    // per-pipeline-type options: gitRemote, and runnerVariables applied
+    // to every job of this pipeline type only (e.g. a lower turbo
+    // concurrency for github's small hosted runners)
+    github: {
+      runnerVariables: {
+        TURBO_CONCURRENCY: "2",
+      },
+    },
   },
 
   components: {

@@ -227,6 +227,17 @@ export type PipelineOutputOptions = {
    * defaults to "origin"
    */
   gitRemote?: string;
+
+  /**
+   * variables applied to every job of THIS pipeline type only —
+   * lowered to gitlab's pipeline-level `variables:` / github's
+   * workflow-level `env:`, so job-level `runnerVariables` take
+   * precedence.
+   *
+   * Useful when the CI systems need different values, e.g. a lower
+   * `TURBO_CONCURRENCY` for github's small hosted runners.
+   */
+  runnerVariables?: Record<string, string>;
 };
 
 /**

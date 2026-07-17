@@ -7,6 +7,7 @@ import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 import type { CatladderJob } from "../../types/jobs";
 import type { PipelineBackend, PipelineFile } from "../types";
 import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
+import { getPipelineOptions } from "../index";
 import {
   collectSecretKinds,
   getUploadProviderIds,
@@ -99,6 +100,13 @@ export class GithubBackend implements PipelineBackend {
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};
 
+    // per-pipeline-type variables (pipelines.github.runnerVariables);
+    // workflow-level env, so job-level runnerVariables take precedence
+    const workflowEnv = {
+      ...GITHUB_INJECTED_WORKFLOW_ENV,
+      ...getPipelineOptions(config, this.type).runnerVariables,
+    };
+
     const reviewStopJobs: Record<string, GithubJob> = {};
     const manualJobs: Record<string, GithubJob> = {};
 
@@ -150,7 +158,7 @@ export class GithubBackend implements PipelineBackend {
         workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] = {
           ...TRIGGER_WORKFLOWS[trigger],
           ...workflowPermissions(images),
-          env: GITHUB_INJECTED_WORKFLOW_ENV,
+          env: workflowEnv,
           jobs: { ...makeEnsureImageGithubJobs(images), ...jobs },
         };
       }
@@ -161,7 +169,7 @@ export class GithubBackend implements PipelineBackend {
         name: "catladder review stop",
         on: { pull_request: { types: ["closed"] } },
         ...workflowPermissions(images),
-        env: GITHUB_INJECTED_WORKFLOW_ENV,
+        env: workflowEnv,
         jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
       };
     }
@@ -182,7 +190,7 @@ export class GithubBackend implements PipelineBackend {
           },
         },
         ...workflowPermissions(images),
-        env: GITHUB_INJECTED_WORKFLOW_ENV,
+        env: workflowEnv,
         jobs: {
           ...makeEnsureImageGithubJobs(images),
           ...Object.fromEntries(

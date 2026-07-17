@@ -22,6 +22,7 @@ import {
 } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import type { PipelineBackend, PipelineFile } from "../types";
+import { getPipelineOptions } from "../index";
 import type { GitlabJobWithContext } from "./createGitlabJobs";
 import { createGitlabJobs } from "./createGitlabJobs";
 import { createGitlabPipelineWithDefaults } from "./createGitlabPipeline";
@@ -232,7 +233,11 @@ export class GitlabBackend implements PipelineBackend {
           ]),
         ),
       },
-      variables: config.runnerVariables,
+      variables: {
+        ...config.runnerVariables,
+        // per-pipeline-type variables (pipelines.gitlab.runnerVariables)
+        ...getPipelineOptions(config, this.type).runnerVariables,
+      },
     });
   }
 }
