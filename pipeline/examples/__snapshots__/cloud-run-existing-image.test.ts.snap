@@ -267,7 +267,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-www
+        name: review-www
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -558,7 +558,7 @@ catladder-review-stop.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-www
+        name: review-www
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115

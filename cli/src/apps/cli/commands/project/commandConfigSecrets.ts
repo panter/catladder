@@ -17,6 +17,7 @@ import {
   parseChoice,
 } from "../../../../config/getProjectConfig";
 import {
+  collectSecretTargets,
   getConfiguredGithubRepo,
   pushSecretsToGithub,
 } from "../../../../commands/project/commandSecretsSyncGithub";
@@ -292,7 +293,12 @@ const mirrorSecretsToCiBackends = async (
     return;
   }
   instance.log(`mirroring ${secrets.length} secrets to github ('${repo}')...`);
-  await pushSecretsToGithub(instance, repo, secrets);
+  await pushSecretsToGithub(
+    instance,
+    repo,
+    secrets,
+    await collectSecretTargets(config),
+  );
 };
 
 export const projectConfigSecrets = async (io: IO, envComponent?: string) => {

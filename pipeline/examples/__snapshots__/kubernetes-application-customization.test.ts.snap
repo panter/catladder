@@ -897,7 +897,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-api
+        name: review-api
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
@@ -1646,7 +1646,7 @@ catladder-review-stop.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-api
+        name: review-api
       env:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
@@ -2166,7 +2166,7 @@ catladder-manual.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-api
+        name: review-api
       env:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}

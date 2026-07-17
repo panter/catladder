@@ -277,6 +277,8 @@ exports[`matches snapshot for node-build-with-custom-image github workflows YAML
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -297,6 +299,8 @@ exports[`matches snapshot for node-build-with-custom-image github workflows YAML
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -331,6 +335,8 @@ exports[`matches snapshot for node-build-with-custom-image github workflows YAML
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
@@ -360,6 +366,8 @@ exports[`matches snapshot for node-build-with-custom-image github workflows YAML
       runs-on: ubuntu-latest
       container:
         image: my-custom-image
+      environment:
+        name: dev
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: my-custom-image
@@ -405,6 +413,8 @@ exports[`matches snapshot for node-build-with-custom-image github workflows YAML
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -730,6 +740,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -750,6 +762,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -784,6 +798,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
@@ -813,6 +829,8 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       container:
         image: my-custom-image
+      environment:
+        name: review
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: my-custom-image
@@ -858,6 +876,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -895,7 +915,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-www
+        name: review-www
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -1173,6 +1193,8 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       container:
         image: my-custom-image
+      environment:
+        name: stage
       env:
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: my-custom-image
@@ -1218,6 +1240,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: stage
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -1269,6 +1293,8 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       container:
         image: my-custom-image
+      environment:
+        name: prod
       env:
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: my-custom-image
@@ -1314,6 +1340,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: prod
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
@@ -1632,7 +1660,7 @@ catladder-review-stop.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-www
+        name: review-www
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115

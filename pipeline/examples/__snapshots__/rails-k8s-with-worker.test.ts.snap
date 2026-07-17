@@ -172,6 +172,8 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
       runs-on: ubuntu-latest
       container:
         image: ruby:3.2.1
+      environment:
+        name: dev
       env:
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
         CL_dev_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_app_POSTGRESQL_PASSWORD }}
@@ -189,6 +191,8 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
       runs-on: ubuntu-latest
       container:
         image: ruby:3.2.1
+      environment:
+        name: dev
       env:
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
         CL_dev_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_app_POSTGRESQL_PASSWORD }}
@@ -211,6 +215,8 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
           image: docker.io/postgres:latest
           env:
             POSTGRES_HOST_AUTH_METHOD: trust
+      environment:
+        name: dev
       env:
         RAILS_ENV: test
         DATABASE_URL: postgresql://postgres@database
@@ -235,6 +241,8 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
@@ -451,6 +459,8 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       container:
         image: ruby:3.2.1
+      environment:
+        name: review
       env:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}
@@ -468,6 +478,8 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       container:
         image: ruby:3.2.1
+      environment:
+        name: review
       env:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}
@@ -490,6 +502,8 @@ catladder-review.yml:
           image: docker.io/postgres:latest
           env:
             POSTGRES_HOST_AUTH_METHOD: trust
+      environment:
+        name: review
       env:
         RAILS_ENV: test
         DATABASE_URL: postgresql://postgres@database
@@ -514,6 +528,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
@@ -542,7 +558,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-app
+        name: review-app
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
@@ -730,6 +746,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: stage
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app_SECRET_KEY_BASE: \${{ secrets.CL_stage_app_SECRET_KEY_BASE }}
@@ -782,6 +800,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: prod
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
@@ -996,7 +1016,7 @@ catladder-review-stop.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-app
+        name: review-app
       env:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}
@@ -1437,7 +1457,7 @@ catladder-manual.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-app
+        name: review-app
       env:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}

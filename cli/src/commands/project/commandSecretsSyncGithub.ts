@@ -1,7 +1,9 @@
+import type { Config } from "@catladder/pipeline";
 import {
   getEnabledPipelineTypes,
   getPipelineGitRemote,
   getSecretVarName,
+  GithubBackend,
 } from "@catladder/pipeline";
 import {
   getAllComponentsWithAllEnvsHierarchical,
@@ -11,6 +13,7 @@ import {
 import { defineCommand } from "../../core/defineCommand";
 import type { IO } from "../../core/types";
 import {
+  ensureGithubEnvironment,
   getGithubRepoFromRemote,
   isGhAuthenticated,
   setGithubSecret,
@@ -58,22 +61,86 @@ export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
   return { secrets, missing };
 };
 
+/** marker for repo-level (environment-less) targets */
+const REPO_LEVEL = "";
+
 /**
- * pushes vault values to github via the gh cli: sensitive ones as repo
- * secrets (masked), "variable"-kind ones as repo variables (plain)
+ * derives which github environment(s) each secret/variable must live in
+ * by scanning the GENERATED workflows: a `${{ secrets.X }}` / `${{
+ * vars.X }}` reference in a job's env targets that job's environment
+ * (or the repo level when the job has none). Deriving from the real
+ * output means the sync can never drift from what the workflows expect.
+ *
+ * Environment secrets are the answer to github's cap of 100 secrets
+ * per REPO (a multi-env project easily exceeds it): the cap applies
+ * per environment instead.
+ */
+export const collectSecretTargets = async (
+  config: Config,
+): Promise<Map<string, Set<string>>> => {
+  const workflows = await new GithubBackend().createWorkflows(config);
+  const targets = new Map<string, Set<string>>();
+  for (const workflow of Object.values(workflows)) {
+    for (const job of Object.values(workflow.jobs)) {
+      const environment =
+        typeof job.environment === "object"
+          ? job.environment.name
+          : job.environment;
+      for (const value of Object.values(job.env ?? {})) {
+        if (typeof value !== "string") continue;
+        for (const match of value.matchAll(
+          /\$\{\{\s*(?:secrets|vars)\.([A-Za-z0-9_]+)\s*\}\}/g,
+        )) {
+          const name = match[1];
+          if (!targets.has(name)) {
+            targets.set(name, new Set());
+          }
+          targets.get(name)!.add(environment ?? REPO_LEVEL);
+        }
+      }
+    }
+  }
+  return targets;
+};
+
+/**
+ * pushes vault values to github via the gh cli: sensitive ones as
+ * secrets (masked), "variable"-kind ones as variables (plain) — each
+ * into the environment(s) whose jobs reference them
  */
 export const pushSecretsToGithub = async (
   io: IO,
   repo: string,
   secrets: { name: string; value: string; kind: "secret" | "variable" }[],
+  targets: Map<string, Set<string>>,
 ) => {
+  const environments = [
+    ...new Set(
+      [...targets.values()].flatMap((envs) =>
+        [...envs].filter((env) => env !== REPO_LEVEL),
+      ),
+    ),
+  ];
+  for (const environment of environments) {
+    await ensureGithubEnvironment(repo, environment);
+    io.log(`🌍 environment ${environment}`);
+  }
+
   for (const { name, value, kind } of secrets) {
-    if (kind === "variable") {
-      await setGithubVariable(repo, name, value);
-      io.log(`📖 ${name} (variable)`);
-    } else {
-      await setGithubSecret(repo, name, value);
-      io.log(`✅ ${name}`);
+    const envs = targets.get(name);
+    if (!envs) {
+      io.log(`⏭️ ${name} (not referenced by any generated workflow)`);
+      continue;
+    }
+    for (const environment of envs) {
+      const suffix = environment === REPO_LEVEL ? "" : ` → ${environment}`;
+      if (kind === "variable") {
+        await setGithubVariable(repo, name, value, environment || undefined);
+        io.log(`📖 ${name} (variable)${suffix}`);
+      } else {
+        await setGithubSecret(repo, name, value, environment || undefined);
+        io.log(`✅ ${name}${suffix}`);
+      }
     }
   }
 };
@@ -163,7 +230,12 @@ export const commandSecretsSyncGithub = defineCommand({
       throw new Error("abort");
     }
 
-    await pushSecretsToGithub(ctx, repo, secrets);
+    await pushSecretsToGithub(
+      ctx,
+      repo,
+      secrets,
+      await collectSecretTargets(config),
+    );
     ctx.log("");
     ctx.log(
       "done! 😻 the github pipeline can use them as ${{ secrets.<NAME> }}",

@@ -341,6 +341,42 @@ export const makeGithubJob = (
     CL_JOB_IMAGE: image ?? "runner",
   };
 
+  /**
+   * the github environment of the job — serving two purposes:
+   * deployment tracking on deploy jobs, and access to environment
+   * secrets (the repo-level cap of 100 secrets doesn't scale to
+   * multiple envs). Names are keyed by env NAME, never env type: an
+   * app can have several envs of the same type.
+   *
+   * - deploy jobs: `<env>-<component>` — static (unlike the former
+   *   per-PR review names), so environment secrets can attach, and
+   *   each component keeps its own deployment badge/url in the
+   *   github ui. For review, PRs share the component's environment:
+   *   a newer PR's deploy marks the previous one Inactive (the badge,
+   *   not the app) — the price of a static name.
+   * - other jobs referencing secrets join the shared `<env>`
+   *   environment — deliberately NOT the per-component one, whose
+   *   Active deploy badge their deployment records would displace.
+   *   NOTE: build-time and deploy-time vars are not differentiated
+   *   yet, so this environment holds roughly ALL of the env's
+   *   secrets (the build's dotenv references every component).
+   * - jobs without secret references get no environment
+   */
+  const referencesSecrets = Object.values(env).some(
+    (value) =>
+      typeof value === "string" &&
+      (value.includes("${{ secrets.") || value.includes("${{ vars.")),
+  );
+  const githubEnvironment =
+    job.environment && isComponent
+      ? {
+          name: `${context.env}-${context.name}`,
+          ...(createsJobEnv ? { url: "${{ steps.main.outputs.url }}" } : {}),
+        }
+      : referencesSecrets
+        ? { name: context.env }
+        : undefined;
+
   const githubJob: GithubJob = {
     name: githubJobName(context, job.name),
     "runs-on": "ubuntu-latest",
@@ -362,17 +398,7 @@ export const makeGithubJob = (
         }
       : {}),
     ...(Object.keys(services).length > 0 ? { services } : {}),
-    ...(job.environment && isComponent
-      ? {
-          environment: {
-            name:
-              context.environment.envType === "review"
-                ? `review-pr\${{ github.event.number }}-${context.name}`
-                : `${context.env}-${context.name}`,
-            ...(createsJobEnv ? { url: "${{ steps.main.outputs.url }}" } : {}),
-          },
-        }
-      : {}),
+    ...(githubEnvironment ? { environment: githubEnvironment } : {}),
     env,
     steps: [
       ...(skipCheckout

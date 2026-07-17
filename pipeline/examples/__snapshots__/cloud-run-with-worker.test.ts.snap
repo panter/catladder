@@ -277,6 +277,8 @@ exports[`matches snapshot for cloud-run-with-worker github workflows YAML 1`] = 
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -297,6 +299,8 @@ exports[`matches snapshot for cloud-run-with-worker github workflows YAML 1`] = 
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -331,6 +335,8 @@ exports[`matches snapshot for cloud-run-with-worker github workflows YAML 1`] = 
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
@@ -365,6 +371,8 @@ exports[`matches snapshot for cloud-run-with-worker github workflows YAML 1`] = 
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -410,6 +418,8 @@ exports[`matches snapshot for cloud-run-with-worker github workflows YAML 1`] = 
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: dev
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -735,6 +745,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -755,6 +767,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -789,6 +803,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
@@ -823,6 +839,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -868,6 +886,8 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: review
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -905,7 +925,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-api
+        name: review-api
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -1188,6 +1208,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: stage
       env:
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -1233,6 +1255,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: stage
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -1289,6 +1313,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: prod
       env:
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
@@ -1334,6 +1360,8 @@ catladder-release.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      environment:
+        name: prod
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
@@ -1652,7 +1680,7 @@ catladder-review-stop.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-api
+        name: review-api
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115

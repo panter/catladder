@@ -269,7 +269,7 @@ catladder-review.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-n8n
+        name: review-n8n
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_n8n_N8N_ENCRYPTION_KEY: \${{ secrets.CL_review_n8n_N8N_ENCRYPTION_KEY }}
@@ -566,7 +566,7 @@ catladder-review-stop.yml:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
-        name: review-pr\${{ github.event.number }}-n8n
+        name: review-n8n
       env:
         CL_review_n8n_N8N_ENCRYPTION_KEY: \${{ secrets.CL_review_n8n_N8N_ENCRYPTION_KEY }}
         CL_review_n8n_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_n8n_GCLOUD_DEPLOY_credentialsKey }}
