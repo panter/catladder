@@ -2,6 +2,7 @@ import { readdirSync, readFileSync, statSync } from "fs";
 import { join } from "path";
 import { getCiVariable } from "../bash/ciVariables";
 import { getDockerJobBaseProps } from "../build/docker";
+import { DOCKER_REGISTRY } from "../constants";
 import type { CatladderImageRef, RunnerImageName } from "../runner";
 import { getCentralRunnerImageUrl, isCatladderImageRef } from "../runner";
 import type { Config, GitlabJobImage, PipelineType } from "../types";
@@ -28,9 +29,15 @@ export type JobImagesMode = "central" | "repo";
 export const getJobImagesMode = (
   config: Config,
   pipelineType: PipelineType,
-): JobImagesMode =>
+): JobImagesMode => {
   // the central registry is not reachable from github runners
-  config.jobImages ?? (pipelineType === "github" ? "repo" : "central");
+  if (pipelineType === "github" && config.jobImages === "central") {
+    throw new Error(
+      `jobImages: "central" is not supported on github: catladder's central registry (${DOCKER_REGISTRY}) is unreachable from github runners. Use "repo" (the default) instead.`,
+    );
+  }
+  return config.jobImages ?? (pipelineType === "github" ? "repo" : "central");
+};
 
 export type ResolvedJobImage = {
   /** the concrete image url */
