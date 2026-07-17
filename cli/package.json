@@ -61,7 +61,7 @@
     "build": "yarn build:compile && yarn build:inline-variables && yarn build:bundle && yarn build:copy-images",
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
     "build:bundle": "./scripts/bundle",
-    "build:copy-images": "rm -rf dist/bundles/runner-images && cp -R ../runner-images dist/bundles/runner-images",
+    "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../runner-images dist/runner-images && cp -R ../runner-images dist/bundles/runner-images",
     "build:compile": "yarn tsc && yarn tsc-alias",
     "dev:own-catenv": "cd ../ && node cli/bin/catenv-dev",
     "build:watch": "tsc-watch --onSuccess \"yarn dev:own-catenv\""
