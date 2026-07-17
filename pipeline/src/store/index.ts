@@ -38,6 +38,10 @@ export const getCatladderStorePath = (directory: string) =>
 /**
  * reads and validates the catladder store. Returns an empty store when the
  * file does not exist (project setup has not run yet).
+ *
+ * An unreadable or invalid store is treated the same as a missing one
+ * (with a warning): the store only holds machine-fetched values, so the
+ * remedy is always rerunning project setup — not hand-editing the file.
  */
 export const readCatladderStore = (
   directory: string = process.cwd(),
@@ -46,9 +50,18 @@ export const readCatladderStore = (
   if (!existsSync(path)) {
     return {};
   }
-  return catladderStoreSchema.parse(
-    parse(readFileSync(path, { encoding: "utf-8" })) ?? {},
-  );
+  try {
+    return catladderStoreSchema.parse(
+      parse(readFileSync(path, { encoding: "utf-8" })) ?? {},
+    );
+  } catch (error) {
+    console.warn(
+      `⚠️ ignoring invalid ${CATLADDER_STORE_FILE} (rerun "catladder project setup" to regenerate it): ${
+        error instanceof Error ? error.message : error
+      }`,
+    );
+    return {};
+  }
 };
 
 /**
