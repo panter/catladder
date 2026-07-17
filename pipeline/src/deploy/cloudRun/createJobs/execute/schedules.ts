@@ -42,7 +42,9 @@ export const getCreateScheduleScript = (
     getCloudRunDeployConfig(context);
 
   return schedules.map(({ fullName, config }, jobIndex): string => {
-    const { uri, ...args } = getSchedulerArgs(config, context);
+    // `headers` is pulled out of the shared args because the flag name differs
+    // between create (`--headers`) and update (`--update-headers`).
+    const { uri, headers, ...args } = getSchedulerArgs(config, context);
 
     const argsString = createArgsString({
       project,
@@ -53,6 +55,11 @@ export const getCreateScheduleScript = (
       schedule: `"${config.schedule}"`,
       "max-retry-attempts": config.maxRetryAttempts ?? 0,
     });
+    const headersValue = headers ? `"${bashEscape(headers)}"` : undefined;
+    const createHeadersArg = headersValue ? ` --headers=${headersValue}` : "";
+    const updateHeadersArg = headersValue
+      ? ` --update-headers=${headersValue}`
+      : "";
     return [
       jobIndex === 0
         ? `exist_scheduler_names="$(\n  ${gcloudSchedulerCmd()} jobs list --filter='httpTarget.uri ~ ${context.env}.*${context.name}' --format='value(name)' --limit=999 --location='${location}' --project='${project}'\n)"`
@@ -60,9 +67,9 @@ export const getCreateScheduleScript = (
       `current_job_uri="${uri}"`,
       `current_scheduler_name="${fullName}"`,
       `if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then`,
-      `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}`,
+      `  ${gcloudSchedulerCmd()} jobs update http "$current_scheduler_name" ${argsString}${updateHeadersArg}`,
       `else`,
-      `  ${gcloudSchedulerCmd()} jobs create http "$current_scheduler_name" ${argsString}`,
+      `  ${gcloudSchedulerCmd()} jobs create http "$current_scheduler_name" ${argsString}${createHeadersArg}`,
       `fi`,
     ]
       .filter(notNil)
@@ -79,6 +86,7 @@ const getSchedulerArgs = (
   "message-body"?: string;
   "oauth-service-account-email"?: string;
   "oidc-service-account-email"?: string;
+  headers?: string;
 } => {
   if (scheduler.type === "job") {
     const { projectId, region } = getCloudRunDeployConfig(context);
@@ -113,10 +121,27 @@ const getSchedulerArgs = (
     };
   }
   if (scheduler.type === "http") {
+    // default the Content-Type to application/json when a body is sent and the
+    // user didn't set one explicitly. Otherwise Cloud Scheduler falls back to
+    // application/octet-stream, which is rarely what's intended.
+    const hasContentType = Object.keys(scheduler.headers ?? {}).some(
+      (k) => k.toLowerCase() === "content-type",
+    );
+    const headers =
+      scheduler.body && !hasContentType
+        ? { "Content-Type": "application/json", ...scheduler.headers }
+        : scheduler.headers;
     return {
       uri: scheduler.url,
-      "message-body": scheduler.body,
+      "message-body": scheduler.body
+        ? '"' + bashEscape(scheduler.body) + '"'
+        : undefined,
       "http-method": scheduler.method,
+      headers: headers
+        ? Object.entries(headers)
+            .map(([k, v]) => `${k}=${v}`)
+            .join(",")
+        : undefined,
       "oidc-service-account-email": `"${getComputeServiceAccountEmail(context)}"`,
     };
   }

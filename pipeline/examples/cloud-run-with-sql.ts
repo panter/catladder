@@ -63,6 +63,10 @@ const config = {
             when: "schedule",
             schedule: "0 * * * *",
             method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: "Bearer ${MY_TOKEN}",
+            },
           },
         },
       },

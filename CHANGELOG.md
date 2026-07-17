@@ -1,3 +1,31 @@
+## [4.6.4](https://git.panter.ch/catladder/catladder/compare/v4.6.3...v4.6.4) (2026-07-17)
+
+
+### Bug Fixes
+
+* **test:** exclude .claude from the vitest run ([5599223](https://git.panter.ch/catladder/catladder/commit/559922393094dc31a06a4572eaa56e51f0145f64))
+
+## [4.6.3](https://git.panter.ch/catladder/catladder/compare/v4.6.2...v4.6.3) (2026-07-17)
+
+
+### Bug Fixes
+
+* **cli:** connect to postgres maintenance db for restore-db drop/create ([9d2651f](https://git.panter.ch/catladder/catladder/commit/9d2651f894c4f12ce54948d51e07a22f06f0cc73))
+
+## [4.6.2](https://git.panter.ch/catladder/catladder/compare/v4.6.1...v4.6.2) (2026-07-07)
+
+
+### Bug Fixes
+
+* **cloudRun:** correct headers flag for http scheduler updates ([14ffda6](https://git.panter.ch/catladder/catladder/commit/14ffda6e1903fc2e6949431fdc61ce287280c613))
+
+## [4.6.1](https://git.panter.ch/catladder/catladder/compare/v4.6.0...v4.6.1) (2026-07-07)
+
+
+### Bug Fixes
+
+* body broke in http schedules ([3707c6a](https://git.panter.ch/catladder/catladder/commit/3707c6a08267b03658eb3574a08a6757b540754c))
+
 # [4.6.0](https://git.panter.ch/catladder/catladder/compare/v4.5.1...v4.6.0) (2026-06-30)
 
 
