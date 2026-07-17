@@ -1,7 +1,7 @@
 import type { ComponentContext } from "../../../types/context";
 
+import { getGcloudProjectNumber } from "../../../store";
 import { isOfDeployType } from "../../types";
-import type { DeployConfigCloudRun } from "../../types/googleCloudRun";
 import { getArtifactsRegistryImage } from "../artifactsRegistry";
 
 export const gcloudCmd = (version?: "beta") => {
@@ -15,14 +15,17 @@ export const gcloudSchedulerCmd = (version?: "beta") => {
   return `${gcloudCmd(version)} scheduler`;
 };
 
-export const setGoogleProjectNumberScript = (
-  deployConfig: DeployConfigCloudRun,
-) => [
-  `export GCLOUD_PROJECT_NUMBER=$(${gcloudCmd()} projects describe ${
-    deployConfig.projectId
-  } --format="value(projectNumber)")`,
-  'echo "GCLOUD_PROJECT_NUMBER: $GCLOUD_PROJECT_NUMBER"',
-];
+/**
+ * the default compute service account of the gcloud project — used by
+ * cloud scheduler to authenticate its calls
+ */
+export const getComputeServiceAccountEmail = (context: ComponentContext) => {
+  const deployConfig = getCloudRunDeployConfig(context);
+  return `${getGcloudProjectNumber(
+    context.fullConfig,
+    deployConfig.projectId,
+  )}-compute@developer.gserviceaccount.com`;
+};
 
 export const makeLabelString = (obj: Record<string, unknown>) =>
   Object.entries(obj)

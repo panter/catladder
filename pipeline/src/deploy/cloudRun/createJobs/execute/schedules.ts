@@ -13,7 +13,11 @@ import { getCloudRunJobExecuteUrl } from "../../utils/cloudRunExecutionUrl";
 import { createArgsString } from "../../utils/createArgsString";
 import { getFullSchedulerName } from "../../utils/jobName";
 import { getCloudRunJobsWithNames } from "../cloudRunJobs";
-import { gcloudSchedulerCmd, getCloudRunDeployConfig } from "../common";
+import {
+  gcloudSchedulerCmd,
+  getCloudRunDeployConfig,
+  getComputeServiceAccountEmail,
+} from "../common";
 
 export const getDeleteSchedulesScript = (context: ComponentContext) => {
   const deployConfig = getCloudRunDeployConfig(context);
@@ -105,7 +109,7 @@ const getSchedulerArgs = (
         ? '"' + bashEscape(JSON.stringify(body)) + '"'
         : undefined,
       "http-method": "POST",
-      "oauth-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
+      "oauth-service-account-email": `"${getComputeServiceAccountEmail(context)}"`,
     };
   }
   if (scheduler.type === "http") {
@@ -113,7 +117,7 @@ const getSchedulerArgs = (
       uri: scheduler.url,
       "message-body": scheduler.body,
       "http-method": scheduler.method,
-      "oidc-service-account-email": `"$GCLOUD_PROJECT_NUMBER-compute@developer.gserviceaccount.com"`,
+      "oidc-service-account-email": `"${getComputeServiceAccountEmail(context)}"`,
     };
   }
   throw new Error(`Unknown scheduler type: ${(scheduler as any).type}`);

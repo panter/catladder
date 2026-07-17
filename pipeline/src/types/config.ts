@@ -8,6 +8,7 @@ import type { PipelineType, WorkspaceBuildConfig } from "..";
 import type { AgentConfig } from "./agent";
 import type { Hooks } from "./hooks";
 import type { ReleaseConfig } from "./release";
+import type { CatladderStore } from "../store";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -336,4 +337,14 @@ export type Config<C extends ConfigProps = never> = {
    * configure tagged releases
    */
   releases?: ReleaseConfig;
+
+  /**
+   * contents of `.catladder-store/store.yml` — non-secret, machine-fetched
+   * values written by `catladder project setup` (e.g. gcloud project
+   * numbers).
+   *
+   * Attached automatically when the config is read from disk; do not set
+   * this manually in catladder.ts.
+   */
+  store?: CatladderStore;
 };

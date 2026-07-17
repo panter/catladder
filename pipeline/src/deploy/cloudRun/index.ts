@@ -1,10 +1,8 @@
 import type { DeployConfigCloudRun, DeployTypeDefinition } from "..";
-import {
-  getBashVariable,
-  joinBashExpressions,
-} from "../../bash/BashExpression";
+import { joinBashExpressions } from "../../bash/BashExpression";
 import type { BuildConfig } from "../../build";
 import { getSecretVarName } from "../../context";
+import { getGcloudProjectNumber } from "../../store";
 import type { EnvironmentContext } from "../../types/environmentContext";
 import { sanitizeForBashVariable } from "../../utils/gitlab";
 import { getFullDbName } from "../cloudSql/utils";
@@ -18,10 +16,6 @@ import {
 import { getServiceNameForEnvContext } from "./utils/getServiceName";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
-
-// FIXME: rename to internalHostSuffix, but this means that project-setup needs to be rerun, so its kindof a breaking change
-export const GCLOUD_RUN_CANONICAL_HOST_SUFFIX =
-  "GCLOUD_RUN_canonicalHostSuffix";
 
 const getCloudSqlVariables = ({
   deployConfigRaw,
@@ -87,13 +81,6 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
               key: GCLOUD_DEPLOY_CREDENTIALS_KEY,
               hidden: true,
             },
-            {
-              key: GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
-              hidden: true,
-              // a public url fragment, not sensitive: masking it would
-              // suppress environment urls on github and break log links
-              kind: "variable" as const,
-            },
           ]
         : []),
       ...(ctx.deployConfigRaw && ctx.deployConfigRaw.cloudSql
@@ -101,21 +88,26 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
         : []),
     ],
     getAdditionalEnvVars: (ctx) => {
-      const { fullName, env, componentName, deployConfigRaw, envType } = ctx;
+      const { fullName, deployConfigRaw, envType, fullConfig } = ctx;
 
-      const HOSTNAME_INTERNAL = joinBashExpressions(
-        [
-          fullName,
-          getBashVariable(
-            getSecretVarName(
-              env,
-              componentName,
-              GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
-            ),
-          ),
-        ],
-        "-",
-      ).toLowerCase();
+      // cloud run's deterministic url host:
+      // `<service>-<projectNumber>.<region>.run.app` — computable at
+      // generation time. For review envs the service name part still
+      // contains a runtime expression (the review slug), so the host stays
+      // a bash expression there; the suffix is always a literal.
+      const HOSTNAME_INTERNAL =
+        deployConfigRaw && envType !== "local"
+          ? joinBashExpressions(
+              [
+                fullName,
+                `${getGcloudProjectNumber(
+                  fullConfig,
+                  deployConfigRaw.projectId,
+                )}.${deployConfigRaw.region}.run.app`,
+              ],
+              "-",
+            ).toLowerCase()
+          : undefined;
       const jobTriggers =
         deployConfigRaw && deployConfigRaw.jobs
           ? Object.fromEntries(
@@ -133,9 +125,7 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
           : {};
 
       return {
-        // references the canonical host suffix secret, which doesn't
-        // exist for the local env
-        ...(envType !== "local" ? { HOSTNAME_INTERNAL } : {}),
+        ...(HOSTNAME_INTERNAL ? { HOSTNAME_INTERNAL } : {}),
         ...getCloudSqlVariables(ctx),
         ...jobTriggers,
         DEPLOY_CLOUD_RUN_SERVICE_NAME: getServiceNameForEnvContext(ctx),

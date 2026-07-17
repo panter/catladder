@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "fs";
 import { createJiti } from "jiti";
 
 import { parse } from "yaml";
+import { readCatladderStore } from "../store";
 import type { Config } from "../types";
 
 const fullPath = (directory: string, ext: string) =>
@@ -16,6 +17,10 @@ const readConfigInternal = async (
 
   if (found) {
     const filePath = fullPath(directory, found);
+    // machine-fetched values (written by `catladder project setup`) are
+    // attached to the config here, so everything downstream can rely on
+    // `config.store`
+    const store = readCatladderStore(directory);
     if (found === "ts" || found === "js") {
       const jiti = createJiti(directory);
       const result = await jiti.import(filePath);
@@ -24,13 +29,16 @@ const readConfigInternal = async (
       return {
         path: filePath,
         ext: found,
-        config: config as Config,
+        config: { ...(config as Config), store },
       };
     } else {
       return {
         path: filePath,
         ext: found,
-        config: parse(readFileSync(filePath, { encoding: "utf-8" })) as Config,
+        config: {
+          ...(parse(readFileSync(filePath, { encoding: "utf-8" })) as Config),
+          store,
+        },
       };
     }
   }

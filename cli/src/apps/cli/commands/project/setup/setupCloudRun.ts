@@ -1,16 +1,15 @@
 import type { ComponentContext } from "@catladder/pipeline";
 import {
   GCLOUD_DEPLOY_CREDENTIALS_KEY,
-  GCLOUD_RUN_CANONICAL_HOST_SUFFIX,
   isOfDeployType,
 } from "@catladder/pipeline";
 
 import type { IO } from "../../../../../core/types";
 import { upsertGcloudArtifactsRegistry } from "../../../../../gcloud/artifactsRegistry";
-import { getCloudRunDomainSuffix } from "../../../../../gcloud/cloudRun/getCloudRunDomainSuffix";
 import { enableGCloudServices } from "../../../../../gcloud/enableServices";
+import { fetchGcloudProjectNumber } from "../../../../../gcloud/getProjectNumber";
 import { upsertGcloudServiceAccountAndSaveSecret } from "../../../../../gcloud/serviceAccounts";
-import { upsertAllVariables } from "../../../../../utils/gitlab";
+import { updateCatladderStore } from "../../../../../store/updateCatladderStore";
 
 export const setupCloudRun = async (
   instance: IO,
@@ -61,24 +60,17 @@ export const setupCloudRun = async (
     GCLOUD_DEPLOY_CREDENTIALS_KEY,
   );
 
-  // gcloud run automatically gives us a hostname
-  // but the pipeline need to know it before deployment
-  // so we get this through some magic and add this as a ci/cd variable
-  // the pipeline than can use this to construct the canonical host
-  instance.log(
-    "get service domain suffix... that might take a while initially",
-  );
-  const suffix = await getCloudRunDomainSuffix(config);
-  instance.log("domain suffix: " + suffix);
+  // the project number is needed at generation time to construct cloud
+  // run's deterministic urls (<service>-<projectNumber>.<region>.run.app)
+  instance.log("fetch gcloud project number...");
+  const projectNumber = await fetchGcloudProjectNumber(config.projectId);
+  instance.log("project number: " + projectNumber);
 
-  await upsertAllVariables(
-    instance,
-    {
-      [GCLOUD_RUN_CANONICAL_HOST_SUFFIX]: suffix,
+  await updateCatladderStore((store) => ({
+    ...store,
+    gcloudProjects: {
+      ...store.gcloudProjects,
+      [config.projectId]: { projectNumber },
     },
-    context.env,
-    context.name,
-    false, // backup
-    false, // masked
-  );
+  }));
 };

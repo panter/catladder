@@ -11,10 +11,7 @@ import { getJobCreateScripts } from "./cloudRunJobs";
 import { getOnDeployExecuteScript } from "./execute/onDeploy";
 import { getServiceDeployScript } from "./cloudRunServices";
 import { getWorkerPoolDeployScript } from "./cloudRunWorkerPools";
-import {
-  getCloudRunDeployConfig,
-  setGoogleProjectNumberScript,
-} from "./common";
+import { getCloudRunDeployConfig } from "./common";
 import { ENV_VARS_FILENAME } from "./constants";
 import { getCreateScheduleScript } from "./execute/schedules";
 import type {
@@ -33,10 +30,7 @@ export function getCloudRunDeployScripts(context: ComponentContext) {
     ...collapseableSection(
       "prepare",
       "Prepare...",
-    )([
-      ...gcloudServiceAccountLoginCommands(context),
-      ...setGoogleProjectNumberScript(deployConfig),
-    ]),
+    )([...gcloudServiceAccountLoginCommands(context)]),
     ...collapseableSection(
       "writeenvvars",
       "Write env vars to file",

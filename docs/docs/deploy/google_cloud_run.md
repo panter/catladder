@@ -48,6 +48,18 @@ const config = {
 This will set up the required service-accounts, APIs, etc.
 _Make Sure that you are logged in with `gcloud` and have access to `your-google-cloud-project`_
 
+### The `.catladder-store` folder
+
+`project-setup` also fetches the gcloud **project number** and writes it to
+`.catladder-store/store.yml`. Catladder needs it to compute the deterministic
+cloud run urls (`https://<service>-<projectNumber>.<region>.run.app`) at
+generation time.
+
+**Check this folder in.** It contains no secrets — only machine-fetched values
+that pipeline generation depends on. If it is missing (e.g. on a freshly
+cloned project that predates it, or after deleting it), `catenv` fails with an
+error asking you to rerun `project-setup`.
+
 ## Cloud SQL support
 
 1. Create a CloudSQL instance in the same project `your-google-cloud-project` (if you need support for cross-project apps, please raise an issue, as this would need an additional service account).  
