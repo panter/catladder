@@ -39,6 +39,15 @@ export const getProjectConfig = async () => {
   return currentConfig as Config;
 };
 
+/**
+ * drops the cached config so the next access re-reads it from disk —
+ * needed after writing the catladder store, which is attached to the
+ * config (`config.store`) at read time
+ */
+export const invalidateProjectConfig = () => {
+  currentConfig = null;
+};
+
 export const getProjectComponents = async () => {
   const config = await getProjectConfig();
   if (!config) return [];

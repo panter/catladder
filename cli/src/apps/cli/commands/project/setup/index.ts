@@ -5,11 +5,14 @@ import { setupContext } from "./setupContext";
 import { setupTopic } from "./setupTopic";
 import { setupAgents } from "./setupAgents";
 import { logSection } from "./logSection";
+import { ensureGcloudProjectNumbers } from "./ensureGcloudProjectNumbers";
 
 export const setupProject = async (
   instance: IO,
   onlyComponents?: string | string[],
 ) => {
+  // must come first: creating contexts already requires the store
+  await ensureGcloudProjectNumbers(instance);
   const allContext = await getAllPipelineContexts(onlyComponents);
   instance.log("will setup those contexts:");
   allContext.forEach((context) => {
