@@ -1,3 +1,10 @@
+## [4.6.4](https://git.panter.ch/catladder/catladder/compare/v4.6.3...v4.6.4) (2026-07-17)
+
+
+### Bug Fixes
+
+* **test:** exclude .claude from the vitest run ([5599223](https://git.panter.ch/catladder/catladder/commit/559922393094dc31a06a4572eaa56e51f0145f64))
+
 ## [4.6.3](https://git.panter.ch/catladder/catladder/compare/v4.6.2...v4.6.3) (2026-07-17)
 
 
