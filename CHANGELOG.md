@@ -1,3 +1,10 @@
+## [4.6.3](https://git.panter.ch/catladder/catladder/compare/v4.6.2...v4.6.3) (2026-07-17)
+
+
+### Bug Fixes
+
+* **cli:** connect to postgres maintenance db for restore-db drop/create ([9d2651f](https://git.panter.ch/catladder/catladder/commit/9d2651f894c4f12ce54948d51e07a22f06f0cc73))
+
 ## [4.6.2](https://git.panter.ch/catladder/catladder/compare/v4.6.1...v4.6.2) (2026-07-07)
 
 
