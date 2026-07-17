@@ -4873,7 +4873,7 @@ DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
-multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
+multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -5279,7 +5279,7 @@ DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
-multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: \\"\\n\\nthe url of self: \\"https://pan-test-app-dev-app2-123456789012.asia-east1.run.app\\"\\nthe url of app1: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
+multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: "\\n\\nthe url of self: "https://pan-test-app-dev-app2-123456789012.asia-east1.run.app"\\nthe url of app1: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
 EOF
 collapseable_section_end "write-dotenv-app2"
@@ -5710,8 +5710,8 @@ ROOT_URL_INTERNAL=https://kube.dev.test-app.pan.panter.cloud
 KUBE_NAMESPACE=pan-test-app-dev
 KUBE_APP_NAME=kube
 KUBE_APP_NAME_PREFIX=
-multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
-multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: \\"\\n\\nthe url of self: \\"https://kube.dev.test-app.pan.panter.cloud\\"\\nthe url of app1: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\\n--------\\n\`
+multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
+multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: "\\n\\nthe url of self: "https://kube.dev.test-app.pan.panter.cloud"\\nthe url of app1: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\\n--------\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
 EOF
 collapseable_section_end "write-dotenv-kube"
@@ -7414,7 +7414,7 @@ DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
-multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
+multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -7688,7 +7688,7 @@ DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
-multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
+multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -7967,7 +7967,7 @@ DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
-multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: \\"\\n\\nthe url of self: \\"https://pan-test-app-stage-app2-123456789012.asia-east1.run.app\\"\\nthe url of app1: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
+multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: "\\n\\nthe url of self: "https://pan-test-app-stage-app2-123456789012.asia-east1.run.app"\\nthe url of app1: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
 EOF
 collapseable_section_end "write-dotenv-app2"
@@ -8256,7 +8256,7 @@ DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
-multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: \\"\\n\\nthe url of self: \\"https://pan-test-app-prod-app2-123456789012.asia-east1.run.app\\"\\nthe url of app1: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
+multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: "\\n\\nthe url of self: "https://pan-test-app-prod-app2-123456789012.asia-east1.run.app"\\nthe url of app1: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
 EOF
 collapseable_section_end "write-dotenv-app2"
@@ -8560,8 +8560,8 @@ ROOT_URL_INTERNAL=https://kube.stage.test-app.pan.panter.cloud
 KUBE_NAMESPACE=pan-test-app-stage
 KUBE_APP_NAME=kube
 KUBE_APP_NAME_PREFIX=
-multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
-multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: \\"\\n\\nthe url of self: \\"https://kube.stage.test-app.pan.panter.cloud\\"\\nthe url of app1: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\\n--------\\n\`
+multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
+multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: "\\n\\nthe url of self: "https://kube.stage.test-app.pan.panter.cloud"\\nthe url of app1: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\\n--------\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
 EOF
 collapseable_section_end "write-dotenv-kube"
@@ -8919,8 +8919,8 @@ ROOT_URL_INTERNAL=https://kube.prod.test-app.pan.panter.cloud
 KUBE_NAMESPACE=pan-test-app-prod
 KUBE_APP_NAME=kube
 KUBE_APP_NAME_PREFIX=
-multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
-multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: \\"\\n\\nthe url of self: \\"https://kube.prod.test-app.pan.panter.cloud\\"\\nthe url of app1: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\\n--------\\n\`
+multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
+multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: "\\n\\nthe url of self: "https://kube.prod.test-app.pan.panter.cloud"\\nthe url of app1: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\\n--------\\n\`
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
 EOF
 collapseable_section_end "write-dotenv-kube"
@@ -9446,7 +9446,7 @@ before_script:
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
-      multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
+      multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -10216,7 +10216,7 @@ before_script:
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
-      multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
+      multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -10529,7 +10529,7 @@ before_script:
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
-      multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
+      multiline=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -10948,7 +10948,7 @@ before_script:
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
-      multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: \\"\\n\\nthe url of self: \\"https://pan-test-app-dev-app2-123456789012.asia-east1.run.app\\"\\nthe url of app1: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
+      multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: "\\n\\nthe url of self: "https://pan-test-app-dev-app2-123456789012.asia-east1.run.app"\\nthe url of app1: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -11753,7 +11753,7 @@ before_script:
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
-      multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: \\"\\n\\nthe url of self: \\"https://pan-test-app-stage-app2-123456789012.asia-east1.run.app\\"\\nthe url of app1: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
+      multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: "\\n\\nthe url of self: "https://pan-test-app-stage-app2-123456789012.asia-east1.run.app"\\nthe url of app1: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -12081,7 +12081,7 @@ before_script:
       DEPLOY_CLOUD_RUN_REGION=asia-east1
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
-      multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: \\"\\n\\nthe url of self: \\"https://pan-test-app-prod-app2-123456789012.asia-east1.run.app\\"\\nthe url of app1: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
+      multiline=\`app2 yeah\\napp2 yeah2\\napp2 yeah3  \\n\\napp2 single quote: '\\napp2 doouble quote: "\\n\\nthe url of self: "https://pan-test-app-prod-app2-123456789012.asia-east1.run.app"\\nthe url of app1: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\nUnresolvable reference: \${app2:multiline_from_app1}\\n--------\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GCLOUD_DEPLOY_credentialsKey","foo","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
@@ -12526,8 +12526,8 @@ before_script:
       KUBE_NAMESPACE=pan-test-app-dev
       KUBE_APP_NAME=kube
       KUBE_APP_NAME_PREFIX=
-      multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
-      multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: \\"\\n\\nthe url of self: \\"https://kube.dev.test-app.pan.panter.cloud\\"\\nthe url of app1: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\\n--------\\n\`
+      multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
+      multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: "\\n\\nthe url of self: "https://kube.dev.test-app.pan.panter.cloud"\\nthe url of app1: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\\n--------\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-kube"
@@ -13764,8 +13764,8 @@ before_script:
       KUBE_NAMESPACE=pan-test-app-stage
       KUBE_APP_NAME=kube
       KUBE_APP_NAME_PREFIX=
-      multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
-      multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: \\"\\n\\nthe url of self: \\"https://kube.stage.test-app.pan.panter.cloud\\"\\nthe url of app1: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\\n--------\\n\`
+      multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
+      multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: "\\n\\nthe url of self: "https://kube.stage.test-app.pan.panter.cloud"\\nthe url of app1: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\\n--------\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-kube"
@@ -14302,8 +14302,8 @@ before_script:
       KUBE_NAMESPACE=pan-test-app-prod
       KUBE_APP_NAME=kube
       KUBE_APP_NAME_PREFIX=
-      multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\`
-      multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: \\"\\n\\nthe url of self: \\"https://kube.prod.test-app.pan.panter.cloud\\"\\nthe url of app1: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: \\"\\n\\n--------\\n\`
+      multiline_from_app1=\`app1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\`
+      multiline=\`kube yeah\\nkube yeah2\\nkube yeah3  \\n\\nkube single quote: '\\nkube doouble quote: "\\n\\nthe url of self: "https://kube.prod.test-app.pan.panter.cloud"\\nthe url of app1: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\nvalue from app1:\\n-------\\napp1 line1\\napp1 line2\\napp1 line3  \\n\\nthe url of self: "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"\\n\\n\\napp1 single quote: '\\napp1 doouble quote: "\\n\\n--------\\n\`
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","multiline_from_app1","multiline"]
       EOF
     - collapseable_section_end "write-dotenv-kube"

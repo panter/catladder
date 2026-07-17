@@ -4722,7 +4722,7 @@ GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentials
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
-circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -5508,7 +5508,7 @@ foo3=foo-value-3
 foo2=this is from app2: foo-value-2
 transitive=this is from app2: this is from app1: foo-value
 transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2" | escapeForDotEnv)
-someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://pan-test-app-dev-app2-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.dev.test-app.pan.panter.cloud\\"}]
+someJson=[{"name": "app1", "url": "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"}, {"name": "app2", "url": "https://pan-test-app-dev-app2-123456789012.asia-east1.run.app"}, {"name": "app3", "url": "https://app3.dev.test-app.pan.panter.cloud"}]
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
 EOF
 collapseable_section_end "write-dotenv-app3"
@@ -5915,7 +5915,7 @@ GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app1_GCLOUD_DEPLOY_credenti
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
-circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -6988,7 +6988,7 @@ GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentia
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
-circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -7250,7 +7250,7 @@ GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credential
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
-circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
@@ -8054,7 +8054,7 @@ foo3=foo-value-3
 foo2=this is from app2: foo-value-2
 transitive=this is from app2: this is from app1: foo-value
 transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2" | escapeForDotEnv)
-someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://pan-test-app-stage-app2-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.stage.test-app.pan.panter.cloud\\"}]
+someJson=[{"name": "app1", "url": "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"}, {"name": "app2", "url": "https://pan-test-app-stage-app2-123456789012.asia-east1.run.app"}, {"name": "app3", "url": "https://app3.stage.test-app.pan.panter.cloud"}]
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
 EOF
 collapseable_section_end "write-dotenv-app3"
@@ -8332,7 +8332,7 @@ foo3=foo-value-3
 foo2=this is from app2: foo-value-2
 transitive=this is from app2: this is from app1: foo-value
 transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2" | escapeForDotEnv)
-someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://pan-test-app-prod-app2-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.prod.test-app.pan.panter.cloud\\"}]
+someJson=[{"name": "app1", "url": "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"}, {"name": "app2", "url": "https://pan-test-app-prod-app2-123456789012.asia-east1.run.app"}, {"name": "app3", "url": "https://app3.prod.test-app.pan.panter.cloud"}]
 _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
 EOF
 collapseable_section_end "write-dotenv-app3"
@@ -8799,7 +8799,7 @@ before_script:
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
-      circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+      circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -9214,7 +9214,7 @@ before_script:
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
-      circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+      circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -9532,7 +9532,7 @@ before_script:
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
-      circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+      circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -9831,7 +9831,7 @@ before_script:
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
-      circle=this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\"
+      circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
@@ -11701,7 +11701,7 @@ before_script:
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
       transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_dev_app1_SECRET1, secret2: $CL_dev_app2_SECRET2" | escapeForDotEnv)
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://pan-test-app-dev-app2-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.dev.test-app.pan.panter.cloud\\"}]
+      someJson=[{"name": "app1", "url": "https://pan-test-app-dev-app1-123456789012.asia-east1.run.app"}, {"name": "app2", "url": "https://pan-test-app-dev-app2-123456789012.asia-east1.run.app"}, {"name": "app3", "url": "https://app3.dev.test-app.pan.panter.cloud"}]
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"
@@ -12613,7 +12613,7 @@ before_script:
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
       transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_stage_app1_SECRET1, secret2: $CL_stage_app2_SECRET2" | escapeForDotEnv)
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://pan-test-app-stage-app2-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.stage.test-app.pan.panter.cloud\\"}]
+      someJson=[{"name": "app1", "url": "https://pan-test-app-stage-app1-123456789012.asia-east1.run.app"}, {"name": "app2", "url": "https://pan-test-app-stage-app2-123456789012.asia-east1.run.app"}, {"name": "app3", "url": "https://app3.stage.test-app.pan.panter.cloud"}]
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"
@@ -13004,7 +13004,7 @@ before_script:
       foo2=this is from app2: foo-value-2
       transitive=this is from app2: this is from app1: foo-value
       transitiveWithSecret=$(printf %s "this is from app2: secret1: $CL_prod_app1_SECRET1, secret2: $CL_prod_app2_SECRET2" | escapeForDotEnv)
-      someJson=[{\\"name\\": \\"app1\\", \\"url\\": \\"https://pan-test-app-prod-app1-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app2\\", \\"url\\": \\"https://pan-test-app-prod-app2-123456789012.asia-east1.run.app\\"}, {\\"name\\": \\"app3\\", \\"url\\": \\"https://app3.prod.test-app.pan.panter.cloud\\"}]
+      someJson=[{"name": "app1", "url": "https://pan-test-app-prod-app1-123456789012.asia-east1.run.app"}, {"name": "app2", "url": "https://pan-test-app-prod-app2-123456789012.asia-east1.run.app"}, {"name": "app3", "url": "https://app3.prod.test-app.pan.panter.cloud"}]
       _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","KUBE_NAMESPACE","KUBE_APP_NAME","KUBE_APP_NAME_PREFIX","foo3","foo2","transitive","transitiveWithSecret","someJson"]
       EOF
     - collapseable_section_end "write-dotenv-app3"

@@ -122,9 +122,13 @@ export const escapeForDotEnv = (
       (part) => part instanceof BashExpression,
     );
     if (!containsAnyBashExpression) {
+      // all parts are literal: the value never passes through bash, so it
+      // must NOT be bash-escaped — `quotes: "double"` would bake literal
+      // \" into the env value (e.g. JSON values, since the deterministic
+      // cloud run urls made such values fully literal)
       return escapeForDotEnv(
         value.toString({
-          quotes: "double",
+          quotes: false,
         }),
       );
     } else {
