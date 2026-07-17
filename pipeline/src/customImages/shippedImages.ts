@@ -51,7 +51,9 @@ export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
  */
 export const getShippedImagesDir = (): string => {
   const candidates = [
-    // built package: dist/customImages -> dist/runner-images
+    // built pipeline package: dist/customImages -> dist/runner-images
+    // bundled cli package (what consumers install): the ncc bundles live
+    // in dist/bundles/<name>, so both resolve to dist/bundles/runner-images
     join(__dirname, "..", "runner-images"),
     // repository: pipeline/src/customImages -> <root>/runner-images
     join(__dirname, "..", "..", "..", "runner-images"),
