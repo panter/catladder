@@ -9,6 +9,7 @@ import type {
   GitlabJobDef,
   GitlabRule,
   WorkspaceContext,
+  CatladderJobCache,
 } from "../../types";
 import type { CatladderJob, CatladderJobNeed } from "../../types/jobs";
 import { notNil } from "../../utils";
@@ -143,12 +144,19 @@ export const makeGitlabJob = (
     jobAllowFailure ?? (gate ? gate === "manual" : undefined);
 
   // the neutral `caches` declarations resolve to gitlab cache configs;
-  // an explicitly set gitlab `cache` takes precedence
-  const cache =
-    jobCache ??
-    (caches && context.type !== "agent"
+  // an explicitly set gitlab `cache` takes precedence. `keyFiles` is a
+  // github-only content-key hint and must not leak into the gitlab yaml
+  const stripKeyFiles = (
+    resolved: CatladderJobCache | CatladderJobCache[],
+  ): CatladderJobCache | CatladderJobCache[] =>
+    Array.isArray(resolved)
+      ? resolved.map(({ keyFiles: _keyFiles, ...cacheRest }) => cacheRest)
+      : (({ keyFiles: _keyFiles, ...cacheRest }) => cacheRest)(resolved);
+  const resolvedCaches =
+    caches && context.type !== "agent"
       ? createJobCacheFromCacheConfigs(context, caches)
-      : undefined);
+      : undefined;
+  const cache = jobCache ?? (resolvedCaches && stripKeyFiles(resolvedCaches));
 
   const stage =
     envMode === "stagePerEnv" && context.type !== "agent"

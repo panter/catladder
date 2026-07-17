@@ -313,7 +313,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -321,7 +321,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 👮 lint
           id: main
@@ -350,7 +350,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -358,7 +358,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 🧪 test
           id: main
@@ -387,7 +387,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -395,7 +395,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 🔨 app
           id: main
@@ -436,7 +436,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache/restore@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Download artifacts from db1-app-dev
           uses: actions/download-artifact@v4
@@ -521,7 +521,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -529,7 +529,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 👮 lint
           id: main
@@ -558,7 +558,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -566,7 +566,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 🧪 test
           id: main
@@ -595,7 +595,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -603,7 +603,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 🔨 app
           id: main
@@ -644,7 +644,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache/restore@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Download artifacts from db2-app-dev
           uses: actions/download-artifact@v4
@@ -729,7 +729,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -737,7 +737,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 👮 lint
           id: main
@@ -766,7 +766,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -774,7 +774,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 🧪 test
           id: main
@@ -804,7 +804,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -812,7 +812,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
@@ -853,7 +853,7 @@ exports[`matches snapshot for cloud-run-with-sql-multiple-dbs github workflows Y
           uses: actions/cache/restore@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Download artifacts from api-app-dev
           uses: actions/download-artifact@v4
@@ -1205,7 +1205,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -1213,7 +1213,7 @@ catladder-review.yml:
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 👮 lint
           id: main
@@ -1242,7 +1242,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -1250,7 +1250,7 @@ catladder-review.yml:
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 🧪 test
           id: main
@@ -1279,7 +1279,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -1287,7 +1287,7 @@ catladder-review.yml:
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 🔨 app
           id: main
@@ -1328,7 +1328,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Download artifacts from db1-app-review
           uses: actions/download-artifact@v4
@@ -1413,7 +1413,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -1421,7 +1421,7 @@ catladder-review.yml:
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 👮 lint
           id: main
@@ -1450,7 +1450,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -1458,7 +1458,7 @@ catladder-review.yml:
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 🧪 test
           id: main
@@ -1487,7 +1487,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -1495,7 +1495,7 @@ catladder-review.yml:
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 🔨 app
           id: main
@@ -1536,7 +1536,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Download artifacts from db2-app-review
           uses: actions/download-artifact@v4
@@ -1621,7 +1621,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -1629,7 +1629,7 @@ catladder-review.yml:
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 👮 lint
           id: main
@@ -1658,7 +1658,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -1666,7 +1666,7 @@ catladder-review.yml:
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 🧪 test
           id: main
@@ -1696,7 +1696,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -1704,7 +1704,7 @@ catladder-review.yml:
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
@@ -1745,7 +1745,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Download artifacts from api-app-review
           uses: actions/download-artifact@v4
@@ -2069,7 +2069,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -2077,7 +2077,7 @@ catladder-release.yml:
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 🔨 app
           id: main
@@ -2118,7 +2118,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Download artifacts from db1-app-stage
           uses: actions/download-artifact@v4
@@ -2177,7 +2177,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Cache packagesdb1-node-modules
           uses: actions/cache@v4
@@ -2185,7 +2185,7 @@ catladder-release.yml:
             path: |-
               packages/db1/node_modules
               packages/db1/.yarn/install-state.gz
-            key: packagesdb1-node-modules-\${{ github.run_id }}
+            key: packagesdb1-node-modules-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-node-modules-
         - name: 🔨 app
           id: main
@@ -2226,7 +2226,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: packages/db1/.yarn
-            key: packagesdb1-yarn-\${{ github.run_id }}
+            key: packagesdb1-yarn-\${{ hashFiles('packages/db1/yarn.lock') }}
             restore-keys: packagesdb1-yarn-
         - name: Download artifacts from db1-app-prod
           uses: actions/download-artifact@v4
@@ -2285,7 +2285,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -2293,7 +2293,7 @@ catladder-release.yml:
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 🔨 app
           id: main
@@ -2334,7 +2334,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Download artifacts from db2-app-stage
           uses: actions/download-artifact@v4
@@ -2393,7 +2393,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Cache packagesdb2-node-modules
           uses: actions/cache@v4
@@ -2401,7 +2401,7 @@ catladder-release.yml:
             path: |-
               packages/db2/node_modules
               packages/db2/.yarn/install-state.gz
-            key: packagesdb2-node-modules-\${{ github.run_id }}
+            key: packagesdb2-node-modules-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-node-modules-
         - name: 🔨 app
           id: main
@@ -2442,7 +2442,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: packages/db2/.yarn
-            key: packagesdb2-yarn-\${{ github.run_id }}
+            key: packagesdb2-yarn-\${{ hashFiles('packages/db2/yarn.lock') }}
             restore-keys: packagesdb2-yarn-
         - name: Download artifacts from db2-app-prod
           uses: actions/download-artifact@v4
@@ -2502,7 +2502,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -2510,7 +2510,7 @@ catladder-release.yml:
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
@@ -2551,7 +2551,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Download artifacts from api-app-stage
           uses: actions/download-artifact@v4
@@ -2612,7 +2612,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Cache api-node-modules
           uses: actions/cache@v4
@@ -2620,7 +2620,7 @@ catladder-release.yml:
             path: |-
               api/node_modules
               api/.yarn/install-state.gz
-            key: api-node-modules-\${{ github.run_id }}
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
         - name: 🔨 app
           id: main
@@ -2661,7 +2661,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: api/.yarn
-            key: api-yarn-\${{ github.run_id }}
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-yarn-
         - name: Download artifacts from api-app-prod
           uses: actions/download-artifact@v4

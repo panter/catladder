@@ -21,6 +21,9 @@ export const getYarnCache = async (
       key: "yarn",
       policy,
       paths: [".yarn"],
+      // content-key for immutable-cache backends (github); the lockfile
+      // decides whether the cached content could have changed
+      keyFiles: ["yarn.lock"],
     },
   ];
 };
@@ -48,6 +51,14 @@ export const getNodeModulesCache = async (
       key: componentIsInWorkspace
         ? "node-modules-workspace"
         : slugify(context.build.dir) + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
+      // content-key for immutable-cache backends (github); the lockfile
+      // decides whether the cached content could have changed (absolute
+      // pathMode: resolve the standalone component's lockfile explicitly)
+      keyFiles: [
+        componentIsInWorkspace
+          ? "yarn.lock"
+          : join(context.build.dir, "yarn.lock"),
+      ],
       policy,
       paths: [
         ...(componentIsInWorkspace

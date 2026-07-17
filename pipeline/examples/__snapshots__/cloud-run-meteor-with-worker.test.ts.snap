@@ -361,7 +361,7 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -369,7 +369,7 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: 👮 lint
           id: main
@@ -397,7 +397,7 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -405,7 +405,7 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: 🧪 test
           id: main
@@ -433,7 +433,7 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -441,7 +441,7 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: Cache web-meteor-build-cache
           uses: actions/cache@v4
@@ -882,7 +882,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -890,7 +890,7 @@ catladder-review.yml:
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: 👮 lint
           id: main
@@ -918,7 +918,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -926,7 +926,7 @@ catladder-review.yml:
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: 🧪 test
           id: main
@@ -954,7 +954,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -962,7 +962,7 @@ catladder-review.yml:
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: Cache web-meteor-build-cache
           uses: actions/cache@v4
@@ -1376,7 +1376,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -1384,7 +1384,7 @@ catladder-release.yml:
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: Cache web-meteor-build-cache
           uses: actions/cache@v4
@@ -1484,7 +1484,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: web/.yarn
-            key: web-yarn-\${{ github.run_id }}
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-yarn-
         - name: Cache web-node-modules
           uses: actions/cache@v4
@@ -1492,7 +1492,7 @@ catladder-release.yml:
             path: |-
               web/node_modules
               web/.yarn/install-state.gz
-            key: web-node-modules-\${{ github.run_id }}
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
         - name: Cache web-meteor-build-cache
           uses: actions/cache@v4

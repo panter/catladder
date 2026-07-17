@@ -10,7 +10,13 @@ import type {
   GitlabRule,
 } from "./gitlab-types";
 
-export type CatladderJobCache = GitlabJobCache;
+export type CatladderJobCache = GitlabJobCache & {
+  /**
+   * content-key hint carried over from {@link CacheConfig} — consumed
+   * by the github lowering (hashFiles key), stripped by gitlab
+   */
+  keyFiles?: string[];
+};
 export const BASE_STAGES = [
   "setup",
   "test",

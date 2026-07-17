@@ -311,7 +311,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -319,7 +319,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: 👮 lint
           id: main
@@ -347,7 +347,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -355,7 +355,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: 🧪 test
           id: main
@@ -383,7 +383,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -391,7 +391,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
@@ -437,7 +437,7 @@ exports[`matches snapshot for cloud-run-with-agents github workflows YAML 1`] = 
           uses: actions/cache/restore@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Download artifacts from www-app-dev
           uses: actions/download-artifact@v4
@@ -785,7 +785,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -793,7 +793,7 @@ catladder-review.yml:
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: 👮 lint
           id: main
@@ -821,7 +821,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -829,7 +829,7 @@ catladder-review.yml:
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: 🧪 test
           id: main
@@ -857,7 +857,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -865,7 +865,7 @@ catladder-review.yml:
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
@@ -911,7 +911,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Download artifacts from www-app-review
           uses: actions/download-artifact@v4
@@ -1232,7 +1232,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -1240,7 +1240,7 @@ catladder-release.yml:
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
@@ -1286,7 +1286,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Download artifacts from www-app-stage
           uses: actions/download-artifact@v4
@@ -1343,7 +1343,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Cache www-node-modules
           uses: actions/cache@v4
@@ -1351,7 +1351,7 @@ catladder-release.yml:
             path: |-
               www/node_modules
               www/.yarn/install-state.gz
-            key: www-node-modules-\${{ github.run_id }}
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
@@ -1397,7 +1397,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: www/.yarn
-            key: www-yarn-\${{ github.run_id }}
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-yarn-
         - name: Download artifacts from www-app-prod
           uses: actions/download-artifact@v4

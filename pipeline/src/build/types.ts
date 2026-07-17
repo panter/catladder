@@ -17,6 +17,18 @@ export type CacheConfigAdvanced = Omit<CatladderJobCache, "paths" | "key"> & {
    * defaults to context
    */
   scope?: "context" | "buildDir" | "global";
+
+  /**
+   * files whose content determines whether the cached content changed
+   * (e.g. the lockfile for a node_modules cache).
+   *
+   * Backends with immutable caches (github) key the cache by the hash
+   * of these files: an unchanged hash is an exact hit and the cache is
+   * never re-saved (without this, every run saves a fresh multi-GB
+   * cache under a run-unique key, and parallel jobs race on saving
+   * it). Gitlab ignores this and keeps its stable, mutable key.
+   */
+  keyFiles?: string[];
 } & CacheConfigSimple;
 
 export type CacheConfigSimple = {

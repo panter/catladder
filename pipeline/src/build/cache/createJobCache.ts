@@ -37,7 +37,7 @@ export const createJobCacheFromCacheConfigs = (
       : [];
 
   const advancedCaches = advancedCacheDefs.map(
-    ({ key, paths, policy, scope, pathMode, buildDir, ...rest }) => {
+    ({ key, paths, policy, scope, pathMode, buildDir, keyFiles, ...rest }) => {
       const baseDir =
         pathMode === "absolute" ? "" : (buildDir ?? context.build.dir);
       const transformedKey =
@@ -61,6 +61,13 @@ export const createJobCacheFromCacheConfigs = (
         policy: policy ?? "pull-push",
         paths:
           pathMode === "absolute" ? paths : paths?.map((p) => join(baseDir, p)),
+        ...(keyFiles?.length
+          ? {
+              keyFiles: keyFiles.map((f) =>
+                pathMode === "absolute" ? f : join(baseDir, f),
+              ),
+            }
+          : {}),
         ...rest,
       };
     },

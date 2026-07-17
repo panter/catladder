@@ -363,7 +363,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -371,7 +371,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 👮 lint
           id: main
@@ -400,7 +400,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -408,7 +408,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 🧪 test
           id: main
@@ -437,7 +437,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -445,7 +445,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 🔨 app
           id: main
@@ -486,7 +486,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache/restore@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Download artifacts from app1-app-dev
           uses: actions/download-artifact@v4
@@ -571,7 +571,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -579,7 +579,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 👮 lint
           id: main
@@ -608,7 +608,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -616,7 +616,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 🧪 test
           id: main
@@ -646,7 +646,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -654,7 +654,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 🔨 app
           id: main
@@ -695,7 +695,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache/restore@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Download artifacts from app2-app-dev
           uses: actions/download-artifact@v4
@@ -773,7 +773,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -781,7 +781,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 👮 lint
           id: main
@@ -806,7 +806,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -814,7 +814,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 🧪 test
           id: main
@@ -843,7 +843,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -851,7 +851,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 🔨 app
           id: main
@@ -888,7 +888,7 @@ exports[`matches snapshot for referencing-other-vars github workflows YAML 1`] =
           uses: actions/cache/restore@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Download artifacts from app3-app-dev
           uses: actions/download-artifact@v4
@@ -1292,7 +1292,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -1300,7 +1300,7 @@ catladder-review.yml:
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 👮 lint
           id: main
@@ -1329,7 +1329,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -1337,7 +1337,7 @@ catladder-review.yml:
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 🧪 test
           id: main
@@ -1366,7 +1366,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -1374,7 +1374,7 @@ catladder-review.yml:
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 🔨 app
           id: main
@@ -1415,7 +1415,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Download artifacts from app1-app-review
           uses: actions/download-artifact@v4
@@ -1500,7 +1500,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -1508,7 +1508,7 @@ catladder-review.yml:
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 👮 lint
           id: main
@@ -1537,7 +1537,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -1545,7 +1545,7 @@ catladder-review.yml:
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 🧪 test
           id: main
@@ -1575,7 +1575,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -1583,7 +1583,7 @@ catladder-review.yml:
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 🔨 app
           id: main
@@ -1624,7 +1624,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Download artifacts from app2-app-review
           uses: actions/download-artifact@v4
@@ -1702,7 +1702,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -1710,7 +1710,7 @@ catladder-review.yml:
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 👮 lint
           id: main
@@ -1735,7 +1735,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -1743,7 +1743,7 @@ catladder-review.yml:
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 🧪 test
           id: main
@@ -1772,7 +1772,7 @@ catladder-review.yml:
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -1780,7 +1780,7 @@ catladder-review.yml:
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 🔨 app
           id: main
@@ -1817,7 +1817,7 @@ catladder-review.yml:
           uses: actions/cache/restore@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Download artifacts from app3-app-review
           uses: actions/download-artifact@v4
@@ -2193,7 +2193,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -2201,7 +2201,7 @@ catladder-release.yml:
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 🔨 app
           id: main
@@ -2242,7 +2242,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Download artifacts from app1-app-stage
           uses: actions/download-artifact@v4
@@ -2301,7 +2301,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Cache app1-node-modules
           uses: actions/cache@v4
@@ -2309,7 +2309,7 @@ catladder-release.yml:
             path: |-
               app1/node_modules
               app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ github.run_id }}
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
         - name: 🔨 app
           id: main
@@ -2350,7 +2350,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: app1/.yarn
-            key: app1-yarn-\${{ github.run_id }}
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-yarn-
         - name: Download artifacts from app1-app-prod
           uses: actions/download-artifact@v4
@@ -2410,7 +2410,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -2418,7 +2418,7 @@ catladder-release.yml:
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 🔨 app
           id: main
@@ -2459,7 +2459,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Download artifacts from app2-app-stage
           uses: actions/download-artifact@v4
@@ -2520,7 +2520,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Cache app2-node-modules
           uses: actions/cache@v4
@@ -2528,7 +2528,7 @@ catladder-release.yml:
             path: |-
               app2/node_modules
               app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ github.run_id }}
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
         - name: 🔨 app
           id: main
@@ -2569,7 +2569,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: app2/.yarn
-            key: app2-yarn-\${{ github.run_id }}
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-yarn-
         - name: Download artifacts from app2-app-prod
           uses: actions/download-artifact@v4
@@ -2629,7 +2629,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -2637,7 +2637,7 @@ catladder-release.yml:
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 🔨 app
           id: main
@@ -2674,7 +2674,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Download artifacts from app3-app-stage
           uses: actions/download-artifact@v4
@@ -2736,7 +2736,7 @@ catladder-release.yml:
           uses: actions/cache@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Cache kube-node-modules
           uses: actions/cache@v4
@@ -2744,7 +2744,7 @@ catladder-release.yml:
             path: |-
               kube/node_modules
               kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ github.run_id }}
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
         - name: 🔨 app
           id: main
@@ -2781,7 +2781,7 @@ catladder-release.yml:
           uses: actions/cache/restore@v4
           with:
             path: kube/.yarn
-            key: kube-yarn-\${{ github.run_id }}
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-yarn-
         - name: Download artifacts from app3-app-prod
           uses: actions/download-artifact@v4

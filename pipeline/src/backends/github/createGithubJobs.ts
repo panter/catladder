@@ -151,12 +151,23 @@ const createCacheSteps = (
     const key = cache.key;
     const { cacheKey, restoreKeyPrefix, label } =
       typeof key === "string" || key === undefined
-        ? {
-            // unique key per run so the cache is re-saved, restored via prefix
-            cacheKey: `${key ?? "cache"}-\${{ github.run_id }}`,
-            restoreKeyPrefix: `${key ?? "cache"}-`,
-            label: key ?? "cache",
-          }
+        ? cache.keyFiles?.length
+          ? {
+              // content-keyed: an unchanged hash is an exact hit and the
+              // cache is never re-saved (no per-run copies, no races
+              // between parallel jobs saving the same key)
+              cacheKey: `${key ?? "cache"}-\${{ hashFiles(${cache.keyFiles
+                .map((f) => `'${f}'`)
+                .join(", ")}) }}`,
+              restoreKeyPrefix: `${key ?? "cache"}-`,
+              label: key ?? "cache",
+            }
+          : {
+              // unique key per run so the cache is re-saved, restored via prefix
+              cacheKey: `${key ?? "cache"}-\${{ github.run_id }}`,
+              restoreKeyPrefix: `${key ?? "cache"}-`,
+              label: key ?? "cache",
+            }
         : {
             cacheKey: `${key.prefix ?? "files"}-\${{ hashFiles(${(
               key.files ?? []
