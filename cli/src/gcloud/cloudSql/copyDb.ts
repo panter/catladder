@@ -38,9 +38,14 @@ const createCopyDbScript = ({
       set -e
 
       ${targetPSQL(
-        `-c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`,
+        // connect to the always-existing "postgres" maintenance database:
+        // without an explicit dbname, psql falls back to the username and
+        // fails with e.g. 'FATAL: database "user" does not exist'
+        `--dbname=postgres -c 'drop database "${targetDbName}" WITH (FORCE)' 1> /dev/null || true`,
       )}
-      ${targetPSQL(`-c 'create database "${targetDbName}"' 1> /dev/null`)}
+      ${targetPSQL(
+        `--dbname=postgres -c 'create database "${targetDbName}"' 1> /dev/null`,
+      )}
       echo "Estimating database size..."
       DB_SIZE=$(PGPASSWORD=${encodedSourcePassword} psql --dbname=postgres://${encodedSourceUsername}:${encodedSourcePassword}@localhost:${sourcePort}/${sourceDbName} -t -A -c "SELECT pg_database_size('${sourceDbName}')")
       # pg_database_size includes indexes, TOAST, and free space — pg_dump output is roughly 40% of that
