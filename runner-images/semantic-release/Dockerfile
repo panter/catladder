@@ -1,10 +1,6 @@
-# build context is the root directory
 FROM node:lts-alpine
 
 RUN apk add --no-cache bash git git-lfs
-
-RUN mkdir /packages
-COPY ./cli /packages/cli
 
 # add semantic release
 RUN yarn global add \
@@ -14,11 +10,10 @@ RUN yarn global add \
     https://github.com/panter/git.git#b4037626cc583d3e9f7995ea0604b23730d0a22e \
     @semantic-release/changelog \
     @semantic-release/gitlab@9 \
-    @semantic-release/exec@6 \
-    /packages/cli
+    @semantic-release/exec@6
 
 RUN mkdir -p /scripts
-COPY ./runner-images/semantic-release/scripts/* /scripts/
+COPY ./scripts/* /scripts/
 RUN chmod +x /scripts/*
 
 ENV PATH="/scripts:${PATH}"

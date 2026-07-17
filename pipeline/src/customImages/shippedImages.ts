@@ -22,13 +22,13 @@ export const RUNNER_IMAGE_DEPENDENCIES: Partial<
  */
 /**
  * images that cannot be built from the shipped definitions and always
- * come from the central registry: semantic-release bakes catladder's
- * own cli sources into the image (repo-root build context).
- * TODO: make the semantic-release image self-contained.
+ * come from the central registry. Empty since the semantic-release
+ * image became self-contained (the security audit runs the
+ * materialized catci bundle instead of a baked-in catladder cli) —
+ * kept as the escape hatch should an image ever need central-only
+ * treatment again.
  */
-export const CENTRAL_ONLY_IMAGES: ReadonlySet<RunnerImageName> = new Set([
-  "semantic-release",
-]);
+export const CENTRAL_ONLY_IMAGES: ReadonlySet<RunnerImageName> = new Set();
 
 export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
   RunnerImageName,
