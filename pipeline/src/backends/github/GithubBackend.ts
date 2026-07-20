@@ -51,7 +51,10 @@ const TRIGGER_WORKFLOWS: Record<
   },
   taggedRelease: {
     name: "catladder release",
-    on: { push: { tags: ["v*"] } },
+    // tags pushed with the default GITHUB_TOKEN (as the release job
+    // does) don't trigger `on: push: tags` — the release job therefore
+    // also dispatches this workflow explicitly for the new tag
+    on: { push: { tags: ["v*"] }, workflow_dispatch: {} },
   },
 };
 

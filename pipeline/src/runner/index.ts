@@ -8,6 +8,7 @@ export type RunnerImageName =
   | "docker-build"
   | "gcloud"
   | "semantic-release"
+  | "changesets"
   | "agent-claude";
 
 /**

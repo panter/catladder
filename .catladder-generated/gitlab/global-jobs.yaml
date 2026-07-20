@@ -21,16 +21,16 @@
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/semantic-release:a6394dac9ab5 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/semantic-release:a6394dac9ab5 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/semantic-release:b0e33fe62d97 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/semantic-release:b0e33fe62d97 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/semantic-release:a6394dac9ab5 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/semantic-release:b0e33fe62d97 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/semantic-release:a6394dac9ab5
+    - docker push $CI_REGISTRY_IMAGE/catladder/semantic-release:b0e33fe62d97
     - collapseable_section_end "docker-push"
   rules:
     - &a1
@@ -98,7 +98,7 @@
   interruptible: true
 create release:
   stage: release
-  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a6394dac9ab5
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:b0e33fe62d97
   script:
     - semanticRelease
   after_script:
@@ -117,7 +117,7 @@ create release:
       when: manual
 ⚠️ force create release:
   stage: release
-  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a6394dac9ab5
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:b0e33fe62d97
   script:
     - semanticRelease
   after_script:

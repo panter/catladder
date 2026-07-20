@@ -8,6 +8,15 @@ set -e
 
 # better branches settings: https://github.com/semantic-release/semantic-release/issues/1581
 
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  # github container jobs: the workspace volume is owned by the host
+  # runner user while this step runs as the container user, and the
+  # safe.directory entry actions/checkout writes goes to a temporary
+  # HOME that is gone by now — git would refuse the repo ("dubious
+  # ownership", surfacing as ENOGITREPO from semantic-release)
+  git config --global --add safe.directory "$(pwd)"
+fi
+
 echo "doing security audit check"
 CATCI=".catladder-generated/catci/index.js"
 if [ -f "$CATCI" ]; then
@@ -29,6 +38,18 @@ else
 fi
 
 echo "doing semantic release"
+
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  # the gitlab publish plugin would fail on github; skip it (the tag
+  # and changelog commit still happen, only the gitlab release entry
+  # is gitlab-specific)
+  PUBLISH_PLUGIN=""
+else
+  PUBLISH_PLUGIN=',
+    ["@semantic-release/gitlab", {
+      "gitlabUrl": "https://git.panter.ch"
+    }]'
+fi
 
 if [ ! -e .releaserc ]; then
   cat >.releaserc <<EOF
@@ -58,10 +79,7 @@ if [ ! -e .releaserc ]; then
     "@semantic-release/changelog",
     ["@semantic-release/git", {
       "message": "chore(\${branch.type}): \${nextRelease.version}\n\n\${nextRelease.notes}"
-    }],
-    ["@semantic-release/gitlab", {
-      "gitlabUrl": "https://git.panter.ch"
-    }]
+    }]${PUBLISH_PLUGIN}
     ],
   "branches": [
     "+([0-9])?(.{+([0-9]),x}).x",
@@ -81,4 +99,25 @@ if [ ! -e .releaserc ]; then
 }
 EOF
 fi
+
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  TAGS_BEFORE=$(git tag --list 'v[0-9]*')
+fi
+
 semantic-release
+
+# tags pushed with the default GITHUB_TOKEN don't trigger `on: push:
+# tags` workflows (github's recursion guard) — dispatch the
+# taggedRelease workflow explicitly for a tag semantic-release created
+if [ "$GITHUB_ACTIONS" = "true" ] && [ -f "$CATCI" ]; then
+  if [ -z "$TAGS_BEFORE" ]; then
+    NEW_TAG=$(git tag --list 'v[0-9]*' | tail -n1)
+  else
+    NEW_TAG=$(git tag --list 'v[0-9]*' | grep -Fxv -f <(printf '%s\n' "$TAGS_BEFORE") | tail -n1 || true)
+  fi
+  if [ -n "$NEW_TAG" ]; then
+    node "$CATCI" release dispatch-tagged-workflow "$NEW_TAG"
+  else
+    echo "no new release tag created — skipping taggedRelease dispatch"
+  fi
+fi

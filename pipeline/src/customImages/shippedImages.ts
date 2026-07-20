@@ -41,6 +41,7 @@ export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
   "docker-build": "self",
   gcloud: "self",
   "semantic-release": "self",
+  changesets: "self",
   "agent-claude": "self",
 };
 

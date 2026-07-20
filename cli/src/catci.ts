@@ -19,6 +19,10 @@ import {
   createSecurityAuditMergeRequest,
   SECURITY_AUDIT_FILE_NAME,
 } from "./security/createSecurityAuditMergeRequest";
+import {
+  changesetsReleaseJob,
+  dispatchTaggedReleaseWorkflow,
+} from "./release/changesetsReleaseJob";
 
 const GITLAB_HOST = "https://git.panter.ch";
 
@@ -33,6 +37,15 @@ usage:
       evaluates ${SECURITY_AUDIT_FILE_NAME}; exits 1 with instructions when
       the document is missing or unanswered (no remediation — works on
       any CI, including github)
+
+  catci release changesets
+      consumes pending .changeset/*.md files: computes the next version
+      from the last v* tag, writes the changelog, commits, tags and
+      pushes (no-op when no changesets are pending)
+
+  catci release dispatch-tagged-workflow <tag>
+      github only: dispatches the generated taggedRelease workflow for
+      the tag (tags pushed with the job token don't trigger it)
 `;
 
 const fail = (message: string): never => {
@@ -114,6 +127,16 @@ const main = async () => {
   }
   if (group === "security-audit" && command === "check" && args.length === 1) {
     return securityAuditCheck(args[0]);
+  }
+  if (group === "release" && command === "changesets" && args.length === 0) {
+    return changesetsReleaseJob();
+  }
+  if (
+    group === "release" &&
+    command === "dispatch-tagged-workflow" &&
+    args.length === 1
+  ) {
+    return dispatchTaggedReleaseWorkflow(args[0]);
   }
   fail(USAGE);
 };

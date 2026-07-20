@@ -9,6 +9,7 @@ export * from "./context";
 export * from "./build";
 export * from "./deploy";
 export * from "./verify";
+export * from "./release";
 export * from "./utils/writeFiles";
 export * from "./utils/measureTime";
 export * from "./variables/VariableValue";

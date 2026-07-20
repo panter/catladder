@@ -1,0 +1,63 @@
+---
+sidebar_position: 7
+---
+
+# Releases
+
+Catladder generates a `create release` job (plus a `⚠️ force create release` variant) that creates a versioned release of your application: it bumps the version, writes the changelog and pushes a `vX.Y.Z` git tag. The pushed tag triggers the tagged-release pipeline, which deploys the `stage` and `prod` environments.
+
+Every release first passes the [security audit](./8_security_audit.md) gate.
+
+## Configuration
+
+```ts
+const config = {
+  // ...
+  releases: {
+    // "manual" (default): the release job waits for a manual trigger
+    // "auto": release on every push to the main branch
+    when: "manual",
+    // "semantic-release" (default) or "changesets"
+    method: "semantic-release",
+  },
+};
+```
+
+## Release methods
+
+### `semantic-release` (default)
+
+Releases are derived from your commit messages ([conventional commits](https://www.conventionalcommits.org/)): `feat:` commits produce a minor release, `fix:`/`docs:`/`perf:` a patch, breaking changes a major. The changelog is generated from the commit history.
+
+This is fully automatic — the flip side is that the changelog reads like a list of commits, and the bump is whatever the commit prefixes imply.
+
+You can customize the behavior by committing your own `.releaserc`; the release job only writes its default config when none exists.
+
+### `changesets`
+
+Releases are declared intentionally: whoever makes a noteworthy change commits a small markdown file to `.changeset/` alongside their MR, stating the bump type and a human-written summary:
+
+```md
+---
+"my-app": minor
+---
+
+Signups can now use their company SSO account
+```
+
+The release job consumes all pending changeset files: it takes the highest declared bump, computes the next version from the last `v*` tag, prepends the summaries to `CHANGELOG.md`, commits, tags and pushes. When no changesets are pending, the job succeeds without releasing.
+
+Authoring:
+
+- In repositories with a `package.json` you can use the official CLI: `yarn changeset` (the file format is the official [changesets](https://github.com/changesets/changesets) format; the declared package names are ignored — only the bump counts, since the version lives in git tags, not in `package.json`).
+- In repositories without one (e.g. rails apps), write the file by hand — any file name ending in `.md` inside `.changeset/` works.
+
+Choose changesets when you want the changelog to communicate value to humans and the version bump to be a deliberate decision; choose semantic-release when a mechanical commit-derived log is good enough.
+
+## Versioning
+
+Both methods derive the version from the last `vX.Y.Z` tag reachable from the branch — the first release is `1.0.0`. On hotfix branches (`1.2.x`), the branch's own release line is continued.
+
+## GitHub notes
+
+On the GitHub backend the release job runs in the main workflow (`when: "auto"`) or as a manual task (`workflow_dispatch`). Because tags pushed with the job's `GITHUB_TOKEN` do not trigger `on: push: tags` workflows, the release job explicitly dispatches the generated tagged-release workflow for the new tag — no extra setup (PAT or GitHub App) is needed.
