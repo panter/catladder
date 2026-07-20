@@ -1489,122 +1489,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/web-deploy-stage.sh
           shell: bash
-    web-app-prod:
-      name: web 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-jobs-meteor
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
-        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache app-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              app/node_modules
-              app/.yarn/install-state.gz
-            key: app-node-modules-\${{ hashFiles('app/yarn.lock') }}
-            restore-keys: app-node-modules-
-        - name: Cache web-meteor-build-cache
-          uses: actions/cache@v4
-          with:
-            path: |-
-              app/.meteor/local/resolver-result-cache.json
-              app/.meteor/local/plugin-cache
-              app/.meteor/local/isopacks
-              app/.meteor/local/bundler-cache/scanner
-            key: web-meteor-build-cache-\${{ github.run_id }}
-            restore-keys: web-meteor-build-cache-
-        - name: Cache app-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: app/.yarn
-            key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
-            restore-keys: app-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/web-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: web-app-prod
-            path: |-
-              app/__build_info.json
-              app/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-    web-docker-prod:
-      name: web 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-docker-build
-        - web-app-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
-        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Download artifacts from web-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: web-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/web-docker-prod.sh
-          shell: bash
-    web-deploy-prod:
-      name: web 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-kubernetes
-        - web-app-prod
-        - web-docker-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-web
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
-        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
-        CL_prod_web_KUBE_URL: \${{ secrets.CL_prod_web_KUBE_URL }}
-        CL_prod_web_KUBE_CA_PEM: \${{ secrets.CL_prod_web_KUBE_CA_PEM }}
-        CL_prod_web_KUBE_TOKEN: \${{ secrets.CL_prod_web_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/web-deploy-prod.sh
-          shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
   on:
@@ -2008,6 +1892,7 @@ catladder-manual.yml:
             - web-rollback-review
             - web-stop-stage
             - web-rollback-stage
+            - web-deploy-prod
             - web-stop-prod
             - web-rollback-prod
   permissions:
@@ -2725,6 +2610,125 @@ catladder-manual.yml:
             kubernetesRollback
           shell: bash
       if: \${{ inputs.job == 'web-rollback-stage' }}
+    web-app-prod:
+      name: web 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-meteor
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/node_modules
+              app/.yarn/install-state.gz
+            key: app-node-modules-\${{ hashFiles('app/yarn.lock') }}
+            restore-keys: app-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app/.meteor/local/resolver-result-cache.json
+              app/.meteor/local/plugin-cache
+              app/.meteor/local/isopacks
+              app/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: Cache app-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app/.yarn
+            key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
+            restore-keys: app-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/web-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-prod
+            path: |-
+              app/__build_info.json
+              app/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'web-deploy-prod' }}
+    web-docker-prod:
+      name: web 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-docker-build
+        - web-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/web-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'web-deploy-prod' }}
+    web-deploy-prod:
+      name: web 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-kubernetes
+        - web-app-prod
+        - web-docker-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_prod_web_MONGODB_ROOT_PASSWORD }}
+        CL_prod_web_MONGODB_REPLICASET_KEY: \${{ secrets.CL_prod_web_MONGODB_REPLICASET_KEY }}
+        CL_prod_web_KUBE_URL: \${{ secrets.CL_prod_web_KUBE_URL }}
+        CL_prod_web_KUBE_CA_PEM: \${{ secrets.CL_prod_web_KUBE_CA_PEM }}
+        CL_prod_web_KUBE_TOKEN: \${{ secrets.CL_prod_web_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/web-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'web-deploy-prod' }}
     web-stop-prod:
       name: web 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest

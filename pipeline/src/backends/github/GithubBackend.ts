@@ -111,7 +111,15 @@ export class GithubBackend implements PipelineBackend {
     };
 
     const reviewStopJobs: Record<string, GithubJob> = {};
+    // jobs routed to the workflow_dispatch "manual tasks" workflow. A
+    // manual job and its build closure live here instead of an automatic
+    // workflow; `manualJobConditions` is the `if` that selects each one
+    // from the dispatch input, `manualDispatchOptions` the leaf jobs that
+    // become dropdown choices (closure jobs run because their leaf was
+    // chosen, not on their own).
     const manualJobs: Record<string, GithubJob> = {};
+    const manualJobConditions: Record<string, string> = {};
+    const manualDispatchOptions: string[] = [];
 
     for (const trigger of ALL_PIPELINE_TRIGGERS) {
       const allJobs = await createAllJobs({
@@ -122,9 +130,14 @@ export class GithubBackend implements PipelineBackend {
 
       const uploadProviderIds = getUploadProviderIds(allJobs);
       const secretKinds = collectSecretKinds(allJobs);
-      const jobs: Record<string, GithubJob> = {};
 
+      // build every job of the trigger up front: partitioning the manual
+      // jobs needs the whole dependency graph.
       // NOTE: agent jobs are gitlab-only and skipped on github
+      const triggerJobs = new Map<
+        string,
+        { githubJob: GithubJob; job: CatladderJob; context: Context }
+      >();
       [...allJobs.workspaces, ...allJobs.components].forEach(
         ({ context, jobs: contextJobs }) =>
           contextJobs.forEach((job) => {
@@ -137,15 +150,82 @@ export class GithubBackend implements PipelineBackend {
               scripts,
               secretKinds,
             );
-            if (isReviewStopJob(context, job)) {
-              reviewStopJobs[id] = githubJob;
-            } else if (isManualTaskJob(job)) {
-              manualJobs[id] = githubJob;
-            } else {
-              jobs[id] = githubJob;
-            }
+            triggerJobs.set(id, { githubJob, job, context });
           }),
       );
+
+      // review-stop jobs run in their own on:pull_request:closed workflow
+      for (const [id, { githubJob, job, context }] of [...triggerJobs]) {
+        if (isReviewStopJob(context, job)) {
+          reviewStopJobs[id] = githubJob;
+          triggerJobs.delete(id);
+        }
+      }
+
+      // leaf manual jobs: an explicit manual gate (e.g. a prod deploy) or
+      // a stop/rollback task with no automatic trigger. Each becomes a
+      // dispatch choice.
+      const leafIds = [...triggerJobs]
+        .filter(([, { job }]) => job.gate === "manual" || isManualTaskJob(job))
+        .map(([id]) => id);
+
+      // A manual leaf drags its whole connected region into the manual
+      // workflow, in both directions, so that a dispatch runs the complete
+      // flow and nothing is left dangling in the automatic workflow:
+      //  - upstream (jobs the leaf needs): github artifacts are scoped to
+      //    a single run, so a dispatched job can't reuse the automatic
+      //    run's build — it has to rebuild, so the build moves too.
+      //  - downstream (jobs that need the leaf, e.g. a post-deploy verify):
+      //    they can't run automatically once their prerequisite is manual.
+      // Needs pointing outside the trigger (the global image-build jobs)
+      // exist in every workflow and are left alone. Because catladder's
+      // deploy/verify jobs are per env, a leaf's region stays within its
+      // env and never swallows another env's automatic chain.
+      // servesLeaves maps every moved job to the leaves that own it.
+      const dependents = new Map<string, string[]>();
+      for (const [id, { githubJob }] of triggerJobs) {
+        for (const need of githubJob.needs ?? []) {
+          if (!triggerJobs.has(need)) continue;
+          const list = dependents.get(need);
+          if (list) list.push(id);
+          else dependents.set(need, [id]);
+        }
+      }
+      const servesLeaves = new Map<string, Set<string>>();
+      for (const leaf of leafIds) {
+        const stack = [leaf];
+        let cur: string | undefined;
+        while ((cur = stack.pop()) !== undefined) {
+          let leaves = servesLeaves.get(cur);
+          if (leaves?.has(leaf)) continue; // already walked for this leaf
+          if (!leaves) {
+            leaves = new Set();
+            servesLeaves.set(cur, leaves);
+          }
+          leaves.add(leaf);
+          for (const need of triggerJobs.get(cur)?.githubJob.needs ?? []) {
+            if (triggerJobs.has(need)) stack.push(need); // upstream deps
+          }
+          for (const dependent of dependents.get(cur) ?? []) {
+            stack.push(dependent); // downstream consumers
+          }
+        }
+      }
+
+      const jobs: Record<string, GithubJob> = {};
+      for (const [id, { githubJob }] of triggerJobs) {
+        const leaves = servesLeaves.get(id);
+        if (leaves) {
+          manualJobs[id] = githubJob;
+          manualJobConditions[id] = [...leaves]
+            .sort()
+            .map((leaf) => `inputs.job == '${leaf}'`)
+            .join(" || ");
+        } else {
+          jobs[id] = githubJob;
+        }
+      }
+      manualDispatchOptions.push(...leafIds);
 
       if (trigger === "mainBranch") {
         const releaseJobs = getGithubReleaseJobs(
@@ -154,7 +234,11 @@ export class GithubBackend implements PipelineBackend {
           images,
         );
         Object.assign(jobs, releaseJobs.main);
-        Object.assign(manualJobs, releaseJobs.manual);
+        for (const [id, job] of Object.entries(releaseJobs.manual)) {
+          manualJobs[id] = job;
+          manualJobConditions[id] = `inputs.job == '${id}'`;
+          manualDispatchOptions.push(id);
+        }
       }
 
       if (Object.keys(jobs).length > 0) {
@@ -187,7 +271,7 @@ export class GithubBackend implements PipelineBackend {
                 description: "the task to run",
                 required: true,
                 type: "choice",
-                options: Object.keys(manualJobs),
+                options: [...new Set(manualDispatchOptions)],
               },
             },
           },
@@ -199,7 +283,7 @@ export class GithubBackend implements PipelineBackend {
           ...Object.fromEntries(
             Object.entries(manualJobs).map(([id, job]) => [
               id,
-              { ...job, if: `\${{ inputs.job == '${id}' }}` },
+              { ...job, if: `\${{ ${manualJobConditions[id]} }}` },
             ]),
           ),
         },

@@ -791,60 +791,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/app-deploy-stage.sh
           shell: bash
-    app-docker-prod:
-      name: app 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-docker-build
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
-        CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
-        CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/app-docker-prod.sh
-          shell: bash
-    app-deploy-prod:
-      name: app 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - app-docker-prod
-        - job-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-app
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
-        CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
-        CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
-        CL_prod_app_KUBE_URL: \${{ secrets.CL_prod_app_KUBE_URL }}
-        CL_prod_app_KUBE_CA_PEM: \${{ secrets.CL_prod_app_KUBE_CA_PEM }}
-        CL_prod_app_KUBE_TOKEN: \${{ secrets.CL_prod_app_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/app-deploy-prod.sh
-          shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
   on:
@@ -1103,6 +1049,7 @@ catladder-manual.yml:
             - app-rollback-review
             - app-stop-stage
             - app-rollback-stage
+            - app-deploy-prod
             - app-stop-prod
             - app-rollback-prod
   permissions:
@@ -1695,6 +1642,62 @@ catladder-manual.yml:
             kubernetesRollback
           shell: bash
       if: \${{ inputs.job == 'app-rollback-stage' }}
+    app-docker-prod:
+      name: app 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
+        CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
+        CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/app-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'app-deploy-prod' }}
+    app-deploy-prod:
+      name: app 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - app-docker-prod
+        - job-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-app
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_app_SECRET_KEY_BASE: \${{ secrets.CL_prod_app_SECRET_KEY_BASE }}
+        CL_prod_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_app_POSTGRESQL_PASSWORD }}
+        CL_prod_app_cloudsqlProxyCredentials: \${{ secrets.CL_prod_app_cloudsqlProxyCredentials }}
+        CL_prod_app_KUBE_URL: \${{ secrets.CL_prod_app_KUBE_URL }}
+        CL_prod_app_KUBE_CA_PEM: \${{ secrets.CL_prod_app_KUBE_CA_PEM }}
+        CL_prod_app_KUBE_TOKEN: \${{ secrets.CL_prod_app_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/app-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'app-deploy-prod' }}
     app-stop-prod:
       name: app 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest

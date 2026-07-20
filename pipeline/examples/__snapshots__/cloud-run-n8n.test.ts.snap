@@ -420,31 +420,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/n8n-deploy-stage.sh
           shell: bash
-    n8n-deploy-prod:
-      name: n8n 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-n8n
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_n8n_N8N_ENCRYPTION_KEY: \${{ secrets.CL_prod_n8n_N8N_ENCRYPTION_KEY }}
-        CL_prod_n8n_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_n8n_GCLOUD_DEPLOY_credentialsKey }}
-        CL_prod_n8n_DB_PASSWORD: \${{ secrets.CL_prod_n8n_DB_PASSWORD }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/n8n-deploy-prod.sh
-          shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
   on:
@@ -643,6 +618,7 @@ catladder-manual.yml:
             - n8n-stop-dev
             - create-release
             - n8n-stop-stage
+            - n8n-deploy-prod
             - n8n-stop-prod
   permissions:
     contents: read
@@ -888,6 +864,32 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'n8n-stop-stage' }}
+    n8n-deploy-prod:
+      name: n8n 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-n8n
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_n8n_N8N_ENCRYPTION_KEY: \${{ secrets.CL_prod_n8n_N8N_ENCRYPTION_KEY }}
+        CL_prod_n8n_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_n8n_GCLOUD_DEPLOY_credentialsKey }}
+        CL_prod_n8n_DB_PASSWORD: \${{ secrets.CL_prod_n8n_DB_PASSWORD }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/n8n-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'n8n-deploy-prod' }}
     n8n-stop-prod:
       name: n8n 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest

@@ -1225,78 +1225,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-deploy-stage.sh
           shell: bash
-    api-app-prod:
-      name: api 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache api-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              api/node_modules
-              api/.yarn/install-state.gz
-            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-node-modules-
-        - name: Cache api-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/api-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: api-app-prod
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-    api-deploy-prod:
-      name: api 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - api-app-prod
-        - job-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-api
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Download artifacts from api-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: api-app-prod
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
-          shell: bash
     www-app-stage:
       name: www 🔨 app | stage
       runs-on: ubuntu-latest
@@ -1370,79 +1298,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/www-deploy-stage.sh
           shell: bash
-    www-app-prod:
-      name: www 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache www-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              www/node_modules
-              www/.yarn/install-state.gz
-            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-node-modules-
-        - name: Cache www-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/www-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: www-app-prod
-            path: |-
-              www/__build_info.json
-              www/.next
-              www/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-    www-deploy-prod:
-      name: www 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - api-deploy-prod
-        - job-image-jobs-default
-        - www-app-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-www
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Download artifacts from www-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: www-app-prod
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/www-deploy-prod.sh
-          shell: bash
 catladder-manual.yml:
   name: catladder manual tasks
   on:
@@ -1454,6 +1309,8 @@ catladder-manual.yml:
           type: choice
           options:
             - create-release
+            - api-deploy-prod
+            - www-deploy-prod
   permissions:
     contents: read
     packages: write
@@ -1634,6 +1491,155 @@ catladder-manual.yml:
           run: semanticRelease
           shell: bash
       if: \${{ inputs.job == 'create-release' }}
+    api-app-prod:
+      name: api 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-prod
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
+    api-deploy-prod:
+      name: api 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - api-app-prod
+        - job-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-api
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from api-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: api-app-prod
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
+    www-app-prod:
+      name: www 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache www-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              www/node_modules
+              www/.yarn/install-state.gz
+            key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/www-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: www-app-prod
+            path: |-
+              www/__build_info.json
+              www/.next
+              www/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
+    www-deploy-prod:
+      name: www 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - api-deploy-prod
+        - job-image-jobs-default
+        - www-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-www
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from www-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: www-app-prod
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/www-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
 
 # ===== .catladder-generated/github/scripts/api-audit-dev.sh =====
 #!/usr/bin/env bash

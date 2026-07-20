@@ -1477,116 +1477,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/web-deploy-stage.sh
           shell: bash
-    web-app-prod:
-      name: web 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-jobs-meteor
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache web-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              web/node_modules
-              web/.yarn/install-state.gz
-            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-node-modules-
-        - name: Cache web-meteor-build-cache
-          uses: actions/cache@v4
-          with:
-            path: |-
-              web/.meteor/local/resolver-result-cache.json
-              web/.meteor/local/plugin-cache
-              web/.meteor/local/isopacks
-              web/.meteor/local/bundler-cache/scanner
-            key: web-meteor-build-cache-\${{ github.run_id }}
-            restore-keys: web-meteor-build-cache-
-        - name: Cache web-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/web-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: web-app-prod
-            path: |-
-              web/__build_info.json
-              web/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-    web-docker-prod:
-      name: web 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-docker-build
-        - web-app-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Download artifacts from web-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: web-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/web-docker-prod.sh
-          shell: bash
-    web-deploy-prod:
-      name: web 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
-        - web-app-prod
-        - web-docker-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-web
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/web-deploy-prod.sh
-          shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
   on:
@@ -1969,6 +1859,7 @@ catladder-manual.yml:
             - web-stop-dev
             - create-release
             - web-stop-stage
+            - web-deploy-prod
             - web-stop-prod
   permissions:
     contents: read
@@ -2412,6 +2303,119 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'web-stop-stage' }}
+    web-app-prod:
+      name: web 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-meteor
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-meteor:66ec3fa9846d
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache web-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/node_modules
+              web/.yarn/install-state.gz
+            key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-node-modules-
+        - name: Cache web-meteor-build-cache
+          uses: actions/cache@v4
+          with:
+            path: |-
+              web/.meteor/local/resolver-result-cache.json
+              web/.meteor/local/plugin-cache
+              web/.meteor/local/isopacks
+              web/.meteor/local/bundler-cache/scanner
+            key: web-meteor-build-cache-\${{ github.run_id }}
+            restore-keys: web-meteor-build-cache-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/web-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: web-app-prod
+            path: |-
+              web/__build_info.json
+              web/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'web-deploy-prod' }}
+    web-docker-prod:
+      name: web 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-docker-build
+        - web-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Download artifacts from web-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: web-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/web-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'web-deploy-prod' }}
+    web-deploy-prod:
+      name: web 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-gcloud
+        - web-app-prod
+        - web-docker-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-web
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_web_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_web_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/web-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'web-deploy-prod' }}
     web-stop-prod:
       name: web 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
