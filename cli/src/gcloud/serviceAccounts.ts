@@ -1,9 +1,9 @@
 import type { ComponentContext } from "@catladder/pipeline";
 
 import { exec } from "child-process-promise";
-import { createHmac } from "crypto";
 import type { IO } from "../core/types";
 import { upsertAllVariables } from "../utils/gitlab";
+import { getGcloudServiceAccountNames } from "./serviceAccountNames";
 
 export const accountExists = async (fullIdentifier: string) => {
   try {
@@ -25,39 +25,14 @@ const upsertGcloudServiceAccount = async (
   context: ComponentContext,
   account: ServiceAccount,
 ): Promise<string> => {
-  const { projectId, name, displayName, roles, description } = account;
+  const { projectId, displayName, roles, description } = account;
 
-  // name has limit of 30
-  const namePrefix = `${name}`;
-  const nameSuffixRaw = `${context.env}-${context.name}`;
-  const nameMiddleRaw = `${context.fullConfig.customerName}-${context.fullConfig.appName}`;
-  const MAX_LENGTH = 30;
-  const NUM_SEPARATORS = 2;
-
-  // we want to first hash middle, then suffix
-  // if for middle we have at least 1 char left, its ok, so we don't hash nameSuffix, otherwise we need to hash that as well
-
-  const middleMaxLength =
-    MAX_LENGTH - namePrefix.length - nameSuffixRaw.length - NUM_SEPARATORS;
-
-  let nameMiddle: string;
-  let nameSuffix: string;
-  if (middleMaxLength < 1) {
-    nameMiddle = hashIfNessecary(nameMiddleRaw, 1);
-    nameSuffix = hashIfNessecary(
-      nameSuffixRaw,
-      MAX_LENGTH - namePrefix.length - 1 - NUM_SEPARATORS,
-    );
-  } else {
-    nameMiddle = hashIfNessecary(nameMiddleRaw, middleMaxLength);
-    nameSuffix = nameSuffixRaw;
-  }
-
-  const fullName = `${namePrefix}-${nameMiddle}-${nameSuffix}`;
+  const { fullName, fullIdentifier } = getGcloudServiceAccountNames(
+    context,
+    account,
+  );
 
   const fullDisplayName = `${context.fullConfig.customerName}-${context.fullConfig.appName} ${context.env}:${context.name} | ${displayName}`;
-
-  const fullIdentifier = `${fullName}@${projectId}.iam.gserviceaccount.com`;
 
   const existing = await accountExists(fullIdentifier);
 
@@ -110,11 +85,4 @@ export const upsertGcloudServiceAccountAndSaveSecret = async (
     context.name,
   );
   instance.log("done!");
-};
-
-const hashIfNessecary = (str: string, maxLength: number) =>
-  str.length > maxLength ? hash(str, maxLength) : str;
-
-const hash = (str: string, length: number) => {
-  return createHmac("sha256", str).digest("hex").substring(0, length);
 };

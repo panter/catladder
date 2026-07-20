@@ -21,6 +21,7 @@ export { commandTriggerCronjobGeneral } from "./project/k8s/commandTriggerCronjo
 export { commandRenewToken } from "./project/commandRenewToken";
 export { commandGetMyTotalWorktime } from "./project/commandGetMyTotalWorktime";
 export { commandSetup } from "./project/commandSetup";
+export { commandDoctor } from "./project/commandDoctor";
 export { commandCiJobOpen, commandCiJobLog } from "./project/commandGitlabCi";
 export { commandProjectRestoreDb } from "./project/commandProjectRestoreDb";
 export { commandSecurityEvaluate } from "./project/commandSecurityEvaluate";
