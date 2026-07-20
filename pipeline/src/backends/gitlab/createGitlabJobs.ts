@@ -144,14 +144,21 @@ export const makeGitlabJob = (
     jobAllowFailure ?? (gate ? gate === "manual" : undefined);
 
   // the neutral `caches` declarations resolve to gitlab cache configs;
-  // an explicitly set gitlab `cache` takes precedence. `keyFiles` is a
-  // github-only content-key hint and must not leak into the gitlab yaml
+  // an explicitly set gitlab `cache` takes precedence. keyFiles /
+  // cacheId / redundantOnExactHitOf are github-only hints (content
+  // keys, conditional restore) and must not leak into the gitlab yaml
+  const stripGithubCacheHints = ({
+    keyFiles: _keyFiles,
+    cacheId: _cacheId,
+    redundantOnExactHitOf: _redundantOnExactHitOf,
+    ...cacheRest
+  }: CatladderJobCache): CatladderJobCache => cacheRest;
   const stripKeyFiles = (
     resolved: CatladderJobCache | CatladderJobCache[],
   ): CatladderJobCache | CatladderJobCache[] =>
     Array.isArray(resolved)
-      ? resolved.map(({ keyFiles: _keyFiles, ...cacheRest }) => cacheRest)
-      : (({ keyFiles: _keyFiles, ...cacheRest }) => cacheRest)(resolved);
+      ? resolved.map(stripGithubCacheHints)
+      : stripGithubCacheHints(resolved);
   const resolvedCaches =
     caches && context.type !== "agent"
       ? createJobCacheFromCacheConfigs(context, caches)

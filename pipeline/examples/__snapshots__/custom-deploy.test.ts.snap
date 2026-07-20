@@ -257,13 +257,8 @@ exports[`matches snapshot for custom-deploy github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -271,6 +266,13 @@ exports[`matches snapshot for custom-deploy github workflows YAML 1`] = `
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/www-lint-dev.sh
@@ -293,13 +295,8 @@ exports[`matches snapshot for custom-deploy github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -307,6 +304,13 @@ exports[`matches snapshot for custom-deploy github workflows YAML 1`] = `
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/www-test-dev.sh
@@ -329,13 +333,8 @@ exports[`matches snapshot for custom-deploy github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -343,6 +342,13 @@ exports[`matches snapshot for custom-deploy github workflows YAML 1`] = `
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/www-app-dev.sh
@@ -675,13 +681,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -689,6 +690,13 @@ catladder-review.yml:
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/www-lint-review.sh
@@ -711,13 +719,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -725,6 +728,13 @@ catladder-review.yml:
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/www-test-review.sh
@@ -747,13 +757,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -761,6 +766,13 @@ catladder-review.yml:
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/www-app-review.sh
@@ -1066,13 +1078,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1080,6 +1087,13 @@ catladder-release.yml:
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/www-app-stage.sh
@@ -1171,13 +1185,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
-          uses: actions/cache@v4
-          with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
         - name: Cache www-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1185,6 +1194,13 @@ catladder-release.yml:
               www/.yarn/install-state.gz
             key: www-node-modules-\${{ hashFiles('www/yarn.lock') }}
             restore-keys: www-node-modules-
+        - name: Cache www-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: www/.yarn
+            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
+            restore-keys: www-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/www-app-prod.sh

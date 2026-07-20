@@ -357,13 +357,8 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -371,6 +366,13 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
               web/.yarn/install-state.gz
             key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/web-lint-dev.sh
@@ -393,13 +395,8 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -407,6 +404,13 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
               web/.yarn/install-state.gz
             key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/web-test-dev.sh
@@ -429,13 +433,8 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -453,6 +452,13 @@ exports[`matches snapshot for cloud-run-meteor-with-worker github workflows YAML
               web/.meteor/local/bundler-cache/scanner
             key: web-meteor-build-cache-\${{ github.run_id }}
             restore-keys: web-meteor-build-cache-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/web-app-dev.sh
@@ -878,13 +884,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -892,6 +893,13 @@ catladder-review.yml:
               web/.yarn/install-state.gz
             key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/web-lint-review.sh
@@ -914,13 +922,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -928,6 +931,13 @@ catladder-review.yml:
               web/.yarn/install-state.gz
             key: web-node-modules-\${{ hashFiles('web/yarn.lock') }}
             restore-keys: web-node-modules-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/web-test-review.sh
@@ -950,13 +960,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -974,6 +979,13 @@ catladder-review.yml:
               web/.meteor/local/bundler-cache/scanner
             key: web-meteor-build-cache-\${{ github.run_id }}
             restore-keys: web-meteor-build-cache-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/web-app-review.sh
@@ -1372,13 +1384,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1396,6 +1403,13 @@ catladder-release.yml:
               web/.meteor/local/bundler-cache/scanner
             key: web-meteor-build-cache-\${{ github.run_id }}
             restore-keys: web-meteor-build-cache-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/web-app-stage.sh
@@ -1480,13 +1494,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache web-yarn
-          uses: actions/cache@v4
-          with:
-            path: web/.yarn
-            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
-            restore-keys: web-yarn-
         - name: Cache web-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1504,6 +1513,13 @@ catladder-release.yml:
               web/.meteor/local/bundler-cache/scanner
             key: web-meteor-build-cache-\${{ github.run_id }}
             restore-keys: web-meteor-build-cache-
+        - name: Cache web-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: web/.yarn
+            key: web-yarn-\${{ hashFiles('web/yarn.lock') }}
+            restore-keys: web-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/web-app-prod.sh

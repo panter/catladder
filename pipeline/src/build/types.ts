@@ -29,6 +29,27 @@ export type CacheConfigAdvanced = Omit<CatladderJobCache, "paths" | "key"> & {
    * it). Gitlab ignores this and keeps its stable, mutable key.
    */
   keyFiles?: string[];
+
+  /**
+   * stable id so other caches of the same job can reference this one
+   * (see {@link redundantOnExactHitOf})
+   */
+  cacheId?: string;
+
+  /**
+   * id of a sibling cache that makes THIS cache unnecessary when it
+   * scores an exact key hit.
+   *
+   * Example: when the node_modules cache hits exactly (same lockfile),
+   * `yarn install` verifies via install-state.gz and never opens a
+   * single `.yarn` zip — downloading the yarn cache (~0.6GB) would be
+   * pure waste. On github the restore step is skipped via the
+   * referenced step's `cache-hit` output; when the sibling misses
+   * (changed lockfile), this cache restores as usual. Gitlab restores
+   * all declared caches unconditionally before the script and has no
+   * mechanism for this — it ignores the field.
+   */
+  redundantOnExactHitOf?: string;
 } & CacheConfigSimple;
 
 export type CacheConfigSimple = {

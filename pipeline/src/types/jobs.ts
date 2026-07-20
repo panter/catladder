@@ -16,6 +16,12 @@ export type CatladderJobCache = GitlabJobCache & {
    * by the github lowering (hashFiles key), stripped by gitlab
    */
   keyFiles?: string[];
+  /**
+   * cross-cache hints carried over from {@link CacheConfig} — consumed
+   * by the github lowering (conditional restore), stripped by gitlab
+   */
+  cacheId?: string;
+  redundantOnExactHitOf?: string;
 };
 export const BASE_STAGES = [
   "setup",

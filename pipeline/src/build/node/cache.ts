@@ -5,6 +5,13 @@ import slugify from "slugify";
 import type { Context, WorkspaceContext } from "../../types/context";
 import type { CacheConfig } from "../types";
 
+/**
+ * stable reference between the two node caches: the yarn (zip) cache
+ * declares itself redundant when the node_modules cache scored an
+ * exact-lockfile hit (github skips the ~0.6GB download on warm runs)
+ */
+const NODE_MODULES_CACHE_ID = "node-modules";
+
 export const getYarnCache = async (
   context: Context,
   policy = "pull-push",
@@ -24,6 +31,11 @@ export const getYarnCache = async (
       // content-key for immutable-cache backends (github); the lockfile
       // decides whether the cached content could have changed
       keyFiles: ["yarn.lock"],
+      // the .yarn zips (~hundreds of MB) are only read when yarn has to
+      // (re)install packages. When the node_modules cache hit for the
+      // same lockfile, install verifies via install-state.gz and never
+      // opens a zip — so github skips downloading this cache entirely
+      redundantOnExactHitOf: NODE_MODULES_CACHE_ID,
     },
   ];
 };
@@ -59,6 +71,9 @@ export const getNodeModulesCache = async (
           ? "yarn.lock"
           : join(context.build.dir, "yarn.lock"),
       ],
+      // referenced by the yarn cache: an exact hit here makes the yarn
+      // zips unnecessary (see redundantOnExactHitOf on getYarnCache)
+      cacheId: NODE_MODULES_CACHE_ID,
       policy,
       paths: [
         ...(componentIsInWorkspace

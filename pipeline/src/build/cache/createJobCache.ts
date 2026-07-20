@@ -37,7 +37,18 @@ export const createJobCacheFromCacheConfigs = (
       : [];
 
   const advancedCaches = advancedCacheDefs.map(
-    ({ key, paths, policy, scope, pathMode, buildDir, keyFiles, ...rest }) => {
+    ({
+      key,
+      paths,
+      policy,
+      scope,
+      pathMode,
+      buildDir,
+      keyFiles,
+      cacheId,
+      redundantOnExactHitOf,
+      ...rest
+    }) => {
       const baseDir =
         pathMode === "absolute" ? "" : (buildDir ?? context.build.dir);
       const transformedKey =
@@ -68,6 +79,8 @@ export const createJobCacheFromCacheConfigs = (
               ),
             }
           : {}),
+        ...(cacheId ? { cacheId } : {}),
+        ...(redundantOnExactHitOf ? { redundantOnExactHitOf } : {}),
         ...rest,
       };
     },

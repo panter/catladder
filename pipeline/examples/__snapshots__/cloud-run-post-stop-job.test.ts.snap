@@ -307,13 +307,8 @@ exports[`matches snapshot for cloud-run-post-stop-job github workflows YAML 1`] 
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -321,6 +316,13 @@ exports[`matches snapshot for cloud-run-post-stop-job github workflows YAML 1`] 
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/api-lint-dev.sh
@@ -343,13 +345,8 @@ exports[`matches snapshot for cloud-run-post-stop-job github workflows YAML 1`] 
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -357,6 +354,13 @@ exports[`matches snapshot for cloud-run-post-stop-job github workflows YAML 1`] 
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/api-test-dev.sh
@@ -379,13 +383,8 @@ exports[`matches snapshot for cloud-run-post-stop-job github workflows YAML 1`] 
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -393,6 +392,13 @@ exports[`matches snapshot for cloud-run-post-stop-job github workflows YAML 1`] 
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/api-app-dev.sh
@@ -775,13 +781,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -789,6 +790,13 @@ catladder-review.yml:
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/api-lint-review.sh
@@ -811,13 +819,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -825,6 +828,13 @@ catladder-review.yml:
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/api-test-review.sh
@@ -847,13 +857,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -861,6 +866,13 @@ catladder-review.yml:
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/api-app-review.sh
@@ -1216,13 +1228,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1230,6 +1237,13 @@ catladder-release.yml:
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/api-app-stage.sh
@@ -1321,13 +1335,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
         - name: Cache api-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1335,6 +1344,13 @@ catladder-release.yml:
               api/.yarn/install-state.gz
             key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
             restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/api-app-prod.sh

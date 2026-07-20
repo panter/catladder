@@ -138,6 +138,10 @@ export const resolveGithubNeeds = (
   );
 };
 
+/** step id of a referenceable cache restore step (see `cacheId`) */
+const cacheStepId = (cacheId: string) =>
+  `cache-${cacheId.replace(/[^a-zA-Z0-9_-]/g, "-")}`;
+
 const createCacheSteps = (
   context: Context,
   job: CatladderJob,
@@ -145,8 +149,31 @@ const createCacheSteps = (
   if (!job.caches?.length) {
     return [];
   }
-  const lowered = createJobCacheFromCacheConfigs(context, job.caches) ?? [];
-  return ensureArray(lowered).map((cache) => {
+  const lowered = ensureArray(
+    createJobCacheFromCacheConfigs(context, job.caches) ?? [],
+  );
+
+  // caches marked redundantOnExactHitOf skip their (expensive) restore
+  // when the referenced sibling cache hit its exact key — e.g. the yarn
+  // zip cache is never read when node_modules restored for the same
+  // lockfile. The referenced cache's step must come first (its
+  // `cache-hit` output drives the `if`), so providers are emitted
+  // before dependents; the reorder is github-only and does not affect
+  // the gitlab cache list.
+  const referencedIds = new Set(
+    lowered
+      .map((cache) => cache.redundantOnExactHitOf)
+      .filter((id): id is string => !!id),
+  );
+  const providedIds = new Set(
+    lowered.map((cache) => cache.cacheId).filter((id): id is string => !!id),
+  );
+  const ordered = [
+    ...lowered.filter((cache) => !cache.redundantOnExactHitOf),
+    ...lowered.filter((cache) => cache.redundantOnExactHitOf),
+  ];
+
+  return ordered.map((cache) => {
     const paths = ensureArray(cache.paths ?? []);
     const key = cache.key;
     const { cacheKey, restoreKeyPrefix, label } =
@@ -177,8 +204,21 @@ const createCacheSteps = (
             restoreKeyPrefix: `${key.prefix ?? "files"}-`,
             label: key.prefix ?? (key.files ?? []).join(","),
           };
+    // the sibling-hit condition only applies when the referenced cache
+    // is actually part of this job — otherwise restore unconditionally
+    const skipCondition =
+      cache.redundantOnExactHitOf &&
+      providedIds.has(cache.redundantOnExactHitOf)
+        ? `\${{ steps.${cacheStepId(cache.redundantOnExactHitOf)}.outputs.cache-hit != 'true' }}`
+        : undefined;
+
     return {
       name: `Cache ${label}`,
+      // referenced caches carry an id so dependents can read cache-hit
+      ...(cache.cacheId && referencedIds.has(cache.cacheId)
+        ? { id: cacheStepId(cache.cacheId) }
+        : {}),
+      ...(skipCondition ? { if: skipCondition } : {}),
       // pull-only caches are restored but never saved
       uses:
         cache.policy === "pull"

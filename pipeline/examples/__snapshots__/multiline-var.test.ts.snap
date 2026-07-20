@@ -357,13 +357,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -371,6 +366,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/app1-lint-dev.sh
@@ -393,13 +395,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -407,6 +404,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/app1-test-dev.sh
@@ -429,13 +433,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -443,6 +442,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app1-app-dev.sh
@@ -559,13 +565,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -573,6 +574,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/app2-lint-dev.sh
@@ -595,13 +603,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -609,6 +612,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/app2-test-dev.sh
@@ -631,13 +641,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -645,6 +650,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app2-app-dev.sh
@@ -755,13 +767,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -769,6 +776,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/kube-lint-dev.sh
@@ -788,13 +802,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -802,6 +811,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/kube-test-dev.sh
@@ -821,13 +837,8 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -835,6 +846,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/kube-app-dev.sh
@@ -1266,13 +1284,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -1280,6 +1293,13 @@ catladder-review.yml:
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/app1-lint-review.sh
@@ -1302,13 +1322,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -1316,6 +1331,13 @@ catladder-review.yml:
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/app1-test-review.sh
@@ -1338,13 +1360,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1352,6 +1369,13 @@ catladder-review.yml:
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app1-app-review.sh
@@ -1468,13 +1492,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -1482,6 +1501,13 @@ catladder-review.yml:
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/app2-lint-review.sh
@@ -1504,13 +1530,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -1518,6 +1539,13 @@ catladder-review.yml:
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/app2-test-review.sh
@@ -1540,13 +1568,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1554,6 +1577,13 @@ catladder-review.yml:
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app2-app-review.sh
@@ -1664,13 +1694,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -1678,6 +1703,13 @@ catladder-review.yml:
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/kube-lint-review.sh
@@ -1697,13 +1729,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -1711,6 +1738,13 @@ catladder-review.yml:
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/kube-test-review.sh
@@ -1730,13 +1764,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1744,6 +1773,13 @@ catladder-review.yml:
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/kube-app-review.sh
@@ -2148,13 +2184,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -2162,6 +2193,13 @@ catladder-release.yml:
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app1-app-stage.sh
@@ -2253,13 +2291,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
         - name: Cache app1-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -2267,6 +2300,13 @@ catladder-release.yml:
               app1/.yarn/install-state.gz
             key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
             restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app1-app-prod.sh
@@ -2358,13 +2398,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -2372,6 +2407,13 @@ catladder-release.yml:
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app2-app-stage.sh
@@ -2463,13 +2505,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
         - name: Cache app2-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -2477,6 +2514,13 @@ catladder-release.yml:
               app2/.yarn/install-state.gz
             key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
             restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/app2-app-prod.sh
@@ -2565,13 +2609,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -2579,6 +2618,13 @@ catladder-release.yml:
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/kube-app-stage.sh
@@ -2666,13 +2712,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
         - name: Cache kube-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -2680,6 +2721,13 @@ catladder-release.yml:
               kube/.yarn/install-state.gz
             key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
             restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/kube-app-prod.sh

@@ -301,13 +301,8 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -315,6 +310,13 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
               .yarn/install-state.gz
             key: .-node-modules-\${{ hashFiles('yarn.lock') }}
             restore-keys: .-node-modules-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-dev.sh
@@ -334,13 +336,8 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -348,6 +345,13 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
               .yarn/install-state.gz
             key: .-node-modules-\${{ hashFiles('yarn.lock') }}
             restore-keys: .-node-modules-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-dev.sh
@@ -371,13 +375,8 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -391,6 +390,13 @@ exports[`matches snapshot for workspace-api-www github workflows YAML 1`] = `
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh
@@ -828,13 +834,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -842,6 +843,13 @@ catladder-review.yml:
               .yarn/install-state.gz
             key: .-node-modules-\${{ hashFiles('yarn.lock') }}
             restore-keys: .-node-modules-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-review.sh
@@ -861,13 +869,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
@@ -875,6 +878,13 @@ catladder-review.yml:
               .yarn/install-state.gz
             key: .-node-modules-\${{ hashFiles('yarn.lock') }}
             restore-keys: .-node-modules-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-review.sh
@@ -898,13 +908,8 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -918,6 +923,13 @@ catladder-review.yml:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-review.sh
@@ -1335,13 +1347,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1355,6 +1362,13 @@ catladder-release.yml:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-stage.sh
@@ -1389,13 +1403,8 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache .-yarn
-          uses: actions/cache@v4
-          with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
         - name: Cache .-node-modules
+          id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: |-
@@ -1409,6 +1418,13 @@ catladder-release.yml:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
+        - name: Cache .-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: .yarn
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh
