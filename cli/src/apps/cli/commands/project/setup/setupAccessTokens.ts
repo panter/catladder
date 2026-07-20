@@ -1,13 +1,20 @@
 import type { IO } from "../../../../../core/types";
 import { add, format } from "date-fns";
-import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
+import {
+  doGitlabRequest,
+  doGitlabRequestAllPages,
+  getProjectInfo,
+} from "../../../../../utils/gitlab";
 
 const TOKEN_NAME = "semantic-release";
 
 export const setupAccessTokens = async (instance: IO) => {
   const { id: projectId } = await getProjectInfo(instance);
 
-  const projectTokens = await doGitlabRequest(
+  // all pages: rotated tokens accumulate one (inactive) entry per
+  // rotation, so the active one quickly moves past the first page —
+  // missing it here created a brand-new duplicate token on every setup
+  const projectTokens = await doGitlabRequestAllPages(
     instance,
     `projects/${projectId}/access_tokens`,
   );

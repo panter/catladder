@@ -90,6 +90,30 @@ export const doGitlabRequest = async <T = any>(
   );
 };
 
+/**
+ * GET a list endpoint across ALL pages (gitlab returns 20 items per
+ * page by default — long-lived projects easily exceed that, e.g.
+ * rotated access tokens accumulate one entry per rotation)
+ */
+export const doGitlabRequestAllPages = async <T = any>(
+  io: IO | null,
+  path: string,
+): Promise<T[]> => {
+  const PER_PAGE = 100;
+  const separator = path.includes("?") ? "&" : "?";
+  const all: T[] = [];
+  for (let page = 1; ; page++) {
+    const items = await doGitlabRequest<T[]>(
+      io,
+      `${path}${separator}per_page=${PER_PAGE}&page=${page}`,
+    );
+    if (!items?.length) break;
+    all.push(...items);
+    if (items.length < PER_PAGE) break;
+  }
+  return all;
+};
+
 export const getProjectInfo = async (
   io: IO | null,
 ): Promise<{ id: string; web_url: string }> => {
