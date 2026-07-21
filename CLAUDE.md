@@ -109,6 +109,11 @@ project.
 command definitions by the cli build (`build:skill-cli-reference`) —
 never edit it, rebuild instead and commit the result.
 
+For the full how-to on adding a new skill or updating an existing one
+(frontmatter/description conventions, generated references, regenerate +
+test + commit), see the repo-internal `authoring-catladder-skills` skill
+in `.claude/skills/` (it is not shipped to consumers).
+
 ## Code Style
 
 - **TypeScript strict mode** enabled
