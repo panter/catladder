@@ -703,6 +703,22 @@ exports[`matches snapshot for cloud-run-verify github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/api-verify-dev.sh
@@ -1409,6 +1425,22 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/api-verify-review.sh
@@ -2015,6 +2047,22 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/api-verify-stage.sh
@@ -7596,17 +7644,11 @@ before_script:
       policy: pull
       paths:
         - api/.yarn
-      keyFiles:
-        - api/yarn.lock
-      redundantOnExactHitOf: node-modules
     - key: api-node-modules
       policy: pull
       paths:
         - api/node_modules
         - api/.yarn/install-state.gz
-      keyFiles:
-        - api/yarn.lock
-      cacheId: node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -8067,9 +8109,6 @@ before_script:
       policy: pull
       paths:
         - api/.yarn
-      keyFiles:
-        - api/yarn.lock
-      redundantOnExactHitOf: node-modules
       fallback_keys:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
@@ -8077,9 +8116,6 @@ before_script:
       paths:
         - api/node_modules
         - api/.yarn/install-state.gz
-      keyFiles:
-        - api/yarn.lock
-      cacheId: node-modules
       fallback_keys:
         - api-node-modules
   rules:
@@ -8414,17 +8450,11 @@ before_script:
       policy: pull
       paths:
         - api/.yarn
-      keyFiles:
-        - api/yarn.lock
-      redundantOnExactHitOf: node-modules
     - key: api-node-modules
       policy: pull
       paths:
         - api/node_modules
         - api/.yarn/install-state.gz
-      keyFiles:
-        - api/yarn.lock
-      cacheId: node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"

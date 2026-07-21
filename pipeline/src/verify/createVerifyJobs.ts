@@ -1,5 +1,4 @@
 import { createArtifactsConfig } from "../build/base/createArtifactsConfig";
-import { createJobCacheFromCacheConfigs } from "../build/cache/createJobCache";
 import { getNodeCache } from "../build/node/cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "../build/node/constants";
 import { ensureNodeVersion, getYarnInstall } from "../build/node/yarn";
@@ -55,9 +54,11 @@ export const createVerifyJobs = async (
         })),
       ],
       image: verifyConfig.jobImage ?? getRunnerImage("jobs-testing-chrome"),
-      cache: nodeCache
-        ? createJobCacheFromCacheConfigs(context, nodeCache)
-        : undefined,
+      // neutral cache declarations — each backend lowers them itself
+      // (gitlab strips the github-only hint keys, github builds cache
+      // restore steps). Pre-lowering via createJobCacheFromCacheConfigs
+      // would leak the hints into the gitlab yaml, which rejects them.
+      caches: nodeCache ?? undefined,
       variables: {
         ...context.environment.envVars,
       },

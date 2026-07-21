@@ -147,12 +147,22 @@ export const makeGitlabJob = (
   // an explicitly set gitlab `cache` takes precedence. keyFiles /
   // cacheId / redundantOnExactHitOf are github-only hints (content
   // keys, conditional restore) and must not leak into the gitlab yaml
-  const stripGithubCacheHints = ({
-    keyFiles: _keyFiles,
-    cacheId: _cacheId,
-    redundantOnExactHitOf: _redundantOnExactHitOf,
-    ...cacheRest
-  }: CatladderJobCache): CatladderJobCache => cacheRest;
+  const stripGithubCacheHints = (
+    jobCacheConfig: CatladderJobCache,
+  ): CatladderJobCache => {
+    const {
+      keyFiles: _keyFiles,
+      cacheId: _cacheId,
+      redundantOnExactHitOf: _redundantOnExactHitOf,
+      ...cacheRest
+    } = jobCacheConfig;
+    // keep object identity when there is nothing to strip — the yaml
+    // serializer anchors repeated objects, and fresh copies would
+    // reshuffle anchors in otherwise untouched snapshots
+    return Object.keys(cacheRest).length === Object.keys(jobCacheConfig).length
+      ? jobCacheConfig
+      : cacheRest;
+  };
   const stripKeyFiles = (
     resolved: CatladderJobCache | CatladderJobCache[],
   ): CatladderJobCache | CatladderJobCache[] =>
@@ -163,7 +173,12 @@ export const makeGitlabJob = (
     caches && context.type !== "agent"
       ? createJobCacheFromCacheConfigs(context, caches)
       : undefined;
-  const cache = jobCache ?? (resolvedCaches && stripKeyFiles(resolvedCaches));
+  // strip the hints from the explicit gitlab `cache` too: its type
+  // admits them, so pre-lowered cache configs passed through the escape
+  // hatch must not leak them into the yaml either
+  const cache =
+    (jobCache && stripKeyFiles(jobCache)) ??
+    (resolvedCaches && stripKeyFiles(resolvedCaches));
 
   const stage =
     envMode === "stagePerEnv" && context.type !== "agent"
