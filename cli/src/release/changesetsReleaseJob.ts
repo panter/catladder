@@ -49,6 +49,29 @@ const readPendingChangesets = async () => {
   );
 };
 
+/**
+ * CI checkouts are usually shallow and tagless (gitlab clones with
+ * depth 1; github's checkout needs fetch-depth: 0) — the local history
+ * then cannot answer "nearest v* tag" and the job would rederive the
+ * FIRST release version. Deepen and fetch tags before deriving.
+ */
+const ensureReleaseHistory = async () => {
+  const shallow = await git("rev-parse", "--is-shallow-repository").catch(
+    () => "false",
+  );
+  try {
+    if (shallow === "true") {
+      await git("fetch", "--quiet", "--unshallow", "--tags", "origin");
+    } else {
+      await git("fetch", "--quiet", "--tags", "origin");
+    }
+  } catch (e) {
+    console.warn(
+      `could not fetch tags from origin (${e}) — version derivation may be wrong on a shallow clone`,
+    );
+  }
+};
+
 const getLastReleaseTag = async (): Promise<string | null> => {
   try {
     // the nearest v* tag in the history of HEAD — on hotfix branches
@@ -95,9 +118,12 @@ const requireEnv = (name: string): string => {
  *   plain push to origin works (`permissions: contents: write`)
  */
 const pushCommitAndTag = async (tag: string) => {
+  // --atomic: all refs or none — a rejected tag must not leave the
+  // release commit half-pushed (observed when a stale local view
+  // rederived an existing version)
   if (process.env.GITHUB_ACTIONS === "true") {
     const branch = requireEnv("GITHUB_REF_NAME");
-    await git("push", "origin", `HEAD:refs/heads/${branch}`, tag);
+    await git("push", "--atomic", "origin", `HEAD:refs/heads/${branch}`, tag);
     return;
   }
   const token = requireEnv("GL_TOKEN");
@@ -105,7 +131,7 @@ const pushCommitAndTag = async (tag: string) => {
   const projectPath = requireEnv("CI_PROJECT_PATH");
   const branch = requireEnv("CI_COMMIT_BRANCH");
   const remote = `https://oauth2:${token}@${host}/${projectPath}.git`;
-  await git("push", remote, `HEAD:refs/heads/${branch}`, tag);
+  await git("push", "--atomic", remote, `HEAD:refs/heads/${branch}`, tag);
 };
 
 /**
@@ -150,6 +176,7 @@ export const changesetsReleaseJob = async () => {
     return;
   }
 
+  await ensureReleaseHistory();
   const lastTag = await getLastReleaseTag();
   const version = getNextVersion(
     lastTag,
