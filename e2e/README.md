@@ -30,6 +30,12 @@ sandbox remotes.
 
 ## Fixtures
 
+> **Coupling note**: the `verify-manual-gate` fixture asserts that github
+> withholds the prod deploy (the manual-gate change, MR !413). Run it
+> with a cli built from a branch that includes that change (`--tgz`),
+> otherwise its github prod-withheld assertions fail. `changesets` makes
+> no prod claim and runs standalone against `next`.
+
 A fixture is a directory under `fixtures/<name>/`:
 
 - `catladder.ts` — the sandbox config to test (copied verbatim)

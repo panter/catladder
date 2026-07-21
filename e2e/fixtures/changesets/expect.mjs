@@ -22,12 +22,15 @@ export default {
         "create release": "success",
       },
     },
+    // note: this fixture validates the release METHOD, not the manual
+    // gate — it deliberately makes no claim about prod (whether prod is
+    // withheld on github depends on the manual-gate change; see the
+    // verify-manual-gate fixture for that)
     tagRun: {
       jobs: {
         "www 🔨 app | stage": "success",
         "www 🚀 Deploy | stage": "success",
         "www 🔍 verify | stage": "success",
-        "www 🚀 Deploy | prod": "absent",
       },
     },
   },
