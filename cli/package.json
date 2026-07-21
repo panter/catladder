@@ -63,7 +63,7 @@
     "build:bundle": "./scripts/bundle",
     "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../runner-images dist/runner-images && cp -R ../runner-images dist/bundles/runner-images",
     "build:copy-skills": "rm -rf dist/skills dist/bundles/skills && cp -R ../skills dist/skills && cp -R ../skills dist/bundles/skills",
-    "build:skill-cli-reference": "node dist/cli/src/scripts/generateCliSkillReference.js",
+    "build:skill-cli-reference": "tsx src/scripts/generateCliSkillReference.ts",
     "build:compile": "yarn tsc && yarn tsc-alias",
     "dev:own-catenv": "cd ../ && node cli/bin/catenv-dev",
     "build:watch": "tsc-watch --onSuccess \"yarn dev:own-catenv\""

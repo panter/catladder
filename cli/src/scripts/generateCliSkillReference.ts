@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { join } from "path";
 import * as commands from "../commands";
 import type { CommandDef, InputDef } from "../core/types";
@@ -72,11 +72,21 @@ export const renderCliReference = (): string => {
   ].join("\n");
 };
 
-// executed by the cli build; __dirname is dist/cli/src/scripts
+// executed by the cli build via tsx (node itself cannot require the
+// ESM-only deps of the command modules on older versions)
 const main = () => {
+  const repoRootCandidates = [
+    join(__dirname, "../../.."), // source: cli/src/scripts
+    join(__dirname, "../../../../.."), // compiled: cli/dist/cli/src/scripts
+  ];
+  const repoRoot = repoRootCandidates.find((candidate) =>
+    existsSync(join(candidate, "skills")),
+  );
+  if (!repoRoot) {
+    throw new Error("skills directory not found next to the cli workspace");
+  }
   const target = join(
-    __dirname,
-    "../../../../..",
+    repoRoot,
     "skills",
     "catladder-cli",
     "references",
