@@ -55,18 +55,20 @@ runs a dependency security audit via catci.
 
 ## Debugging CI
 
-Useful commands in the catladder shell (`yarn catladder`):
+Useful CLI commands (see the `catladder-cli` skill for invocation):
 
-- `project ci job-log` / `project ci job-open` — fetch or open a CI job
-- `project doctor` — detect drift between `catladder.ts` and the
-  actually provisioned infrastructure (missing IAM roles, stale
+- `yarn catladder project ci job-log` / `project ci job-open` — fetch
+  or open a CI job
+- `yarn catladder project doctor` — detect drift between `catladder.ts`
+  and the actually provisioned infrastructure (missing IAM roles, stale
   secrets, ...). Run this when a deploy/teardown fails with permission
   errors even though the config looks right; fix findings with
-  `project setup [component]`.
-- `project logs open`, `project k8s list-pods`, `project k8s get-shell`
-  — inspect the running deployments
+  `yarn catladder project setup [component]`.
+- `yarn catladder project logs open`, `project k8s list-pods`,
+  `project k8s get-shell` — inspect the running deployments
 
 ## Related skills
 
 - `catladder-config` — catladder.ts structure and regeneration
 - `catladder-secrets` — env vars and secret management
+- `catladder-cli` — non-interactive CLI usage and command reference

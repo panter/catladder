@@ -79,3 +79,4 @@ Key concepts:
 
 - `catladder-secrets` — env vars and secret management
 - `catladder-pipelines` — how the generated pipelines work, debugging CI
+- `catladder-cli` — non-interactive CLI usage and command reference

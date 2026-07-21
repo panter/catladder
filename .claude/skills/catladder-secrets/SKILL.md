@@ -35,12 +35,11 @@ commit.
 
 ## Setting secret values
 
-Secret values are managed through the interactive catladder shell —
-never by editing files in the repo:
+Secret values are managed through the catladder CLI — never by editing
+files in the repo:
 
 ```sh
-yarn catladder            # opens the catladder shell (tab completion, `help`)
-catladder $ project config-secrets
+yarn catladder project config-secrets
 ```
 
 This opens all env vars as YAML in `$EDITOR` (use e.g.
@@ -54,10 +53,10 @@ editor** — when a new secret *value* is needed, add the name to
 
 GitHub Actions cannot read the vault at runtime; secrets are mirrored
 into GitHub *environment* secrets (one GitHub environment per catladder
-env). Sync them from the catladder shell:
+env). Sync them with:
 
 ```sh
-catladder $ project secrets-sync-github
+yarn catladder project secrets-sync-github
 ```
 
 Run this after adding/changing secrets when a github pipeline is
@@ -74,3 +73,4 @@ suspecting anything else.
 
 - `catladder-config` — general catladder.ts structure and regeneration
 - `catladder-pipelines` — how the generated pipelines work
+- `catladder-cli` — non-interactive CLI usage and command reference

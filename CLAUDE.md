@@ -88,8 +88,26 @@ yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 
 ### CLI structure (`cli/src/`)
 
-- `apps/cli/` — Main Vorpal-based REPL (`catladder` command)
+- `apps/cli/` — Commander-based CLI (`catladder` command; command defs in `commands/`, registered in `cli.ts`)
 - `apps/catenv/` — Environment/pipeline generation (`catenv` command)
+
+## Agent skills (`skills/`)
+
+`skills/` contains the agent skills catladder ships to consumer
+projects: pipeline generation materializes them into `.claude/skills/`
+and `.agents/skills/` as `catladder-*` directories, so AI coding agents
+working in a consumer repo get usage knowledge matching the installed
+catladder version (see `pipeline/src/agentSkills/`).
+
+**When you change user-facing behavior — config options, CLI commands,
+generated pipeline behavior, workflows — update the affected skill in
+`skills/` in the same change.** The skills are catladder's agent-facing
+documentation; a stale skill actively misleads agents in every consumer
+project.
+
+`skills/catladder-cli/references/commands.md` is generated from the
+command definitions by the cli build (`build:skill-cli-reference`) —
+never edit it, rebuild instead and commit the result.
 
 ## Code Style
 
