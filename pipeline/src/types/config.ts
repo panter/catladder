@@ -8,6 +8,7 @@ import type { PipelineType, WorkspaceBuildConfig } from "..";
 import type { AgentConfig } from "./agent";
 import type { Hooks } from "./hooks";
 import type { ReleaseConfig } from "./release";
+import type { VerifyConfig } from "../verify/types";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -91,6 +92,14 @@ export type DefaultEnvConfig = {
    * environment variables
    */
   vars?: EnvVars;
+
+  /**
+   * post-deploy verification: runs a job in the `verify` stage after the deploy,
+   * e.g. an e2e test suite against the freshly deployed environment.
+   *
+   * Runs in all deployed envs by default, disable per env with `verify: false`
+   */
+  verify?: VerifyConfig | false;
 };
 
 export type DevLocalEnvConfig = {

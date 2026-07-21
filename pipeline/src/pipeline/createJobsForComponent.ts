@@ -5,6 +5,7 @@ import type {
   ComponentContextWithBuild,
 } from "../types/context";
 import type { CatladderJob } from "../types/jobs";
+import { createVerifyJobs } from "../verify/createVerifyJobs";
 
 const injectDefaultVarsInCustomJobs = (
   context: ComponentContext,
@@ -27,7 +28,7 @@ const getCustomJobs = (context: ComponentContext) => {
 export const createJobsForComponentContext = async (
   context: ComponentContext,
 ): Promise<CatladderJob[]> => {
-  const [buildJobs, deployJobs] = await Promise.all([
+  const [buildJobs, deployJobs, verifyJobs] = await Promise.all([
     context.build.type !== "disabled"
       ? BUILD_TYPES[context.build.buildType].jobs(
           context as ComponentContextWithBuild,
@@ -36,9 +37,10 @@ export const createJobsForComponentContext = async (
     context.componentConfig.deploy !== false
       ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
       : [],
+    createVerifyJobs(context),
   ]);
 
   const customJobs = getCustomJobs(context);
 
-  return [...buildJobs, ...deployJobs, ...customJobs];
+  return [...buildJobs, ...deployJobs, ...verifyJobs, ...customJobs];
 };
