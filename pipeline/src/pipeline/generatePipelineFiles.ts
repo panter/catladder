@@ -8,6 +8,7 @@ import { GitlabBackend } from "../backends/gitlab";
 import type { CatenvContext } from "../catenv";
 import { GENERATED_IMAGES_FOLDER } from "../customImages/jobImagesPlan";
 import { GENERATED_CATCI_FOLDER } from "../catci/shippedCatci";
+import { generateAgentSkills } from "../agentSkills";
 
 /**
  * generates the pipeline files of all pipeline types enabled in the
@@ -30,6 +31,9 @@ export async function generatePipelineFiles(
     await rm(GENERATED_IMAGES_FOLDER, { recursive: true, force: true });
     // same for the materialized catci bundle (union across backends)
     await rm(GENERATED_CATCI_FOLDER, { recursive: true, force: true });
+    // agent skills are backend-independent, materialized once per full
+    // generation
+    await generateAgentSkills(context);
   }
 
   for (const type of pipelineTypes) {

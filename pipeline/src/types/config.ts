@@ -9,6 +9,7 @@ import type { AgentConfig } from "./agent";
 import type { Hooks } from "./hooks";
 import type { ReleaseConfig } from "./release";
 import type { CatladderStore } from "../store";
+import type { AgentSkillsConfig } from "../agentSkills/types";
 import type { VerifyConfig } from "../verify/types";
 
 export const ALL_PIPELINE_TRIGGERS = [
@@ -311,6 +312,21 @@ export type Config<C extends ConfigProps = never> = {
    *   github, where the central registry is not reachable)
    */
   jobImages?: "central" | "repo";
+
+  /**
+   * materialize the agent skills shipped with catladder (usage guides
+   * for AI coding agents like Claude Code) into the repository, so
+   * agents working in the project use knowledge matching the installed
+   * catladder version. The skills are written on every generation into
+   * `catladder-*` directories under the agent skill folders (e.g.
+   * `.claude/skills/`) — that namespace is owned by catladder and must
+   * not be edited manually.
+   *
+   * - `true` (default): write to all known agent skill directories
+   * - `false`: opt out (previously generated skills are removed)
+   * - `{ targets: [...] }`: only write to the given targets
+   */
+  agentSkills?: AgentSkillsConfig;
 
   /**
    * name of the customer or group

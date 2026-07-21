@@ -58,10 +58,11 @@
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "test": "yarn run lint",
-    "build": "yarn build:compile && yarn build:inline-variables && yarn build:bundle && yarn build:copy-images",
+    "build": "yarn build:compile && yarn build:inline-variables && yarn build:bundle && yarn build:copy-images && yarn build:copy-skills",
     "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
     "build:bundle": "./scripts/bundle",
     "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../runner-images dist/runner-images && cp -R ../runner-images dist/bundles/runner-images",
+    "build:copy-skills": "rm -rf dist/skills dist/bundles/skills && cp -R ../skills dist/skills && cp -R ../skills dist/bundles/skills",
     "build:compile": "yarn tsc && yarn tsc-alias",
     "dev:own-catenv": "cd ../ && node cli/bin/catenv-dev",
     "build:watch": "tsc-watch --onSuccess \"yarn dev:own-catenv\""

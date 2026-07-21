@@ -1,0 +1,74 @@
+---
+name: catladder-secrets
+description: Managing environment variables and secrets in a catladder project. Use when adding or changing env vars in catladder.ts (vars.public / vars.secret), when a secret value must be set or rotated, when secrets need syncing to GitHub, or when local .env / direnv environment questions come up. Triggers on "env var", "secret", "vars", "catenv", ".env", "config-secrets".
+---
+
+# Env vars and secrets with catladder
+
+Environment variables are declared per component in `catladder.ts`;
+secret *values* are never checked into the repo.
+
+## Declaring variables
+
+```ts
+components: {
+  app: {
+    vars: {
+      // names of secret vars — values are stored in the secrets vault, not in git
+      secret: ["API_KEY"],
+      public: {
+        MY_VAR: "some value",
+        // reference other vars, including from other components:
+        GRAPHQL_ENDPOINT: "${api:ROOT_URL}/graphql",
+      },
+    },
+  },
+}
+```
+
+Predefined per component/env: `ROOT_URL`, `HOSTNAME`, `PORT` (plus
+deploy-type specific ones). All vars are available at build time and at
+runtime. After changing declarations, regenerate with `yarn catenv` and
+commit.
+
+## Setting secret values
+
+Secret values are managed through the interactive catladder shell —
+never by editing files in the repo:
+
+```sh
+yarn catladder            # opens the catladder shell (tab completion, `help`)
+catladder $ project config-secrets
+```
+
+This opens all env vars as YAML in `$EDITOR` (use e.g.
+`EDITOR="code --wait"`); on save, catladder upserts the changed values
+into the secrets vault. **An agent cannot drive this interactive
+editor** — when a new secret *value* is needed, add the name to
+`vars.secret`, regenerate, and ask the user to run
+`project config-secrets` themselves.
+
+## GitHub pipelines
+
+GitHub Actions cannot read the vault at runtime; secrets are mirrored
+into GitHub *environment* secrets (one GitHub environment per catladder
+env). Sync them from the catladder shell:
+
+```sh
+catladder $ project secrets-sync-github
+```
+
+Run this after adding/changing secrets when a github pipeline is
+enabled.
+
+## Local development
+
+`catenv` generates the local env (`.env` files / exported vars via
+direnv) for the `local` environment. If a var is missing locally,
+check its declaration in `catladder.ts` and re-run `yarn catenv` before
+suspecting anything else.
+
+## Related skills
+
+- `catladder-config` — general catladder.ts structure and regeneration
+- `catladder-pipelines` — how the generated pipelines work
