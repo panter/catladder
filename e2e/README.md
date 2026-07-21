@@ -44,6 +44,10 @@ A fixture is a directory under `fixtures/<name>/`:
 ## Phases
 
 - **Phase 1 (this)**: manual invocation.
+- Phase 1.5 (idea): pre-push `ci/lint` API check of each generated
+  gitlab yaml fragment — run #2 caught gitlab rejecting generated yaml
+  ("cache config contains unknown keys"), which a lint call would have
+  flagged without waiting for a pipeline.
 - Phase 2 (planned): scheduled / label-gated job in catladder's own CI,
   sandbox push tokens as CI secrets.
 - Phase 3 (idea): ephemeral per-run sandbox repos created+destroyed via
