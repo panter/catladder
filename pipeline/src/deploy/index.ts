@@ -27,6 +27,11 @@ export type DeployTypeDefinition<D extends DeployConfig> = {
   getAdditionalEnvVars: (
     envContext: EnvironmentContext<BuildConfig, D>,
   ) => Record<string, string | BashExpression | undefined | null>;
+  /**
+   * script lines the deploy type contributes to the start of the verify job,
+   * e.g. to authenticate against a non-public service
+   */
+  verifyJobSetupScript?: (context: ComponentContext) => string[];
 };
 export type DeployTypes = {
   [T in DeployConfigType]: DeployTypeDefinition<DeployConfigGeneric<T>>;

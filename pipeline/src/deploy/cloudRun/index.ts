@@ -4,7 +4,10 @@ import type { BuildConfig } from "../../build";
 import { getSecretVarName } from "../../context";
 import { getGcloudProjectNumber } from "../../store";
 import type { EnvironmentContext } from "../../types/environmentContext";
-import { sanitizeForBashVariable } from "../../utils/gitlab";
+import {
+  collapseableSection,
+  sanitizeForBashVariable,
+} from "../../utils/gitlab";
 import { getFullDbName } from "../cloudSql/utils";
 import { createGoogleCloudRunDeployJobs } from "./createJobs";
 import { getCloudRunJobExecuteUrl } from "./utils/cloudRunExecutionUrl";
@@ -136,5 +139,24 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
           ? deployConfigRaw.region
           : undefined,
       };
+    },
+    verifyJobSetupScript: (context) => {
+      const deployConfig = context.deploy?.config as
+        | DeployConfigCloudRun
+        | undefined;
+      const service = deployConfig?.service;
+      const serviceConfig = typeof service === "object" ? service : undefined;
+      if (serviceConfig?.allowUnauthenticated !== false) {
+        return [];
+      }
+      // the service requires IAM auth: provide application default credentials
+      // so the verify command can fetch identity tokens for the deployed service
+      return collapseableSection(
+        "verifygcloudauth",
+        "Setup google application credentials",
+      )([
+        `echo "$${GCLOUD_DEPLOY_CREDENTIALS_KEY}" > "$CI_PROJECT_DIR/.gcloud-sa.json"`,
+        `export GOOGLE_APPLICATION_CREDENTIALS="$CI_PROJECT_DIR/.gcloud-sa.json"`,
+      ]);
     },
   };

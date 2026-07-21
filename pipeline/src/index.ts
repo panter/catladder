@@ -8,6 +8,7 @@ export * from "./store";
 export * from "./context";
 export * from "./build";
 export * from "./deploy";
+export * from "./verify";
 export * from "./utils/writeFiles";
 export * from "./utils/measureTime";
 export * from "./variables/VariableValue";
