@@ -1,3 +1,15 @@
+# [4.7.0](https://git.panter.ch/catladder/catladder/compare/v4.6.4...v4.7.0) (2026-07-21)
+
+
+### Bug Fixes
+
+* **semantic-release:** pin plugins to v19-compatible majors ([2e88869](https://git.panter.ch/catladder/catladder/commit/2e888690148e1bcd646765fed3b6baf8c9d5c81f))
+
+
+### Features
+
+* **pipeline:** add post-deploy verify jobs ([33471ca](https://git.panter.ch/catladder/catladder/commit/33471cad841d990c742b2823071d324d56b9fbbf))
+
 ## [4.6.4](https://git.panter.ch/catladder/catladder/compare/v4.6.3...v4.6.4) (2026-07-17)
 
 
