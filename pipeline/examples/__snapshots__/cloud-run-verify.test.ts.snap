@@ -1814,113 +1814,6 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db-deploy-stage.sh
           shell: bash
-    db-app-prod:
-      name: db 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_db_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_db_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache db-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              db/node_modules
-              db/.yarn/install-state.gz
-            key: db-node-modules-\${{ hashFiles('db/yarn.lock') }}
-            restore-keys: db-node-modules-
-        - name: Cache db-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: db/.yarn
-            key: db-yarn-\${{ hashFiles('db/yarn.lock') }}
-            restore-keys: db-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/db-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: db-app-prod
-            path: |-
-              db/__build_info.json
-              db/.next
-              db/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-    db-docker-prod:
-      name: db 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - db-app-prod
-        - job-image-docker-build
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_db_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_db_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache db-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: db/.yarn
-            key: db-yarn-\${{ hashFiles('db/yarn.lock') }}
-            restore-keys: db-yarn-
-        - name: Download artifacts from db-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: db-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/db-docker-prod.sh
-          shell: bash
-    db-deploy-prod:
-      name: db 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - db-app-prod
-        - db-docker-prod
-        - job-image-gcloud
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-db
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_db_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_db_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/db-deploy-prod.sh
-          shell: bash
     api-app-stage:
       name: api 🔨 app | stage
       runs-on: ubuntu-latest
@@ -2067,113 +1960,6 @@ catladder-release.yml:
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/api-verify-stage.sh
-          shell: bash
-    api-app-prod:
-      name: api 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - job-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache api-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              api/node_modules
-              api/.yarn/install-state.gz
-            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-node-modules-
-        - name: Cache api-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/api-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: api-app-prod
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-    api-docker-prod:
-      name: api 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - api-app-prod
-        - job-image-docker-build
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
-        - name: Download artifacts from api-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: api-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/api-docker-prod.sh
-          shell: bash
-    api-deploy-prod:
-      name: api 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - api-app-prod
-        - api-docker-prod
-        - job-image-gcloud
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-api
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
           shell: bash
 catladder-review-stop.yml:
   name: catladder review stop
@@ -2564,8 +2350,10 @@ catladder-manual.yml:
             - api-stop-dev
             - create-release
             - db-stop-stage
+            - db-deploy-prod
             - db-stop-prod
             - api-stop-stage
+            - api-deploy-prod
             - api-stop-prod
   permissions:
     contents: read
@@ -3012,6 +2800,116 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'db-stop-stage' }}
+    db-app-prod:
+      name: db 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_db_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_db_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache db-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              db/node_modules
+              db/.yarn/install-state.gz
+            key: db-node-modules-\${{ hashFiles('db/yarn.lock') }}
+            restore-keys: db-node-modules-
+        - name: Cache db-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: db/.yarn
+            key: db-yarn-\${{ hashFiles('db/yarn.lock') }}
+            restore-keys: db-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/db-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: db-app-prod
+            path: |-
+              db/__build_info.json
+              db/.next
+              db/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'db-deploy-prod' }}
+    db-docker-prod:
+      name: db 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - db-app-prod
+        - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_db_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_db_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache db-yarn
+          uses: actions/cache/restore@v4
+          with:
+            path: db/.yarn
+            key: db-yarn-\${{ hashFiles('db/yarn.lock') }}
+            restore-keys: db-yarn-
+        - name: Download artifacts from db-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: db-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/db-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'db-deploy-prod' }}
+    db-deploy-prod:
+      name: db 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - db-app-prod
+        - db-docker-prod
+        - job-image-gcloud
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-db
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_db_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_db_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/db-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'db-deploy-prod' }}
     db-stop-prod:
       name: db 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
@@ -3122,6 +3020,116 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'api-stop-stage' }}
+    api-app-prod:
+      name: api 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - job-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-prod
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'api-deploy-prod' }}
+    api-docker-prod:
+      name: api 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - api-app-prod
+        - job-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-yarn
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: Download artifacts from api-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: api-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/api-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'api-deploy-prod' }}
+    api-deploy-prod:
+      name: api 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - api-app-prod
+        - api-docker-prod
+        - job-image-gcloud
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-api
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'api-deploy-prod' }}
     api-stop-prod:
       name: api 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
