@@ -51,7 +51,8 @@ not in the YAML.
 
 With `releases` configured, tagged releases are created by a release
 job (method: `semantic-release` or `changesets`). The release job also
-runs a dependency security audit via catci.
+runs a dependency security audit that gates the release. See the
+`catladder-releases` skill for the full flow.
 
 ## Debugging CI
 
@@ -70,5 +71,8 @@ Useful CLI commands (see the `catladder-cli` skill for invocation):
 ## Related skills
 
 - `catladder-config` — catladder.ts structure and regeneration
+- `catladder-builds` — build jobs and Docker images
+- `catladder-deploys` — deploy jobs, environments and review apps
+- `catladder-releases` — the `taggedRelease` flow and security-audit gate
 - `catladder-secrets` — env vars and secret management
 - `catladder-cli` — non-interactive CLI usage and command reference

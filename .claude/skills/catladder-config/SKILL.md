@@ -39,8 +39,8 @@ const config = {
     www: {
       dir: "frontend",          // working directory of this component
       vars: { public: {}, secret: [] },  // env vars (see catladder-secrets skill)
-      build: { type: "node" },  // build types: node | rails | base
-      deploy: { type: "kubernetes" }, // kubernetes | google-cloudrun | dockerTag | custom
+      build: { type: "node" },  // node | rails | meteor | custom — see catladder-builds
+      deploy: { type: "kubernetes" }, // kubernetes | google-cloudrun | dockerTag | custom — see catladder-deploys
       env: {                    // enable/customize per environment
         review: {},
         dev: {},
@@ -79,6 +79,9 @@ Key concepts:
 
 ## Related skills
 
+- `catladder-builds` — the component `build` config (build types, Docker)
+- `catladder-deploys` — the component `deploy` config (k8s, Cloud Run, …)
 - `catladder-secrets` — env vars and secret management
+- `catladder-releases` — releasing (semantic-release / changesets)
 - `catladder-pipelines` — how the generated pipelines work, debugging CI
 - `catladder-cli` — non-interactive CLI usage and command reference

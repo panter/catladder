@@ -51,5 +51,8 @@ it matches the installed version).
 ## Related skills
 
 - `catladder-config` — catladder.ts structure and regeneration
+- `catladder-builds` — the component `build` config
+- `catladder-deploys` — the component `deploy` config
 - `catladder-secrets` — env vars and secret management
+- `catladder-releases` — releasing (semantic-release / changesets)
 - `catladder-pipelines` — pipeline behavior and CI debugging

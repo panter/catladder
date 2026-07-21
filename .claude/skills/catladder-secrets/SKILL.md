@@ -72,5 +72,7 @@ suspecting anything else.
 ## Related skills
 
 - `catladder-config` — general catladder.ts structure and regeneration
+- `catladder-builds` — build-time vars (`jobVars`) and build config
+- `catladder-deploys` — runtime deploy config
 - `catladder-pipelines` — how the generated pipelines work
 - `catladder-cli` — non-interactive CLI usage and command reference
