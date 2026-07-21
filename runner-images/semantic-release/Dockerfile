@@ -7,6 +7,10 @@ FROM node:22-alpine
 RUN apk add --no-cache bash git git-lfs
 
 # add semantic release
+# NOTE: keep every plugin pinned to a major that is compatible with
+# semantic-release@19 (they declare `semantic-release` as a peer dependency).
+# Unpinned plugins drift to their latest major on image rebuild, which now
+# requires semantic-release>=20 and fails with "plugins configuration is invalid".
 RUN yarn global add \
     semantic-release@19.0.5 \
     @semantic-release/commit-analyzer@13.0.1 \
