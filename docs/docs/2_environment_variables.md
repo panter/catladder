@@ -126,6 +126,28 @@ catladder $
 The editor is selected from your shell's environment variables `$VISUAL` or `$EDITOR`, or falls back to `code` or `vim`. Be careful with `EDITOR=code` - **this will not work correctly**.  
 The correct way is `EDITOR="code --wait"`.
 
+### Scoped and non-interactive secrets commands
+
+All secrets commands accept a **scope** argument: `dev:app` (one env of one component), `dev:` (one env, all components), `:app` (all envs of one component — handy for rotating a credential everywhere), or nothing (everything). `--key KEY1,KEY2` narrows to specific secrets; this also works for `project config-secrets`.
+
+Besides the editor flow there are non-interactive commands, suitable for scripts and coding agents:
+
+```sh
+# status overview (no values); --check exits non-zero when something is unset
+catladder project secrets-list
+catladder project secrets-list dev:app --reveal
+
+# set a single secret; value via stdin, --value-file or --value
+echo -n "the-value" | catladder project secrets-set dev:app API_KEY
+catladder project secrets-set :app API_KEY --value-file value.txt
+
+# bulk edit: dump as yaml, edit, push back (partial documents are fine)
+catladder project secrets-pull dev: --out secrets.yml
+catladder project secrets-push dev: --file secrets.yml
+```
+
+`secrets-push` rejects keys that are not declared in the config and skips untouched `🚨 FILL ME` placeholders, so nothing bogus ends up in the vault.
+
 :::note
 
 catladder makes a copy of old values as a backup; you can restore those manually in GitLab if needed.

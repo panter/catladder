@@ -109,9 +109,10 @@ restores a project db from one source to another target
 
 ## `catladder project config-secrets [envComponent]`
 
-setup/update secrets stored in pass
+setup/update secrets in the vault via your editor
 
-- `envComponent` (positional): environment:component
+- `envComponent` (positional): scope: env:component, env:, :component or empty for everything
+- `--key <value>`: only edit these secrets (comma-separated keys)
 
 ## `catladder project doctor [component]`
 
@@ -227,6 +228,40 @@ Configures the project access token for semantic release.
 clears all backups
 
 - `--keep <value>`: How many backups should we keep? (default: 1)
+
+## `catladder project secrets-list [envComponent]`
+
+lists the declared secrets of a scope with their set/unset status (values only with --reveal)
+
+- `envComponent` (positional): scope: env:component, env:, :component or empty for everything
+- `--key <value>`: only these secrets (comma-separated keys)
+- `--reveal`: also print the secret values (default: false)
+- `--check`: exit with an error when any secret is unset (for CI/agents) (default: false)
+
+## `catladder project secrets-pull [envComponent]`
+
+prints the current secrets of a scope as yaml (unset ones as a placeholder) — edit and feed to secrets-push
+
+- `envComponent` (positional): scope: env:component, env:, :component or empty for everything
+- `--key <value>`: only these secrets (comma-separated keys)
+- `--out <value>`: write the yaml to this file instead of stdout
+
+## `catladder project secrets-push [envComponent]`
+
+writes secrets from a yaml document (secrets-pull format, --file or stdin) to the vault; may be partial
+
+- `envComponent` (positional): scope: env:component, env:, :component or empty for everything
+- `--key <value>`: only write these secrets (comma-separated keys)
+- `--file <value>`: yaml file to push (component → env → key: value); stdin when omitted
+
+## `catladder project secrets-set [envComponent] [key]`
+
+sets one secret — in one env (dev:web), one env everywhere (dev:), or all envs of a component (:web); value via --value, --value-file or stdin
+
+- `envComponent` (positional): scope: env:component, env:, or :component
+- `key` (positional): which secret?
+- `--value <value>`: the secret value (prefer --value-file or stdin over shell history)
+- `--value-file <value>`: read the secret value from this file
 
 ## `catladder project secrets-sync-github [repo] [env]`
 
