@@ -6,7 +6,6 @@ export type RunnerImageName =
   | "jobs-testing-chrome"
   | "kubernetes"
   | "docker-build"
-  | "gcloud"
   | "semantic-release"
   | "changesets"
   | "agent-claude";

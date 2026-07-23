@@ -167,56 +167,6 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-gcloud:
-      name: 🐳 job image gcloud
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 job image gcloud
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images/gcloud
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-            collapseable_section_end "docker-push"
-          shell: bash
     job-image-semantic-release:
       name: 🐳 job image semantic-release
       runs-on: ubuntu-latest
@@ -454,21 +404,17 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
       runs-on: ubuntu-latest
       needs:
         - api-docker-dev
-        - job-image-gcloud
         - ws-myworkspace-audit-dev
         - ws-myworkspace-lint-dev
         - ws-myworkspace-test-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: dev-api
         url: \${{ steps.main.outputs.url }}
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -514,22 +460,18 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
       name: www 🚀 Deploy | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-gcloud
         - ws-myworkspace-audit-dev
         - ws-myworkspace-lint-dev
         - ws-myworkspace-test-dev
         - www-docker-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: dev-www
         url: \${{ steps.main.outputs.url }}
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -701,56 +643,6 @@ catladder-review.yml:
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
-            collapseable_section_end "docker-push"
-          shell: bash
-    job-image-gcloud:
-      name: 🐳 job image gcloud
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 job image gcloud
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images/gcloud
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -990,21 +882,17 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       needs:
         - api-docker-review
-        - job-image-gcloud
         - ws-myworkspace-audit-review
         - ws-myworkspace-lint-review
         - ws-myworkspace-test-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: review-api
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1050,22 +938,18 @@ catladder-review.yml:
       name: www 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-gcloud
         - ws-myworkspace-audit-review
         - ws-myworkspace-lint-review
         - ws-myworkspace-test-review
         - www-docker-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: review-www
         url: \${{ steps.main.outputs.url }}
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1235,56 +1119,6 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-gcloud:
-      name: 🐳 job image gcloud
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 job image gcloud
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images/gcloud
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-            collapseable_section_end "docker-push"
-          shell: bash
     job-image-semantic-release:
       name: 🐳 job image semantic-release
       runs-on: ubuntu-latest
@@ -1433,18 +1267,14 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - api-docker-stage
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: stage-api
         url: \${{ steps.main.outputs.url }}
       env:
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1490,19 +1320,15 @@ catladder-release.yml:
       name: www 🚀 Deploy | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-gcloud
         - www-docker-stage
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: stage-www
         url: \${{ steps.main.outputs.url }}
       env:
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1671,56 +1497,6 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-gcloud:
-      name: 🐳 job image gcloud
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 job image gcloud
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images/gcloud
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-            collapseable_section_end "docker-push"
-          shell: bash
     job-image-semantic-release:
       name: 🐳 job image semantic-release
       runs-on: ubuntu-latest
@@ -1774,18 +1550,13 @@ catladder-review-stop.yml:
     api-stop-review:
       name: api 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: review-api
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -1831,18 +1602,13 @@ catladder-review-stop.yml:
     www-stop-review:
       name: www 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: review-www
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2059,56 +1825,6 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-gcloud:
-      name: 🐳 job image gcloud
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🐳 job image gcloud
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "docker-login" "Docker Login"
-            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-            collapseable_section_end "docker-login"
-            collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 already exists, skipping build"
-              exit 0
-            fi
-            collapseable_section_end "check-image"
-            collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115 -f .catladder-generated/images/gcloud/Dockerfile .catladder-generated/images/gcloud
-            collapseable_section_end "docker-build"
-            collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-            collapseable_section_end "docker-push"
-          shell: bash
     job-image-semantic-release:
       name: 🐳 job image semantic-release
       runs-on: ubuntu-latest
@@ -2162,18 +1878,13 @@ catladder-manual.yml:
     api-stop-dev:
       name: api 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: dev-api
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2217,18 +1928,13 @@ catladder-manual.yml:
     www-stop-dev:
       name: www 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: dev-www
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2357,18 +2063,13 @@ catladder-manual.yml:
     api-stop-stage:
       name: api 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: stage-api
       env:
         CL_stage_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2449,18 +2150,14 @@ catladder-manual.yml:
       runs-on: ubuntu-latest
       needs:
         - api-docker-prod
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: prod-api
         url: \${{ steps.main.outputs.url }}
       env:
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2472,18 +2169,13 @@ catladder-manual.yml:
     api-stop-prod:
       name: api 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: prod-api
       env:
         CL_prod_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_api_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2527,18 +2219,13 @@ catladder-manual.yml:
     www-stop-stage:
       name: www 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: stage-www
       env:
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2618,19 +2305,15 @@ catladder-manual.yml:
       name: www 🚀 Deploy | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-gcloud
         - www-docker-prod
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: prod-www
         url: \${{ steps.main.outputs.url }}
       env:
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2642,18 +2325,13 @@ catladder-manual.yml:
     www-stop-prod:
       name: www 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
-      needs:
-        - job-image-gcloud
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
+        image: google/cloud-sdk:525.0.0
       environment:
         name: prod-www
       env:
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/gcloud:425075338115
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -5326,7 +5004,7 @@ before_script:
   interruptible: true
 '🔹 api 🚀 Deploy | dev ':
   stage: deploy dev
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5429,7 +5107,7 @@ before_script:
   allow_failure: false
 '🔹 api 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5524,7 +5202,7 @@ before_script:
   interruptible: true
 '🔹 api 🚀 Deploy | review ':
   stage: deploy review
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5630,7 +5308,7 @@ before_script:
   allow_failure: false
 '🔹 api 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5726,7 +5404,7 @@ before_script:
   interruptible: true
 '🔹 api 🚀 Deploy | stage ':
   stage: deploy stage
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5822,7 +5500,7 @@ before_script:
   allow_failure: false
 '🔹 api 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5915,7 +5593,7 @@ before_script:
   interruptible: true
 '🔹 api 🚀 Deploy | prod ':
   stage: deploy prod
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6011,7 +5689,7 @@ before_script:
   allow_failure: true
 '🔹 api 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6104,7 +5782,7 @@ before_script:
   interruptible: true
 '🔹 www 🚀 Deploy | dev ':
   stage: deploy dev
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6210,7 +5888,7 @@ before_script:
   allow_failure: false
 '🔹 www 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6305,7 +5983,7 @@ before_script:
   interruptible: true
 '🔹 www 🚀 Deploy | review ':
   stage: deploy review
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6414,7 +6092,7 @@ before_script:
   allow_failure: false
 '🔹 www 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6510,7 +6188,7 @@ before_script:
   interruptible: true
 '🔹 www 🚀 Deploy | stage ':
   stage: deploy stage
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6609,7 +6287,7 @@ before_script:
   allow_failure: false
 '🔹 www 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6702,7 +6380,7 @@ before_script:
   interruptible: true
 '🔹 www 🚀 Deploy | prod ':
   stage: deploy prod
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6801,7 +6479,7 @@ before_script:
   allow_failure: true
 '🔹 www 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: path/to/docker/gcloud:the-version
+  image: google/cloud-sdk:525.0.0
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi

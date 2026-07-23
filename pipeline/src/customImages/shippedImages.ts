@@ -39,7 +39,6 @@ export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
   "jobs-testing-chrome": "root",
   kubernetes: "self",
   "docker-build": "self",
-  gcloud: "self",
   "semantic-release": "self",
   changesets: "self",
   "agent-claude": "self",
