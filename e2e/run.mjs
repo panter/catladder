@@ -94,8 +94,7 @@ const packCli = async () => {
   const given = flag("tgz");
   if (given) return resolve(String(given));
   log("packing @catladder/cli from this checkout (pass --tgz to skip)");
-  sh("yarn workspace @catladder/pipeline build", { cwd: repoRoot, stdio: "inherit" });
-  sh("yarn workspace @catladder/cli build", { cwd: repoRoot, stdio: "inherit" });
+  sh("yarn turbo run build --filter=@catladder/cli", { cwd: repoRoot, stdio: "inherit" });
   const out = sh(`npm pack --pack-destination /tmp`, { cwd: join(repoRoot, "apps/cli") })
     .split("\n")
     .pop();
