@@ -77,8 +77,17 @@ if [ ! -e .releaserc ]; then
     ],
     "@semantic-release/release-notes-generator",
     "@semantic-release/changelog",
+    # message prefix hardcoded to "release" on purpose. Ideally this would be
+    # "chore(\${branch.type})", but upstream @semantic-release/git passes the
+    # branch *name* (not the object) into the template, so \${branch.type} is
+    # never available (see https://github.com/semantic-release/git/pull/213,
+    # open/ignored since 2020 — the README documents branch.type but the code
+    # never wired it up; the old panter fork existed only to patch this). On the
+    # default branch branch.type is always "release", and the pipeline
+    # loop-prevention rule keys on the literal "chore(release)" prefix, so keep
+    # this literal. Don't "fix" it back to \${branch.type}.
     ["@semantic-release/git", {
-      "message": "chore(\${branch.type}): \${nextRelease.version}\n\n\${nextRelease.notes}"
+      "message": "chore(release): \${nextRelease.version}\n\n\${nextRelease.notes}"
     }]${PUBLISH_PLUGIN}
     ],
   "branches": [
