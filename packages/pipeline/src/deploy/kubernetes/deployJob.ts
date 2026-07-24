@@ -7,7 +7,7 @@ import { createDeployementJobs } from "../base";
 import { isOfDeployType } from "../types";
 import { createKubeValues } from "./kubeValues";
 
-import { writeBashYamlToFileScript } from "../../bash/bashYaml";
+import { writeBashYamlToFileScript } from "@catladder/bash";
 import { collapseableSection } from "../../utils/gitlab";
 
 const ALL_VALUES_FILE = "__all_values.yml";

@@ -1,4 +1,4 @@
-import { BashExpression } from "../../bash/BashExpression";
+import { BashExpression } from "@catladder/bash";
 import { getRunnerImage } from "../../runner";
 import type {
   ComponentContext,

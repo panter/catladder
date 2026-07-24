@@ -2,7 +2,7 @@ import {
   escapeBackTicks,
   escapeDoubleQuotes,
   escapeNewlines,
-} from "../../bash/bashEscape";
+} from "@catladder/bash";
 import { getRunnerImage } from "../../runner";
 import type { AgentContext, CatladderJobSpec } from "../../types";
 import { CatladderJob } from "../../types/jobs";

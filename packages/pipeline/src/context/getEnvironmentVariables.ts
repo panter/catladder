@@ -6,12 +6,12 @@ import type {
 import type { DevLocalEnvConfig } from "../types/config";
 
 import type { CreateComponentContextContext, UnspecifiedEnvVars } from "..";
-import type { StringOrBashExpression } from "../bash/BashExpression";
-import { joinBashExpressions } from "../bash/BashExpression";
+import type { StringOrBashExpression } from "@catladder/bash";
+import { joinBashExpressions } from "@catladder/bash";
 import { isStandaloneBuildConfig } from "../build/types";
 import type { EnvironmentContext } from "../types/environmentContext";
-import { createVariableValueContainingReferencesFromString } from "../variables/VariableValueContainingReferences";
-import { resolveAllReferences } from "../variables/resolveAllReferences";
+import { createVariableValueContainingReferencesFromString } from "@catladder/bash";
+import { resolveAllReferences } from "@catladder/bash";
 import { getBuildInfoVariables } from "./getBuildInfoVariables";
 import { getEnvironmentContext } from "./getEnvironmentContext";
 import { transformJobOnlyVars } from "./transformJobOnlyVars";

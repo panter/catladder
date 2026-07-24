@@ -1,5 +1,5 @@
 import { isNil } from "lodash-es";
-import { escapeForDotEnv } from "../../bash/bashEscape";
+import { escapeForDotEnv } from "@catladder/bash";
 import { ALL_BUILD_VARIABLES } from "../../context/getBuildInfoVariables";
 import type { ComponentContext } from "../../types";
 import { collapseableSection } from "../../utils/gitlab";

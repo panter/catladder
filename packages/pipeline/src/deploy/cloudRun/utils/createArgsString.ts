@@ -1,5 +1,5 @@
 import { isNil } from "lodash-es";
-import type { BashExpression } from "../../../bash/BashExpression";
+import type { BashExpression } from "@catladder/bash";
 
 /**
  * creates arguments string:

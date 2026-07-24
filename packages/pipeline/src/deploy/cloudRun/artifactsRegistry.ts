@@ -1,5 +1,5 @@
-import type { StringOrBashExpression } from "../../bash/BashExpression";
-import { joinBashExpressions } from "../../bash/BashExpression";
+import type { StringOrBashExpression } from "@catladder/bash";
+import { joinBashExpressions } from "@catladder/bash";
 import type { ComponentContext } from "../../types/context";
 import { allowFailureInScripts } from "../../utils/gitlab";
 import { isOfDeployType } from "../types";

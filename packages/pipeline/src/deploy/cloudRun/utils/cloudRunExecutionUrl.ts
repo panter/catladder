@@ -1,4 +1,4 @@
-import type { StringOrBashExpression } from "../../../bash";
+import type { StringOrBashExpression } from "@catladder/bash";
 import { getCloudRunJobName } from "./jobName";
 
 export function getCloudRunJobExecuteUrl(

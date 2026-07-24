@@ -1,7 +1,7 @@
-import type { StringOrBashExpression } from "../../../bash/BashExpression";
+import type { StringOrBashExpression } from "@catladder/bash";
 import { getSecretVarNameForContext } from "../../../context";
 import type { ComponentContext } from "../../../types";
-import type { VariableValue } from "../../../variables/VariableValue";
+import type { VariableValue } from "@catladder/bash";
 import { getFullDbName } from "../../cloudSql/utils";
 import { isOfDeployType } from "../../types";
 

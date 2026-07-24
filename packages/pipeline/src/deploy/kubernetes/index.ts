@@ -1,7 +1,7 @@
 import slugify from "slugify";
 import type { DeployConfigKubernetes, DeployTypeDefinition } from "..";
 import { getKubernetesNamespace } from "..";
-import { joinBashExpressions } from "../../bash/BashExpression";
+import { joinBashExpressions } from "@catladder/bash";
 import { additionalKubernetesSecretKeys } from "./additionalSecretKeys";
 import { createKubernetesDeployJobs } from "./deployJob";
 export * from "./cloudSql";

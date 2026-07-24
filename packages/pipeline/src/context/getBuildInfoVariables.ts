@@ -1,4 +1,4 @@
-import { BashExpression } from "../bash/BashExpression";
+import { BashExpression } from "@catladder/bash";
 import type { BashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import { getBashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import type { EnvironmentContext } from "../types/environmentContext";

@@ -1,7 +1,7 @@
 import { GITHUB_CI_VARIABLES } from "../backends/github/ciVariables";
 import { GITLAB_CI_VARIABLES } from "../backends/gitlab/ciVariables";
 import type { PipelineType } from "../types/pipeline";
-import { BashExpression } from "./BashExpression";
+import { BashExpression } from "@catladder/bash";
 
 /**
  * platform-neutral names for variables that the CI system provides at

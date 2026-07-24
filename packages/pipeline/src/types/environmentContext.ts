@@ -1,4 +1,4 @@
-import type { StringOrBashExpression } from "../bash/BashExpression";
+import type { StringOrBashExpression } from "@catladder/bash";
 import type { BuildConfig } from "../build";
 import type { DeployConfig } from "../deploy";
 import type { Config, EnvConfigWithComponent, EnvType } from "./config";

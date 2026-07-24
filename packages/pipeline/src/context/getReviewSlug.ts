@@ -1,7 +1,4 @@
-import {
-  BashExpression,
-  type StringOrBashExpression,
-} from "../bash/BashExpression";
+import { BashExpression, type StringOrBashExpression } from "@catladder/bash";
 import type { BashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import { getBashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import type { PipelineType } from "../types";

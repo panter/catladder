@@ -1,4 +1,4 @@
-import { BashExpression } from "../../bash/BashExpression";
+import { BashExpression } from "@catladder/bash";
 import type { ComponentContextWithBuild } from "../../types";
 import { type Context } from "../../types";
 import { ensureArray } from "../../utils";

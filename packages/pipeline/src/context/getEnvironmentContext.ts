@@ -1,6 +1,6 @@
 import type { CreateComponentContextContext } from "..";
-import type { StringOrBashExpression } from "../bash/BashExpression";
-import { joinBashExpressions } from "../bash/BashExpression";
+import type { StringOrBashExpression } from "@catladder/bash";
+import { joinBashExpressions } from "@catladder/bash";
 
 import type { EnvironmentContext } from "../types/environmentContext";
 import { getEnvConfig } from "./getEnvConfig";

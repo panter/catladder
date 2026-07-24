@@ -1,5 +1,5 @@
 import type { PipelineType } from "../types/pipeline";
-import type { BashExpression } from "./BashExpression";
+import type { BashExpression } from "@catladder/bash";
 
 export type BashExpressionPerPipelineType = {
   [type in PipelineType]?: BashExpression | string;

@@ -3,7 +3,7 @@ import type { ComponentContext } from "../../../types/context";
 import { collapseableSection } from "../../../utils/gitlab";
 
 import { GCLOUD_DEPLOY_CREDENTIALS_KEY } from "..";
-import { writeBashYamlToFileScript } from "../../../bash/bashYaml";
+import { writeBashYamlToFileScript } from "@catladder/bash";
 import { getRemoveOldRevisionsAndImagesCommand } from "../cleanup";
 import { getDatabaseCreateScript } from "../utils/database";
 import { gcloudServiceAccountLoginCommands } from "../utils/gcloudServiceAccountLoginCommands";

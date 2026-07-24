@@ -1,8 +1,5 @@
-import { bashEscape } from "../../../../bash";
-import type {
-  BashExpression,
-  StringOrBashExpression,
-} from "../../../../bash/BashExpression";
+import { bashEscape } from "@catladder/bash";
+import type { BashExpression, StringOrBashExpression } from "@catladder/bash";
 import type { ComponentContext } from "../../../../types/context";
 import { notNil } from "../../../../utils";
 import type {

@@ -1,5 +1,5 @@
 import type { DeployConfigCloudRun, DeployTypeDefinition } from "..";
-import { joinBashExpressions } from "../../bash/BashExpression";
+import { joinBashExpressions } from "@catladder/bash";
 import type { BuildConfig } from "../../build";
 import { getSecretVarName } from "../../context";
 import { getGcloudProjectNumber } from "../../store";

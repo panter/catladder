@@ -2,7 +2,7 @@ import {
   BashExpression,
   joinBashExpressions,
   type StringOrBashExpression,
-} from "../../../bash";
+} from "@catladder/bash";
 import type { ComponentContext } from "../../../types";
 import { allowFailureInScripts, repeatOnFailure } from "../../../utils/gitlab";
 import type {

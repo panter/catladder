@@ -1,4 +1,4 @@
-import type { StringOrBashExpression } from "../../../../bash";
+import type { StringOrBashExpression } from "@catladder/bash";
 import type { ComponentContext } from "../../../../types/context";
 import { ensureArray } from "../../../../utils";
 import type { DeployConfigBaseExecuteOnDeploy } from "../../../types/executeBase";

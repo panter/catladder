@@ -1,7 +1,7 @@
 import { isObject } from "lodash-es";
 import type { SecretEnvVar } from "../getEnvironmentVariables";
 import { getSecretVarName } from "../getEnvironmentVariables";
-import { getBashVariable } from "../../bash/BashExpression";
+import { getBashVariable } from "@catladder/bash";
 import type { EnvVars } from "../../types/config";
 
 export const stringifyValues = (obj: Record<string, unknown>) =>

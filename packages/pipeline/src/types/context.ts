@@ -1,4 +1,4 @@
-import type { StringOrBashExpression } from "../bash/BashExpression";
+import type { StringOrBashExpression } from "@catladder/bash";
 import type {
   BuildConfigFromWorkspace,
   BuildConfigStandalone,
@@ -6,7 +6,7 @@ import type {
 } from "../build";
 import type { PredefinedVariables, SecretEnvVar } from "../context";
 import type { DeployConfig } from "../deploy";
-import type { VariableValue } from "../variables/VariableValue";
+import type { VariableValue } from "@catladder/bash";
 import type { AgentConfig } from "./agent";
 import type {
   ComponentConfig,

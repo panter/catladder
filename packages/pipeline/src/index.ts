@@ -12,7 +12,6 @@ export * from "./verify";
 export * from "./release";
 export * from "./utils/writeFiles";
 export * from "./utils/measureTime";
-export * from "./variables/VariableValue";
-export * from "./bash";
+export * from "@catladder/bash";
 export * from "./catenv";
 export * from "./agentSkills";

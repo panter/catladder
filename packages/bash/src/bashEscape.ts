@@ -1,6 +1,6 @@
-import { registerGlobalScriptFunction } from "../globalScriptFunctions";
-import type { VariableValue } from "../variables/VariableValue";
-import { VariableValueContainingReferences } from "../variables/VariableValueContainingReferences";
+import { registerGlobalScriptFunction } from "./globalScriptFunctions";
+import type { VariableValue } from "./variables/VariableValue";
+import { VariableValueContainingReferences } from "./variables/VariableValueContainingReferences";
 import { BashExpression } from "./BashExpression";
 
 export type QuotesEscapeMode = "single" | "double";

@@ -1,5 +1,5 @@
 import type { Pipeline } from "../../types";
-import { globalScriptFunctions } from "../../globalScriptFunctions";
+import { globalScriptFunctions } from "@catladder/bash";
 import {
   RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,

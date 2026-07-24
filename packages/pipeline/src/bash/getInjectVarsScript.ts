@@ -1,6 +1,6 @@
 import type { UnspecifiedEnvVars } from "../types";
 import { isNil } from "lodash-es";
-import { bashEscape } from "./bashEscape";
+import { bashEscape } from "@catladder/bash";
 
 export const getInjectVarsScript = (vars?: UnspecifiedEnvVars) => {
   if (!vars) return [];

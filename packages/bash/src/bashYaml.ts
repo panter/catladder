@@ -1,7 +1,7 @@
 import type { ScalarTag } from "yaml";
 import { stringify } from "yaml";
 import { BashExpression } from "./BashExpression";
-import { VariableValueContainingReferences } from "../variables/VariableValueContainingReferences";
+import { VariableValueContainingReferences } from "./variables/VariableValueContainingReferences";
 
 const bashExpressionType: ScalarTag = {
   tag: "",

@@ -17,7 +17,7 @@ import { collapseableSection } from "../../utils/gitlab";
 import { removeUndefined } from "../../utils/removeUndefined";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { AllCatladderJobs } from "../../pipeline/createAllJobs";
-import { getBashVariable } from "../../bash/BashExpression";
+import { getBashVariable } from "@catladder/bash";
 import { addCacheFallback } from "./cache";
 
 export type GitlabJobWithContext = {

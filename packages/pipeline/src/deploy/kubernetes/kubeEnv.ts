@@ -1,5 +1,5 @@
 import type { ComponentContext } from "../../types";
-import type { VariableValue } from "../../variables/VariableValue";
+import type { VariableValue } from "@catladder/bash";
 import { isOfDeployType } from "../types";
 
 const shouldGoIntoSecrets = (key: string, value: string | undefined) => {

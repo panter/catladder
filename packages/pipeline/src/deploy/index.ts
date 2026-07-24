@@ -1,5 +1,5 @@
 import type { BuildConfig, SecretEnvVar } from "..";
-import type { BashExpression } from "../bash/BashExpression";
+import type { BashExpression } from "@catladder/bash";
 import type { ComponentContext } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";

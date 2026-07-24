@@ -1,6 +1,6 @@
-import { BashExpression } from "../bash/BashExpression";
-import type { EscapeOptions } from "../bash/bashEscape";
-import { escapeBashExpression, escapeString } from "../bash/bashEscape";
+import { BashExpression } from "../BashExpression";
+import type { EscapeOptions } from "../bashEscape";
+import { escapeBashExpression, escapeString } from "../bashEscape";
 
 export class UnresolvableReference {
   constructor(public reference: VariableReference) {}

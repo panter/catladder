@@ -1,4 +1,4 @@
-import { globalScriptFunctions } from "../../globalScriptFunctions";
+import { globalScriptFunctions } from "@catladder/bash";
 
 /**
  * github variants of the global script functions where the gitlab

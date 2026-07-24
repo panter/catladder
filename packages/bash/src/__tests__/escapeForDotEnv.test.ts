@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { escapeForDotEnv } from "../bashEscape";
 import { BashExpression } from "../BashExpression";
-import { VariableValueContainingReferences } from "../../variables/VariableValueContainingReferences";
+import { VariableValueContainingReferences } from "../variables/VariableValueContainingReferences";
 
 describe("escapeForDotEnv", () => {
   it("returns plain strings as is", () => {

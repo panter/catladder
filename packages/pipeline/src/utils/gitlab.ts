@@ -1,4 +1,4 @@
-import { registerGlobalScriptFunction } from "../globalScriptFunctions";
+import { registerGlobalScriptFunction } from "@catladder/bash";
 
 export const allowFailureInScripts = (script: string[]): string[] => [
   "set +e", // disable fail job on error

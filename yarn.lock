@@ -1705,10 +1705,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@catladder/bash@workspace:*, @catladder/bash@workspace:packages/bash":
+  version: 0.0.0-use.local
+  resolution: "@catladder/bash@workspace:packages/bash"
+  dependencies:
+    "@types/node": "npm:^22.5.1"
+    typescript: "npm:^5.4.5"
+    yaml: "npm:^2.5.0"
+  languageName: unknown
+  linkType: soft
+
 "@catladder/cli@workspace:apps/cli":
   version: 0.0.0-use.local
   resolution: "@catladder/cli@workspace:apps/cli"
   dependencies:
+    "@catladder/bash": "workspace:*"
     "@catladder/pipeline": "workspace:*"
     "@changesets/parse": "npm:^0.4.3"
     "@gitbeaker/rest": "npm:^39.28.0"
@@ -1755,6 +1766,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@catladder/pipeline@workspace:packages/pipeline"
   dependencies:
+    "@catladder/bash": "workspace:*"
     "@types/child-process-promise": "npm:^2.2.6"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.5.1"
