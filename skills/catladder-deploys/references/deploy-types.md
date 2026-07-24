@@ -47,6 +47,15 @@ resources with `yarn catladder project setup`; detect drift with
 - `execute?: Record<string, DeployConfigCloudRunExecute | null>` — run a script / job / HTTP call at a lifecycle point (`when`: `preDeploy` | `postDeploy` | `preStop` | `postStop`) or on a `schedule`.
 - `debug?: boolean`.
 
+## `npmPackage`
+
+- `type: "npmPackage"` — **required**. Publishes the component as an npm package: the deploy job stamps the derived version into `package.json` and runs `npm publish` (via catci).
+- `access?: "public" | "restricted"` — npm access level, default `"public"`.
+- `registry?: string` — registry url, default `https://registry.npmjs.org/`.
+- `distTag?: string` — overrides the derived dist-tag.
+- Version/dist-tag derivation: tagged release (`prod`) → tag version under `latest`; branch/MR → `0.0.0-<branch-slug>-<sha>` under `canary` (branches `next`/`beta` publish under their own dist-tag).
+- Requires the `NPM_TOKEN` secret (managed like any catladder secret). Disable staging on the component (`env: { stage: false }`) so tagged releases publish directly.
+
 ## `dockerTag`
 
 - `type: "dockerTag"`, `tag: string` — **required**. Adds a custom tag on the image repo to deploy it. Only used in one project historically; not generally recommended (runtime env vars must be coordinated manually).

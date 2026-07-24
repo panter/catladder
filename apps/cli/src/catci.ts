@@ -23,6 +23,7 @@ import {
   changesetsReleaseJob,
   dispatchTaggedReleaseWorkflow,
 } from "./release/changesetsReleaseJob";
+import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
 
 const GITLAB_HOST = "https://git.panter.ch";
 
@@ -46,6 +47,13 @@ usage:
   catci release dispatch-tagged-workflow <tag>
       github only: dispatches the generated taggedRelease workflow for
       the tag (tags pushed with the job token don't trigger it)
+
+  catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]
+      npmPackage deploy job: derives version + dist-tag from the
+      pipeline trigger (tagged release -> tag version @latest; branch/MR
+      -> 0.0.0-<slug>-<sha> canary, with next/beta branches publishing
+      under their own dist-tag), stamps package.json and runs npm
+      publish (authenticated via the NPM_TOKEN secret)
 `;
 
 const fail = (message: string): never => {
@@ -137,6 +145,12 @@ const main = async () => {
     args.length === 1
   ) {
     return dispatchTaggedReleaseWorkflow(args[0]);
+  }
+  if (group === "publish" && command === "npm") {
+    const options = parseNpmPublishArgs(args);
+    if (options) {
+      return npmPublishJob(options);
+    }
   }
   fail(USAGE);
 };
