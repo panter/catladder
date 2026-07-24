@@ -14,10 +14,7 @@ import {
   githubGlobalJobId,
   makeGithubJob,
 } from "./createGithubJobs";
-import {
-  getJobImagesMode,
-  JobImagesPlan,
-} from "../../customImages/jobImagesPlan";
+import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import { notNil } from "../../utils";
@@ -72,7 +69,7 @@ export class GithubBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const images = this.createImagesPlan(config);
+    const images = this.createImagesPlan();
     const scripts = new GithubScriptFiles();
     const workflows = await this.createWorkflows(config, images, scripts);
 
@@ -89,8 +86,8 @@ export class GithubBackend implements PipelineBackend {
     ];
   }
 
-  private createImagesPlan(config: Config): JobImagesPlan {
-    return new JobImagesPlan(getJobImagesMode(config, this.type), this.type);
+  private createImagesPlan(): JobImagesPlan {
+    return new JobImagesPlan(this.type);
   }
 
   /**
@@ -98,7 +95,7 @@ export class GithubBackend implements PipelineBackend {
    */
   async createWorkflows(
     config: Config,
-    images: JobImagesPlan = this.createImagesPlan(config),
+    images: JobImagesPlan = this.createImagesPlan(),
     scripts: GithubScriptFiles = new GithubScriptFiles(),
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};
@@ -295,12 +292,11 @@ export class GithubBackend implements PipelineBackend {
 }
 
 /**
- * repo mode needs packages:write for pushing job images to ghcr
+ * job images are built and pushed to ghcr, which needs packages:write
  */
-const workflowPermissions = (images: JobImagesPlan) =>
-  images.mode === "repo"
-    ? { permissions: { contents: "read", packages: "write" } }
-    : {};
+const workflowPermissions = (_images: JobImagesPlan) => ({
+  permissions: { contents: "read", packages: "write" },
+});
 
 /**
  * the image build jobs: always run (github has no server-side

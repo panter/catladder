@@ -31,12 +31,12 @@ plus stop jobs for review-app teardown.
 
 ## Job images and catci
 
-Jobs run in catladder-provided images. With `jobImages: "repo"`, image
-definitions are materialized into `.catladder-generated/images/` and
-built in the project's own registry (content-hashed, rebuilt only on
-change). `.catladder-generated/catci/` holds a small bundled CI
-companion used by generated jobs (e.g. the release security audit) —
-all generated, never edit.
+Jobs run in catladder-provided images. Their definitions are
+materialized into `.catladder-generated/images/` and built in the
+project's own registry (content-hashed, rebuilt only on change).
+`.catladder-generated/catci/` holds a small bundled CI companion used by
+generated jobs (e.g. the release security audit) — all generated, never
+edit.
 
 ## Caching
 

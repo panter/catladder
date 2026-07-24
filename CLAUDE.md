@@ -44,7 +44,7 @@ yarn catladder
 ### Workspace-specific builds
 
 ```bash
-yarn workspace @catladder/pipeline build    # tsc + babel variable inlining
+yarn workspace @catladder/pipeline build    # tsc + copy runner images
 yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 ```
 

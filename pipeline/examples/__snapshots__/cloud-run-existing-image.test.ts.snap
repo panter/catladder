@@ -1033,7 +1033,7 @@ echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 `;
 
 exports[`matches snapshot for cloud-run-existing-image local pipeline YAML 1`] = `
-"image: path/to/docker/jobs-default:the-version
+"image: node:22
 stages:
   - setup
   - setup dev
@@ -1135,6 +1135,89 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
+🐳 job image semantic-release:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+    - collapseable_section_end "docker-push"
+  rules:
+    - &a1
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+  needs: []
+  retry: &a4
+    max: 2
+  interruptible: true
+create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - &a2
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - *a1
+    - &a3
+      if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - *a2
+    - *a1
+    - *a3
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+  needs: []
 'www 🚀 Deploy | dev ':
   stage: deploy dev
   image: google/cloud-sdk:525.0.0
@@ -1227,8 +1310,7 @@ before_script:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: &a1
-    max: 2
+  retry: *a4
   interruptible: true
   allow_failure: false
 'www 🛑 Stop ⚠️ | dev ':
@@ -1258,7 +1340,7 @@ before_script:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: true
 'www 🚀 Deploy | review ':
@@ -1356,7 +1438,7 @@ before_script:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: false
 'www 🛑 Stop ⚠️ | review ':
@@ -1389,7 +1471,7 @@ before_script:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: true
 'www 🚀 Deploy | stage ':
@@ -1483,7 +1565,7 @@ before_script:
     - when: on_success
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: false
 'www 🛑 Stop ⚠️ | stage ':
@@ -1513,7 +1595,7 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: true
 'www 🚀 Deploy | prod ':
@@ -1607,7 +1689,7 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: true
 'www 🛑 Stop ⚠️ | prod ':
@@ -1637,45 +1719,8 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a4
   interruptible: true
   allow_failure: true
-create release:
-  stage: release
-  image: path/to/docker/semantic-release:the-version
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
-    - &a2
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-      when: never
-    - &a3
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-      when: never
-    - &a4
-      if: $CI_PIPELINE_SOURCE  == "schedule"
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
-⚠️ force create release:
-  stage: release
-  image: path/to/docker/semantic-release:the-version
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
-    - *a2
-    - *a3
-    - *a4
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
-  needs: []
 "
 `;

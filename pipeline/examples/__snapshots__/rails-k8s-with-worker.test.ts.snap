@@ -2878,7 +2878,7 @@ echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 `;
 
 exports[`matches snapshot for rails-k8s-with-worker local pipeline YAML 1`] = `
-"image: path/to/docker/jobs-default:the-version
+"image: node:22
 stages:
   - setup
   - setup dev
@@ -2980,6 +2980,179 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
+🐳 job image semantic-release:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+    - collapseable_section_end "docker-push"
+  rules:
+    - &a1
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+  needs: []
+  retry: &a2
+    max: 2
+  interruptible: true
+🐳 job image docker-build:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/docker-build/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/docker-build/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/docker-build/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
+🐳 job image kubernetes:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/kubernetes/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/kubernetes/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/kubernetes/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
+create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - &a3
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - *a1
+    - &a4
+      if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - *a3
+    - *a1
+    - *a4
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+  needs: []
 'app 🛡 audit | dev ':
   stage: test
   image: ruby:3.2.1
@@ -2995,8 +3168,7 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: &a1
-    max: 2
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app 👮 lint | dev ':
@@ -3010,7 +3182,7 @@ before_script:
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
     - bundle exec rubocop
-  cache: &a2
+  cache: &a5
     key:
       files:
         - Gemfile.lock
@@ -3022,7 +3194,7 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
 'app 🧪 test | dev ':
   stage: test
@@ -3044,17 +3216,17 @@ before_script:
     - bundle exec rake db:test:prepare
     - bundle exec rake assets:precompile assets:clean
     - bundle exec rspec
-  cache: *a2
+  cache: *a5
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
 'app 🔨 docker | dev ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -3089,12 +3261,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'app 🚀 Deploy | dev ':
   stage: deploy dev
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3235,6 +3410,9 @@ before_script:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
     - job: 'app 👮 lint | dev '
       artifacts: false
     - job: 'app 🔨 docker | dev '
@@ -3243,12 +3421,12 @@ before_script:
       artifacts: false
     - job: 'app 🛡 audit | dev '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'app 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3294,13 +3472,16 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app ↩️ Rollback ⚠️ | dev ':
   stage: rollback dev
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3346,8 +3527,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app 🛡 audit | review ':
@@ -3365,7 +3549,7 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app 👮 lint | review ':
@@ -3379,7 +3563,7 @@ before_script:
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
     - bundle exec rubocop
-  cache: &a3
+  cache: &a6
     key:
       files:
         - Gemfile.lock
@@ -3391,7 +3575,7 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
 'app 🧪 test | review ':
   stage: test
@@ -3413,17 +3597,17 @@ before_script:
     - bundle exec rake db:test:prepare
     - bundle exec rake assets:precompile assets:clean
     - bundle exec rspec
-  cache: *a3
+  cache: *a6
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
 'app 🔨 docker | review ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -3458,12 +3642,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'app 🚀 Deploy | review ':
   stage: deploy review
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3610,6 +3797,9 @@ before_script:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
     - job: 'app 👮 lint | review '
       artifacts: false
     - job: 'app 🔨 docker | review '
@@ -3618,12 +3808,12 @@ before_script:
       artifacts: false
     - job: 'app 🛡 audit | review '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'app 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3669,13 +3859,16 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app ↩️ Rollback ⚠️ | review ':
   stage: rollback review
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3721,13 +3914,16 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app 🔨 docker | stage ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -3762,12 +3958,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'app 🚀 Deploy | stage ':
   stage: deploy stage
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3907,14 +4106,17 @@ before_script:
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
     - job: 'app 🔨 docker | stage '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'app 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -3960,13 +4162,16 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app ↩️ Rollback ⚠️ | stage ':
   stage: rollback stage
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -4012,13 +4217,16 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app 🔨 docker | prod ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -4053,12 +4261,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'app 🚀 Deploy | prod ':
   stage: deploy prod
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -4198,14 +4409,17 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
     - job: 'app 🔨 docker | prod '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -4251,13 +4465,16 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'app ↩️ Rollback ⚠️ | prod ':
   stage: rollback prod
-  image: path/to/docker/kubernetes:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -4303,46 +4520,12 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - when: manual
       if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image kubernetes
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
-create release:
-  stage: release
-  image: path/to/docker/semantic-release:the-version
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
-    - &a4
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-      when: never
-    - &a5
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-      when: never
-    - &a6
-      if: $CI_PIPELINE_SOURCE  == "schedule"
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
-⚠️ force create release:
-  stage: release
-  image: path/to/docker/semantic-release:the-version
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
-    - *a4
-    - *a5
-    - *a6
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
-  needs: []
 "
 `;

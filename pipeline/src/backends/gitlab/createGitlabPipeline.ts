@@ -1,4 +1,3 @@
-import { getCentralRunnerImageUrl } from "../../runner";
 import type { Pipeline } from "../../types";
 import { globalScriptFunctions } from "../../globalScriptFunctions";
 import {
@@ -7,6 +6,14 @@ import {
   RULE_IS_TAGGED_RELEASE,
 } from "../../rules";
 type PickRequired<T, K extends keyof T> = Required<Pick<T, K>> & Omit<T, K>;
+
+/**
+ * gitlab requires a top-level default image for jobs that don't set their
+ * own. Every catladder-generated job sets an explicit image, so this
+ * fallback is never actually pulled — it just needs to be a valid,
+ * build-free image (a catladder job image would drag in a build job).
+ */
+const DEFAULT_PIPELINE_IMAGE = "node:22";
 
 export const createGitlabPipelineWithDefaults = ({
   image,
@@ -18,7 +25,7 @@ export const createGitlabPipelineWithDefaults = ({
   "stages" | "jobs"
 >): Pipeline<"gitlab"> => {
   return {
-    image: image ?? getCentralRunnerImageUrl("jobs-default"), // default image
+    image: image ?? DEFAULT_PIPELINE_IMAGE,
     variables: {
       FF_USE_FASTZIP: "true", // enable fastzip - a faster zip implementation that also supports level configuration.
       ARTIFACT_COMPRESSION_LEVEL: "fast", // we value speed over compression

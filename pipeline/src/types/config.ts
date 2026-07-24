@@ -305,15 +305,6 @@ export type Config<C extends ConfigProps = never> = {
   secrets?: SecretsConfig;
 
   /**
-   * where the catladder job images come from:
-   * - central: catladder's central registry (default on gitlab)
-   * - repo: built in the repository's own registry from the image
-   *   definitions shipped with catladder (default and required on
-   *   github, where the central registry is not reachable)
-   */
-  jobImages?: "central" | "repo";
-
-  /**
    * materialize the agent skills shipped with catladder (usage guides
    * for AI coding agents like Claude Code) into the repository, so
    * agents working in the project use knowledge matching the installed

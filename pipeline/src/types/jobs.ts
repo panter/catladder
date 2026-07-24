@@ -215,8 +215,8 @@ export type GitlabJobFields = {
 
   /**
    * image to use: a concrete image or a reference to a
-   * catladder-provided job image (resolved by the backend according to
-   * the `jobImages` mode)
+   * catladder-provided job image (resolved by the backend to an image
+   * built in the repository's own registry)
    */
   image?: GitlabJobImage | CatladderImageRef;
 

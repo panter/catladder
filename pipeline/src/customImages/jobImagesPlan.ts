@@ -2,15 +2,13 @@ import { readdirSync, readFileSync, statSync } from "fs";
 import { join } from "path";
 import { getCiVariable } from "../bash/ciVariables";
 import { getDockerJobBaseProps } from "../build/docker";
-import { DOCKER_REGISTRY } from "../constants";
 import type { CatladderImageRef, RunnerImageName } from "../runner";
-import { getCentralRunnerImageUrl, isCatladderImageRef } from "../runner";
-import type { Config, GitlabJobImage, PipelineType } from "../types";
+import { isCatladderImageRef } from "../runner";
+import type { GitlabJobImage, PipelineType } from "../types";
 import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { computeCustomImageHash } from "./hash";
 import {
-  CENTRAL_ONLY_IMAGES,
   getShippedImageDir,
   RUNNER_IMAGE_BUILD_CONTEXT,
   RUNNER_IMAGE_DEPENDENCIES,
@@ -24,25 +22,10 @@ export const GENERATED_IMAGES_FOLDER = ".catladder-generated/images";
  */
 const BUILDER_IMAGE = "docker.io/docker:29.5.1";
 
-export type JobImagesMode = "central" | "repo";
-
-export const getJobImagesMode = (
-  config: Config,
-  pipelineType: PipelineType,
-): JobImagesMode => {
-  // the central registry is not reachable from github runners
-  if (pipelineType === "github" && config.jobImages === "central") {
-    throw new Error(
-      `jobImages: "central" is not supported on github: catladder's central registry (${DOCKER_REGISTRY}) is unreachable from github runners. Use "repo" (the default) instead.`,
-    );
-  }
-  return config.jobImages ?? (pipelineType === "github" ? "repo" : "central");
-};
-
 export type ResolvedJobImage = {
   /** the concrete image url */
   image: string;
-  /** the dependency on the image build job (repo mode only) */
+  /** the dependency on the image build job */
   need?: CatladderJobNeed;
   /** whether the image lives in the repository's own registry */
   fromRepoRegistry?: boolean;
@@ -54,22 +37,21 @@ const ensureJobName = (name: RunnerImageName) => `🐳 job image ${name}`;
 
 /**
  * plans the catladder job images of one backend run: resolves image
- * references, and (in repo mode) collects the image build jobs and the
- * image definitions to materialize into the generated files.
+ * references, collects the image build jobs, and the image definitions
+ * to materialize into the generated files. Each referenced catladder
+ * image is built in the repository's own registry from the definition
+ * shipped with catladder.
  *
  * Reference-driven: only images actually used by a job are built.
  */
 export class JobImagesPlan {
   private used = new Map<RunnerImageName, { hash: string }>();
 
-  constructor(
-    readonly mode: JobImagesMode,
-    private readonly pipelineType: PipelineType,
-  ) {}
+  constructor(private readonly pipelineType: PipelineType) {}
 
   /**
    * resolves a job image (marker or concrete) to a concrete image url
-   * plus the build job dependency in repo mode
+   * plus the build job dependency
    */
   resolve(image: CatladderJob["image"]): {
     image: GitlabJobImage | undefined;
@@ -84,9 +66,6 @@ export class JobImagesPlan {
 
   resolveRef(ref: CatladderImageRef): ResolvedJobImage {
     const name = ref.catladderImage;
-    if (this.mode === "central" || CENTRAL_ONLY_IMAGES.has(name)) {
-      return { image: getCentralRunnerImageUrl(name) };
-    }
     const { hash } = this.use(name);
     return {
       image: `${this.registryImageRef()}/catladder/${name}:${hash}`,
@@ -131,8 +110,7 @@ export class JobImagesPlan {
   }
 
   /**
-   * the image build jobs for all used images (repo mode; empty in
-   * central mode)
+   * the image build jobs for all used images
    */
   getEnsureJobs(): CatladderJob[] {
     return [...this.used.entries()].map(([name, { hash }]) =>

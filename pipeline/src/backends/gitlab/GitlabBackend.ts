@@ -16,10 +16,7 @@ import type {
 } from "../../types";
 import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
 import { createAllJobs } from "../../pipeline/createAllJobs";
-import {
-  getJobImagesMode,
-  JobImagesPlan,
-} from "../../customImages/jobImagesPlan";
+import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import type { PipelineBackend, PipelineFile } from "../types";
 import { getPipelineOptions } from "../index";
@@ -44,7 +41,7 @@ export class GitlabBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const images = this.createImagesPlan(config);
+    const images = this.createImagesPlan();
     const includes = await this.createIncludes(config, images);
 
     const mainFile: PipelineFile = {
@@ -64,8 +61,8 @@ export class GitlabBackend implements PipelineBackend {
     ];
   }
 
-  private createImagesPlan(config: Config): JobImagesPlan {
-    return new JobImagesPlan(getJobImagesMode(config, this.type), this.type);
+  private createImagesPlan(): JobImagesPlan {
+    return new JobImagesPlan(this.type);
   }
 
   /**
@@ -75,10 +72,7 @@ export class GitlabBackend implements PipelineBackend {
   async createCompletePipeline(
     config: Config,
   ): Promise<Record<string, unknown>> {
-    const includes = await this.createIncludes(
-      config,
-      this.createImagesPlan(config),
-    );
+    const includes = await this.createIncludes(config, this.createImagesPlan());
 
     return includes.reduce((acc, { content }) => {
       return {

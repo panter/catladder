@@ -58,8 +58,7 @@
     "lint": "eslint \"src/**/*.ts\"",
     "lint:fix": "eslint \"src/**/*.ts\" --fix",
     "test": "yarn run lint",
-    "build": "yarn build:compile && yarn build:inline-variables && yarn build:bundle && yarn build:copy-images && yarn build:skill-cli-reference && yarn build:copy-skills",
-    "build:inline-variables": "yarn babel --keep-file-extension --extensions \".ts,.js\" --config-file ./babel-inline.json dist --out-dir dist",
+    "build": "yarn build:compile && yarn build:bundle && yarn build:copy-images && yarn build:skill-cli-reference && yarn build:copy-skills",
     "build:bundle": "./scripts/bundle",
     "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../runner-images dist/runner-images && cp -R ../runner-images dist/bundles/runner-images",
     "build:copy-skills": "rm -rf dist/skills dist/bundles/skills && cp -R ../skills dist/skills && cp -R ../skills dist/bundles/skills",
@@ -78,9 +77,6 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.28.6",
-    "@babel/core": "^7.29.0",
-    "@babel/plugin-syntax-typescript": "^7.28.6",
     "@changesets/parse": "^0.4.3",
     "@gitbeaker/rest": "^39.28.0",
     "@inquirer/prompts": "^8.4.3",
@@ -96,7 +92,6 @@
     "@types/update-notifier": "^2.5.0",
     "@types/websocket": "^0.0.40",
     "@types/yargs": "^17.0.33",
-    "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "child-process-promise": "^2.2.1",
     "clipboardy": "^2.0.0",
     "command-exists-promise": "^2.0.2",

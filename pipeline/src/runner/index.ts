@@ -1,5 +1,3 @@
-import { DOCKER_REGISTRY, PIPELINE_IMAGE_TAG } from "../constants";
-
 export type RunnerImageName =
   | "jobs-default"
   | "jobs-meteor"
@@ -11,11 +9,10 @@ export type RunnerImageName =
   | "agent-claude";
 
 /**
- * a reference to a catladder-provided job image. It is resolved by the
- * pipeline backend according to the `jobImages` mode:
- * - central: the image from catladder's central registry
- * - repo: the image is built in the repository's own registry from the
- *   image definition shipped with catladder
+ * a reference to a catladder-provided job image. The pipeline backend
+ * resolves it to a concrete image url: the image is built in the
+ * repository's own registry from the image definition shipped with
+ * catladder.
  */
 export type CatladderImageRef = {
   catladderImage: RunnerImageName;
@@ -38,9 +35,3 @@ export const getRunnerImage = (
 ): CatladderImageRef => ({
   catladderImage: imageName,
 });
-
-/**
- * the image url in catladder's central registry (the classic behavior)
- */
-export const getCentralRunnerImageUrl = (imageName: RunnerImageName): string =>
-  DOCKER_REGISTRY + "/" + imageName + ":" + PIPELINE_IMAGE_TAG;

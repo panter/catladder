@@ -7852,7 +7852,7 @@ echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 `;
 
 exports[`matches snapshot for cloud-run-with-sql-multiple-dbs local pipeline YAML 1`] = `
-"image: path/to/docker/jobs-default:the-version
+"image: node:22
 stages:
   - setup
   - setup dev
@@ -7954,9 +7954,230 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
+🐳 job image semantic-release:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+    - collapseable_section_end "docker-push"
+  rules:
+    - &a1
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+  needs: []
+  retry: &a2
+    max: 2
+  interruptible: true
+🐳 job image jobs-default:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/jobs-default/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/jobs-default/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/jobs-default/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
+🐳 job image jobs-testing-chrome:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/jobs-testing-chrome/**/*
+        - .catladder-generated/images/jobs-default/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/jobs-testing-chrome/**/*
+        - .catladder-generated/images/jobs-default/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/jobs-testing-chrome/**/*
+        - .catladder-generated/images/jobs-default/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
+🐳 job image docker-build:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/docker-build/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/docker-build/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/docker-build/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
+create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - &a3
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - *a1
+    - &a4
+      if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:e230b45e2742
+  script:
+    - semanticRelease
+  after_script:
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - *a3
+    - *a1
+    - *a4
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+  needs: []
 'db1 🛡 audit | dev ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -7971,14 +8192,16 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: &a1
-    max: 2
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db1 👮 lint | dev ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8007,19 +8230,22 @@ before_script:
         - packages/db1/.yarn
     - key: packagesdb1-node-modules
       policy: pull
-      paths: &a2
+      paths: &a5
         - packages/db1/node_modules
         - packages/db1/.yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🧪 test | dev ':
   stage: test
-  image: path/to/docker/jobs-testing-chrome:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8048,17 +8274,20 @@ before_script:
         - packages/db1/.yarn
     - key: packagesdb1-node-modules
       policy: pull
-      paths: *a2
+      paths: *a5
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-testing-chrome
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🔨 app | dev ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8151,12 +8380,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🔨 docker | dev ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -8213,8 +8445,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db1 🔨 app | dev '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db1 🚀 Deploy | dev ':
   stage: deploy dev
@@ -8353,7 +8588,7 @@ before_script:
       artifacts: false
     - job: 'db1 🛡 audit | dev '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'db1 🛑 Stop ⚠️ | dev ':
@@ -8384,12 +8619,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db1 🛡 audit | review ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8404,13 +8639,16 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db1 👮 lint | review ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8441,7 +8679,7 @@ before_script:
         - packagesdb1-yarn
     - key: packagesdb1-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a3
+      paths: &a6
         - packages/db1/node_modules
         - packages/db1/.yarn/install-state.gz
       fallback_keys:
@@ -8450,12 +8688,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🧪 test | review ':
   stage: test
-  image: path/to/docker/jobs-testing-chrome:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8486,19 +8727,22 @@ before_script:
         - packagesdb1-yarn
     - key: packagesdb1-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: *a3
+      paths: *a6
       fallback_keys:
         - packagesdb1-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-testing-chrome
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🔨 app | review ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8595,12 +8839,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🔨 docker | review ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -8659,8 +8906,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db1 🔨 app | review '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db1 🚀 Deploy | review ':
   stage: deploy review
@@ -8802,7 +9052,7 @@ before_script:
       artifacts: false
     - job: 'db1 🛡 audit | review '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'db1 🛑 Stop ⚠️ | review ':
@@ -8839,12 +9089,12 @@ before_script:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db1 🔨 app | stage ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8937,12 +9187,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🔨 docker | stage ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -8999,8 +9252,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db1 🔨 app | stage '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db1 🚀 Deploy | stage ':
   stage: deploy stage
@@ -9132,7 +9388,7 @@ before_script:
       artifacts: false
     - job: 'db1 🔨 docker | stage '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'db1 🛑 Stop ⚠️ | stage ':
@@ -9163,12 +9419,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db1 🔨 app | prod ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9261,12 +9517,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db1 🔨 docker | prod ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -9323,8 +9582,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db1 🔨 app | prod '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db1 🚀 Deploy | prod ':
   stage: deploy prod
@@ -9456,7 +9718,7 @@ before_script:
       artifacts: false
     - job: 'db1 🔨 docker | prod '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db1 🛑 Stop ⚠️ | prod ':
@@ -9487,12 +9749,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 🛡 audit | dev ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9507,13 +9769,16 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 👮 lint | dev ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9542,19 +9807,22 @@ before_script:
         - packages/db2/.yarn
     - key: packagesdb2-node-modules
       policy: pull
-      paths: &a4
+      paths: &a7
         - packages/db2/node_modules
         - packages/db2/.yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🧪 test | dev ':
   stage: test
-  image: path/to/docker/jobs-testing-chrome:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9583,17 +9851,20 @@ before_script:
         - packages/db2/.yarn
     - key: packagesdb2-node-modules
       policy: pull
-      paths: *a4
+      paths: *a7
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-testing-chrome
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🔨 app | dev ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9686,12 +9957,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🔨 docker | dev ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -9748,8 +10022,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db2 🔨 app | dev '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db2 🚀 Deploy | dev ':
   stage: deploy dev
@@ -9888,7 +10165,7 @@ before_script:
       artifacts: false
     - job: 'db2 🛡 audit | dev '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'db2 🛑 Stop ⚠️ | dev ':
@@ -9919,12 +10196,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 🛡 audit | review ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9939,13 +10216,16 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 👮 lint | review ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9976,7 +10256,7 @@ before_script:
         - packagesdb2-yarn
     - key: packagesdb2-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a5
+      paths: &a8
         - packages/db2/node_modules
         - packages/db2/.yarn/install-state.gz
       fallback_keys:
@@ -9985,12 +10265,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🧪 test | review ':
   stage: test
-  image: path/to/docker/jobs-testing-chrome:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -10021,19 +10304,22 @@ before_script:
         - packagesdb2-yarn
     - key: packagesdb2-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: *a5
+      paths: *a8
       fallback_keys:
         - packagesdb2-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-testing-chrome
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🔨 app | review ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -10130,12 +10416,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🔨 docker | review ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -10194,8 +10483,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db2 🔨 app | review '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db2 🚀 Deploy | review ':
   stage: deploy review
@@ -10337,7 +10629,7 @@ before_script:
       artifacts: false
     - job: 'db2 🛡 audit | review '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'db2 🛑 Stop ⚠️ | review ':
@@ -10374,12 +10666,12 @@ before_script:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 🔨 app | stage ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -10472,12 +10764,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🔨 docker | stage ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -10534,8 +10829,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db2 🔨 app | stage '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db2 🚀 Deploy | stage ':
   stage: deploy stage
@@ -10667,7 +10965,7 @@ before_script:
       artifacts: false
     - job: 'db2 🔨 docker | stage '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'db2 🛑 Stop ⚠️ | stage ':
@@ -10698,12 +10996,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 🔨 app | prod ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -10796,12 +11094,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'db2 🔨 docker | prod ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -10858,8 +11159,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'db2 🔨 app | prod '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'db2 🚀 Deploy | prod ':
   stage: deploy prod
@@ -10991,7 +11295,7 @@ before_script:
       artifacts: false
     - job: 'db2 🔨 docker | prod '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'db2 🛑 Stop ⚠️ | prod ':
@@ -11022,12 +11326,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 🛡 audit | dev ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11042,13 +11346,16 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 👮 lint | dev ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11077,19 +11384,22 @@ before_script:
         - api/.yarn
     - key: api-node-modules
       policy: pull
-      paths: &a6
+      paths: &a9
         - api/node_modules
         - api/.yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🧪 test | dev ':
   stage: test
-  image: path/to/docker/jobs-testing-chrome:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11118,17 +11428,20 @@ before_script:
         - api/.yarn
     - key: api-node-modules
       policy: pull
-      paths: *a6
+      paths: *a9
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-testing-chrome
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🔨 app | dev ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11221,12 +11534,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🔨 docker | dev ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -11283,8 +11599,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'api 🔨 app | dev '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'api 🚀 Deploy | dev ':
   stage: deploy dev
@@ -11413,7 +11732,7 @@ before_script:
       artifacts: false
     - job: 'api 🛡 audit | dev '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'api 🛑 Stop ⚠️ | dev ':
@@ -11443,12 +11762,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 🛡 audit | review ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11463,13 +11782,16 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 👮 lint | review ':
   stage: test
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11500,7 +11822,7 @@ before_script:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a7
+      paths: &a10
         - api/node_modules
         - api/.yarn/install-state.gz
       fallback_keys:
@@ -11509,12 +11831,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🧪 test | review ':
   stage: test
-  image: path/to/docker/jobs-testing-chrome:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11545,19 +11870,22 @@ before_script:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: *a7
+      paths: *a10
       fallback_keys:
         - api-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-testing-chrome
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🔨 app | review ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11654,12 +11982,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🔨 docker | review ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -11718,8 +12049,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'api 🔨 app | review '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'api 🚀 Deploy | review ':
   stage: deploy review
@@ -11851,7 +12185,7 @@ before_script:
       artifacts: false
     - job: 'api 🛡 audit | review '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'api 🛑 Stop ⚠️ | review ':
@@ -11887,12 +12221,12 @@ before_script:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 🔨 app | stage ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -11985,12 +12319,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🔨 docker | stage ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -12047,8 +12384,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'api 🔨 app | stage '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'api 🚀 Deploy | stage ':
   stage: deploy stage
@@ -12170,7 +12510,7 @@ before_script:
       artifacts: false
     - job: 'api 🔨 docker | stage '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: false
 'api 🛑 Stop ⚠️ | stage ':
@@ -12200,12 +12540,12 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 🔨 app | prod ':
   stage: build
-  image: path/to/docker/jobs-default:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -12298,12 +12638,15 @@ before_script:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
-  needs: []
-  retry: *a1
+  needs:
+    - job: 🐳 job image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
   interruptible: true
 'api 🔨 docker | prod ':
   stage: build
-  image: path/to/docker/docker-build:the-version
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
   services:
     - name: docker:29.5.1-dind
       command:
@@ -12360,8 +12703,11 @@ before_script:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
+    - job: 🐳 job image docker-build
+      artifacts: false
+      optional: true
     - 'api 🔨 app | prod '
-  retry: *a1
+  retry: *a2
   interruptible: true
 'api 🚀 Deploy | prod ':
   stage: deploy prod
@@ -12483,7 +12829,7 @@ before_script:
       artifacts: false
     - job: 'api 🔨 docker | prod '
       artifacts: false
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
 'api 🛑 Stop ⚠️ | prod ':
@@ -12513,45 +12859,8 @@ before_script:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a1
+  retry: *a2
   interruptible: true
   allow_failure: true
-create release:
-  stage: release
-  image: path/to/docker/semantic-release:the-version
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
-    - &a8
-      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
-      when: never
-    - &a9
-      if: $CI_PIPELINE_SOURCE  == "trigger"
-      when: never
-    - &a10
-      if: $CI_PIPELINE_SOURCE  == "schedule"
-      when: never
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
-⚠️ force create release:
-  stage: release
-  image: path/to/docker/semantic-release:the-version
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
-    - *a8
-    - *a9
-    - *a10
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
-  needs: []
 "
 `;

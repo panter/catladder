@@ -129,8 +129,8 @@ export const makeGitlabJob = (
     ...rest
   } = job;
 
-  // catladder image references resolve according to the jobImages mode;
-  // in repo mode the job additionally depends on the image build job
+  // catladder image references resolve to an image built in the repo's
+  // own registry; the job additionally depends on the image build job
   const resolvedImage = images.resolve(jobImage);
   const image = resolvedImage.image;
   const imageNeeds = resolvedImage.need ? [resolvedImage.need] : [];

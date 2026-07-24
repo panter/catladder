@@ -15,8 +15,6 @@ const config: Config = {
   releases: {
     when: "auto",
   },
-  // dogfood the repo-built job images (MR !399) on gitlab
-  jobImages: "repo",
   // dogfood the agent skills, but only the claude-code copy — the
   // .agents/ copy would just duplicate it in this repo's diffs
   agentSkills: { targets: ["claude-code"] },

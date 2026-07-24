@@ -16,7 +16,6 @@ const config: Config = {
       gitRemote: "github",
     },
   },
-  jobImages: "repo",
   releases: {
     when: "auto",
     method: "changesets",

@@ -20,16 +20,6 @@ export const RUNNER_IMAGE_DEPENDENCIES: Partial<
  * Dockerfiles INCLUDE sibling images), the others from their own dir
  * (their COPY paths are relative to it)
  */
-/**
- * images that cannot be built from the shipped definitions and always
- * come from the central registry. Empty since the semantic-release
- * image became self-contained (the security audit runs the
- * materialized catci bundle instead of a baked-in catladder cli) —
- * kept as the escape hatch should an image ever need central-only
- * treatment again.
- */
-export const CENTRAL_ONLY_IMAGES: ReadonlySet<RunnerImageName> = new Set();
-
 export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
   RunnerImageName,
   "root" | "self"
