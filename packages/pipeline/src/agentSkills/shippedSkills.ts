@@ -26,9 +26,9 @@ export const getShippedSkillsDir = (): string => {
     // bundled cli package (what consumers install): the ncc bundles live
     // in dist/bundles/<name>, so both resolve to dist/bundles/skills
     join(__dirname, "..", "skills"),
-    // cli tsc dist (catenv-dev): dist/pipeline/src/agentSkills -> dist/skills
-    // repository: pipeline/src/agentSkills -> <root>/skills
-    join(__dirname, "..", "..", "..", "skills"),
+    // cli tsc dist (catenv-dev): dist/packages/pipeline/src/agentSkills -> dist/skills
+    // repository: packages/pipeline/src/agentSkills -> <root>/skills
+    join(__dirname, "..", "..", "..", "..", "skills"),
   ];
   const found = candidates.find((candidate) => existsSync(candidate));
   if (!found) {

@@ -14,14 +14,13 @@
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\"",
-    "catenv": "./cli/bin/catenv-dev",
-    "catladder": "./cli/bin/catladder-dev",
+    "catenv": "./apps/cli/bin/catenv-dev",
+    "catladder": "./apps/cli/bin/catladder-dev",
     "e2e": "node e2e/run.mjs"
   },
   "workspaces": [
-    "pipeline",
-    "cli",
-    "docs"
+    "packages/*",
+    "apps/*"
   ],
   "devDependencies": {
     "@eslint/js": "^9.9.1",

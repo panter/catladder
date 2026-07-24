@@ -7,7 +7,7 @@ vi.spyOn(global.Date.prototype, "toISOString").mockReturnValue(
   "01-01-2023 12:13:14",
 );
 
-vi.mock("../pipeline/src/pipeline/yarn/yarnUtils", () => ({
+vi.mock("../packages/pipeline/src/pipeline/yarn/yarnUtils", () => ({
   getYarnVersion: () => "3",
   getWorkspaces: () => [],
 }));

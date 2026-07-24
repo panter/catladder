@@ -45,8 +45,9 @@ export const getShippedImagesDir = (): string => {
     // bundled cli package (what consumers install): the ncc bundles live
     // in dist/bundles/<name>, so both resolve to dist/bundles/runner-images
     join(__dirname, "..", "runner-images"),
-    // repository: pipeline/src/customImages -> <root>/runner-images
-    join(__dirname, "..", "..", "..", "runner-images"),
+    // cli tsc dist (catenv-dev): dist/packages/pipeline/src/customImages -> dist/runner-images
+    // repository: packages/pipeline/src/customImages -> <root>/runner-images
+    join(__dirname, "..", "..", "..", "..", "runner-images"),
   ];
   const found = candidates.find((candidate) => existsSync(candidate));
   if (!found) {

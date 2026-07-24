@@ -1,5 +1,5 @@
 import { readFile } from "fs/promises";
-import type { Config } from "./pipeline/src";
+import type { Config } from "./packages/pipeline/src";
 
 // this project did not use catladder itself to create its pipeline
 // however we now start to use some of its features

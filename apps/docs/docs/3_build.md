@@ -42,7 +42,7 @@ This is useful to host static apps (Angular, React, Next.js static exports) on a
 
 ### rails
 
-The `rails` build type is for Ruby on Rails apps. See the example in `pipeline/examples/rails-k8s-with-worker.ts`.
+The `rails` build type is for Ruby on Rails apps. See the example in `packages/pipeline/examples/rails-k8s-with-worker.ts`.
 
 It creates some very basic test, lint, and audit jobs that most likely need to be customized.
 

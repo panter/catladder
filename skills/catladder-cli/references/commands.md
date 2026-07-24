@@ -1,7 +1,7 @@
 # catladder CLI command reference
 
 <!-- rendered from the command definitions by
-     cli/src/scripts/generateCliSkillReference.ts — do not edit -->
+     apps/cli/src/scripts/generateCliSkillReference.ts — do not edit -->
 
 All commands run non-interactively as `yarn catladder <command> ...`;
 see SKILL.md for how to pass inputs.

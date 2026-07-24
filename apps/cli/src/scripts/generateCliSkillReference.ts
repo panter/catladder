@@ -62,7 +62,7 @@ export const renderCliReference = (): string => {
     "# catladder CLI command reference",
     "",
     "<!-- rendered from the command definitions by",
-    "     cli/src/scripts/generateCliSkillReference.ts — do not edit -->",
+    "     apps/cli/src/scripts/generateCliSkillReference.ts — do not edit -->",
     "",
     "All commands run non-interactively as `yarn catladder <command> ...`;",
     "see SKILL.md for how to pass inputs.",
@@ -76,8 +76,8 @@ export const renderCliReference = (): string => {
 // ESM-only deps of the command modules on older versions)
 const main = () => {
   const repoRootCandidates = [
-    join(__dirname, "../../.."), // source: cli/src/scripts
-    join(__dirname, "../../../../.."), // compiled: cli/dist/cli/src/scripts
+    join(__dirname, "../../../.."), // source: apps/cli/src/scripts
+    join(__dirname, "../../../../../../.."), // compiled: apps/cli/dist/apps/cli/src/scripts
   ];
   const repoRoot = repoRootCandidates.find((candidate) =>
     existsSync(join(candidate, "skills")),

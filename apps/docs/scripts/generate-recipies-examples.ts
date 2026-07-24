@@ -13,9 +13,9 @@ const sidebarPosition = Number.parseInt(
   10,
 );
 
-const rootPath = resolve(__dirname, "../../");
-const examplesSourcePath = "pipeline/examples";
-const outputDir = join(rootPath, "docs/docs/examples");
+const rootPath = resolve(__dirname, "../../../");
+const examplesSourcePath = "packages/pipeline/examples";
+const outputDir = join(rootPath, "apps/docs/docs/examples");
 
 async function main() {
   if (!existsSync(outputDir)) {

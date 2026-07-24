@@ -15,14 +15,16 @@ const getShippedCatciBundle = (): string => {
   const candidates = [
     // ncc bundle (what consumers run): dist/bundles/<entry> -> dist/bundles/catci
     join(__dirname, "..", "catci", "index.js"),
-    // cli tsc dist (catenv-dev): dist/pipeline/src/catci -> dist/bundles/catci
-    join(__dirname, "..", "..", "..", "bundles", "catci", "index.js"),
-    // repository (pipeline/src/catci): <root>/cli/dist/bundles/catci
+    // cli tsc dist (catenv-dev): dist/packages/pipeline/src/catci -> dist/bundles/catci
+    join(__dirname, "..", "..", "..", "..", "bundles", "catci", "index.js"),
+    // repository (packages/pipeline/src/catci): <root>/apps/cli/dist/bundles/catci
     join(
       __dirname,
       "..",
       "..",
       "..",
+      "..",
+      "apps",
       "cli",
       "dist",
       "bundles",

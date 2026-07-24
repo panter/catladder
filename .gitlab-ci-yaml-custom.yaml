@@ -61,7 +61,8 @@ test:
     - yarn build
   artifacts:
     paths:
-      - "*/dist"
+      - "apps/*/dist"
+      - "packages/*/dist"
 
 .npm-publish-base:
   interruptible: true
@@ -123,12 +124,12 @@ test:
 🚀 cli:
   extends: .npm-publish-base
   variables:
-    DIR: cli
+    DIR: apps/cli
 
 🚀 pipeline:
   extends: .npm-publish-base
   variables:
-    DIR: pipeline
+    DIR: packages/pipeline
 
 pages:
   stage: deploy

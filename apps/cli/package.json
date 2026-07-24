@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://git.panter.ch/catladder/catladder.git",
-    "directory": "cli"
+    "directory": "apps/cli"
   },
   "keywords": [
     "GitLab",
@@ -60,19 +60,19 @@
     "test": "yarn run lint",
     "build": "yarn build:compile && yarn build:bundle && yarn build:copy-images && yarn build:skill-cli-reference && yarn build:copy-skills",
     "build:bundle": "./scripts/bundle",
-    "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../runner-images dist/runner-images && cp -R ../runner-images dist/bundles/runner-images",
-    "build:copy-skills": "rm -rf dist/skills dist/bundles/skills && cp -R ../skills dist/skills && cp -R ../skills dist/bundles/skills",
+    "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../../runner-images dist/runner-images && cp -R ../../runner-images dist/bundles/runner-images",
+    "build:copy-skills": "rm -rf dist/skills dist/bundles/skills && cp -R ../../skills dist/skills && cp -R ../../skills dist/bundles/skills",
     "build:skill-cli-reference": "tsx src/scripts/generateCliSkillReference.ts",
     "build:compile": "yarn tsc && yarn tsc-alias",
-    "dev:own-catenv": "cd ../ && node cli/bin/catenv-dev",
+    "dev:own-catenv": "cd ../../ && node apps/cli/bin/catenv-dev",
     "build:watch": "tsc-watch --onSuccess \"yarn dev:own-catenv\""
   },
   "bin": {
     "catenv": "./bin/catenv",
     "catladder": "./bin/catladder"
   },
-  "types": "dist/cli/src/index.d.ts",
-  "main": "dist/cli/src/index.js",
+  "types": "dist/apps/cli/src/index.d.ts",
+  "main": "dist/apps/cli/src/index.js",
   "engines": {
     "node": ">=18.0.0"
   },

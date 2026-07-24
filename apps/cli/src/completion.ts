@@ -157,8 +157,8 @@ _catladder_find_binary() {
       return
     fi
     # Also check for catladder-dev (monorepo development)
-    if [[ -x "$dir/cli/bin/catladder-dev" ]]; then
-      echo "$dir/cli/bin/catladder-dev"
+    if [[ -x "$dir/apps/cli/bin/catladder-dev" ]]; then
+      echo "$dir/apps/cli/bin/catladder-dev"
       return
     fi
     dir="\${dir:h}"

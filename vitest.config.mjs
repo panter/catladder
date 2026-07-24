@@ -7,7 +7,7 @@ export default defineConfig({
       // mirror cli/tsconfig.json: cli tests import @catladder/pipeline
       // from source, so they don't depend on a built pipeline/dist
       "@catladder/pipeline": fileURLToPath(
-        new URL("./pipeline/src/index.ts", import.meta.url),
+        new URL("./packages/pipeline/src/index.ts", import.meta.url),
       ),
     },
   },
@@ -24,7 +24,7 @@ export default defineConfig({
       "**/node_modules/**",
       "**/.claude/**",
     ],
-    include: ["**/__tests__/**/*.[jt]s?(x)", "**/pipeline/examples/*.test.ts"],
+    include: ["**/__tests__/**/*.[jt]s?(x)", "packages/pipeline/examples/*.test.ts"],
     testTimeout: 10000,
   },
 });
