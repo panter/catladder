@@ -8,16 +8,17 @@ Catladder is a TypeScript framework by Panter that generates GitLab CI/CD pipeli
 
 ## Repository Structure
 
-**Yarn 3.1.1 monorepo** with three workspaces:
+**Yarn 4.x monorepo** orchestrated with **Turborepo** (`turbo run`), workspaces under `packages/*` and `apps/*`:
 
-- **`pipeline/`** (`@catladder/pipeline`) — Core framework: pipeline generation, build/deploy types, environment management, agent integration
-- **`cli/`** (`@catladder/cli`) — CLI tools: `catladder` (environment/secret management), `catenv` (pipeline/env file generation via direnv)
-- **`docs/`** — Docusaurus documentation site
+- **`packages/pipeline`** (`@catladder/pipeline`, private) — Core framework: pipeline generation, build/deploy types, environment management, agent integration. Not published; compiled from source into the cli.
+- **`packages/bash`** (`@catladder/bash`, private) — Type-safe bash script generation primitives (`BashExpression`, escaping, `VariableValue`). Internal just-in-time package: `main` points at `src/index.ts`.
+- **`apps/cli`** (`@catladder/cli`) — the only published npm package: `catladder` (environment/secret management), `catenv` (pipeline/env file generation via direnv). Its tsc compiles the pipeline+bash sources via tsconfig `paths` + `tsc-alias`, then ncc bundles.
+- **`apps/docs`** — Docusaurus documentation site
 
 ## Common Commands
 
 ```bash
-# Build all workspaces (topological order, excludes docs)
+# Build all workspaces (turbo graph, cached, excludes docs)
 yarn build
 
 # Watch mode for all workspaces in parallel
@@ -29,9 +30,9 @@ yarn test:watch
 yarn test:update          # update snapshots
 
 # Lint
-yarn lint                 # all workspaces
-yarn workspace @catladder/pipeline lint:fix
-yarn workspace @catladder/cli lint:fix
+yarn lint                 # all workspaces (turbo run lint)
+yarn turbo run lint:fix   # note: yarn workspace <ws> lint needs the root
+                          # node_modules/.bin on PATH; prefer turbo
 
 # Format
 yarn pretty
@@ -44,15 +45,15 @@ yarn catladder
 ### Workspace-specific builds
 
 ```bash
-yarn workspace @catladder/pipeline build    # tsc + copy runner images
-yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
+yarn turbo run build --filter=@catladder/pipeline   # tsc + copy runner images
+yarn turbo run build --filter=@catladder/cli        # tsc + tsc-alias + ncc bundle (+ deps)
 ```
 
 ## Testing
 
 - **Framework**: Vitest (globals enabled, node environment)
-- **Test locations**: `**/__tests__/**/*.[jt]s?(x)` and `pipeline/examples/*.test.ts`
-- **Example tests**: Auto-generated from `pipeline/examples/` via `yarn workspace @catladder/pipeline generate:examples-test` — this runs automatically before `yarn test`
+- **Test locations**: `**/__tests__/**/*.[jt]s?(x)` and `packages/pipeline/examples/*.test.ts`
+- **Example tests**: Auto-generated from `packages/pipeline/examples/` via `turbo run generate:examples-test` — this runs automatically before `yarn test`
 - **Snapshots**: Example tests use snapshot testing for generated YAML output; update with `yarn test:update`
 - **Timeout**: 10 seconds per test
 
@@ -61,8 +62,8 @@ yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 ### Pipeline Generation Flow
 
 1. **Config** (`catladder.ts`) defines components, builds, deploys, agents, environments
-2. **Context creation** (`pipeline/src/context/`) builds runtime contexts per component/environment
-3. **Job creation** (`pipeline/src/pipeline/createAllJobs.ts`) generates GitLab CI jobs based on pipeline triggers
+2. **Context creation** (`packages/pipeline/src/context/`) builds runtime contexts per component/environment
+3. **Job creation** (`packages/pipeline/src/pipeline/createAllJobs.ts`) generates GitLab CI jobs based on pipeline triggers
 4. **YAML output** → `.catladder-generated/gitlab/` directory (must be checked in)
 5. **GitLab CI** (`.gitlab-ci.yml`) includes generated files
 
@@ -74,19 +75,18 @@ yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 - **Deploy types**: `kubernetes`, `cloudRun`, `dockerTag`, `custom`
 - **Components**: Each component has a build config and deploy config; multiple components per project
 
-### Key source modules in `pipeline/src/`
+### Key source modules in `packages/pipeline/src/`
 
 - `types/` — Config schema, GitLab CI types, job types, context types
 - `pipeline/` — Job creation, pipeline orchestration, GitLab integration
 - `build/` — Build strategies (node, rails, base, docker, caching)
 - `deploy/` — Deploy strategies (kubernetes, cloudRun, dockerTag, custom)
 - `context/` — Runtime context (component context, environment resolution)
-- `bash/` — Type-safe bash script generation (`BashExpression`)
-- `variables/` — Environment variable handling (`VariableValue`)
+- `bash/` — pipeline-coupled bash helpers (CI variables per backend); the core primitives (`BashExpression`, `VariableValue`) live in `packages/bash`
 - `rules/` — GitLab job rule generation
 - `catenv/` — Environment file generation for direnv
 
-### CLI structure (`cli/src/`)
+### CLI structure (`apps/cli/src/`)
 
 - `apps/cli/` — Commander-based CLI (`catladder` command; command defs in `commands/`, registered in `cli.ts`)
 - `apps/catenv/` — Environment/pipeline generation (`catenv` command)
@@ -97,7 +97,7 @@ yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 projects: pipeline generation materializes them into `.claude/skills/`
 as `catladder-*` directories, so AI coding agents working in a consumer
 repo get usage knowledge matching the installed catladder version (see
-`pipeline/src/agentSkills/`). The cross-agent `.agents/skills/` location
+`packages/pipeline/src/agentSkills/`). The cross-agent `.agents/skills/` location
 is opt-in via `agentSkills: { targets: ["claude-code", "agents"] }`.
 
 **When you change user-facing behavior — config options, CLI commands,
