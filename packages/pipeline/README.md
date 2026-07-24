@@ -2,6 +2,9 @@
 
 Panter workflow for cloud CI/CD and DevOps.
 
+Internal workspace package: it is compiled into @catladder/cli from
+source and not published to npm.
+
 **It just works™**
 
 ## Getting started
