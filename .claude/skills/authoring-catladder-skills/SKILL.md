@@ -16,15 +16,17 @@ agent-facing docs. They are:
 
 - **shipped** inside the `@catladder/cli` package (copied into `dist/`
   by `build:copy-skills`);
-- **materialized** into every consumer repo's `.claude/skills/` and
-  `.agents/skills/` on every `catenv` run (`generateAgentSkills` in
-  `pipeline/src/agentSkills/`), as `catladder-*` directories carrying a
-  generated marker;
+- **materialized** into every consumer repo's `.claude/skills/` on every
+  `catenv` run (`generateAgentSkills` in `pipeline/src/agentSkills/`), as
+  `catladder-*` directories carrying a generated marker. The cross-agent
+  `.agents/skills/` location is opt-in
+  (`agentSkills: { targets: ["claude-code", "agents"] }`);
 - therefore **version-synced for free** — the agent in a project always
   sees skills matching that project's installed catladder version.
 
 Current skills: `catladder-config`, `catladder-secrets`,
-`catladder-pipelines`, `catladder-cli`.
+`catladder-pipelines`, `catladder-cli`, `catladder-builds`,
+`catladder-deploys`, `catladder-releases`.
 
 ## The maintenance rule (most important)
 
@@ -115,9 +117,8 @@ Commit the source skill in `skills/` **and** the regenerated dogfood
 copy under `.claude/skills/` together, exactly like any other
 generated-file change.
 
-Note: this repo dogfoods with `agentSkills: { targets: ["claude-code"] }`
-in `catladder.ts`, so only the `.claude/skills/` copy is materialized
-here (not `.agents/skills/`).
+Note: the default target is `claude-code` only, so only the
+`.claude/skills/` copy is materialized here (not `.agents/skills/`).
 
 ## Candidate topics not yet covered
 

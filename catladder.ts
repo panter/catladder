@@ -15,9 +15,8 @@ const config: Config = {
   releases: {
     when: "auto",
   },
-  // dogfood the agent skills, but only the claude-code copy — the
-  // .agents/ copy would just duplicate it in this repo's diffs
-  agentSkills: { targets: ["claude-code"] },
+  // agent skills are materialized into .claude/skills/ by default
+  // (dogfooding the default; .agents/skills/ is opt-in)
   components: {}, // currently we use custom gitlab
   hooks: {
     transformYamlBeforeWrite: async ({ filename, data }) => {

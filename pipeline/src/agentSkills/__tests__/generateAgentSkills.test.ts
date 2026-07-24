@@ -59,12 +59,14 @@ describe("generateAgentSkills", () => {
     rootDir = await mkdtemp(join(tmpdir(), "catladder-agent-skills-"));
   });
 
-  it("materializes all shipped skills into all targets by default", async () => {
+  it("materializes all shipped skills into the default target (claude-code only)", async () => {
     await generateAgentSkills(createContext(), rootDir);
     const shipped = getShippedSkills().map((s) => s.name);
-    for (const targetDir of [".claude/skills", ".agents/skills"]) {
-      expect((await readdir(join(rootDir, targetDir))).sort()).toEqual(shipped);
-    }
+    expect((await readdir(join(rootDir, ".claude/skills"))).sort()).toEqual(
+      shipped,
+    );
+    // .agents/skills is opt-in — not written by default
+    expect(existsSync(join(rootDir, ".agents/skills"))).toBe(false);
     const skillMd = await readFile(
       join(rootDir, ".claude/skills", shipped[0], "SKILL.md"),
       "utf-8",
@@ -74,15 +76,32 @@ describe("generateAgentSkills", () => {
     expect(skillMd).toMatch(/^---\n/);
   });
 
+  it("writes to every named target when targets are given explicitly", async () => {
+    await generateAgentSkills(
+      createContext({ agentSkills: { targets: ["claude-code", "agents"] } }),
+      rootDir,
+    );
+    const shipped = getShippedSkills().map((s) => s.name);
+    for (const targetDir of [".claude/skills", ".agents/skills"]) {
+      expect((await readdir(join(rootDir, targetDir))).sort()).toEqual(shipped);
+    }
+  });
+
   it("removes previously generated skills when opting out", async () => {
-    await generateAgentSkills(createContext(), rootDir);
+    await generateAgentSkills(
+      createContext({ agentSkills: { targets: ["claude-code", "agents"] } }),
+      rootDir,
+    );
     await generateAgentSkills(createContext({ agentSkills: false }), rootDir);
     expect(await readdir(join(rootDir, ".claude/skills"))).toEqual([]);
     expect(await readdir(join(rootDir, ".agents/skills"))).toEqual([]);
   });
 
   it("removes stale copies when narrowing targets", async () => {
-    await generateAgentSkills(createContext(), rootDir);
+    await generateAgentSkills(
+      createContext({ agentSkills: { targets: ["claude-code", "agents"] } }),
+      rootDir,
+    );
     await generateAgentSkills(
       createContext({ agentSkills: { targets: ["claude-code"] } }),
       rootDir,

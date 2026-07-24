@@ -313,9 +313,12 @@ export type Config<C extends ConfigProps = never> = {
    * `.claude/skills/`) — that namespace is owned by catladder and must
    * not be edited manually.
    *
-   * - `true` (default): write to all known agent skill directories
+   * - `true` / omitted (default): write to `.claude/skills/` only
+   *   (Claude Code is the only agent that consumes these today)
    * - `false`: opt out (previously generated skills are removed)
-   * - `{ targets: [...] }`: only write to the given targets
+   * - `{ targets: [...] }`: write to the given targets, e.g.
+   *   `["claude-code", "agents"]` to also populate the cross-agent
+   *   `.agents/skills/` directory
    */
   agentSkills?: AgentSkillsConfig;
 

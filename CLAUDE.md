@@ -95,9 +95,10 @@ yarn workspace @catladder/cli build         # tsc + tsc-alias + ncc bundle
 
 `skills/` contains the agent skills catladder ships to consumer
 projects: pipeline generation materializes them into `.claude/skills/`
-and `.agents/skills/` as `catladder-*` directories, so AI coding agents
-working in a consumer repo get usage knowledge matching the installed
-catladder version (see `pipeline/src/agentSkills/`).
+as `catladder-*` directories, so AI coding agents working in a consumer
+repo get usage knowledge matching the installed catladder version (see
+`pipeline/src/agentSkills/`). The cross-agent `.agents/skills/` location
+is opt-in via `agentSkills: { targets: ["claude-code", "agents"] }`.
 
 **When you change user-facing behavior — config options, CLI commands,
 generated pipeline behavior, workflows — update the affected skill in
