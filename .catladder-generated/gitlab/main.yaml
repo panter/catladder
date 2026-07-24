@@ -6,13 +6,37 @@
 image: node:22
 stages:
   - setup
+  - setup dev
+  - setup review
+  - setup prod
   - test
+  - test dev
+  - test review
+  - test prod
   - build
+  - build dev
+  - build review
+  - build prod
   - deploy
+  - deploy dev
+  - deploy review
+  - deploy prod
   - verify
+  - verify dev
+  - verify review
+  - verify prod
   - agents
+  - agents dev
+  - agents review
+  - agents prod
   - rollback
+  - rollback dev
+  - rollback review
+  - rollback prod
   - stop
+  - stop dev
+  - stop review
+  - stop prod
   - release
 variables:
   FF_USE_FASTZIP: 'true'
