@@ -8,9 +8,9 @@ export const NPM_PACKAGE_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigNpmPackag
     jobs: createNpmPackageDeployJobs,
     defaults: () => ({}),
     additionalSecretKeys: (ctx) =>
-      // publish credentials don't exist for the local env
-      ctx.envType !== "local"
-        ? [{ key: NPM_TOKEN_SECRET_KEY, hidden: true }]
-        : [],
+      // publish credentials don't exist for the local env. Not hidden:
+      // the user sets the token via `catladder project secrets-set`
+      // (hidden is for machine-provisioned credentials)
+      ctx.envType !== "local" ? [{ key: NPM_TOKEN_SECRET_KEY }] : [],
     getAdditionalEnvVars: () => ({}),
   };
