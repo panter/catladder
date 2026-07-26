@@ -7,7 +7,7 @@ import type {
   PackageManagerInfoComponent,
 } from "../types";
 import { detectPackageManager } from "./detectPackageManager";
-import { getPnpmWorkspaces } from "./pnpm/pnpmUtils";
+import { getPnpmPatchFiles, getPnpmWorkspaces } from "./pnpm/pnpmUtils";
 import { getWorkspaces, getWorkspaceDependencies } from "./yarn/yarnUtils";
 import memoizee from "memoizee";
 
@@ -68,6 +68,15 @@ export const getPackageManagerInfoForComponent = async (
           .filter((f) => existsSync(f))
       : [];
 
+  // patch files referenced by patchedDependencies must exist in the
+  // image, or pnpm's frozen install fails verifying them
+  const patchFiles =
+    baseInfo.type === "pnpm"
+      ? getPnpmPatchFiles(
+          componentIsInWorkspace ? workspaceRoot : component.dir,
+        )
+      : [];
+
   const pathsToCopyInDocker = [
     ...new Set([
       packageJson,
@@ -75,6 +84,7 @@ export const getPackageManagerInfoForComponent = async (
       lockFile,
       ...configFilePaths,
       ...allWorkspaceManifests,
+      ...patchFiles,
       ...currentWorkspaceDependencies,
     ]),
   ];

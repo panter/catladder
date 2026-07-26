@@ -1,7 +1,9 @@
 import { exec } from "child-process-promise";
+import { existsSync, readFileSync } from "fs";
 import { readFile } from "fs/promises";
 import { join, relative } from "path";
 import memoizee from "memoizee";
+import { parse } from "yaml";
 import type { YarnWorkspace } from "../../types";
 import { jsonParseOrThrow } from "../../utils/jsonParse";
 
@@ -34,6 +36,34 @@ const readWorkspaceDependencyLocations = async (
   } catch {
     return [];
   }
+};
+
+/**
+ * patch files referenced by `patchedDependencies` (pnpm-workspace.yaml
+ * or the root package.json's `pnpm` section) — they must travel into
+ * the docker build context, or the prod install fails to verify them
+ */
+export const getPnpmPatchFiles = (root = "."): string[] => {
+  const patchedDependencies: Record<string, string> = {};
+  try {
+    const ws = parse(readFileSync(join(root, "pnpm-workspace.yaml"), "utf-8"));
+    Object.assign(patchedDependencies, ws?.patchedDependencies ?? {});
+  } catch {
+    // no workspace file
+  }
+  try {
+    const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf-8"));
+    Object.assign(patchedDependencies, pkg?.pnpm?.patchedDependencies ?? {});
+  } catch {
+    // no package.json
+  }
+  return [
+    ...new Set(
+      Object.values(patchedDependencies)
+        .map((p) => join(root, p))
+        .filter((p) => existsSync(p)),
+    ),
+  ];
 };
 
 /**
