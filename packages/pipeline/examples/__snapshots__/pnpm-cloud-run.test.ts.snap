@@ -257,13 +257,13 @@ exports[`matches snapshot for pnpm-cloud-run github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
@@ -293,13 +293,13 @@ exports[`matches snapshot for pnpm-cloud-run github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
@@ -329,13 +329,13 @@ exports[`matches snapshot for pnpm-cloud-run github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
           with:
@@ -677,13 +677,13 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
@@ -713,13 +713,13 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
@@ -749,13 +749,13 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
           with:
@@ -1071,13 +1071,13 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
           with:
@@ -1786,13 +1786,13 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-node-modules
+        - name: Cache pnpm-www-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: www/node_modules
-            key: www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-node-modules-
+            key: pnpm-www-node-modules-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: pnpm-www-node-modules-
         - name: Cache www-default
           uses: actions/cache@v4
           with:
@@ -3519,7 +3519,7 @@ create release:
       policy: pull
       paths:
         - www/.pnpm-store
-    - key: www-node-modules
+    - key: pnpm-www-node-modules
       policy: pull
       paths: &a5
         - www/node_modules
@@ -3564,7 +3564,7 @@ create release:
       policy: pull
       paths:
         - www/.pnpm-store
-    - key: www-node-modules
+    - key: pnpm-www-node-modules
       policy: pull
       paths: *a5
   rules:
@@ -3640,7 +3640,7 @@ create release:
       policy: pull-push
       paths:
         - www/.pnpm-store
-    - key: www-node-modules
+    - key: pnpm-www-node-modules
       policy: pull-push
       paths:
         - www/node_modules
@@ -3923,12 +3923,12 @@ create release:
         - www/.pnpm-store
       fallback_keys:
         - www-pnpm
-    - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
+    - key: pnpm-www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths: &a6
         - www/node_modules
       fallback_keys:
-        - www-node-modules
+        - pnpm-www-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -3972,11 +3972,11 @@ create release:
         - www/.pnpm-store
       fallback_keys:
         - www-pnpm
-    - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
+    - key: pnpm-www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths: *a6
       fallback_keys:
-        - www-node-modules
+        - pnpm-www-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4052,12 +4052,12 @@ create release:
         - www/.pnpm-store
       fallback_keys:
         - www-pnpm
-    - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
+    - key: pnpm-www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - www/node_modules
       fallback_keys:
-        - www-node-modules
+        - pnpm-www-node-modules
     - key: www-default-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
@@ -4353,7 +4353,7 @@ create release:
       policy: pull-push
       paths:
         - www/.pnpm-store
-    - key: www-node-modules
+    - key: pnpm-www-node-modules
       policy: pull-push
       paths:
         - www/node_modules
@@ -4635,7 +4635,7 @@ create release:
       policy: pull-push
       paths:
         - www/.pnpm-store
-    - key: www-node-modules
+    - key: pnpm-www-node-modules
       policy: pull-push
       paths:
         - www/node_modules
