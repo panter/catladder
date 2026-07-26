@@ -2179,10 +2179,10 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
+tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
 gcloud auth activate-service-account --key-file=<(echo "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey")
@@ -2547,10 +2547,10 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
+tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
 gcloud auth activate-service-account --key-file=<(echo "$CL_review_www_GCLOUD_DEPLOY_credentialsKey")
@@ -2787,10 +2787,10 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
+tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
 gcloud auth activate-service-account --key-file=<(echo "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey")
@@ -3024,10 +3024,10 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
+tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
 gcloud auth activate-service-account --key-file=<(echo "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey")
@@ -3702,11 +3702,10 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - |-
-      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
+    - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey")
@@ -4119,11 +4118,10 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - |-
-      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
+    - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_review_www_GCLOUD_DEPLOY_credentialsKey")
@@ -4417,11 +4415,10 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - |-
-      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
+    - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey")
@@ -4700,11 +4697,10 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - |-
-      export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
+    - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
     - gcloud auth activate-service-account --key-file=<(echo "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey")

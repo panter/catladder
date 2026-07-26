@@ -77,10 +77,21 @@ export const createNodeDockerJobDefinition = async (
     packageManagerInfo.type === "pnpm" &&
     packageManagerInfo.componentIsInWorkspace;
 
+  // pnpm copies every workspace manifest into the image — as individual
+  // COPY instructions that many layers exceed docker's depth limit, so
+  // the job tars them up and a single ADD extracts them
+  const isPnpm = packageManagerInfo.type === "pnpm";
+  const WORKSPACE_FILES_TAR = ".catladder-workspace-files.tar";
+
   return {
     script: [
       // the COPY source must exist even when the cache was cold
       ...(copyPnpmStore ? ["mkdir -p .pnpm-store"] : []),
+      ...(isPnpm
+        ? [
+            `tar -cf ${WORKSPACE_FILES_TAR} ${packageManagerInfo.pathsToCopyInDocker.join(" ")}`,
+          ]
+        : []),
       ...getDockerBuildScriptWithBuiltInDockerFile(
         context,
         dockerDefaultBuiltIn,
@@ -90,17 +101,19 @@ export const createNodeDockerJobDefinition = async (
     variables: {
       // only required for non static
       DOCKER_COPY_AND_INSTALL_APP: dockerAppCopyAndBuildScript,
-      DOCKER_COPY_WORKSPACE_FILES: [
-        ...packageManagerInfo.pathsToCopyInDocker.map(
-          (dir) => `COPY --chown=node:node ${dir} /app/${dir}`,
-        ),
-        ...(copyPnpmStore
-          ? [`COPY --chown=node:node .pnpm-store /app/.pnpm-store`]
-          : []),
-      ].join("\n"),
+      DOCKER_COPY_WORKSPACE_FILES: isPnpm
+        ? [
+            `ADD --chown=node:node ${WORKSPACE_FILES_TAR} /app/`,
+            ...(copyPnpmStore
+              ? [`COPY --chown=node:node .pnpm-store /app/.pnpm-store`]
+              : []),
+          ].join("\n")
+        : packageManagerInfo.pathsToCopyInDocker
+            .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
+            .join("\n"),
       // pnpm is not preinstalled in the node base images; installed as
       // root before the image switches to the node user
-      ...(packageManagerInfo.type === "pnpm"
+      ...(isPnpm
         ? {
             DOCKER_SETUP_PACKAGE_MANAGER: `RUN npm install -g pnpm@${packageManagerInfo.version}`,
           }
