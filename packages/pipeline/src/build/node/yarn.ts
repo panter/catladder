@@ -115,11 +115,13 @@ const getPnpmDockerAppCopyAndBuildScript = (
     ? "/app/.pnpm-store"
     : "/app/$APP_DIR/.pnpm-store";
   // in a workspace, only install the component (and its workspace
-  // dependencies) — the pnpm equivalent of `yarn workspaces focus`
+  // dependencies) — the pnpm equivalent of `yarn workspaces focus`.
+  // npm package names are shell-safe unquoted (the whole script is
+  // embedded in a double-quoted bash export, so inner quotes would nest)
   const filter =
     packageManagerInfo.componentIsInWorkspace &&
     packageManagerInfo.currentWorkspace
-      ? ` --filter "${packageManagerInfo.currentWorkspace.name}..."`
+      ? ` --filter ${packageManagerInfo.currentWorkspace.name}...`
       : "";
   return new BashExpression(
     `
