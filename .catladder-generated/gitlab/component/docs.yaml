@@ -8,8 +8,8 @@
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
-    KUBERNETES_MEMORY_REQUEST: 200Mi
-    KUBERNETES_MEMORY_LIMIT: 400Mi
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
     PAGES_PREFIX: ''
   script:
     - collapseable_section_start "injectvars" "Injecting variables"
@@ -65,8 +65,8 @@
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
-    KUBERNETES_MEMORY_REQUEST: 200Mi
-    KUBERNETES_MEMORY_LIMIT: 400Mi
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
     PAGES_PREFIX: mr-$CI_MERGE_REQUEST_IID
   script:
     - collapseable_section_start "injectvars" "Injecting variables"

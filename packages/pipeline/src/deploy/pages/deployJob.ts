@@ -50,6 +50,10 @@ export const createPagesDeployJobs = async (
       runnerVariables: {
         // exposed so build scripts can adjust e.g. their base url
         PAGES_PREFIX: pathPrefix,
+        // a pages deploy runs a full site build — the generic deploy-job
+        // resources (200Mi/400Mi) OOM on any real yarn install + build
+        KUBERNETES_MEMORY_REQUEST: "1Gi",
+        KUBERNETES_MEMORY_LIMIT: "4Gi",
       },
     },
   });
