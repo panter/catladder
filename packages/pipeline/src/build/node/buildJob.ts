@@ -103,7 +103,12 @@ export const createNodeDockerJobDefinition = async (
       DOCKER_COPY_AND_INSTALL_APP: dockerAppCopyAndBuildScript,
       DOCKER_COPY_WORKSPACE_FILES: isPnpm
         ? [
-            `ADD --chown=node:node ${WORKSPACE_FILES_TAR} /app/`,
+            `ADD ${WORKSPACE_FILES_TAR} /app/`,
+            // ADD does not apply --chown to extracted tars, and parent
+            // dirs of the entries come out root-owned — fix ownership
+            // while the stage still runs as root (store not copied yet,
+            // so this only touches the small manifest tree)
+            `RUN chown -R node:node /app`,
             ...(copyPnpmStore
               ? [`COPY --chown=node:node .pnpm-store /app/.pnpm-store`]
               : []),

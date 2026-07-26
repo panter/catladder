@@ -155,16 +155,16 @@ exports[`matches snapshot for pnpm-cloud-run github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -370,7 +370,7 @@ exports[`matches snapshot for pnpm-cloud-run github workflows YAML 1`] = `
         - job-image-docker-build
         - www-app-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -379,7 +379,7 @@ exports[`matches snapshot for pnpm-cloud-run github workflows YAML 1`] = `
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -575,16 +575,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -790,7 +790,7 @@ catladder-review.yml:
         - job-image-docker-build
         - www-app-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -799,7 +799,7 @@ catladder-review.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -991,16 +991,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -1112,7 +1112,7 @@ catladder-release.yml:
         - job-image-docker-build
         - www-app-stage
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1121,7 +1121,7 @@ catladder-release.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1309,16 +1309,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -1581,16 +1581,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
             collapseable_section_end "docker-push"
           shell: bash
     job-image-semantic-release:
@@ -1828,7 +1828,7 @@ catladder-manual.yml:
         - job-image-docker-build
         - www-app-prod
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1837,7 +1837,7 @@ catladder-manual.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2179,7 +2179,8 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+RUN chown -R node:node /app"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -2547,7 +2548,8 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+RUN chown -R node:node /app"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -2787,7 +2789,8 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+RUN chown -R node:node /app"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -3024,7 +3027,8 @@ export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm
 COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
-export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+RUN chown -R node:node /app"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -3406,16 +3410,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
+    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -3523,9 +3527,12 @@ create release:
       policy: pull
       paths:
         - www/.pnpm-store
-    - key: pnpm-www-node-modules
+    - key: &a5
+        prefix: pnpm-www-node-modules
+        files:
+          - www/pnpm-lock.yaml
       policy: pull
-      paths: &a5
+      paths: &a6
         - www/node_modules
   rules:
     - when: never
@@ -3568,9 +3575,9 @@ create release:
       policy: pull
       paths:
         - www/.pnpm-store
-    - key: pnpm-www-node-modules
+    - key: *a5
       policy: pull
-      paths: *a5
+      paths: *a6
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -3644,7 +3651,10 @@ create release:
       policy: pull-push
       paths:
         - www/.pnpm-store
-    - key: pnpm-www-node-modules
+    - key:
+        prefix: pnpm-www-node-modules
+        files:
+          - www/pnpm-lock.yaml
       policy: pull-push
       paths:
         - www/node_modules
@@ -3675,7 +3685,7 @@ create release:
   interruptible: true
 'www 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
   services:
     - name: docker:29.5.1-dind
       command:
@@ -3702,7 +3712,9 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+      RUN chown -R node:node /app"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -3927,12 +3939,13 @@ create release:
         - www/.pnpm-store
       fallback_keys:
         - www-pnpm
-    - key: pnpm-www-node-modules-mr$CI_MERGE_REQUEST_IID
+    - key: &a7
+        prefix: pnpm-www-node-modules
+        files:
+          - www/pnpm-lock.yaml
       policy: pull
-      paths: &a6
+      paths: &a8
         - www/node_modules
-      fallback_keys:
-        - pnpm-www-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -3976,11 +3989,9 @@ create release:
         - www/.pnpm-store
       fallback_keys:
         - www-pnpm
-    - key: pnpm-www-node-modules-mr$CI_MERGE_REQUEST_IID
+    - key: *a7
       policy: pull
-      paths: *a6
-      fallback_keys:
-        - pnpm-www-node-modules
+      paths: *a8
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4056,12 +4067,13 @@ create release:
         - www/.pnpm-store
       fallback_keys:
         - www-pnpm
-    - key: pnpm-www-node-modules-mr$CI_MERGE_REQUEST_IID
+    - key:
+        prefix: pnpm-www-node-modules
+        files:
+          - www/pnpm-lock.yaml
       policy: pull-push
       paths:
         - www/node_modules
-      fallback_keys:
-        - pnpm-www-node-modules
     - key: www-default-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
@@ -4091,7 +4103,7 @@ create release:
   interruptible: true
 'www 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
   services:
     - name: docker:29.5.1-dind
       command:
@@ -4118,7 +4130,9 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+      RUN chown -R node:node /app"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -4357,7 +4371,10 @@ create release:
       policy: pull-push
       paths:
         - www/.pnpm-store
-    - key: pnpm-www-node-modules
+    - key:
+        prefix: pnpm-www-node-modules
+        files:
+          - www/pnpm-lock.yaml
       policy: pull-push
       paths:
         - www/node_modules
@@ -4388,7 +4405,7 @@ create release:
   interruptible: true
 'www 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
   services:
     - name: docker:29.5.1-dind
       command:
@@ -4415,7 +4432,9 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+      RUN chown -R node:node /app"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
@@ -4639,7 +4658,10 @@ create release:
       policy: pull-push
       paths:
         - www/.pnpm-store
-    - key: pnpm-www-node-modules
+    - key:
+        prefix: pnpm-www-node-modules
+        files:
+          - www/pnpm-lock.yaml
       policy: pull-push
       paths:
         - www/node_modules
@@ -4670,7 +4692,7 @@ create release:
   interruptible: true
 'www 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
   services:
     - name: docker:29.5.1-dind
       command:
@@ -4697,7 +4719,9 @@ create release:
       COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
-    - export DOCKER_COPY_WORKSPACE_FILES="ADD --chown=node:node .catladder-workspace-files.tar /app/"
+    - |-
+      export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
+      RUN chown -R node:node /app"
     - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - tar -cf .catladder-workspace-files.tar www/package.json www/pnpm-lock.yaml
