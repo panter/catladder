@@ -93,4 +93,4 @@ vars: {
 ## See also
 
 - [Being "Cloud Ready"](./CLOUD_READY.md) — general principles for cloud-native apps (note: n8n intentionally deviates from some of these since it is stateful)
-- [Cloud Run deploy type documentation](../deploy-types/google-cloud-run)
+- [Cloud Run deploy type documentation](../deploy/google_cloud_run)
