@@ -50,6 +50,8 @@ export interface GitlabJobDef
   > {
   stage: JobTemplate["stage"];
   rules?: GitlabRule[];
+  // not in the generated JobTemplate (older gitlab schema)
+  pages?: boolean | { path_prefix?: string };
   cache?: GitlabJobCache | GitlabJobCache[];
   artifacts?: Artifacts;
   tags?: string[];

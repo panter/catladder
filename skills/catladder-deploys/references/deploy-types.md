@@ -56,6 +56,16 @@ resources with `yarn catladder project setup`; detect drift with
 - Version/dist-tag derivation: tagged release (`prod`) → tag version under `latest`; branch/MR → `0.0.0-<branch-slug>-<sha>` under `canary` (branches `next`/`beta` publish under their own dist-tag).
 - Requires the `NPM_TOKEN` secret (managed like any catladder secret). Disable staging on the component (`env: { stage: false }`) so tagged releases publish directly.
 
+## `pages`
+
+- `type: "pages"` — **required**. Publishes a static site on gitlab pages (not yet supported on the github backend).
+- `script: string[]` — **required**; produces the site.
+- `publishDir?: string` — output directory relative to the repo root, default `"public"`.
+- `requiresYarnInstall?: boolean` — run `yarn install` first.
+- `jobImage?: GitlabJobImage`; also accepts `cache`.
+- Review envs publish under an `mr-<iid>` path prefix (parallel deployments → MR previews; exposed as `$PAGES_PREFIX`); other envs publish at the root. The environment url is the published pages url.
+- Defaults to `allowFailure: true`.
+
 ## `dockerTag`
 
 - `type: "dockerTag"`, `tag: string` — **required**. Adds a custom tag on the image repo to deploy it. Only used in one project historically; not generally recommended (runtime env vars must be coordinated manually).

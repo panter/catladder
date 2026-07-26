@@ -32,6 +32,12 @@ export type DeployConfigBase = {
    *
    */
   runnerVariables?: Record<string, string>;
+
+  /**
+   * whether the pipeline may continue when this deploy fails
+   * (gitlab allow_failure)
+   */
+  allowFailure?: boolean;
 };
 
 export type AllowUnknownProps<T extends Record<string, unknown>> = T &

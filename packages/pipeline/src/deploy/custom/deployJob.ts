@@ -25,6 +25,9 @@ export const createCustomDeployJobs = async (
     deploy: {
       image: deployConfig.jobImage ?? getRunnerImage("jobs-default"),
       cache: getAllCacheConfigsFromConfig(context, deployConfig),
+      artifacts: deployConfig.artifactsPaths
+        ? { paths: deployConfig.artifactsPaths }
+        : undefined,
       script: [
         `cd ${context.build.dir}`,
         ...(deployConfig.requiresYarnInstall ? yarnInstall : []),

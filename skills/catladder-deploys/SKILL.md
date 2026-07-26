@@ -1,6 +1,6 @@
 ---
 name: catladder-deploys
-description: Configuring how a component is deployed in a catladder project — the `deploy` config in catladder.ts (deploy types kubernetes / google-cloudrun / npmPackage / dockerTag / custom, manual vs auto deploy, resources, autoscaling, health checks, CloudSQL/MongoDB, Cloud Run services/jobs/worker pools, cron jobs). Use when adding or changing a component's deploy, choosing a deploy target, setting resources/replicas/autoscaling, wiring a database, adding cron/scheduled jobs, publishing a component as an npm package, or making a deploy manual. Triggers on "deploy config", "deploy type", "kubernetes", "cloud run", "cloudrun", "autoscale", "resources", "replicas", "cloudsql", "mongodb", "cronjob", "manual deploy", "npm package", "npm publish", "publish to npm".
+description: Configuring how a component is deployed in a catladder project — the `deploy` config in catladder.ts (deploy types kubernetes / google-cloudrun / npmPackage / pages / dockerTag / custom, manual vs auto deploy, resources, autoscaling, health checks, CloudSQL/MongoDB, Cloud Run services/jobs/worker pools, cron jobs). Use when adding or changing a component's deploy, choosing a deploy target, setting resources/replicas/autoscaling, wiring a database, adding cron/scheduled jobs, publishing a component as an npm package, publishing a site on gitlab pages, or making a deploy manual. Triggers on "deploy config", "deploy type", "kubernetes", "cloud run", "cloudrun", "autoscale", "resources", "replicas", "cloudsql", "mongodb", "cronjob", "manual deploy", "npm package", "npm publish", "publish to npm", "gitlab pages", "static site", "docs site", "site preview".
 ---
 
 # Component deploys with catladder
@@ -18,7 +18,7 @@ components: {
     dir: "backend",
     build: { /* see catladder-builds */ },
     deploy: {
-      type: "kubernetes",         // kubernetes | google-cloudrun | npmPackage | dockerTag | custom
+      type: "kubernetes",         // kubernetes | google-cloudrun | npmPackage | pages | dockerTag | custom
       cluster: { type: "gcloud", name: "…", projectId: "…", region: "…" },
       values: { application: { replicas: 2 } },
     },
@@ -33,6 +33,7 @@ components: {
 | `kubernetes` | a GKE cluster via Helm | `cluster` |
 | `google-cloudrun` | Google Cloud Run | `projectId`, `region` |
 | `npmPackage` | publishes the component to an npm registry | nothing — see below |
+| `pages` | publishes a static site on gitlab pages | `script` — see below |
 | `dockerTag` | tags an image (no runtime) | `tag` — rarely used, not generally recommended |
 | `custom` | your own script | `requiresDocker`, `script` |
 
@@ -102,6 +103,34 @@ Authentication uses the `NPM_TOKEN` secret (set it like any other
 catladder secret, see `catladder-secrets`). Disable the stage
 environment as shown — a tagged release then publishes `latest`
 directly from the auto-deploying prod env.
+
+## GitLab pages sites
+
+`type: "pages"` publishes a static site (docs, storybook, coverage
+report) on gitlab pages: the deploy job runs your build `script` and
+publishes `publishDir` (default `"public"`). Review environments
+automatically publish under an `mr-<iid>` path prefix — every merge
+request gets its own site preview (the prefix is exposed to the build
+as `$PAGES_PREFIX`). The gitlab environment url points at the
+published site. GitLab-only for now.
+
+```ts
+docs: {
+  dir: "docs",
+  env: { stage: false, prod: false },  // pages exist on main + MRs
+  build: false,
+  deploy: {
+    type: "pages",
+    requiresYarnInstall: true,
+    script: ["yarn workspace docs build"],
+  },
+},
+```
+
+Pages deploys default to `allowFailure: true` (a broken site publish
+should not block the pipeline). `allowFailure` is also available on
+every other deploy type, and custom deploys can now declare
+`artifactsPaths` for output they produce.
 
 ## Full option reference
 

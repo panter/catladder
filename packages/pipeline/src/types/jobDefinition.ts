@@ -19,6 +19,8 @@ export type DeployJobDefinition = Pick<
   | "artifacts"
   | "services"
   | "runnerVariables"
+  | "allow_failure"
+  | "pages"
 > & {
   cache?: CacheConfig[];
 };

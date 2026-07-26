@@ -225,6 +225,13 @@ export type GitlabJobFields = {
    */
   allow_failure?: boolean;
 
+  /**
+   * gitlab pages publishing for this job (lowered only by the gitlab
+   * backend); `path_prefix` enables parallel deployments (e.g. MR
+   * previews)
+   */
+  pages?: boolean | { path_prefix?: string };
+
   /** */
 
   when?: GitlabRule["when"];

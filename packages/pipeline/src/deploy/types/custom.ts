@@ -28,5 +28,10 @@ export type DeployConfigCustom = {
    * image to use
    */
   jobImage?: GitlabJobImage;
+
+  /**
+   * job artifact paths the deploy produces (relative to the repo root)
+   */
+  artifactsPaths?: string[];
 } & DeployConfigBase &
   WithCacheConfig;

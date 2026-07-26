@@ -9,6 +9,7 @@ import { CUSTOM_DEPLOY_TYPE } from "./custom";
 import { DOCKER_TAG_DEPLOY_TYPE } from "./dockerTag";
 import { KUBERNETES_DEPLOY_TYPE } from "./kubernetes";
 import { NPM_PACKAGE_DEPLOY_TYPE } from "./npmPackage";
+import { PAGES_DEPLOY_TYPE } from "./pages";
 import type {
   DeployConfig,
   DeployConfigGeneric,
@@ -17,6 +18,7 @@ import type {
 export * from "./cloudRun";
 export * from "./kubernetes";
 export * from "./npmPackage";
+export * from "./pages";
 export * from "./types";
 export * from "./utils";
 
@@ -45,4 +47,5 @@ export const DEPLOY_TYPES: DeployTypes = {
   dockerTag: DOCKER_TAG_DEPLOY_TYPE,
   "google-cloudrun": GCLOUD_RUN_DEPLOY_TYPE,
   npmPackage: NPM_PACKAGE_DEPLOY_TYPE,
+  pages: PAGES_DEPLOY_TYPE,
 };

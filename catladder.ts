@@ -63,37 +63,13 @@ const config: Config = {
       },
       build: false,
       deploy: {
-        type: "custom",
-        requiresDocker: false,
+        type: "pages",
         requiresYarnInstall: true,
         script: [
           "yarn workspace docs gen-examples-md",
           "yarn workspace docs build",
         ],
       },
-    },
-  },
-  hooks: {
-    transformYamlBeforeWrite: async ({ path, data }) => {
-      // gitlab pages needs the `pages` keyword + the public/ artifact on
-      // the deploy job — catladder has no first-class pages deploy yet
-      if (path.endsWith("gitlab/component/docs.yaml")) {
-        const jobs = data as Record<string, any>;
-        for (const [name, job] of Object.entries(jobs)) {
-          if (!name.includes("docs 🚀 Deploy")) continue;
-          job.pages = { path_prefix: "$PAGES_PREFIX" };
-          job.artifacts = { ...(job.artifacts ?? {}), paths: ["public"] };
-          job.allow_failure = true;
-          job.variables = {
-            ...(job.variables ?? {}),
-            // MR previews publish under mr-<iid>, main under the root
-            PAGES_PREFIX: name.includes("| review")
-              ? "mr-$CI_MERGE_REQUEST_IID"
-              : "",
-          };
-        }
-        return jobs;
-      }
     },
   },
 };

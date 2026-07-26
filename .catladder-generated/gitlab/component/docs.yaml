@@ -35,15 +35,16 @@
     - collapseable_section_end "yarninstall"
     - yarn workspace docs gen-examples-md
     - yarn workspace docs build
+    - export ROOT_URL="$CI_PAGES_URL"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: dev/docs
     url: $CL_GITLAB_ENVIRONMENT_URL
   artifacts:
-    reports:
-      dotenv: gitlab_environment.env
     paths:
       - public
+    reports:
+      dotenv: gitlab_environment.env
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -58,7 +59,7 @@
   interruptible: true
   allow_failure: true
   pages:
-    path_prefix: $PAGES_PREFIX
+    path_prefix: ''
 '🔹 docs 🚀 Deploy | review ':
   stage: deploy review
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
@@ -91,15 +92,16 @@
     - collapseable_section_end "yarninstall"
     - yarn workspace docs gen-examples-md
     - yarn workspace docs build
+    - export ROOT_URL="$CI_PAGES_URL/mr-$CI_MERGE_REQUEST_IID"
     - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
   environment:
     name: review/$CI_COMMIT_REF_NAME/docs
     url: $CL_GITLAB_ENVIRONMENT_URL
   artifacts:
-    reports:
-      dotenv: gitlab_environment.env
     paths:
       - public
+    reports:
+      dotenv: gitlab_environment.env
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -113,4 +115,4 @@
   interruptible: true
   allow_failure: true
   pages:
-    path_prefix: $PAGES_PREFIX
+    path_prefix: mr-$CI_MERGE_REQUEST_IID
