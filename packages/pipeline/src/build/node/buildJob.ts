@@ -107,8 +107,10 @@ export const createNodeDockerJobDefinition = async (
             // ADD does not apply --chown to extracted tars, and parent
             // dirs of the entries come out root-owned — fix ownership
             // while the stage still runs as root (store not copied yet,
-            // so this only touches the small manifest tree)
-            `RUN chown -R node:node /app`,
+            // so this only touches the small manifest tree). Custom
+            // base images without a node user run as root and don't
+            // need it, hence the fallback
+            `RUN chown -R node:node /app || true`,
             ...(copyPnpmStore
               ? [`COPY --chown=node:node .pnpm-store /app/.pnpm-store`]
               : []),
