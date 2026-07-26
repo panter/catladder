@@ -2594,6 +2594,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
 COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
@@ -2751,6 +2752,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
 COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
@@ -3122,6 +3124,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
 COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
@@ -3282,6 +3285,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
 COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
@@ -3605,6 +3609,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
 COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
@@ -3762,6 +3767,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
 COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
@@ -3919,6 +3925,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
 COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
@@ -4079,6 +4086,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
 RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
 COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
@@ -5182,6 +5190,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
@@ -5378,6 +5387,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
@@ -5582,6 +5592,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
@@ -5771,6 +5782,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
@@ -5960,6 +5972,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
@@ -6159,6 +6172,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
@@ -6366,6 +6380,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
@@ -6558,6 +6573,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
+      RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
       RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json

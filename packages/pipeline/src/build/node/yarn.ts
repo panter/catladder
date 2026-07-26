@@ -127,6 +127,7 @@ const getPnpmDockerAppCopyAndBuildScript = (
     `
 ENV npm_config_store_dir=${storeDir}
 ${DOCKER_COPY_FILES}
+RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@${packageManagerInfo.version}
 RUN pnpm install --prod --frozen-lockfile${filter}
     `.trim(),
   );
