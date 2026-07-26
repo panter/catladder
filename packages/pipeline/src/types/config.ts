@@ -2,7 +2,7 @@ import type { BuildConfig } from "../build/types";
 import type { DeployConfig } from "../deploy/types";
 
 import type { CatladderJobSpec } from "./jobs";
-import type { ComponentContext } from "./context";
+import type { ComponentContext, PackageManagerType } from "./context";
 import type { PartialDeep } from "./utils";
 import type { PipelineType, WorkspaceBuildConfig } from "..";
 import type { AgentConfig } from "./agent";
@@ -307,6 +307,14 @@ export type Config<C extends ConfigProps = never> = {
    * how secrets are stored and shared (see {@link SecretsConfig})
    */
   secrets?: SecretsConfig;
+
+  /**
+   * which package manager the project uses. Usually not needed:
+   * catladder autodetects it from the `packageManager` field in
+   * package.json or the lockfile present (pnpm-lock.yaml / yarn.lock),
+   * falling back to yarn. Set it to override the detection.
+   */
+  packageManager?: PackageManagerType;
 
   /**
    * materialize the agent skills shipped with catladder (usage guides

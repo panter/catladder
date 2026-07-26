@@ -9,6 +9,10 @@ RUN rm /bin/sh && \
 # set high timeout for yarn, see https://github.com/dhis2/notes/issues/29
 RUN yarn config set network-timeout 600000 -g
 
+# pnpm for projects using it (pnpm self-switches to the version pinned
+# in the project's packageManager field)
+RUN npm install -g pnpm
+
 # install nvm && some common node versions
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && \
     source /root/.nvm/nvm.sh && \

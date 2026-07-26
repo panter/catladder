@@ -3,8 +3,9 @@
 <!-- rendered from the command definitions by
      apps/cli/src/scripts/generateCliSkillReference.ts — do not edit -->
 
-All commands run non-interactively as `yarn catladder <command> ...`;
-see SKILL.md for how to pass inputs.
+All commands run non-interactively as `yarn catladder <command> ...`
+(`pnpm catladder ...` in pnpm projects); see SKILL.md for how to
+pass inputs.
 
 ## `catladder cloudsql restore-db`
 

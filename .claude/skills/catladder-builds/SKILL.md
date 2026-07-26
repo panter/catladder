@@ -30,11 +30,18 @@ components: {
 Set `build: false` to disable building for a component (e.g. a
 deploy-only or docker-tag component).
 
+Node-family builds work with **yarn or pnpm**: catladder autodetects the
+package manager (from the `packageManager` field in package.json or the
+lockfile) and generates the matching install commands, caches and
+default build/lint/test commands. Override with `packageManager:
+"pnpm" | "yarn"` at the top level of `catladder.ts` if needed. The
+`meteor` build type is yarn-only.
+
 ## Build types
 
 | Type | Use for | Notes |
 |---|---|---|
-| `node` | Node/JS apps (Next.js, Vite, plain node) | default `yarn build` + `yarn start`; `docker` selects the runtime image |
+| `node` | Node/JS apps (Next.js, Vite, plain node) | default `<pm> build` + `<pm> start` (yarn or pnpm, autodetected); `docker` selects the runtime image |
 | `rails` | Ruby on Rails apps | Cloud Native Buildpacks when there is no `Dockerfile`; Postgres test DB |
 | `meteor` | Meteor apps | starts `node main.js` |
 | `custom` | anything else | you provide the `jobImage` and `docker` config (both required) |
@@ -48,8 +55,9 @@ type: `build: { from: "web" }` (see workspace builds below).
 - `buildCommand` — the build step (`string | string[] | null | false`;
   `false`/`null` skips building).
 - `startCommand` — how the app is started at runtime.
-- `postInstall` — commands run after `yarn install` (node family; needed
-  e.g. for Yarn PnP where `package.json` postinstall won't run).
+- `postInstall` — commands run after the package-manager install (node
+  family; needed e.g. for Yarn PnP where `package.json` postinstall
+  won't run).
 - `lint` / `test` / `audit` — customize (`{ command, jobImage, … }`) or
   set to `false` to disable that job.
 - `artifactsPaths` / `artifactsExcludePaths` — extra build artifacts

@@ -23,7 +23,9 @@ There are currently those standalone build-types:
 
 ### node
 
-The node build type is meant for node apps that manage dependencies and scripts with `yarn` (yarn berry is supported too).
+The node build type is meant for node apps that manage dependencies and scripts with `yarn` (classic and berry) or `pnpm`.
+
+The package manager is autodetected: the `packageManager` field in package.json wins, then the lockfile present (`pnpm-lock.yaml` → pnpm, `yarn.lock` → yarn). You can override the detection with `packageManager: "pnpm" | "yarn"` at the top level of `catladder.ts`. All generated install commands, caches and default commands follow the detected package manager (the examples below use `yarn`; in a pnpm project they become `pnpm ...`).
 
 It supports any node-version by checking for a `.nvmrc` file in the root of the repository or in the component directory.
 
@@ -55,7 +57,7 @@ If no `Dockerfile` is present it will build a container with the [Heroku Cloud N
 
 ### meteor
 
-For (legacy) meteor apps.
+For (legacy) meteor apps. Yarn-only — a pnpm project cannot use this build type.
 
 ### Custom (experimental)
 

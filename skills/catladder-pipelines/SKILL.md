@@ -39,7 +39,9 @@ edit.
 ## Caching
 
 Cache configuration is generated per build type; node builds cache
-`node_modules` and the yarn cache. GitLab uses mutable caches with
+`node_modules` and the package manager's download cache (the `.yarn`
+zip cache, or for pnpm projects a project-local `.pnpm-store`). GitLab
+uses mutable caches with
 fallback keys (review branches fall back to the dev cache); GitHub uses
 immutable lockfile-keyed caches where only the build job writes.
 Caching behavior is changed via the build config in `catladder.ts`,

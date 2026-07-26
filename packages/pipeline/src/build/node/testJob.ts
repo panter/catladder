@@ -65,9 +65,11 @@ export const createNodeTestJobs = async (
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
-              packageManagerInfo.isClassic
-                ? "yarn audit --level critical"
-                : "yarn npm audit --environment production --severity critical", // yarn 2
+              packageManagerInfo.type === "pnpm"
+                ? "pnpm audit --prod --audit-level critical"
+                : packageManagerInfo.isClassic
+                  ? "yarn audit --level critical"
+                  : "yarn npm audit --environment production --severity critical", // yarn 2
             ]),
           ],
           allow_failure: buildConfig.audit?.allowFailure ?? true,

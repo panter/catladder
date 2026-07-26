@@ -70,18 +70,41 @@ export const createNodeDockerJobDefinition = async (
       context.packageManagerInfo,
     ]);
 
+  // the pnpm store (pulled via the cache above) is copied into the
+  // image so the prod install works offline — like the yarn zip cache,
+  // which travels inside the copied `.yarn` config folder
+  const copyPnpmStore =
+    packageManagerInfo.type === "pnpm" &&
+    packageManagerInfo.componentIsInWorkspace;
+
   return {
-    script: getDockerBuildScriptWithBuiltInDockerFile(
-      context,
-      dockerDefaultBuiltIn,
-    ),
+    script: [
+      // the COPY source must exist even when the cache was cold
+      ...(copyPnpmStore ? ["mkdir -p .pnpm-store"] : []),
+      ...getDockerBuildScriptWithBuiltInDockerFile(
+        context,
+        dockerDefaultBuiltIn,
+      ),
+    ],
     cache: [...yarnCache],
     variables: {
       // only required for non static
       DOCKER_COPY_AND_INSTALL_APP: dockerAppCopyAndBuildScript,
-      DOCKER_COPY_WORKSPACE_FILES: packageManagerInfo?.pathsToCopyInDocker
-        .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)
-        ?.join("\n"),
+      DOCKER_COPY_WORKSPACE_FILES: [
+        ...packageManagerInfo.pathsToCopyInDocker.map(
+          (dir) => `COPY --chown=node:node ${dir} /app/${dir}`,
+        ),
+        ...(copyPnpmStore
+          ? [`COPY --chown=node:node .pnpm-store /app/.pnpm-store`]
+          : []),
+      ].join("\n"),
+      // pnpm is not preinstalled in the node base images; installed as
+      // root before the image switches to the node user
+      ...(packageManagerInfo.type === "pnpm"
+        ? {
+            DOCKER_SETUP_PACKAGE_MANAGER: `RUN npm install -g pnpm@${packageManagerInfo.version}`,
+          }
+        : {}),
     },
   };
 };

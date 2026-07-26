@@ -169,16 +169,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -349,7 +349,7 @@ create release:
   interruptible: true
 'app 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -734,7 +734,7 @@ create release:
   interruptible: true
 'app 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -1054,7 +1054,7 @@ create release:
   allow_failure: true
 'app 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -1361,7 +1361,7 @@ create release:
   allow_failure: true
 'app 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:

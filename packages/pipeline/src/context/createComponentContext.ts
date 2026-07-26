@@ -37,6 +37,7 @@ export const createComponentContext = async (
     ctx.config,
     ctx.componentName,
   );
+  const { type: packageManagerType } = await packageManagerInfoPromise;
 
   const envContext = getEnvironmentContext(ctx);
 
@@ -58,7 +59,10 @@ export const createComponentContext = async (
     ? {
         build:
           resolvedBuildType &&
-          BUILD_TYPES[resolvedBuildType].defaults(envContext),
+          BUILD_TYPES[resolvedBuildType].defaults(
+            envContext,
+            packageManagerType,
+          ),
         deploy: DEPLOY_TYPES[
           componentConfigWithoutDefaults.deploy.type as DeployConfigType
         ].defaults(envContext as any),
@@ -66,7 +70,10 @@ export const createComponentContext = async (
     : {
         build:
           resolvedBuildType &&
-          BUILD_TYPES[resolvedBuildType].defaults(envContext),
+          BUILD_TYPES[resolvedBuildType].defaults(
+            envContext,
+            packageManagerType,
+          ),
         deploy: {},
       };
 

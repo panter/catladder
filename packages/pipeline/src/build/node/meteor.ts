@@ -30,6 +30,11 @@ const getMeteorDockerInstallScripts = async (
   context: ComponentContextWithBuild,
 ): Promise<BashExpression> => {
   const packageManagerInfo = await context.packageManagerInfo;
+  if (packageManagerInfo.type === "pnpm") {
+    throw new Error(
+      "the meteor build type only supports yarn (meteor's bundler is yarn-based)",
+    );
+  }
   if (packageManagerInfo.isClassic) {
     return new BashExpression(
       `

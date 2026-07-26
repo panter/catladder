@@ -6,20 +6,28 @@ import type {
   PackageManagerInfoBase,
   PackageManagerInfoComponent,
 } from "../types";
-import {
-  getWorkspaces,
-  getYarnVersion,
-  getWorkspaceDependencies,
-} from "./yarn/yarnUtils";
+import { detectPackageManager } from "./detectPackageManager";
+import { getPnpmWorkspaces } from "./pnpm/pnpmUtils";
+import { getWorkspaces, getWorkspaceDependencies } from "./yarn/yarnUtils";
 import memoizee from "memoizee";
+
+const PACKAGE_MANAGER_FILES = {
+  yarn: {
+    lockFile: "yarn.lock",
+    configFiles: [".yarnrc", ".yarnrc.yml", ".npmrc", ".yarn"], // ".yarn" is yarn 2 folder
+  },
+  pnpm: {
+    lockFile: "pnpm-lock.yaml",
+    configFiles: ["pnpm-workspace.yaml", ".npmrc", ".pnpmfile.cjs"],
+  },
+} as const;
 
 export const getPackageManagerInfoForComponent = async (
   config: Config,
   componentName: string,
 ): Promise<PackageManagerInfoComponent> => {
-  const baseInfo = await getPackageManagerInfoBase();
+  const baseInfo = await getPackageManagerInfoBase(config);
   const { workspaces } = baseInfo;
-  // currently only supports yarn
 
   const component = config.components[componentName];
   const currentWorkspace = workspaces.find((w) =>
@@ -32,10 +40,11 @@ export const getPackageManagerInfoForComponent = async (
     ? join(workspaceRoot, "package.json")
     : null;
 
+  const { lockFile: lockFileName, configFiles } =
+    PACKAGE_MANAGER_FILES[baseInfo.type];
   const lockFile = componentIsInWorkspace
-    ? join(workspaceRoot, "yarn.lock")
-    : join(component.dir, "yarn.lock");
-  const configFiles = [".yarnrc", ".yarnrc.yml", ".npmrc", ".yarn"]; // ".yarn" is yarn 2 folder
+    ? join(workspaceRoot, lockFileName)
+    : join(component.dir, lockFileName);
   // copy all those configFiles from workspace root and/or component folder
 
   const configFilePaths = [
@@ -49,12 +58,23 @@ export const getPackageManagerInfoForComponent = async (
     ? getWorkspaceDependencies(currentWorkspace, workspaces)
     : [];
 
+  // pnpm's --frozen-lockfile check requires every importer of the
+  // lockfile to exist on disk, so all workspace manifests (not just the
+  // dependency workspaces, which are copied entirely) go into the image
+  const allWorkspaceManifests =
+    baseInfo.type === "pnpm" && componentIsInWorkspace
+      ? workspaces
+          .map((w) => join(w.location, "package.json"))
+          .filter((f) => existsSync(f))
+      : [];
+
   const pathsToCopyInDocker = [
     ...new Set([
       packageJson,
       ...(workspacePackageJson ? [workspacePackageJson] : []),
       lockFile,
       ...configFilePaths,
+      ...allWorkspaceManifests,
       ...currentWorkspaceDependencies,
     ]),
   ];
@@ -67,24 +87,33 @@ export const getPackageManagerInfoForComponent = async (
   };
 };
 
-const _getPackageManagerInfoBase =
-  async (): Promise<PackageManagerInfoBase> => {
-    // currently only supports yarn
+const _getPackageManagerInfoBase = async (
+  config?: Config,
+): Promise<PackageManagerInfoBase> => {
+  const { type, version } = await detectPackageManager(config?.packageManager);
+  if (!version) throw new Error(`could not get ${type} version`);
 
-    const version = await getYarnVersion();
-    if (!version) throw new Error("could not get yarn version");
-    const isClassic = version.startsWith("1");
-
-    const workspaces = await getWorkspaces(isClassic);
-
+  if (type === "pnpm") {
     return {
-      type: "yarn",
-      workspaces,
+      type: "pnpm",
+      workspaces: await getPnpmWorkspaces(),
       version,
-      isClassic,
     };
+  }
+
+  const isClassic = version.startsWith("1");
+  const workspaces = await getWorkspaces(isClassic);
+
+  return {
+    type: "yarn",
+    workspaces,
+    version,
+    isClassic,
   };
+};
 
 export const getPackageManagerInfoBase = memoizee(_getPackageManagerInfoBase, {
   promise: true,
+  // memoize per explicit packageManager choice, not per config identity
+  normalizer: ([config]) => config?.packageManager ?? "",
 });

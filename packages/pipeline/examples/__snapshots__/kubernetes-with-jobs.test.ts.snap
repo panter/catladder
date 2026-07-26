@@ -55,16 +55,16 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-testing-chrome:
@@ -105,16 +105,16 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -155,16 +155,16 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -273,12 +273,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -292,12 +292,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -327,12 +327,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-testing-chrome
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -362,12 +362,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -408,13 +408,13 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - api-app-dev
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -468,12 +468,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -487,12 +487,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -522,12 +522,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-testing-chrome
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -557,12 +557,12 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -603,13 +603,13 @@ exports[`matches snapshot for kubernetes-with-jobs github workflows YAML 1`] = `
         - job-image-docker-build
         - www-app-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -711,16 +711,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-testing-chrome:
@@ -761,16 +761,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -811,16 +811,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -929,12 +929,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -948,12 +948,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -983,12 +983,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-testing-chrome
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1018,12 +1018,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1064,13 +1064,13 @@ catladder-review.yml:
         - api-app-review
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1124,12 +1124,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1143,12 +1143,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1178,12 +1178,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-testing-chrome
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1213,12 +1213,12 @@ catladder-review.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1259,13 +1259,13 @@ catladder-review.yml:
         - job-image-docker-build
         - www-app-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1363,16 +1363,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-testing-chrome:
@@ -1413,16 +1413,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -1463,16 +1463,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -1581,12 +1581,12 @@ catladder-release.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1627,13 +1627,13 @@ catladder-release.yml:
         - api-app-stage
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1684,12 +1684,12 @@ catladder-release.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1730,13 +1730,13 @@ catladder-release.yml:
         - job-image-docker-build
         - www-app-stage
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1830,16 +1830,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-testing-chrome:
@@ -1880,16 +1880,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -1930,16 +1930,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -2260,16 +2260,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
     job-image-jobs-testing-chrome:
@@ -2310,16 +2310,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:c9799d0c3dc3
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
     job-image-docker-build:
@@ -2360,16 +2360,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -3103,12 +3103,12 @@ catladder-manual.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3150,13 +3150,13 @@ catladder-manual.yml:
         - api-app-prod
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3509,12 +3509,12 @@ catladder-manual.yml:
       needs:
         - job-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:a3d5deca022b
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3556,13 +3556,13 @@ catladder-manual.yml:
         - job-image-docker-build
         - www-app-prod
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:d97f1ac6c3c5
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:4233494718dc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -6440,16 +6440,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -6485,16 +6485,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
+    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -6533,16 +6533,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -6642,7 +6642,7 @@ create release:
   needs: []
 'api 🛡 audit | dev ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -6666,7 +6666,7 @@ create release:
   allow_failure: true
 'api 👮 lint | dev ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -6710,7 +6710,7 @@ create release:
   interruptible: true
 'api 🧪 test | dev ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -6752,7 +6752,7 @@ create release:
   interruptible: true
 'api 🔨 app | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -6820,7 +6820,7 @@ create release:
   interruptible: true
 'api 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -7123,7 +7123,7 @@ create release:
   allow_failure: true
 'api 🛡 audit | review ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -7147,7 +7147,7 @@ create release:
   allow_failure: true
 'api 👮 lint | review ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -7195,7 +7195,7 @@ create release:
   interruptible: true
 'api 🧪 test | review ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -7241,7 +7241,7 @@ create release:
   interruptible: true
 'api 🔨 app | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -7313,7 +7313,7 @@ create release:
   interruptible: true
 'api 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -7614,7 +7614,7 @@ create release:
   allow_failure: true
 'api 🔨 app | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -7682,7 +7682,7 @@ create release:
   interruptible: true
 'api 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -7978,7 +7978,7 @@ create release:
   allow_failure: true
 'api 🔨 app | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8046,7 +8046,7 @@ create release:
   interruptible: true
 'api 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -8342,7 +8342,7 @@ create release:
   allow_failure: true
 'www 🛡 audit | dev ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8366,7 +8366,7 @@ create release:
   allow_failure: true
 'www 👮 lint | dev ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8410,7 +8410,7 @@ create release:
   interruptible: true
 'www 🧪 test | dev ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8452,7 +8452,7 @@ create release:
   interruptible: true
 'www 🔨 app | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8537,7 +8537,7 @@ create release:
   interruptible: true
 'www 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -8830,7 +8830,7 @@ create release:
   allow_failure: true
 'www 🛡 audit | review ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8854,7 +8854,7 @@ create release:
   allow_failure: true
 'www 👮 lint | review ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8902,7 +8902,7 @@ create release:
   interruptible: true
 'www 🧪 test | review ':
   stage: test
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:c9799d0c3dc3
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-testing-chrome:6c33db75f445
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -8948,7 +8948,7 @@ create release:
   interruptible: true
 'www 🔨 app | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9037,7 +9037,7 @@ create release:
   interruptible: true
 'www 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -9333,7 +9333,7 @@ create release:
   allow_failure: true
 'www 🔨 app | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9418,7 +9418,7 @@ create release:
   interruptible: true
 'www 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:
@@ -9704,7 +9704,7 @@ create release:
   allow_failure: true
 'www 🔨 app | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
   variables:
     KUBERNETES_CPU_REQUEST: '0.45'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -9789,7 +9789,7 @@ create release:
   interruptible: true
 'www 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:d97f1ac6c3c5
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:4233494718dc
   services:
     - name: docker:29.5.1-dind
       command:

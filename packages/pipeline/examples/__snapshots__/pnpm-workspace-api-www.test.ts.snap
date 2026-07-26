@@ -1,6 +1,6 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAML 1`] = `
+exports[`matches snapshot for pnpm-workspace-api-www github workflows YAML 1`] = `
 "catladder-main.yml:
   name: catladder main
   on:
@@ -255,18 +255,16 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-dev.sh
@@ -290,18 +288,16 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-dev.sh
@@ -329,27 +325,22 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
           id: cache-node-modules
           uses: actions/cache@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
-            path: |-
-              .turbo
-              api/.component-custom-cache
-              www/.next/cache
+            path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh
@@ -385,12 +376,12 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
+        - name: Cache api-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
+            path: api/.pnpm-store
+            key: api-pnpm-\${{ hashFiles('api/pnpm-lock.yaml') }}
+            restore-keys: api-pnpm-
         - name: Download artifacts from ws-myworkspace-app-dev
           uses: actions/download-artifact@v4
           with:
@@ -442,12 +433,12 @@ exports[`matches snapshot for workspace-api-www-turbo-cache github workflows YAM
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
+        - name: Cache www-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
+            path: www/.pnpm-store
+            key: www-pnpm-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: www-pnpm-
         - name: Download artifacts from ws-myworkspace-app-dev
           uses: actions/download-artifact@v4
           with:
@@ -733,18 +724,16 @@ catladder-review.yml:
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-review.sh
@@ -768,18 +757,16 @@ catladder-review.yml:
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-review.sh
@@ -807,27 +794,22 @@ catladder-review.yml:
           id: cache-node-modules
           uses: actions/cache@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
-            path: |-
-              .turbo
-              api/.component-custom-cache
-              www/.next/cache
+            path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-review.sh
@@ -863,12 +845,12 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
+        - name: Cache api-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
+            path: api/.pnpm-store
+            key: api-pnpm-\${{ hashFiles('api/pnpm-lock.yaml') }}
+            restore-keys: api-pnpm-
         - name: Download artifacts from ws-myworkspace-app-review
           uses: actions/download-artifact@v4
           with:
@@ -920,12 +902,12 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
+        - name: Cache www-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
+            path: www/.pnpm-store
+            key: www-pnpm-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: www-pnpm-
         - name: Download artifacts from ws-myworkspace-app-review
           uses: actions/download-artifact@v4
           with:
@@ -1192,27 +1174,22 @@ catladder-release.yml:
           id: cache-node-modules
           uses: actions/cache@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
-            path: |-
-              .turbo
-              api/.component-custom-cache
-              www/.next/cache
+            path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-stage.sh
@@ -1248,12 +1225,12 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
+        - name: Cache api-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
+            path: api/.pnpm-store
+            key: api-pnpm-\${{ hashFiles('api/pnpm-lock.yaml') }}
+            restore-keys: api-pnpm-
         - name: Download artifacts from ws-myworkspace-app-stage
           uses: actions/download-artifact@v4
           with:
@@ -1302,12 +1279,12 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
+        - name: Cache www-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
+            path: www/.pnpm-store
+            key: www-pnpm-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: www-pnpm-
         - name: Download artifacts from ws-myworkspace-app-stage
           uses: actions/download-artifact@v4
           with:
@@ -2023,27 +2000,22 @@ catladder-manual.yml:
           id: cache-node-modules
           uses: actions/cache@v4
           with:
-            path: |-
-              node_modules
-              .yarn/install-state.gz
-            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            path: node_modules
+            key: .-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
             restore-keys: .-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
-            path: |-
-              .turbo
-              api/.component-custom-cache
-              www/.next/cache
+            path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-yarn
+        - name: Cache .-pnpm
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
-            path: .yarn
-            key: .-yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: .-yarn-
+            path: .pnpm-store
+            key: .-pnpm-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh
@@ -2130,12 +2102,12 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-yarn
+        - name: Cache api-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
+            path: api/.pnpm-store
+            key: api-pnpm-\${{ hashFiles('api/pnpm-lock.yaml') }}
+            restore-keys: api-pnpm-
         - name: Download artifacts from ws-myworkspace-app-prod
           uses: actions/download-artifact@v4
           with:
@@ -2286,12 +2258,12 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-yarn
+        - name: Cache www-pnpm
           uses: actions/cache/restore@v4
           with:
-            path: www/.yarn
-            key: www-yarn-\${{ hashFiles('www/yarn.lock') }}
-            restore-keys: www-yarn-
+            path: www/.pnpm-store
+            key: www-pnpm-\${{ hashFiles('www/pnpm-lock.yaml') }}
+            restore-keys: www-pnpm-
         - name: Download artifacts from ws-myworkspace-app-prod
           uses: actions/download-artifact@v4
           with:
@@ -2406,7 +2378,7 @@ collapseable_section_start "injectvars" "Injecting variables"
 export APP_PATH="."
 collapseable_section_end "injectvars"
 cd .
-yarn npm audit --environment production --severity critical
+pnpm audit --prod --audit-level critical
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-lint-dev.sh =====
 #!/usr/bin/env bash
@@ -2449,10 +2421,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn lint
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm lint
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-test-dev.sh =====
 #!/usr/bin/env bash
@@ -2495,10 +2469,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn test
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm test
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh =====
 #!/usr/bin/env bash
@@ -2573,10 +2549,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn build
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm build
 
 # ===== .catladder-generated/github/scripts/api-docker-dev.sh =====
 #!/usr/bin/env bash
@@ -2614,15 +2592,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -2727,7 +2702,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy pan-test-app-dev-api --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -2774,15 +2749,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -2890,7 +2862,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy pan-test-app-dev-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy pan-test-app-dev-www --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -2934,7 +2906,7 @@ collapseable_section_start "injectvars" "Injecting variables"
 export APP_PATH="."
 collapseable_section_end "injectvars"
 cd .
-yarn npm audit --environment production --severity critical
+pnpm audit --prod --audit-level critical
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-lint-review.sh =====
 #!/usr/bin/env bash
@@ -2977,10 +2949,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn lint
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm lint
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-test-review.sh =====
 #!/usr/bin/env bash
@@ -3023,10 +2997,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn test
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm test
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-app-review.sh =====
 #!/usr/bin/env bash
@@ -3101,10 +3077,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn build
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm build
 
 # ===== .catladder-generated/github/scripts/api-docker-review.sh =====
 #!/usr/bin/env bash
@@ -3142,15 +3120,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -3255,7 +3230,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown"):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}') --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown"):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -3305,15 +3280,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -3421,7 +3393,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown"):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}') --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown"):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -3508,10 +3480,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn build
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm build
 
 # ===== .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh =====
 #!/usr/bin/env bash
@@ -3586,10 +3560,12 @@ collapseable_section_start "nodeinstall" "Ensure node version"
 if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
 if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
-collapseable_section_start "yarninstall" "Yarn install"
-yarn install --immutable --inline-builds
-collapseable_section_end "yarninstall"
-yarn build
+collapseable_section_start "pnpminstall" "pnpm install"
+if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
+collapseable_section_end "pnpminstall"
+pnpm build
 
 # ===== .catladder-generated/github/scripts/api-docker-stage.sh =====
 #!/usr/bin/env bash
@@ -3627,15 +3603,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -3740,7 +3713,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy pan-test-app-stage-api --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -3787,15 +3760,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -3900,7 +3870,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy pan-test-app-prod-api --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -3947,15 +3917,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -4063,7 +4030,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy pan-test-app-stage-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy pan-test-app-stage-www --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -4110,15 +4077,12 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
 COPY --chown=node:node $APP_DIR .
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
-RUN yarn rebuild"
+RUN pnpm install --prod --frozen-lockfile"
 export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-COPY --chown=node:node .yarn /app/.yarn"
+COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
 collapseable_section_end "injectvars"
 ensureNodeDockerfile
 collapseable_section_start "docker-login" "Docker Login"
@@ -4226,7 +4190,7 @@ EOF
 
 collapseable_section_end "writeenvvars"
 collapseable_section_start "deploy" "Deploy to cloud run"
-gcloud run deploy pan-test-app-prod-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+gcloud run deploy pan-test-app-prod-www --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
 collapseable_section_end "deploy"
 collapseable_section_start "cleanup" "Cleanup"
 set +e
@@ -4239,7 +4203,7 @@ echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
 "
 `;
 
-exports[`matches snapshot for workspace-api-www-turbo-cache local pipeline YAML 1`] = `
+exports[`matches snapshot for pnpm-workspace-api-www local pipeline YAML 1`] = `
 "image: node:22
 stages:
   - setup
@@ -4575,7 +4539,7 @@ create release:
     - export APP_PATH="."
     - collapseable_section_end "injectvars"
     - cd .
-    - yarn npm audit --environment production --severity critical
+    - pnpm audit --prod --audit-level critical
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4607,20 +4571,21 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn lint
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm lint
   cache:
-    - key: .-yarn
+    - key: .-pnpm
       policy: pull
       paths:
-        - .yarn
+        - .pnpm-store
     - key: .-node-modules
       policy: pull
       paths: &a5
         - node_modules
-        - .yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4651,15 +4616,17 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn test
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm test
   cache:
-    - key: .-yarn
+    - key: .-pnpm
       policy: pull
       paths:
-        - .yarn
+        - .pnpm-store
     - key: .-node-modules
       policy: pull
       paths: *a5
@@ -4727,25 +4694,24 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn build
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm build
   cache:
-    - key: .-yarn
+    - key: .-pnpm
       policy: pull-push
       paths:
-        - .yarn
+        - .pnpm-store
     - key: .-node-modules
       policy: pull-push
       paths:
         - node_modules
-        - .yarn/install-state.gz
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .turbo
-        - api/.component-custom-cache
         - www/.next/cache
   artifacts:
     paths:
@@ -4783,7 +4749,7 @@ create release:
     - export APP_PATH="."
     - collapseable_section_end "injectvars"
     - cd .
-    - yarn npm audit --environment production --severity critical
+    - pnpm audit --prod --audit-level critical
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4815,22 +4781,23 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn lint
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm lint
   cache:
-    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
+    - key: .-pnpm-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
-        - .yarn
+        - .pnpm-store
       fallback_keys:
-        - .-yarn
+        - .-pnpm
     - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths: &a6
         - node_modules
-        - .yarn/install-state.gz
       fallback_keys:
         - .-node-modules
   rules:
@@ -4863,17 +4830,19 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn test
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm test
   cache:
-    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
+    - key: .-pnpm-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
-        - .yarn
+        - .pnpm-store
       fallback_keys:
-        - .-yarn
+        - .-pnpm
     - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths: *a6
@@ -4943,29 +4912,28 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn build
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm build
   cache:
-    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
+    - key: .-pnpm-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
-        - .yarn
+        - .pnpm-store
       fallback_keys:
-        - .-yarn
+        - .-pnpm
     - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - node_modules
-        - .yarn/install-state.gz
       fallback_keys:
         - .-node-modules
     - key: myWorkspace-default-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
-        - .turbo
-        - api/.component-custom-cache
         - www/.next/cache
       fallback_keys:
         - myWorkspace-default
@@ -5047,25 +5015,24 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn build
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm build
   cache:
-    - key: .-yarn
+    - key: .-pnpm
       policy: pull-push
       paths:
-        - .yarn
+        - .pnpm-store
     - key: .-node-modules
       policy: pull-push
       paths:
         - node_modules
-        - .yarn/install-state.gz
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .turbo
-        - api/.component-custom-cache
         - www/.next/cache
   artifacts:
     paths:
@@ -5145,25 +5112,24 @@ create release:
     - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
     - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
     - collapseable_section_end "nodeinstall"
-    - collapseable_section_start "yarninstall" "Yarn install"
-    - yarn install --immutable --inline-builds
-    - collapseable_section_end "yarninstall"
-    - yarn build
+    - collapseable_section_start "pnpminstall" "pnpm install"
+    - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
+    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
+    - collapseable_section_end "pnpminstall"
+    - pnpm build
   cache:
-    - key: .-yarn
+    - key: .-pnpm
       policy: pull-push
       paths:
-        - .yarn
+        - .pnpm-store
     - key: .-node-modules
       policy: pull-push
       paths:
         - node_modules
-        - .yarn/install-state.gz
     - key: myWorkspace-default
       policy: pull-push
       paths:
-        - .turbo
-        - api/.component-custom-cache
         - www/.next/cache
   artifacts:
     paths:
@@ -5214,16 +5180,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-      COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -5239,10 +5202,10 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: api-yarn
+    - key: api-pnpm
       policy: pull
       paths:
-        - api/.yarn
+        - api/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5323,7 +5286,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-test-app-dev-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-dev-api --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -5413,16 +5376,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-      COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -5438,12 +5398,12 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
+    - key: api-pnpm-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
-        - api/.yarn
+        - api/.pnpm-store
       fallback_keys:
-        - api-yarn
+        - api-pnpm
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5524,7 +5484,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -5620,16 +5580,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-      COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -5645,10 +5602,10 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: api-yarn
+    - key: api-pnpm
       policy: pull
       paths:
-        - api/.yarn
+        - api/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5729,7 +5686,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-test-app-stage-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-stage-api --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -5812,16 +5769,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node api/package.json /app/api/package.json
-      COPY --chown=node:node api/yarn.lock /app/api/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node api/pnpm-lock.yaml /app/api/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -5837,10 +5791,10 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: api-yarn
+    - key: api-pnpm
       policy: pull
       paths:
-        - api/.yarn
+        - api/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5921,7 +5875,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-test-app-prod-api --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-prod-api --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=api,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-api --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -6004,16 +5958,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -6029,10 +5980,10 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: www-yarn
+    - key: www-pnpm
       policy: pull
       paths:
-        - www/.yarn
+        - www/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6116,7 +6067,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-test-app-dev-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-dev-www --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=dev,env-name=dev,build-type=node,cloud-run-service-name=pan-test-app-dev-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -6206,16 +6157,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -6231,12 +6179,12 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: www-yarn-mr$CI_MERGE_REQUEST_IID
+    - key: www-pnpm-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
-        - www/.yarn
+        - www/.pnpm-store
       fallback_keys:
-        - www-yarn
+        - www-pnpm
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6320,7 +6268,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy $(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; }):$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=review,env-name=review,build-type=node,cloud-run-service-name=$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}') --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -6416,16 +6364,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -6441,10 +6386,10 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: www-yarn
+    - key: www-pnpm
       policy: pull
       paths:
-        - www/.yarn
+        - www/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6528,7 +6473,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-test-app-stage-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-stage-www --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=stage,env-name=stage,build-type=node,cloud-run-service-name=pan-test-app-stage-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e
@@ -6611,16 +6556,13 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV YARN_ENABLE_INLINE_BUILDS=1
+      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
       COPY --chown=node:node $APP_DIR .
-      RUN yarn plugin import workspace-tools
-      RUN yarn workspaces focus --production
-      RUN yarn rebuild"
+      RUN pnpm install --prod --frozen-lockfile"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="COPY --chown=node:node www/package.json /app/www/package.json
-      COPY --chown=node:node www/yarn.lock /app/www/yarn.lock
-      COPY --chown=node:node .yarnrc.yml /app/.yarnrc.yml
-      COPY --chown=node:node .yarn /app/.yarn"
+      COPY --chown=node:node www/pnpm-lock.yaml /app/www/pnpm-lock.yaml"
+    - export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
     - collapseable_section_end "injectvars"
     - ensureNodeDockerfile
     - collapseable_section_start "docker-login" "Docker Login"
@@ -6636,10 +6578,10 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: www-yarn
+    - key: www-pnpm
       policy: pull
       paths:
-        - www/.yarn
+        - www/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6723,7 +6665,7 @@ create release:
       EOF
     - collapseable_section_end "writeenvvars"
     - collapseable_section_start "deploy" "Deploy to cloud run"
-    - gcloud run deploy pan-test-app-prod-www --command="yarn,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
+    - gcloud run deploy pan-test-app-prod-www --command="pnpm,start" --image=europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www:$DOCKER_IMAGE_TAG --project=google-project-id --region=europe-west6 --labels=customer-name=pan,component-name=www,app-name=test-app,env-type=prod,env-name=prod,build-type=node,cloud-run-service-name=pan-test-app-prod-www --env-vars-file=____envvars.yaml --min-instances=0 --max-instances=100 --cpu-throttling --allow-unauthenticated --ingress=all --cpu-boost
     - collapseable_section_end "deploy"
     - collapseable_section_start "cleanup" "Cleanup"
     - set +e

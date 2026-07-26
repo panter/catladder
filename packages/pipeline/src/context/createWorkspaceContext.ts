@@ -29,7 +29,10 @@ export async function createWorkspaceContext({
     throw new Error(`Workspace ${workspaceName} not found in config`);
   }
 
-  const defaults = WORKSPACE_BUILD_TYPES[workspaceConfigRaw.type].defaults();
+  const packageManagerInfo = getPackageManagerInfoBase(config);
+  const defaults = WORKSPACE_BUILD_TYPES[workspaceConfigRaw.type].defaults(
+    (await packageManagerInfo).type,
+  );
 
   const workspaceConfig = mergeWithMergingArrays(defaults, workspaceConfigRaw);
   return {
@@ -43,7 +46,7 @@ export async function createWorkspaceContext({
     env,
     components,
     fullConfig: config,
-    packageManagerInfo: getPackageManagerInfoBase(),
+    packageManagerInfo,
     build: {
       type: "workspace",
       dir: workspaceConfig.dir ?? ".",

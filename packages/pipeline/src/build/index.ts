@@ -1,5 +1,6 @@
 import type {
   ComponentContextWithBuild,
+  PackageManagerType,
   WorkspaceContext,
 } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
@@ -17,6 +18,13 @@ import type {
 export * from "./node";
 export * from "./types";
 
+/**
+ * run a package.json script with the project's package manager
+ * (`yarn build` / `pnpm build`)
+ */
+const runScript = (packageManager: PackageManagerType, script: string) =>
+  `${packageManager} ${script}`;
+
 export type BuildTypes = {
   [type in BuildConfigStandaloneType]: {
     jobs: (
@@ -24,6 +32,7 @@ export type BuildTypes = {
     ) => CatladderJob[] | Promise<CatladderJob[]>;
     defaults: (
       envContext: EnvironmentContext,
+      packageManager: PackageManagerType,
     ) => Partial<Extract<BuildConfig, { type: type }>>;
   };
 };
@@ -31,24 +40,24 @@ export type BuildTypes = {
 export const BUILD_TYPES: BuildTypes = {
   node: {
     jobs: createNodeJobs,
-    defaults: () => ({
-      buildCommand: "yarn build",
-      startCommand: "yarn start",
+    defaults: (_, pm) => ({
+      buildCommand: runScript(pm, "build"),
+      startCommand: runScript(pm, "start"),
       artifactsPaths: ["dist", ".next"],
       artifactsExcludePaths: [".next/cache/**/*"],
     }),
   },
   "node-static": {
     jobs: createNodeJobs,
-    defaults: () => ({
-      buildCommand: "yarn build",
+    defaults: (_, pm) => ({
+      buildCommand: runScript(pm, "build"),
       artifactsPaths: ["dist"],
     }),
   },
   storybook: {
     jobs: createStorybookJobs,
-    defaults: () => ({
-      buildCommand: ["yarn build-storybook --quiet -o ./dist"],
+    defaults: (_, pm) => ({
+      buildCommand: [runScript(pm, "build-storybook --quiet -o ./dist")],
       artifactsPaths: ["dist"],
     }),
   },
@@ -81,20 +90,22 @@ export type WorkspaceBuildTypes = {
     jobs: (
       context: WorkspaceContext,
     ) => CatladderJob[] | Promise<CatladderJob[]>;
-    defaults: () => Partial<Extract<WorkspaceBuildConfig, { type: type }>>;
+    defaults: (
+      packageManager: PackageManagerType,
+    ) => Partial<Extract<WorkspaceBuildConfig, { type: type }>>;
   };
 };
 
 export const WORKSPACE_BUILD_TYPES: WorkspaceBuildTypes = {
   node: {
     jobs: createNodeJobs,
-    defaults: () => ({
-      buildCommand: "yarn build",
+    defaults: (pm) => ({
+      buildCommand: runScript(pm, "build"),
       lint: {
-        command: "yarn lint",
+        command: runScript(pm, "lint"),
       },
       test: {
-        command: "yarn test",
+        command: runScript(pm, "test"),
       },
     }),
   },

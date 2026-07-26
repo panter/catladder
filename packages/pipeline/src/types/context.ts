@@ -66,6 +66,9 @@ export type YarnWorkspace = {
   workspaceDependencies: string[];
   mismatchedWorkspaceDependencies: string[];
 };
+
+export type PackageManagerType = "yarn" | "pnpm";
+
 export type YarnPackageManagerInfoBase = {
   type: "yarn";
   version: string;
@@ -73,19 +76,35 @@ export type YarnPackageManagerInfoBase = {
   isClassic: boolean;
 };
 
-export type YarnPackageManagerInfoComponent = YarnPackageManagerInfoBase & {
+export type PnpmPackageManagerInfoBase = {
+  type: "pnpm";
+  version: string;
+  workspaces: YarnWorkspace[];
+};
+
+type PackageManagerInfoComponentPart = {
   currentWorkspace?: YarnWorkspace;
   componentIsInWorkspace: boolean;
   pathsToCopyInDocker: string[];
   currentWorkspaceDependencies: string[];
 };
 
-export type PackageManagerInfoComponent = YarnPackageManagerInfoComponent;
+export type YarnPackageManagerInfoComponent = YarnPackageManagerInfoBase &
+  PackageManagerInfoComponentPart;
+
+export type PnpmPackageManagerInfoComponent = PnpmPackageManagerInfoBase &
+  PackageManagerInfoComponentPart;
+
+export type PackageManagerInfoComponent =
+  | YarnPackageManagerInfoComponent
+  | PnpmPackageManagerInfoComponent;
 
 /**
  * not confuse with yarn workspaces
  */
-export type PackageManagerInfoBase = YarnPackageManagerInfoBase;
+export type PackageManagerInfoBase =
+  | YarnPackageManagerInfoBase
+  | PnpmPackageManagerInfoBase;
 
 export type ContextBeforeConfig = {
   componentName: string;

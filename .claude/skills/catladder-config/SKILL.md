@@ -66,6 +66,11 @@ Key concepts:
 - **Pipelines**: `pipelines: { gitlab: true, github: true }` selects
   which CI systems get generated files. Options objects instead of
   `true` allow per-pipeline settings (e.g. `runnerVariables`).
+- **Package manager**: yarn and pnpm are supported and autodetected
+  (from the `packageManager` field in package.json or the lockfile;
+  yarn is the fallback). `packageManager: "pnpm" | "yarn"` at the top
+  level overrides the detection. In pnpm projects, run the CLIs as
+  `pnpm catenv` / `pnpm catladder`.
 
 ## Common tasks
 

@@ -10,7 +10,7 @@ generated pipeline files.
 |---|---|---|
 | `buildCommand` | `string \| string[] \| null \| false` | build step; `false`/`null` skips it |
 | `startCommand` | `string` | runtime start command |
-| `postInstall` | `string \| string[]` | runs after `yarn install` (node family) |
+| `postInstall` | `string \| string[]` | runs after the package-manager install (node family) |
 | `lint` / `test` / `audit` | `false \| TestJobCustom` | customize or disable the job |
 | `artifactsPaths` | `string[]` | extra artifacts (`dist`, `.next` always included) |
 | `artifactsExcludePaths` | `string[]` | artifact excludes |
@@ -29,8 +29,9 @@ generated pipeline files.
 ## Per-type options & defaults
 
 ### `node`
-- `docker?` — built-in node image `{ type: "node", yarnRebuildEnabled?: boolean (default true), additionsBegin?: string[], additionsEnd?: string[] }`, or a custom docker config.
-- Defaults: `buildCommand: "yarn build"`, `startCommand: "yarn start"`, artifacts `["dist", ".next"]`, excludes `[".next/cache/**/*"]`.
+- Works with yarn **and pnpm** — the package manager is autodetected (`packageManager` field / lockfile), overridable via top-level `packageManager: "pnpm" | "yarn"` in `catladder.ts`.
+- `docker?` — built-in node image `{ type: "node", yarnRebuildEnabled?: boolean (default true, yarn berry only), additionsBegin?: string[], additionsEnd?: string[] }`, or a custom docker config.
+- Defaults: `buildCommand: "<pm> build"`, `startCommand: "<pm> start"` (`yarn`/`pnpm` per detection), artifacts `["dist", ".next"]`, excludes `[".next/cache/**/*"]`.
 
 ### `rails`
 - `test?.databaseImage?` — test DB container image (Postgres only; default `docker.io/postgres:latest`).
@@ -41,6 +42,7 @@ generated pipeline files.
   - `buildVars?: Record<string, string | undefined>` — Bundler / Rails asset-precompile vars (`undefined` inherits from the component's env vars).
 
 ### `meteor`
+- Yarn-only (meteor's bundler is yarn-based) — a pnpm project cannot use this build type.
 - `installScripts?: boolean` — run `yarn install` inside the source folder in the image (only needed with custom image scripts).
 - `docker?` — meteor built-in or custom. Default `startCommand: "node main.js"`.
 
@@ -68,5 +70,5 @@ defaulted `buildCommand: "yarn build-storybook --quiet -o ./dist"`.
 Top-level `builds: Record<string, WorkspaceBuildConfig>`. Only
 `type: "node"` is supported.
 
-- Node workspace build: `dir?`, `buildCommand?` (default `yarn build`), `dockerDefaults?: { yarnRebuildEnabled }`, plus shared `lint?` (default `{ command: "yarn lint" }`), `test?` (default `{ command: "yarn test" }`), `audit?`, `runnerVariables?`, `artifactsReports?`, `jobImage?`, `jobTags?`, `cache?`.
+- Node workspace build: `dir?`, `buildCommand?` (default `<pm> build`), `dockerDefaults?: { yarnRebuildEnabled }`, plus shared `lint?` (default `{ command: "<pm> lint" }`), `test?` (default `{ command: "<pm> test" }`), `audit?`, `runnerVariables?`, `artifactsReports?`, `jobImage?`, `jobTags?`, `cache?` (`<pm>` = `yarn`/`pnpm` per detection).
 - A component references it via `build: { from: "<name>", docker?, startCommand?, artifactsPaths?, artifactsExcludePaths?, cache? }` — the per-component overrides layer on top of the shared build.
