@@ -5,7 +5,7 @@
  */
 import { spawn } from "child_process";
 import { readFile, writeFile } from "fs/promises";
-import { join } from "path";
+import { join, resolve } from "path";
 import type { NpmPublishContext } from "./npmPublishPlan";
 import { computeNpmPublishPlan, slugifyRef } from "./npmPublishPlan";
 
@@ -57,28 +57,29 @@ const setPackageVersion = async (dir: string, version: string) => {
 };
 
 /**
- * writes the package-local .npmrc for token auth. npm expands
- * `${NPM_TOKEN}` from the job environment at run time, and never
- * includes .npmrc in the published tarball.
+ * writes the auth .npmrc and returns its absolute path. It is passed to
+ * npm as userconfig: in a workspace monorepo npm resolves its project
+ * prefix to the workspace ROOT, so a package-local .npmrc would be
+ * silently ignored (ENEEDAUTH). npm expands `${NPM_TOKEN}` from the job
+ * environment at run time and never includes .npmrc in the tarball.
  */
 const writeNpmrc = async (dir: string, registry: string) => {
   const registryHost = registry.replace(/^https?:/, "").replace(/\/?$/, "/");
+  const npmrcPath = resolve(dir, ".npmrc");
   await writeFile(
-    join(dir, ".npmrc"),
-    [
-      `registry=${registry}`,
+    npmrcPath,
 
-      `${registryHost}:_authToken=\${NPM_TOKEN}`,
-      "",
-    ].join("\n"),
+    `${registryHost}:_authToken=\${NPM_TOKEN}\n`,
   );
+  return npmrcPath;
 };
 
-const npmPublish = (dir: string, args: string[]) =>
+const npmPublish = (dir: string, npmrcPath: string, args: string[]) =>
   new Promise<void>((resolvePromise, reject) => {
     const child = spawn("npm", ["publish", ...args], {
       cwd: dir,
       stdio: "inherit",
+      env: { ...process.env, NPM_CONFIG_USERCONFIG: npmrcPath },
     });
     child.on("error", reject);
     child.on("exit", (code) =>
@@ -102,17 +103,21 @@ export const npmPublishJob = async (options: NpmPublishJobOptions) => {
   });
 
   const name = await setPackageVersion(options.dir, plan.version);
-  await writeNpmrc(options.dir, registry);
+  const npmrcPath = await writeNpmrc(options.dir, registry);
 
   console.log(
     `publishing ${name}@${plan.version} (dist-tag ${plan.distTag}) to ${registry}`,
   );
-  await npmPublish(options.dir, [
+  await npmPublish(options.dir, npmrcPath, [
     "--tag",
     plan.distTag,
     "--access",
     options.access ?? "public",
-    "--no-git-tag-version",
+    "--registry",
+    registry,
+    // publish exactly this package, not the workspace set npm may
+    // otherwise derive from the monorepo root
+    "--workspaces=false",
   ]);
   console.log(`published ${name}@${plan.version} 🚀`);
 };
