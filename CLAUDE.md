@@ -55,6 +55,7 @@ yarn turbo run build --filter=@catladder/cli        # tsc + tsc-alias + ncc bund
 - **Test locations**: `**/__tests__/**/*.[jt]s?(x)` and `packages/pipeline/examples/*.test.ts`
 - **Example tests**: Auto-generated from `packages/pipeline/examples/` via `turbo run generate:examples-test` — this runs automatically before `yarn test`
 - **Snapshots**: Example tests use snapshot testing for generated YAML output; update with `yarn test:update`
+- **Editing `runner-images/` changes snapshots**: job images are tagged by a content hash of their definition (see `customImages/`), and that tag is embedded throughout the generated YAML. So **any** edit under `runner-images/` (even a comment) changes the hash and requires `yarn test:update` + committing the regenerated snapshots — otherwise CI's snapshot test fails on the changed image tag even though nothing behavioural changed.
 - **Timeout**: 10 seconds per test
 
 ## Architecture
