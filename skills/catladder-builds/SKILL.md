@@ -35,8 +35,9 @@ default build/lint/test commands. Override with `packageManager:
 "pnpm" | "yarn"` at the top level of `catladder.ts` if needed. The
 `meteor` build type is yarn-only.
 
-pnpm gotchas: dependency build scripts must be approved
-(`onlyBuiltDependencies` in pnpm-workspace.yaml); pnpm runs the root
+pnpm gotchas: dependency build scripts must be approved in
+pnpm-workspace.yaml (`allowBuilds` map since pnpm 11,
+`onlyBuiltDependencies` list on pnpm 10); pnpm runs the root
 `prepare` script even during the production install in the docker
 build — guard husky with `"prepare": "husky || true"`; `pnpm run`
 prints a banner to stdout, so use `pnpm --silent run` in piped

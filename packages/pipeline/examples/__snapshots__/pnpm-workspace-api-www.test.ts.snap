@@ -251,20 +251,20 @@ exports[`matches snapshot for pnpm-workspace-api-www github workflows YAML 1`] =
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
-        - name: Cache pnpm-v10
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-dev.sh
@@ -284,20 +284,20 @@ exports[`matches snapshot for pnpm-workspace-api-www github workflows YAML 1`] =
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
-        - name: Cache pnpm-v10
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-dev.sh
@@ -321,26 +321,26 @@ exports[`matches snapshot for pnpm-workspace-api-www github workflows YAML 1`] =
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache pnpm-v10
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh
@@ -720,20 +720,20 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
-        - name: Cache pnpm-v10
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-review.sh
@@ -753,20 +753,20 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
-        - name: Cache pnpm-v10
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-review.sh
@@ -790,26 +790,26 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache pnpm-v10
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-review.sh
@@ -1170,26 +1170,26 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache pnpm-v10
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-stage.sh
@@ -1996,26 +1996,26 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-node-modules-workspace
+        - name: Cache pnpm-.-node-modules
           id: cache-node-modules
           uses: actions/cache@v4
           with:
             path: node_modules
-            key: pnpm-node-modules-workspace-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-node-modules-workspace-
+            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache pnpm-v10
+        - name: Cache .-pnpm-v10
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache@v4
           with:
             path: .pnpm-store
-            key: pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-v10-
+            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
+            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh
@@ -4577,16 +4577,16 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm lint
   cache:
-    - key: pnpm-v10
+    - key: .-pnpm-v10
       policy: pull
-      paths: &a5
+      paths:
         - .pnpm-store
-    - key: &a6
-        prefix: pnpm-node-modules-workspace
+    - key: &a5
+        prefix: pnpm-.-node-modules
         files:
           - pnpm-lock.yaml
       policy: pull
-      paths: &a7
+      paths: &a6
         - node_modules
   rules:
     - when: never
@@ -4624,12 +4624,13 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm test
   cache:
-    - key: pnpm-v10
+    - key: .-pnpm-v10
       policy: pull
-      paths: *a5
-    - key: *a6
+      paths:
+        - .pnpm-store
+    - key: *a5
       policy: pull
-      paths: *a7
+      paths: *a6
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4700,12 +4701,12 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: pnpm-v10
+    - key: .-pnpm-v10
       policy: pull-push
       paths:
         - .pnpm-store
     - key:
-        prefix: pnpm-node-modules-workspace
+        prefix: pnpm-.-node-modules
         files:
           - pnpm-lock.yaml
       policy: pull-push
@@ -4789,18 +4790,18 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm lint
   cache:
-    - key: pnpm-v10-mr$CI_MERGE_REQUEST_IID
+    - key: .-pnpm-v10-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a8
+      paths:
         - .pnpm-store
       fallback_keys:
-        - pnpm-v10
-    - key: &a9
-        prefix: pnpm-node-modules-workspace
+        - .-pnpm-v10
+    - key: &a7
+        prefix: pnpm-.-node-modules
         files:
           - pnpm-lock.yaml
       policy: pull
-      paths: &a10
+      paths: &a8
         - node_modules
   rules:
     - when: never
@@ -4838,14 +4839,15 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm test
   cache:
-    - key: pnpm-v10-mr$CI_MERGE_REQUEST_IID
+    - key: .-pnpm-v10-mr$CI_MERGE_REQUEST_IID
+      policy: pull
+      paths:
+        - .pnpm-store
+      fallback_keys:
+        - .-pnpm-v10
+    - key: *a7
       policy: pull
       paths: *a8
-      fallback_keys:
-        - pnpm-v10
-    - key: *a9
-      policy: pull
-      paths: *a10
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4916,14 +4918,14 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: pnpm-v10-mr$CI_MERGE_REQUEST_IID
+    - key: .-pnpm-v10-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
         - .pnpm-store
       fallback_keys:
-        - pnpm-v10
+        - .-pnpm-v10
     - key:
-        prefix: pnpm-node-modules-workspace
+        prefix: pnpm-.-node-modules
         files:
           - pnpm-lock.yaml
       policy: pull-push
@@ -5019,12 +5021,12 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: pnpm-v10
+    - key: .-pnpm-v10
       policy: pull-push
       paths:
         - .pnpm-store
     - key:
-        prefix: pnpm-node-modules-workspace
+        prefix: pnpm-.-node-modules
         files:
           - pnpm-lock.yaml
       policy: pull-push
@@ -5118,12 +5120,12 @@ create release:
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: pnpm-v10
+    - key: .-pnpm-v10
       policy: pull-push
       paths:
         - .pnpm-store
     - key:
-        prefix: pnpm-node-modules-workspace
+        prefix: pnpm-.-node-modules
         files:
           - pnpm-lock.yaml
       policy: pull-push
