@@ -1,8 +1,7 @@
-import { uniq } from "lodash-es";
 import { join } from "path";
 import slugify from "slugify";
 
-import type { Context, WorkspaceContext } from "../../types/context";
+import type { Context } from "../../types/context";
 import type { CacheConfig } from "../types";
 
 /**
@@ -12,19 +11,40 @@ import type { CacheConfig } from "../types";
  */
 const NODE_MODULES_CACHE_ID = "node-modules";
 
-export const getYarnCache = async (
-  context: Context,
-  policy = "pull-push",
-): Promise<CacheConfig[]> => {
+/**
+ * the directory whose caches this job uses. Components that are part of
+ * a shared workspace use the workspace root's caches: the install
+ * operates on the whole workspace, and the workspace build job is the
+ * one that populates the slots. Historically these component jobs
+ * (verify, docker) read a separate key family that no job ever saved,
+ * so they always started cold. Standalone components and the workspace
+ * jobs themselves keep using their own build dir (unchanged keys).
+ */
+const getCacheBaseDir = async (context: Context): Promise<string> => {
   const packageManagerInfo = await context.packageManagerInfo;
   const componentIsInWorkspace =
     context.type === "component" &&
     "componentIsInWorkspace" in packageManagerInfo &&
     packageManagerInfo.componentIsInWorkspace;
+  if (!componentIsInWorkspace) return context.build.dir;
+  // the workspace build's dir when the component references one,
+  // otherwise the repo root (packageManager.ts resolves workspace
+  // membership against the root)
+  return context.build.type === "fromWorkspace"
+    ? (context.build.workspaceBuildConfig.dir ?? ".")
+    : ".";
+};
+
+export const getYarnCache = async (
+  context: Context,
+  policy = "pull-push",
+): Promise<CacheConfig[]> => {
+  const baseDir = await getCacheBaseDir(context);
   return [
     {
-      scope: componentIsInWorkspace ? "global" : "buildDir",
-      pathMode: componentIsInWorkspace ? "absolute" : "relative",
+      scope: "buildDir",
+      pathMode: "relative",
+      buildDir: baseDir,
       key: "yarn",
       policy,
       paths: [".yarn"],
@@ -45,12 +65,9 @@ export const getNodeModulesCache = async (
   policy = "pull-push",
 ): Promise<CacheConfig[]> => {
   const packageManagerInfo = await context.packageManagerInfo;
-  const componentIsInWorkspace =
-    context.type === "component" &&
-    "componentIsInWorkspace" in packageManagerInfo &&
-    packageManagerInfo.componentIsInWorkspace;
+  const baseDir = await getCacheBaseDir(context);
 
-  const { isClassic, workspaces } = packageManagerInfo;
+  const { isClassic } = packageManagerInfo;
 
   // We intentionally do not use the contents of yarn.lock as a cache key, as yarn install should always guarantee that the files are updated, but it can still use part of the cache if not all packages are up-to-date.
   // It would slow down all pipelines whenever one adds a new dependency as it will need to download all node_modules again.
@@ -59,43 +76,19 @@ export const getNodeModulesCache = async (
       scope: "global",
       pathMode: "absolute",
 
-      // if component is in a shared workspace, use workspace cache. use individual cache else
-      key: componentIsInWorkspace
-        ? "node-modules-workspace"
-        : slugify(context.build.dir) + "-node-modules", // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
+      // we use the dirname, not the component name, because in certain cases we have two apps in the same directory and want to share the cache, e.g. when having storybook in the same package.json
+      key: slugify(baseDir) + "-node-modules",
       // content-key for immutable-cache backends (github); the lockfile
       // decides whether the cached content could have changed (absolute
-      // pathMode: resolve the standalone component's lockfile explicitly)
-      keyFiles: [
-        componentIsInWorkspace
-          ? "yarn.lock"
-          : join(context.build.dir, "yarn.lock"),
-      ],
+      // pathMode: resolve the lockfile explicitly)
+      keyFiles: [join(baseDir, "yarn.lock")],
       // referenced by the yarn cache: an exact hit here makes the yarn
       // zips unnecessary (see redundantOnExactHitOf on getYarnCache)
       cacheId: NODE_MODULES_CACHE_ID,
       policy,
       paths: [
-        ...(componentIsInWorkspace
-          ? uniq([
-              "node_modules",
-              ...(workspaces.map((w) => join(w.location, "node_modules")) ??
-                []),
-              ...(!isClassic
-                ? [
-                    ".yarn/install-state.gz",
-                    ...(workspaces.map((w) =>
-                      join(w.location, ".yarn/install-state.gz"),
-                    ) ?? []),
-                  ]
-                : []),
-            ])
-          : [
-              join(context.build.dir, "node_modules"),
-              ...(!isClassic
-                ? [join(context.build.dir, ".yarn/install-state.gz")]
-                : []),
-            ]),
+        join(baseDir, "node_modules"),
+        ...(!isClassic ? [join(baseDir, ".yarn/install-state.gz")] : []),
       ],
     },
   ];

@@ -376,12 +376,12 @@ exports[`matches snapshot for workspace-verify github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-dev
           uses: actions/download-artifact@v4
           with:
@@ -433,12 +433,12 @@ exports[`matches snapshot for workspace-verify github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-dev
           uses: actions/download-artifact@v4
           with:
@@ -489,26 +489,22 @@ exports[`matches snapshot for workspace-verify github workflows YAML 1`] = `
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache node-modules-workspace
+        - name: Cache .-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
               node_modules
-              services/api/node_modules
-              services/www/node_modules
               .yarn/install-state.gz
-              services/api/.yarn/install-state.gz
-              services/www/.yarn/install-state.gz
-            key: node-modules-workspace-\${{ hashFiles('yarn.lock') }}
-            restore-keys: node-modules-workspace-
-        - name: Cache yarn
+            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-node-modules-
+        - name: Cache .-yarn
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/www-verify-dev.sh
@@ -888,12 +884,12 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-review
           uses: actions/download-artifact@v4
           with:
@@ -945,12 +941,12 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-review
           uses: actions/download-artifact@v4
           with:
@@ -1001,26 +997,22 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache node-modules-workspace
+        - name: Cache .-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
               node_modules
-              services/api/node_modules
-              services/www/node_modules
               .yarn/install-state.gz
-              services/api/.yarn/install-state.gz
-              services/www/.yarn/install-state.gz
-            key: node-modules-workspace-\${{ hashFiles('yarn.lock') }}
-            restore-keys: node-modules-workspace-
-        - name: Cache yarn
+            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-node-modules-
+        - name: Cache .-yarn
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/www-verify-review.sh
@@ -1307,12 +1299,12 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-stage
           uses: actions/download-artifact@v4
           with:
@@ -1361,12 +1353,12 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-stage
           uses: actions/download-artifact@v4
           with:
@@ -1414,26 +1406,22 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache node-modules-workspace
+        - name: Cache .-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
               node_modules
-              services/api/node_modules
-              services/www/node_modules
               .yarn/install-state.gz
-              services/api/.yarn/install-state.gz
-              services/www/.yarn/install-state.gz
-            key: node-modules-workspace-\${{ hashFiles('yarn.lock') }}
-            restore-keys: node-modules-workspace-
-        - name: Cache yarn
+            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-node-modules-
+        - name: Cache .-yarn
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/www-verify-stage.sh
@@ -2223,12 +2211,12 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-prod
           uses: actions/download-artifact@v4
           with:
@@ -2379,12 +2367,12 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache yarn
+        - name: Cache .-yarn
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: Download artifacts from ws-myworkspace-app-prod
           uses: actions/download-artifact@v4
           with:
@@ -2484,26 +2472,22 @@ catladder-manual.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache node-modules-workspace
+        - name: Cache .-node-modules
           id: cache-node-modules
           uses: actions/cache/restore@v4
           with:
             path: |-
               node_modules
-              services/api/node_modules
-              services/www/node_modules
               .yarn/install-state.gz
-              services/api/.yarn/install-state.gz
-              services/www/.yarn/install-state.gz
-            key: node-modules-workspace-\${{ hashFiles('yarn.lock') }}
-            restore-keys: node-modules-workspace-
-        - name: Cache yarn
+            key: .-node-modules-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-node-modules-
+        - name: Cache .-yarn
           if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
           uses: actions/cache/restore@v4
           with:
             path: .yarn
-            key: yarn-\${{ hashFiles('yarn.lock') }}
-            restore-keys: yarn-
+            key: .-yarn-\${{ hashFiles('yarn.lock') }}
+            restore-keys: .-yarn-
         - name: 🔍 verify
           id: main
           run: bash .catladder-generated/github/scripts/www-verify-prod.sh
@@ -5579,7 +5563,7 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
@@ -5779,12 +5763,12 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn-mr$CI_MERGE_REQUEST_IID
+    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - .yarn
       fallback_keys:
-        - yarn
+        - .-yarn
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5987,7 +5971,7 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
@@ -6180,7 +6164,7 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
@@ -6373,7 +6357,7 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
@@ -6561,19 +6545,15 @@ create release:
     - collapseable_section_end "yarninstall"
     - yarn e2e
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
-    - key: node-modules-workspace
+    - key: .-node-modules
       policy: pull
       paths:
         - node_modules
-        - services/api/node_modules
-        - services/www/node_modules
         - .yarn/install-state.gz
-        - services/api/.yarn/install-state.gz
-        - services/www/.yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6637,12 +6617,12 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn-mr$CI_MERGE_REQUEST_IID
+    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - .yarn
       fallback_keys:
-        - yarn
+        - .-yarn
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6833,23 +6813,19 @@ create release:
     - collapseable_section_end "yarninstall"
     - yarn e2e
   cache:
-    - key: yarn-mr$CI_MERGE_REQUEST_IID
+    - key: .-yarn-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - .yarn
       fallback_keys:
-        - yarn
-    - key: node-modules-workspace-mr$CI_MERGE_REQUEST_IID
+        - .-yarn
+    - key: .-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
       paths:
         - node_modules
-        - services/api/node_modules
-        - services/www/node_modules
         - .yarn/install-state.gz
-        - services/api/.yarn/install-state.gz
-        - services/www/.yarn/install-state.gz
       fallback_keys:
-        - node-modules-workspace
+        - .-node-modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6913,7 +6889,7 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
@@ -7094,19 +7070,15 @@ create release:
     - collapseable_section_end "yarninstall"
     - yarn e2e
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
-    - key: node-modules-workspace
+    - key: .-node-modules
       policy: pull
       paths:
         - node_modules
-        - services/api/node_modules
-        - services/www/node_modules
         - .yarn/install-state.gz
-        - services/api/.yarn/install-state.gz
-        - services/www/.yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -7170,7 +7142,7 @@ create release:
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
@@ -7351,19 +7323,15 @@ create release:
     - collapseable_section_end "yarninstall"
     - yarn e2e
   cache:
-    - key: yarn
+    - key: .-yarn
       policy: pull
       paths:
         - .yarn
-    - key: node-modules-workspace
+    - key: .-node-modules
       policy: pull
       paths:
         - node_modules
-        - services/api/node_modules
-        - services/www/node_modules
         - .yarn/install-state.gz
-        - services/api/.yarn/install-state.gz
-        - services/www/.yarn/install-state.gz
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
