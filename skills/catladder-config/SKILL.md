@@ -75,6 +75,35 @@ Key concepts:
   `.catladder-generated/gitlab/`, `.github/workflows/`) — but never
   edit them.
 
+## Escape hatches — last resort, and a signal to file an issue
+
+catladder has two escape hatches for things it doesn't (yet) support
+natively:
+
+- **`customJobs`** (per component) — hand-written CI job specs injected
+  into the pipeline.
+- **transform `hooks`** (top-level `hooks`) —
+  `transformFileBeforeWrite` / `transformYamlBeforeWrite` rewrite the
+  generated files just before they're written to disk.
+
+Both work, but they are **fragile by design**: they depend on the exact
+shape of catladder's generated output, so a catladder upgrade can break
+them silently, and they sit outside everything the rest of the config
+gives you (rules, caching, images, per-env logic, snapshots). Prefer a
+first-class config option whenever one exists — check the `build`,
+`deploy`, `releases`, and env/vars surfaces (and the sibling skills)
+first.
+
+**When you do reach for one, treat it as a missing-feature signal.** If
+a dev needs `customJobs` or a transform hook, it almost always means
+catladder is missing a capability that other projects will need too.
+**Open an issue at
+https://git.panter.ch/catladder/catladder/-/issues** describing the use
+case (what you're trying to achieve and why the existing config can't
+express it) so it can be generalized into a supported feature — and,
+where possible, offer to help the dev write that issue. The goal is for
+escape hatches to shrink over time, not accumulate.
+
 ## Related skills
 
 - `catladder-builds` — the component `build` config (build types, Docker)

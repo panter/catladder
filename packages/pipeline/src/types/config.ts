@@ -187,7 +187,11 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * add custom jobs. Can be an array or a function that receives the context and returns an array of jobs.
    * For convenience, all env vars are injectd as variables
    *
-   * Please raise an issue on https://git.panter.ch/catladder/catladder
+   * customJobs are a last-resort escape hatch. Prefer a first-class
+   * config option whenever one exists.
+   *
+   * Please raise an issue on
+   * https://git.panter.ch/catladder/catladder/-/issues
    * to let us know about why you need to use custom jobs.
    * This feedback will help us to generalize use cases
    */
