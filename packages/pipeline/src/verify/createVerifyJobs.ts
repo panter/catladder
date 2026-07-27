@@ -1,7 +1,10 @@
 import { createArtifactsConfig } from "../build/base/createArtifactsConfig";
 import { getNodeCache } from "../build/node/cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "../build/node/constants";
-import { ensureNodeVersion, getYarnInstall } from "../build/node/yarn";
+import {
+  ensureNodeVersion,
+  getPackageManagerInstall,
+} from "../build/node/packageManagerInstall";
 import { DEPLOY_TYPES } from "../deploy";
 import { getRunnerImage } from "../runner";
 import type { ComponentContext } from "../types/context";
@@ -27,9 +30,9 @@ export const createVerifyJobs = async (
   const isNodeBuild =
     context.build.type !== "disabled" && context.build.buildType === "node";
 
-  const [yarnInstall, nodeCache] = isNodeBuild
+  const [packageManagerInstall, nodeCache] = isNodeBuild
     ? await Promise.all([
-        getYarnInstall(context),
+        getPackageManagerInstall(context),
         getNodeCache(context, "pull"),
       ])
     : [null, null];
@@ -68,9 +71,9 @@ export const createVerifyJobs = async (
       },
       script: [
         ...setupScript,
-        ...(yarnInstall ? ensureNodeVersion(context) : []),
+        ...(packageManagerInstall ? ensureNodeVersion(context) : []),
         `cd ${context.build.dir}`,
-        ...(yarnInstall ?? []),
+        ...(packageManagerInstall ?? []),
         ...ensureArray(verifyConfig.command),
       ],
       allow_failure: verifyConfig.allowFailure,

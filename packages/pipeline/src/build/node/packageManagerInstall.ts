@@ -60,6 +60,28 @@ const getPnpmInstallCommands = (
   `pnpm install --frozen-lockfile --store-dir ${getPnpmStoreDirExpression(isInWorkspace(context, packageManagerInfo))}`,
 ];
 
+/**
+ * default `audit` job command per package manager. Exhaustive on the
+ * package-manager type and throws for anything unsupported, so adding a
+ * new package manager surfaces every place that needs a command here.
+ */
+export const getDefaultAuditCommand = (
+  packageManagerInfo: PackageManagerInfoBase,
+): string => {
+  switch (packageManagerInfo.type) {
+    case "pnpm":
+      return "pnpm audit --prod --audit-level critical";
+    case "yarn":
+      return packageManagerInfo.isClassic
+        ? "yarn audit --level critical"
+        : "yarn npm audit --environment production --severity critical"; // yarn 2+
+    default:
+      throw new Error(
+        `no audit command implemented for package manager "${(packageManagerInfo as { type: string }).type}"`,
+      );
+  }
+};
+
 export const ensureNodeVersion = (context: Context) =>
   collapseableSection(
     "nodeinstall",
@@ -71,7 +93,7 @@ export const ensureNodeVersion = (context: Context) =>
     "if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi",
   ]);
 
-export const getYarnInstall = async (
+export const getPackageManagerInstall = async (
   context: Context,
   options?: {
     noCustomPostInstall: boolean;

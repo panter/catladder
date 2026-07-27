@@ -1,5 +1,5 @@
 import { getAllCacheConfigsFromConfig } from "../../build/cache/getAllCacheConfigsFromConfig";
-import { getYarnInstall } from "../../build/node/yarn";
+import { getPackageManagerInstall } from "../../build/node/packageManagerInstall";
 import { getRunnerImage } from "../../runner";
 import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
@@ -28,7 +28,7 @@ export const createPagesDeployJobs = async (
     context.environment.envType === "review" ? "mr-$CI_MERGE_REQUEST_IID" : "";
   const publishDir = deployConfig.publishDir ?? "public";
 
-  const yarnInstall = await getYarnInstall(context, {
+  const packageManagerInstall = await getPackageManagerInstall(context, {
     noCustomPostInstall: true,
   });
 
@@ -41,7 +41,7 @@ export const createPagesDeployJobs = async (
       script: [
         `cd ${context.build.dir}`,
         ...((deployConfig.requiresInstall ?? deployConfig.requiresYarnInstall)
-          ? yarnInstall
+          ? packageManagerInstall
           : []),
         ...deployConfig.script,
         // the gitlab environment url should point at the published site

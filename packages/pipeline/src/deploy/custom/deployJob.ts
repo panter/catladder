@@ -1,5 +1,5 @@
 import { getAllCacheConfigsFromConfig } from "../../build/cache/getAllCacheConfigsFromConfig";
-import { getYarnInstall } from "../../build/node/yarn";
+import { getPackageManagerInstall } from "../../build/node/packageManagerInstall";
 import { getRunnerImage } from "../../runner";
 import type { ComponentContext } from "../../types/context";
 import type { CatladderJob } from "../../types/jobs";
@@ -16,7 +16,7 @@ export const createCustomDeployJobs = async (
     // should not happen
     throw new Error("deploy config is not custom");
   }
-  const yarnInstall = await getYarnInstall(context, {
+  const packageManagerInstall = await getPackageManagerInstall(context, {
     noCustomPostInstall: true,
   });
 
@@ -30,7 +30,7 @@ export const createCustomDeployJobs = async (
       script: [
         `cd ${context.build.dir}`,
         ...((deployConfig.requiresInstall ?? deployConfig.requiresYarnInstall)
-          ? yarnInstall
+          ? packageManagerInstall
           : []),
         ...deployConfig.script,
       ],

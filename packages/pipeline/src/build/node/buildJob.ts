@@ -17,7 +17,10 @@ import { createBuildJobDefinition } from "../base/createBuildJobDefinition";
 import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import type { BuildConfigDocker } from "../types";
 import { getNodeCache, getYarnCache } from "./cache";
-import { getDockerAppCopyAndBuildScript, getYarnInstall } from "./yarn";
+import {
+  getDockerAppCopyAndBuildScript,
+  getPackageManagerInstall,
+} from "./packageManagerInstall";
 
 export const createNodeBuildJobs = async (
   context: ComponentContextWithBuild | WorkspaceContext,
@@ -41,12 +44,12 @@ export const createNodeBuildJobDefinition = async (
 ): Promise<AppBuildJobDefinition | undefined> => {
   const buildConfig = context.build.config;
 
-  const [yarnInstall, nodeCache] = await Promise.all([
-    getYarnInstall(context),
+  const [packageManagerInstall, nodeCache] = await Promise.all([
+    getPackageManagerInstall(context),
     getNodeCache(context),
   ]);
   return createBuildJobDefinition(context, buildConfig, {
-    prescript: yarnInstall,
+    prescript: packageManagerInstall,
     cache: nodeCache,
   });
 };

@@ -12,7 +12,7 @@ import { getDockerBuildScriptWithBuiltInDockerFile } from "../docker";
 import type { CacheConfig } from "../types";
 import { isOfBuildType } from "../types";
 import { getNodeCache } from "./cache";
-import { getYarnInstall } from "./yarn";
+import { getPackageManagerInstall } from "./packageManagerInstall";
 
 const getMeteorCache = (context: ComponentContext): CacheConfig[] => [
   {
@@ -31,8 +31,10 @@ const getMeteorDockerInstallScripts = async (
 ): Promise<BashExpression> => {
   const packageManagerInfo = await context.packageManagerInfo;
   if (packageManagerInfo.type === "pnpm") {
+    // not a meteor limitation — catladder's meteor docker install path
+    // is only implemented for yarn so far
     throw new Error(
-      "the meteor build type only supports yarn (meteor's bundler is yarn-based)",
+      "the meteor build type is only implemented for yarn in catladder",
     );
   }
   if (packageManagerInfo.isClassic) {
@@ -74,13 +76,14 @@ export const createMeteorBuildJobs = async (
     throw new Error("deploy config is not meteor");
   }
 
-  const [yarnInstall, nodeCache, meteorInstallScripts] = await Promise.all([
-    getYarnInstall(context),
-    getNodeCache(context),
-    buildConfig.installScripts
-      ? getMeteorDockerInstallScripts(context)
-      : Promise.resolve("" as const),
-  ]);
+  const [packageManagerInstall, nodeCache, meteorInstallScripts] =
+    await Promise.all([
+      getPackageManagerInstall(context),
+      getNodeCache(context),
+      buildConfig.installScripts
+        ? getMeteorDockerInstallScripts(context)
+        : Promise.resolve("" as const),
+    ]);
 
   return createComponentBuildJobs(context, {
     appBuild:
@@ -92,7 +95,7 @@ export const createMeteorBuildJobs = async (
               METEOR_DISABLE_OPTIMISTIC_CACHING: "1", // see https://forums.meteor.com/t/veeery-long-building-time-inside-docker-container/58673/17?u=macrozone
             },
             script: [
-              ...yarnInstall,
+              ...packageManagerInstall,
 
               'TOOL_NODE_FLAGS="--max_old_space_size=3584 --min_semi_space_size=8 --max_semi_space_size=256 --optimize_for_size" meteor build ./dist --architecture os.linux.x86_64 --allow-superuser --server-only --directory',
 

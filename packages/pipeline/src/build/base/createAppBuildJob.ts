@@ -11,7 +11,7 @@ import { CatladderJob } from "../../types/jobs";
 import { ensureArray } from "../../utils";
 import { removeUndefined } from "../../utils/removeUndefined";
 import { createBuildJobArtifacts } from "../artifacts/createBuildJobArtifact";
-import { ensureNodeVersion } from "../node/yarn";
+import { ensureNodeVersion } from "../node/packageManagerInstall";
 import {
   APP_BUILD_JOB_NAME,
   RUNNER_BUILD_RESOURCE_VARIABLES,

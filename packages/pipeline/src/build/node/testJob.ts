@@ -10,7 +10,11 @@ import { ensureArrayOrNull, notNil } from "../../utils";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
-import { ensureNodeVersion, getYarnInstall } from "./yarn";
+import {
+  ensureNodeVersion,
+  getDefaultAuditCommand,
+  getPackageManagerInstall,
+} from "./packageManagerInstall";
 
 export const createNodeTestJobs = async (
   context: ComponentContext | WorkspaceContext,
@@ -43,14 +47,15 @@ export const createNodeTestJobs = async (
     needs: [],
   };
   const buildConfig = context.build.config;
-  const [yarnInstall, packageManagerInfo, nodeCache] = await Promise.all([
-    getYarnInstall(context),
-    context.packageManagerInfo,
-    // pull-only: the build job is the designated cache writer — lint and
-    // test produce equivalent content from the same lockfile, so their
-    // uploads were pure redundancy (same multi-GB archive, last wins)
-    getNodeCache(context, "pull"),
-  ]);
+  const [packageManagerInstall, packageManagerInfo, nodeCache] =
+    await Promise.all([
+      getPackageManagerInstall(context),
+      context.packageManagerInfo,
+      // pull-only: the build job is the designated cache writer — lint and
+      // test produce equivalent content from the same lockfile, so their
+      // uploads were pure redundancy (same multi-GB archive, last wins)
+      getNodeCache(context, "pull"),
+    ]);
   const auditJob: CatladderJob | null =
     buildConfig.audit !== false
       ? new CatladderJob({
@@ -61,15 +66,11 @@ export const createNodeTestJobs = async (
             ...(buildConfig.audit?.runnerVariables ?? {}),
           },
           image: buildConfig.audit?.jobImage ?? defaultImage,
-          caches: undefined, // audit does not need yarn install and no cache
+          caches: undefined, // audit does not need an install and no cache
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
-              packageManagerInfo.type === "pnpm"
-                ? "pnpm audit --prod --audit-level critical"
-                : packageManagerInfo.isClassic
-                  ? "yarn audit --level critical"
-                  : "yarn npm audit --environment production --severity critical", // yarn 2
+              getDefaultAuditCommand(packageManagerInfo),
             ]),
           ],
           allow_failure: buildConfig.audit?.allowFailure ?? true,
@@ -94,7 +95,7 @@ export const createNodeTestJobs = async (
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
-            ...yarnInstall,
+            ...packageManagerInstall,
             ...(ensureArrayOrNull(buildConfig.lint?.command) ?? ["yarn lint"]),
           ],
           allow_failure: buildConfig.lint?.allowFailure,
@@ -121,7 +122,7 @@ export const createNodeTestJobs = async (
           script: [
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
-            ...yarnInstall,
+            ...packageManagerInstall,
             ...(ensureArrayOrNull(buildConfig.test?.command) ?? ["yarn test"]),
           ],
           allow_failure: buildConfig.test?.allowFailure,
