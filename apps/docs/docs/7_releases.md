@@ -45,7 +45,16 @@ Releases are declared intentionally: whoever makes a noteworthy change commits a
 Signups can now use their company SSO account
 ```
 
-The release job consumes all pending changeset files: it takes the highest declared bump, computes the next version from the last `v*` tag, prepends the summaries to `CHANGELOG.md`, commits, tags and pushes. When no changesets are pending, the job succeeds without releasing.
+The release job consumes all pending changeset files: it takes the highest declared bump, computes the next version from the last `v*` tag, prepends the summaries to `CHANGELOG.md`, commits, tags and pushes. When no changesets are pending, the job succeeds without releasing — to release anyway (e.g. a hotfix was merged without a changeset), the `⚠️ force create release` job releases a patch bump with a generic changelog entry.
+
+#### The changeset check
+
+Every merge-request pipeline gets a **`🦋 changeset check`** job that shows what merging would do: which changesets the MR adds, everything already pending, and the version (plus changelog preview) the next release would carry. When the MR adds no changeset the job turns yellow (`allow_failure`) as a nudge — it never blocks the merge, since docs and chore changes legitimately ship without a changeset.
+
+Where the report appears:
+
+- **GitLab**: in the job log and as an exposed artifact (`changeset-report.md`) linked in the MR widget. If the project chooses to make `GL_TOKEN` available to MR pipelines, the job additionally maintains a sticky MR comment — this is opt-in, because exposing an api-scope token to MR pipelines is a security trade-off.
+- **GitHub**: as a sticky PR comment (maintained with the workflow's own token, updated in place on every push).
 
 Authoring:
 

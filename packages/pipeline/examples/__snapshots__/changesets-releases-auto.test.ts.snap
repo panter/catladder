@@ -205,16 +205,16 @@ exports[`matches snapshot for changesets-releases-auto github workflows YAML 1`]
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
             collapseable_section_end "docker-push"
           shell: bash
     www-audit-dev:
@@ -425,7 +425,7 @@ exports[`matches snapshot for changesets-releases-auto github workflows YAML 1`]
       name: create release
       runs-on: ubuntu-latest
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+        image: ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -655,16 +655,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
             collapseable_section_end "docker-push"
           shell: bash
     www-audit-review:
@@ -871,6 +871,31 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/www-deploy-review.sh
           shell: bash
+    changeset-check:
+      name: changeset check
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: read
+        pull-requests: write
+        packages: read
+      needs:
+        - job-image-changesets
+      continue-on-error: true
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: changeset check
+          run: changesetCheck
+          shell: bash
 catladder-release.yml:
   name: catladder release
   on:
@@ -1071,16 +1096,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
             collapseable_section_end "docker-push"
           shell: bash
     www-app-stage:
@@ -1385,16 +1410,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
             collapseable_section_end "docker-push"
           shell: bash
     www-stop-review:
@@ -1657,16 +1682,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+            docker push ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
             collapseable_section_end "docker-push"
           shell: bash
     www-stop-dev:
@@ -1723,7 +1748,7 @@ catladder-manual.yml:
       name: create release
       runs-on: ubuntu-latest
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/changesets:4dd77440f31d
+        image: ghcr.io/\${{ github.repository }}/catladder/changesets:d9899ef59230
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1735,6 +1760,7 @@ catladder-manual.yml:
         - job-image-changesets
       env:
         GITHUB_TOKEN: \${{ github.token }}
+        CATLADDER_FORCE_RELEASE: 'true'
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3279,16 +3305,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d
+    - docker push $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
     - collapseable_section_end "docker-push"
   rules:
     - &a1
@@ -3449,7 +3475,7 @@ before_script:
   interruptible: true
 create release:
   stage: release
-  image: $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d
+  image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
   script:
     - changesetsRelease
   after_script:
@@ -3468,7 +3494,9 @@ create release:
       when: manual
 ⚠️ force create release:
   stage: release
-  image: $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d
+  image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
+  variables:
+    CATLADDER_FORCE_RELEASE: 'true'
   script:
     - changesetsRelease
   after_script:
@@ -3482,6 +3510,21 @@ create release:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
   needs: []
+🦋 changeset check:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
+  script:
+    - changesetCheck
+  artifacts:
+    paths:
+      - changeset-report.md
+    expose_as: changeset report
+    when: always
+  rules:
+    - *a1
+    - *a4
+    - if: $CI_MERGE_REQUEST_ID
+  allow_failure: true
 'www 🛡 audit | dev ':
   stage: test
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:a3d5deca022b

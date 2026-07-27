@@ -19,6 +19,18 @@ export type ReleaseMethodDefinition = {
    * before releasing.
    */
   script: string;
+  /**
+   * optional MR/PR check script (on the same image): generates an
+   * informational check job in merge-request pipelines (e.g. the
+   * changeset check reporting what merging would release)
+   */
+  checkScript?: string;
+  /**
+   * variables injected into the FORCE release jobs only, letting the
+   * method's script implement force semantics (e.g. changesets: release
+   * a patch bump even without pending changesets)
+   */
+  forceReleaseVariables?: Record<string, string>;
 };
 
 export const RELEASE_METHODS: Record<ReleaseMethod, ReleaseMethodDefinition> = {
@@ -29,6 +41,8 @@ export const RELEASE_METHODS: Record<ReleaseMethod, ReleaseMethodDefinition> = {
   changesets: {
     image: "changesets",
     script: "changesetsRelease",
+    checkScript: "changesetCheck",
+    forceReleaseVariables: { CATLADDER_FORCE_RELEASE: "true" },
   },
 };
 

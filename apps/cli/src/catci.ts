@@ -23,6 +23,7 @@ import {
   changesetsReleaseJob,
   dispatchTaggedReleaseWorkflow,
 } from "./release/changesetsReleaseJob";
+import { changesetCheckJob } from "./release/changesetCheckJob";
 import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
 
 const GITLAB_HOST = "https://git.panter.ch";
@@ -43,6 +44,12 @@ usage:
       consumes pending .changeset/*.md files: computes the next version
       from the last v* tag, writes the changelog, commits, tags and
       pushes (no-op when no changesets are pending)
+
+  catci release changeset-check
+      MR/PR pipelines: reports which changesets the merge request adds,
+      what is pending and what version merging would release (job log,
+      changeset-report.md, sticky MR/PR comment where a token allows);
+      exits 1 when the merge request adds no changeset
 
   catci release dispatch-tagged-workflow <tag>
       github only: dispatches the generated taggedRelease workflow for
@@ -138,6 +145,13 @@ const main = async () => {
   }
   if (group === "release" && command === "changesets" && args.length === 0) {
     return changesetsReleaseJob();
+  }
+  if (
+    group === "release" &&
+    command === "changeset-check" &&
+    args.length === 0
+  ) {
+    return changesetCheckJob();
   }
   if (
     group === "release" &&

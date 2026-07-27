@@ -1,0 +1,23 @@
+#!/bin/bash
+set -e
+
+# MR/PR pipelines only: reports which changesets this merge request
+# adds, what is pending and what version merging would release; exits 1
+# (the job runs with allow_failure) when no changeset is added
+
+if [ "$GITHUB_ACTIONS" = "true" ]; then
+  # github container jobs: the workspace volume is owned by the host
+  # runner user while this step runs as the container user, and the
+  # safe.directory entry actions/checkout writes goes to a temporary
+  # HOME that is gone by now — git would refuse the repo ("dubious
+  # ownership")
+  git config --global --add safe.directory "$(pwd)"
+fi
+
+CATCI=".catladder-generated/catci/index.js"
+if [ ! -f "$CATCI" ]; then
+  echo "$CATCI not found — regenerate the pipeline with a current catladder version (catenv)"
+  exit 1
+fi
+
+node "$CATCI" release changeset-check

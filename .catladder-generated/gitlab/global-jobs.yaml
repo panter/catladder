@@ -21,16 +21,16 @@
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d
+    - docker push $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
     - collapseable_section_end "docker-push"
   rules:
     - &a1
@@ -191,7 +191,7 @@
   interruptible: true
 create release:
   stage: release
-  image: $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d
+  image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
   script:
     - changesetsRelease
   after_script:
@@ -210,7 +210,9 @@ create release:
       when: manual
 ⚠️ force create release:
   stage: release
-  image: $CI_REGISTRY_IMAGE/catladder/changesets:4dd77440f31d
+  image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
+  variables:
+    CATLADDER_FORCE_RELEASE: 'true'
   script:
     - changesetsRelease
   after_script:
@@ -224,3 +226,18 @@ create release:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
   needs: []
+🦋 changeset check:
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
+  script:
+    - changesetCheck
+  artifacts:
+    paths:
+      - changeset-report.md
+    expose_as: changeset report
+    when: always
+  rules:
+    - *a1
+    - *a4
+    - if: $CI_MERGE_REQUEST_ID
+  allow_failure: true

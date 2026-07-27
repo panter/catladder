@@ -5,10 +5,9 @@
  * from the last `v*` tag, writes the changelog, commits, tags and
  * pushes — the pushed tag triggers the taggedRelease pipeline.
  */
-import { execFile as execFileCb } from "child_process";
 import { readFile, readdir, rm, writeFile } from "fs/promises";
 import { join } from "path";
-import { promisify } from "util";
+import type { Changeset } from "./changesets";
 import {
   getNextVersion,
   maxBump,
@@ -16,8 +15,7 @@ import {
   prependToChangelog,
   renderChangelogEntries,
 } from "./changesets";
-
-const execFile = promisify(execFileCb);
+import { ensureReleaseHistory, getLastReleaseTag, git } from "./releaseGit";
 
 const CHANGESET_DIR = ".changeset";
 const CHANGELOG_FILE = "CHANGELOG.md";
@@ -29,12 +27,7 @@ const CHANGELOG_FILE = "CHANGELOG.md";
  */
 const GITHUB_TAGGED_RELEASE_WORKFLOW = "catladder-release.yml";
 
-const git = async (...args: string[]): Promise<string> => {
-  const { stdout } = await execFile("git", args);
-  return stdout.trim();
-};
-
-const readPendingChangesets = async () => {
+export const readPendingChangesets = async () => {
   const entries = await readdir(CHANGESET_DIR).catch(() => []);
   const files = entries.filter(
     (file) => file.endsWith(".md") && file.toLowerCase() !== "readme.md",
@@ -47,40 +40,6 @@ const readPendingChangesets = async () => {
       ),
     ),
   );
-};
-
-/**
- * CI checkouts are usually shallow and tagless (gitlab clones with
- * depth 1; github's checkout needs fetch-depth: 0) — the local history
- * then cannot answer "nearest v* tag" and the job would rederive the
- * FIRST release version. Deepen and fetch tags before deriving.
- */
-const ensureReleaseHistory = async () => {
-  const shallow = await git("rev-parse", "--is-shallow-repository").catch(
-    () => "false",
-  );
-  try {
-    if (shallow === "true") {
-      await git("fetch", "--quiet", "--unshallow", "--tags", "origin");
-    } else {
-      await git("fetch", "--quiet", "--tags", "origin");
-    }
-  } catch (e) {
-    console.warn(
-      `could not fetch tags from origin (${e}) — version derivation may be wrong on a shallow clone`,
-    );
-  }
-};
-
-const getLastReleaseTag = async (): Promise<string | null> => {
-  try {
-    // the nearest v* tag in the history of HEAD — on hotfix branches
-    // this is deliberately the branch's own release line, not the
-    // globally highest version
-    return await git("describe", "--tags", "--abbrev=0", "--match", "v[0-9]*");
-  } catch {
-    return null;
-  }
 };
 
 const ensureGitIdentity = async () => {
@@ -164,16 +123,37 @@ export const dispatchTaggedReleaseWorkflow = async (tag: string) => {
   console.log(`dispatched ${GITHUB_TAGGED_RELEASE_WORKFLOW} for ${tag}`);
 };
 
+/**
+ * the escape hatch of the force-release job: releasing without pending
+ * changesets (e.g. a hotfix merged without one) must not require a new
+ * MR, so a forced empty release becomes a patch bump with a generic
+ * changelog entry instead of a no-op
+ */
+const FORCED_RELEASE_CHANGESET: Changeset = {
+  fileName: "",
+  bump: "patch",
+  summary: "Forced release without pending changesets.",
+};
+
 export const changesetsReleaseJob = async () => {
-  const changesets = await readPendingChangesets();
-  if (changesets.length === 0) {
+  const pending = await readPendingChangesets();
+  const forcedEmpty =
+    pending.length === 0 && process.env.CATLADDER_FORCE_RELEASE === "true";
+  if (pending.length === 0 && !forcedEmpty) {
     console.log(
       `no changesets found in ${CHANGESET_DIR}/ — nothing to release`,
     );
     console.log(
       "add one with `yarn changeset` (or write .changeset/<name>.md by hand) and merge it to release",
     );
+    console.log(
+      "to release anyway (patch bump), run the force release job instead",
+    );
     return;
+  }
+  const changesets = forcedEmpty ? [FORCED_RELEASE_CHANGESET] : pending;
+  if (forcedEmpty) {
+    console.log("no changesets pending — forced release, bumping a patch");
   }
 
   await ensureReleaseHistory();
@@ -197,11 +177,19 @@ export const changesetsReleaseJob = async () => {
     prependToChangelog(existingChangelog, version, date, entries),
   );
   await Promise.all(
-    changesets.map((changeset) => rm(join(CHANGESET_DIR, changeset.fileName))),
+    // pending, not changesets: the synthetic forced-release changeset
+    // has no file to delete
+    pending.map((changeset) => rm(join(CHANGESET_DIR, changeset.fileName))),
   );
 
   await ensureGitIdentity();
-  await git("add", CHANGELOG_FILE, CHANGESET_DIR);
+  // a forced empty release consumes no changeset files — and .changeset/
+  // may not even exist yet, which `git add` would reject
+  if (forcedEmpty) {
+    await git("add", CHANGELOG_FILE);
+  } else {
+    await git("add", CHANGELOG_FILE, CHANGESET_DIR);
+  }
   await git("commit", "-m", `chore(release): ${version}\n\n${entries}`);
   await git("tag", tag);
   await pushCommitAndTag(tag);

@@ -18,7 +18,10 @@ import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import { notNil } from "../../utils";
-import { getGithubReleaseJobs } from "./githubReleaseJobs";
+import {
+  getGithubReleaseCheckJobs,
+  getGithubReleaseJobs,
+} from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
 
 const WORKFLOWS_FOLDER = ".github/workflows";
@@ -223,6 +226,10 @@ export class GithubBackend implements PipelineBackend {
         }
       }
       manualDispatchOptions.push(...leafIds);
+
+      if (trigger === "mr") {
+        Object.assign(jobs, getGithubReleaseCheckJobs(config, images));
+      }
 
       if (trigger === "mainBranch") {
         const releaseJobs = getGithubReleaseJobs(

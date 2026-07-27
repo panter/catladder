@@ -28,7 +28,10 @@ are generated, never hand-edited.
   pipeline (it still no-ops when there is nothing to release).
 
 There is always also a manual **`⚠️ force create release`** job as an
-escape hatch.
+escape hatch. With `method: "changesets"` it has an extra meaning: it
+releases **even when no changesets are pending** (patch bump with a
+generic changelog entry) — the recovery path when a change was merged
+without a changeset and must ship now.
 
 ## `method` — how the version is decided
 
@@ -56,6 +59,31 @@ Add a changeset by creating `.changeset/<name>.md`:
 Add the new export endpoint.
 ```
 
+**When you (an agent) make a user-facing change in a changesets
+project, add a changeset file in the same MR** — bump level `major`
+(breaking) / `minor` (feature) / `patch` (fix), and a one-to-two
+sentence summary written for the changelog reader. Docs/chore-only
+changes need none. The package name in the frontmatter is ignored
+(versions come from git tags); only the bump counts.
+
+### The changeset check (MR/PR pipelines)
+
+Changesets projects get a **`🦋 changeset check`** job in every
+merge-request pipeline. It reports what merging would do — the
+changesets this MR adds, everything pending, and the version the next
+release would get (with a changelog preview) — and **warns without
+blocking** (`allow_failure`) when the MR adds no changeset:
+
+- **GitLab**: report in the job log and as an exposed artifact
+  (`changeset-report.md`) in the MR widget. If the project makes
+  `GL_TOKEN` available to MR pipelines it also maintains a sticky MR
+  comment (opt-in — an api-scope token in MR pipelines is a security
+  trade-off).
+- **GitHub**: maintains a sticky PR comment via the workflow token.
+
+A yellow changeset-check job on an MR is a prompt to ask: is this
+change user-facing? If yes, add a changeset; if not, ignore it.
+
 ## The security-audit gate
 
 **Both methods gate on a dependency security audit before releasing.**
@@ -69,7 +97,8 @@ the `security` commands in the `catladder-cli` reference.
 
 - Fails immediately on the audit → handle the security-audit gate above.
 - `changesets` released nothing → no `.changeset/*.md` files were
-  pending.
+  pending. To ship anyway, run `⚠️ force create release` (patch bump),
+  or merge an MR adding a changeset describing the accumulated work.
 - Wrong version bump → check commit types (semantic-release) or the bump
   levels in the changeset files (changesets).
 - Inspect the job with `yarn catladder project ci job-log` (see the

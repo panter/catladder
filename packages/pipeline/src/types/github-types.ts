@@ -36,6 +36,7 @@ export type GithubJob = {
   env?: Record<string, string>;
   permissions?: Record<string, string>;
   if?: string;
+  "continue-on-error"?: boolean;
   steps: GithubStep[];
 };
 
