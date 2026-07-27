@@ -2423,8 +2423,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm lint
 
@@ -2471,8 +2470,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm test
 
@@ -2551,8 +2549,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -2592,10 +2589,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -2751,10 +2747,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -2955,8 +2950,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm lint
 
@@ -3003,8 +2997,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm test
 
@@ -3083,8 +3076,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -3124,10 +3116,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3286,10 +3277,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3490,8 +3480,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -3570,8 +3559,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-pnpm install --frozen-lockfile
+pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -3611,10 +3599,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3770,10 +3757,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/api"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3929,10 +3915,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -4091,10 +4076,9 @@ export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
-export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-COPY --chown=node:node $APP_DIR .
+export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile"
+RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -4589,8 +4573,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm lint
   cache:
@@ -4637,8 +4620,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm test
   cache:
@@ -4714,8 +4696,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
@@ -4804,8 +4785,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm lint
   cache:
@@ -4854,8 +4834,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm test
   cache:
@@ -4933,8 +4912,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
@@ -5037,8 +5015,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
@@ -5137,8 +5114,7 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
-    - pnpm install --frozen-lockfile
+    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
@@ -5206,10 +5182,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5404,10 +5379,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5610,10 +5584,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5801,10 +5774,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/api"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5992,10 +5964,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6193,10 +6164,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6402,10 +6372,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6596,10 +6565,9 @@ create release:
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
     - export DOCKER_IMAGE_TAG="$CI_COMMIT_SHA"
     - |-
-      export DOCKER_COPY_AND_INSTALL_APP="ENV npm_config_store_dir=/app/$APP_DIR/.pnpm-store
-      COPY --chown=node:node $APP_DIR .
+      export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"

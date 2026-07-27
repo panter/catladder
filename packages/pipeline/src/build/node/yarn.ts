@@ -42,20 +42,22 @@ const getEnsurePnpmCommand = (version: string) =>
 /**
  * pnpm's store is global by default; point it at a project-local
  * directory so CI can cache it (the pnpm equivalent of the `.yarn`
- * zip cache)
+ * zip cache). Passed as the --store-dir flag: pnpm 11 stopped reading
+ * the npm_config_store_dir env var (settings only come from
+ * pnpm-workspace.yaml / global config / CLI flags), the flag works on
+ * v10 and v11
  */
-const getPnpmStoreDirCommand = (inWorkspace: boolean) =>
+const getPnpmStoreDirExpression = (inWorkspace: boolean) =>
   inWorkspace
-    ? `export npm_config_store_dir="$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"`
-    : `export npm_config_store_dir="$PWD/.pnpm-store"`;
+    ? `"$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"`
+    : `"$PWD/.pnpm-store"`;
 
 const getPnpmInstallCommands = (
   context: Context,
   packageManagerInfo: PackageManagerInfoBase & { type: "pnpm" },
 ) => [
   getEnsurePnpmCommand(packageManagerInfo.version),
-  getPnpmStoreDirCommand(isInWorkspace(context, packageManagerInfo)),
-  `pnpm install --frozen-lockfile`,
+  `pnpm install --frozen-lockfile --store-dir ${getPnpmStoreDirExpression(isInWorkspace(context, packageManagerInfo))}`,
 ];
 
 export const ensureNodeVersion = (context: Context) =>
@@ -125,10 +127,9 @@ const getPnpmDockerAppCopyAndBuildScript = (
       : "";
   return new BashExpression(
     `
-ENV npm_config_store_dir=${storeDir}
 ${DOCKER_COPY_FILES}
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@${packageManagerInfo.version}
-RUN pnpm install --prod --frozen-lockfile${filter}
+RUN pnpm install --prod --frozen-lockfile --store-dir ${storeDir}${filter}
     `.trim(),
   );
 };
