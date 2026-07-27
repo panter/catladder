@@ -12,6 +12,9 @@ const config: Config = {
   },
   releases: {
     when: "auto",
+    // dogfood the changesets release method: merging a changeset to the
+    // main branch releases; no pending changesets → no-op
+    method: "changesets",
   },
   builds: {
     // one shared turbo build for the whole monorepo (docs builds in its
