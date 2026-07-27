@@ -12,7 +12,13 @@ export type DeployConfigCustom = {
    */
   requiresDocker: boolean;
   /**
-   * whether your custom script requires yarn install
+   * whether your custom script requires the package-manager install
+   * (yarn/pnpm, autodetected) to run first
+   */
+  requiresInstall?: boolean;
+  /**
+   * @deprecated use {@link requiresInstall} — same behavior (the
+   * install always uses the project's detected package manager)
    */
   requiresYarnInstall?: boolean;
   /**

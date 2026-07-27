@@ -121,7 +121,7 @@ docs: {
   build: false,
   deploy: {
     type: "pages",
-    requiresYarnInstall: true,
+    requiresInstall: true,
     script: ["yarn workspace docs build"],
   },
 },

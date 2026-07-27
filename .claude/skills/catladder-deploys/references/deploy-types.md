@@ -63,7 +63,7 @@ resources with `yarn catladder project setup`; detect drift with
 - `type: "pages"` — **required**. Publishes a static site on gitlab pages (not yet supported on the github backend).
 - `script: string[]` — **required**; produces the site.
 - `publishDir?: string` — output directory relative to the repo root, default `"public"`.
-- `requiresYarnInstall?: boolean` — run `yarn install` first.
+- `requiresInstall?: boolean` — run the package-manager install (yarn/pnpm) first (`requiresYarnInstall` is a deprecated alias).
 - `jobImage?: GitlabJobImage`; also accepts `cache`.
 - Review envs publish under an `mr-<iid>` path prefix (parallel deployments → MR previews; exposed as `$PAGES_PREFIX`); other envs publish at the root. The environment url is the published pages url.
 - Defaults to `allowFailure: true`.
@@ -77,7 +77,7 @@ resources with `yarn catladder project setup`; detect drift with
 - `type: "custom"` — **required**.
 - `requiresDocker: boolean` — **required**; whether the deploy needs a built Docker image.
 - `script: string[]` — **required**; the deploy script.
-- `requiresYarnInstall?: boolean` — whether the script needs `yarn install`.
+- `requiresInstall?: boolean` — whether the script needs the package-manager install (`requiresYarnInstall` is a deprecated alias).
 - `stopScript?: string[]` — script to stop/tear down the environment.
 - `jobImage?: GitlabJobImage`.
 - Also accepts `cache` (via `WithCacheConfig`).

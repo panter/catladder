@@ -31,7 +31,14 @@ export type DeployConfigPages = {
   publishDir?: string;
 
   /**
-   * whether the script needs `yarn install` first
+   * whether the script needs the package-manager install (yarn/pnpm,
+   * autodetected) to run first
+   */
+  requiresInstall?: boolean;
+
+  /**
+   * @deprecated use {@link requiresInstall} — same behavior (the
+   * install always uses the project's detected package manager)
    */
   requiresYarnInstall?: boolean;
 

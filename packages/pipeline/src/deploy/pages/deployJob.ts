@@ -40,7 +40,9 @@ export const createPagesDeployJobs = async (
       pages: { path_prefix: pathPrefix },
       script: [
         `cd ${context.build.dir}`,
-        ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
+        ...((deployConfig.requiresInstall ?? deployConfig.requiresYarnInstall)
+          ? yarnInstall
+          : []),
         ...deployConfig.script,
         // the gitlab environment url should point at the published site
         // (the base deploy job reports $ROOT_URL as environment url)

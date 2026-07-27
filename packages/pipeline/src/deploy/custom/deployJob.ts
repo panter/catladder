@@ -16,7 +16,6 @@ export const createCustomDeployJobs = async (
     // should not happen
     throw new Error("deploy config is not custom");
   }
-  // FIXME: custom deploy currently assumes yarn-based project
   const yarnInstall = await getYarnInstall(context, {
     noCustomPostInstall: true,
   });
@@ -30,7 +29,9 @@ export const createCustomDeployJobs = async (
         : undefined,
       script: [
         `cd ${context.build.dir}`,
-        ...(deployConfig.requiresYarnInstall ? yarnInstall : []),
+        ...((deployConfig.requiresInstall ?? deployConfig.requiresYarnInstall)
+          ? yarnInstall
+          : []),
         ...deployConfig.script,
       ],
       variables: {},
