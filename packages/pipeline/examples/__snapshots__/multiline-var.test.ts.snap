@@ -155,16 +155,16 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -420,7 +420,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
         - app1-app-dev
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -429,7 +429,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -624,7 +624,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
         - app2-app-dev
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -633,7 +633,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
       env:
         DOCKER_BUILDKIT: '1'
         CL_dev_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -816,13 +816,13 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
         - job-image-docker-build
         - kube-app-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1024,16 +1024,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -1289,7 +1289,7 @@ catladder-review.yml:
         - app1-app-review
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1298,7 +1298,7 @@ catladder-review.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1493,7 +1493,7 @@ catladder-review.yml:
         - app2-app-review
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1502,7 +1502,7 @@ catladder-review.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_review_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1685,13 +1685,13 @@ catladder-review.yml:
         - job-image-docker-build
         - kube-app-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1889,16 +1889,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -2056,7 +2056,7 @@ catladder-release.yml:
         - app1-app-stage
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2065,7 +2065,7 @@ catladder-release.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2159,7 +2159,7 @@ catladder-release.yml:
         - app2-app-stage
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2168,7 +2168,7 @@ catladder-release.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_stage_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_stage_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2259,13 +2259,13 @@ catladder-release.yml:
         - job-image-docker-build
         - kube-app-stage
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2459,16 +2459,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -2953,16 +2953,16 @@ catladder-manual.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
     job-image-kubernetes:
@@ -3623,7 +3623,7 @@ catladder-manual.yml:
         - app1-app-prod
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3632,7 +3632,7 @@ catladder-manual.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3829,7 +3829,7 @@ catladder-manual.yml:
         - app2-app-prod
         - job-image-docker-build
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3838,7 +3838,7 @@ catladder-manual.yml:
       env:
         DOCKER_BUILDKIT: '1'
         CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -4200,13 +4200,13 @@ catladder-manual.yml:
         - job-image-docker-build
         - kube-app-prod
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       env:
         DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:9826749566e3
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -9248,16 +9248,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3 -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+    - docker push $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -9568,7 +9568,7 @@ create release:
   interruptible: true
 'app1 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -10025,7 +10025,7 @@ create release:
   interruptible: true
 'app1 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -10359,7 +10359,7 @@ create release:
   interruptible: true
 'app1 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -10678,7 +10678,7 @@ create release:
   interruptible: true
 'app1 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -11112,7 +11112,7 @@ create release:
   interruptible: true
 'app2 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -11589,7 +11589,7 @@ create release:
   interruptible: true
 'app2 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -11938,7 +11938,7 @@ create release:
   interruptible: true
 'app2 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -12272,7 +12272,7 @@ create release:
   interruptible: true
 'app2 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -12733,7 +12733,7 @@ create release:
   interruptible: true
 'kube 🔨 docker | dev ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -13447,7 +13447,7 @@ create release:
   interruptible: true
 'kube 🔨 docker | review ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -14010,7 +14010,7 @@ create release:
   interruptible: true
 'kube 🔨 docker | stage ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
@@ -14563,7 +14563,7 @@ create release:
   interruptible: true
 'kube 🔨 docker | prod ':
   stage: build
-  image: $CI_REGISTRY_IMAGE/catladder/docker-build:9826749566e3
+  image: $CI_REGISTRY_IMAGE/catladder/docker-build:b343b099980e
   services:
     - name: docker:29.5.1-dind
       command:
