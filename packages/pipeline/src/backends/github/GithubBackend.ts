@@ -72,7 +72,7 @@ export class GithubBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const images = this.createImagesPlan();
+    const images = this.createImagesPlan(config);
     const scripts = new GithubScriptFiles();
     const workflows = await this.createWorkflows(config, images, scripts);
 
@@ -89,8 +89,8 @@ export class GithubBackend implements PipelineBackend {
     ];
   }
 
-  private createImagesPlan(): JobImagesPlan {
-    return new JobImagesPlan(this.type);
+  private createImagesPlan(config: Config): JobImagesPlan {
+    return new JobImagesPlan(this.type, config.images);
   }
 
   /**
@@ -98,7 +98,7 @@ export class GithubBackend implements PipelineBackend {
    */
   async createWorkflows(
     config: Config,
-    images: JobImagesPlan = this.createImagesPlan(),
+    images: JobImagesPlan = this.createImagesPlan(config),
     scripts: GithubScriptFiles = new GithubScriptFiles(),
   ): Promise<Record<string, GithubWorkflow>> {
     const workflows: Record<string, GithubWorkflow> = {};

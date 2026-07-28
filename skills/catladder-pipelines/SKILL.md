@@ -29,12 +29,20 @@ plus stop jobs for review-app teardown.
 
 ## Job images and catci
 
-Jobs run in catladder-provided images. Their definitions are
-materialized into `.catladder-generated/images/` and built in the
-project's own registry (content-hashed, rebuilt only on change).
+Jobs run in catladder-provided images (`🐳 catladder image <name>` build
+jobs). Their definitions are materialized into
+`.catladder-generated/images/` and built in the project's own registry
+under `catladder/` (content-hashed, rebuilt only on change).
 `.catladder-generated/catci/` holds a small bundled CI companion used by
 generated jobs (e.g. the release security audit) — all generated, never
 edit.
+
+Projects can declare their own job images under `images` in
+`catladder.ts` (`🐳 image <name>` build jobs, pushed to `job-images/` in
+the registry) and reference them in any `jobImage` field via
+`{ image: "<name>" }` — see the `catladder-builds` skill. Their
+Dockerfile dirs are used in place (nothing is materialized); the build
+job is skipped when the content hash already exists in the registry.
 
 ## Caching
 

@@ -17,13 +17,13 @@ exports[`matches snapshot for custom-build-job github workflows YAML 1`] = `
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -67,13 +67,13 @@ exports[`matches snapshot for custom-build-job github workflows YAML 1`] = `
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -147,7 +147,7 @@ exports[`matches snapshot for custom-build-job github workflows YAML 1`] = `
       name: www 🔨 docker | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
         - www-app-dev
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
@@ -208,13 +208,13 @@ catladder-review.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -258,13 +258,13 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -338,7 +338,7 @@ catladder-review.yml:
       name: www 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
         - www-app-review
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
@@ -395,13 +395,13 @@ catladder-release.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -445,13 +445,13 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -525,7 +525,7 @@ catladder-release.yml:
       name: www 🔨 docker | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
         - www-app-stage
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
@@ -581,13 +581,13 @@ catladder-review-stop.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -631,13 +631,13 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -753,13 +753,13 @@ catladder-manual.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -803,13 +803,13 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -916,7 +916,7 @@ catladder-manual.yml:
         actions: write
         packages: read
       needs:
-        - job-image-semantic-release
+        - catladder-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
       steps:
@@ -1009,7 +1009,7 @@ catladder-manual.yml:
       name: www 🔨 docker | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
         - www-app-prod
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
@@ -2095,7 +2095,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-🐳 job image semantic-release:
+🐳 catladder image semantic-release:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -2143,7 +2143,7 @@ before_script:
   retry: &a2
     max: 2
   interruptible: true
-🐳 job image docker-build:
+🐳 catladder image docker-build:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -2330,7 +2330,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'www 🔨 app | dev '
@@ -2572,7 +2572,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'www 🔨 app | review '
@@ -2820,7 +2820,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'www 🔨 app | stage '
@@ -3061,7 +3061,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'www 🔨 app | prod '

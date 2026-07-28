@@ -51,7 +51,7 @@
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: &a1
@@ -108,7 +108,7 @@
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a1

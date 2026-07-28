@@ -41,7 +41,7 @@ export class GitlabBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const images = this.createImagesPlan();
+    const images = this.createImagesPlan(config);
     const includes = await this.createIncludes(config, images);
 
     const mainFile: PipelineFile = {
@@ -61,8 +61,8 @@ export class GitlabBackend implements PipelineBackend {
     ];
   }
 
-  private createImagesPlan(): JobImagesPlan {
-    return new JobImagesPlan(this.type);
+  private createImagesPlan(config: Config): JobImagesPlan {
+    return new JobImagesPlan(this.type, config.images);
   }
 
   /**
@@ -72,7 +72,10 @@ export class GitlabBackend implements PipelineBackend {
   async createCompletePipeline(
     config: Config,
   ): Promise<Record<string, unknown>> {
-    const includes = await this.createIncludes(config, this.createImagesPlan());
+    const includes = await this.createIncludes(
+      config,
+      this.createImagesPlan(config),
+    );
 
     return includes.reduce((acc, { content }) => {
       return {

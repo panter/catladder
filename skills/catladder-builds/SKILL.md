@@ -1,6 +1,6 @@
 ---
 name: catladder-builds
-description: Configuring how a component is built in a catladder project — the `build` config in catladder.ts (build types node / rails / meteor / custom, build & start commands, artifacts, caching, lint/test/audit jobs, the Docker image, and shared workspace builds). Use when adding or changing a component's build, choosing a build type, wiring a Dockerfile/nginx image, tuning the build/test/lint jobs, or setting up a monorepo workspace build. Triggers on "build config", "buildCommand", "build type", "Dockerfile", "docker image", "rails build", "monorepo build", "artifacts".
+description: Configuring how a component is built in a catladder project — the `build` config in catladder.ts (build types node / rails / meteor / custom, build & start commands, artifacts, caching, lint/test/audit jobs, the Docker image, project-declared job images, and shared workspace builds). Use when adding or changing a component's build, choosing a build type, wiring a Dockerfile/nginx image, declaring a custom CI job image (`images` config), tuning the build/test/lint jobs, or setting up a monorepo workspace build. Triggers on "build config", "buildCommand", "build type", "Dockerfile", "docker image", "job image", "jobImage", "custom image", "project image", "rails build", "monorepo build", "artifacts".
 ---
 
 # Component builds with catladder
@@ -71,10 +71,39 @@ type: `build: { from: "web" }` (see workspace builds below).
 - `cache` — build caching (see the `catladder-pipelines` skill for the
   caching model).
 - `jobImage`, `jobTags`, `jobVars`, `runnerVariables` — the CI image,
-  runner tags, build-only env vars, and extra runner variables.
+  runner tags, build-only env vars, and extra runner variables. A
+  `jobImage` is a concrete image url or `{ image: "<name>" }`
+  referencing a project image (see below).
 - `docker` — the image build strategy: a built-in
   (`{ type: "nginx" | "node" | "meteor" }`) or
   `{ type: "custom" }` (expects a `Dockerfile`).
+
+## Project images (custom CI job images)
+
+When a job needs a toolchain catladder doesn't ship (Java, Playwright,
+…), declare a Docker image at the top level under `images` and reference
+it in any `jobImage` field (build, `test.jobImage`, custom/pages deploy,
+verify):
+
+```ts
+images: {
+  "java-build": {
+    dir: "docker/java-build",                 // contains the Dockerfile (= build context)
+    buildArgs: { MAVEN_VERSION: "3.9.9" },    // optional, part of the content hash
+    hashExtraPaths: ["shared/settings.xml"],  // optional extra hashed+watched files
+  },
+},
+components: {
+  api: {
+    build: { type: "custom", jobImage: { image: "java-build" }, docker: { type: "custom" } },
+  },
+}
+```
+
+Catladder generates a `🐳 image <name>` job (setup stage) that builds
+the image content-hashed into the project registry
+(`…/job-images/<name>:<hash>`) and skips when it already exists — works
+on GitLab and GitHub.
 
 ## Workspace builds (monorepos)
 

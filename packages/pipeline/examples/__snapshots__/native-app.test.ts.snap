@@ -17,13 +17,13 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
-    job-image-jobs-default:
-      name: 🐳 job image jobs-default
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-default
+        - name: 🐳 catladder image jobs-default
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -67,13 +67,13 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-jobs-testing-chrome:
-      name: 🐳 job image jobs-testing-chrome
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-testing-chrome
+        - name: 🐳 catladder image jobs-testing-chrome
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -117,13 +117,13 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -167,13 +167,13 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -221,7 +221,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: app 🛡 audit | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -245,7 +245,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: app 👮 lint | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -285,7 +285,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: app 🧪 test | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-testing-chrome
+        - catladder-image-jobs-testing-chrome
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
@@ -325,7 +325,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: app 🔨 app | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -385,7 +385,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
         - app-audit-dev
         - app-lint-dev
         - app-test-dev
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -420,7 +420,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: api 🛡 audit | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -442,7 +442,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: api 👮 lint | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -480,7 +480,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: api 🧪 test | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-testing-chrome
+        - catladder-image-jobs-testing-chrome
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
@@ -518,7 +518,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       name: api 🔨 app | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -567,7 +567,7 @@ exports[`matches snapshot for native-app github workflows YAML 1`] = `
       runs-on: ubuntu-latest
       needs:
         - api-app-dev
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -636,13 +636,13 @@ catladder-review.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-jobs-default:
-      name: 🐳 job image jobs-default
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-default
+        - name: 🐳 catladder image jobs-default
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -686,13 +686,13 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-jobs-testing-chrome:
-      name: 🐳 job image jobs-testing-chrome
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-testing-chrome
+        - name: 🐳 catladder image jobs-testing-chrome
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -736,13 +736,13 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -786,13 +786,13 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -840,7 +840,7 @@ catladder-review.yml:
       name: app 🛡 audit | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -864,7 +864,7 @@ catladder-review.yml:
       name: app 👮 lint | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -904,7 +904,7 @@ catladder-review.yml:
       name: app 🧪 test | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-testing-chrome
+        - catladder-image-jobs-testing-chrome
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
@@ -944,7 +944,7 @@ catladder-review.yml:
       name: app 🔨 app | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1004,7 +1004,7 @@ catladder-review.yml:
         - app-audit-review
         - app-lint-review
         - app-test-review
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1039,7 +1039,7 @@ catladder-review.yml:
       name: api 🛡 audit | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1061,7 +1061,7 @@ catladder-review.yml:
       name: api 👮 lint | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1099,7 +1099,7 @@ catladder-review.yml:
       name: api 🧪 test | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-testing-chrome
+        - catladder-image-jobs-testing-chrome
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
         credentials:
@@ -1137,7 +1137,7 @@ catladder-review.yml:
       name: api 🔨 app | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1186,7 +1186,7 @@ catladder-review.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-review
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -1251,13 +1251,13 @@ catladder-release.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-jobs-default:
-      name: 🐳 job image jobs-default
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-default
+        - name: 🐳 catladder image jobs-default
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1301,13 +1301,13 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-jobs-testing-chrome:
-      name: 🐳 job image jobs-testing-chrome
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-testing-chrome
+        - name: 🐳 catladder image jobs-testing-chrome
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1351,13 +1351,13 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1401,13 +1401,13 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1455,7 +1455,7 @@ catladder-release.yml:
       name: app 🔨 app | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1512,7 +1512,7 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - app-app-stage
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1547,7 +1547,7 @@ catladder-release.yml:
       name: api 🔨 app | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -1596,7 +1596,7 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-stage
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -1657,13 +1657,13 @@ catladder-review-stop.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-jobs-default:
-      name: 🐳 job image jobs-default
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-default
+        - name: 🐳 catladder image jobs-default
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1707,13 +1707,13 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-jobs-testing-chrome:
-      name: 🐳 job image jobs-testing-chrome
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-testing-chrome
+        - name: 🐳 catladder image jobs-testing-chrome
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1757,13 +1757,13 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1807,13 +1807,13 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1930,13 +1930,13 @@ catladder-manual.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-jobs-default:
-      name: 🐳 job image jobs-default
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-default
+        - name: 🐳 catladder image jobs-default
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1980,13 +1980,13 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-jobs-testing-chrome:
-      name: 🐳 job image jobs-testing-chrome
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image jobs-testing-chrome
+        - name: 🐳 catladder image jobs-testing-chrome
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -2030,13 +2030,13 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -2080,13 +2080,13 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -2193,7 +2193,7 @@ catladder-manual.yml:
         actions: write
         packages: read
       needs:
-        - job-image-semantic-release
+        - catladder-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
       steps:
@@ -2209,7 +2209,7 @@ catladder-manual.yml:
       name: app 🔨 app | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -2267,7 +2267,7 @@ catladder-manual.yml:
       runs-on: ubuntu-latest
       needs:
         - app-app-prod
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -2353,7 +2353,7 @@ catladder-manual.yml:
       name: api 🔨 app | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-jobs-default
+        - catladder-image-jobs-default
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
         credentials:
@@ -2403,7 +2403,7 @@ catladder-manual.yml:
       runs-on: ubuntu-latest
       needs:
         - api-app-prod
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -4634,7 +4634,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-🐳 job image semantic-release:
+🐳 catladder image semantic-release:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -4682,7 +4682,7 @@ before_script:
   retry: &a2
     max: 2
   interruptible: true
-🐳 job image jobs-default:
+🐳 catladder image jobs-default:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -4727,7 +4727,7 @@ before_script:
   needs: []
   retry: *a2
   interruptible: true
-🐳 job image jobs-testing-chrome:
+🐳 catladder image jobs-testing-chrome:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -4775,7 +4775,7 @@ before_script:
   needs: []
   retry: *a2
   interruptible: true
-🐳 job image docker-build:
+🐳 catladder image docker-build:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -4875,7 +4875,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -4922,7 +4922,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -4966,7 +4966,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-testing-chrome
+    - job: 🐳 catladder image jobs-testing-chrome
       artifacts: false
       optional: true
   retry: *a2
@@ -5067,7 +5067,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5126,7 +5126,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
     - job: 'app 👮 lint | dev '
@@ -5160,7 +5160,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5211,7 +5211,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5259,7 +5259,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-testing-chrome
+    - job: 🐳 catladder image jobs-testing-chrome
       artifacts: false
       optional: true
   retry: *a2
@@ -5364,7 +5364,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5423,7 +5423,7 @@ create release:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
     - job: 'app 👮 lint | review '
@@ -5533,7 +5533,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5592,7 +5592,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
     - job: 'app 🔨 app | stage '
@@ -5696,7 +5696,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5755,7 +5755,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
     - job: 'app 🔨 app | prod '
@@ -5781,7 +5781,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5826,7 +5826,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -5868,7 +5868,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-testing-chrome
+    - job: 🐳 catladder image jobs-testing-chrome
       artifacts: false
       optional: true
   retry: *a2
@@ -5955,7 +5955,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -6019,7 +6019,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'api 🔨 app | dev '
@@ -6178,7 +6178,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -6227,7 +6227,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -6273,7 +6273,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-testing-chrome
+    - job: 🐳 catladder image jobs-testing-chrome
       artifacts: false
       optional: true
   retry: *a2
@@ -6364,7 +6364,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -6430,7 +6430,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'api 🔨 app | review '
@@ -6659,7 +6659,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -6723,7 +6723,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'api 🔨 app | stage '
@@ -6939,7 +6939,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -7003,7 +7003,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
     - 'api 🔨 app | prod '

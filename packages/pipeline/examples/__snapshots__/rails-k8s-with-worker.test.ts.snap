@@ -17,13 +17,13 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -67,13 +67,13 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-kubernetes:
-      name: 🐳 job image kubernetes
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image kubernetes
+        - name: 🐳 catladder image kubernetes
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -117,13 +117,13 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
             docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -235,7 +235,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
       name: app 🔨 docker | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -264,7 +264,7 @@ exports[`matches snapshot for rails-k8s-with-worker github workflows YAML 1`] = 
         - app-docker-dev
         - app-lint-dev
         - app-test-dev
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -304,13 +304,13 @@ catladder-review.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -354,13 +354,13 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-kubernetes:
-      name: 🐳 job image kubernetes
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image kubernetes
+        - name: 🐳 catladder image kubernetes
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -404,13 +404,13 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -522,7 +522,7 @@ catladder-review.yml:
       name: app 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -551,7 +551,7 @@ catladder-review.yml:
         - app-docker-review
         - app-lint-review
         - app-test-review
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -587,13 +587,13 @@ catladder-release.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -637,13 +637,13 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-kubernetes:
-      name: 🐳 job image kubernetes
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image kubernetes
+        - name: 🐳 catladder image kubernetes
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -687,13 +687,13 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -741,7 +741,7 @@ catladder-release.yml:
       name: app 🔨 docker | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -767,7 +767,7 @@ catladder-release.yml:
       runs-on: ubuntu-latest
       needs:
         - app-docker-stage
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -802,13 +802,13 @@ catladder-review-stop.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -852,13 +852,13 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-kubernetes:
-      name: 🐳 job image kubernetes
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image kubernetes
+        - name: 🐳 catladder image kubernetes
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -902,13 +902,13 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -956,7 +956,7 @@ catladder-review-stop.yml:
       name: app 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1057,13 +1057,13 @@ catladder-manual.yml:
     packages: write
   env: *a1
   jobs:
-    job-image-docker-build:
-      name: 🐳 job image docker-build
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image docker-build
+        - name: 🐳 catladder image docker-build
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1107,13 +1107,13 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-kubernetes:
-      name: 🐳 job image kubernetes
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image kubernetes
+        - name: 🐳 catladder image kubernetes
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1157,13 +1157,13 @@ catladder-manual.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
             collapseable_section_end "docker-push"
           shell: bash
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -1211,7 +1211,7 @@ catladder-manual.yml:
       name: app 🛑 Stop ⚠️ | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1293,7 +1293,7 @@ catladder-manual.yml:
       name: app ↩️ Rollback ⚠️ | dev
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1384,7 +1384,7 @@ catladder-manual.yml:
         actions: write
         packages: read
       needs:
-        - job-image-semantic-release
+        - catladder-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
       steps:
@@ -1400,7 +1400,7 @@ catladder-manual.yml:
       name: app ↩️ Rollback ⚠️ | review
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1482,7 +1482,7 @@ catladder-manual.yml:
       name: app 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1564,7 +1564,7 @@ catladder-manual.yml:
       name: app ↩️ Rollback ⚠️ | stage
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1646,7 +1646,7 @@ catladder-manual.yml:
       name: app 🔨 docker | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-docker-build
+        - catladder-image-docker-build
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
         credentials:
@@ -1673,7 +1673,7 @@ catladder-manual.yml:
       runs-on: ubuntu-latest
       needs:
         - app-docker-prod
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1702,7 +1702,7 @@ catladder-manual.yml:
       name: app 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -1784,7 +1784,7 @@ catladder-manual.yml:
       name: app ↩️ Rollback ⚠️ | prod
       runs-on: ubuntu-latest
       needs:
-        - job-image-kubernetes
+        - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
         credentials:
@@ -2980,7 +2980,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-🐳 job image semantic-release:
+🐳 catladder image semantic-release:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -3028,7 +3028,7 @@ before_script:
   retry: &a2
     max: 2
   interruptible: true
-🐳 job image docker-build:
+🐳 catladder image docker-build:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -3073,7 +3073,7 @@ before_script:
   needs: []
   retry: *a2
   interruptible: true
-🐳 job image kubernetes:
+🐳 catladder image kubernetes:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -3262,7 +3262,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
   retry: *a2
@@ -3410,7 +3410,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
     - job: 'app 👮 lint | dev '
@@ -3473,7 +3473,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -3528,7 +3528,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -3643,7 +3643,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
   retry: *a2
@@ -3797,7 +3797,7 @@ create release:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
     - job: 'app 👮 lint | review '
@@ -3860,7 +3860,7 @@ create release:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -3915,7 +3915,7 @@ create release:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -3959,7 +3959,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
   retry: *a2
@@ -4106,7 +4106,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
     - job: 'app 🔨 docker | stage '
@@ -4163,7 +4163,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -4218,7 +4218,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -4262,7 +4262,7 @@ create release:
       if: $CI_PIPELINE_SOURCE  == "trigger"
     - if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image docker-build
+    - job: 🐳 catladder image docker-build
       artifacts: false
       optional: true
   retry: *a2
@@ -4409,7 +4409,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
     - job: 'app 🔨 docker | prod '
@@ -4466,7 +4466,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2
@@ -4521,7 +4521,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 job image kubernetes
+    - job: 🐳 catladder image kubernetes
       artifacts: false
       optional: true
   retry: *a2

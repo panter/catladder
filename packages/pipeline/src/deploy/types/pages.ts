@@ -1,5 +1,5 @@
 import type { WithCacheConfig } from "../../build";
-import type { GitlabJobImage } from "../../types";
+import type { JobImageConfig } from "../../customImages/projectImages";
 import type { DeployConfigBase } from "./base";
 
 export type DeployConfigPages = {
@@ -45,6 +45,6 @@ export type DeployConfigPages = {
   /**
    * image to use
    */
-  jobImage?: GitlabJobImage;
+  jobImage?: JobImageConfig;
 } & DeployConfigBase &
   WithCacheConfig;

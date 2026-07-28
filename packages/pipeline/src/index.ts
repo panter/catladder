@@ -3,6 +3,7 @@ export * from "./backends";
 export * from "./types";
 export * from "./rules";
 export * from "./runner";
+export * from "./customImages/projectImages";
 export * from "./config";
 export * from "./store";
 export * from "./context";

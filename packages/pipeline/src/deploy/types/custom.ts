@@ -1,5 +1,5 @@
 import type { WithCacheConfig } from "../../build";
-import type { GitlabJobImage } from "../../types";
+import type { JobImageConfig } from "../../customImages/projectImages";
 import type { DeployConfigBase } from "./base";
 
 export type DeployConfigCustom = {
@@ -33,7 +33,7 @@ export type DeployConfigCustom = {
   /**
    * image to use
    */
-  jobImage?: GitlabJobImage;
+  jobImage?: JobImageConfig;
 
   /**
    * job artifact paths the deploy produces (relative to the repo root)

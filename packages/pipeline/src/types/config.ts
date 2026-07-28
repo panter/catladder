@@ -10,6 +10,7 @@ import type { Hooks } from "./hooks";
 import type { ReleaseConfig } from "./release";
 import type { CatladderStore } from "../store";
 import type { AgentSkillsConfig } from "../agentSkills/types";
+import type { ProjectImageConfig } from "../customImages/projectImages";
 import type { VerifyConfig } from "../verify/types";
 
 export const ALL_PIPELINE_TRIGGERS = [
@@ -350,6 +351,14 @@ export type Config<C extends ConfigProps = never> = {
   domainCanonical?: string;
 
   agents?: Record<string, AgentConfig>;
+
+  /**
+   * docker images declared by the project, built automatically in the
+   * pipeline: content-hashed into the project's own registry and only
+   * rebuilt when their inputs change. Reference them in any `jobImage`
+   * field via `{ image: "<key>" }`.
+   */
+  images?: Record<string, ProjectImageConfig>;
 
   // shared workspace Builds
   builds?: Record<string, WorkspaceBuildConfig>;

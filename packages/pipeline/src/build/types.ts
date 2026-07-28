@@ -1,4 +1,5 @@
-import type { Artifacts, EnvVars, GitlabJobImage } from "../types";
+import type { Artifacts, EnvVars } from "../types";
+import type { JobImageConfig } from "../customImages/projectImages";
 import type { Services } from "../types/gitlab-ci-yml";
 
 import type { CatladderJob, CatladderJobCache } from "../types/jobs";
@@ -97,7 +98,7 @@ export type WithCacheConfig = {
 
 export type TestJobCustom = {
   command?: string | string[];
-  jobImage?: GitlabJobImage;
+  jobImage?: JobImageConfig;
   /**
    * additional CI/CD artifacts reports,
    * use to display information in merge requests, pipeline views and security dashboards.
@@ -192,7 +193,7 @@ export type BuildConfigBase = {
   /**
    * custom image to use
    */
-  jobImage?: GitlabJobImage;
+  jobImage?: JobImageConfig;
 } & WithCacheConfig;
 
 export type BuildConfigNodeBase = BuildConfigBase & {
@@ -304,7 +305,7 @@ export type BuildConfigCustom = Omit<
   "lint" | "test" | "audit"
 > & {
   type: "custom";
-  jobImage: GitlabJobImage;
+  jobImage: JobImageConfig;
   /**
    * {@link Services}s used in lint, test, audit, and build jobs.
    */
@@ -456,7 +457,7 @@ export type WorkspaceBuildConfigBase = {
    */
   artifactsReports?: BuildConfigArtifactsReports;
 
-  jobImage?: GitlabJobImage;
+  jobImage?: JobImageConfig;
   /**
    * tags for the underlying job runner (e.g gitlab)
    */

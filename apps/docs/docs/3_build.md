@@ -67,6 +67,81 @@ Use the custom build type for anything that is not yet built-in to catladder.
 
 ```
 
+## Project Images
+
+When your build or test jobs need a specific Docker image (e.g. Java + Maven, Playwright, a custom toolchain), you can declare it under `images` and catladder builds it automatically in your pipeline — on GitLab and GitHub alike.
+
+### How it works
+
+1. You put a `Dockerfile` in a directory in your repo (e.g. `docker/java-build/Dockerfile`)
+2. You declare it in your catladder config under `images`
+3. You reference it in any `jobImage` field using `{ image: "<name>" }`
+
+Catladder will:
+
+- **Hash** all files in the image directory (plus `hashExtraPaths` and `buildArgs`) at generation time and use the hash as the image tag
+- **Generate a build job** (`🐳 image <name>`) in the `setup` stage. On GitLab it only runs when the image inputs change (via `rules:changes`); on GitHub it always runs, but a registry existence check skips the build when the tag already exists
+- **Set `needs: optional: true`** on consumer jobs so they don't wait for the build job when it doesn't run
+
+This means: **zero pipeline overhead** when the image hasn't changed, and automatic rebuilds when it does.
+
+### Configuration
+
+```ts title="catladder.ts"
+const config = {
+  images: {
+    "java-build": {
+      // directory containing a Dockerfile (also used as build context)
+      dir: "docker/java-build",
+      // optional: Docker build arguments (part of the content hash)
+      buildArgs: { MAVEN_VERSION: "3.9.9" },
+      // optional: extra files outside `dir` to include in hash + change detection
+      hashExtraPaths: ["shared/settings.xml"],
+    },
+  },
+  components: {
+    api: {
+      dir: "api",
+      build: {
+        type: "custom",
+        jobImage: { image: "java-build" },
+        docker: { type: "custom" },
+      },
+      deploy: { /* ... */ },
+    },
+  },
+} satisfies Config;
+```
+
+The `dir` must contain a `Dockerfile`. All files in that directory are part of the content hash and watched for changes — nothing is copied into `.catladder-generated`, the directory is used in place.
+
+`{ image: "<name>" }` works in every `jobImage` field: build jobs, test jobs (`build.test.jobImage`), custom and pages deploys, and post-deploy verify jobs:
+
+```ts title="catladder.ts"
+build: {
+  type: "node",
+  test: {
+    jobImage: { image: "playwright" },
+  },
+},
+```
+
+### How images are stored
+
+Images are pushed to your project's own container registry:
+
+- GitLab: `$CI_REGISTRY_IMAGE/job-images/<name>:<content-hash>`
+- GitHub: `ghcr.io/<owner>/<repo>/job-images/<name>:<content-hash>`
+
+The `job-images/` prefix keeps them apart from your deployable component images and build caches. Catladder's own built-in job images live under `catladder/` in the same registry. Old images remain in the registry and can be cleaned up via registry retention policies.
+
+### Edge cases
+
+- **First pipeline run**: the image doesn't exist yet, the build job runs and builds it, consumer jobs wait
+- **Image deleted from registry**: consumer jobs will fail (the image can't be pulled). Re-run the pipeline after touching the Dockerfile to trigger a rebuild.
+- **Config-only changes**: `buildArgs` / `hashExtraPaths` changes alter the image tag without touching the image directory — the build job also watches `catladder.ts`, so it still runs
+- **Tagged releases**: GitLab's `rules:changes` may always evaluate to true for tags. The build job handles this gracefully by checking the registry first and skipping the build if the image already exists.
+
 ## Workspace Builds
 
 Workspace builds are shared builds that are used by multiple components. There will be only one build job for all components that use the workspace build, but each component still will have its own docker build job.

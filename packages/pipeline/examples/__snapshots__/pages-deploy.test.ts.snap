@@ -22,13 +22,13 @@ exports[`matches snapshot for pages-deploy github workflows YAML 1`] = `
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
-    job-image-semantic-release:
-      name: 🐳 job image semantic-release
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: 🐳 job image semantic-release
+        - name: 🐳 catladder image semantic-release
           id: main
           run: |-
             function escapeForDotEnv () {
@@ -85,7 +85,7 @@ exports[`matches snapshot for pages-deploy github workflows YAML 1`] = `
         actions: write
         packages: read
       needs:
-        - job-image-semantic-release
+        - catladder-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
       steps:
@@ -187,7 +187,7 @@ before_script:
     local section_title="\${1}"
       echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
     }
-🐳 job image semantic-release:
+🐳 catladder image semantic-release:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -235,7 +235,7 @@ before_script:
   retry: &a2
     max: 2
   interruptible: true
-🐳 job image jobs-default:
+🐳 catladder image jobs-default:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -358,7 +358,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2
@@ -413,7 +413,7 @@ create release:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 job image jobs-default
+    - job: 🐳 catladder image jobs-default
       artifacts: false
       optional: true
   retry: *a2

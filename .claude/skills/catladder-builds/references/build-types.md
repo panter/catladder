@@ -21,7 +21,7 @@ generated pipeline files.
 | `jobVars` | `EnvVars` | env vars only in build jobs |
 | `runnerVariables` | `Record<string,string>` | extra runner vars (also for `services:`) |
 | `jobTags` | `string[]` | runner tags |
-| `jobImage` | `GitlabJobImage` | custom CI image for the build |
+| `jobImage` | `JobImageConfig` | CI image for the build: a concrete image or `{ image: "<name>" }` referencing a project image |
 | `docker` | see below | the deployable image strategy |
 
 `TestJobCustom` (for `lint`/`test`/`audit`): `command`, `jobImage`,
@@ -50,7 +50,7 @@ generated pipeline files.
 
 ### `custom`
 - `type: "custom"` — **required**.
-- `jobImage: GitlabJobImage` — **required** CI image.
+- `jobImage: JobImageConfig` — **required** CI image (concrete image or `{ image: "<name>" }` project-image ref).
 - `docker: BuildConfigDocker` — **required** image build config.
 - `jobServices?: Services` — services for lint/test/audit/build jobs.
 - `lint?` / `test?` / `audit?: TestJobCustom` — disabled unless set.

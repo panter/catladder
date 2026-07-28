@@ -8,6 +8,8 @@ import type { GitlabJobImage, PipelineType } from "../types";
 import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
 import { computeCustomImageHash } from "./hash";
+import type { ProjectImageConfig, ProjectImageRef } from "./projectImages";
+import { isProjectImageRef } from "./projectImages";
 import {
   getShippedImageDir,
   RUNNER_IMAGE_BUILD_CONTEXT,
@@ -33,7 +35,18 @@ export type ResolvedJobImage = {
 
 export type GeneratedImageFile = { path: string; content: string };
 
-const ensureJobName = (name: RunnerImageName) => `🐳 job image ${name}`;
+// built-in (catladder-shipped) images carry the catladder marker in
+// their job name; project-declared images get the short plain name
+const ensureJobName = (name: RunnerImageName) => `🐳 catladder image ${name}`;
+const projectEnsureJobName = (name: string) => `🐳 image ${name}`;
+
+/**
+ * the config file whose content feeds the project image hashes
+ * (`buildArgs`, `hashExtraPaths`): the gitlab change detection has to
+ * watch it, because a config-only change alters the image tag without
+ * touching the image dir
+ */
+const CONFIG_FILE = "catladder.ts";
 
 /**
  * plans the catladder job images of one backend run: resolves image
@@ -46,8 +59,15 @@ const ensureJobName = (name: RunnerImageName) => `🐳 job image ${name}`;
  */
 export class JobImagesPlan {
   private used = new Map<RunnerImageName, { hash: string }>();
+  private usedProject = new Map<
+    string,
+    { hash: string; watchedPaths: string[] }
+  >();
 
-  constructor(private readonly pipelineType: PipelineType) {}
+  constructor(
+    private readonly pipelineType: PipelineType,
+    private readonly projectImages: Record<string, ProjectImageConfig> = {},
+  ) {}
 
   /**
    * resolves a job image (marker or concrete) to a concrete image url
@@ -58,10 +78,13 @@ export class JobImagesPlan {
     need?: CatladderJobNeed;
     fromRepoRegistry?: boolean;
   } {
-    if (!isCatladderImageRef(image)) {
-      return { image };
+    if (isCatladderImageRef(image)) {
+      return this.resolveRef(image);
     }
-    return this.resolveRef(image);
+    if (isProjectImageRef(image)) {
+      return this.resolveProjectRef(image);
+    }
+    return { image };
   }
 
   resolveRef(ref: CatladderImageRef): ResolvedJobImage {
@@ -79,6 +102,23 @@ export class JobImagesPlan {
     };
   }
 
+  resolveProjectRef(ref: ProjectImageRef): ResolvedJobImage {
+    const name = ref.image;
+    const { hash } = this.useProject(name);
+    return {
+      // `job-images/` keeps the project's job images apart from its
+      // deployable component images (registry root) and build caches
+      image: `${this.registryImageRef()}/job-images/${name}:${hash}`,
+      fromRepoRegistry: true,
+      need: {
+        job: projectEnsureJobName(name),
+        artifacts: false,
+        optional: true,
+        global: true,
+      },
+    };
+  }
+
   /**
    * the registry image prefix. On github, container images can't use
    * runtime env vars — the expression form is required.
@@ -87,6 +127,32 @@ export class JobImagesPlan {
     return this.pipelineType === "github"
       ? "ghcr.io/${{ github.repository }}"
       : `${getCiVariable({ pipelineType: this.pipelineType }, "registryImage")}`;
+  }
+
+  private useProject(name: string): { hash: string; watchedPaths: string[] } {
+    const existing = this.usedProject.get(name);
+    if (existing) {
+      return existing;
+    }
+    const imageConfig = this.projectImages[name];
+    if (!imageConfig) {
+      const declared = Object.keys(this.projectImages);
+      throw new Error(
+        `unknown job image "${name}" — ${
+          declared.length > 0
+            ? `images declared in config.images: ${declared.join(", ")}`
+            : "no images are declared in config.images"
+        }`,
+      );
+    }
+    const { hash, watchedPaths } = computeCustomImageHash({
+      dir: imageConfig.dir,
+      hashExtraPaths: imageConfig.hashExtraPaths,
+      buildArgs: imageConfig.buildArgs,
+    });
+    const entry = { hash, watchedPaths };
+    this.usedProject.set(name, entry);
+    return entry;
   }
 
   private use(name: RunnerImageName): { hash: string } {
@@ -113,24 +179,78 @@ export class JobImagesPlan {
    * the image build jobs for all used images
    */
   getEnsureJobs(): CatladderJob[] {
-    return [...this.used.entries()].map(([name, { hash }]) =>
-      this.createEnsureJob(name, hash),
-    );
+    return [
+      ...[...this.used.entries()].map(([name, { hash }]) =>
+        this.createEnsureJob(name, hash),
+      ),
+      ...[...this.usedProject.entries()].map(([name, entry]) =>
+        this.createProjectEnsureJob(name, entry),
+      ),
+    ];
   }
 
   private createEnsureJob(name: RunnerImageName, hash: string): CatladderJob {
-    const ctx = { pipelineType: this.pipelineType };
-    const registryUser = getCiVariable(ctx, "registryUser");
-    const jobToken = getCiVariable(ctx, "jobToken");
-    const registry = getCiVariable(ctx, "registry");
     const imageRef = `${this.registryImageRef()}/catladder/${name}:${hash}`;
 
     const watchedDirs = [name, ...(RUNNER_IMAGE_DEPENDENCIES[name] ?? [])];
 
+    return this.createImageBuildJob({
+      jobName: ensureJobName(name),
+      imageRef,
+      watchedPaths: watchedDirs.map(
+        (dir) => `${GENERATED_IMAGES_FOLDER}/${dir}/**/*`,
+      ),
+      buildCommand: `DOCKER_BUILDKIT=1 docker build -t ${imageRef} -f ${GENERATED_IMAGES_FOLDER}/${name}/Dockerfile ${
+        RUNNER_IMAGE_BUILD_CONTEXT[name] === "root"
+          ? GENERATED_IMAGES_FOLDER
+          : `${GENERATED_IMAGES_FOLDER}/${name}`
+      }`,
+    });
+  }
+
+  private createProjectEnsureJob(
+    name: string,
+    { hash, watchedPaths }: { hash: string; watchedPaths: string[] },
+  ): CatladderJob {
+    const imageConfig = this.projectImages[name];
+    const imageRef = `${this.registryImageRef()}/job-images/${name}:${hash}`;
+
+    const buildArgFlags = Object.entries(imageConfig.buildArgs ?? {})
+      .map(([key, value]) => ` --build-arg '${key}=${value}'`)
+      .join("");
+
+    return this.createImageBuildJob({
+      jobName: projectEnsureJobName(name),
+      imageRef,
+      // the image dir is committed in the project repository — watched
+      // in place, nothing is materialized. The config file is watched
+      // too: buildArgs / hashExtraPaths changes alter the tag without
+      // touching the dir
+      watchedPaths: [...watchedPaths, CONFIG_FILE],
+      buildCommand: `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${imageConfig.dir}/Dockerfile ${imageConfig.dir}`,
+    });
+  }
+
+  private createImageBuildJob({
+    jobName,
+    imageRef,
+    watchedPaths,
+    buildCommand,
+  }: {
+    jobName: string;
+    imageRef: string;
+    watchedPaths: string[];
+    buildCommand: string;
+  }): CatladderJob {
+    const ctx = { pipelineType: this.pipelineType };
+    const registryUser = getCiVariable(ctx, "registryUser");
+    const jobToken = getCiVariable(ctx, "jobToken");
+    const registry = getCiVariable(ctx, "registry");
+
     const { services, runnerVariables } = getDockerJobBaseProps();
 
     return {
-      name: ensureJobName(name),
+      name: jobName,
       stage: "setup",
       image: BUILDER_IMAGE,
       services,
@@ -140,9 +260,7 @@ export class JobImagesPlan {
       // no equivalent and always runs (the existence check is fast)
       rules: [
         {
-          changes: watchedDirs.map(
-            (dir) => `${GENERATED_IMAGES_FOLDER}/${dir}/**/*`,
-          ),
+          changes: watchedPaths,
         },
       ],
       variables: {},
@@ -165,13 +283,7 @@ export class JobImagesPlan {
         ...collapseableSection(
           "docker-build",
           "Building image",
-        )([
-          `DOCKER_BUILDKIT=1 docker build -t ${imageRef} -f ${GENERATED_IMAGES_FOLDER}/${name}/Dockerfile ${
-            RUNNER_IMAGE_BUILD_CONTEXT[name] === "root"
-              ? GENERATED_IMAGES_FOLDER
-              : `${GENERATED_IMAGES_FOLDER}/${name}`
-          }`,
-        ]),
+        )([buildCommand]),
         ...collapseableSection(
           "docker-push",
           "Pushing image",
