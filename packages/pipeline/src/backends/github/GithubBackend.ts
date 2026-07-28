@@ -33,9 +33,10 @@ const WORKFLOWS_FOLDER = ".github/workflows";
 const GENERATED_FILE_PREFIX = "catladder-";
 
 // NOTE on the emoji prefixes: github sorts the Actions sidebar by raw
-// code point, so the 🛠️ (U+1F6E0) prefix makes the pipeline workflows
-// sort BELOW the triggerable action workflows (↩️ ⏹️ ▶️ 🚀, all lower
-// code points) — the things a human clicks come first.
+// code point, so the prefix decides the order. 🛠️ (U+1F6E0) is the
+// highest, which keeps the pipeline workflows below the triggerable
+// action workflows (↩️ ▶️ 🚀 🛑) — the things a human clicks come
+// first, and 🛑 (U+1F6D1) puts the stop actions after ▶️ deploy.
 const TRIGGER_WORKFLOWS: Record<
   PipelineTrigger,
   Pick<GithubWorkflow, "name" | "on" | "concurrency">
@@ -295,7 +296,7 @@ export class GithubBackend implements PipelineBackend {
 
     if (Object.keys(reviewStopJobs).length > 0) {
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = {
-        name: "⏹️ catladder stop review app",
+        name: "🛑 catladder stop review app",
         on: {
           pull_request: { types: ["closed"] },
           // tearing a review app down while its pull request is still
@@ -436,7 +437,7 @@ type ManualKindBucket = {
 
 const MANUAL_KIND_WORKFLOW_NAMES: Record<ManualKind, string> = {
   deploy: "▶️ catladder deploy",
-  stop: "⏹️ catladder stop",
+  stop: "🛑 catladder stop",
   rollback: "↩️ catladder rollback",
 };
 
