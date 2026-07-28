@@ -93,3 +93,5 @@ Useful CLI commands (see the `catladder-cli` skill for invocation):
 - `catladder-releases` — the `taggedRelease` flow and security-audit gate
 - `catladder-secrets` — env vars and secret management
 - `catladder-cli` — non-interactive CLI usage and command reference
+- `catladder-migrate-ci-backend` — moving between GitLab CI and GitHub
+  Actions (running both in parallel, then cutting over)

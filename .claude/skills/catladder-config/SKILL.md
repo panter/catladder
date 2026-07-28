@@ -119,3 +119,7 @@ escape hatches to shrink over time, not accumulate.
 - `catladder-releases` — releasing (semantic-release / changesets)
 - `catladder-pipelines` — how the generated pipelines work, debugging CI
 - `catladder-cli` — non-interactive CLI usage and command reference
+- `catladder-migrate-ci-backend` — moving a project between GitLab CI
+  and GitHub Actions
+- `catladder-migrate-release-method` — switching between
+  semantic-release and changesets

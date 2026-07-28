@@ -1,19 +1,16842 @@
-(()=>{var e={906:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.parseNpmPublishArgs=t.npmPublishJob=t.DEFAULT_NPM_REGISTRY=void 0;const s=r(5317);const n=r(1943);const o=r(6928);const i=r(918);t.DEFAULT_NPM_REGISTRY="https://registry.npmjs.org/";const readCiContext=e=>{var t,r,s,n;const o=process.env;if(o.GITLAB_CI==="true"){return{ciTag:o.CI_COMMIT_TAG||null,refSlug:(t=o.CI_COMMIT_REF_SLUG)!==null&&t!==void 0?t:"",shortSha:(r=o.CI_COMMIT_SHORT_SHA)!==null&&r!==void 0?r:""}}if(o.GITHUB_ACTIONS==="true"){return{ciTag:o.GITHUB_REF_TYPE==="tag"?(s=o.GITHUB_REF_NAME)!==null&&s!==void 0?s:null:null,refSlug:(0,i.slugifyRef)(o.GITHUB_HEAD_REF||o.GITHUB_REF_NAME||""),shortSha:((n=o.GITHUB_SHA)!==null&&n!==void 0?n:"").slice(0,8)}}throw new Error(`publish npm for "${e.dir}" must run in a gitlab or github CI job (no CI provider detected)`)};const setPackageVersion=async(e,t)=>{const r=(0,o.join)(e,"package.json");const s=JSON.parse(await(0,n.readFile)(r,"utf-8"));s.version=t;await(0,n.writeFile)(r,JSON.stringify(s,null,2)+"\n");return s.name};const writeNpmrc=async(e,t)=>{const r=t.replace(/^https?:/,"").replace(/\/?$/,"/");const s=(0,o.resolve)(e,".npmrc");await(0,n.writeFile)(s,`${r}:_authToken=\${NPM_TOKEN}\n`);return s};const npmPublish=(e,t,r)=>new Promise(((n,o)=>{const i=(0,s.spawn)("npm",["publish",...r],{cwd:e,stdio:"inherit",env:{...process.env,NPM_CONFIG_USERCONFIG:t}});i.on("error",o);i.on("exit",(e=>e===0?n():o(new Error(`npm publish exited with ${e}`))))}));const npmPublishJob=async e=>{var r,s;if(!process.env.NPM_TOKEN){throw new Error("NPM_TOKEN is not set — configure it as a catladder secret for this component")}const n=(r=e.registry)!==null&&r!==void 0?r:t.DEFAULT_NPM_REGISTRY;const o=(0,i.computeNpmPublishPlan)({envType:e.envType,distTagOverride:e.distTag,...readCiContext(e)});const a=await setPackageVersion(e.dir,o.version);const u=await writeNpmrc(e.dir,n);console.log(`publishing ${a}@${o.version} (dist-tag ${o.distTag}) to ${n}`);await npmPublish(e.dir,u,["--tag",o.distTag,"--access",(s=e.access)!==null&&s!==void 0?s:"public","--registry",n,"--workspaces=false"]);console.log(`published ${a}@${o.version} 🚀`)};t.npmPublishJob=npmPublishJob;const parseNpmPublishArgs=e=>{const t={};for(let r=0;r<e.length;r+=2){const s=e[r];const n=e[r+1];if(!(s===null||s===void 0?void 0:s.startsWith("--"))||n===undefined)return null;t[s.slice(2)]=n}const{dir:r,access:s,registry:n}=t;const o=t["env-type"];const i=t["dist-tag"];if(!r||!o)return null;return{dir:r,envType:o,access:s,registry:n,distTag:i}};t.parseNpmPublishArgs=parseNpmPublishArgs},918:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.slugifyRef=t.computeNpmPublishPlan=t.BRANCH_DIST_TAGS=void 0;t.BRANCH_DIST_TAGS=["next","beta"];const computeNpmPublishPlan=e=>{var r,s;if(e.envType==="prod"||e.envType==="stage"){if(!e.ciTag){throw new Error(`npm publish for env type "${e.envType}" expects a tagged-release pipeline, but no git tag is set`)}return{version:e.ciTag.replace(/^v/,""),distTag:(r=e.distTagOverride)!==null&&r!==void 0?r:"latest"}}return{version:`0.0.0-${e.refSlug}-${e.shortSha}`,distTag:(s=e.distTagOverride)!==null&&s!==void 0?s:t.BRANCH_DIST_TAGS.includes(e.refSlug)?e.refSlug:"canary"}};t.computeNpmPublishPlan=computeNpmPublishPlan;const slugifyRef=e=>e.toLowerCase().replace(/[^0-9a-z]/g,"-").slice(0,63).replace(/^-+|-+$/g,"");t.slugifyRef=slugifyRef},2287:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.runChangesetCheck=t.CHANGESET_CHECK_MARKER=void 0;const s=r(3810);t.CHANGESET_CHECK_MARKER="\x3c!-- catladder-changeset-check --\x3e";const runChangesetCheck=({addedFiles:e,pending:r,lastTag:n,requestLabel:o})=>{const i=e.length>0;const a=[t.CHANGESET_CHECK_MARKER,"## 🦋 Changeset check",""];if(i){a.push(`✅ This ${o} adds ${e.length} changeset${e.length===1?"":"s"}: ${e.map((e=>`\`${e}\``)).join(", ")}`)}else{a.push(`⚠️ **This ${o} adds no changeset.** If the change is user-facing it will be missing from the next release's changelog — add \`.changeset/<name>.md\` (or run \`yarn changeset\`). For docs/chore changes this warning can be ignored.`)}a.push("");if(r.length===0){a.push("No changesets are pending — merging will **not** trigger a release.")}else{const e=(0,s.getNextVersion)(n,(0,s.maxBump)(r.map((e=>e.bump))));a.push(`${r.length} changeset${r.length===1?" is":"s are"} pending after merge — the next release will be **v${e}**${n?` (from ${n})`:" (first release)"}:`,"","<details><summary>Changelog preview</summary>","",(0,s.renderChangelogEntries)(r),"","</details>")}return{addsChangeset:i,markdown:a.join("\n")}};t.runChangesetCheck=runChangesetCheck},4472:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.changesetCheckJob=t.CHANGESET_REPORT_FILE=void 0;const s=r(1943);const n=r(2287);const o=r(1206);const i=r(5320);t.CHANGESET_REPORT_FILE="changeset-report.md";const onGithub=()=>process.env.GITHUB_ACTIONS==="true";const getAddedChangesetFiles=async()=>{const e=onGithub()?process.env.GITHUB_BASE_REF:process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME;if(!e){return null}await(0,i.git)("fetch","--quiet","origin",e);const t=await(0,i.git)("merge-base","HEAD","FETCH_HEAD");const r=await(0,i.git)("diff","--name-only","--diff-filter=A",t,"HEAD");return r.split("\n").filter((e=>e.startsWith(".changeset/")&&e.endsWith(".md")&&!e.toLowerCase().endsWith("readme.md"))).map((e=>e.slice(".changeset/".length)))};const findSticky=e=>e.find((e=>{var t;return(t=e.body)===null||t===void 0?void 0:t.includes(n.CHANGESET_CHECK_MARKER)}));const request=async(e,t)=>{var r;const s=await fetch(e,t);if(!s.ok){throw new Error(`${(r=t.method)!==null&&r!==void 0?r:"GET"} ${e} failed: ${s.status} ${await s.text()}`)}return s};const upsertGithubComment=async e=>{var t,r;const s=process.env.GITHUB_TOKEN;const n=(t=process.env.GITHUB_API_URL)!==null&&t!==void 0?t:"https://api.github.com";const o=process.env.GITHUB_REPOSITORY;const i=parseInt((r=process.env.GITHUB_REF_NAME)!==null&&r!==void 0?r:"");if(!s||!o||!i){console.log("no PR context/token — skipping the PR comment");return}const a={authorization:`Bearer ${s}`,accept:"application/vnd.github+json","content-type":"application/json"};const u=await(await request(`${n}/repos/${o}/issues/${i}/comments?per_page=100`,{headers:a})).json();const c=findSticky(u);if(c){await request(`${n}/repos/${o}/issues/comments/${c.id}`,{method:"PATCH",headers:a,body:JSON.stringify({body:e})})}else{await request(`${n}/repos/${o}/issues/${i}/comments`,{method:"POST",headers:a,body:JSON.stringify({body:e})})}console.log("updated the sticky PR comment")};const upsertGitlabComment=async e=>{const t=process.env.GL_TOKEN;if(!t){console.log("GL_TOKEN is not available in this pipeline — skipping the MR comment (report available in the job log and the exposed artifact)");return}const r=process.env.CI_API_V4_URL;const s=process.env.CI_PROJECT_ID;const n=process.env.CI_MERGE_REQUEST_IID;if(!r||!s||!n){console.log("no MR context — skipping the MR comment");return}const o={"PRIVATE-TOKEN":t,"content-type":"application/json"};const i=`${r}/projects/${s}/merge_requests/${n}/notes`;const a=await(await request(`${i}?per_page=100`,{headers:o})).json();const u=findSticky(a);if(u){await request(`${i}/${u.id}`,{method:"PUT",headers:o,body:JSON.stringify({body:e})})}else{await request(i,{method:"POST",headers:o,body:JSON.stringify({body:e})})}console.log("updated the sticky MR comment")};const changesetCheckJob=async()=>{await(0,i.ensureReleaseHistory)();const e=await(0,o.readPendingChangesets)();const r=await(0,i.getLastReleaseTag)();const a=await getAddedChangesetFiles();const u=(0,n.runChangesetCheck)({addedFiles:a!==null&&a!==void 0?a:[],pending:e,lastTag:r,requestLabel:onGithub()?"pull request":"merge request"});console.log(u.markdown.replace(`${n.CHANGESET_CHECK_MARKER}\n`,""));await(0,s.writeFile)(t.CHANGESET_REPORT_FILE,u.markdown);try{if(onGithub()){await upsertGithubComment(u.markdown)}else{await upsertGitlabComment(u.markdown)}}catch(e){console.warn(`could not update the sticky comment: ${e}`)}if(a===null){console.log("not running against a merge request — check skipped");return}if(!u.addsChangeset){process.exitCode=1}};t.changesetCheckJob=changesetCheckJob},3810:function(e,t,r){"use strict";var s=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:true});t.prependToChangelog=t.renderChangelogEntries=t.getNextVersion=t.maxBump=t.parseChangesetFile=t.BUMPS=void 0;const n=s(r(7751));t.BUMPS=["patch","minor","major"];const isBump=e=>t.BUMPS.includes(e);const parseChangesetFile=(e,r)=>{let s;try{s=(0,n.default)(r)}catch(t){throw new Error(`${e}: not a valid changeset (${t instanceof Error?t.message:t})`)}const o=s.releases.map((e=>e.type)).filter(isBump);if(o.length===0){throw new Error(`${e}: changeset declares no effective version bump (major|minor|patch)`)}const i=s.summary.trim();if(i===""){throw new Error(`${e}: changeset has no summary`)}return{fileName:e,bump:(0,t.maxBump)(o),summary:i}};t.parseChangesetFile=parseChangesetFile;const maxBump=e=>e.reduce(((e,r)=>t.BUMPS.indexOf(r)>t.BUMPS.indexOf(e)?r:e));t.maxBump=maxBump;const getNextVersion=(e,t)=>{if(e===null){return"1.0.0"}const r=e.match(/^v(\d+)\.(\d+)\.(\d+)$/);if(!r){throw new Error(`last release tag "${e}" is not of the form vX.Y.Z — cannot derive the next version`)}const[s,n,o]=r.slice(1).map(Number);switch(t){case"major":return`${s+1}.0.0`;case"minor":return`${s}.${n+1}.0`;case"patch":return`${s}.${n}.${o+1}`}};t.getNextVersion=getNextVersion;const o={major:"Major Changes",minor:"Minor Changes",patch:"Patch Changes"};const renderChangelogEntries=e=>[...t.BUMPS].reverse().map((t=>{const r=e.filter((e=>e.bump===t));if(r.length===0)return null;return[`### ${o[t]}`,"",...r.map((e=>`- ${e.summary.replace(/\r?\n/g,"\n  ")}`))].join("\n")})).filter((e=>e!==null)).join("\n\n");t.renderChangelogEntries=renderChangelogEntries;const i="# Changelog";const prependToChangelog=(e,t,r,s)=>{const n=`## ${t} (${r})\n\n${s}\n`;const o=(e!==null&&e!==void 0?e:"").replace(new RegExp(`^${i}\\s*\\n`),"").trim();return[i,"",n+(o?"\n"+o+"\n":"")].join("\n")};t.prependToChangelog=prependToChangelog},1206:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.changesetsReleaseJob=t.dispatchTaggedReleaseWorkflow=t.readPendingChangesets=void 0;const s=r(1943);const n=r(6928);const o=r(3810);const i=r(5320);const a=".changeset";const u="CHANGELOG.md";const c="catladder-release.yml";const readPendingChangesets=async()=>{const e=await(0,s.readdir)(a).catch((()=>[]));const t=e.filter((e=>e.endsWith(".md")&&e.toLowerCase()!=="readme.md"));return Promise.all(t.map((async e=>(0,o.parseChangesetFile)(e,await(0,s.readFile)((0,n.join)(a,e),"utf-8")))))};t.readPendingChangesets=readPendingChangesets;const ensureGitIdentity=async()=>{const e=await(0,i.git)("config","user.email").catch((()=>""));if(e!=="")return;const t=process.env.GITHUB_ACTIONS==="true";await(0,i.git)("config","user.name",t?"github-actions[bot]":"catladder");await(0,i.git)("config","user.email",t?"41898282+github-actions[bot]@users.noreply.github.com":"catladder-release@panter.ch")};const requireEnv=e=>{const t=process.env[e];if(!t){throw new Error(`${e} is not set — cannot push the release`)}return t};const pushCommitAndTag=async e=>{if(process.env.GITHUB_ACTIONS==="true"){const t=requireEnv("GITHUB_REF_NAME");await(0,i.git)("push","--atomic","origin",`HEAD:refs/heads/${t}`,e);return}const t=requireEnv("GL_TOKEN");const r=requireEnv("CI_SERVER_HOST");const s=requireEnv("CI_PROJECT_PATH");const n=requireEnv("CI_COMMIT_BRANCH");const o=`https://oauth2:${t}@${r}/${s}.git`;await(0,i.git)("push","--atomic",o,`HEAD:refs/heads/${n}`,e)};const dispatchTaggedReleaseWorkflow=async e=>{var t;const r=(t=process.env.GITHUB_API_URL)!==null&&t!==void 0?t:"https://api.github.com";const s=requireEnv("GITHUB_REPOSITORY");const n=requireEnv("GITHUB_TOKEN");const o=await fetch(`${r}/repos/${s}/actions/workflows/${c}/dispatches`,{method:"POST",headers:{authorization:`Bearer ${n}`,accept:"application/vnd.github+json"},body:JSON.stringify({ref:e})});if(!o.ok){throw new Error(`dispatching ${c} for ${e} failed: ${o.status} ${await o.text()}`)}console.log(`dispatched ${c} for ${e}`)};t.dispatchTaggedReleaseWorkflow=dispatchTaggedReleaseWorkflow;const p={fileName:"",bump:"patch",summary:"Forced release without pending changesets."};const changesetsReleaseJob=async()=>{const e=await(0,t.readPendingChangesets)();const r=e.length===0&&process.env.CATLADDER_FORCE_RELEASE==="true";if(e.length===0&&!r){console.log(`no changesets found in ${a}/ — nothing to release`);console.log("add one with `yarn changeset` (or write .changeset/<name>.md by hand) and merge it to release");console.log("to release anyway (patch bump), run the force release job instead");return}const c=r?[p]:e;if(r){console.log("no changesets pending — forced release, bumping a patch")}await(0,i.ensureReleaseHistory)();const l=await(0,i.getLastReleaseTag)();const d=(0,o.getNextVersion)(l,(0,o.maxBump)(c.map((e=>e.bump))));const f=`v${d}`;console.log(`releasing ${f} (${l!==null&&l!==void 0?l:"first release"} + ${c.length} changeset(s))`);const h=(0,o.renderChangelogEntries)(c);const g=await(0,s.readFile)(u,"utf-8").catch((()=>null));const m=(new Date).toISOString().slice(0,10);await(0,s.writeFile)(u,(0,o.prependToChangelog)(g,d,m,h));await Promise.all(e.map((e=>(0,s.rm)((0,n.join)(a,e.fileName)))));await ensureGitIdentity();if(r){await(0,i.git)("add",u)}else{await(0,i.git)("add",u,a)}await(0,i.git)("commit","-m",`chore(release): ${d}\n\n${h}`);await(0,i.git)("tag",f);await pushCommitAndTag(f);console.log(`released ${f}`);if(process.env.GITHUB_ACTIONS==="true"){await(0,t.dispatchTaggedReleaseWorkflow)(f)}};t.changesetsReleaseJob=changesetsReleaseJob},5320:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.getLastReleaseTag=t.ensureReleaseHistory=t.git=void 0;const s=r(5317);const n=r(9023);const o=(0,n.promisify)(s.execFile);const git=async(...e)=>{const{stdout:t}=await o("git",e);return t.trim()};t.git=git;const ensureReleaseHistory=async()=>{const e=await(0,t.git)("rev-parse","--is-shallow-repository").catch((()=>"false"));try{if(e==="true"){await(0,t.git)("fetch","--quiet","--unshallow","--tags","origin")}else{await(0,t.git)("fetch","--quiet","--tags","origin")}}catch(e){console.warn(`could not fetch tags from origin (${e}) — version derivation may be wrong on a shallow clone`)}};t.ensureReleaseHistory=ensureReleaseHistory;const getLastReleaseTag=async()=>{try{return await(0,t.git)("describe","--tags","--abbrev=0","--match","v[0-9]*")}catch(e){return null}};t.getLastReleaseTag=getLastReleaseTag},8226:function(e,t,r){"use strict";var s=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:true});t.evaluateDocument=t.makeTemplate=void 0;const n=s(r(6743));const o=n.default;const i="✅";const a="❌";const u=`${i}/${a}`;const c="@...";const p=[["Responsible",u,"Description","Note","More Information"]].concat(o.map((e=>[Array(e.responsibles).fill(c).join(", "),u,e.description,"",e.more])));function makeTable(e){const t=calculateColumnWidths(e);return`\n${makeRow(e[0],t," ")}\n${makeRow(e[0].map((()=>"")),t,"-")}\n${e.slice(1).map((e=>makeRow(e,t," "))).join("\n")}\n`}function calculateColumnWidths(e){const t=e[0].length;return Array.from({length:t},((e,t)=>t)).map((t=>Math.max(...e.map((e=>e[t].length)))))}function makeRow(e,t,r){return`| ${e.map(((e,s)=>e.padEnd(t[s],r))).join(" | ")} |`}function makeTemplate(){return`\n# Security Audit Report\n\nA security audit report document is a comprehensive assessment of an application's security posture, containing security topics that auditors can mark to indicate the state of various security aspects.\n\nIt serves as a structured guide for security team to evaluate different security factors such as authentication, authorization, data encryption, input validation, and more.\n\n## General Information\n\n- Project Owner is @...\n- Dev team:\n  - @...\n  - @...\n  - @...\n\n## Project Security\n\n${makeTable(p)}\n\n`}t.makeTemplate=makeTemplate;function evaluateDocument(e){var t,r;const s=(r=(t=e.match(/^\s*\|.*?\|\s*$/gm))===null||t===void 0?void 0:t.map((e=>e.trim())))!==null&&r!==void 0?r:[];const n=s.map((e=>e.split("|").map((e=>e.trim())))).slice(2);const a=new Set(o.map((e=>e.description)));const p=n.map((e=>{const t=e[1].split(", ");const r=e[2];const s=e[3];const n=e[4];const o=!a.has(s);const p=!o&&!r.includes(u)&&!t.some((e=>e.includes(c)));const l=!o&&p&&r.includes(i);return{responsibles:t,answer:r,description:s,note:n,isUnknown:o,isAnswered:p,isSecured:l}}));const l=o.length;const d=p.filter((e=>e.isAnswered)).length;const f=p.filter((e=>e.isSecured)).length;const h=p.filter((e=>e.isUnknown)).length;const g=Math.round(f/l*100);return{topics:p,score:{rating:g,totalTopics:l,answeredTopics:d,securedTopics:f,unknownTopics:h}}}t.evaluateDocument=evaluateDocument},1276:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.createSecurityAuditMergeRequest=t.SECURITY_AUDIT_FILE_NAME=void 0;const s=r(1709);const n=r(8226);function makeDatedBranchName(e){const t=(new Date).toISOString().slice(0,-5).replaceAll(/[:.T]/g,"-");return`${e}-${t}`}const o="Draft: chore(security): add security audit document";t.SECURITY_AUDIT_FILE_NAME="SECURITY.md";async function createSecurityAuditMergeRequest({projectId:e,mainBranch:r,userId:i,api:a}){const u=(await s.Result.wrapAsync((()=>a.MergeRequests.all({state:"opened",wip:"yes",labels:"security-audit"})))).mapErr((()=>`could not search for existing merge requests`));if(u.isErr())return u;const c=u.value[0];if(c)return(0,s.Err)(`open merge request with security audit already exists: ${c.web_url}`);const p=s.Result.wrap((()=>(0,n.makeTemplate)())).mapErr((()=>"could not make security audit template document"));if(p.isErr())return p;const l=(await s.Result.wrapAsync((()=>a.Branches.create(e,makeDatedBranchName("chore/security-audit"),r)))).mapErr((e=>{console.log(e);return"could not create branch"}));if(l.isErr())return l;const d=(await s.Result.wrapAsync((()=>a.Commits.create(e,l.value.name,"chore(security): add empty security audit document template",[{action:"create",filePath:t.SECURITY_AUDIT_FILE_NAME,content:p.value,encoding:"text"}])))).mapErr((()=>"could not create commit"));if(d.isErr())return d;const f=(await s.Result.wrapAsync((()=>a.MergeRequests.create(e,l.value.name,r,o,{description:`Please follow and update security audit document in \`${t.SECURITY_AUDIT_FILE_NAME}\`.`,assigneeId:i,squash:true,labels:"security-audit",removeSourceBranch:true})))).mapErr((()=>"could not create merge request"));return f}t.createSecurityAuditMergeRequest=createSecurityAuditMergeRequest},9392:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.makeSecurityAuditOverview=t.evaluateSecurityAudit=void 0;const s=r(1709);const n=r(6928);const o=r(1943);const i=r(1276);const a=r(8226);async function evaluateSecurityAudit({path:e}){return(await s.Result.wrapAsync((async()=>{const t=(0,n.join)(e,i.SECURITY_AUDIT_FILE_NAME);const r=await(0,o.readFile)(t);const s=r.toString("utf-8");return(0,a.evaluateDocument)(s)}))).mapErr((e=>`could not evaluate ${i.SECURITY_AUDIT_FILE_NAME}: ${e}`))}t.evaluateSecurityAudit=evaluateSecurityAudit;function makeSecurityAuditOverview(e){const ratingToEmo=e=>e<33?"🟥":e<66?"🟨":"🟩";return`Project security posture overview:\n 🧐 Total topics: ${e.score.totalTopics}\n 🔒 Secured topics: ${e.score.securedTopics}\n 📢 Answered topics: ${e.score.answeredTopics}\n ❔ Unknown topics: ${e.score.unknownTopics}\n 📊 Rating: ${ratingToEmo(e.score.rating)} ${e.score.rating}/100`}t.makeSecurityAuditOverview=makeSecurityAuditOverview},7751:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});var s=r(5130);function _interopDefault(e){return e&&e.__esModule?e:{default:e}}var n=_interopDefault(s);const o=/\s*---([^]*?)\n\s*---(\s*(?:\n|$)[^]*)/;const i=`---\n"package-name": patch\n---`;const a=["major","minor","patch","none"];function truncate(e,t=200){return e.length>t?e.slice(0,t)+"...":e}function validateReleases(e,t){for(const r of e){if(typeof r.name!=="string"||r.name.trim()===""){throw new Error(`could not parse changeset - invalid package name in frontmatter.\n`+`Expected a non-empty string for package name, but got: ${JSON.stringify(r.name)}\n`+`Changeset contents:\n${truncate(t)}`)}if(typeof r.type!=="string"){throw new Error(`could not parse changeset - invalid release type for package "${r.name}".\n`+`Expected a string for release type, but got: ${typeof r.type}\n`+`Changeset contents:\n${truncate(t)}`)}if(!a.includes(r.type)){throw new Error(`could not parse changeset - invalid version type ${JSON.stringify(r.type)} for package "${r.name}".\n`+`Valid version types are: ${a.join(", ")}\n`+`Changeset contents:\n${truncate(t)}`)}}}function parseChangesetFile(e){const t=e.trim();if(!t){throw new Error(`could not parse changeset - file is empty.\n`+`Changesets must have frontmatter with package names and version types.\n`+`Example:\n${i}\n\nYour changeset summary here.`)}const r=o.exec(e);if(!r){throw new Error(`could not parse changeset - missing or invalid frontmatter.\n`+`Changesets must start with frontmatter delimited by "---".\n`+`Example:\n${i}\n\nYour changeset summary here.\n`+`Received content:\n${truncate(t)}`)}let[,s,a]=r;let u=a.trim();let c;let p;try{p=n["default"].load(s)}catch(e){throw new Error(`could not parse changeset - invalid YAML in frontmatter.\n`+`The frontmatter between the "---" delimiters must be valid YAML.\n`+`YAML error: ${e instanceof Error?e.message:String(e)}\n`+`Frontmatter content:\n${s}`)}if(p){if(typeof p!=="object"||Array.isArray(p)){throw new Error(`could not parse changeset - frontmatter must be an object mapping package names to version types.\n`+`Expected format:\n${i}\n`+`Received:\n${s}`)}c=Object.entries(p).map((([e,t])=>({name:e,type:t})))}else{c=[]}validateReleases(c,e);return{releases:c,summary:u}}t["default"]=parseChangesetFile},5130:(e,t,r)=>{"use strict";const s=r(7915);const n=r(5485);function renamed(e,t){return function(){throw new Error("Function yaml."+e+" is removed in js-yaml 4. "+"Use yaml."+t+" instead, which is now safe by default.")}}e.exports.Type=r(9180);e.exports.Schema=r(9079);e.exports.FAILSAFE_SCHEMA=r(4111);e.exports.JSON_SCHEMA=r(5480);e.exports.CORE_SCHEMA=r(9193);e.exports.DEFAULT_SCHEMA=r(177);e.exports.load=s.load;e.exports.loadAll=s.loadAll;e.exports.dump=n.dump;e.exports.YAMLException=r(2767);e.exports.types={binary:r(3230),float:r(9749),map:r(6033),null:r(8142),pairs:r(6142),set:r(3863),timestamp:r(9727),bool:r(7703),int:r(1090),merge:r(7739),omap:r(6482),seq:r(8892),str:r(8828)};e.exports.safeLoad=renamed("safeLoad","load");e.exports.safeLoadAll=renamed("safeLoadAll","loadAll");e.exports.safeDump=renamed("safeDump","dump")},6305:e=>{"use strict";function isNothing(e){return typeof e==="undefined"||e===null}function isObject(e){return typeof e==="object"&&e!==null}function toArray(e){if(Array.isArray(e))return e;else if(isNothing(e))return[];return[e]}function extend(e,t){if(t){const r=Object.keys(t);for(let s=0,n=r.length;s<n;s+=1){const n=r[s];e[n]=t[n]}}return e}function repeat(e,t){let r="";for(let s=0;s<t;s+=1){r+=e}return r}function isNegativeZero(e){return e===0&&Number.NEGATIVE_INFINITY===1/e}e.exports.isNothing=isNothing;e.exports.isObject=isObject;e.exports.toArray=toArray;e.exports.repeat=repeat;e.exports.isNegativeZero=isNegativeZero;e.exports.extend=extend},5485:(e,t,r)=>{"use strict";const s=r(6305);const n=r(2767);const o=r(177);const i=Object.prototype.toString;const a=Object.prototype.hasOwnProperty;const u=65279;const c=9;const p=10;const l=13;const d=32;const f=33;const h=34;const g=35;const m=37;const y=38;const v=39;const $=42;const b=44;const w=45;const _=58;const A=61;const S=62;const j=63;const E=64;const R=91;const x=93;const k=96;const I=123;const P=124;const T=125;const C={};C[0]="\\0";C[7]="\\a";C[8]="\\b";C[9]="\\t";C[10]="\\n";C[11]="\\v";C[12]="\\f";C[13]="\\r";C[27]="\\e";C[34]='\\"';C[92]="\\\\";C[133]="\\N";C[160]="\\_";C[8232]="\\L";C[8233]="\\P";const O=["y","Y","yes","Yes","YES","on","On","ON","n","N","no","No","NO","off","Off","OFF"];const M=/^[-+]?[0-9_]+(?::[0-9_]+)+(?:\.[0-9_]*)?$/;function compileStyleMap(e,t){if(t===null)return{};const r={};const s=Object.keys(t);for(let n=0,o=s.length;n<o;n+=1){let o=s[n];let i=String(t[o]);if(o.slice(0,2)==="!!"){o="tag:yaml.org,2002:"+o.slice(2)}const u=e.compiledTypeMap["fallback"][o];if(u&&a.call(u.styleAliases,i)){i=u.styleAliases[i]}r[o]=i}return r}function encodeHex(e){let t;let r;const o=e.toString(16).toUpperCase();if(e<=255){t="x";r=2}else if(e<=65535){t="u";r=4}else if(e<=4294967295){t="U";r=8}else{throw new n("code point within a string may not be greater than 0xFFFFFFFF")}return"\\"+t+s.repeat("0",r-o.length)+o}const N=1;const L=2;function State(e){this.schema=e["schema"]||o;this.indent=Math.max(1,e["indent"]||2);this.noArrayIndent=e["noArrayIndent"]||false;this.skipInvalid=e["skipInvalid"]||false;this.flowLevel=s.isNothing(e["flowLevel"])?-1:e["flowLevel"];this.styleMap=compileStyleMap(this.schema,e["styles"]||null);this.sortKeys=e["sortKeys"]||false;this.lineWidth=e["lineWidth"]||80;this.noRefs=e["noRefs"]||false;this.noCompatMode=e["noCompatMode"]||false;this.condenseFlow=e["condenseFlow"]||false;this.quotingType=e["quotingType"]==='"'?L:N;this.forceQuotes=e["forceQuotes"]||false;this.replacer=typeof e["replacer"]==="function"?e["replacer"]:null;this.implicitTypes=this.schema.compiledImplicit;this.explicitTypes=this.schema.compiledExplicit;this.tag=null;this.result="";this.duplicates=[];this.usedDuplicates=null}function indentString(e,t){const r=s.repeat(" ",t);let n=0;let o="";const i=e.length;while(n<i){let t;const s=e.indexOf("\n",n);if(s===-1){t=e.slice(n);n=i}else{t=e.slice(n,s+1);n=s+1}if(t.length&&t!=="\n")o+=r;o+=t}return o}function generateNextLine(e,t){return"\n"+s.repeat(" ",e.indent*t)}function testImplicitResolving(e,t){for(let r=0,s=e.implicitTypes.length;r<s;r+=1){const s=e.implicitTypes[r];if(s.resolve(t)){return true}}return false}function isWhitespace(e){return e===d||e===c}function isPrintable(e){return e>=32&&e<=126||e>=161&&e<=55295&&e!==8232&&e!==8233||e>=57344&&e<=65533&&e!==u||e>=65536&&e<=1114111}function isNsCharOrWhitespace(e){return isPrintable(e)&&e!==u&&e!==l&&e!==p}function isPlainSafe(e,t,r){const s=isNsCharOrWhitespace(e);const n=s&&!isWhitespace(e);return(r?s:s&&e!==b&&e!==R&&e!==x&&e!==I&&e!==T)&&e!==g&&!(t===_&&!n)||isNsCharOrWhitespace(t)&&!isWhitespace(t)&&e===g||t===_&&n}function isPlainSafeFirst(e){return isPrintable(e)&&e!==u&&!isWhitespace(e)&&e!==w&&e!==j&&e!==_&&e!==b&&e!==R&&e!==x&&e!==I&&e!==T&&e!==g&&e!==y&&e!==$&&e!==f&&e!==P&&e!==A&&e!==S&&e!==v&&e!==h&&e!==m&&e!==E&&e!==k}function isPlainSafeLast(e){return!isWhitespace(e)&&e!==_}function codePointAt(e,t){const r=e.charCodeAt(t);let s;if(r>=55296&&r<=56319&&t+1<e.length){s=e.charCodeAt(t+1);if(s>=56320&&s<=57343){return(r-55296)*1024+s-56320+65536}}return r}function needIndentIndicator(e){const t=/^\n* /;return t.test(e)}const B=1;const F=2;const D=3;const q=4;const G=5;function chooseScalarStyle(e,t,r,s,n,o,i,a){let u;let c=0;let l=null;let d=false;let f=false;const h=s!==-1;let g=-1;let m=isPlainSafeFirst(codePointAt(e,0))&&isPlainSafeLast(codePointAt(e,e.length-1));if(t||i){for(u=0;u<e.length;c>=65536?u+=2:u++){c=codePointAt(e,u);if(!isPrintable(c)){return G}m=m&&isPlainSafe(c,l,a);l=c}}else{for(u=0;u<e.length;c>=65536?u+=2:u++){c=codePointAt(e,u);if(c===p){d=true;if(h){f=f||u-g-1>s&&e[g+1]!==" ";g=u}}else if(!isPrintable(c)){return G}m=m&&isPlainSafe(c,l,a);l=c}f=f||h&&(u-g-1>s&&e[g+1]!==" ")}if(!d&&!f){if(m&&!i&&!n(e)){return B}return o===L?G:F}if(r>9&&needIndentIndicator(e)){return G}if(!i){return f?q:D}return o===L?G:F}function writeScalar(e,t,r,s,o){e.dump=function(){if(t.length===0){return e.quotingType===L?'""':"''"}if(!e.noCompatMode){if(O.indexOf(t)!==-1||M.test(t)){return e.quotingType===L?'"'+t+'"':"'"+t+"'"}}const i=e.indent*Math.max(1,r);const a=e.lineWidth===-1?-1:Math.max(Math.min(e.lineWidth,40),e.lineWidth-i);const u=s||e.flowLevel>-1&&r>=e.flowLevel;function testAmbiguity(t){return testImplicitResolving(e,t)}switch(chooseScalarStyle(t,u,e.indent,a,testAmbiguity,e.quotingType,e.forceQuotes&&!s,o)){case B:return t;case F:return"'"+t.replace(/'/g,"''")+"'";case D:return"|"+blockHeader(t,e.indent)+dropEndingNewline(indentString(t,i));case q:return">"+blockHeader(t,e.indent)+dropEndingNewline(indentString(foldString(t,a),i));case G:return'"'+escapeString(t,a)+'"';default:throw new n("impossible error: invalid scalar style")}}()}function blockHeader(e,t){const r=needIndentIndicator(e)?String(t):"";const s=e[e.length-1]==="\n";const n=s&&(e[e.length-2]==="\n"||e==="\n");const o=n?"+":s?"":"-";return r+o+"\n"}function dropEndingNewline(e){return e[e.length-1]==="\n"?e.slice(0,-1):e}function foldString(e,t){const r=/(\n+)([^\n]*)/g;let s=function(){let s=e.indexOf("\n");s=s!==-1?s:e.length;r.lastIndex=s;return foldLine(e.slice(0,s),t)}();let n=e[0]==="\n"||e[0]===" ";let o;let i;while(i=r.exec(e)){const e=i[1];const r=i[2];o=r[0]===" ";s+=e+(!n&&!o&&r!==""?"\n":"")+foldLine(r,t);n=o}return s}function foldLine(e,t){if(e===""||e[0]===" ")return e;const r=/ [^ ]/g;let s;let n=0;let o;let i=0;let a=0;let u="";while(s=r.exec(e)){a=s.index;if(a-n>t){o=i>n?i:a;u+="\n"+e.slice(n,o);n=o+1}i=a}u+="\n";if(e.length-n>t&&i>n){u+=e.slice(n,i)+"\n"+e.slice(i+1)}else{u+=e.slice(n)}return u.slice(1)}function escapeString(e){let t="";let r=0;for(let s=0;s<e.length;r>=65536?s+=2:s++){r=codePointAt(e,s);const n=C[r];if(!n&&isPrintable(r)){t+=e[s];if(r>=65536)t+=e[s+1]}else{t+=n||encodeHex(r)}}return t}function writeFlowSequence(e,t,r){let s="";const n=e.tag;for(let n=0,o=r.length;n<o;n+=1){let o=r[n];if(e.replacer){o=e.replacer.call(r,String(n),o)}if(writeNode(e,t,o,false,false)||typeof o==="undefined"&&writeNode(e,t,null,false,false)){if(s!=="")s+=","+(!e.condenseFlow?" ":"");s+=e.dump}}e.tag=n;e.dump="["+s+"]"}function writeBlockSequence(e,t,r,s){let n="";const o=e.tag;for(let o=0,i=r.length;o<i;o+=1){let i=r[o];if(e.replacer){i=e.replacer.call(r,String(o),i)}if(writeNode(e,t+1,i,true,true,false,true)||typeof i==="undefined"&&writeNode(e,t+1,null,true,true,false,true)){if(!s||n!==""){n+=generateNextLine(e,t)}if(e.dump&&p===e.dump.charCodeAt(0)){n+="-"}else{n+="- "}n+=e.dump}}e.tag=o;e.dump=n||"[]"}function writeFlowMapping(e,t,r){let s="";const n=e.tag;const o=Object.keys(r);for(let n=0,i=o.length;n<i;n+=1){let i="";if(s!=="")i+=", ";if(e.condenseFlow)i+='"';const a=o[n];let u=r[a];if(e.replacer){u=e.replacer.call(r,a,u)}if(!writeNode(e,t,a,false,false)){continue}if(e.dump.length>1024)i+="? ";i+=e.dump+(e.condenseFlow?'"':"")+":"+(e.condenseFlow?"":" ");if(!writeNode(e,t,u,false,false)){continue}i+=e.dump;s+=i}e.tag=n;e.dump="{"+s+"}"}function writeBlockMapping(e,t,r,s){let o="";const i=e.tag;const a=Object.keys(r);if(e.sortKeys===true){a.sort()}else if(typeof e.sortKeys==="function"){a.sort(e.sortKeys)}else if(e.sortKeys){throw new n("sortKeys must be a boolean or a function")}for(let n=0,i=a.length;n<i;n+=1){let i="";if(!s||o!==""){i+=generateNextLine(e,t)}const u=a[n];let c=r[u];if(e.replacer){c=e.replacer.call(r,u,c)}if(!writeNode(e,t+1,u,true,true,true)){continue}const l=e.tag!==null&&e.tag!=="?"||e.dump&&e.dump.length>1024;if(l){if(e.dump&&p===e.dump.charCodeAt(0)){i+="?"}else{i+="? "}}i+=e.dump;if(l){i+=generateNextLine(e,t)}if(!writeNode(e,t+1,c,true,l)){continue}if(e.dump&&p===e.dump.charCodeAt(0)){i+=":"}else{i+=": "}i+=e.dump;o+=i}e.tag=i;e.dump=o||"{}"}function detectType(e,t,r){const s=r?e.explicitTypes:e.implicitTypes;for(let o=0,u=s.length;o<u;o+=1){const u=s[o];if((u.instanceOf||u.predicate)&&(!u.instanceOf||typeof t==="object"&&t instanceof u.instanceOf)&&(!u.predicate||u.predicate(t))){if(r){if(u.multi&&u.representName){e.tag=u.representName(t)}else{e.tag=u.tag}}else{e.tag="?"}if(u.represent){const r=e.styleMap[u.tag]||u.defaultStyle;let s;if(i.call(u.represent)==="[object Function]"){s=u.represent(t,r)}else if(a.call(u.represent,r)){s=u.represent[r](t,r)}else{throw new n("!<"+u.tag+'> tag resolver accepts not "'+r+'" style')}e.dump=s}return true}}return false}function writeNode(e,t,r,s,o,a,u){e.tag=null;e.dump=r;if(!detectType(e,r,false)){detectType(e,r,true)}const c=i.call(e.dump);const p=s;if(s){s=e.flowLevel<0||e.flowLevel>t}const l=c==="[object Object]"||c==="[object Array]";let d;let f;if(l){d=e.duplicates.indexOf(r);f=d!==-1}if(e.tag!==null&&e.tag!=="?"||f||e.indent!==2&&t>0){o=false}if(f&&e.usedDuplicates[d]){e.dump="*ref_"+d}else{if(l&&f&&!e.usedDuplicates[d]){e.usedDuplicates[d]=true}if(c==="[object Object]"){if(s&&Object.keys(e.dump).length!==0){writeBlockMapping(e,t,e.dump,o);if(f){e.dump="&ref_"+d+e.dump}}else{writeFlowMapping(e,t,e.dump);if(f){e.dump="&ref_"+d+" "+e.dump}}}else if(c==="[object Array]"){if(s&&e.dump.length!==0){if(e.noArrayIndent&&!u&&t>0){writeBlockSequence(e,t-1,e.dump,o)}else{writeBlockSequence(e,t,e.dump,o)}if(f){e.dump="&ref_"+d+e.dump}}else{writeFlowSequence(e,t,e.dump);if(f){e.dump="&ref_"+d+" "+e.dump}}}else if(c==="[object String]"){if(e.tag!=="?"){writeScalar(e,e.dump,t,a,p)}}else if(c==="[object Undefined]"){return false}else{if(e.skipInvalid)return false;throw new n("unacceptable kind of an object to dump "+c)}if(e.tag!==null&&e.tag!=="?"){let t=encodeURI(e.tag[0]==="!"?e.tag.slice(1):e.tag).replace(/!/g,"%21");if(e.tag[0]==="!"){t="!"+t}else if(t.slice(0,18)==="tag:yaml.org,2002:"){t="!!"+t.slice(18)}else{t="!<"+t+">"}e.dump=t+" "+e.dump}}return true}function getDuplicateReferences(e,t){const r=[];const s=[];inspectNode(e,r,s);const n=s.length;for(let e=0;e<n;e+=1){t.duplicates.push(r[s[e]])}t.usedDuplicates=new Array(n)}function inspectNode(e,t,r){if(e!==null&&typeof e==="object"){const s=t.indexOf(e);if(s!==-1){if(r.indexOf(s)===-1){r.push(s)}}else{t.push(e);if(Array.isArray(e)){for(let s=0,n=e.length;s<n;s+=1){inspectNode(e[s],t,r)}}else{const s=Object.keys(e);for(let n=0,o=s.length;n<o;n+=1){inspectNode(e[s[n]],t,r)}}}}}function dump(e,t){t=t||{};const r=new State(t);if(!r.noRefs)getDuplicateReferences(e,r);let s=e;if(r.replacer){s=r.replacer.call({"":s},"",s)}if(writeNode(r,0,s,true,true))return r.dump+"\n";return""}e.exports.dump=dump},2767:e=>{"use strict";function formatError(e,t){let r="";const s=e.reason||"(unknown reason)";if(!e.mark)return s;if(e.mark.name){r+='in "'+e.mark.name+'" '}r+="("+(e.mark.line+1)+":"+(e.mark.column+1)+")";if(!t&&e.mark.snippet){r+="\n\n"+e.mark.snippet}return s+" "+r}function YAMLException(e,t){Error.call(this);this.name="YAMLException";this.reason=e;this.mark=t;this.message=formatError(this,false);if(Error.captureStackTrace){Error.captureStackTrace(this,this.constructor)}else{this.stack=(new Error).stack||""}}YAMLException.prototype=Object.create(Error.prototype);YAMLException.prototype.constructor=YAMLException;YAMLException.prototype.toString=function toString(e){return this.name+": "+formatError(this,e)};e.exports=YAMLException},7915:(e,t,r)=>{"use strict";const s=r(6305);const n=r(2767);const o=r(7075);const i=r(177);const a=Object.prototype.hasOwnProperty;const u=1;const c=2;const p=3;const l=4;const d=1;const f=2;const h=3;const g=/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x84\x86-\x9F\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;const m=/[\x85\u2028\u2029]/;const y=/[,\[\]{}]/;const v=/^(?:!|!!|![0-9A-Za-z-]+!)$/;const $=/^(?:!|[^,\[\]{}])(?:%[0-9a-f]{2}|[0-9a-z\-#;/?:@&=+$,_.!~*'()\[\]])*$/i;function _class(e){return Object.prototype.toString.call(e)}function isEol(e){return e===10||e===13}function isWhiteSpace(e){return e===9||e===32}function isWsOrEol(e){return e===9||e===32||e===10||e===13}function isFlowIndicator(e){return e===44||e===91||e===93||e===123||e===125}function fromHexCode(e){if(e>=48&&e<=57){return e-48}const t=e|32;if(t>=97&&t<=102){return t-97+10}return-1}function escapedHexLen(e){if(e===120){return 2}if(e===117){return 4}if(e===85){return 8}return 0}function fromDecimalCode(e){if(e>=48&&e<=57){return e-48}return-1}function simpleEscapeSequence(e){switch(e){case 48:return"\0";case 97:return"";case 98:return"\b";case 116:return"\t";case 9:return"\t";case 110:return"\n";case 118:return"\v";case 102:return"\f";case 114:return"\r";case 101:return"";case 32:return" ";case 34:return'"';case 47:return"/";case 92:return"\\";case 78:return"";case 95:return" ";case 76:return"\u2028";case 80:return"\u2029";default:return""}}function charFromCodepoint(e){if(e<=65535){return String.fromCharCode(e)}return String.fromCharCode((e-65536>>10)+55296,(e-65536&1023)+56320)}function setProperty(e,t,r){if(t==="__proto__"){Object.defineProperty(e,t,{configurable:true,enumerable:true,writable:true,value:r})}else{e[t]=r}}const b=new Array(256);const w=new Array(256);for(let e=0;e<256;e++){b[e]=simpleEscapeSequence(e)?1:0;w[e]=simpleEscapeSequence(e)}function State(e,t){this.input=e;this.filename=t["filename"]||null;this.schema=t["schema"]||i;this.onWarning=t["onWarning"]||null;this.legacy=t["legacy"]||false;this.json=t["json"]||false;this.listener=t["listener"]||null;this.maxDepth=typeof t["maxDepth"]==="number"?t["maxDepth"]:100;this.maxTotalMergeKeys=typeof t["maxTotalMergeKeys"]==="number"?t["maxTotalMergeKeys"]:1e4;this.implicitTypes=this.schema.compiledImplicit;this.typeMap=this.schema.compiledTypeMap;this.length=e.length;this.position=0;this.line=0;this.lineStart=0;this.lineIndent=0;this.depth=0;this.totalMergeKeys=0;this.firstTabInLine=-1;this.documents=[];this.anchorMapTransactions=[]}function generateError(e,t){const r={name:e.filename,buffer:e.input.slice(0,-1),position:e.position,line:e.line,column:e.position-e.lineStart};r.snippet=o(r);return new n(t,r)}function throwError(e,t){throw generateError(e,t)}function throwWarning(e,t){if(e.onWarning){e.onWarning.call(null,generateError(e,t))}}function storeAnchor(e,t,r){const s=e.anchorMapTransactions;if(s.length!==0){const r=s[s.length-1];if(!a.call(r,t)){r[t]={existed:a.call(e.anchorMap,t),value:e.anchorMap[t]}}}e.anchorMap[t]=r}function beginAnchorTransaction(e){e.anchorMapTransactions.push(Object.create(null))}function commitAnchorTransaction(e){const t=e.anchorMapTransactions.pop();const r=e.anchorMapTransactions;if(r.length===0)return;const s=r[r.length-1];const n=Object.keys(t);for(let e=0,r=n.length;e<r;e+=1){const r=n[e];if(!a.call(s,r)){s[r]=t[r]}}}function rollbackAnchorTransaction(e){const t=e.anchorMapTransactions.pop();const r=Object.keys(t);for(let s=r.length-1;s>=0;s-=1){const n=t[r[s]];if(n.existed){e.anchorMap[r[s]]=n.value}else{delete e.anchorMap[r[s]]}}}function snapshotState(e){return{position:e.position,line:e.line,lineStart:e.lineStart,lineIndent:e.lineIndent,firstTabInLine:e.firstTabInLine,tag:e.tag,anchor:e.anchor,kind:e.kind,result:e.result}}function restoreState(e,t){e.position=t.position;e.line=t.line;e.lineStart=t.lineStart;e.lineIndent=t.lineIndent;e.firstTabInLine=t.firstTabInLine;e.tag=t.tag;e.anchor=t.anchor;e.kind=t.kind;e.result=t.result}const _={YAML:function handleYamlDirective(e,t,r){if(e.version!==null){throwError(e,"duplication of %YAML directive")}if(r.length!==1){throwError(e,"YAML directive accepts exactly one argument")}const s=/^([0-9]+)\.([0-9]+)$/.exec(r[0]);if(s===null){throwError(e,"ill-formed argument of the YAML directive")}const n=parseInt(s[1],10);const o=parseInt(s[2],10);if(n!==1){throwError(e,"unacceptable YAML version of the document")}e.version=r[0];e.checkLineBreaks=o<2;if(o!==1&&o!==2){throwWarning(e,"unsupported YAML version of the document")}},TAG:function handleTagDirective(e,t,r){let s;if(r.length!==2){throwError(e,"TAG directive accepts exactly two arguments")}const n=r[0];s=r[1];if(!v.test(n)){throwError(e,"ill-formed tag handle (first argument) of the TAG directive")}if(a.call(e.tagMap,n)){throwError(e,'there is a previously declared suffix for "'+n+'" tag handle')}if(!$.test(s)){throwError(e,"ill-formed tag prefix (second argument) of the TAG directive")}try{s=decodeURIComponent(s)}catch(t){throwError(e,"tag prefix is malformed: "+s)}e.tagMap[n]=s}};function captureSegment(e,t,r,s){if(t<r){const n=e.input.slice(t,r);if(s){for(let t=0,r=n.length;t<r;t+=1){const r=n.charCodeAt(t);if(!(r===9||r>=32&&r<=1114111)){throwError(e,"expected valid JSON character")}}}else if(g.test(n)){throwError(e,"the stream contains non-printable characters")}e.result+=n}}function mergeMappings(e,t,r,n){if(!s.isObject(r)){throwError(e,"cannot merge mappings; the provided source object is unacceptable")}const o=Object.keys(r);for(let s=0,i=o.length;s<i;s+=1){const i=o[s];if(e.maxTotalMergeKeys!==-1&&++e.totalMergeKeys>e.maxTotalMergeKeys){throwError(e,"merge keys exceeded maxTotalMergeKeys ("+e.maxTotalMergeKeys+")")}if(!a.call(t,i)){setProperty(t,i,r[i]);n[i]=true}}}function storeMappingPair(e,t,r,s,n,o,i,u,c){if(Array.isArray(n)){n=Array.prototype.slice.call(n);for(let t=0,r=n.length;t<r;t+=1){if(Array.isArray(n[t])){throwError(e,"nested arrays are not supported inside keys")}if(typeof n==="object"&&_class(n[t])==="[object Object]"){n[t]="[object Object]"}}}if(typeof n==="object"&&_class(n)==="[object Object]"){n="[object Object]"}n=String(n);if(t===null){t={}}if(s==="tag:yaml.org,2002:merge"){if(Array.isArray(o)){for(let s=0,n=o.length;s<n;s+=1){mergeMappings(e,t,o[s],r)}}else{mergeMappings(e,t,o,r)}}else{if(!e.json&&!a.call(r,n)&&a.call(t,n)){e.line=i||e.line;e.lineStart=u||e.lineStart;e.position=c||e.position;throwError(e,"duplicated mapping key")}setProperty(t,n,o);delete r[n]}return t}function readLineBreak(e){const t=e.input.charCodeAt(e.position);if(t===10){e.position++}else if(t===13){e.position++;if(e.input.charCodeAt(e.position)===10){e.position++}}else{throwError(e,"a line break is expected")}e.line+=1;e.lineStart=e.position;e.firstTabInLine=-1}function skipSeparationSpace(e,t,r){let s=0;let n=e.input.charCodeAt(e.position);while(n!==0){while(isWhiteSpace(n)){if(n===9&&e.firstTabInLine===-1){e.firstTabInLine=e.position}n=e.input.charCodeAt(++e.position)}if(t&&n===35){do{n=e.input.charCodeAt(++e.position)}while(n!==10&&n!==13&&n!==0)}if(isEol(n)){readLineBreak(e);n=e.input.charCodeAt(e.position);s++;e.lineIndent=0;while(n===32){e.lineIndent++;n=e.input.charCodeAt(++e.position)}}else{break}}if(r!==-1&&s!==0&&e.lineIndent<r){throwWarning(e,"deficient indentation")}return s}function testDocumentSeparator(e){let t=e.position;let r=e.input.charCodeAt(t);if((r===45||r===46)&&r===e.input.charCodeAt(t+1)&&r===e.input.charCodeAt(t+2)){t+=3;r=e.input.charCodeAt(t);if(r===0||isWsOrEol(r)){return true}}return false}function writeFoldedLines(e,t){if(t===1){e.result+=" "}else if(t>1){e.result+=s.repeat("\n",t-1)}}function readPlainScalar(e,t,r){let s;let n;let o;let i;let a;let u;const c=e.kind;const p=e.result;let l=e.input.charCodeAt(e.position);if(isWsOrEol(l)||isFlowIndicator(l)||l===35||l===38||l===42||l===33||l===124||l===62||l===39||l===34||l===37||l===64||l===96){return false}if(l===63||l===45){const t=e.input.charCodeAt(e.position+1);if(isWsOrEol(t)||r&&isFlowIndicator(t)){return false}}e.kind="scalar";e.result="";s=n=e.position;o=false;while(l!==0){if(l===58){const t=e.input.charCodeAt(e.position+1);if(isWsOrEol(t)||r&&isFlowIndicator(t)){break}}else if(l===35){const t=e.input.charCodeAt(e.position-1);if(isWsOrEol(t)){break}}else if(e.position===e.lineStart&&testDocumentSeparator(e)||r&&isFlowIndicator(l)){break}else if(isEol(l)){i=e.line;a=e.lineStart;u=e.lineIndent;skipSeparationSpace(e,false,-1);if(e.lineIndent>=t){o=true;l=e.input.charCodeAt(e.position);continue}else{e.position=n;e.line=i;e.lineStart=a;e.lineIndent=u;break}}if(o){captureSegment(e,s,n,false);writeFoldedLines(e,e.line-i);s=n=e.position;o=false}if(!isWhiteSpace(l)){n=e.position+1}l=e.input.charCodeAt(++e.position)}captureSegment(e,s,n,false);if(e.result){return true}e.kind=c;e.result=p;return false}function readSingleQuotedScalar(e,t){let r;let s;let n=e.input.charCodeAt(e.position);if(n!==39){return false}e.kind="scalar";e.result="";e.position++;r=s=e.position;while((n=e.input.charCodeAt(e.position))!==0){if(n===39){captureSegment(e,r,e.position,true);n=e.input.charCodeAt(++e.position);if(n===39){r=e.position;e.position++;s=e.position}else{return true}}else if(isEol(n)){captureSegment(e,r,s,true);writeFoldedLines(e,skipSeparationSpace(e,false,t));r=s=e.position}else if(e.position===e.lineStart&&testDocumentSeparator(e)){throwError(e,"unexpected end of the document within a single quoted scalar")}else{e.position++;if(!isWhiteSpace(n)){s=e.position}}}throwError(e,"unexpected end of the stream within a single quoted scalar")}function readDoubleQuotedScalar(e,t){let r;let s;let n;let o=e.input.charCodeAt(e.position);if(o!==34){return false}e.kind="scalar";e.result="";e.position++;r=s=e.position;while((o=e.input.charCodeAt(e.position))!==0){if(o===34){captureSegment(e,r,e.position,true);e.position++;return true}else if(o===92){captureSegment(e,r,e.position,true);o=e.input.charCodeAt(++e.position);if(isEol(o)){skipSeparationSpace(e,false,t)}else if(o<256&&b[o]){e.result+=w[o];e.position++}else if((n=escapedHexLen(o))>0){let t=n;let r=0;for(;t>0;t--){o=e.input.charCodeAt(++e.position);if((n=fromHexCode(o))>=0){r=(r<<4)+n}else{throwError(e,"expected hexadecimal character")}}e.result+=charFromCodepoint(r);e.position++}else{throwError(e,"unknown escape sequence")}r=s=e.position}else if(isEol(o)){captureSegment(e,r,s,true);writeFoldedLines(e,skipSeparationSpace(e,false,t));r=s=e.position}else if(e.position===e.lineStart&&testDocumentSeparator(e)){throwError(e,"unexpected end of the document within a double quoted scalar")}else{e.position++;if(!isWhiteSpace(o)){s=e.position}}}throwError(e,"unexpected end of the stream within a double quoted scalar")}function readFlowCollection(e,t){let r=true;let s;let n;let o;const i=e.tag;let a;const c=e.anchor;let p;let l;let d;let f;const h=Object.create(null);let g;let m;let y;let v=e.input.charCodeAt(e.position);if(v===91){p=93;f=false;a=[]}else if(v===123){p=125;f=true;a={}}else{return false}if(e.anchor!==null){storeAnchor(e,e.anchor,a)}v=e.input.charCodeAt(++e.position);while(v!==0){skipSeparationSpace(e,true,t);v=e.input.charCodeAt(e.position);if(v===p){e.position++;e.tag=i;e.anchor=c;e.kind=f?"mapping":"sequence";e.result=a;return true}else if(!r){throwError(e,"missed comma between flow collection entries")}else if(v===44){throwError(e,"expected the node content, but found ','")}m=g=y=null;l=d=false;if(v===63){const r=e.input.charCodeAt(e.position+1);if(isWsOrEol(r)){l=d=true;e.position++;skipSeparationSpace(e,true,t)}}s=e.line;n=e.lineStart;o=e.position;composeNode(e,t,u,false,true);m=e.tag;g=e.result;skipSeparationSpace(e,true,t);v=e.input.charCodeAt(e.position);if((d||e.line===s)&&v===58){l=true;v=e.input.charCodeAt(++e.position);skipSeparationSpace(e,true,t);composeNode(e,t,u,false,true);y=e.result}if(f){storeMappingPair(e,a,h,m,g,y,s,n,o)}else if(l){a.push(storeMappingPair(e,null,h,m,g,y,s,n,o))}else{a.push(g)}skipSeparationSpace(e,true,t);v=e.input.charCodeAt(e.position);if(v===44){r=true;v=e.input.charCodeAt(++e.position)}else{r=false}}throwError(e,"unexpected end of the stream within a flow collection")}function readBlockScalar(e,t){let r;let n=d;let o=false;let i=false;let a=t;let u=0;let c=false;let p;let l=e.input.charCodeAt(e.position);if(l===124){r=false}else if(l===62){r=true}else{return false}e.kind="scalar";e.result="";while(l!==0){l=e.input.charCodeAt(++e.position);if(l===43||l===45){if(d===n){n=l===43?h:f}else{throwError(e,"repeat of a chomping mode identifier")}}else if((p=fromDecimalCode(l))>=0){if(p===0){throwError(e,"bad explicit indentation width of a block scalar; it cannot be less than one")}else if(!i){a=t+p-1;i=true}else{throwError(e,"repeat of an indentation width identifier")}}else{break}}if(isWhiteSpace(l)){do{l=e.input.charCodeAt(++e.position)}while(isWhiteSpace(l));if(l===35){do{l=e.input.charCodeAt(++e.position)}while(!isEol(l)&&l!==0)}}while(l!==0){readLineBreak(e);e.lineIndent=0;l=e.input.charCodeAt(e.position);while((!i||e.lineIndent<a)&&l===32){e.lineIndent++;l=e.input.charCodeAt(++e.position)}if(!i&&e.lineIndent>a){a=e.lineIndent}if(isEol(l)){u++;continue}if(!i&&a===0){throwError(e,"missing indentation for block scalar")}if(e.lineIndent<a){if(n===h){e.result+=s.repeat("\n",o?1+u:u)}else if(n===d){if(o){e.result+="\n"}}break}if(r){if(isWhiteSpace(l)){c=true;e.result+=s.repeat("\n",o?1+u:u)}else if(c){c=false;e.result+=s.repeat("\n",u+1)}else if(u===0){if(o){e.result+=" "}}else{e.result+=s.repeat("\n",u)}}else{e.result+=s.repeat("\n",o?1+u:u)}o=true;i=true;u=0;const t=e.position;while(!isEol(l)&&l!==0){l=e.input.charCodeAt(++e.position)}captureSegment(e,t,e.position,false)}return true}function readBlockSequence(e,t){const r=e.tag;const s=e.anchor;const n=[];let o=false;if(e.firstTabInLine!==-1)return false;if(e.anchor!==null){storeAnchor(e,e.anchor,n)}let i=e.input.charCodeAt(e.position);while(i!==0){if(e.firstTabInLine!==-1){e.position=e.firstTabInLine;throwError(e,"tab characters must not be used in indentation")}if(i!==45){break}const r=e.input.charCodeAt(e.position+1);if(!isWsOrEol(r)){break}o=true;e.position++;if(skipSeparationSpace(e,true,-1)){if(e.lineIndent<=t){n.push(null);i=e.input.charCodeAt(e.position);continue}}const s=e.line;composeNode(e,t,p,false,true);n.push(e.result);skipSeparationSpace(e,true,-1);i=e.input.charCodeAt(e.position);if((e.line===s||e.lineIndent>t)&&i!==0){throwError(e,"bad indentation of a sequence entry")}else if(e.lineIndent<t){break}}if(o){e.tag=r;e.anchor=s;e.kind="sequence";e.result=n;return true}return false}function readBlockMapping(e,t,r){let s;let n;let o;let i;const a=e.tag;const u=e.anchor;const p={};const d=Object.create(null);let f=null;let h=null;let g=null;let m=false;let y=false;if(e.firstTabInLine!==-1)return false;if(e.anchor!==null){storeAnchor(e,e.anchor,p)}let v=e.input.charCodeAt(e.position);while(v!==0){if(!m&&e.firstTabInLine!==-1){e.position=e.firstTabInLine;throwError(e,"tab characters must not be used in indentation")}const $=e.input.charCodeAt(e.position+1);const b=e.line;if((v===63||v===58)&&isWsOrEol($)){if(v===63){if(m){storeMappingPair(e,p,d,f,h,null,n,o,i);f=h=g=null}y=true;m=true;s=true}else if(m){m=false;s=true}else{throwError(e,"incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line")}e.position+=1;v=$}else{n=e.line;o=e.lineStart;i=e.position;if(!composeNode(e,r,c,false,true)){break}if(e.line===b){v=e.input.charCodeAt(e.position);while(isWhiteSpace(v)){v=e.input.charCodeAt(++e.position)}if(v===58){v=e.input.charCodeAt(++e.position);if(!isWsOrEol(v)){throwError(e,"a whitespace character is expected after the key-value separator within a block mapping")}if(m){storeMappingPair(e,p,d,f,h,null,n,o,i);f=h=g=null}y=true;m=false;s=false;f=e.tag;h=e.result}else if(y){throwError(e,"can not read an implicit mapping pair; a colon is missed")}else{e.tag=a;e.anchor=u;return true}}else if(y){throwError(e,"can not read a block mapping entry; a multiline key may not be an implicit key")}else{e.tag=a;e.anchor=u;return true}}if(e.line===b||e.lineIndent>t){if(m){n=e.line;o=e.lineStart;i=e.position}if(composeNode(e,t,l,true,s)){if(m){h=e.result}else{g=e.result}}if(!m){storeMappingPair(e,p,d,f,h,g,n,o,i);f=h=g=null}skipSeparationSpace(e,true,-1);v=e.input.charCodeAt(e.position)}if((e.line===b||e.lineIndent>t)&&v!==0){throwError(e,"bad indentation of a mapping entry")}else if(e.lineIndent<t){break}}if(m){storeMappingPair(e,p,d,f,h,null,n,o,i)}if(y){e.tag=a;e.anchor=u;e.kind="mapping";e.result=p}return y}function readTagProperty(e){let t=false;let r=false;let s;let n;let o=e.input.charCodeAt(e.position);if(o!==33)return false;if(e.tag!==null){throwError(e,"duplication of a tag property")}o=e.input.charCodeAt(++e.position);if(o===60){t=true;o=e.input.charCodeAt(++e.position)}else if(o===33){r=true;s="!!";o=e.input.charCodeAt(++e.position)}else{s="!"}let i=e.position;if(t){do{o=e.input.charCodeAt(++e.position)}while(o!==0&&o!==62);if(e.position<e.length){n=e.input.slice(i,e.position);o=e.input.charCodeAt(++e.position)}else{throwError(e,"unexpected end of the stream within a verbatim tag")}}else{while(o!==0&&!isWsOrEol(o)){if(o===33){if(!r){s=e.input.slice(i-1,e.position+1);if(!v.test(s)){throwError(e,"named tag handle cannot contain such characters")}r=true;i=e.position+1}else{throwError(e,"tag suffix cannot contain exclamation marks")}}o=e.input.charCodeAt(++e.position)}n=e.input.slice(i,e.position);if(y.test(n)){throwError(e,"tag suffix cannot contain flow indicator characters")}}if(n&&!$.test(n)){throwError(e,"tag name cannot contain such characters: "+n)}try{n=decodeURIComponent(n)}catch(t){throwError(e,"tag name is malformed: "+n)}if(t){e.tag=n}else if(a.call(e.tagMap,s)){e.tag=e.tagMap[s]+n}else if(s==="!"){e.tag="!"+n}else if(s==="!!"){e.tag="tag:yaml.org,2002:"+n}else{throwError(e,'undeclared tag handle "'+s+'"')}return true}function readAnchorProperty(e){let t=e.input.charCodeAt(e.position);if(t!==38)return false;if(e.anchor!==null){throwError(e,"duplication of an anchor property")}t=e.input.charCodeAt(++e.position);const r=e.position;while(t!==0&&!isWsOrEol(t)&&!isFlowIndicator(t)){t=e.input.charCodeAt(++e.position)}if(e.position===r){throwError(e,"name of an anchor node must contain at least one character")}e.anchor=e.input.slice(r,e.position);return true}function readAlias(e){let t=e.input.charCodeAt(e.position);if(t!==42)return false;t=e.input.charCodeAt(++e.position);const r=e.position;while(t!==0&&!isWsOrEol(t)&&!isFlowIndicator(t)){t=e.input.charCodeAt(++e.position)}if(e.position===r){throwError(e,"name of an alias node must contain at least one character")}const s=e.input.slice(r,e.position);if(!a.call(e.anchorMap,s)){throwError(e,'unidentified alias "'+s+'"')}e.result=e.anchorMap[s];skipSeparationSpace(e,true,-1);return true}function tryReadBlockMappingFromProperty(e,t,r,s){const n=snapshotState(e);beginAnchorTransaction(e);restoreState(e,t);e.tag=null;e.anchor=null;e.kind=null;e.result=null;if(readBlockMapping(e,r,s)&&e.kind==="mapping"){commitAnchorTransaction(e);return true}rollbackAnchorTransaction(e);restoreState(e,n);return false}function composeNode(e,t,r,s,n){let o;let i;let d=1;let f=false;let h=false;let g=null;let m;let y;let v;if(e.depth>=e.maxDepth){throwError(e,"nesting exceeded maxDepth ("+e.maxDepth+")")}e.depth+=1;if(e.listener!==null){e.listener("open",e)}e.tag=null;e.anchor=null;e.kind=null;e.result=null;const $=o=i=l===r||p===r;if(s){if(skipSeparationSpace(e,true,-1)){f=true;if(e.lineIndent>t){d=1}else if(e.lineIndent===t){d=0}else if(e.lineIndent<t){d=-1}}}if(d===1){while(true){const r=e.input.charCodeAt(e.position);const s=snapshotState(e);if(f&&(r===33&&e.tag!==null||r===38&&e.anchor!==null)){break}if(!readTagProperty(e)&&!readAnchorProperty(e)){break}if(g===null){g=s}if(skipSeparationSpace(e,true,-1)){f=true;i=$;if(e.lineIndent>t){d=1}else if(e.lineIndent===t){d=0}else if(e.lineIndent<t){d=-1}}else{i=false}}}if(i){i=f||n}if(d===1||l===r){if(u===r||c===r){y=t}else{y=t+1}v=e.position-e.lineStart;if(d===1){if(i&&(readBlockSequence(e,v)||readBlockMapping(e,v,y))||readFlowCollection(e,y)){h=true}else{const t=e.input.charCodeAt(e.position);if(g!==null&&$&&!i&&t!==124&&t!==62&&tryReadBlockMappingFromProperty(e,g,g.position-g.lineStart,y)){h=true}else if(o&&readBlockScalar(e,y)||readSingleQuotedScalar(e,y)||readDoubleQuotedScalar(e,y)){h=true}else if(readAlias(e)){h=true;if(e.tag!==null||e.anchor!==null){throwError(e,"alias node should not have any properties")}}else if(readPlainScalar(e,y,u===r)){h=true;if(e.tag===null){e.tag="?"}}if(e.anchor!==null){storeAnchor(e,e.anchor,e.result)}}}else if(d===0){h=i&&readBlockSequence(e,v)}}if(e.tag===null){if(e.anchor!==null){storeAnchor(e,e.anchor,e.result)}}else if(e.tag==="?"){if(e.result!==null&&e.kind!=="scalar"){throwError(e,'unacceptable node kind for !<?> tag; it should be "scalar", not "'+e.kind+'"')}for(let t=0,r=e.implicitTypes.length;t<r;t+=1){m=e.implicitTypes[t];if(m.resolve(e.result)){e.result=m.construct(e.result);e.tag=m.tag;if(e.anchor!==null){storeAnchor(e,e.anchor,e.result)}break}}}else if(e.tag!=="!"){if(a.call(e.typeMap[e.kind||"fallback"],e.tag)){m=e.typeMap[e.kind||"fallback"][e.tag]}else{m=null;const t=e.typeMap.multi[e.kind||"fallback"];for(let r=0,s=t.length;r<s;r+=1){if(e.tag.slice(0,t[r].tag.length)===t[r].tag){m=t[r];break}}}if(!m){throwError(e,"unknown tag !<"+e.tag+">")}if(e.result!==null&&m.kind!==e.kind){throwError(e,"unacceptable node kind for !<"+e.tag+'> tag; it should be "'+m.kind+'", not "'+e.kind+'"')}if(!m.resolve(e.result,e.tag)){throwError(e,"cannot resolve a node with !<"+e.tag+"> explicit tag")}else{e.result=m.construct(e.result,e.tag);if(e.anchor!==null){storeAnchor(e,e.anchor,e.result)}}}if(e.listener!==null){e.listener("close",e)}e.depth-=1;return e.tag!==null||e.anchor!==null||h}function readDocument(e){const t=e.position;let r=false;let s;e.version=null;e.checkLineBreaks=e.legacy;e.tagMap=Object.create(null);e.anchorMap=Object.create(null);while((s=e.input.charCodeAt(e.position))!==0){skipSeparationSpace(e,true,-1);s=e.input.charCodeAt(e.position);if(e.lineIndent>0||s!==37){break}r=true;s=e.input.charCodeAt(++e.position);let t=e.position;while(s!==0&&!isWsOrEol(s)){s=e.input.charCodeAt(++e.position)}const n=e.input.slice(t,e.position);const o=[];if(n.length<1){throwError(e,"directive name must not be less than one character in length")}while(s!==0){while(isWhiteSpace(s)){s=e.input.charCodeAt(++e.position)}if(s===35){do{s=e.input.charCodeAt(++e.position)}while(s!==0&&!isEol(s));break}if(isEol(s))break;t=e.position;while(s!==0&&!isWsOrEol(s)){s=e.input.charCodeAt(++e.position)}o.push(e.input.slice(t,e.position))}if(s!==0)readLineBreak(e);if(a.call(_,n)){_[n](e,n,o)}else{throwWarning(e,'unknown document directive "'+n+'"')}}skipSeparationSpace(e,true,-1);if(e.lineIndent===0&&e.input.charCodeAt(e.position)===45&&e.input.charCodeAt(e.position+1)===45&&e.input.charCodeAt(e.position+2)===45){e.position+=3;skipSeparationSpace(e,true,-1)}else if(r){throwError(e,"directives end mark is expected")}composeNode(e,e.lineIndent-1,l,false,true);skipSeparationSpace(e,true,-1);if(e.checkLineBreaks&&m.test(e.input.slice(t,e.position))){throwWarning(e,"non-ASCII line breaks are interpreted as content")}e.documents.push(e.result);if(e.position===e.lineStart&&testDocumentSeparator(e)){if(e.input.charCodeAt(e.position)===46){e.position+=3;skipSeparationSpace(e,true,-1)}return}if(e.position<e.length-1){throwError(e,"end of the stream or a document separator is expected")}}function loadDocuments(e,t){e=String(e);t=t||{};if(e.length!==0){if(e.charCodeAt(e.length-1)!==10&&e.charCodeAt(e.length-1)!==13){e+="\n"}if(e.charCodeAt(0)===65279){e=e.slice(1)}}const r=new State(e,t);const s=e.indexOf("\0");if(s!==-1){r.position=s;throwError(r,"null byte is not allowed in input")}r.input+="\0";while(r.input.charCodeAt(r.position)===32){r.lineIndent+=1;r.position+=1}while(r.position<r.length-1){readDocument(r)}return r.documents}function loadAll(e,t,r){if(t!==null&&typeof t==="object"&&typeof r==="undefined"){r=t;t=null}const s=loadDocuments(e,r);if(typeof t!=="function"){return s}for(let e=0,r=s.length;e<r;e+=1){t(s[e])}}function load(e,t){const r=loadDocuments(e,t);if(r.length===0){return undefined}else if(r.length===1){return r[0]}throw new n("expected a single document in the stream, but found more")}e.exports.loadAll=loadAll;e.exports.load=load},9079:(e,t,r)=>{"use strict";const s=r(2767);const n=r(9180);function compileList(e,t){const r=[];e[t].forEach((function(e){let t=r.length;r.forEach((function(r,s){if(r.tag===e.tag&&r.kind===e.kind&&r.multi===e.multi){t=s}}));r[t]=e}));return r}function compileMap(){const e={scalar:{},sequence:{},mapping:{},fallback:{},multi:{scalar:[],sequence:[],mapping:[],fallback:[]}};function collectType(t){if(t.multi){e.multi[t.kind].push(t);e.multi["fallback"].push(t)}else{e[t.kind][t.tag]=e["fallback"][t.tag]=t}}for(let e=0,t=arguments.length;e<t;e+=1){arguments[e].forEach(collectType)}return e}function Schema(e){return this.extend(e)}Schema.prototype.extend=function extend(e){let t=[];let r=[];if(e instanceof n){r.push(e)}else if(Array.isArray(e)){r=r.concat(e)}else if(e&&(Array.isArray(e.implicit)||Array.isArray(e.explicit))){if(e.implicit)t=t.concat(e.implicit);if(e.explicit)r=r.concat(e.explicit)}else{throw new s("Schema.extend argument should be a Type, [ Type ], "+"or a schema definition ({ implicit: [...], explicit: [...] })")}t.forEach((function(e){if(!(e instanceof n)){throw new s("Specified list of YAML types (or a single Type object) contains a non-Type object.")}if(e.loadKind&&e.loadKind!=="scalar"){throw new s("There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.")}if(e.multi){throw new s("There is a multi type in the implicit list of a schema. Multi tags can only be listed as explicit.")}}));r.forEach((function(e){if(!(e instanceof n)){throw new s("Specified list of YAML types (or a single Type object) contains a non-Type object.")}}));const o=Object.create(Schema.prototype);o.implicit=(this.implicit||[]).concat(t);o.explicit=(this.explicit||[]).concat(r);o.compiledImplicit=compileList(o,"implicit");o.compiledExplicit=compileList(o,"explicit");o.compiledTypeMap=compileMap(o.compiledImplicit,o.compiledExplicit);return o};e.exports=Schema},9193:(e,t,r)=>{"use strict";e.exports=r(5480)},177:(e,t,r)=>{"use strict";e.exports=r(9193).extend({implicit:[r(9727),r(7739)],explicit:[r(3230),r(6482),r(6142),r(3863)]})},4111:(e,t,r)=>{"use strict";const s=r(9079);e.exports=new s({explicit:[r(8828),r(8892),r(6033)]})},5480:(e,t,r)=>{"use strict";e.exports=r(4111).extend({implicit:[r(8142),r(7703),r(1090),r(9749)]})},7075:(e,t,r)=>{"use strict";const s=r(6305);function getLine(e,t,r,s,n){let o="";let i="";const a=Math.floor(n/2)-1;if(s-t>a){o=" ... ";t=s-a+o.length}if(r-s>a){i=" ...";r=s+a-i.length}return{str:o+e.slice(t,r).replace(/\t/g,"→")+i,pos:s-t+o.length}}function padStart(e,t){return s.repeat(" ",t-e.length)+e}function makeSnippet(e,t){t=Object.create(t||null);if(!e.buffer)return null;if(!t.maxLength)t.maxLength=79;if(typeof t.indent!=="number")t.indent=1;if(typeof t.linesBefore!=="number")t.linesBefore=3;if(typeof t.linesAfter!=="number")t.linesAfter=2;const r=/\r?\n|\r|\0/g;const n=[0];const o=[];let i;let a=-1;while(i=r.exec(e.buffer)){o.push(i.index);n.push(i.index+i[0].length);if(e.position<=i.index&&a<0){a=n.length-2}}if(a<0)a=n.length-1;let u="";const c=Math.min(e.line+t.linesAfter,o.length).toString().length;const p=t.maxLength-(t.indent+c+3);for(let r=1;r<=t.linesBefore;r++){if(a-r<0)break;const i=getLine(e.buffer,n[a-r],o[a-r],e.position-(n[a]-n[a-r]),p);u=s.repeat(" ",t.indent)+padStart((e.line-r+1).toString(),c)+" | "+i.str+"\n"+u}const l=getLine(e.buffer,n[a],o[a],e.position,p);u+=s.repeat(" ",t.indent)+padStart((e.line+1).toString(),c)+" | "+l.str+"\n";u+=s.repeat("-",t.indent+c+3+l.pos)+"^"+"\n";for(let r=1;r<=t.linesAfter;r++){if(a+r>=o.length)break;const i=getLine(e.buffer,n[a+r],o[a+r],e.position-(n[a]-n[a+r]),p);u+=s.repeat(" ",t.indent)+padStart((e.line+r+1).toString(),c)+" | "+i.str+"\n"}return u.replace(/\n$/,"")}e.exports=makeSnippet},9180:(e,t,r)=>{"use strict";const s=r(2767);const n=["kind","multi","resolve","construct","instanceOf","predicate","represent","representName","defaultStyle","styleAliases"];const o=["scalar","sequence","mapping"];function compileStyleAliases(e){const t={};if(e!==null){Object.keys(e).forEach((function(r){e[r].forEach((function(e){t[String(e)]=r}))}))}return t}function Type(e,t){t=t||{};Object.keys(t).forEach((function(t){if(n.indexOf(t)===-1){throw new s('Unknown option "'+t+'" is met in definition of "'+e+'" YAML type.')}}));this.options=t;this.tag=e;this.kind=t["kind"]||null;this.resolve=t["resolve"]||function(){return true};this.construct=t["construct"]||function(e){return e};this.instanceOf=t["instanceOf"]||null;this.predicate=t["predicate"]||null;this.represent=t["represent"]||null;this.representName=t["representName"]||null;this.defaultStyle=t["defaultStyle"]||null;this.multi=t["multi"]||false;this.styleAliases=compileStyleAliases(t["styleAliases"]||null);if(o.indexOf(this.kind)===-1){throw new s('Unknown kind "'+this.kind+'" is specified for "'+e+'" YAML type.')}}e.exports=Type},3230:(e,t,r)=>{"use strict";const s=r(9180);const n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\n\r";function resolveYamlBinary(e){if(e===null)return false;let t=0;const r=e.length;const s=n;for(let n=0;n<r;n++){const r=s.indexOf(e.charAt(n));if(r>64)continue;if(r<0)return false;t+=6}return t%8===0}function constructYamlBinary(e){const t=e.replace(/[\r\n=]/g,"");const r=t.length;const s=n;let o=0;const i=[];for(let e=0;e<r;e++){if(e%4===0&&e){i.push(o>>16&255);i.push(o>>8&255);i.push(o&255)}o=o<<6|s.indexOf(t.charAt(e))}const a=r%4*6;if(a===0){i.push(o>>16&255);i.push(o>>8&255);i.push(o&255)}else if(a===18){i.push(o>>10&255);i.push(o>>2&255)}else if(a===12){i.push(o>>4&255)}return new Uint8Array(i)}function representYamlBinary(e){let t="";let r=0;const s=e.length;const o=n;for(let n=0;n<s;n++){if(n%3===0&&n){t+=o[r>>18&63];t+=o[r>>12&63];t+=o[r>>6&63];t+=o[r&63]}r=(r<<8)+e[n]}const i=s%3;if(i===0){t+=o[r>>18&63];t+=o[r>>12&63];t+=o[r>>6&63];t+=o[r&63]}else if(i===2){t+=o[r>>10&63];t+=o[r>>4&63];t+=o[r<<2&63];t+=o[64]}else if(i===1){t+=o[r>>2&63];t+=o[r<<4&63];t+=o[64];t+=o[64]}return t}function isBinary(e){return Object.prototype.toString.call(e)==="[object Uint8Array]"}e.exports=new s("tag:yaml.org,2002:binary",{kind:"scalar",resolve:resolveYamlBinary,construct:constructYamlBinary,predicate:isBinary,represent:representYamlBinary})},7703:(e,t,r)=>{"use strict";const s=r(9180);function resolveYamlBoolean(e){if(e===null)return false;const t=e.length;return t===4&&(e==="true"||e==="True"||e==="TRUE")||t===5&&(e==="false"||e==="False"||e==="FALSE")}function constructYamlBoolean(e){return e==="true"||e==="True"||e==="TRUE"}function isBoolean(e){return Object.prototype.toString.call(e)==="[object Boolean]"}e.exports=new s("tag:yaml.org,2002:bool",{kind:"scalar",resolve:resolveYamlBoolean,construct:constructYamlBoolean,predicate:isBoolean,represent:{lowercase:function(e){return e?"true":"false"},uppercase:function(e){return e?"TRUE":"FALSE"},camelcase:function(e){return e?"True":"False"}},defaultStyle:"lowercase"})},9749:(e,t,r)=>{"use strict";const s=r(6305);const n=r(9180);const o=new RegExp("^(?:[-+]?(?:[0-9]+)(?:\\.[0-9]*)?(?:[eE][-+]?[0-9]+)?"+"|\\.[0-9]+(?:[eE][-+]?[0-9]+)?"+"|[-+]?\\.(?:inf|Inf|INF)"+"|\\.(?:nan|NaN|NAN))$");const i=new RegExp("^(?:"+"[-+]?\\.(?:inf|Inf|INF)"+"|\\.(?:nan|NaN|NAN))$");function resolveYamlFloat(e){if(e===null)return false;if(!o.test(e)){return false}if(isFinite(parseFloat(e,10))){return true}return i.test(e)}function constructYamlFloat(e){let t=e.toLowerCase();const r=t[0]==="-"?-1:1;if("+-".indexOf(t[0])>=0){t=t.slice(1)}if(t===".inf"){return r===1?Number.POSITIVE_INFINITY:Number.NEGATIVE_INFINITY}else if(t===".nan"){return NaN}return r*parseFloat(t,10)}const a=/^[-+]?[0-9]+e/;function representYamlFloat(e,t){if(isNaN(e)){switch(t){case"lowercase":return".nan";case"uppercase":return".NAN";case"camelcase":return".NaN"}}else if(Number.POSITIVE_INFINITY===e){switch(t){case"lowercase":return".inf";case"uppercase":return".INF";case"camelcase":return".Inf"}}else if(Number.NEGATIVE_INFINITY===e){switch(t){case"lowercase":return"-.inf";case"uppercase":return"-.INF";case"camelcase":return"-.Inf"}}else if(s.isNegativeZero(e)){return"-0.0"}const r=e.toString(10);return a.test(r)?r.replace("e",".e"):r}function isFloat(e){return Object.prototype.toString.call(e)==="[object Number]"&&(e%1!==0||s.isNegativeZero(e))}e.exports=new n("tag:yaml.org,2002:float",{kind:"scalar",resolve:resolveYamlFloat,construct:constructYamlFloat,predicate:isFloat,represent:representYamlFloat,defaultStyle:"lowercase"})},1090:(e,t,r)=>{"use strict";const s=r(6305);const n=r(9180);function isHexCode(e){return e>=48&&e<=57||e>=65&&e<=70||e>=97&&e<=102}function isOctCode(e){return e>=48&&e<=55}function isDecCode(e){return e>=48&&e<=57}function resolveYamlInteger(e){if(e===null)return false;const t=e.length;let r=0;let s=false;if(!t)return false;let n=e[r];if(n==="-"||n==="+"){n=e[++r]}if(n==="0"){if(r+1===t)return true;n=e[++r];if(n==="b"){r++;for(;r<t;r++){n=e[r];if(n!=="0"&&n!=="1")return false;s=true}return s&&isFinite(parseYamlInteger(e))}if(n==="x"){r++;for(;r<t;r++){if(!isHexCode(e.charCodeAt(r)))return false;s=true}return s&&isFinite(parseYamlInteger(e))}if(n==="o"){r++;for(;r<t;r++){if(!isOctCode(e.charCodeAt(r)))return false;s=true}return s&&isFinite(parseYamlInteger(e))}}for(;r<t;r++){if(!isDecCode(e.charCodeAt(r))){return false}s=true}if(!s)return false;return isFinite(parseYamlInteger(e))}function parseYamlInteger(e){let t=e;let r=1;let s=t[0];if(s==="-"||s==="+"){if(s==="-")r=-1;t=t.slice(1);s=t[0]}if(t==="0")return 0;if(s==="0"){if(t[1]==="b")return r*parseInt(t.slice(2),2);if(t[1]==="x")return r*parseInt(t.slice(2),16);if(t[1]==="o")return r*parseInt(t.slice(2),8)}return r*parseInt(t,10)}function constructYamlInteger(e){return parseYamlInteger(e)}function isInteger(e){return Object.prototype.toString.call(e)==="[object Number]"&&(e%1===0&&!s.isNegativeZero(e))}e.exports=new n("tag:yaml.org,2002:int",{kind:"scalar",resolve:resolveYamlInteger,construct:constructYamlInteger,predicate:isInteger,represent:{binary:function(e){return e>=0?"0b"+e.toString(2):"-0b"+e.toString(2).slice(1)},octal:function(e){return e>=0?"0o"+e.toString(8):"-0o"+e.toString(8).slice(1)},decimal:function(e){return e.toString(10)},hexadecimal:function(e){return e>=0?"0x"+e.toString(16).toUpperCase():"-0x"+e.toString(16).toUpperCase().slice(1)}},defaultStyle:"decimal",styleAliases:{binary:[2,"bin"],octal:[8,"oct"],decimal:[10,"dec"],hexadecimal:[16,"hex"]}})},6033:(e,t,r)=>{"use strict";const s=r(9180);e.exports=new s("tag:yaml.org,2002:map",{kind:"mapping",construct:function(e){return e!==null?e:{}}})},7739:(e,t,r)=>{"use strict";const s=r(9180);function resolveYamlMerge(e){return e==="<<"||e===null}e.exports=new s("tag:yaml.org,2002:merge",{kind:"scalar",resolve:resolveYamlMerge})},8142:(e,t,r)=>{"use strict";const s=r(9180);function resolveYamlNull(e){if(e===null)return true;const t=e.length;return t===1&&e==="~"||t===4&&(e==="null"||e==="Null"||e==="NULL")}function constructYamlNull(){return null}function isNull(e){return e===null}e.exports=new s("tag:yaml.org,2002:null",{kind:"scalar",resolve:resolveYamlNull,construct:constructYamlNull,predicate:isNull,represent:{canonical:function(){return"~"},lowercase:function(){return"null"},uppercase:function(){return"NULL"},camelcase:function(){return"Null"},empty:function(){return""}},defaultStyle:"lowercase"})},6482:(e,t,r)=>{"use strict";const s=r(9180);const n=Object.prototype.hasOwnProperty;const o=Object.prototype.toString;function resolveYamlOmap(e){if(e===null)return true;const t=[];const r=e;for(let e=0,s=r.length;e<s;e+=1){const s=r[e];let i=false;if(o.call(s)!=="[object Object]")return false;let a;for(a in s){if(n.call(s,a)){if(!i)i=true;else return false}}if(!i)return false;if(t.indexOf(a)===-1)t.push(a);else return false}return true}function constructYamlOmap(e){return e!==null?e:[]}e.exports=new s("tag:yaml.org,2002:omap",{kind:"sequence",resolve:resolveYamlOmap,construct:constructYamlOmap})},6142:(e,t,r)=>{"use strict";const s=r(9180);const n=Object.prototype.toString;function resolveYamlPairs(e){if(e===null)return true;const t=e;const r=new Array(t.length);for(let e=0,s=t.length;e<s;e+=1){const s=t[e];if(n.call(s)!=="[object Object]")return false;const o=Object.keys(s);if(o.length!==1)return false;r[e]=[o[0],s[o[0]]]}return true}function constructYamlPairs(e){if(e===null)return[];const t=e;const r=new Array(t.length);for(let e=0,s=t.length;e<s;e+=1){const s=t[e];const n=Object.keys(s);r[e]=[n[0],s[n[0]]]}return r}e.exports=new s("tag:yaml.org,2002:pairs",{kind:"sequence",resolve:resolveYamlPairs,construct:constructYamlPairs})},8892:(e,t,r)=>{"use strict";const s=r(9180);e.exports=new s("tag:yaml.org,2002:seq",{kind:"sequence",construct:function(e){return e!==null?e:[]}})},3863:(e,t,r)=>{"use strict";const s=r(9180);const n=Object.prototype.hasOwnProperty;function resolveYamlSet(e){if(e===null)return true;const t=e;for(const e in t){if(n.call(t,e)){if(t[e]!==null)return false}}return true}function constructYamlSet(e){return e!==null?e:{}}e.exports=new s("tag:yaml.org,2002:set",{kind:"mapping",resolve:resolveYamlSet,construct:constructYamlSet})},8828:(e,t,r)=>{"use strict";const s=r(9180);e.exports=new s("tag:yaml.org,2002:str",{kind:"scalar",construct:function(e){return e!==null?e:""}})},9727:(e,t,r)=>{"use strict";const s=r(9180);const n=new RegExp("^([0-9][0-9][0-9][0-9])"+"-([0-9][0-9])"+"-([0-9][0-9])$");const o=new RegExp("^([0-9][0-9][0-9][0-9])"+"-([0-9][0-9]?)"+"-([0-9][0-9]?)"+"(?:[Tt]|[ \\t]+)"+"([0-9][0-9]?)"+":([0-9][0-9])"+":([0-9][0-9])"+"(?:\\.([0-9]*))?"+"(?:[ \\t]*(Z|([-+])([0-9][0-9]?)"+"(?::([0-9][0-9]))?))?$");function resolveYamlTimestamp(e){if(e===null)return false;if(n.exec(e)!==null)return true;if(o.exec(e)!==null)return true;return false}function constructYamlTimestamp(e){let t=0;let r=null;let s=n.exec(e);if(s===null)s=o.exec(e);if(s===null)throw new Error("Date resolve error");const i=+s[1];const a=+s[2]-1;const u=+s[3];if(!s[4]){return new Date(Date.UTC(i,a,u))}const c=+s[4];const p=+s[5];const l=+s[6];if(s[7]){t=s[7].slice(0,3);while(t.length<3){t+="0"}t=+t}if(s[9]){const e=+s[10];const t=+(s[11]||0);r=(e*60+t)*6e4;if(s[9]==="-")r=-r}const d=new Date(Date.UTC(i,a,u,c,p,l,t));if(r)d.setTime(d.getTime()-r);return d}function representYamlTimestamp(e){return e.toISOString()}e.exports=new s("tag:yaml.org,2002:timestamp",{kind:"scalar",resolve:resolveYamlTimestamp,construct:constructYamlTimestamp,instanceOf:Date,represent:representYamlTimestamp})},7925:(e,t,r)=>{"use strict";var s=r(1292);var n=r(5872);var o=r(5596);function _interopDefault(e){return e&&e.__esModule?e:{default:e}}var i=_interopDefault(o);function appendFormFromObject(e){const t=new FormData;Object.entries(e).forEach((([e,r])=>{if(!r)return;if(Array.isArray(r))t.append(e,r[0],r[1]);else t.append(e,r)}));return t}function endpoint(e,...t){return t.reduce(((t,r,s)=>t+encodeURIComponent(r)+e[s+1]),e[0])}function parseLinkHeader(e){const t={};const r=/<([^>]+)>; rel="([^"]+)"/g;let s;while(s=r.exec(e)){const[,e,r]=s;t[r]=e}return t}function reformatObjectOptions(e,t,r=false){const s=r?n.decamelizeKeys(e):e;return i.default.stringify({[t]:s},{encode:false}).split("&").reduce(((e,t)=>{const[r,s]=t.split("=");e[r]=s;return e}),{})}function packageResponse(e,t){return t?{data:e.body,status:e.status,headers:e.headers}:e.body}function getStream(e,t){return packageResponse(e,t)}function getSingle(e,t,r){const{status:s,headers:o}=t;let{body:i}=t;if(e)i=n.camelizeKeys(i);return packageResponse({body:i,status:s,headers:o},r)}async function getManyMore(e,t,r,s,i,a){const{sudo:u,showExpanded:c,maxPages:p,pagination:l,page:d,perPage:f,idAfter:h,orderBy:g,sort:m}=i;if(e)s.body=n.camelizeKeys(s?.body);const y=[...a||[],...s.body];const v=p&&f?y.length/+f<p:true;const{next:$=""}=parseLinkHeader(s.headers.link);if(!(d&&(a||[]).length===0)&&$&&v){const s=o.parse($.split("?")[1]);const i={...n.camelizeKeys(s)};const a={...i,maxPages:p,sudo:u,showExpanded:c};const l=await t(r,{searchParams:i,sudo:u});return getManyMore(e,t,r,l,a,y)}if(!c)return y;const b=l==="keyset"?{idAfter:h?+h:null,perPage:f?+f:null,orderBy:g,sort:m}:{total:parseInt(s.headers["x-total"],10),next:parseInt(s.headers["x-next-page"],10)||null,current:parseInt(s.headers["x-page"],10)||1,previous:parseInt(s.headers["x-prev-page"],10)||null,perPage:parseInt(s.headers["x-per-page"],10),totalPages:parseInt(s.headers["x-total-pages"],10)};return{data:y,paginationInfo:b}}function get(){return async(e,t,r)=>{const{asStream:s,sudo:n,showExpanded:o,maxPages:i,...a}=r||{};const u=e.queryTimeout?AbortSignal.timeout(e.queryTimeout):void 0;const c=await e.requester.get(t,{searchParams:a,sudo:n,asStream:s,signal:u});const p=e.camelize||false;if(s)return getStream(c,o);if(!Array.isArray(c.body))return getSingle(p,c,o);const l={sudo:n,showExpanded:o,maxPages:i,...a};return getManyMore(p,((t,r)=>e.requester.get(t,{...r,signal:u})),t,c,l)}}function post(){return async(e,t,{searchParams:r,isForm:s,sudo:o,showExpanded:i,...a}={})=>{const u=s?appendFormFromObject(a):a;const c=await e.requester.post(t,{searchParams:r,body:u,sudo:o,signal:e.queryTimeout?AbortSignal.timeout(e.queryTimeout):void 0});if(e.camelize)c.body=n.camelizeKeys(c.body);return packageResponse(c,i)}}function put(){return async(e,t,{searchParams:r,isForm:s,sudo:o,showExpanded:i,...a}={})=>{const u=s?appendFormFromObject(a):a;const c=await e.requester.put(t,{body:u,searchParams:r,sudo:o,signal:e.queryTimeout?AbortSignal.timeout(e.queryTimeout):void 0});if(e.camelize)c.body=n.camelizeKeys(c.body);return packageResponse(c,i)}}function patch(){return async(e,t,{searchParams:r,isForm:s,sudo:o,showExpanded:i,...a}={})=>{const u=s?appendFormFromObject(a):a;const c=await e.requester.patch(t,{body:u,searchParams:r,sudo:o,signal:e.queryTimeout?AbortSignal.timeout(e.queryTimeout):void 0});if(e.camelize)c.body=n.camelizeKeys(c.body);return packageResponse(c,i)}}function del(){return async(e,t,{sudo:r,showExpanded:s,searchParams:n,...o}={})=>{const i=await e.requester.delete(t,{body:o,searchParams:n,sudo:r,signal:e.queryTimeout?AbortSignal.timeout(e.queryTimeout):void 0});return packageResponse(i,s)}}var a={post:post,put:put,patch:patch,get:get,del:del};var u=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/cluster_agents`,t)}allTokens(e,t,r){return a.get()(this,endpoint`projects/${e}/cluster_agents/${t}/tokens`,r)}createToken(e,t,r,s){return a.get()(this,endpoint`projects/${e}/cluster_agents/${t}/tokens`,{name:r,...s})}show(e,t,r){return a.get()(this,endpoint`projects/${e}/cluster_agents/${t}`,r)}showToken(e,t,r,s){return a.get()(this,endpoint`projects/${e}/cluster_agents/${t}/tokens/${r}`,s)}register(e,t,r){return a.post()(this,endpoint`projects/${e}/cluster_agents`,{name:t,...r})}removeToken(e,t,r,s){return a.del()(this,endpoint`projects/${e}/cluster_agents/${t}/tokens/${r}`,s)}unregister(e,t,r){return a.del()(this,endpoint`projects/${e}/cluster_agents/${t}`,r)}};var c=class extends s.BaseResource{allMetricImages(e,t,r){return a.get()(this,endpoint`projects/${e}/alert_management_alerts/${t}/metric_images`,r)}editMetricImage(e,t,r,s){return a.put()(this,endpoint`projects/${e}/alert_management_alerts/${t}/metric_images/${r}`,s)}removeMetricImage(e,t,r,s){return a.del()(this,endpoint`projects/${e}/alert_management_alerts/${t}/metric_images/${r}`,s)}uploadMetricImage(e,t,r,s){return a.post()(this,endpoint`projects/${e}/alert_management_alerts/${t}/metric_images`,{isForm:true,file:[r.content,r.filename],...s})}};var p=class extends s.BaseResource{show(e){return a.get()(this,"application/appearence",e)}edit({logo:e,pwaIcon:t,...r}={}){if(e||t){const s={...r,isForm:true};if(e)s.logo=[e.content,e.filename];if(t)s.pwaIcon=[t.content,t.filename];return a.put()(this,"application/appearence",s)}return a.put()(this,"application/appearence",r)}};var l=class extends s.BaseResource{show(e){return a.get()(this,"application/plan_limits",e)}edit(e,t={}){const{ciPipelineSize:r,ciActiveJobs:s,ciActivePipelines:n,ciProjectSubscriptions:o,ciPipelineSchedules:i,ciNeedsSizeLimit:u,ciRegisteredGroupRunners:c,ciRegisteredProjectRunners:p,conanMaxFileSize:l,genericPackagesMaxFileSize:d,helmMaxFileSize:f,mavenMaxFileSize:h,npmMaxFileSize:g,nugetMaxFileSize:m,pypiMaxFileSize:y,terraformModuleMaxFileSize:v,storageSizeLimit:$,...b}=t;return a.put()(this,"application/plan_limits",{...b,searchParams:{planName:e,ciPipelineSize:r,ciActiveJobs:s,ciActivePipelines:n,ciProjectSubscriptions:o,ciPipelineSchedules:i,ciNeedsSizeLimit:u,ciRegisteredGroupRunners:c,ciRegisteredProjectRunners:p,conanMaxFileSize:l,genericPackagesMaxFileSize:d,helmMaxFileSize:f,mavenMaxFileSize:h,npmMaxFileSize:g,nugetMaxFileSize:m,pypiMaxFileSize:y,terraformModuleMaxFileSize:v,storageSizeLimit:$}})}};var d=class extends s.BaseResource{all(e){return a.get()(this,"applications",e)}create(e,t,r,s){return a.post()(this,"applications",{name:e,redirectUri:t,scopes:r,...s})}remove(e,t){return a.del()(this,`applications/${e}`,t)}};var f=class extends s.BaseResource{show(e){return a.get()(this,"application/settings",e)}edit(e){return a.put()(this,"application/settings",e)}};var h=class extends s.BaseResource{show(e){return a.get()(this,"application/statistics",e)}};function url({projectId:e,groupId:t}={}){let r="";if(e)r=endpoint`projects/${e}/`;else if(t)r=endpoint`groups/${t}/`;return`${r}audit_events`}var g=class extends s.BaseResource{all({projectId:e,groupId:t,...r}={}){const s=url({projectId:e,groupId:t});return a.get()(this,s,r)}show(e,{projectId:t,groupId:r,...s}={}){const n=url({projectId:t,groupId:r});return a.get()(this,`${n}/${e}`,s)}};var m=class extends s.BaseResource{show(e,t){return a.get()(this,"avatar",{email:e,...t})}};var y=class extends s.BaseResource{all(e){return a.get()(this,"broadcast_messages",e)}create(e){return a.post()(this,"broadcast_messages",e)}edit(e,t){return a.put()(this,`broadcast_messages/${e}`,t)}remove(e,t){return a.del()(this,`broadcast_messages/${e}`,t)}show(e,t){return a.get()(this,`broadcast_messages/${e}`,t)}};var v=class extends s.BaseResource{createAccessToken(e){return a.post()(this,"code_suggestions/tokens",e)}generateCompletion(e){return a.post()(this,"code_suggestions/completions",e)}};var $=class extends s.BaseResource{create(e,t){return a.post()(this,endpoint`projects/${e}/packages/composer`,t)}download(e,t,r,s){return a.get()(this,endpoint`projects/${e}/packages/composer/archives/${t}`,{searchParams:{sha:r},...s})}showMetadata(e,t,r){let s;if(r&&r.sha){s=endpoint`groups/${e}/-/packages/composer/${t}$${r.sha}`}else{s=endpoint`groups/${e}/-/packages/composer/p2/${t}`}return a.get()(this,s,r)}showPackages(e,t,r){return a.get()(this,endpoint`groups/${e}/-/packages/composer/p/${t}`,r)}showBaseRepository(e,t){const r={...this};if(t&&t.composerVersion==="2"){r.headers["User-Agent"]="Composer/2"}return a.get()(r,endpoint`groups/${e}/-/packages/composer/packages`,t)}};function url2(e){return e?endpoint`projects/${e}/packages/conan/v1`:"packages/conan/v1"}var b=class extends s.BaseResource{authenticate({projectId:e,...t}={}){return a.get()(this,`${url2(e)}/users/authenticate`,t)}checkCredentials({projectId:e,...t}={}){const r=url2(e);return a.get()(this,`${r}/users/check_credentials`,t)}downloadPackageFile(e,t,r,s,n,o,i,u,{projectId:c,...p}={}){const l=url2(c);return a.get()(this,`${l}/conans/${e}/${t}/${r}/${s}/${o}/package/${n}/${i}/${u}`,p)}downloadRecipeFile(e,t,r,s,n,o,{projectId:i,...u}={}){const c=url2(i);return a.get()(this,`${c}/conans/${e}/${t}/${r}/${s}/${n}/export/${o}`,u)}showPackageUploadUrls(e,t,r,s,n,{projectId:o,...i}={}){const u=url2(o);return a.get()(this,`${u}/conans/${e}/${t}/${r}/${s}/packages/${n}/upload_urls`,i)}showPackageDownloadUrls(e,t,r,s,n,{projectId:o,...i}={}){const u=url2(o);return a.get()(this,`${u}/conans/${e}/${t}/${r}/${s}/packages/${n}/download_urls`,i)}showPackageManifest(e,t,r,s,n,{projectId:o,...i}={}){const u=url2(o);return a.get()(this,`${u}/conans/${e}/${t}/${r}/${s}/packages/${n}/digest`,i)}showPackageSnapshot(e,t,r,s,n,{projectId:o,...i}={}){const u=url2(o);return a.get()(this,`${u}/conans/${e}/${t}/${r}/${s}/packages/${n}`,i)}ping({projectId:e,...t}={}){return a.post()(this,`${url2(e)}/ping`,t)}showRecipeUploadUrls(e,t,r,s,{projectId:n,...o}={}){const i=url2(n);return a.get()(this,`${i}/conans/${e}/${t}/${r}/${s}/upload_urls`,o)}showRecipeDownloadUrls(e,t,r,s,{projectId:n,...o}={}){const i=url2(n);return a.get()(this,`${i}/conans/${e}/${t}/${r}/${s}/download_urls`,o)}showRecipeManifest(e,t,r,s,{projectId:n,...o}={}){const i=url2(n);return a.get()(this,`${i}/conans/${e}/${t}/${r}/${s}/digest`,o)}showRecipeSnapshot(e,t,r,s,{projectId:n,...o}={}){const i=url2(n);return a.get()(this,`${i}/conans/${e}/${t}/${r}/${s}`,o)}removePackageFile(e,t,r,s,{projectId:n,...o}={}){const i=url2(n);return a.get()(this,`${i}/conans/${e}/${t}/${r}/${s}`,o)}search({projectId:e,...t}={}){const r=url2(e);return a.get()(this,`${r}/conans/search`,t)}uploadPackageFile(e,t,r,s,n,o,i,u,c){const p=url2();return a.get()(this,`${p}/files/${t}/${r}/${s}/${n}/${i}/package/${o}/${u}/${e.filename}`,{isForm:true,...c,file:[e.content,e.filename]})}uploadRecipeFile(e,t,r,s,n,o,i){const u=url2();return a.get()(this,`${u}/files/${t}/${r}/${s}/${n}/${o}/export/${e.filename}`,{isForm:true,...i,file:[e.content,e.filename]})}};var w=class extends s.BaseResource{create(e,t,r,{environmentId:s,clusterId:n,...o}={}){let i;if(s)i=endpoint`environments/${s}/metrics_dashboard/annotations`;else if(n)i=endpoint`clusters/${n}/metrics_dashboard/annotations`;else throw new Error("Missing required argument. Please supply a environmentId or a cluserId in the options parameter.");return a.post()(this,i,{dashboardPath:e,startingAt:t,description:r,...o})}};function url3({projectId:e,groupId:t}={}){if(e)return endpoint`/projects/${e}/packages/debian`;if(t)return endpoint`/groups/${t}/-/packages/debian`;throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter")}var _=class extends s.BaseResource{downloadBinaryFileIndex(e,t,r,{projectId:s,groupId:n,...o}){const i=url3({projectId:s,groupId:n});return a.get()(this,`${i}/dists/${e}/${t}/binary-${r}/Packages`,o)}downloadDistributionReleaseFile(e,{projectId:t,groupId:r,...s}){const n=url3({projectId:t,groupId:r});return a.get()(this,`${n}/dists/${e}/Release`,s)}downloadSignedDistributionReleaseFile(e,{projectId:t,groupId:r,...s}){const n=url3({projectId:t,groupId:r});return a.get()(this,`${n}/dists/${e}/InRelease`,s)}downloadReleaseFileSignature(e,{projectId:t,groupId:r,...s}){const n=url3({projectId:t,groupId:r});return a.get()(this,`${n}/dists/${e}/Release.gpg`,s)}downloadPackageFile(e,t,r,s,n,o,i){return a.get()(this,endpoint`projects/${e}/packages/debian/pool/${t}/${r}/${s}/${n}/${o}`,i)}uploadPackageFile(e,t,r){return a.put()(this,endpoint`projects/${e}/packages/debian/${t.filename}`,{isForm:true,...r,file:[t.content,t.filename]})}};var A=class extends s.BaseResource{remove(e,t){return a.post()(this,`groups/${e}/dependency_proxy/cache`,t)}};var S=class extends s.BaseResource{all({projectId:e,userId:t,...r}={}){let s;if(e){s=endpoint`projects/${e}/deploy_keys`}else if(t){s=endpoint`users/${t}/project_deploy_keys`}else{s="deploy_keys"}return a.get()(this,s,r)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/deploy_keys`,{title:t,key:r,...s})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/deploy_keys/${t}`,r)}enable(e,t,r){return a.post()(this,endpoint`projects/${e}/deploy_keys/${t}/enable`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/deploy_keys/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/deploy_keys/${t}`,r)}};var j=class extends s.BaseResource{all({projectId:e,groupId:t,...r}={}){let s;if(e)s=endpoint`projects/${e}/deploy_tokens`;else if(t)s=endpoint`groups/${t}/deploy_tokens`;else s="deploy_tokens";return a.get()(this,s,r)}create(e,t,{projectId:r,groupId:s,...n}={}){let o;if(r)o=endpoint`projects/${r}/deploy_tokens`;else if(s)o=endpoint`groups/${s}/deploy_tokens`;else{throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter.")}return a.post()(this,o,{name:e,scopes:t,...n})}remove(e,{projectId:t,groupId:r,...s}={}){let n;if(t)n=endpoint`projects/${t}/deploy_tokens/${e}`;else if(r)n=endpoint`groups/${r}/deploy_tokens/${e}`;else{throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter.")}return a.del()(this,n,s)}show(e,{projectId:t,groupId:r,...s}={}){let n;if(t)n=endpoint`projects/${t}/deploy_tokens/${e}`;else if(r)n=endpoint`groups/${r}/deploy_tokens/${e}`;else{throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter.")}return a.get()(this,n,s)}};var E=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/access_requests`,t)}request(e,t){return a.post()(this,endpoint`${e}/access_requests`,t)}approve(e,t,r){return a.post()(this,endpoint`${e}/access_requests/${t}/approve`,r)}deny(e,t,r){return a.del()(this,endpoint`${e}/access_requests/${t}`,r)}};var R=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/access_tokens`,t)}create(e,t,r,s){return a.post()(this,endpoint`${e}/access_tokens`,{name:t,scopes:r,...s})}revoke(e,t,r){return a.del()(this,endpoint`${e}/access_tokens/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`${e}/access_tokens/${t}`,r)}};function url4(e,t,r,s){const[n,o]=[e,r].map(encodeURIComponent);const i=[n,t,o];i.push("award_emoji");if(s)i.push(s);return i.join("/")}var x=class extends s.BaseResource{resourceType2;constructor(e,t,r){super({prefixUrl:e,...r});this.resourceType2=t}all(e,t,r){return a.get()(this,url4(e,this.resourceType2,t),r)}award(e,t,r,s){return a.post()(this,url4(e,this.resourceType2,t),{name:r,...s})}remove(e,t,r,s){return a.del()(this,url4(e,this.resourceType2,t,r),s)}show(e,t,r,s){return a.get()(this,url4(e,this.resourceType2,t,r),s)}};function url5(e,t,r,s,n){const[o,i]=[e,r].map(encodeURIComponent);const a=[o,t,i];a.push("notes");a.push(s);a.push("award_emoji");if(n)a.push(n);return a.join("/")}var k=class extends s.BaseResource{resourceType;constructor(e,t){super({prefixUrl:"projects",...t});this.resourceType=e}all(e,t,r,s){return a.get()(this,url5(e,this.resourceType,t,r),s)}award(e,t,r,s,n){return a.post()(this,url5(e,this.resourceType,t,r),{name:s,...n})}remove(e,t,r,s,n){return a.del()(this,url5(e,this.resourceType,t,r,s),n)}show(e,t,r,s,n){return a.get()(this,url5(e,this.resourceType,t,r,s),n)}};var I=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}add(e,t,r,s){return a.post()(this,endpoint`${e}/badges`,{linkUrl:t,imageUrl:r,...s})}all(e,t){return a.get()(this,endpoint`${e}/badges`,t)}edit(e,t,r){return a.put()(this,endpoint`${e}/badges/${t}`,r)}preview(e,t,r,s){return a.get()(this,endpoint`${e}/badges/render`,{linkUrl:t,imageUrl:r,...s})}remove(e,t,r){return a.del()(this,endpoint`${e}/badges/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`${e}/badges/${t}`,r)}};var P=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/custom_attributes`,t)}remove(e,t,r){return a.del()(this,endpoint`${e}/custom_attributes/${t}`,r)}set(e,t,r,s){return a.put()(this,endpoint`${e}/custom_attributes/${t}`,{value:r,...s})}show(e,t,r){return a.get()(this,endpoint`${e}/custom_attributes/${t}`,r)}};var T=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t,r){return a.get()(this,endpoint`${e}/dora/metrics`,{metric:t,...r})}};var C=class extends s.BaseResource{resource2Type;constructor(e,t,r){super({prefixUrl:e,...r});this.resource2Type=t}addNote(e,t,r,s,n,o){return a.post()(this,endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}/notes`,{...o,body:n,noteId:s})}all(e,t,r){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/discussions`,r)}create(e,t,r,{position:s,...n}={}){const o={...n,body:r};if(s){Object.assign(o,reformatObjectOptions(s,"position",true));o.isForm=true}return a.post()(this,endpoint`${e}/${this.resource2Type}/${t}/discussions`,o)}editNote(e,t,r,s,n){return a.put()(this,endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}/notes/${s}`,n)}removeNote(e,t,r,s,n){return a.del()(this,endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}/notes/${s}`,n)}show(e,t,r,s){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}`,s)}};var O=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/boards`,t)}allLists(e,t,r){return a.get()(this,endpoint`${e}/boards/${t}/lists`,r)}create(e,t,r){return a.post()(this,endpoint`${e}/boards`,{name:t,...r})}createList(e,t,r){return a.post()(this,endpoint`${e}/boards/${t}/lists`,r)}edit(e,t,r){return a.put()(this,endpoint`${e}/boards/${t}`,r)}editList(e,t,r,s,n){return a.put()(this,endpoint`${e}/boards/${t}/lists/${r}`,{position:s,...n})}remove(e,t,r){return a.del()(this,endpoint`${e}/boards/${t}`,r)}removeList(e,t,r,s){return a.del()(this,endpoint`${e}/boards/${t}/lists/${r}`,s)}show(e,t,r){return a.get()(this,endpoint`${e}/boards/${t}`,r)}showList(e,t,r,s){return a.get()(this,endpoint`${e}/boards/${t}/lists/${r}`,s)}};var M=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/labels`,t)}create(e,t,r,s){return a.post()(this,endpoint`${e}/labels`,{name:t,color:r,...s})}edit(e,t,r){if(!r?.newName&&!r?.color)throw new Error("Missing required argument. Please supply a color or a newName in the options parameter.");return a.put()(this,endpoint`${e}/labels/${t}`,r)}promote(e,t,r){return a.put()(this,endpoint`${e}/labels/${t}/promote`,r)}remove(e,t,r){return a.del()(this,endpoint`${e}/labels/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`${e}/labels/${t}`,r)}subscribe(e,t,r){return a.post()(this,endpoint`${e}/issues/${t}/subscribe`,r)}unsubscribe(e,t,r){return a.post()(this,endpoint`${e}/issues/${t}/unsubscribe`,r)}};var N=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}add(e,t,r,s){return a.post()(this,endpoint`${e}/members`,{userId:String(t),accessLevel:r,...s})}all(e,{includeInherited:t,...r}={}){let s=endpoint`${e}/members`;if(t)s+="/all";return a.get()(this,s,r)}edit(e,t,r,s){return a.put()(this,endpoint`${e}/members/${t}`,{accessLevel:r,...s})}show(e,t,{includeInherited:r,...s}={}){const[n,o]=[e,t].map(encodeURIComponent);const i=[n,"members"];if(r)i.push("all");i.push(o);return a.get()(this,i.join("/"),s)}remove(e,t,r){return a.del()(this,endpoint`${e}/members/${t}`,r)}};var L=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/milestones`,t)}allAssignedIssues(e,t,r){return a.get()(this,endpoint`${e}/milestones/${t}/issues`,r)}allAssignedMergeRequests(e,t,r){return a.get()(this,endpoint`${e}/milestones/${t}/merge_requests`,r)}allBurndownChartEvents(e,t,r){return a.get()(this,endpoint`${e}/milestones/${t}/burndown_events`,r)}create(e,t,r){return a.post()(this,endpoint`${e}/milestones`,{title:t,...r})}edit(e,t,r){return a.put()(this,endpoint`${e}/milestones/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`${e}/milestones/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`${e}/milestones/${t}`,r)}};var B=class extends s.BaseResource{resource2Type;constructor(e,t,r){super({prefixUrl:e,...r});this.resource2Type=t}all(e,t,r){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/notes`,r)}create(e,t,r,s){return a.post()(this,endpoint`${e}/${this.resource2Type}/${t}/notes`,{body:r,...s})}edit(e,t,r,s){return a.put()(this,endpoint`${e}/${this.resource2Type}/${t}/notes/${r}`,s)}remove(e,t,r,s){return a.del()(this,endpoint`${e}/${this.resource2Type}/${t}/notes/${r}`,s)}show(e,t,r,s){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/notes/${r}`,s)}};var F=class extends s.BaseResource{constructor(e,t){super({prefixUrl:["templates",e].join("/"),...t})}all(e){process.emitWarning('This API will be deprecated as of Gitlabs v5 API. Please make the switch to "ProjectTemplates".',"DeprecationWarning");return a.get()(this,"",e)}show(e,t){process.emitWarning('This API will be deprecated as of Gitlabs v5 API. Please make the switch to "ProjectTemplates".',"DeprecationWarning");return a.get()(this,encodeURIComponent(e),t)}};var D=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/variables`,t)}create(e,t,r,s){return a.post()(this,endpoint`${e}/variables`,{key:t,value:r,...s})}edit(e,t,r,s){return a.put()(this,endpoint`${e}/variables/${t}`,{value:r,...s})}show(e,t,r){return a.get()(this,endpoint`${e}/variables/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`${e}/variables/${t}`,r)}};var q=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/wikis`,t)}create(e,t,r,s){return a.post()(this,endpoint`${e}/wikis`,{content:t,title:r,...s})}edit(e,t,r){return a.put()(this,endpoint`${e}/wikis/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`${e}/wikis/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`${e}/wikis/${t}`,r)}uploadAttachment(e,t,r){return a.post()(this,endpoint`${e}/wikis/attachments`,{...r,isForm:true,file:[t.content,t.filename]})}};var G=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}add(e,t,r){return a.post()(this,endpoint`${e}/hooks`,{url:t,...r})}all(e,t){return a.get()(this,endpoint`${e}/hooks`,t)}edit(e,t,r,s){return a.put()(this,endpoint`${e}/hooks/${t}`,{url:r,...s})}remove(e,t,r){return a.del()(this,endpoint`${e}/hooks/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`${e}/hooks/${t}`,r)}};var H=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}create(e,t){return a.post()(this,endpoint`${e}/push_rule`,t)}edit(e,t){return a.put()(this,endpoint`${e}/push_rule`,t)}remove(e,t){return a.del()(this,endpoint`${e}/push_rule`,t)}show(e,t){return a.get()(this,endpoint`${e}/push_rule`,t)}};var U=class extends s.BaseResource{resourceType;resourceTypeSingular;constructor(e,t){super(t);this.resourceType=e;this.resourceTypeSingular=e.substring(0,e.length-1)}all(e){const t=e?.[`${this.resourceTypeSingular}Id`];const r=t?endpoint`${this.resourceType}/${t}/repository_storage_moves`:`${this.resourceTypeSingular}_repository_storage_moves`;return a.get()(this,r,e)}show(e,t){const r=t?.[`${this.resourceTypeSingular}Id`];const s=r?endpoint`${this.resourceType}/${r}/repository_storage_moves`:`${this.resourceTypeSingular}_repository_storage_moves`;return a.get()(this,`${s}/${e}`,t)}schedule(e,t){const r=t?.[`${this.resourceTypeSingular}Id`];const s=r?endpoint`${this.resourceType}/${r}/repository_storage_moves`:`${this.resourceTypeSingular}_repository_storage_moves`;return a.post()(this,s,{sourceStorageName:e,...t})}};var K=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}add(e,t,r){if(!r?.email&&!r?.userId)throw new Error("Missing required argument. Please supply a email or a userId in the options parameter.");return a.post()(this,endpoint`${e}/invitations`,{accessLevel:t,...r})}all(e,t){return a.get()(this,endpoint`${e}/invitations`,t)}edit(e,t,r){return a.put()(this,endpoint`${e}/invitations/${t}`,r)}remove(e,t,r){return a.put()(this,endpoint`${e}/invitations/${t}`,r)}};var W=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,endpoint`${e}/iterations`,t)}};var z=class extends s.BaseResource{constructor(e,t){super({prefixUrl:e,...t})}all(e,t){return a.get()(this,`${e}/protected_environments`,t)}create(e,t,r,s){return a.post()(this,`${e}/protected_environments`,{name:t,deployAccessLevel:r,...s})}edit(e,t,r){return a.put()(this,`${e}/protected_environments/${t}`,r)}show(e,t,r){return a.get()(this,`${e}/protected_environments/${t}`,r)}remove(e,t,r){return a.del()(this,`${e}/protected_environments/${t}`,r)}};var Y=class extends s.BaseResource{resource2Type;constructor(e,t,r){super({prefixUrl:e,...r});this.resource2Type=t}all(e,t,r){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_iteration_events`,r)}show(e,t,r,s){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_iteration_events/${r}`,s)}};var Q=class extends s.BaseResource{resource2Type;constructor(e,t,r){super({prefixUrl:e,...r});this.resource2Type=t}all(e,t,r){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_label_events`,r)}show(e,t,r,s){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_label_events/${r}`,s)}};var V=class extends s.BaseResource{resource2Type;constructor(e,t,r){super({prefixUrl:e,...r});this.resource2Type=t}all(e,t,r){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_milestone_events`,r)}show(e,t,r,s){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_milestone_events/${r}`,s)}};var J=class extends s.BaseResource{resource2Type;constructor(e,t,r){super({prefixUrl:e,...r});this.resource2Type=t}all(e,t,r){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_state_events`,r)}show(e,t,r,s){return a.get()(this,endpoint`${e}/${this.resource2Type}/${t}/resource_state_events/${r}`,s)}};var Z=class extends F{constructor(e){super("dockerfiles",e)}};var X=class extends s.BaseResource{all({projectId:e,userId:t,...r}={}){let s;if(e)s=endpoint`projects/${e}/events`;else if(t)s=endpoint`users/${t}/events`;else s="events";return a.get()(this,s,r)}};var ee=class extends s.BaseResource{all(e){return a.get()(this,"experiments",e)}};var te=class extends s.BaseResource{all(e){return a.get()(this,"geo_nodes",e)}allStatuses(e){return a.get()(this,"geo_nodes/statuses",e)}allFailures(e){return a.get()(this,"geo_nodes/current/failures",e)}create(e,t,r){return a.post()(this,"geo_nodes",{name:e,url:t,...r})}edit(e,t){return a.put()(this,`geo_nodes/${e}`,t)}repair(e,t){return a.post()(this,`geo_nodes/${e}/repair`,t)}remove(e,t){return a.del()(this,`geo_nodes/${e}`,t)}show(e,t){return a.get()(this,`geo_nodes/${e}`,t)}showStatus(e,t){return a.get()(this,`geo_nodes/${e}/status`,t)}};var re=class extends s.BaseResource{all(e){return a.get()(this,"geo_sites",e)}allStatuses(e){return a.get()(this,"geo_sites/statuses",e)}allFailures(e){return a.get()(this,"geo_sites/current/failures",e)}create(e,t,r){return a.post()(this,"geo_sites",{name:e,url:t,...r})}edit(e,t){return a.put()(this,`geo_sites/${e}`,t)}repair(e,t){return a.post()(this,`geo_sites/${e}/repair`,t)}remove(e,t){return a.del()(this,`geo_sites/${e}`,t)}show(e,t){return a.get()(this,`geo_sites/${e}`,t)}showStatus(e,t){return a.get()(this,`geo_sites/${e}/status`,t)}};var se=class extends F{constructor(e){super("gitignores",e)}};var ne=class extends F{constructor(e){super("gitlab_ci_ymls",e)}};var oe=class extends s.BaseResource{importGithubRepository(e,t,r,s){return a.post()(this,"import/github",{personalAccessToken:e,repoId:t,targetNamespace:r,...s})}cancelGithubRepositoryImport(e,t){return a.post()(this,"import/github/cancel",{projectId:e,...t})}importGithubGists(e,t){return a.post()(this,"import/github/gists",{personalAccessToken:e,...t})}importBitbucketServerRepository(e,t,r,s,n,o){return a.post()(this,"import/bitbucket_server",{bitbucketServerUrl:e,bitbucketServerUsername:t,personalAccessToken:r,bitbucketServerProject:s,bitbucketServerRepo:n,...o})}};var ie=class extends s.BaseResource{all(e){return a.get()(this,"admin/ci/variables",e)}create(e,t,r){return a.post()(this,"admin/ci/variables",{key:e,value:t,...r})}edit(e,t,r){return a.put()(this,endpoint`admin/ci/variables/${e}`,{value:t,...r})}show(e,t){return a.get()(this,endpoint`admin/ci/variables/${e}`,t)}remove(e,t){return a.get()(this,endpoint`admin/ci/variables/${e}`,t)}};var ae=class extends s.BaseResource{show({keyId:e,fingerprint:t,...r}={}){let s;if(e)s=`keys/${e}`;else if(t)s=`keys?fingerprint=${t}`;else{throw new Error("Missing required argument. Please supply a fingerprint or a keyId in the options parameter")}return a.get()(this,s,r)}};var ue=class extends s.BaseResource{add(e,t){return a.post()(this,"license",{searchParams:{license:e},...t})}all(e){return a.get()(this,"licenses",e)}show(e){return a.get()(this,"license",e)}remove(e,t){return a.del()(this,`license/${e}`,t)}recalculateBillableUsers(e,t){return a.put()(this,`license/${e}/refresh_billable_users`,t)}};var ce=class extends F{constructor(e){super("Licenses",e)}};var pe=class extends s.BaseResource{check(e,t){return a.get()(this,endpoint`projects/${e}/ci/lint`,t)}lint(e,t,r){return a.post()(this,endpoint`projects/${e}/ci/lint`,{...r,content:t})}};var le=class extends s.BaseResource{render(e,t){return a.post()(this,"markdown",{text:e,...t})}};var de=class extends s.BaseResource{downloadPackageFile(e,t,{projectId:r,groupId:s,...n}){let o=endpoint`packages/maven/${e}/${t}`;if(r)o=endpoint`projects/${r}/${o}`;else if(s)o=endpoint`groups/${s}/-/${o}`;return a.get()(this,o,n)}uploadPackageFile(e,t,r,s){return a.put()(this,endpoint`projects/${e}/packages/maven/${t}/${r.filename}`,{isForm:true,...s,file:[r.content,r.filename]})}};var fe=class extends s.BaseResource{show(e){return a.get()(this,"metadata",e)}};var he=class extends s.BaseResource{all(e){return a.get()(this,"bulk_imports",e)}create(e,t,r){return a.post()(this,"bulk_imports",{configuration:e,entities:t,...r})}allEntities({bulkImportId:e,...t}={}){const r=e?endpoint`bulk_imports/${e}/entities`:"bulk_imports/entities";return a.get()(this,r,t)}show(e,t){return a.get()(this,`bulk_imports/${e}`,t)}showEntity(e,t,r){return a.get()(this,`bulk_imports/${e}/entities/${t}`,r)}};var ge=class extends s.BaseResource{all(e){return a.get()(this,"namespaces",e)}exists(e,t){return a.get()(this,endpoint`namespaces/${e}/exists`,t)}show(e,t){return a.get()(this,endpoint`namespaces/${e}`,t)}};function url6({projectId:e,groupId:t}={}){let r="";if(e)r=endpoint`projects/${e}/`;if(t)r=endpoint`groups/${t}/`;return`${r}notification_settings`}var me=class extends s.BaseResource{edit({groupId:e,projectId:t,...r}={}){const s=url6({groupId:e,projectId:t});return a.put()(this,s,r)}show({groupId:e,projectId:t,...r}={}){const s=url6({groupId:e,projectId:t});return a.get()(this,s,r)}};function url7(e){return e?endpoint`/projects/${e}/packages/npm`:"packages/npm"}var ye=class extends s.BaseResource{downloadPackageFile(e,t,r,s){return a.get()(this,endpoint`projects/${e}/packages/npm/${t}/-/${r}`,s)}removeDistTag(e,t,r){const s=url7(r?.projectId);return a.del()(this,`${s}/-/package/${e}/dist-tags/${t}`,r)}setDistTag(e,t,r){const s=url7(r?.projectId);return a.put()(this,`${s}/-/package/${e}/dist-tags/${t}`,r)}showDistTags(e,t){const r=url7(t?.projectId);return a.get()(this,`${r}/-/package/${e}/dist-tags`,t)}showMetadata(e,t){const r=url7(t?.projectId);return a.get()(this,`${r}/${e}`,t)}uploadPackageFile(e,t,r,s,n){return a.put()(this,endpoint`projects/${e}/packages/npm/${t}`,{...n,versions:r,...s})}};function url8({projectId:e,groupId:t}={}){if(e)return endpoint`/projects/${e}/packages/nuget`;if(t)return endpoint`/groups/${t}/-/packages/nuget`;throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter")}var ve=class extends s.BaseResource{downloadPackageFile(e,t,r,s,n){return a.get()(this,endpoint`projects/${e}/packages/nuget/download/${t}/${r}/${s}`,n)}search(e,{projectId:t,groupId:r,...s}){const n=url8({projectId:t,groupId:r});return a.get()(this,`${n}/query`,{q:e,...s})}showMetadata(e,{projectId:t,groupId:r,...s}){const n=url8({projectId:t,groupId:r});return a.get()(this,`${n}/metadata/${e}/index`,s)}showPackageIndex(e,t,r){return a.get()(this,endpoint`projects/${e}/packages/nuget/download/${t}/index`,r)}showServiceIndex({projectId:e,groupId:t,...r}){const s=url8({projectId:e,groupId:t});return a.get()(this,`${s}/index`,r)}showVersionMetadata(e,t,{projectId:r,groupId:s,...n}){const o=url8({projectId:r,groupId:s});return a.get()(this,`${o}/metadata/${e}/${t}`,n)}uploadPackageFile(e,t,r,s,n){return a.put()(this,endpoint`projects/${e}/packages/nuget`,{isForm:true,...n,packageName:t,packageVersion:r,file:[s.content,s.filename]})}uploadSymbolPackage(e,t,r,s,n){return a.put()(this,endpoint`projects/${e}/packages/nuget/symbolpackage`,{isForm:true,...n,packageName:t,packageVersion:r,file:[s.content,s.filename]})}};var $e=class extends s.BaseResource{all(e){return a.get()(this,"personal_access_tokens",e)}create(e,t,r,s){return a.post()(this,endpoint`users/${e}/personal_access_tokens`,{name:t,scopes:r,...s})}remove({tokenId:e,...t}={}){const r=e?endpoint`personal_access_tokens/${e}`:"personal_access_tokens/self";return a.del()(this,r,t)}rotate(e,t){return a.post()(this,endpoint`personal_access_tokens/${e}/rotate`,t)}show({tokenId:e,...t}={}){const r=e?endpoint`personal_access_tokens/${e}`:"personal_access_tokens/self";return a.get()(this,r,t)}};var be=class extends s.BaseResource{downloadPackageFile(e,t,{projectId:r,groupId:s,...n}={}){let o;if(r){o=endpoint`projects/${r}/packages/pypi/files/${e}/${t}`}else if(s){o=endpoint`groups/${s}/packages/pypi/files/${e}/${t}`}else{throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter")}return a.get()(this,o,n)}showPackageDescriptor(e,{projectId:t,groupId:r,...s}){let n;if(t){n=endpoint`projects/${t}/packages/pypi/simple/${e}`}else if(r){n=endpoint`groups/${r}/packages/pypi/simple/${e}`}else{throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter")}return a.get()(this,n,s)}uploadPackageFile(e,t,r){return a.put()(this,endpoint`projects/${e}/packages/pypi`,{...r,isForm:true,file:[t.content,t.filename]})}};var we=class extends s.BaseResource{allDependencies(e,t){return a.get()(this,endpoint`projects/${e}/packages/rubygems/api/v1/dependencies`,t)}downloadGemFile(e,t,r){return a.get()(this,endpoint`projects/${e}/packages/rubygems/gems/${t}`,r)}uploadGemFile(e,t,r){return a.post()(this,`projects/${e}/packages/rubygems/api/v1/gems`,{isForm:true,...r,file:[t.content,t.filename]})}};var _e=class extends s.BaseResource{all(e,t,r){const{projectId:s,groupId:n,...o}=r||{};let i;if(s)i=endpoint`projects/${s}/`;else if(n)i=endpoint`groups/${n}/`;else i="";return a.get()(this,`${i}search`,{scope:e,search:t,...o})}};var Ae=class extends s.BaseResource{all(e){return a.get()(this,"admin/search/migrations",e)}show(e,t){return a.get()(this,endpoint`admin/search/migrations/${e}`,t)}};var Se=class extends s.BaseResource{create(e){return a.post()(this,endpoint`service_accounts`,e)}};var je=class extends s.BaseResource{showMetricDefinitions(e){return a.get()(this,"usage_data/metric_definitions",e)}showServicePingSQLQueries(e){return a.get()(this,"usage_data/queries",e)}showUsageDataNonSQLMetrics(e){return a.get()(this,"usage_data/non_sql_metrics",e)}};var Ee=class extends s.BaseResource{queueMetrics(){return a.get()(this,"sidekiq/queue_metrics")}processMetrics(){return a.get()(this,"sidekiq/process_metrics")}jobStats(){return a.get()(this,"sidekiq/job_stats")}compoundMetrics(){return a.get()(this,"sidekiq/compound_metrics")}};var Re=class extends s.BaseResource{remove(e,t){return a.get()(this,endpoint`admin/sidekiq/queues/${e}`,t)}};var xe=class extends U{constructor(e){super("snippets",e)}};var ke=class extends s.BaseResource{all({public:e,...t}={}){const r=e?"snippets/public":"snippets";return a.get()(this,r,t)}create(e,t){return a.post()(this,"snippets",{title:e,...t})}edit(e,t){return a.put()(this,`snippets/${e}`,t)}remove(e,t){return a.del()(this,`snippets/${e}`,t)}show(e,t){return a.get()(this,`snippets/${e}`,t)}showContent(e,t){return a.get()(this,`snippets/${e}/raw`,t)}showRepositoryFileContent(e,t,r,s){return a.get()(this,endpoint`snippets/${e}/files/${t}/${r}/raw`,s)}showUserAgentDetails(e,t){return a.get()(this,`snippets/${e}/user_agent_detail`,t)}};var Ie=class extends s.BaseResource{edit(e,t){return a.put()(this,`suggestions/${e}/apply`,t)}editBatch(e,t){return a.put()(this,`suggestions/batch_apply`,{...t,ids:e})}};var Pe=class extends s.BaseResource{all(e){return a.get()(this,"hooks",e)}add(e,t){return this.create(e,t)}create(e,t){return a.post()(this,"hooks",{url:e,...t})}test(e,t){return a.post()(this,`hooks/${e}`,t)}remove(e,t){return a.del()(this,`hooks/${e}`,t)}show(e,t){return a.post()(this,`hooks/${e}`,t)}};var Te=class extends s.BaseResource{all(e){return a.get()(this,"todos",e)}done({todoId:e,...t}={}){let r="todos";if(e)r+=`/${e}`;return a.post()(this,`${r}/mark_as_done`,t)}};var Ce=class extends s.BaseResource{all(e){return a.get()(this,"topics",e)}create(e,{avatar:t,...r}={}){const s={name:e,...r};if(t){s.isForm=true;s.file=[t.content,t.filename]}return a.post()(this,"topics",s)}edit(e,{avatar:t,...r}={}){const s={...r};if(t){s.isForm=true;s.file=[t.content,t.filename]}return a.put()(this,`topics/${e}`,s)}merge(e,t,r){return a.post()(this,`topics/merge`,{sourceTopicId:e,targetTopicId:t,...r})}remove(e,t){return a.del()(this,`topics/${e}`,t)}show(e,t){return a.get()(this,`topics/${e}`,t)}};var Oe=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/repository/branches`,t)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/repository/branches`,{branch:t,ref:r,...s})}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/repository/branches/${t}`,r)}removeMerged(e,t){return a.del()(this,endpoint`projects/${e}/repository/merged_branches`,t)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/branches/${t}`,r)}};var Me=class extends C{constructor(e){super("projects","repository/commits",e)}};var Ne=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/repository/commits`,t)}allComments(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/comments`,r)}allDiscussions(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/discussions`,r)}allMergeRequests(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/merge_requests`,r)}allReferences(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/refs`,r)}allStatuses(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/statuses`,r)}cherryPick(e,t,r,s){return a.post()(this,endpoint`projects/${e}/repository/commits/${t}/cherry_pick`,{branch:r,...s})}create(e,t,r,s=[],n={}){return a.post()(this,endpoint`projects/${e}/repository/commits`,{branch:t,commitMessage:r,actions:s,...n})}createComment(e,t,r,s){return a.post()(this,endpoint`projects/${e}/repository/commits/${t}/comments`,{note:r,...s})}editStatus(e,t,r,s){return a.post()(this,endpoint`projects/${e}/statuses/${t}`,{state:r,...s})}revert(e,t,r,s){return a.post()(this,endpoint`projects/${e}/repository/commits/${t}/revert`,{...s,branch:r})}show(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}`,r)}showDiff(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/diff`,r)}showGPGSignature(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/commits/${t}/signature`,r)}};var Le=class extends s.BaseResource{allRepositories({groupId:e,projectId:t,...r}={}){let s;if(e)s=endpoint`groups/${e}/registry/repositories`;else if(t)s=endpoint`projects/${t}/registry/repositories`;else throw new Error("Missing required argument. Please supply a groupId or a projectId in the options parameter.");return a.get()(this,s,r)}allTags(e,t,r){return a.get()(this,endpoint`projects/${e}/registry/repositories/${t}/tags`,r)}editRegistryVisibility(e,t){return a.get()(this,endpoint`projects/${e}`,t)}removeRepository(e,t,r){return a.del()(this,endpoint`projects/${e}/registry/repositories/${t}`,r)}removeTag(e,t,r,s){return a.del()(this,endpoint`projects/${e}/registry/repositories/${t}/tags/${r}`,s)}removeTags(e,t,r,s){return a.del()(this,endpoint`projects/${e}/registry/repositories/${t}/tags`,{nameRegexDelete:r,...s})}showRepository(e,t){return a.get()(this,endpoint`registry/repositories/${e}`,t)}showTag(e,t,r,s){return a.get()(this,endpoint`projects/${e}/registry/repositories/${t}/tags/${r}`,s)}};var Be=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/deployments`,t)}allMergeRequests(e,t,r){return a.get()(this,endpoint`projects/${e}/deployments/${t}/merge_requests`,r)}create(e,t,r,s,n,o){return a.post()(this,endpoint`projects/${e}/deployments`,{environment:t,sha:r,ref:s,tag:n,...o})}edit(e,t,r,s){return a.put()(this,endpoint`projects/${e}/deployments/${t}`,{...s,status:r})}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/deployments/${t}`,r)}setApproval(e,t,r,s){return a.post()(this,endpoint`projects/${e}/deployments/${t}/approval`,{...s,status:r})}show(e,t,r){return a.get()(this,endpoint`projects/${e}/deployments/${t}`,r)}};var Fe=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/environments`,t)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/environments`,{name:t,...r})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/environments/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/environments/${t}`,r)}removeReviewApps(e,t){return a.del()(this,endpoint`projects/${e}/environments/review_apps`,t)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/environments/${t}`,r)}stop(e,t,r){return a.post()(this,endpoint`projects/${e}/environments/${t}/stop`,r)}stopStale(e,t,r){return a.post()(this,endpoint`projects/${e}/environments/stop_stale`,{searchParams:{before:t},...r})}};var De=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/error_tracking/client_keys`,t)}create(e,t){return a.post()(this,endpoint`projects/${e}/error_tracking/client_keys`,t)}remove(e,t){return a.del()(this,endpoint`projects/${e}/error_tracking/client_keys`,t)}};var qe=class extends s.BaseResource{create(e,t,r,s){return a.put()(this,endpoint`projects/${e}/error_tracking/settings`,{searchParams:{active:t,integrated:r},...s})}edit(e,t,{integrated:r,...s}={}){return a.patch()(this,endpoint`projects/${e}/error_tracking/settings`,{searchParams:{active:t,integrated:r},...s})}show(e,t){return a.get()(this,endpoint`projects/${e}/error_tracking/settings`,t)}};var Ge=class extends s.BaseResource{all(e,t){const{mergerequestIId:r,...s}=t||{};let n=endpoint`projects/${e}`;if(r){n+=endpoint`/merge_requests/${r}/status_checks`}else{n+="/external_status_checks"}return a.get()(this,n,s)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/external_status_checks`,{name:t,externalUrl:r,...s})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/external_status_checks/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/external_status_checks/${t}`,r)}set(e,t,r,s,n){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/status_check_responses`,{sha:r,externalStatusCheckId:s,...n})}};var He=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/feature_flags`,t)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/feature_flags`,{name:t,version:r,...s})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/feature_flags/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/feature_flags/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/feature_flags/${t}`,r)}};var Ue=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/feature_flags_user_lists`,t)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/feature_flags_user_lists`,{name:t,userXids:r,...s})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/feature_flags_user_lists/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/feature_flags_user_lists/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/feature_flags_user_lists/${t}`,r)}};var Ke=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/freeze_periods`,t)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/freeze_periods`,{freezeStart:t,freezeEnd:r,...s})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/freeze_periods/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/freeze_periods/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/freeze_periods/${t}`,r)}};var We=class extends s.BaseResource{remove(e,t){return a.del()(this,endpoint`projects/${e}/pages`,t)}};var ze=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/packages/go/${t}/@v/list`,r)}showVersionMetadata(e,t,r,s){return a.get()(this,endpoint`projects/${e}/packages/go/${t}/@v/${r}.info`,s)}downloadModuleFile(e,t,r,s){return a.get()(this,endpoint`projects/${e}/packages/go/${t}/@v/${r}.mod`,s)}downloadModuleSource(e,t,r,s){return a.get()(this,endpoint`projects/${e}/packages/go/${t}/@v/${r}.zip`,s)}};var Ye=class extends s.BaseResource{downloadChartIndex(e,t,r){return a.get()(this,endpoint`projects/${e}/packages/helm/${t}/index.yaml`,r)}downloadChart(e,t,r,s){return a.get()(this,endpoint`projects/${e}/packages/helm/${t}/charts/${r}.tgz`,s)}import(e,t,r,s){return a.post()(this,endpoint`projects/${e}/packages/helm/api/${t}/charts`,{isForm:true,...s,chart:[r.content,r.filename]})}};var Qe=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/integrations`,t)}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/integrations/${t}`,r)}disable(e,t,r){return a.del()(this,endpoint`projects/${e}/integrations/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/integrations/${t}`,r)}};var Ve=class extends x{constructor(e){super("projects","issues",e)}};var Je=class extends C{constructor(e){super("projects","issues",e)}};var Ze=class extends Y{constructor(e){super("projects","issues",e)}};var Xe=class extends Q{constructor(e){super("projects","issues",e)}};var et=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/links`,r)}create(e,t,r,s,n){return a.post()(this,endpoint`projects/${e}/issues/${t}/links`,{targetProjectId:r,targetIssueIid:s,...n})}remove(e,t,r,s){return a.del()(this,endpoint`projects/${e}/issues/${t}/links/${r}`,s)}};var tt=class extends V{constructor(e){super("projects","issues",e)}};var rt=class extends k{constructor(e){super("issues",e)}};var st=class extends B{constructor(e){super("projects","issues",e)}};var nt=class extends s.BaseResource{addSpentTime(e,t,r,s){return a.post()(this,endpoint`projects/${e}/issues/${t}/add_spent_time`,{duration:r,...s})}addTimeEstimate(e,t,r,s){return a.post()(this,endpoint`projects/${e}/issues/${t}/time_estimate`,{duration:r,...s})}all({projectId:e,groupId:t,...r}={}){let s;if(e)s=endpoint`projects/${e}/issues`;else if(t)s=endpoint`groups/${t}/issues`;else s="issues";return a.get()(this,s,r)}allMetricImages(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/metric_images`,r)}allParticipants(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/participants`,r)}allRelatedMergeRequests(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/related_merge_requests`,r)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/issues`,{...r,title:t})}createTodo(e,t,r){return a.post()(this,endpoint`projects/${e}/issues/${t}/todo`,r)}clone(e,t,r,s){return a.post()(this,endpoint`projects/${e}/issues/${t}/clone`,{toProjectId:r,...s})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/issues/${t}`,r)}editMetricImage(e,t,r,s){return a.put()(this,endpoint`projects/${e}/issues/${t}/metric_images/${r}`,s)}move(e,t,r,s){return a.post()(this,endpoint`projects/${e}/issues/${t}/move`,{toProjectId:r,...s})}promote(e,t,r,s){return a.post()(this,endpoint`projects/${e}/issues/${t}/notes`,{searchParams:{body:`${r} \n /promote`},...s})}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/issues/${t}`,r)}removeMetricImage(e,t,r,s){return a.del()(this,endpoint`projects/${e}/issues/${t}/metric_images/${r}`,s)}reorder(e,t,r){return a.put()(this,endpoint`projects/${e}/issues/${t}/reorder`,r)}resetSpentTime(e,t,r){return a.post()(this,endpoint`projects/${e}/issues/${t}/reset_spent_time`,r)}resetTimeEstimate(e,t,r){return a.post()(this,endpoint`projects/${e}/issues/${t}/reset_time_estimate`,r)}show(e,{projectId:t,...r}={}){const s=t?endpoint`projects/${t}/issues/${e}`:`issues/${e}`;return a.get()(this,s,r)}subscribe(e,t,r){return a.post()(this,endpoint`projects/${e}/issues/${t}/subscribe`,r)}allClosedByMergeRequestst(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/closed_by`,r)}showTimeStats(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/time_stats`,r)}unsubscribe(e,t,r){return a.post()(this,endpoint`projects/${e}/issues/${t}/unsubscribe`,r)}uploadMetricImage(e,t,r,s){return a.post()(this,endpoint`projects/${e}/issues/${t}/metric_images`,{isForm:true,...s,file:[r.content,r.filename]})}showUserAgentDetails(e,t,r){return a.get()(this,endpoint`projects/${e}/issues/${t}/user_agent_details`,r)}};var ot=class extends s.BaseResource{all({projectId:e,groupId:t,...r}={}){let s;if(e)s=endpoint`projects/${e}/issues_statistics`;else if(t)s=endpoint`groups/${t}/issues_statistics`;else s="issues_statistics";return a.get()(this,s,r)}};var it=class extends J{constructor(e){super("projects","issues",e)}};var at=class extends J{constructor(e){super("projects","issues",e)}};function generateDownloadPathForJob(e,t,r){let s=endpoint`projects/${e}/jobs/${t}/artifacts`;if(r)s+=`/${r}`;return s}function generateDownloadPath(e,t,r){let s=endpoint`projects/${e}/jobs/artifacts/${t}`;if(r){s+=endpoint`/raw/${r}`}else{s+=endpoint`/download`}return s}var ut=class extends s.BaseResource{downloadArchive(e,{jobId:t,artifactPath:r,ref:s,...n}={}){let o;if(t)o=generateDownloadPathForJob(e,t,r);else if(n?.job&&s)o=generateDownloadPath(e,s,r);else throw new Error("Missing one of the required parameters. See typing documentation for available arguments.");return a.get()(this,o,n)}keep(e,t,r){return a.post()(this,endpoint`projects/${e}/jobs/${t}/artifacts/keep`,r)}remove(e,{jobId:t,...r}={}){let s;if(t){s=endpoint`projects/${e}/jobs/${t}/artifacts`}else{s=endpoint`projects/${e}/artifacts`}return a.del()(this,s,r)}};var ct=class extends s.BaseResource{all(e,{pipelineId:t,...r}={}){const s=t?endpoint`projects/${e}/pipelines/${t}/jobs`:endpoint`projects/${e}/jobs`;return a.get()(this,s,r)}allPipelineBridges(e,t,r){return a.get()(this,endpoint`projects/${e}/pipelines/${t}/bridges`,r)}cancel(e,t,r){return a.post()(this,endpoint`projects/${e}/jobs/${t}/cancel`,r)}erase(e,t,r){return a.post()(this,endpoint`projects/${e}/jobs/${t}/erase`,r)}play(e,t,r){return a.post()(this,endpoint`projects/${e}/jobs/${t}/play`,r)}retry(e,t,r){return a.post()(this,endpoint`projects/${e}/jobs/${t}/retry`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/jobs/${t}`,r)}showConnectedJob(e){if(!this.headers["job-token"])throw new Error('Missing required header "job-token"');return a.get()(this,"job",e)}showConnectedJobK8Agents(e){if(!this.headers["job-token"])throw new Error('Missing required header "job-token"');return a.get()(this,"job/allowed_agents",e)}showLog(e,t,r){return a.get()(this,endpoint`projects/${e}/jobs/${t}/trace`,r)}};var pt=class extends s.BaseResource{allApprovalRules(e,{mergerequestIId:t,...r}={}){let s;if(t){s=endpoint`projects/${e}/merge_requests/${t}/approval_rules`}else{s=endpoint`projects/${e}/approval_rules`}return a.get()(this,s,r)}approve(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/approve`,r)}createApprovalRule(e,t,r,{mergerequestIId:s,...n}={}){let o;if(s){o=endpoint`projects/${e}/merge_requests/${s}/approval_rules`}else{o=endpoint`projects/${e}/approval_rules`}return a.post()(this,o,{name:t,approvalsRequired:r,...n})}editApprovalRule(e,t,r,s,{mergerequestIId:n,...o}={}){let i;if(n){i=endpoint`projects/${e}/merge_requests/${n}/approval_rules/${t}`}else{i=endpoint`projects/${e}/approval_rules/${t}`}return a.put()(this,i,{name:r,approvalsRequired:s,...o})}editConfiguration(e,t){return a.post()(this,endpoint`projects/${e}/approvals`,t)}removeApprovalRule(e,t,{mergerequestIId:r,...s}={}){let n;if(r){n=endpoint`projects/${e}/merge_requests/${r}/approval_rules/${t}`}else{n=endpoint`projects/${e}/approval_rules/${t}`}return a.del()(this,n,s)}showApprovalRule(e,t,r){return a.get()(this,endpoint`projects/${e}/approval_rules/${t}`,r)}showApprovalState(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/approval_state`,r)}showConfiguration(e,{mergerequestIId:t,...r}={}){let s;if(t){s=endpoint`projects/${e}/merge_requests/${t}/approvals`}else{s=endpoint`projects/${e}/approvals`}return a.get()(this,s,r)}unapprove(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/unapprove`,r)}};var lt=class extends x{constructor(e){super("projects","merge_requests",e)}};var dt=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/context_commits`,r)}create(e,t,{mergerequestIId:r,...s}={}){const n=endpoint`projects/${e}/merge_requests`;const o=r?`${n}/${r}/context_commits`:n;return a.post()(this,o,{commits:t,...s})}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/merge_requests/${t}/context_commits`,r)}};var ft=class extends C{constructor(e){super("projects","merge_requests",e)}resolve(e,t,r,s,n){return a.put()(this,endpoint`${e}/merge_requests/${t}/discussions/${r}`,{searchParams:{resolved:s},...n})}};var ht=class extends Q{constructor(e){super("projects","merge_requests",e)}};var gt=class extends V{constructor(e){super("projects","merge_requests",e)}};var mt=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes`,r)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes`,{...s,note:r})}edit(e,t,r,s){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}`,s)}publish(e,t,r,s){return a.put()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}/publish`,s)}publishBulk(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes/bulk_publish`,r)}remove(e,t,r,s){return a.del()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}`,s)}show(e,t,r,s){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}`,s)}};var yt=class extends B{constructor(e){super("projects","merge_requests",e)}};var vt=class extends k{constructor(e){super("merge_requests",e)}};var $t=class extends s.BaseResource{accept(e,t,r){return this.merge(e,t,r)}addSpentTime(e,t,r,s){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/add_spent_time`,{duration:r,...s})}all({projectId:e,groupId:t,...r}={}){let s="";if(e){s=endpoint`projects/${e}/`}else if(t){s=endpoint`groups/${t}/`}return a.get()(this,`${s}merge_requests`,r)}allDiffs(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/diffs`,r)}allCommits(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/commits`,r)}allDiffVersions(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/versions`,r)}allIssuesClosed(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/closes_issues`,r)}allParticipants(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/participants`,r)}allPipelines(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/pipelines`,r)}cancelOnPipelineSuccess(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/cancel_merge_when_pipeline_succeeds`,r)}create(e,t,r,s,n){return a.post()(this,endpoint`projects/${e}/merge_requests`,{sourceBranch:t,targetBranch:r,title:s,...n})}createPipeline(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/pipelines`,r)}createTodo(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/todo`,r)}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/merge_requests/${t}`,r)}merge(e,t,r){return a.put()(this,endpoint`projects/${e}/merge_requests/${t}/merge`,r)}mergeToDefault(e,t,r){return a.put()(this,endpoint`projects/${e}/merge_requests/${t}/merge_ref`,r)}rebase(e,t,r){return a.put()(this,endpoint`projects/${e}/merge_requests/${t}/rebase`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/merge_requests/${t}`,r)}resetSpentTime(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/reset_spent_time`,r)}resetTimeEstimate(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/reset_time_estimate`,r)}setTimeEstimate(e,t,r,s){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/time_estimate`,{duration:r,...s})}show(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}`,r)}showChanges(e,t,r){process.emitWarning('This endpoint was deprecated in Gitlab API 15.7 and will be removed in API v5. Please use the "allDiffs" function instead.',"DeprecationWarning");return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/changes`,r)}showDiffVersion(e,t,r,s){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/versions/${r}`,s)}showTimeStats(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_requests/${t}/time_stats`,r)}subscribe(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/subscribe`,r)}unsubscribe(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_requests/${t}/unsubscribe`,r)}};var bt=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/merge_trains`,t)}showStatus(e,t,r){return a.get()(this,endpoint`projects/${e}/merge_trains/merge_requests/${t}`,r)}addMergeRequest(e,t,r){return a.post()(this,endpoint`projects/${e}/merge_trains/merge_requests/${t}`,r)}};var wt=class extends s.BaseResource{publish(e,t,r,s,{contentType:n,...o}={}){return a.put()(this,endpoint`projects/${e}/packages/generic/${t}/${r}/${s.filename}`,{isForm:true,file:[s.content,s.filename],...o})}download(e,t,r,s,n){return a.get()(this,endpoint`projects/${e}/packages/generic/${t}/${r}/${s}`,n)}};var _t=class extends s.BaseResource{all({projectId:e,groupId:t,...r}={}){let s;if(e)s=endpoint`projects/${e}/packages`;else if(t)s=endpoint`groups/${t}/packages`;else{throw new Error("Missing required argument. Please supply a projectId or a groupId in the options parameter.")}return a.get()(this,s,r)}allFiles(e,t,r){return a.get()(this,endpoint`projects/${e}/packages/${t}/package_files`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/packages/${t}`,r)}removeFile(e,t,r,s){return a.del()(this,endpoint`projects/${e}/packages/${t}/package_files/${r}`,s)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/packages/${t}`,r)}};var At=class extends s.BaseResource{all({projectId:e,...t}={}){const r=e?endpoint`projects/${e}/`:"";return a.get()(this,`${r}pages/domains`,t)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/pages/domains`,{domain:t,...r})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/pages/domains/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/pages/domains/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/pages/domains/${t}`,r)}};var St=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/pipelines`,t)}allVariables(e,t,r){return a.get()(this,endpoint`projects/${e}/pipelines/${t}/variables`,r)}cancel(e,t,r){return a.post()(this,endpoint`projects/${e}/pipelines/${t}/cancel`,r)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/pipeline`,{ref:t,...r})}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/pipelines/${t}`,r)}retry(e,t,r){return a.post()(this,endpoint`projects/${e}/pipelines/${t}/retry`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/pipelines/${t}`,r)}showTestReport(e,t,r){return a.get()(this,endpoint`projects/${e}/pipelines/${t}/test_report`,r)}showTestReportSummary(e,t,r){return a.get()(this,endpoint`projects/${e}/pipelines/${t}/test_report_summary`,r)}};var jt=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/pipeline_schedules`,t)}allTriggeredPipelines(e,t,r){return a.get()(this,endpoint`projects/${e}/pipeline_schedules/${t}/pipelines`,r)}create(e,t,r,s,n){return a.post()(this,endpoint`projects/${e}/pipeline_schedules`,{description:t,ref:r,cron:s,...n})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/pipeline_schedules/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/pipeline_schedules/${t}`,r)}run(e,t,r){return a.post()(this,endpoint`projects/${e}/pipeline_schedules/${t}/play`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/pipeline_schedules/${t}`,r)}takeOwnership(e,t,r){return a.post()(this,endpoint`projects/${e}/pipeline_schedules/${t}/take_ownership`,r)}};var Et=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/pipeline_schedules/${t}/variables`,r)}create(e,t,r,s,n){return a.post()(this,endpoint`projects/${e}/pipeline_schedules/${t}/variables`,{...n,key:r,value:s})}edit(e,t,r,s,n){return a.put()(this,endpoint`projects/${e}/pipeline_schedules/${t}/variables/${r}`,{...n,value:s})}remove(e,t,r,s){return a.del()(this,endpoint`projects/${e}/pipeline_schedules/${t}/variables/${r}`,s)}};var Rt=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/triggers`,t)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/triggers`,{description:t,...r})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/triggers/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/triggers/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/triggers/${t}`,r)}trigger(e,t,r,{variables:s,...n}={}){const o={...n,searchParams:{token:r,ref:t}};if(s){o.isForm=true;Object.assign(o,reformatObjectOptions(s,"variables"))}return a.post()(this,endpoint`projects/${e}/trigger/pipeline`,o)}};var xt=class extends s.BaseResource{allFunnels(e,t){return a.get()(this,endpoint`projects/${e}/product_analytics/funnels`,t)}load(e,t){return a.post()(this,endpoint`projects/${e}/product_analytics/request/load`,t)}dryRun(e,t){return a.post()(this,endpoint`projects/${e}/product_analytics/request/dry-run`,t)}showMetadata(e,t){return a.get()(this,endpoint`projects/${e}/product_analytics/request/meta`,t)}};var kt=class extends E{constructor(e){super("projects",e)}};var It=class extends R{constructor(e){super("projects",e)}};var Pt=class extends s.BaseResource{all(e){return a.get()(this,"project_aliases",e)}create(e,t,r){return a.post()(this,"project_aliases",{name:t,projectId:e,...r})}edit(e,t){return a.post()(this,`project_aliases/${e}`,t)}remove(e,t){return a.del()(this,`project_aliases/${e}`,t)}};var Tt=class extends I{constructor(e){super("projects",e)}};var Ct=class extends P{constructor(e){super("projects",e)}};var Ot=class extends T{constructor(e){super("projects",e)}};var Mt=class extends G{constructor(e){super("projects",e)}};var Nt=class extends s.BaseResource{download(e,t){return a.get()(this,endpoint`projects/${e}/export/download`,t)}import(e,t,r){return a.post()(this,"projects/import",{isForm:true,...r,file:[e.content,e.filename],path:t})}importRemote(e,t,r){return a.post()(this,"projects/remote-import",{...r,path:t,url:e})}importRemoteS3(e,t,r,s,n,o,i){return a.post()(this,"projects/remote-import",{...i,accessKeyId:e,bucketName:t,fileKey:r,path:s,region:n,secretAccessKey:o})}showExportStatus(e,t){return a.get()(this,endpoint`projects/${e}/export`,t)}showImportStatus(e,t){return a.get()(this,endpoint`projects/${e}/import`,t)}scheduleExport(e,t,r){return a.post()(this,endpoint`projects/${e}/export`,{...r,upload:t})}};var Lt=class extends K{constructor(e){super("projects",e)}};var Bt=class extends O{constructor(e){super("projects",e)}};var Ft=class extends W{constructor(e){super("project",e)}};var Dt=class extends M{constructor(e){super("projects",e)}};var qt=class extends N{constructor(e){super("projects",e)}};var Gt=class extends L{constructor(e){super("projects",e)}promote(e,t,r){return a.post()(this,endpoint`${e}/milestones/${t}/promote`,r)}};var Ht=class extends z{constructor(e){super("groups",e)}};var Ut=class extends H{constructor(e){super("projects",e)}};var Kt=class extends s.BaseResource{download(e,t,r){return a.get()(this,endpoint`projects/${e}/export_relations/download`,{relation:t,...r})}showExportStatus(e,t){return a.get()(this,endpoint`projects/${e}/export_relations/status`,t)}scheduleExport(e,t){return a.post()(this,endpoint`projects/${e}/export_relations`,t)}};var Wt=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/releases`,t)}create(e,t){return a.post()(this,endpoint`projects/${e}/releases`,t)}createEvidence(e,t,r){return a.post()(this,endpoint`projects/${e}/releases/${t}/evidence`,r)}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/releases/${t}`,r)}download(e,t,r,s){return a.get()(this,endpoint`projects/${e}/releases/${t}/downloads/${r}`,s)}downloadLatest(e,t,r){return a.get()(this,endpoint`projects/${e}/releases/permalink/latest/downloads/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/releases/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/releases/${t}`,r)}showLatest(e,t){return a.get()(this,endpoint`projects/${e}/releases/permalink/latest`,t)}showLatestEvidence(e,t){return a.get()(this,endpoint`projects/${e}/releases/permalink/latest/evidence`,t)}};var zt=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/remote_mirrors`,t)}createPullMirror(e,t,r,s){return a.post()(this,endpoint`projects/${e}/mirror/pull`,{importUrl:t,mirror:r,...s})}createPushMirror(e,t,r){return a.post()(this,endpoint`projects/${e}/remote_mirrors`,{url:t,...r})}edit(e,t,r){return a.post()(this,endpoint`projects/${e}/remote_mirrors/${t}`,r)}remove(e,t){return a.del()(this,`project_aliases/${e}`,t)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/remote_mirrors/${t}`,r)}};var Yt=class extends U{constructor(e){super("projects",e)}};var Qt=class extends s.BaseResource{all({userId:e,starredOnly:t,...r}={}){let s;if(e&&t)s=endpoint`users/${e}/starred_projects`;else if(e)s=endpoint`users/${e}/projects`;else s="projects";return a.get()(this,s,r)}allTransferLocations(e,t){return a.get()(this,endpoint`projects/${e}/transfer_locations`,t)}allUsers(e,t){return a.get()(this,endpoint`projects/${e}/users`,t)}allGroups(e,t){return a.get()(this,endpoint`projects/${e}/groups`,t)}allSharableGroups(e,t){return a.get()(this,endpoint`projects/${e}/share_locations`,t)}allForks(e,t){return a.get()(this,endpoint`projects/${e}/forks`,t)}allStarrers(e,t){return a.get()(this,endpoint`projects/${e}/starrers`,t)}allStoragePaths(e,t){return a.get()(this,endpoint`projects/${e}/storage`,t)}archive(e,t){return a.post()(this,endpoint`projects/${e}/archive`,t)}create({userId:e,avatar:t,...r}={}){const s=e?`projects/user/${e}`:"projects";if(t){return a.post()(this,s,{...r,isForm:true,avatar:[t.content,t.filename]})}return a.post()(this,s,{...r,avatar:t})}createForkRelationship(e,t,r){return a.post()(this,endpoint`projects/${e}/fork/${t}`,r)}createPullMirror(e,t,r,s){return a.post()(this,endpoint`projects/${e}/mirror/pull`,{importUrl:t,mirror:r,...s})}downloadSnapshot(e,t){return a.get()(this,endpoint`projects/${e}/snapshot`,t)}edit(e,{avatar:t,...r}={}){const s=endpoint`projects/${e}`;if(t){return a.put()(this,s,{...r,isForm:true,avatar:[t.content,t.filename]})}return a.put()(this,s,{...r,avatar:t})}fork(e,t){return a.post()(this,endpoint`projects/${e}/fork`,t)}housekeeping(e,t){return a.post()(this,endpoint`projects/${e}/housekeeping`,t)}importProjectMembers(e,t,r){return a.post()(this,endpoint`projects/${e}/import_project_members/${t}`,r)}remove(e,t){return a.del()(this,endpoint`projects/${e}`,t)}removeForkRelationship(e,t){return a.del()(this,endpoint`projects/${e}/fork`,t)}removeAvatar(e,t){return a.put()(this,endpoint`projects/${e}`,{...t,avatar:""})}restore(e,t){return a.post()(this,endpoint`projects/${e}/restore`,t)}search(e,t){return a.get()(this,"projects",{search:e,...t})}share(e,t,r,s){return a.post()(this,endpoint`projects/${e}/share`,{groupId:t,groupAccess:r,...s})}show(e,t){return a.get()(this,endpoint`projects/${e}`,t)}showLanguages(e,t){return a.get()(this,endpoint`projects/${e}/languages`,t)}showPullMirror(e,t){return a.get()(this,endpoint`projects/${e}/mirror/pull`,t)}star(e,t){return a.post()(this,endpoint`projects/${e}/star`,t)}transfer(e,t,r){return a.put()(this,endpoint`projects/${e}/transfer`,{...r,namespace:t})}unarchive(e,t){return a.post()(this,endpoint`projects/${e}/unarchive`,t)}unshare(e,t,r){return a.del()(this,endpoint`projects/${e}/share/${t}`,r)}unstar(e,t){return a.post()(this,endpoint`projects/${e}/unstar`,t)}uploadForReference(e,t,r){return a.post()(this,endpoint`projects/${e}/uploads`,{...r,isForm:true,file:[t.content,t.filename]})}uploadAvatar(e,t,r){return a.put()(this,endpoint`projects/${e}`,{...r,isForm:true,avatar:[t.content,t.filename]})}};var Vt=class extends x{constructor(e){super("projects","snippets",e)}};var Jt=class extends C{constructor(e){super("projects","snippets",e)}};var Zt=class extends B{constructor(e){super("projects","snippets",e)}};var Xt=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/snippets`,t)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/snippets`,{title:t,...r})}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/snippets/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/snippets/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/snippets/${t}`,r)}showContent(e,t,r){return a.get()(this,endpoint`projects/${e}/snippets/${t}/raw`,r)}showRepositoryFileContent(e,t,r,s,n){return a.get()(this,endpoint`projects/${e}/snippets/${t}/files/${r}/${s}/raw`,n)}showUserAgentDetails(e,t,r){return a.get()(this,endpoint`projects/${e}/snippets/${t}/user_agent_detail`,r)}};var er=class extends s.BaseResource{show(e,t){return a.get()(this,endpoint`projects/${e}/statistics`,t)}};var tr=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/templates/${t}`,r)}show(e,t,r,s){return a.get()(this,endpoint`projects/${e}/templates/${t}/${r}`,s)}};var rr=class extends D{constructor(e){super("projects",e)}};var sr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/vulnerabilities`,t)}create(e,t,r){return a.post()(this,endpoint`projects/${e}/vulnerabilities`,{...r,searchParams:{findingId:t}})}};var nr=class extends q{constructor(e){super("projects",e)}};var or=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/protected_branches`,t)}create(e,t,r){const{sudo:s,showExpanded:n,...o}=r||{};return a.post()(this,endpoint`projects/${e}/protected_branches`,{searchParams:{...o,name:t},sudo:s,showExpanded:n})}protect(e,t,r){return this.create(e,t,r)}edit(e,t,r){return a.patch()(this,endpoint`projects/${e}/protected_branches/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/protected_branches/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/protected_branches/${t}`,r)}unprotect(e,t,r){return this.remove(e,t,r)}};var ir=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/protected_tags`,t)}create(e,t,r){const{sudo:s,showExpanded:n,...o}=r||{};return a.post()(this,endpoint`projects/${e}/protected_tags`,{searchParams:{name:t,...o},sudo:s,showExpanded:n})}protect(e,t,r){return this.create(e,t,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/protected_tags/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/protected_tags/${t}`,r)}unprotect(e,t,r){return this.remove(e,t,r)}};var ar=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`projects/${e}/releases/${t}/assets/links`,r)}create(e,t,r,s,n){return a.post()(this,endpoint`projects/${e}/releases/${t}/assets/links`,{name:r,url:s,...n})}edit(e,t,r,s){return a.put()(this,endpoint`projects/${e}/releases/${t}/assets/links/${r}`,s)}remove(e,t,r,s){return a.del()(this,endpoint`projects/${e}/releases/${t}/assets/links/${r}`,s)}show(e,t,r,s){return a.get()(this,endpoint`projects/${e}/releases/${t}/assets/links/${r}`,s)}};var ur=class extends s.BaseResource{allContributors(e,t){return a.get()(this,endpoint`projects/${e}/repository/contributors`,t)}allRepositoryTrees(e,t){return a.get()(this,endpoint`projects/${e}/repository/tree`,t)}compare(e,t,r,s){return a.get()(this,endpoint`projects/${e}/repository/compare`,{from:t,to:r,...s})}editChangelog(e,t,r){return a.post()(this,endpoint`projects/${e}/repository/changelog`,{...r,version:t})}mergeBase(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/merge_base`,{...r,refs:t})}showArchive(e,{fileType:t="tar.gz",...r}={}){return a.get()(this,endpoint`projects/${e}/repository/archive.${t}`,r)}showBlob(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/blobs/${t}`,r)}showBlobRaw(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/blobs/${t}/raw`,r)}showChangelog(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/changelog`,{...r,version:t})}};var cr=class extends s.BaseResource{allFileBlames(e,t,r,s){return a.get()(this,endpoint`projects/${e}/repository/files/${t}/blame`,{ref:r,...s})}create(e,t,r,s,n,o){return a.post()(this,endpoint`projects/${e}/repository/files/${t}`,{branch:r,content:s,commitMessage:n,...o})}edit(e,t,r,s,n,o){return a.put()(this,endpoint`projects/${e}/repository/files/${t}`,{branch:r,content:s,commitMessage:n,...o})}remove(e,t,r,s,n){return a.del()(this,endpoint`projects/${e}/repository/files/${t}`,{branch:r,commitMessage:s,...n})}show(e,t,r,s){return a.get()(this,endpoint`projects/${e}/repository/files/${t}`,{ref:r,...s})}showRaw(e,t,r,s){return a.get()(this,endpoint`projects/${e}/repository/files/${t}/raw`,{ref:r,...s})}};var pr=class extends s.BaseResource{edit(e,t,r,s,n){return a.put()(this,endpoint`projects/${e}/repository/submodules/${t}`,{branch:r,commitSha:s,...n})}};var lr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/resource_groups`,t)}edit(e,t,r){return a.put()(this,endpoint`projects/${e}/resource_groups/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/resource_groups/${t}`,r)}allUpcomingJobs(e,t){return a.get()(this,endpoint`projects/${e}/resource_groups/upcoming_jobs`,t)}};var dr=class extends s.BaseResource{all({projectId:e,groupId:t,owned:r,...s}={}){let n;if(e)n=endpoint`projects/${e}/runners`;else if(t)n=endpoint`groups/${t}/runners`;else if(r)n="runners";else n="runners/all";return a.get()(this,n,s)}allJobs(e,t){return a.get()(this,`runners/${e}/jobs`,t)}create(e,t){return a.post()(this,`runners`,{token:e,...t})}edit(e,t){return a.put()(this,`runners/${e}`,t)}enable(e,t,r){return a.post()(this,endpoint`projects/${e}/runners`,{runnerId:t,...r})}disable(e,t,r){return a.del()(this,endpoint`projects/${e}/runners/${t}`,r)}register(e,t){return this.create(e,t)}remove({runnerId:e,token:t,...r}){let s;if(e)s=`runners/${e}`;else if(t){s="runners"}else throw new Error("Missing required argument. Please supply a runnerId or a token in the options parameter");return a.del()(this,s,{token:t,...r})}resetRegistrationToken({runnerId:e,token:t,...r}={}){let s;if(e)s=endpoint`runners/${e}/reset_registration_token`;else if(t)s="runners/reset_registration_token";else{throw new Error("Missing either runnerId or token parameters")}return a.post()(this,s,{token:t,...r})}show(e,t){return a.get()(this,`runners/${e}`,t)}verify(e){return a.post()(this,`runners/verify`,e)}};var fr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/secure_files`,t)}create(e,t,r,s){return a.post()(this,`projects/${e}/secure_files`,{isForm:true,...s,file:[r.content,r.filename],name:t})}download(e,t,r){return a.get()(this,endpoint`projects/${e}/secure_files/${t}/download`,r)}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/secure_files/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/secure_files/${t}`,r)}};var hr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`projects/${e}/repository/tags`,t)}create(e,t,r,s){return a.post()(this,endpoint`projects/${e}/repository/tags`,{searchParams:{tagName:t,ref:r},...s})}remove(e,t,r){return a.del()(this,endpoint`projects/${e}/repository/tags/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/tags/${t}`,r)}showSignature(e,t,r){return a.get()(this,endpoint`projects/${e}/repository/tags/${t}/signature`,r)}};var gr=class extends s.BaseResource{create(e,t,r){return a.get()(this,endpoint`projects/${e}/metrics/user_starred_dashboards`,{dashboardPath:t,...r})}remove(e,t){return a.del()(this,endpoint`projects/${e}/metrics/user_starred_dashboards`,t)}};var mr=class extends x{constructor(e){super("epics","issues",e)}};var yr=class extends C{constructor(e){super("groups","epics",e)}};var vr=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`groups/${e}/epics/${t}/issues`,r)}assign(e,t,r,s){return a.post()(this,endpoint`groups/${e}/epics/${t}/issues/${r}`,s)}edit(e,t,r,s){return a.put()(this,endpoint`groups/${e}/epics/${t}/issues/${r}`,s)}remove(e,t,r,s){return a.del()(this,endpoint`groups/${e}/epics/${t}/issues/${r}`,s)}};var $r=class extends Q{constructor(e){super("groups","epic",e)}};var br=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`groups/${e}/epics/${t}/links`,r)}assign(e,t,r,s){return a.post()(this,endpoint`groups/${e}/epics/${t}/links/${r}`,s)}create(e,t,r,s){return a.post()(this,endpoint`groups/${e}/epics/${t}/links`,{searchParams:{title:r},...s})}reorder(e,t,r,s){return a.put()(this,endpoint`groups/${e}/epics/${t}/links/${r}`,s)}unassign(e,t,r,s){return a.del()(this,endpoint`groups/${e}/epics/${t}/links/${r}`,s)}};var wr=class extends B{constructor(e){super("groups","epics",e)}};var _r=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`groups/${e}/epics`,t)}create(e,t,r){return a.post()(this,endpoint`groups/${e}/epics`,{title:t,...r})}createTodo(e,t,r){return a.post()(this,endpoint`groups/${e}/epics/${t}/todos`,r)}edit(e,t,r){return a.put()(this,endpoint`groups/${e}/epics/${t}`,r)}remove(e,t,r){return a.del()(this,endpoint`groups/${e}/epics/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`groups/${e}/epics/${t}`,r)}};var Ar=class extends E{constructor(e){super("groups",e)}};var Sr=class extends R{constructor(e){super("groups",e)}};var jr=class extends s.BaseResource{showIssuesCount(e,t){return a.get()(this,"analytics/group_activity/issues_count",{searchParams:{groupPath:e},...t})}showMergeRequestsCount(e,t){return a.get()(this,"analytics/group_activity/merge_requests_count",{searchParams:{groupPath:e},...t})}showNewMembersCount(e,t){return a.get()(this,"analytics/group_activity/new_members_count",{searchParams:{groupPath:e},...t})}};var Er=class extends I{constructor(e){super("groups",e)}};var Rr=class extends P{constructor(e){super("groups",e)}};var xr=class extends T{constructor(e){super("groups",e)}};var kr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`groups/${e}/epic_boards`,t)}allLists(e,t,r){return a.get()(this,endpoint`groups/${e}/epic_boards/${t}/lists`,r)}show(e,t,r){return a.get()(this,endpoint`groups/${e}/epic_boards/${t}`,r)}showList(e,t,r,s){return a.get()(this,endpoint`groups/${e}/epic_boards/${t}/lists/${r}`,s)}};var Ir=class extends G{constructor(e){super("groups",e)}};var Pr=class extends s.BaseResource{download(e,t){return a.get()(this,endpoint`groups/${e}/export/download`,t)}import(e,t,{parentId:r,name:s,...n}){return a.post()(this,"groups/import",{isForm:true,...n,file:[e.content,e.filename],path:t,name:s||t.split("/").at(0),parentId:r})}scheduleExport(e,t){return a.post()(this,endpoint`groups/${e}/export`,t)}};var Tr=class extends K{constructor(e){super("groups",e)}};var Cr=class extends O{constructor(e){super("groups",e)}};var Or=class extends W{constructor(e){super("groups",e)}};var Mr=class extends M{constructor(e){super("groups",e)}};var Nr=class extends s.BaseResource{add(e,t,r,s){return a.post()(this,endpoint`groups/${e}/ldap_group_links`,{groupAccess:t,provider:r,...s})}all(e,t){return a.get()(this,endpoint`groups/${e}/ldap_group_links`,t)}remove(e,t,r){return a.del()(this,endpoint`groups/${e}/ldap_group_links`,{provider:t,...r})}sync(e,t){return a.post()(this,endpoint`groups/${e}/ldap_sync`,t)}};var Lr=class extends N{constructor(e){super("groups",e)}allBillable(e,t){return a.get()(this,endpoint`${e}/billable_members`,t)}allPending(e,t){return a.get()(this,endpoint`${e}/pending_members`,t)}allBillableMemberships(e,t,r){return a.get()(this,endpoint`${e}/billable_members/${t}/memberships`,r)}approve(e,t,r){return a.put()(this,endpoint`${e}/members/${t}/approve`,r)}approveAll(e,t){return a.put()(this,endpoint`${e}/members/approve_all`,t)}removeBillable(e,t,r){return a.del()(this,endpoint`${e}/billable_members/${t}`,r)}removeOverrideFlag(e,t,r){return a.del()(this,endpoint`${e}/members/${t}/override`,r)}setOverrideFlag(e,t,r){return a.post()(this,endpoint`${e}/members/${t}/override`,r)}};var Br=class extends s.BaseResource{add(e,t,r){return a.post()(this,endpoint`groups/${e}/members`,{baseAccessLevel:t,...r})}all(e,t){return a.get()(this,endpoint`groups/${e}/member_roles`,t)}remove(e,t,r){return a.del()(this,endpoint`groups/${e}/member_roles/${t}`,r)}};var Fr=class extends L{constructor(e){super("groups",e)}};var Dr=class extends z{constructor(e){super("groups",e)}};var qr=class extends H{constructor(e){super("groups",e)}};var Gr=class extends s.BaseResource{download(e,t,r){return a.get()(this,endpoint`groups/${e}/export_relations/download`,{searchParams:{relation:t},...r})}exportStatus(e,t){return a.get()(this,endpoint`groups/${e}/export_relations`,t)}scheduleExport(e,t){return a.post()(this,endpoint`groups/${e}/export_relations`,t)}};var Hr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`groups/${e}/releases`,t)}};var Ur=class extends U{constructor(e){super("groups",e)}};var Kr=class extends s.BaseResource{all(e){return a.get()(this,"groups",e)}allDescendantGroups(e,t){return a.get()(this,endpoint`groups/${e}/descendant_groups`,t)}allProjects(e,t){return a.get()(this,endpoint`groups/${e}/projects`,t)}allSharedProjects(e,t){return a.get()(this,endpoint`groups/${e}/projects/shared`,t)}allSubgroups(e,t){return a.get()(this,endpoint`groups/${e}/subgroups`,t)}allProvisionedUsers(e,t){return a.get()(this,endpoint`groups/${e}/provisioned_users`,t)}allTransferLocations(e,t){return a.get()(this,endpoint`groups/${e}/transfer_locations`,t)}create(e,t,{avatar:r,...s}={}){if(r){return a.post()(this,"groups",{...s,isForm:true,avatar:[r.content,r.filename],name:e,path:t})}return a.post()(this,"groups",{name:e,path:t,...s})}downloadAvatar(e,t){return a.get()(this,endpoint`groups/${e}/avatar`,t)}edit(e,{avatar:t,...r}={}){if(t){return a.post()(this,endpoint`groups/${e}`,{...r,isForm:true,avatar:[t.content,t.filename]})}return a.put()(this,endpoint`groups/${e}`,r)}remove(e,t){return a.del()(this,endpoint`groups/${e}`,t)}removeAvatar(e,t){return a.put()(this,endpoint`groups/${e}`,{...t,avatar:""})}restore(e,t){return a.post()(this,endpoint`groups/${e}/restore`,t)}search(e,t){return a.get()(this,"groups",{search:e,...t})}share(e,t,r,s){return a.post()(this,endpoint`groups/${e}/share`,{groupId:t,groupAccess:r,...s})}show(e,t){return a.get()(this,endpoint`groups/${e}`,t)}transfer(e,t){return a.post()(this,endpoint`groups/${e}/transfer`,t)}transferProject(e,t,r){return a.post()(this,endpoint`groups/${e}/projects/${t}`,r)}unshare(e,t,r){return a.del()(this,endpoint`groups/${e}/share/${t}`,r)}uploadAvatar(e,t,{filename:r,...s}={}){return a.put()(this,endpoint`groups/${e}/avatar`,{isForm:true,...s,file:[t,r]})}};var Wr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`groups/${e}/saml/identities`,t)}edit(e,t,r){return a.patch()(this,endpoint`groups/${e}/saml/${t}`,r)}};var zr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`groups/${e}/saml_group_links`,t)}create(e,t,r,s){return a.post()(this,endpoint`groups/${e}/saml_group_links`,{accessLevel:r,samlGroupName:t,...s})}remove(e,t,r){return a.del()(this,endpoint`groups/${e}/saml_group_links/${t}`,r)}show(e,t,r){return a.get()(this,endpoint`groups/${e}/saml_group_links/${t}`,r)}};var Yr=class extends s.BaseResource{all(e,t){return a.get()(this,endpoint`groups/${e}/scim/identities`,t)}edit(e,t,r){return a.patch()(this,endpoint`groups/${e}/scim/${t}`,r)}};var Qr=class extends s.BaseResource{create(e,t){return a.post()(this,endpoint`groups/${e}/service_accounts`,t)}addPersonalAccessToken(e,t,r){return a.post()(this,endpoint`groups/${e}/service_accounts/${t}`,r)}rotatePersonalAccessToken(e,t,r,s){return a.post()(this,endpoint`groups/${e}/service_accounts/${t}/personal_access_tokens/${r}/rotate`,s)}};var Vr=class extends D{constructor(e){super("groups",e)}};var Jr=class extends q{constructor(e){super("groups",e)}};var Zr=class extends s.BaseResource{all(e,t,r){return a.get()(this,endpoint`groups/${e}/epics/${t}/related_epics`,r)}create(e,t,r,s,n){return a.post()(this,endpoint`groups/${e}/epics/${t}/related_epics`,{searchParams:{targetGroupId:s,targetEpicIid:r},...n})}remove(e,t,r,s){return a.del()(this,endpoint`groups/${e}/epics/${t}/related_epics/${r}`,s)}};var Xr=class extends P{constructor(e){super("users",e)}};var url9=e=>e?`users/${e}/emails`:"user/emails";var es=class extends s.BaseResource{add(e,t){return this.create(e,t)}all({userId:e,...t}={}){return a.get()(this,url9(e),t)}create(e,{userId:t,...r}={}){return a.post()(this,url9(t),{email:e,...r})}show(e,t){return a.get()(this,`user/emails/${e}`,t)}remove(e,{userId:t,...r}={}){return a.del()(this,`${url9(t)}/${e}`,r)}};var url10=e=>e?`users/${e}/gpg_keys`:"user/gpg_keys";var ts=class extends s.BaseResource{add(e,t){return this.create(e,t)}all({userId:e,...t}={}){return a.get()(this,url10(e),t)}create(e,{userId:t,...r}={}){return a.post()(this,url10(t),{key:e,...r})}show(e,{userId:t,...r}={}){return a.get()(this,`${url10(t)}/${e}`,r)}remove(e,{userId:t,...r}={}){return a.del()(this,`${url10(t)}/${e}`,r)}};var rs=class extends s.BaseResource{all(e,t){return a.get()(this,`users/${e}/impersonation_tokens`,t)}create(e,t,r,s){return a.post()(this,`users/${e}/impersonation_tokens`,{name:t,scopes:r,...s})}show(e,t,r){return a.get()(this,`users/${e}/impersonation_tokens/${t}`,r)}remove(e,t,r){return a.del()(this,`users/${e}/impersonation_tokens/${t}`,r)}revoke(e,t,r){return this.remove(e,t,r)}};var ss=class extends s.BaseResource{activate(e,t){return a.post()(this,endpoint`users/${e}/activate`,t)}all(e){return a.get()(this,"users",e)}allActivities(e){return a.get()(this,"user/activities",e)}allEvents(e,t){return a.get()(this,endpoint`users/${e}/events`,t)}allFollowers(e,t){return a.get()(this,endpoint`users/${e}/followers`,t)}allFollowing(e,t){return a.get()(this,endpoint`users/${e}/following`,t)}allMemberships(e,t){return a.get()(this,endpoint`users/${e}/memberships`,t)}allProjects(e,t){return a.get()(this,endpoint`users/${e}/projects`,t)}allContributedProjects(e,t){return a.get()(this,endpoint`users/${e}/contributed_projects`,t)}allStarredProjects(e,t){return a.get()(this,endpoint`users/${e}/starred_projects`,t)}approve(e,t){return a.post()(this,endpoint`users/${e}/approve`,t)}ban(e,t){return a.post()(this,endpoint`users/${e}/ban`,t)}block(e,t){return a.post()(this,endpoint`users/${e}/block`,t)}create(e){return a.post()(this,"users",e)}createPersonalAccessToken(e,t,r,s){return a.post()(this,endpoint`users/${e}/personal_access_tokens`,{name:t,scopes:r,...s})}createCIRunner(e,t){return a.post()(this,"user/runners",{...t,runnerType:e})}deactivate(e,t){return a.post()(this,endpoint`users/${e}/deactivate`,t)}disableTwoFactor(e,t){return a.patch()(this,endpoint`users/${e}/disable_two_factor`,t)}edit(e,t){return a.put()(this,endpoint`users/${e}`,t)}editStatus(e){return a.put()(this,"user/status",e)}editCurrentUserPreferences(e,t,r){return a.put()(this,"user/preferences",{viewDiffsFileByFile:e,showWhitespaceInDiffs:t,...r})}follow(e,t){return a.post()(this,endpoint`users/${e}/follow`,t)}reject(e,t){return a.post()(this,endpoint`users/${e}/reject`,t)}show(e,t){return a.get()(this,endpoint`users/${e}`,t)}showCount(e){return a.get()(this,"user_counts",e)}showAssociationsCount(e,t){return a.get()(this,`users/${e}/associations_count`,t)}showCurrentUser(e){return a.get()(this,"user",e)}showCurrentUserPreferences(e){return a.get()(this,"user/preferences",e)}showStatus({iDOrUsername:e,...t}={}){let r;if(e)r=`users/${e}/status`;else r="user/status";return a.get()(this,r,t)}remove(e,t){return a.del()(this,endpoint`users/${e}`,t)}removeAuthenticationIdentity(e,t,r){return a.del()(this,endpoint`users/${e}/identities/${t}`,r)}unban(e,t){return a.post()(this,endpoint`users/${e}/unban`,t)}unblock(e,t){return a.post()(this,endpoint`users/${e}/unblock`,t)}unfollow(e,t){return a.post()(this,endpoint`users/${e}/unfollow`,t)}};var url11=e=>e?`users/${e}/keys`:"user/keys";var ns=class extends s.BaseResource{add(e,t,r){return this.create(e,t,r)}all({userId:e,...t}={}){return a.get()(this,url11(e),t)}create(e,t,{userId:r,...s}={}){return a.post()(this,url11(r),{title:e,key:t,...s})}show(e,{userId:t,...r}={}){return a.get()(this,`${url11(t)}/${e}`,r)}remove(e,{userId:t,...r}={}){return a.del()(this,`${url11(t)}/${e}`,r)}};var os={Agents:u,AlertManagement:c,ApplicationAppearance:p,ApplicationPlanLimits:l,Applications:d,ApplicationSettings:f,ApplicationStatistics:h,AuditEvents:g,Avatar:m,BroadcastMessages:y,CodeSuggestions:v,Composer:$,Conan:b,DashboardAnnotations:w,Debian:_,DependencyProxy:A,DeployKeys:S,DeployTokens:j,DockerfileTemplates:Z,Events:X,Experiments:ee,GeoNodes:te,GeoSites:re,GitignoreTemplates:se,GitLabCIYMLTemplates:ne,Import:oe,InstanceLevelCICDVariables:ie,Keys:ae,License:ue,LicenseTemplates:ce,Lint:pe,Markdown:le,Maven:de,Metadata:fe,Migrations:he,Namespaces:ge,NotificationSettings:me,NPM:ye,NuGet:ve,PersonalAccessTokens:$e,PyPI:be,RubyGems:we,Search:_e,SearchAdmin:Ae,ServiceAccounts:Se,ServiceData:je,SidekiqMetrics:Ee,SidekiqQueues:Re,SnippetRepositoryStorageMoves:xe,Snippets:ke,Suggestions:Ie,SystemHooks:Pe,TodoLists:Te,Topics:Ce,Branches:Oe,CommitDiscussions:Me,Commits:Ne,ContainerRegistry:Le,Deployments:Be,Environments:Fe,ErrorTrackingClientKeys:De,ErrorTrackingSettings:qe,ExternalStatusChecks:Ge,FeatureFlags:He,FeatureFlagUserLists:Ue,FreezePeriods:Ke,GitlabPages:We,GoProxy:ze,Helm:Ye,Integrations:Qe,IssueAwardEmojis:Ve,IssueDiscussions:Je,IssueIterationEvents:Ze,IssueLabelEvents:Xe,IssueLinks:et,IssueMilestoneEvents:tt,IssueNoteAwardEmojis:rt,IssueNotes:st,Issues:nt,IssuesStatistics:ot,IssueStateEvents:it,IssueWeightEvents:at,JobArtifacts:ut,Jobs:ct,MergeRequestApprovals:pt,MergeRequestAwardEmojis:lt,MergeRequestContextCommits:dt,MergeRequestDiscussions:ft,MergeRequestLabelEvents:ht,MergeRequestMilestoneEvents:gt,MergeRequestDraftNotes:mt,MergeRequestNotes:yt,MergeRequestNoteAwardEmojis:vt,MergeRequests:$t,MergeTrains:bt,PackageRegistry:wt,Packages:_t,PagesDomains:At,Pipelines:St,PipelineSchedules:jt,PipelineScheduleVariables:Et,PipelineTriggerTokens:Rt,ProductAnalytics:xt,ProjectAccessRequests:kt,ProjectAccessTokens:It,ProjectAliases:Pt,ProjectBadges:Tt,ProjectCustomAttributes:Ct,ProjectDORA4Metrics:Ot,ProjectHooks:Mt,ProjectImportExports:Nt,ProjectInvitations:Lt,ProjectIssueBoards:Bt,ProjectIterations:Ft,ProjectLabels:Dt,ProjectMembers:qt,ProjectMilestones:Gt,ProjectProtectedEnvironments:Ht,ProjectPushRules:Ut,ProjectRelationsExport:Kt,ProjectReleases:Wt,ProjectRemoteMirrors:zt,ProjectRepositoryStorageMoves:Yt,Projects:Qt,ProjectSnippetAwardEmojis:Vt,ProjectSnippetDiscussions:Jt,ProjectSnippetNotes:Zt,ProjectSnippets:Xt,ProjectStatistics:er,ProjectTemplates:tr,ProjectVariables:rr,ProjectVulnerabilities:sr,ProjectWikis:nr,ProtectedBranches:or,ProtectedTags:ir,ReleaseLinks:ar,Repositories:ur,RepositoryFiles:cr,RepositorySubmodules:pr,ResourceGroups:lr,Runners:dr,SecureFiles:fr,Tags:hr,UserStarredMetricsDashboard:gr,EpicAwardEmojis:mr,EpicDiscussions:yr,EpicIssues:vr,EpicLabelEvents:$r,EpicLinks:br,EpicNotes:wr,Epics:_r,GroupAccessRequests:Ar,GroupAccessTokens:Sr,GroupActivityAnalytics:jr,GroupBadges:Er,GroupCustomAttributes:Rr,GroupDORA4Metrics:xr,GroupEpicBoards:kr,GroupHooks:Ir,GroupImportExports:Pr,GroupInvitations:Tr,GroupIssueBoards:Cr,GroupIterations:Or,GroupLabels:Mr,GroupLDAPLinks:Nr,GroupMembers:Lr,GroupMemberRoles:Br,GroupMilestones:Fr,GroupProtectedEnvironments:Dr,GroupPushRules:qr,GroupRelationExports:Gr,GroupReleases:Hr,GroupRepositoryStorageMoves:Ur,Groups:Kr,GroupSAMLIdentities:Wr,GroupSAMLLinks:zr,GroupSCIMIdentities:Yr,GroupServiceAccounts:Qr,GroupVariables:Vr,GroupWikis:Jr,LinkedEpics:Zr,UserCustomAttributes:Xr,UserEmails:es,UserGPGKeys:ts,UserImpersonationTokens:rs,Users:ss,UserSSHKeys:ns};var is=class extends s.BaseResource{constructor(e){super(e);Object.keys(os).forEach((t=>{this[t]=new os[t](e)}))}};var as=(e=>{e[e["NO_ACCESS"]=0]="NO_ACCESS";e[e["MINIMAL_ACCESS"]=5]="MINIMAL_ACCESS";e[e["GUEST"]=10]="GUEST";e[e["REPORTER"]=20]="REPORTER";e[e["DEVELOPER"]=30]="DEVELOPER";e[e["MAINTAINER"]=40]="MAINTAINER";e[e["OWNER"]=50]="OWNER";e[e["ADMIN"]=60]="ADMIN";return e})(as||{});t.AccessLevel=as;t.Agents=u;t.AlertManagement=c;t.ApplicationAppearance=p;t.ApplicationPlanLimits=l;t.ApplicationSettings=f;t.ApplicationStatistics=h;t.Applications=d;t.AuditEvents=g;t.Avatar=m;t.Branches=Oe;t.BroadcastMessages=y;t.CodeSuggestions=v;t.CommitDiscussions=Me;t.Commits=Ne;t.Composer=$;t.Conan=b;t.ContainerRegistry=Le;t.DashboardAnnotations=w;t.Debian=_;t.DependencyProxy=A;t.DeployKeys=S;t.DeployTokens=j;t.Deployments=Be;t.DockerfileTemplates=Z;t.Environments=Fe;t.EpicAwardEmojis=mr;t.EpicDiscussions=yr;t.EpicIssues=vr;t.EpicLabelEvents=$r;t.EpicLinks=br;t.EpicNotes=wr;t.Epics=_r;t.ErrorTrackingClientKeys=De;t.ErrorTrackingSettings=qe;t.Events=X;t.Experiments=ee;t.ExternalStatusChecks=Ge;t.FeatureFlagUserLists=Ue;t.FeatureFlags=He;t.FreezePeriods=Ke;t.GeoNodes=te;t.GeoSites=re;t.GitLabCIYMLTemplates=ne;t.GitignoreTemplates=se;t.Gitlab=is;t.GitlabPages=We;t.GoProxy=ze;t.GroupAccessRequests=Ar;t.GroupAccessTokens=Sr;t.GroupActivityAnalytics=jr;t.GroupBadges=Er;t.GroupCustomAttributes=Rr;t.GroupDORA4Metrics=xr;t.GroupEpicBoards=kr;t.GroupHooks=Ir;t.GroupImportExports=Pr;t.GroupInvitations=Tr;t.GroupIssueBoards=Cr;t.GroupIterations=Or;t.GroupLDAPLinks=Nr;t.GroupLabels=Mr;t.GroupMemberRoles=Br;t.GroupMembers=Lr;t.GroupMilestones=Fr;t.GroupProtectedEnvironments=Dr;t.GroupPushRules=qr;t.GroupRelationExports=Gr;t.GroupReleases=Hr;t.GroupRepositoryStorageMoves=Ur;t.GroupSAMLIdentities=Wr;t.GroupSAMLLinks=zr;t.GroupSCIMIdentities=Yr;t.GroupServiceAccounts=Qr;t.GroupVariables=Vr;t.GroupWikis=Jr;t.Groups=Kr;t.Helm=Ye;t.Import=oe;t.InstanceLevelCICDVariables=ie;t.Integrations=Qe;t.IssueAwardEmojis=Ve;t.IssueDiscussions=Je;t.IssueIterationEvents=Ze;t.IssueLabelEvents=Xe;t.IssueLinks=et;t.IssueMilestoneEvents=tt;t.IssueNoteAwardEmojis=rt;t.IssueNotes=st;t.IssueStateEvents=it;t.IssueWeightEvents=at;t.Issues=nt;t.IssuesStatistics=ot;t.JobArtifacts=ut;t.Jobs=ct;t.Keys=ae;t.License=ue;t.LicenseTemplates=ce;t.LinkedEpics=Zr;t.Lint=pe;t.Markdown=le;t.Maven=de;t.MergeRequestApprovals=pt;t.MergeRequestAwardEmojis=lt;t.MergeRequestContextCommits=dt;t.MergeRequestDiscussions=ft;t.MergeRequestDraftNotes=mt;t.MergeRequestLabelEvents=ht;t.MergeRequestMilestoneEvents=gt;t.MergeRequestNoteAwardEmojis=vt;t.MergeRequestNotes=yt;t.MergeRequests=$t;t.MergeTrains=bt;t.Metadata=fe;t.Migrations=he;t.NPM=ye;t.Namespaces=ge;t.NotificationSettings=me;t.NuGet=ve;t.PackageRegistry=wt;t.Packages=_t;t.PagesDomains=At;t.PersonalAccessTokens=$e;t.PipelineScheduleVariables=Et;t.PipelineSchedules=jt;t.PipelineTriggerTokens=Rt;t.Pipelines=St;t.ProductAnalytics=xt;t.ProjectAccessRequests=kt;t.ProjectAccessTokens=It;t.ProjectAliases=Pt;t.ProjectBadges=Tt;t.ProjectCustomAttributes=Ct;t.ProjectDORA4Metrics=Ot;t.ProjectHooks=Mt;t.ProjectImportExports=Nt;t.ProjectInvitations=Lt;t.ProjectIssueBoards=Bt;t.ProjectIterations=Ft;t.ProjectLabels=Dt;t.ProjectMembers=qt;t.ProjectMilestones=Gt;t.ProjectProtectedEnvironments=Ht;t.ProjectPushRules=Ut;t.ProjectRelationsExport=Kt;t.ProjectReleases=Wt;t.ProjectRemoteMirrors=zt;t.ProjectRepositoryStorageMoves=Yt;t.ProjectSnippetAwardEmojis=Vt;t.ProjectSnippetDiscussions=Jt;t.ProjectSnippetNotes=Zt;t.ProjectSnippets=Xt;t.ProjectStatistics=er;t.ProjectTemplates=tr;t.ProjectVariables=rr;t.ProjectVulnerabilities=sr;t.ProjectWikis=nr;t.Projects=Qt;t.ProtectedBranches=or;t.ProtectedTags=ir;t.PyPI=be;t.ReleaseLinks=ar;t.Repositories=ur;t.RepositoryFiles=cr;t.RepositorySubmodules=pr;t.ResourceGroups=lr;t.RubyGems=we;t.Runners=dr;t.Search=_e;t.SearchAdmin=Ae;t.SecureFiles=fr;t.ServiceAccounts=Se;t.ServiceData=je;t.SidekiqMetrics=Ee;t.SidekiqQueues=Re;t.SnippetRepositoryStorageMoves=xe;t.Snippets=ke;t.Suggestions=Ie;t.SystemHooks=Pe;t.Tags=hr;t.TodoLists=Te;t.Topics=Ce;t.UserCustomAttributes=Xr;t.UserEmails=es;t.UserGPGKeys=ts;t.UserImpersonationTokens=rs;t.UserSSHKeys=ns;t.UserStarredMetricsDashboard=gr;t.Users=ss},1292:(e,t,r)=>{"use strict";var s=r(5596);var n=r(5872);var o=r(173);var i=r(7805);function _interopDefault(e){return e&&e.__esModule?e:{default:e}}var a=_interopDefault(i);function formatQuery(e={}){const t=n.decamelizeKeys(e);return s.stringify(t,{arrayFormat:"brackets"})}async function defaultOptionsHandler(e,{body:t,searchParams:r,sudo:s,signal:o,asStream:i=false,method:a="GET"}={}){const{headers:u,authHeaders:c,url:p}=e;const l={...u};const d={method:a,asStream:i,signal:o,prefixUrl:p};d.headers=l;if(s)d.headers.sudo=`${s}`;if(t){if(t instanceof FormData){d.body=t}else{d.body=JSON.stringify(n.decamelizeKeys(t));d.headers["content-type"]="application/json"}}const[f,h]=Object.entries(c)[0];d.headers[f]=await h();const g=formatQuery(r);if(g)d.searchParams=g;return Promise.resolve(d)}function createRateLimiters(e={}){const t={};Object.entries(e).forEach((([e,r])=>{if(typeof r==="number")t[e]=o.RateLimit(r,{timeUnit:6e4});else t[e]={method:r.method.toUpperCase(),limit:o.RateLimit(r.limit,{timeUnit:6e4})}}));return t}function createRequesterFn(e,t){const r=["get","post","put","patch","delete"];return s=>{const n={};const o=createRateLimiters(s.rateLimits);r.forEach((r=>{n[r]=async(n,i)=>{const a=await defaultOptionsHandler(s,{...i,method:r.toUpperCase()});const u=await e(s,a);return t(n,{...u,rateLimiters:o})}}));return n}}function extendClass(e,t){return class extends e{constructor(...e){const[r,...s]=e;super({...t,...r},...s)}}}function presetResourceArguments(e,t={}){const r={};Object.entries(e).filter((([,e])=>typeof e==="function")).forEach((([e,s])=>{r[e]=extendClass(s,t)}));return r}function getMatchingRateLimiter(e,t={},r="GET"){const s=Object.keys(t).sort().reverse();const n=s.find((t=>a.default.isMatch(e,t)));const i=n&&t[n];if(i&&typeof i!=="object"){return i}if(i&&i.method.toUpperCase()===r.toUpperCase()){return i.limit}return o.RateLimit(3e3,{timeUnit:6e4})}function getDynamicToken(e){return e instanceof Function?e():Promise.resolve(e)}var u=Object.freeze({"**":3e3,"projects/import":6,"projects/*/export":6,"projects/*/download":1,"groups/import":6,"groups/*/export":6,"groups/*/download":1,"projects/*/issues/*/notes":{method:"post",limit:300},"projects/*/snippets/*/notes":{method:"post",limit:300},"projects/*/merge_requests/*/notes":{method:"post",limit:300},"groups/*/epics/*/notes":{method:"post",limit:300},"projects/*/repository/archive*":5,"projects/*/jobs":600,"projects/*/members":60,"groups/*/members":60});var c=class{url;requester;queryTimeout;headers;authHeaders;camelize;rejectUnauthorized;constructor({sudo:e,profileToken:t,camelize:r,requesterFn:s,profileMode:n="execution",host:o="https://gitlab.com",prefixUrl:i="",rejectUnauthorized:a=true,queryTimeout:c=3e5,rateLimits:p=u,...l}){if(!s)throw new ReferenceError("requesterFn must be passed");this.url=[o,"api","v4",i].join("/");this.headers={};this.authHeaders={};this.rejectUnauthorized=a;this.camelize=r;this.queryTimeout=c;if("oauthToken"in l)this.authHeaders.authorization=async()=>{const e=await getDynamicToken(l.oauthToken);return`Bearer ${e}`};else if("jobToken"in l)this.authHeaders["job-token"]=async()=>getDynamicToken(l.jobToken);else if("token"in l)this.authHeaders["private-token"]=async()=>getDynamicToken(l.token);else{throw new ReferenceError("A token, oauthToken or jobToken must be passed")}if(t){this.headers["X-Profile-Token"]=t;this.headers["X-Profile-Mode"]=n}if(e)this.headers.Sudo=`${e}`;this.requester=s({...this,rateLimits:p})}};var p=class extends Error{constructor(e,t){super(e,t);this.name="GitbeakerRequestError"}};var l=class extends Error{constructor(e){super(e);this.name="GitbeakerTimeoutError"}};var d=class extends Error{constructor(e){super(e);this.name="GitbeakerTimeoutError"}};t.BaseResource=c;t.GitbeakerRequestError=p;t.GitbeakerRetryError=d;t.GitbeakerTimeoutError=l;t.createRateLimiters=createRateLimiters;t.createRequesterFn=createRequesterFn;t.defaultOptionsHandler=defaultOptionsHandler;t.formatQuery=formatQuery;t.getMatchingRateLimiter=getMatchingRateLimiter;t.presetResourceArguments=presetResourceArguments},7650:(e,t,r)=>{"use strict";var s=r(7925);var n=r(1292);function _interopNamespace(e){if(e&&e.__esModule)return e;var t=Object.create(null);if(e){Object.keys(e).forEach((function(r){if(r!=="default"){var s=Object.getOwnPropertyDescriptor(e,r);Object.defineProperty(t,r,s.get?s:{enumerable:true,get:function(){return e[r]}})}}))}t.default=e;return Object.freeze(t)}var o=_interopNamespace(s);async function defaultOptionsHandler(e,t){const s={...t};if(e.url.includes("https")&&e.rejectUnauthorized!=null&&e.rejectUnauthorized===false){if(typeof window!=="object"){const{Agent:e}=await Promise.resolve().then(r.t.bind(r,5692,23));s.agent=new e({rejectUnauthorized:false})}}return s}async function processBody(e){const t=(e.headers.get("content-type")||"").split(";")[0].trim();if(t==="application/json"){return e.json().then((e=>e||{}))}if(t.startsWith("text/")){return e.text().then((e=>e||""))}return e.blob()}function delay(e){return new Promise((t=>{setTimeout(t,e)}))}async function parseResponse(e,t=false){const{status:r,headers:s}=e;const n=Object.fromEntries(s.entries());let o;if(t){o=e.body}else{o=r===204?null:await processBody(e)}return{body:o,headers:n,status:r}}async function throwFailedRequestError(e,t){const r=await t.text();const s=t.headers.get("Content-Type");let o="API Request Error";if(s?.includes("application/json")){const e=JSON.parse(r);o=JSON.stringify(e.error||e.message,null,2)}else{o=r}throw new n.GitbeakerRequestError(t.statusText,{cause:{description:o,request:e,response:t}})}function getConditionalMode(e){if(e.includes("repository/archive"))return"same-origin";return void 0}async function defaultRequestHandler(e,t){const r=[429,502];const s=10;const{prefixUrl:o,asStream:i,searchParams:a,rateLimiters:u,method:c,...p}=t||{};const l=n.getMatchingRateLimiter(e,u,c);let d;if(o)d=o.endsWith("/")?o:`${o}/`;const f=new URL(e,d);f.search=a||"";const h=getConditionalMode(e);for(let e=0;e<s;e+=1){const t=new Request(f,{...p,method:c,mode:h});await l();const s=await fetch(t).catch((e=>{if(e.name==="TimeoutError"||e.name==="AbortError"){throw new n.GitbeakerTimeoutError("Query timeout was reached")}throw e}));if(s.ok)return parseResponse(s,i);if(!r.includes(s.status))await throwFailedRequestError(t,s);await delay(2**e*.25);continue}throw new n.GitbeakerRetryError(`Could not successfully complete this request due to Error 429. Check the applicable rate limits for this endpoint.`)}var i=n.createRequesterFn(defaultOptionsHandler,defaultRequestHandler);var{AccessLevel:a,...u}=o;var c=n.presetResourceArguments(u,{requesterFn:i});var p=a;var{Agents:l,AlertManagement:d,ApplicationAppearance:f,ApplicationPlanLimits:h,Applications:g,ApplicationSettings:m,ApplicationStatistics:y,AuditEvents:v,Avatar:$,BroadcastMessages:b,CodeSuggestions:w,Composer:_,Conan:A,DashboardAnnotations:S,Debian:j,DependencyProxy:E,DeployKeys:R,DeployTokens:x,DockerfileTemplates:k,Events:I,Experiments:P,GeoNodes:T,GeoSites:C,GitignoreTemplates:O,GitLabCIYMLTemplates:M,Import:N,InstanceLevelCICDVariables:L,Keys:B,License:F,LicenseTemplates:D,Lint:q,Markdown:G,Maven:H,Metadata:U,Migrations:K,Namespaces:W,NotificationSettings:z,NPM:Y,NuGet:Q,PersonalAccessTokens:V,PyPI:J,RubyGems:Z,Search:X,SearchAdmin:ee,ServiceAccounts:te,ServiceData:re,SidekiqMetrics:se,SidekiqQueues:ne,SnippetRepositoryStorageMoves:oe,Snippets:ie,Suggestions:ae,SystemHooks:ue,TodoLists:ce,Topics:pe,Branches:le,CommitDiscussions:de,Commits:fe,ContainerRegistry:he,Deployments:ge,Environments:me,ErrorTrackingClientKeys:ye,ErrorTrackingSettings:ve,ExternalStatusChecks:$e,FeatureFlags:be,FeatureFlagUserLists:we,FreezePeriods:_e,GitlabPages:Ae,GoProxy:Se,Helm:je,Integrations:Ee,IssueAwardEmojis:Re,IssueDiscussions:xe,IssueIterationEvents:ke,IssueLabelEvents:Ie,IssueLinks:Pe,IssueMilestoneEvents:Te,IssueNoteAwardEmojis:Ce,IssueNotes:Oe,Issues:Me,IssuesStatistics:Ne,IssueStateEvents:Le,IssueWeightEvents:Be,JobArtifacts:Fe,Jobs:De,MergeRequestApprovals:qe,MergeRequestAwardEmojis:Ge,MergeRequestContextCommits:He,MergeRequestDiscussions:Ue,MergeRequestLabelEvents:Ke,MergeRequestMilestoneEvents:We,MergeRequestDraftNotes:ze,MergeRequestNotes:Ye,MergeRequestNoteAwardEmojis:Qe,MergeRequests:Ve,MergeTrains:Je,PackageRegistry:Ze,Packages:Xe,PagesDomains:et,Pipelines:tt,PipelineSchedules:rt,PipelineScheduleVariables:st,PipelineTriggerTokens:nt,ProductAnalytics:ot,ProjectAccessRequests:it,ProjectAccessTokens:at,ProjectAliases:ut,ProjectBadges:ct,ProjectCustomAttributes:pt,ProjectDORA4Metrics:lt,ProjectHooks:dt,ProjectImportExports:ft,ProjectInvitations:ht,ProjectIssueBoards:gt,ProjectIterations:mt,ProjectLabels:yt,ProjectMembers:vt,ProjectMilestones:$t,ProjectProtectedEnvironments:bt,ProjectPushRules:wt,ProjectRelationsExport:_t,ProjectReleases:At,ProjectRemoteMirrors:St,ProjectRepositoryStorageMoves:jt,Projects:Et,ProjectSnippetAwardEmojis:Rt,ProjectSnippetDiscussions:xt,ProjectSnippetNotes:kt,ProjectSnippets:It,ProjectStatistics:Pt,ProjectTemplates:Tt,ProjectVariables:Ct,ProjectVulnerabilities:Ot,ProjectWikis:Mt,ProtectedBranches:Nt,ProtectedTags:Lt,ReleaseLinks:Bt,Repositories:Ft,RepositoryFiles:Dt,RepositorySubmodules:qt,ResourceGroups:Gt,Runners:Ht,SecureFiles:Ut,Tags:Kt,UserStarredMetricsDashboard:Wt,EpicAwardEmojis:zt,EpicDiscussions:Yt,EpicIssues:Qt,EpicLabelEvents:Vt,EpicLinks:Jt,EpicNotes:Zt,Epics:Xt,GroupAccessRequests:er,GroupAccessTokens:tr,GroupActivityAnalytics:rr,GroupBadges:sr,GroupCustomAttributes:nr,GroupDORA4Metrics:or,GroupEpicBoards:ir,GroupHooks:ar,GroupImportExports:ur,GroupInvitations:cr,GroupIssueBoards:pr,GroupIterations:lr,GroupLabels:dr,GroupLDAPLinks:fr,GroupMembers:hr,GroupMemberRoles:gr,GroupMilestones:mr,GroupProtectedEnvironments:yr,GroupPushRules:vr,GroupRelationExports:$r,GroupReleases:br,GroupRepositoryStorageMoves:wr,Groups:_r,GroupSAMLIdentities:Ar,GroupSAMLLinks:Sr,GroupSCIMIdentities:jr,GroupServiceAccounts:Er,GroupVariables:Rr,GroupWikis:xr,LinkedEpics:kr,UserCustomAttributes:Ir,UserEmails:Pr,UserGPGKeys:Tr,UserImpersonationTokens:Cr,Users:Or,UserSSHKeys:Mr,Gitlab:Nr}=c;t.AccessLevel=p;t.Agents=l;t.AlertManagement=d;t.ApplicationAppearance=f;t.ApplicationPlanLimits=h;t.ApplicationSettings=m;t.ApplicationStatistics=y;t.Applications=g;t.AuditEvents=v;t.Avatar=$;t.Branches=le;t.BroadcastMessages=b;t.CodeSuggestions=w;t.CommitDiscussions=de;t.Commits=fe;t.Composer=_;t.Conan=A;t.ContainerRegistry=he;t.DashboardAnnotations=S;t.Debian=j;t.DependencyProxy=E;t.DeployKeys=R;t.DeployTokens=x;t.Deployments=ge;t.DockerfileTemplates=k;t.Environments=me;t.EpicAwardEmojis=zt;t.EpicDiscussions=Yt;t.EpicIssues=Qt;t.EpicLabelEvents=Vt;t.EpicLinks=Jt;t.EpicNotes=Zt;t.Epics=Xt;t.ErrorTrackingClientKeys=ye;t.ErrorTrackingSettings=ve;t.Events=I;t.Experiments=P;t.ExternalStatusChecks=$e;t.FeatureFlagUserLists=we;t.FeatureFlags=be;t.FreezePeriods=_e;t.GeoNodes=T;t.GeoSites=C;t.GitLabCIYMLTemplates=M;t.GitignoreTemplates=O;t.Gitlab=Nr;t.GitlabPages=Ae;t.GoProxy=Se;t.GroupAccessRequests=er;t.GroupAccessTokens=tr;t.GroupActivityAnalytics=rr;t.GroupBadges=sr;t.GroupCustomAttributes=nr;t.GroupDORA4Metrics=or;t.GroupEpicBoards=ir;t.GroupHooks=ar;t.GroupImportExports=ur;t.GroupInvitations=cr;t.GroupIssueBoards=pr;t.GroupIterations=lr;t.GroupLDAPLinks=fr;t.GroupLabels=dr;t.GroupMemberRoles=gr;t.GroupMembers=hr;t.GroupMilestones=mr;t.GroupProtectedEnvironments=yr;t.GroupPushRules=vr;t.GroupRelationExports=$r;t.GroupReleases=br;t.GroupRepositoryStorageMoves=wr;t.GroupSAMLIdentities=Ar;t.GroupSAMLLinks=Sr;t.GroupSCIMIdentities=jr;t.GroupServiceAccounts=Er;t.GroupVariables=Rr;t.GroupWikis=xr;t.Groups=_r;t.Helm=je;t.Import=N;t.InstanceLevelCICDVariables=L;t.Integrations=Ee;t.IssueAwardEmojis=Re;t.IssueDiscussions=xe;t.IssueIterationEvents=ke;t.IssueLabelEvents=Ie;t.IssueLinks=Pe;t.IssueMilestoneEvents=Te;t.IssueNoteAwardEmojis=Ce;t.IssueNotes=Oe;t.IssueStateEvents=Le;t.IssueWeightEvents=Be;t.Issues=Me;t.IssuesStatistics=Ne;t.JobArtifacts=Fe;t.Jobs=De;t.Keys=B;t.License=F;t.LicenseTemplates=D;t.LinkedEpics=kr;t.Lint=q;t.Markdown=G;t.Maven=H;t.MergeRequestApprovals=qe;t.MergeRequestAwardEmojis=Ge;t.MergeRequestContextCommits=He;t.MergeRequestDiscussions=Ue;t.MergeRequestDraftNotes=ze;t.MergeRequestLabelEvents=Ke;t.MergeRequestMilestoneEvents=We;t.MergeRequestNoteAwardEmojis=Qe;t.MergeRequestNotes=Ye;t.MergeRequests=Ve;t.MergeTrains=Je;t.Metadata=U;t.Migrations=K;t.NPM=Y;t.Namespaces=W;t.NotificationSettings=z;t.NuGet=Q;t.PackageRegistry=Ze;t.Packages=Xe;t.PagesDomains=et;t.PersonalAccessTokens=V;t.PipelineScheduleVariables=st;t.PipelineSchedules=rt;t.PipelineTriggerTokens=nt;t.Pipelines=tt;t.ProductAnalytics=ot;t.ProjectAccessRequests=it;t.ProjectAccessTokens=at;t.ProjectAliases=ut;t.ProjectBadges=ct;t.ProjectCustomAttributes=pt;t.ProjectDORA4Metrics=lt;t.ProjectHooks=dt;t.ProjectImportExports=ft;t.ProjectInvitations=ht;t.ProjectIssueBoards=gt;t.ProjectIterations=mt;t.ProjectLabels=yt;t.ProjectMembers=vt;t.ProjectMilestones=$t;t.ProjectProtectedEnvironments=bt;t.ProjectPushRules=wt;t.ProjectRelationsExport=_t;t.ProjectReleases=At;t.ProjectRemoteMirrors=St;t.ProjectRepositoryStorageMoves=jt;t.ProjectSnippetAwardEmojis=Rt;t.ProjectSnippetDiscussions=xt;t.ProjectSnippetNotes=kt;t.ProjectSnippets=It;t.ProjectStatistics=Pt;t.ProjectTemplates=Tt;t.ProjectVariables=Ct;t.ProjectVulnerabilities=Ot;t.ProjectWikis=Mt;t.Projects=Et;t.ProtectedBranches=Nt;t.ProtectedTags=Lt;t.PyPI=J;t.ReleaseLinks=Bt;t.Repositories=Ft;t.RepositoryFiles=Dt;t.RepositorySubmodules=qt;t.ResourceGroups=Gt;t.RubyGems=Z;t.Runners=Ht;t.Search=X;t.SearchAdmin=ee;t.SecureFiles=Ut;t.ServiceAccounts=te;t.ServiceData=re;t.SidekiqMetrics=se;t.SidekiqQueues=ne;t.SnippetRepositoryStorageMoves=oe;t.Snippets=ie;t.Suggestions=ae;t.SystemHooks=ue;t.Tags=Kt;t.TodoLists=ce;t.Topics=pe;t.UserCustomAttributes=Ir;t.UserEmails=Pr;t.UserGPGKeys=Tr;t.UserImpersonationTokens=Cr;t.UserSSHKeys=Mr;t.UserStarredMetricsDashboard=Wt;t.Users=Or},173:function(e,t,r){"use strict";var s=this&&this.__importDefault||function(e){return e&&e.__esModule?e:{default:e}};Object.defineProperty(t,"__esModule",{value:true});t.RateLimit=t.Sema=void 0;const n=s(r(4434));function arrayMove(e,t,r,s,n){for(let o=0;o<n;++o){r[o+s]=e[o+t];e[o+t]=void 0}}function pow2AtLeast(e){e=e>>>0;e=e-1;e=e|e>>1;e=e|e>>2;e=e|e>>4;e=e|e>>8;e=e|e>>16;return e+1}function getCapacity(e){return pow2AtLeast(Math.min(Math.max(16,e),1073741824))}class Deque{constructor(e){this._capacity=getCapacity(e);this._length=0;this._front=0;this.arr=[]}push(e){const t=this._length;this.checkCapacity(t+1);const r=this._front+t&this._capacity-1;this.arr[r]=e;this._length=t+1;return t+1}pop(){const e=this._length;if(e===0){return void 0}const t=this._front+e-1&this._capacity-1;const r=this.arr[t];this.arr[t]=void 0;this._length=e-1;return r}shift(){const e=this._length;if(e===0){return void 0}const t=this._front;const r=this.arr[t];this.arr[t]=void 0;this._front=t+1&this._capacity-1;this._length=e-1;return r}get length(){return this._length}checkCapacity(e){if(this._capacity<e){this.resizeTo(getCapacity(this._capacity*1.5+16))}}resizeTo(e){const t=this._capacity;this._capacity=e;const r=this._front;const s=this._length;if(r+s>t){const e=r+s&t-1;arrayMove(this.arr,0,this.arr,t,e)}}}class ReleaseEmitter extends n.default{}function isFn(e){return typeof e==="function"}function defaultInit(){return"1"}class Sema{constructor(e,{initFn:t=defaultInit,pauseFn:r,resumeFn:s,capacity:n=10}={}){if(isFn(r)!==isFn(s)){throw new Error("pauseFn and resumeFn must be both set for pausing")}this.nrTokens=e;this.free=new Deque(e);this.waiting=new Deque(n);this.releaseEmitter=new ReleaseEmitter;this.noTokens=t===defaultInit;this.pauseFn=r;this.resumeFn=s;this.paused=false;this.releaseEmitter.on("release",(e=>{const t=this.waiting.shift();if(t){t.resolve(e)}else{if(this.resumeFn&&this.paused){this.paused=false;this.resumeFn()}this.free.push(e)}}));for(let r=0;r<e;r++){this.free.push(t())}}tryAcquire(){return this.free.pop()}async acquire(){let e=this.tryAcquire();if(e!==void 0){return e}return new Promise(((e,t)=>{if(this.pauseFn&&!this.paused){this.paused=true;this.pauseFn()}this.waiting.push({resolve:e,reject:t})}))}release(e){this.releaseEmitter.emit("release",this.noTokens?"1":e)}drain(){const e=new Array(this.nrTokens);for(let t=0;t<this.nrTokens;t++){e[t]=this.acquire()}return Promise.all(e)}nrWaiting(){return this.waiting.length}}t.Sema=Sema;function RateLimit(e,{timeUnit:t=1e3,uniformDistribution:r=false}={}){const s=new Sema(r?1:e);const n=r?t/e:t;return async function rl(){await s.acquire();setTimeout((()=>s.release()),n)}}t.RateLimit=RateLimit},7120:(e,t,r)=>{"use strict";const s=r(641);const n=r(6453);const o=r(6374);const i=r(5583);const braces=(e,t={})=>{let r=[];if(Array.isArray(e)){for(const s of e){const e=braces.create(s,t);if(Array.isArray(e)){r.push(...e)}else{r.push(e)}}}else{r=[].concat(braces.create(e,t))}if(t&&t.expand===true&&t.nodupes===true){r=[...new Set(r)]}return r};braces.parse=(e,t={})=>i(e,t);braces.stringify=(e,t={})=>{if(typeof e==="string"){return s(braces.parse(e,t),t)}return s(e,t)};braces.compile=(e,t={})=>{if(typeof e==="string"){e=braces.parse(e,t)}return n(e,t)};braces.expand=(e,t={})=>{if(typeof e==="string"){e=braces.parse(e,t)}let r=o(e,t);if(t.noempty===true){r=r.filter(Boolean)}if(t.nodupes===true){r=[...new Set(r)]}return r};braces.create=(e,t={})=>{if(e===""||e.length<3){return[e]}return t.expand!==true?braces.compile(e,t):braces.expand(e,t)};e.exports=braces},6453:(e,t,r)=>{"use strict";const s=r(9073);const n=r(837);const compile=(e,t={})=>{const walk=(e,r={})=>{const o=n.isInvalidBrace(r);const i=e.invalid===true&&t.escapeInvalid===true;const a=o===true||i===true;const u=t.escapeInvalid===true?"\\":"";let c="";if(e.isOpen===true){return u+e.value}if(e.isClose===true){console.log("node.isClose",u,e.value);return u+e.value}if(e.type==="open"){return a?u+e.value:"("}if(e.type==="close"){return a?u+e.value:")"}if(e.type==="comma"){return e.prev.type==="comma"?"":a?e.value:"|"}if(e.value){return e.value}if(e.nodes&&e.ranges>0){const r=n.reduce(e.nodes);const o=s(...r,{...t,wrap:false,toRegex:true,strictZeros:true});if(o.length!==0){return r.length>1&&o.length>1?`(${o})`:o}}if(e.nodes){for(const t of e.nodes){c+=walk(t,e)}}return c};return walk(e)};e.exports=compile},7201:e=>{"use strict";e.exports={MAX_LENGTH:1e4,CHAR_0:"0",CHAR_9:"9",CHAR_UPPERCASE_A:"A",CHAR_LOWERCASE_A:"a",CHAR_UPPERCASE_Z:"Z",CHAR_LOWERCASE_Z:"z",CHAR_LEFT_PARENTHESES:"(",CHAR_RIGHT_PARENTHESES:")",CHAR_ASTERISK:"*",CHAR_AMPERSAND:"&",CHAR_AT:"@",CHAR_BACKSLASH:"\\",CHAR_BACKTICK:"`",CHAR_CARRIAGE_RETURN:"\r",CHAR_CIRCUMFLEX_ACCENT:"^",CHAR_COLON:":",CHAR_COMMA:",",CHAR_DOLLAR:"$",CHAR_DOT:".",CHAR_DOUBLE_QUOTE:'"',CHAR_EQUAL:"=",CHAR_EXCLAMATION_MARK:"!",CHAR_FORM_FEED:"\f",CHAR_FORWARD_SLASH:"/",CHAR_HASH:"#",CHAR_HYPHEN_MINUS:"-",CHAR_LEFT_ANGLE_BRACKET:"<",CHAR_LEFT_CURLY_BRACE:"{",CHAR_LEFT_SQUARE_BRACKET:"[",CHAR_LINE_FEED:"\n",CHAR_NO_BREAK_SPACE:" ",CHAR_PERCENT:"%",CHAR_PLUS:"+",CHAR_QUESTION_MARK:"?",CHAR_RIGHT_ANGLE_BRACKET:">",CHAR_RIGHT_CURLY_BRACE:"}",CHAR_RIGHT_SQUARE_BRACKET:"]",CHAR_SEMICOLON:";",CHAR_SINGLE_QUOTE:"'",CHAR_SPACE:" ",CHAR_TAB:"\t",CHAR_UNDERSCORE:"_",CHAR_VERTICAL_LINE:"|",CHAR_ZERO_WIDTH_NOBREAK_SPACE:"\ufeff"}},6374:(e,t,r)=>{"use strict";const s=r(9073);const n=r(641);const o=r(837);const append=(e="",t="",r=false)=>{const s=[];e=[].concat(e);t=[].concat(t);if(!t.length)return e;if(!e.length){return r?o.flatten(t).map((e=>`{${e}}`)):t}for(const n of e){if(Array.isArray(n)){for(const e of n){s.push(append(e,t,r))}}else{for(let e of t){if(r===true&&typeof e==="string")e=`{${e}}`;s.push(Array.isArray(e)?append(n,e,r):n+e)}}}return o.flatten(s)};const expand=(e,t={})=>{const r=t.rangeLimit===undefined?1e3:t.rangeLimit;const walk=(e,i={})=>{e.queue=[];let a=i;let u=i.queue;while(a.type!=="brace"&&a.type!=="root"&&a.parent){a=a.parent;u=a.queue}if(e.invalid||e.dollar){u.push(append(u.pop(),n(e,t)));return}if(e.type==="brace"&&e.invalid!==true&&e.nodes.length===2){u.push(append(u.pop(),["{}"]));return}if(e.nodes&&e.ranges>0){const i=o.reduce(e.nodes);if(o.exceedsLimit(...i,t.step,r)){throw new RangeError("expanded array length exceeds range limit. Use options.rangeLimit to increase or disable the limit.")}let a=s(...i,t);if(a.length===0){a=n(e,t)}u.push(append(u.pop(),a));e.nodes=[];return}const c=o.encloseBrace(e);let p=e.queue;let l=e;while(l.type!=="brace"&&l.type!=="root"&&l.parent){l=l.parent;p=l.queue}for(let t=0;t<e.nodes.length;t++){const r=e.nodes[t];if(r.type==="comma"&&e.type==="brace"){if(t===1)p.push("");p.push("");continue}if(r.type==="close"){u.push(append(u.pop(),p,c));continue}if(r.value&&r.type!=="open"){p.push(append(p.pop(),r.value));continue}if(r.nodes){walk(r,e)}}return p};return o.flatten(walk(e))};e.exports=expand},5583:(e,t,r)=>{"use strict";const s=r(641);const{MAX_LENGTH:n,CHAR_BACKSLASH:o,CHAR_BACKTICK:i,CHAR_COMMA:a,CHAR_DOT:u,CHAR_LEFT_PARENTHESES:c,CHAR_RIGHT_PARENTHESES:p,CHAR_LEFT_CURLY_BRACE:l,CHAR_RIGHT_CURLY_BRACE:d,CHAR_LEFT_SQUARE_BRACKET:f,CHAR_RIGHT_SQUARE_BRACKET:h,CHAR_DOUBLE_QUOTE:g,CHAR_SINGLE_QUOTE:m,CHAR_NO_BREAK_SPACE:y,CHAR_ZERO_WIDTH_NOBREAK_SPACE:v}=r(7201);const parse=(e,t={})=>{if(typeof e!=="string"){throw new TypeError("Expected a string")}const r=t||{};const $=typeof r.maxLength==="number"?Math.min(n,r.maxLength):n;if(e.length>$){throw new SyntaxError(`Input length (${e.length}), exceeds max characters (${$})`)}const b={type:"root",input:e,nodes:[]};const w=[b];let _=b;let A=b;let S=0;const j=e.length;let E=0;let R=0;let x;const advance=()=>e[E++];const push=e=>{if(e.type==="text"&&A.type==="dot"){A.type="text"}if(A&&A.type==="text"&&e.type==="text"){A.value+=e.value;return}_.nodes.push(e);e.parent=_;e.prev=A;A=e;return e};push({type:"bos"});while(E<j){_=w[w.length-1];x=advance();if(x===v||x===y){continue}if(x===o){push({type:"text",value:(t.keepEscaping?x:"")+advance()});continue}if(x===h){push({type:"text",value:"\\"+x});continue}if(x===f){S++;let e;while(E<j&&(e=advance())){x+=e;if(e===f){S++;continue}if(e===o){x+=advance();continue}if(e===h){S--;if(S===0){break}}}push({type:"text",value:x});continue}if(x===c){_=push({type:"paren",nodes:[]});w.push(_);push({type:"text",value:x});continue}if(x===p){if(_.type!=="paren"){push({type:"text",value:x});continue}_=w.pop();push({type:"text",value:x});_=w[w.length-1];continue}if(x===g||x===m||x===i){const e=x;let r;if(t.keepQuotes!==true){x=""}while(E<j&&(r=advance())){if(r===o){x+=r+advance();continue}if(r===e){if(t.keepQuotes===true)x+=r;break}x+=r}push({type:"text",value:x});continue}if(x===l){R++;const e=A.value&&A.value.slice(-1)==="$"||_.dollar===true;const t={type:"brace",open:true,close:false,dollar:e,depth:R,commas:0,ranges:0,nodes:[]};_=push(t);w.push(_);push({type:"open",value:x});continue}if(x===d){if(_.type!=="brace"){push({type:"text",value:x});continue}const e="close";_=w.pop();_.close=true;push({type:e,value:x});R--;_=w[w.length-1];continue}if(x===a&&R>0){if(_.ranges>0){_.ranges=0;const e=_.nodes.shift();_.nodes=[e,{type:"text",value:s(_)}]}push({type:"comma",value:x});_.commas++;continue}if(x===u&&R>0&&_.commas===0){const e=_.nodes;if(R===0||e.length===0){push({type:"text",value:x});continue}if(A.type==="dot"){_.range=[];A.value+=x;A.type="range";if(_.nodes.length!==3&&_.nodes.length!==5){_.invalid=true;_.ranges=0;A.type="text";continue}_.ranges++;_.args=[];continue}if(A.type==="range"){e.pop();const t=e[e.length-1];t.value+=A.value+x;A=t;_.ranges--;continue}push({type:"dot",value:x});continue}push({type:"text",value:x})}do{_=w.pop();if(_.type!=="root"){_.nodes.forEach((e=>{if(!e.nodes){if(e.type==="open")e.isOpen=true;if(e.type==="close")e.isClose=true;if(!e.nodes)e.type="text";e.invalid=true}}));const e=w[w.length-1];const t=e.nodes.indexOf(_);e.nodes.splice(t,1,..._.nodes)}}while(w.length>0);push({type:"eos"});return b};e.exports=parse},641:(e,t,r)=>{"use strict";const s=r(837);e.exports=(e,t={})=>{const stringify=(e,r={})=>{const n=t.escapeInvalid&&s.isInvalidBrace(r);const o=e.invalid===true&&t.escapeInvalid===true;let i="";if(e.value){if((n||o)&&s.isOpenOrClose(e)){return"\\"+e.value}return e.value}if(e.value){return e.value}if(e.nodes){for(const t of e.nodes){i+=stringify(t)}}return i};return stringify(e)}},837:(e,t)=>{"use strict";t.isInteger=e=>{if(typeof e==="number"){return Number.isInteger(e)}if(typeof e==="string"&&e.trim()!==""){return Number.isInteger(Number(e))}return false};t.find=(e,t)=>e.nodes.find((e=>e.type===t));t.exceedsLimit=(e,r,s=1,n)=>{if(n===false)return false;if(!t.isInteger(e)||!t.isInteger(r))return false;return(Number(r)-Number(e))/Number(s)>=n};t.escapeNode=(e,t=0,r)=>{const s=e.nodes[t];if(!s)return;if(r&&s.type===r||s.type==="open"||s.type==="close"){if(s.escaped!==true){s.value="\\"+s.value;s.escaped=true}}};t.encloseBrace=e=>{if(e.type!=="brace")return false;if(e.commas>>0+e.ranges>>0===0){e.invalid=true;return true}return false};t.isInvalidBrace=e=>{if(e.type!=="brace")return false;if(e.invalid===true||e.dollar)return true;if(e.commas>>0+e.ranges>>0===0){e.invalid=true;return true}if(e.open!==true||e.close!==true){e.invalid=true;return true}return false};t.isOpenOrClose=e=>{if(e.type==="open"||e.type==="close"){return true}return e.open===true||e.close===true};t.reduce=e=>e.reduce(((e,t)=>{if(t.type==="text")e.push(t.value);if(t.type==="range")t.type="text";return e}),[]);t.flatten=(...e)=>{const t=[];const flat=e=>{for(let r=0;r<e.length;r++){const s=e[r];if(Array.isArray(s)){flat(s);continue}if(s!==undefined){t.push(s)}}return t};flat(e);return t}},1372:(e,t,r)=>{"use strict";var s=r(978);var n=r(8960);var o=n(s("String.prototype.indexOf"));e.exports=function callBoundIntrinsic(e,t){var r=s(e,!!t);if(typeof r==="function"&&o(e,".prototype.")>-1){return n(r)}return r}},8960:(e,t,r)=>{"use strict";var s=r(5112);var n=r(978);var o=r(7230);var i=r(1254);var a=n("%Function.prototype.apply%");var u=n("%Function.prototype.call%");var c=n("%Reflect.apply%",true)||s.call(u,a);var p=r(4090);var l=n("%Math.max%");e.exports=function callBind(e){if(typeof e!=="function"){throw new i("a function is required")}var t=c(s,u,arguments);return o(t,1+l(0,e.length-(arguments.length-1)),true)};var d=function applyBind(){return c(s,a,arguments)};if(p){p(e.exports,"apply",{value:d})}else{e.exports.apply=d}},3968:(e,t,r)=>{"use strict";var s=r(4090);var n=r(1821);var o=r(1254);var i=r(6822);e.exports=function defineDataProperty(e,t,r){if(!e||typeof e!=="object"&&typeof e!=="function"){throw new o("`obj` must be an object or a function`")}if(typeof t!=="string"&&typeof t!=="symbol"){throw new o("`property` must be a string or a symbol`")}if(arguments.length>3&&typeof arguments[3]!=="boolean"&&arguments[3]!==null){throw new o("`nonEnumerable`, if provided, must be a boolean or null")}if(arguments.length>4&&typeof arguments[4]!=="boolean"&&arguments[4]!==null){throw new o("`nonWritable`, if provided, must be a boolean or null")}if(arguments.length>5&&typeof arguments[5]!=="boolean"&&arguments[5]!==null){throw new o("`nonConfigurable`, if provided, must be a boolean or null")}if(arguments.length>6&&typeof arguments[6]!=="boolean"){throw new o("`loose`, if provided, must be a boolean")}var a=arguments.length>3?arguments[3]:null;var u=arguments.length>4?arguments[4]:null;var c=arguments.length>5?arguments[5]:null;var p=arguments.length>6?arguments[6]:false;var l=!!i&&i(e,t);if(s){s(e,t,{configurable:c===null&&l?l.configurable:!c,enumerable:a===null&&l?l.enumerable:!a,value:r,writable:u===null&&l?l.writable:!u})}else if(p||!a&&!u&&!c){e[t]=r}else{throw new n("This environment does not support defining a property as non-configurable, non-writable, or non-enumerable.")}}},4090:(e,t,r)=>{"use strict";var s=r(978);var n=s("%Object.defineProperty%",true)||false;if(n){try{n({},"a",{value:1})}catch(e){n=false}}e.exports=n},8060:e=>{"use strict";e.exports=EvalError},2472:e=>{"use strict";e.exports=Error},2957:e=>{"use strict";e.exports=RangeError},9157:e=>{"use strict";e.exports=ReferenceError},1821:e=>{"use strict";e.exports=SyntaxError},1254:e=>{"use strict";e.exports=TypeError},662:e=>{"use strict";e.exports=URIError},9073:(e,t,r)=>{"use strict";
-/*!
- * fill-range <https://github.com/jonschlinkert/fill-range>
- *
- * Copyright (c) 2014-present, Jon Schlinkert.
- * Licensed under the MIT License.
- */const s=r(9023);const n=r(4395);const isObject=e=>e!==null&&typeof e==="object"&&!Array.isArray(e);const transform=e=>t=>e===true?Number(t):String(t);const isValidValue=e=>typeof e==="number"||typeof e==="string"&&e!=="";const isNumber=e=>Number.isInteger(+e);const zeros=e=>{let t=`${e}`;let r=-1;if(t[0]==="-")t=t.slice(1);if(t==="0")return false;while(t[++r]==="0");return r>0};const stringify=(e,t,r)=>{if(typeof e==="string"||typeof t==="string"){return true}return r.stringify===true};const pad=(e,t,r)=>{if(t>0){let r=e[0]==="-"?"-":"";if(r)e=e.slice(1);e=r+e.padStart(r?t-1:t,"0")}if(r===false){return String(e)}return e};const toMaxLen=(e,t)=>{let r=e[0]==="-"?"-":"";if(r){e=e.slice(1);t--}while(e.length<t)e="0"+e;return r?"-"+e:e};const toSequence=(e,t,r)=>{e.negatives.sort(((e,t)=>e<t?-1:e>t?1:0));e.positives.sort(((e,t)=>e<t?-1:e>t?1:0));let s=t.capture?"":"?:";let n="";let o="";let i;if(e.positives.length){n=e.positives.map((e=>toMaxLen(String(e),r))).join("|")}if(e.negatives.length){o=`-(${s}${e.negatives.map((e=>toMaxLen(String(e),r))).join("|")})`}if(n&&o){i=`${n}|${o}`}else{i=n||o}if(t.wrap){return`(${s}${i})`}return i};const toRange=(e,t,r,s)=>{if(r){return n(e,t,{wrap:false,...s})}let o=String.fromCharCode(e);if(e===t)return o;let i=String.fromCharCode(t);return`[${o}-${i}]`};const toRegex=(e,t,r)=>{if(Array.isArray(e)){let t=r.wrap===true;let s=r.capture?"":"?:";return t?`(${s}${e.join("|")})`:e.join("|")}return n(e,t,r)};const rangeError=(...e)=>new RangeError("Invalid range arguments: "+s.inspect(...e));const invalidRange=(e,t,r)=>{if(r.strictRanges===true)throw rangeError([e,t]);return[]};const invalidStep=(e,t)=>{if(t.strictRanges===true){throw new TypeError(`Expected step "${e}" to be a number`)}return[]};const fillNumbers=(e,t,r=1,s={})=>{let n=Number(e);let o=Number(t);if(!Number.isInteger(n)||!Number.isInteger(o)){if(s.strictRanges===true)throw rangeError([e,t]);return[]}if(n===0)n=0;if(o===0)o=0;let i=n>o;let a=String(e);let u=String(t);let c=String(r);r=Math.max(Math.abs(r),1);let p=zeros(a)||zeros(u)||zeros(c);let l=p?Math.max(a.length,u.length,c.length):0;let d=p===false&&stringify(e,t,s)===false;let f=s.transform||transform(d);if(s.toRegex&&r===1){return toRange(toMaxLen(e,l),toMaxLen(t,l),true,s)}let h={negatives:[],positives:[]};let push=e=>h[e<0?"negatives":"positives"].push(Math.abs(e));let g=[];let m=0;while(i?n>=o:n<=o){if(s.toRegex===true&&r>1){push(n)}else{g.push(pad(f(n,m),l,d))}n=i?n-r:n+r;m++}if(s.toRegex===true){return r>1?toSequence(h,s,l):toRegex(g,null,{wrap:false,...s})}return g};const fillLetters=(e,t,r=1,s={})=>{if(!isNumber(e)&&e.length>1||!isNumber(t)&&t.length>1){return invalidRange(e,t,s)}let n=s.transform||(e=>String.fromCharCode(e));let o=`${e}`.charCodeAt(0);let i=`${t}`.charCodeAt(0);let a=o>i;let u=Math.min(o,i);let c=Math.max(o,i);if(s.toRegex&&r===1){return toRange(u,c,false,s)}let p=[];let l=0;while(a?o>=i:o<=i){p.push(n(o,l));o=a?o-r:o+r;l++}if(s.toRegex===true){return toRegex(p,null,{wrap:false,options:s})}return p};const fill=(e,t,r,s={})=>{if(t==null&&isValidValue(e)){return[e]}if(!isValidValue(e)||!isValidValue(t)){return invalidRange(e,t,s)}if(typeof r==="function"){return fill(e,t,1,{transform:r})}if(isObject(r)){return fill(e,t,0,r)}let n={...s};if(n.capture===true)n.wrap=true;r=r||n.step||1;if(!isNumber(r)){if(r!=null&&!isObject(r))return invalidStep(r,n);return fill(e,t,1,r)}if(isNumber(e)&&isNumber(t)){return fillNumbers(e,t,r,n)}return fillLetters(e,t,Math.max(Math.abs(r),1),n)};e.exports=fill},4124:e=>{"use strict";var t="Function.prototype.bind called on incompatible ";var r=Object.prototype.toString;var s=Math.max;var n="[object Function]";var o=function concatty(e,t){var r=[];for(var s=0;s<e.length;s+=1){r[s]=e[s]}for(var n=0;n<t.length;n+=1){r[n+e.length]=t[n]}return r};var i=function slicy(e,t){var r=[];for(var s=t||0,n=0;s<e.length;s+=1,n+=1){r[n]=e[s]}return r};var joiny=function(e,t){var r="";for(var s=0;s<e.length;s+=1){r+=e[s];if(s+1<e.length){r+=t}}return r};e.exports=function bind(e){var a=this;if(typeof a!=="function"||r.apply(a)!==n){throw new TypeError(t+a)}var u=i(arguments,1);var c;var binder=function(){if(this instanceof c){var t=a.apply(this,o(u,arguments));if(Object(t)===t){return t}return this}return a.apply(e,o(u,arguments))};var p=s(0,a.length-u.length);var l=[];for(var d=0;d<p;d++){l[d]="$"+d}c=Function("binder","return function ("+joiny(l,",")+"){ return binder.apply(this,arguments); }")(binder);if(a.prototype){var f=function Empty(){};f.prototype=a.prototype;c.prototype=new f;f.prototype=null}return c}},5112:(e,t,r)=>{"use strict";var s=r(4124);e.exports=Function.prototype.bind||s},978:(e,t,r)=>{"use strict";var s;var n=r(2472);var o=r(8060);var i=r(2957);var a=r(9157);var u=r(1821);var c=r(1254);var p=r(662);var l=Function;var getEvalledConstructor=function(e){try{return l('"use strict"; return ('+e+").constructor;")()}catch(e){}};var d=Object.getOwnPropertyDescriptor;if(d){try{d({},"")}catch(e){d=null}}var throwTypeError=function(){throw new c};var f=d?function(){try{arguments.callee;return throwTypeError}catch(e){try{return d(arguments,"callee").get}catch(e){return throwTypeError}}}():throwTypeError;var h=r(4428)();var g=r(375)();var m=Object.getPrototypeOf||(g?function(e){return e.__proto__}:null);var y={};var v=typeof Uint8Array==="undefined"||!m?s:m(Uint8Array);var $={__proto__:null,"%AggregateError%":typeof AggregateError==="undefined"?s:AggregateError,"%Array%":Array,"%ArrayBuffer%":typeof ArrayBuffer==="undefined"?s:ArrayBuffer,"%ArrayIteratorPrototype%":h&&m?m([][Symbol.iterator]()):s,"%AsyncFromSyncIteratorPrototype%":s,"%AsyncFunction%":y,"%AsyncGenerator%":y,"%AsyncGeneratorFunction%":y,"%AsyncIteratorPrototype%":y,"%Atomics%":typeof Atomics==="undefined"?s:Atomics,"%BigInt%":typeof BigInt==="undefined"?s:BigInt,"%BigInt64Array%":typeof BigInt64Array==="undefined"?s:BigInt64Array,"%BigUint64Array%":typeof BigUint64Array==="undefined"?s:BigUint64Array,"%Boolean%":Boolean,"%DataView%":typeof DataView==="undefined"?s:DataView,"%Date%":Date,"%decodeURI%":decodeURI,"%decodeURIComponent%":decodeURIComponent,"%encodeURI%":encodeURI,"%encodeURIComponent%":encodeURIComponent,"%Error%":n,"%eval%":eval,"%EvalError%":o,"%Float32Array%":typeof Float32Array==="undefined"?s:Float32Array,"%Float64Array%":typeof Float64Array==="undefined"?s:Float64Array,"%FinalizationRegistry%":typeof FinalizationRegistry==="undefined"?s:FinalizationRegistry,"%Function%":l,"%GeneratorFunction%":y,"%Int8Array%":typeof Int8Array==="undefined"?s:Int8Array,"%Int16Array%":typeof Int16Array==="undefined"?s:Int16Array,"%Int32Array%":typeof Int32Array==="undefined"?s:Int32Array,"%isFinite%":isFinite,"%isNaN%":isNaN,"%IteratorPrototype%":h&&m?m(m([][Symbol.iterator]())):s,"%JSON%":typeof JSON==="object"?JSON:s,"%Map%":typeof Map==="undefined"?s:Map,"%MapIteratorPrototype%":typeof Map==="undefined"||!h||!m?s:m((new Map)[Symbol.iterator]()),"%Math%":Math,"%Number%":Number,"%Object%":Object,"%parseFloat%":parseFloat,"%parseInt%":parseInt,"%Promise%":typeof Promise==="undefined"?s:Promise,"%Proxy%":typeof Proxy==="undefined"?s:Proxy,"%RangeError%":i,"%ReferenceError%":a,"%Reflect%":typeof Reflect==="undefined"?s:Reflect,"%RegExp%":RegExp,"%Set%":typeof Set==="undefined"?s:Set,"%SetIteratorPrototype%":typeof Set==="undefined"||!h||!m?s:m((new Set)[Symbol.iterator]()),"%SharedArrayBuffer%":typeof SharedArrayBuffer==="undefined"?s:SharedArrayBuffer,"%String%":String,"%StringIteratorPrototype%":h&&m?m(""[Symbol.iterator]()):s,"%Symbol%":h?Symbol:s,"%SyntaxError%":u,"%ThrowTypeError%":f,"%TypedArray%":v,"%TypeError%":c,"%Uint8Array%":typeof Uint8Array==="undefined"?s:Uint8Array,"%Uint8ClampedArray%":typeof Uint8ClampedArray==="undefined"?s:Uint8ClampedArray,"%Uint16Array%":typeof Uint16Array==="undefined"?s:Uint16Array,"%Uint32Array%":typeof Uint32Array==="undefined"?s:Uint32Array,"%URIError%":p,"%WeakMap%":typeof WeakMap==="undefined"?s:WeakMap,"%WeakRef%":typeof WeakRef==="undefined"?s:WeakRef,"%WeakSet%":typeof WeakSet==="undefined"?s:WeakSet};if(m){try{null.error}catch(e){var b=m(m(e));$["%Error.prototype%"]=b}}var w=function doEval(e){var t;if(e==="%AsyncFunction%"){t=getEvalledConstructor("async function () {}")}else if(e==="%GeneratorFunction%"){t=getEvalledConstructor("function* () {}")}else if(e==="%AsyncGeneratorFunction%"){t=getEvalledConstructor("async function* () {}")}else if(e==="%AsyncGenerator%"){var r=doEval("%AsyncGeneratorFunction%");if(r){t=r.prototype}}else if(e==="%AsyncIteratorPrototype%"){var s=doEval("%AsyncGenerator%");if(s&&m){t=m(s.prototype)}}$[e]=t;return t};var _={__proto__:null,"%ArrayBufferPrototype%":["ArrayBuffer","prototype"],"%ArrayPrototype%":["Array","prototype"],"%ArrayProto_entries%":["Array","prototype","entries"],"%ArrayProto_forEach%":["Array","prototype","forEach"],"%ArrayProto_keys%":["Array","prototype","keys"],"%ArrayProto_values%":["Array","prototype","values"],"%AsyncFunctionPrototype%":["AsyncFunction","prototype"],"%AsyncGenerator%":["AsyncGeneratorFunction","prototype"],"%AsyncGeneratorPrototype%":["AsyncGeneratorFunction","prototype","prototype"],"%BooleanPrototype%":["Boolean","prototype"],"%DataViewPrototype%":["DataView","prototype"],"%DatePrototype%":["Date","prototype"],"%ErrorPrototype%":["Error","prototype"],"%EvalErrorPrototype%":["EvalError","prototype"],"%Float32ArrayPrototype%":["Float32Array","prototype"],"%Float64ArrayPrototype%":["Float64Array","prototype"],"%FunctionPrototype%":["Function","prototype"],"%Generator%":["GeneratorFunction","prototype"],"%GeneratorPrototype%":["GeneratorFunction","prototype","prototype"],"%Int8ArrayPrototype%":["Int8Array","prototype"],"%Int16ArrayPrototype%":["Int16Array","prototype"],"%Int32ArrayPrototype%":["Int32Array","prototype"],"%JSONParse%":["JSON","parse"],"%JSONStringify%":["JSON","stringify"],"%MapPrototype%":["Map","prototype"],"%NumberPrototype%":["Number","prototype"],"%ObjectPrototype%":["Object","prototype"],"%ObjProto_toString%":["Object","prototype","toString"],"%ObjProto_valueOf%":["Object","prototype","valueOf"],"%PromisePrototype%":["Promise","prototype"],"%PromiseProto_then%":["Promise","prototype","then"],"%Promise_all%":["Promise","all"],"%Promise_reject%":["Promise","reject"],"%Promise_resolve%":["Promise","resolve"],"%RangeErrorPrototype%":["RangeError","prototype"],"%ReferenceErrorPrototype%":["ReferenceError","prototype"],"%RegExpPrototype%":["RegExp","prototype"],"%SetPrototype%":["Set","prototype"],"%SharedArrayBufferPrototype%":["SharedArrayBuffer","prototype"],"%StringPrototype%":["String","prototype"],"%SymbolPrototype%":["Symbol","prototype"],"%SyntaxErrorPrototype%":["SyntaxError","prototype"],"%TypedArrayPrototype%":["TypedArray","prototype"],"%TypeErrorPrototype%":["TypeError","prototype"],"%Uint8ArrayPrototype%":["Uint8Array","prototype"],"%Uint8ClampedArrayPrototype%":["Uint8ClampedArray","prototype"],"%Uint16ArrayPrototype%":["Uint16Array","prototype"],"%Uint32ArrayPrototype%":["Uint32Array","prototype"],"%URIErrorPrototype%":["URIError","prototype"],"%WeakMapPrototype%":["WeakMap","prototype"],"%WeakSetPrototype%":["WeakSet","prototype"]};var A=r(5112);var S=r(9776);var j=A.call(Function.call,Array.prototype.concat);var E=A.call(Function.apply,Array.prototype.splice);var R=A.call(Function.call,String.prototype.replace);var x=A.call(Function.call,String.prototype.slice);var k=A.call(Function.call,RegExp.prototype.exec);var I=/[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;var P=/\\(\\)?/g;var T=function stringToPath(e){var t=x(e,0,1);var r=x(e,-1);if(t==="%"&&r!=="%"){throw new u("invalid intrinsic syntax, expected closing `%`")}else if(r==="%"&&t!=="%"){throw new u("invalid intrinsic syntax, expected opening `%`")}var s=[];R(e,I,(function(e,t,r,n){s[s.length]=r?R(n,P,"$1"):t||e}));return s};var C=function getBaseIntrinsic(e,t){var r=e;var s;if(S(_,r)){s=_[r];r="%"+s[0]+"%"}if(S($,r)){var n=$[r];if(n===y){n=w(r)}if(typeof n==="undefined"&&!t){throw new c("intrinsic "+e+" exists, but is not available. Please file an issue!")}return{alias:s,name:r,value:n}}throw new u("intrinsic "+e+" does not exist!")};e.exports=function GetIntrinsic(e,t){if(typeof e!=="string"||e.length===0){throw new c("intrinsic name must be a non-empty string")}if(arguments.length>1&&typeof t!=="boolean"){throw new c('"allowMissing" argument must be a boolean')}if(k(/^%?[^%]*%?$/,e)===null){throw new u("`%` may not be present anywhere but at the beginning and end of the intrinsic name")}var r=T(e);var n=r.length>0?r[0]:"";var o=C("%"+n+"%",t);var i=o.name;var a=o.value;var p=false;var l=o.alias;if(l){n=l[0];E(r,j([0,1],l))}for(var f=1,h=true;f<r.length;f+=1){var g=r[f];var m=x(g,0,1);var y=x(g,-1);if((m==='"'||m==="'"||m==="`"||(y==='"'||y==="'"||y==="`"))&&m!==y){throw new u("property names with quotes must have matching quotes")}if(g==="constructor"||!h){p=true}n+="."+g;i="%"+n+"%";if(S($,i)){a=$[i]}else if(a!=null){if(!(g in a)){if(!t){throw new c("base intrinsic for "+e+" exists, but the property is not available.")}return void s}if(d&&f+1>=r.length){var v=d(a,g);h=!!v;if(h&&"get"in v&&!("originalValue"in v.get)){a=v.get}else{a=a[g]}}else{h=S(a,g);a=a[g]}if(h&&!p){$[i]=a}}}return a}},6822:(e,t,r)=>{"use strict";var s=r(978);var n=s("%Object.getOwnPropertyDescriptor%",true);if(n){try{n([],"length")}catch(e){n=null}}e.exports=n},8421:(e,t,r)=>{"use strict";var s=r(4090);var n=function hasPropertyDescriptors(){return!!s};n.hasArrayLengthDefineBug=function hasArrayLengthDefineBug(){if(!s){return null}try{return s([],"length",{value:1}).length!==1}catch(e){return true}};e.exports=n},375:e=>{"use strict";var t={__proto__:null,foo:{}};var r=Object;e.exports=function hasProto(){return{__proto__:t}.foo===t.foo&&!(t instanceof r)}},4428:(e,t,r)=>{"use strict";var s=typeof Symbol!=="undefined"&&Symbol;var n=r(2542);e.exports=function hasNativeSymbols(){if(typeof s!=="function"){return false}if(typeof Symbol!=="function"){return false}if(typeof s("foo")!=="symbol"){return false}if(typeof Symbol("bar")!=="symbol"){return false}return n()}},2542:e=>{"use strict";e.exports=function hasSymbols(){if(typeof Symbol!=="function"||typeof Object.getOwnPropertySymbols!=="function"){return false}if(typeof Symbol.iterator==="symbol"){return true}var e={};var t=Symbol("test");var r=Object(t);if(typeof t==="string"){return false}if(Object.prototype.toString.call(t)!=="[object Symbol]"){return false}if(Object.prototype.toString.call(r)!=="[object Symbol]"){return false}var s=42;e[t]=s;for(t in e){return false}if(typeof Object.keys==="function"&&Object.keys(e).length!==0){return false}if(typeof Object.getOwnPropertyNames==="function"&&Object.getOwnPropertyNames(e).length!==0){return false}var n=Object.getOwnPropertySymbols(e);if(n.length!==1||n[0]!==t){return false}if(!Object.prototype.propertyIsEnumerable.call(e,t)){return false}if(typeof Object.getOwnPropertyDescriptor==="function"){var o=Object.getOwnPropertyDescriptor(e,t);if(o.value!==s||o.enumerable!==true){return false}}return true}},9776:(e,t,r)=>{"use strict";var s=Function.prototype.call;var n=Object.prototype.hasOwnProperty;var o=r(5112);e.exports=o.call(s,n)},7850:e=>{"use strict";
-/*!
- * is-number <https://github.com/jonschlinkert/is-number>
- *
- * Copyright (c) 2014-present, Jon Schlinkert.
- * Released under the MIT License.
- */e.exports=function(e){if(typeof e==="number"){return e-e===0}if(typeof e==="string"&&e.trim()!==""){return Number.isFinite?Number.isFinite(+e):isFinite(+e)}return false}},7805:(e,t,r)=>{"use strict";const s=r(9023);const n=r(7120);const o=r(1026);const i=r(2599);const isEmptyString=e=>e===""||e==="./";const micromatch=(e,t,r)=>{t=[].concat(t);e=[].concat(e);let s=new Set;let n=new Set;let i=new Set;let a=0;let onResult=e=>{i.add(e.output);if(r&&r.onResult){r.onResult(e)}};for(let i=0;i<t.length;i++){let u=o(String(t[i]),{...r,onResult:onResult},true);let c=u.state.negated||u.state.negatedExtglob;if(c)a++;for(let t of e){let e=u(t,true);let r=c?!e.isMatch:e.isMatch;if(!r)continue;if(c){s.add(e.output)}else{s.delete(e.output);n.add(e.output)}}}let u=a===t.length?[...i]:[...n];let c=u.filter((e=>!s.has(e)));if(r&&c.length===0){if(r.failglob===true){throw new Error(`No matches found for "${t.join(", ")}"`)}if(r.nonull===true||r.nullglob===true){return r.unescape?t.map((e=>e.replace(/\\/g,""))):t}}return c};micromatch.match=micromatch;micromatch.matcher=(e,t)=>o(e,t);micromatch.isMatch=(e,t,r)=>o(t,r)(e);micromatch.any=micromatch.isMatch;micromatch.not=(e,t,r={})=>{t=[].concat(t).map(String);let s=new Set;let n=[];let onResult=e=>{if(r.onResult)r.onResult(e);n.push(e.output)};let o=new Set(micromatch(e,t,{...r,onResult:onResult}));for(let e of n){if(!o.has(e)){s.add(e)}}return[...s]};micromatch.contains=(e,t,r)=>{if(typeof e!=="string"){throw new TypeError(`Expected a string: "${s.inspect(e)}"`)}if(Array.isArray(t)){return t.some((t=>micromatch.contains(e,t,r)))}if(typeof t==="string"){if(isEmptyString(e)||isEmptyString(t)){return false}if(e.includes(t)||e.startsWith("./")&&e.slice(2).includes(t)){return true}}return micromatch.isMatch(e,t,{...r,contains:true})};micromatch.matchKeys=(e,t,r)=>{if(!i.isObject(e)){throw new TypeError("Expected the first argument to be an object")}let s=micromatch(Object.keys(e),t,r);let n={};for(let t of s)n[t]=e[t];return n};micromatch.some=(e,t,r)=>{let s=[].concat(e);for(let e of[].concat(t)){let t=o(String(e),r);if(s.some((e=>t(e)))){return true}}return false};micromatch.every=(e,t,r)=>{let s=[].concat(e);for(let e of[].concat(t)){let t=o(String(e),r);if(!s.every((e=>t(e)))){return false}}return true};micromatch.all=(e,t,r)=>{if(typeof e!=="string"){throw new TypeError(`Expected a string: "${s.inspect(e)}"`)}return[].concat(t).every((t=>o(t,r)(e)))};micromatch.capture=(e,t,r)=>{let s=i.isWindows(r);let n=o.makeRe(String(e),{...r,capture:true});let a=n.exec(s?i.toPosixSlashes(t):t);if(a){return a.slice(1).map((e=>e===void 0?"":e))}};micromatch.makeRe=(...e)=>o.makeRe(...e);micromatch.scan=(...e)=>o.scan(...e);micromatch.parse=(e,t)=>{let r=[];for(let s of[].concat(e||[])){for(let e of n(String(s),t)){r.push(o.parse(e,t))}}return r};micromatch.braces=(e,t)=>{if(typeof e!=="string")throw new TypeError("Expected a string");if(t&&t.nobrace===true||!/\{.*\}/.test(e)){return[e]}return n(e,t)};micromatch.braceExpand=(e,t)=>{if(typeof e!=="string")throw new TypeError("Expected a string");return micromatch.braces(e,{...t,expand:true})};e.exports=micromatch},5278:(e,t,r)=>{var s=typeof Map==="function"&&Map.prototype;var n=Object.getOwnPropertyDescriptor&&s?Object.getOwnPropertyDescriptor(Map.prototype,"size"):null;var o=s&&n&&typeof n.get==="function"?n.get:null;var i=s&&Map.prototype.forEach;var a=typeof Set==="function"&&Set.prototype;var u=Object.getOwnPropertyDescriptor&&a?Object.getOwnPropertyDescriptor(Set.prototype,"size"):null;var c=a&&u&&typeof u.get==="function"?u.get:null;var p=a&&Set.prototype.forEach;var l=typeof WeakMap==="function"&&WeakMap.prototype;var d=l?WeakMap.prototype.has:null;var f=typeof WeakSet==="function"&&WeakSet.prototype;var h=f?WeakSet.prototype.has:null;var g=typeof WeakRef==="function"&&WeakRef.prototype;var m=g?WeakRef.prototype.deref:null;var y=Boolean.prototype.valueOf;var v=Object.prototype.toString;var $=Function.prototype.toString;var b=String.prototype.match;var w=String.prototype.slice;var _=String.prototype.replace;var A=String.prototype.toUpperCase;var S=String.prototype.toLowerCase;var j=RegExp.prototype.test;var E=Array.prototype.concat;var R=Array.prototype.join;var x=Array.prototype.slice;var k=Math.floor;var I=typeof BigInt==="function"?BigInt.prototype.valueOf:null;var P=Object.getOwnPropertySymbols;var T=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?Symbol.prototype.toString:null;var C=typeof Symbol==="function"&&typeof Symbol.iterator==="object";var O=typeof Symbol==="function"&&Symbol.toStringTag&&(typeof Symbol.toStringTag===C?"object":"symbol")?Symbol.toStringTag:null;var M=Object.prototype.propertyIsEnumerable;var N=(typeof Reflect==="function"?Reflect.getPrototypeOf:Object.getPrototypeOf)||([].__proto__===Array.prototype?function(e){return e.__proto__}:null);function addNumericSeparator(e,t){if(e===Infinity||e===-Infinity||e!==e||e&&e>-1e3&&e<1e3||j.call(/e/,t)){return t}var r=/[0-9](?=(?:[0-9]{3})+(?![0-9]))/g;if(typeof e==="number"){var s=e<0?-k(-e):k(e);if(s!==e){var n=String(s);var o=w.call(t,n.length+1);return _.call(n,r,"$&_")+"."+_.call(_.call(o,/([0-9]{3})/g,"$&_"),/_$/,"")}}return _.call(t,r,"$&_")}var L=r(8050);var B=L.custom;var F=isSymbol(B)?B:null;e.exports=function inspect_(e,t,r,s){var n=t||{};if(has(n,"quoteStyle")&&(n.quoteStyle!=="single"&&n.quoteStyle!=="double")){throw new TypeError('option "quoteStyle" must be "single" or "double"')}if(has(n,"maxStringLength")&&(typeof n.maxStringLength==="number"?n.maxStringLength<0&&n.maxStringLength!==Infinity:n.maxStringLength!==null)){throw new TypeError('option "maxStringLength", if provided, must be a positive integer, Infinity, or `null`')}var a=has(n,"customInspect")?n.customInspect:true;if(typeof a!=="boolean"&&a!=="symbol"){throw new TypeError("option \"customInspect\", if provided, must be `true`, `false`, or `'symbol'`")}if(has(n,"indent")&&n.indent!==null&&n.indent!=="\t"&&!(parseInt(n.indent,10)===n.indent&&n.indent>0)){throw new TypeError('option "indent" must be "\\t", an integer > 0, or `null`')}if(has(n,"numericSeparator")&&typeof n.numericSeparator!=="boolean"){throw new TypeError('option "numericSeparator", if provided, must be `true` or `false`')}var u=n.numericSeparator;if(typeof e==="undefined"){return"undefined"}if(e===null){return"null"}if(typeof e==="boolean"){return e?"true":"false"}if(typeof e==="string"){return inspectString(e,n)}if(typeof e==="number"){if(e===0){return Infinity/e>0?"0":"-0"}var l=String(e);return u?addNumericSeparator(e,l):l}if(typeof e==="bigint"){var d=String(e)+"n";return u?addNumericSeparator(e,d):d}var f=typeof n.depth==="undefined"?5:n.depth;if(typeof r==="undefined"){r=0}if(r>=f&&f>0&&typeof e==="object"){return isArray(e)?"[Array]":"[Object]"}var h=getIndent(n,r);if(typeof s==="undefined"){s=[]}else if(indexOf(s,e)>=0){return"[Circular]"}function inspect(e,t,o){if(t){s=x.call(s);s.push(t)}if(o){var i={depth:n.depth};if(has(n,"quoteStyle")){i.quoteStyle=n.quoteStyle}return inspect_(e,i,r+1,s)}return inspect_(e,n,r+1,s)}if(typeof e==="function"&&!isRegExp(e)){var g=nameOf(e);var m=arrObjKeys(e,inspect);return"[Function"+(g?": "+g:" (anonymous)")+"]"+(m.length>0?" { "+R.call(m,", ")+" }":"")}if(isSymbol(e)){var v=C?_.call(String(e),/^(Symbol\(.*\))_[^)]*$/,"$1"):T.call(e);return typeof e==="object"&&!C?markBoxed(v):v}if(isElement(e)){var $="<"+S.call(String(e.nodeName));var b=e.attributes||[];for(var A=0;A<b.length;A++){$+=" "+b[A].name+"="+wrapQuotes(quote(b[A].value),"double",n)}$+=">";if(e.childNodes&&e.childNodes.length){$+="..."}$+="</"+S.call(String(e.nodeName))+">";return $}if(isArray(e)){if(e.length===0){return"[]"}var j=arrObjKeys(e,inspect);if(h&&!singleLineValues(j)){return"["+indentedJoin(j,h)+"]"}return"[ "+R.call(j,", ")+" ]"}if(isError(e)){var k=arrObjKeys(e,inspect);if(!("cause"in Error.prototype)&&"cause"in e&&!M.call(e,"cause")){return"{ ["+String(e)+"] "+R.call(E.call("[cause]: "+inspect(e.cause),k),", ")+" }"}if(k.length===0){return"["+String(e)+"]"}return"{ ["+String(e)+"] "+R.call(k,", ")+" }"}if(typeof e==="object"&&a){if(F&&typeof e[F]==="function"&&L){return L(e,{depth:f-r})}else if(a!=="symbol"&&typeof e.inspect==="function"){return e.inspect()}}if(isMap(e)){var P=[];if(i){i.call(e,(function(t,r){P.push(inspect(r,e,true)+" => "+inspect(t,e))}))}return collectionOf("Map",o.call(e),P,h)}if(isSet(e)){var B=[];if(p){p.call(e,(function(t){B.push(inspect(t,e))}))}return collectionOf("Set",c.call(e),B,h)}if(isWeakMap(e)){return weakCollectionOf("WeakMap")}if(isWeakSet(e)){return weakCollectionOf("WeakSet")}if(isWeakRef(e)){return weakCollectionOf("WeakRef")}if(isNumber(e)){return markBoxed(inspect(Number(e)))}if(isBigInt(e)){return markBoxed(inspect(I.call(e)))}if(isBoolean(e)){return markBoxed(y.call(e))}if(isString(e)){return markBoxed(inspect(String(e)))}if(!isDate(e)&&!isRegExp(e)){var D=arrObjKeys(e,inspect);var q=N?N(e)===Object.prototype:e instanceof Object||e.constructor===Object;var G=e instanceof Object?"":"null prototype";var H=!q&&O&&Object(e)===e&&O in e?w.call(toStr(e),8,-1):G?"Object":"";var U=q||typeof e.constructor!=="function"?"":e.constructor.name?e.constructor.name+" ":"";var K=U+(H||G?"["+R.call(E.call([],H||[],G||[]),": ")+"] ":"");if(D.length===0){return K+"{}"}if(h){return K+"{"+indentedJoin(D,h)+"}"}return K+"{ "+R.call(D,", ")+" }"}return String(e)};function wrapQuotes(e,t,r){var s=(r.quoteStyle||t)==="double"?'"':"'";return s+e+s}function quote(e){return _.call(String(e),/"/g,"&quot;")}function isArray(e){return toStr(e)==="[object Array]"&&(!O||!(typeof e==="object"&&O in e))}function isDate(e){return toStr(e)==="[object Date]"&&(!O||!(typeof e==="object"&&O in e))}function isRegExp(e){return toStr(e)==="[object RegExp]"&&(!O||!(typeof e==="object"&&O in e))}function isError(e){return toStr(e)==="[object Error]"&&(!O||!(typeof e==="object"&&O in e))}function isString(e){return toStr(e)==="[object String]"&&(!O||!(typeof e==="object"&&O in e))}function isNumber(e){return toStr(e)==="[object Number]"&&(!O||!(typeof e==="object"&&O in e))}function isBoolean(e){return toStr(e)==="[object Boolean]"&&(!O||!(typeof e==="object"&&O in e))}function isSymbol(e){if(C){return e&&typeof e==="object"&&e instanceof Symbol}if(typeof e==="symbol"){return true}if(!e||typeof e!=="object"||!T){return false}try{T.call(e);return true}catch(e){}return false}function isBigInt(e){if(!e||typeof e!=="object"||!I){return false}try{I.call(e);return true}catch(e){}return false}var D=Object.prototype.hasOwnProperty||function(e){return e in this};function has(e,t){return D.call(e,t)}function toStr(e){return v.call(e)}function nameOf(e){if(e.name){return e.name}var t=b.call($.call(e),/^function\s*([\w$]+)/);if(t){return t[1]}return null}function indexOf(e,t){if(e.indexOf){return e.indexOf(t)}for(var r=0,s=e.length;r<s;r++){if(e[r]===t){return r}}return-1}function isMap(e){if(!o||!e||typeof e!=="object"){return false}try{o.call(e);try{c.call(e)}catch(e){return true}return e instanceof Map}catch(e){}return false}function isWeakMap(e){if(!d||!e||typeof e!=="object"){return false}try{d.call(e,d);try{h.call(e,h)}catch(e){return true}return e instanceof WeakMap}catch(e){}return false}function isWeakRef(e){if(!m||!e||typeof e!=="object"){return false}try{m.call(e);return true}catch(e){}return false}function isSet(e){if(!c||!e||typeof e!=="object"){return false}try{c.call(e);try{o.call(e)}catch(e){return true}return e instanceof Set}catch(e){}return false}function isWeakSet(e){if(!h||!e||typeof e!=="object"){return false}try{h.call(e,h);try{d.call(e,d)}catch(e){return true}return e instanceof WeakSet}catch(e){}return false}function isElement(e){if(!e||typeof e!=="object"){return false}if(typeof HTMLElement!=="undefined"&&e instanceof HTMLElement){return true}return typeof e.nodeName==="string"&&typeof e.getAttribute==="function"}function inspectString(e,t){if(e.length>t.maxStringLength){var r=e.length-t.maxStringLength;var s="... "+r+" more character"+(r>1?"s":"");return inspectString(w.call(e,0,t.maxStringLength),t)+s}var n=_.call(_.call(e,/(['\\])/g,"\\$1"),/[\x00-\x1f]/g,lowbyte);return wrapQuotes(n,"single",t)}function lowbyte(e){var t=e.charCodeAt(0);var r={8:"b",9:"t",10:"n",12:"f",13:"r"}[t];if(r){return"\\"+r}return"\\x"+(t<16?"0":"")+A.call(t.toString(16))}function markBoxed(e){return"Object("+e+")"}function weakCollectionOf(e){return e+" { ? }"}function collectionOf(e,t,r,s){var n=s?indentedJoin(r,s):R.call(r,", ");return e+" ("+t+") {"+n+"}"}function singleLineValues(e){for(var t=0;t<e.length;t++){if(indexOf(e[t],"\n")>=0){return false}}return true}function getIndent(e,t){var r;if(e.indent==="\t"){r="\t"}else if(typeof e.indent==="number"&&e.indent>0){r=R.call(Array(e.indent+1)," ")}else{return null}return{base:r,prev:R.call(Array(t+1),r)}}function indentedJoin(e,t){if(e.length===0){return""}var r="\n"+t.prev+t.base;return r+R.call(e,","+r)+"\n"+t.prev}function arrObjKeys(e,t){var r=isArray(e);var s=[];if(r){s.length=e.length;for(var n=0;n<e.length;n++){s[n]=has(e,n)?t(e[n],e):""}}var o=typeof P==="function"?P(e):[];var i;if(C){i={};for(var a=0;a<o.length;a++){i["$"+o[a]]=o[a]}}for(var u in e){if(!has(e,u)){continue}if(r&&String(Number(u))===u&&u<e.length){continue}if(C&&i["$"+u]instanceof Symbol){continue}else if(j.call(/[^\w$]/,u)){s.push(t(u,e)+": "+t(e[u],e))}else{s.push(u+": "+t(e[u],e))}}if(typeof P==="function"){for(var c=0;c<o.length;c++){if(M.call(e,o[c])){s.push("["+t(o[c])+"]: "+t(e[o[c]],e))}}}return s}},8050:(e,t,r)=>{e.exports=r(9023).inspect},1026:(e,t,r)=>{"use strict";e.exports=r(4156)},7223:(e,t,r)=>{"use strict";const s=r(6928);const n="\\\\/";const o=`[^${n}]`;const i="\\.";const a="\\+";const u="\\?";const c="\\/";const p="(?=.)";const l="[^/]";const d=`(?:${c}|$)`;const f=`(?:^|${c})`;const h=`${i}{1,2}${d}`;const g=`(?!${i})`;const m=`(?!${f}${h})`;const y=`(?!${i}{0,1}${d})`;const v=`(?!${h})`;const $=`[^.${c}]`;const b=`${l}*?`;const w={DOT_LITERAL:i,PLUS_LITERAL:a,QMARK_LITERAL:u,SLASH_LITERAL:c,ONE_CHAR:p,QMARK:l,END_ANCHOR:d,DOTS_SLASH:h,NO_DOT:g,NO_DOTS:m,NO_DOT_SLASH:y,NO_DOTS_SLASH:v,QMARK_NO_DOT:$,STAR:b,START_ANCHOR:f};const _={...w,SLASH_LITERAL:`[${n}]`,QMARK:o,STAR:`${o}*?`,DOTS_SLASH:`${i}{1,2}(?:[${n}]|$)`,NO_DOT:`(?!${i})`,NO_DOTS:`(?!(?:^|[${n}])${i}{1,2}(?:[${n}]|$))`,NO_DOT_SLASH:`(?!${i}{0,1}(?:[${n}]|$))`,NO_DOTS_SLASH:`(?!${i}{1,2}(?:[${n}]|$))`,QMARK_NO_DOT:`[^.${n}]`,START_ANCHOR:`(?:^|[${n}])`,END_ANCHOR:`(?:[${n}]|$)`};const A={alnum:"a-zA-Z0-9",alpha:"a-zA-Z",ascii:"\\x00-\\x7F",blank:" \\t",cntrl:"\\x00-\\x1F\\x7F",digit:"0-9",graph:"\\x21-\\x7E",lower:"a-z",print:"\\x20-\\x7E ",punct:"\\-!\"#$%&'()\\*+,./:;<=>?@[\\]^_`{|}~",space:" \\t\\r\\n\\v\\f",upper:"A-Z",word:"A-Za-z0-9_",xdigit:"A-Fa-f0-9"};e.exports={MAX_LENGTH:1024*64,POSIX_REGEX_SOURCE:A,REGEX_BACKSLASH:/\\(?![*+?^${}(|)[\]])/g,REGEX_NON_SPECIAL_CHARS:/^[^@![\].,$*+?^{}()|\\/]+/,REGEX_SPECIAL_CHARS:/[-*+?.^${}(|)[\]]/,REGEX_SPECIAL_CHARS_BACKREF:/(\\?)((\W)(\3*))/g,REGEX_SPECIAL_CHARS_GLOBAL:/([-*+?.^${}(|)[\]])/g,REGEX_REMOVE_BACKSLASH:/(?:\[.*?[^\\]\]|\\(?=.))/g,REPLACEMENTS:{"***":"*","**/**":"**","**/**/**":"**"},CHAR_0:48,CHAR_9:57,CHAR_UPPERCASE_A:65,CHAR_LOWERCASE_A:97,CHAR_UPPERCASE_Z:90,CHAR_LOWERCASE_Z:122,CHAR_LEFT_PARENTHESES:40,CHAR_RIGHT_PARENTHESES:41,CHAR_ASTERISK:42,CHAR_AMPERSAND:38,CHAR_AT:64,CHAR_BACKWARD_SLASH:92,CHAR_CARRIAGE_RETURN:13,CHAR_CIRCUMFLEX_ACCENT:94,CHAR_COLON:58,CHAR_COMMA:44,CHAR_DOT:46,CHAR_DOUBLE_QUOTE:34,CHAR_EQUAL:61,CHAR_EXCLAMATION_MARK:33,CHAR_FORM_FEED:12,CHAR_FORWARD_SLASH:47,CHAR_GRAVE_ACCENT:96,CHAR_HASH:35,CHAR_HYPHEN_MINUS:45,CHAR_LEFT_ANGLE_BRACKET:60,CHAR_LEFT_CURLY_BRACE:123,CHAR_LEFT_SQUARE_BRACKET:91,CHAR_LINE_FEED:10,CHAR_NO_BREAK_SPACE:160,CHAR_PERCENT:37,CHAR_PLUS:43,CHAR_QUESTION_MARK:63,CHAR_RIGHT_ANGLE_BRACKET:62,CHAR_RIGHT_CURLY_BRACE:125,CHAR_RIGHT_SQUARE_BRACKET:93,CHAR_SEMICOLON:59,CHAR_SINGLE_QUOTE:39,CHAR_SPACE:32,CHAR_TAB:9,CHAR_UNDERSCORE:95,CHAR_VERTICAL_LINE:124,CHAR_ZERO_WIDTH_NOBREAK_SPACE:65279,SEP:s.sep,extglobChars(e){return{"!":{type:"negate",open:"(?:(?!(?:",close:`))${e.STAR})`},"?":{type:"qmark",open:"(?:",close:")?"},"+":{type:"plus",open:"(?:",close:")+"},"*":{type:"star",open:"(?:",close:")*"},"@":{type:"at",open:"(?:",close:")"}}},globChars(e){return e===true?_:w}}},3717:(e,t,r)=>{"use strict";const s=r(7223);const n=r(2599);const{MAX_LENGTH:o,POSIX_REGEX_SOURCE:i,REGEX_NON_SPECIAL_CHARS:a,REGEX_SPECIAL_CHARS_BACKREF:u,REPLACEMENTS:c}=s;const expandRange=(e,t)=>{if(typeof t.expandRange==="function"){return t.expandRange(...e,t)}e.sort();const r=`[${e.join("-")}]`;try{new RegExp(r)}catch(t){return e.map((e=>n.escapeRegex(e))).join("..")}return r};const syntaxError=(e,t)=>`Missing ${e}: "${t}" - use "\\\\${t}" to match literal characters`;const parse=(e,t)=>{if(typeof e!=="string"){throw new TypeError("Expected a string")}e=c[e]||e;const r={...t};const p=typeof r.maxLength==="number"?Math.min(o,r.maxLength):o;let l=e.length;if(l>p){throw new SyntaxError(`Input length: ${l}, exceeds maximum allowed length: ${p}`)}const d={type:"bos",value:"",output:r.prepend||""};const f=[d];const h=r.capture?"":"?:";const g=n.isWindows(t);const m=s.globChars(g);const y=s.extglobChars(m);const{DOT_LITERAL:v,PLUS_LITERAL:$,SLASH_LITERAL:b,ONE_CHAR:w,DOTS_SLASH:_,NO_DOT:A,NO_DOT_SLASH:S,NO_DOTS_SLASH:j,QMARK:E,QMARK_NO_DOT:R,STAR:x,START_ANCHOR:k}=m;const globstar=e=>`(${h}(?:(?!${k}${e.dot?_:v}).)*?)`;const I=r.dot?"":A;const P=r.dot?E:R;let T=r.bash===true?globstar(r):x;if(r.capture){T=`(${T})`}if(typeof r.noext==="boolean"){r.noextglob=r.noext}const C={input:e,index:-1,start:0,dot:r.dot===true,consumed:"",output:"",prefix:"",backtrack:false,negated:false,brackets:0,braces:0,parens:0,quotes:0,globstar:false,tokens:f};e=n.removePrefix(e,C);l=e.length;const O=[];const M=[];const N=[];let L=d;let B;const eos=()=>C.index===l-1;const F=C.peek=(t=1)=>e[C.index+t];const D=C.advance=()=>e[++C.index]||"";const remaining=()=>e.slice(C.index+1);const consume=(e="",t=0)=>{C.consumed+=e;C.index+=t};const append=e=>{C.output+=e.output!=null?e.output:e.value;consume(e.value)};const negate=()=>{let e=1;while(F()==="!"&&(F(2)!=="("||F(3)==="?")){D();C.start++;e++}if(e%2===0){return false}C.negated=true;C.start++;return true};const increment=e=>{C[e]++;N.push(e)};const decrement=e=>{C[e]--;N.pop()};const push=e=>{if(L.type==="globstar"){const t=C.braces>0&&(e.type==="comma"||e.type==="brace");const r=e.extglob===true||O.length&&(e.type==="pipe"||e.type==="paren");if(e.type!=="slash"&&e.type!=="paren"&&!t&&!r){C.output=C.output.slice(0,-L.output.length);L.type="star";L.value="*";L.output=T;C.output+=L.output}}if(O.length&&e.type!=="paren"){O[O.length-1].inner+=e.value}if(e.value||e.output)append(e);if(L&&L.type==="text"&&e.type==="text"){L.value+=e.value;L.output=(L.output||"")+e.value;return}e.prev=L;f.push(e);L=e};const extglobOpen=(e,t)=>{const s={...y[t],conditions:1,inner:""};s.prev=L;s.parens=C.parens;s.output=C.output;const n=(r.capture?"(":"")+s.open;increment("parens");push({type:e,value:t,output:C.output?"":w});push({type:"paren",extglob:true,value:D(),output:n});O.push(s)};const extglobClose=e=>{let s=e.close+(r.capture?")":"");let n;if(e.type==="negate"){let o=T;if(e.inner&&e.inner.length>1&&e.inner.includes("/")){o=globstar(r)}if(o!==T||eos()||/^\)+$/.test(remaining())){s=e.close=`)$))${o}`}if(e.inner.includes("*")&&(n=remaining())&&/^\.[^\\/.]+$/.test(n)){const r=parse(n,{...t,fastpaths:false}).output;s=e.close=`)${r})${o})`}if(e.prev.type==="bos"){C.negatedExtglob=true}}push({type:"paren",extglob:true,value:B,output:s});decrement("parens")};if(r.fastpaths!==false&&!/(^[*!]|[/()[\]{}"])/.test(e)){let s=false;let o=e.replace(u,((e,t,r,n,o,i)=>{if(n==="\\"){s=true;return e}if(n==="?"){if(t){return t+n+(o?E.repeat(o.length):"")}if(i===0){return P+(o?E.repeat(o.length):"")}return E.repeat(r.length)}if(n==="."){return v.repeat(r.length)}if(n==="*"){if(t){return t+n+(o?T:"")}return T}return t?e:`\\${e}`}));if(s===true){if(r.unescape===true){o=o.replace(/\\/g,"")}else{o=o.replace(/\\+/g,(e=>e.length%2===0?"\\\\":e?"\\":""))}}if(o===e&&r.contains===true){C.output=e;return C}C.output=n.wrapOutput(o,C,t);return C}while(!eos()){B=D();if(B==="\0"){continue}if(B==="\\"){const e=F();if(e==="/"&&r.bash!==true){continue}if(e==="."||e===";"){continue}if(!e){B+="\\";push({type:"text",value:B});continue}const t=/^\\+/.exec(remaining());let s=0;if(t&&t[0].length>2){s=t[0].length;C.index+=s;if(s%2!==0){B+="\\"}}if(r.unescape===true){B=D()}else{B+=D()}if(C.brackets===0){push({type:"text",value:B});continue}}if(C.brackets>0&&(B!=="]"||L.value==="["||L.value==="[^")){if(r.posix!==false&&B===":"){const e=L.value.slice(1);if(e.includes("[")){L.posix=true;if(e.includes(":")){const e=L.value.lastIndexOf("[");const t=L.value.slice(0,e);const r=L.value.slice(e+2);const s=i[r];if(s){L.value=t+s;C.backtrack=true;D();if(!d.output&&f.indexOf(L)===1){d.output=w}continue}}}}if(B==="["&&F()!==":"||B==="-"&&F()==="]"){B=`\\${B}`}if(B==="]"&&(L.value==="["||L.value==="[^")){B=`\\${B}`}if(r.posix===true&&B==="!"&&L.value==="["){B="^"}L.value+=B;append({value:B});continue}if(C.quotes===1&&B!=='"'){B=n.escapeRegex(B);L.value+=B;append({value:B});continue}if(B==='"'){C.quotes=C.quotes===1?0:1;if(r.keepQuotes===true){push({type:"text",value:B})}continue}if(B==="("){increment("parens");push({type:"paren",value:B});continue}if(B===")"){if(C.parens===0&&r.strictBrackets===true){throw new SyntaxError(syntaxError("opening","("))}const e=O[O.length-1];if(e&&C.parens===e.parens+1){extglobClose(O.pop());continue}push({type:"paren",value:B,output:C.parens?")":"\\)"});decrement("parens");continue}if(B==="["){if(r.nobracket===true||!remaining().includes("]")){if(r.nobracket!==true&&r.strictBrackets===true){throw new SyntaxError(syntaxError("closing","]"))}B=`\\${B}`}else{increment("brackets")}push({type:"bracket",value:B});continue}if(B==="]"){if(r.nobracket===true||L&&L.type==="bracket"&&L.value.length===1){push({type:"text",value:B,output:`\\${B}`});continue}if(C.brackets===0){if(r.strictBrackets===true){throw new SyntaxError(syntaxError("opening","["))}push({type:"text",value:B,output:`\\${B}`});continue}decrement("brackets");const e=L.value.slice(1);if(L.posix!==true&&e[0]==="^"&&!e.includes("/")){B=`/${B}`}L.value+=B;append({value:B});if(r.literalBrackets===false||n.hasRegexChars(e)){continue}const t=n.escapeRegex(L.value);C.output=C.output.slice(0,-L.value.length);if(r.literalBrackets===true){C.output+=t;L.value=t;continue}L.value=`(${h}${t}|${L.value})`;C.output+=L.value;continue}if(B==="{"&&r.nobrace!==true){increment("braces");const e={type:"brace",value:B,output:"(",outputIndex:C.output.length,tokensIndex:C.tokens.length};M.push(e);push(e);continue}if(B==="}"){const e=M[M.length-1];if(r.nobrace===true||!e){push({type:"text",value:B,output:B});continue}let t=")";if(e.dots===true){const e=f.slice();const s=[];for(let t=e.length-1;t>=0;t--){f.pop();if(e[t].type==="brace"){break}if(e[t].type!=="dots"){s.unshift(e[t].value)}}t=expandRange(s,r);C.backtrack=true}if(e.comma!==true&&e.dots!==true){const r=C.output.slice(0,e.outputIndex);const s=C.tokens.slice(e.tokensIndex);e.value=e.output="\\{";B=t="\\}";C.output=r;for(const e of s){C.output+=e.output||e.value}}push({type:"brace",value:B,output:t});decrement("braces");M.pop();continue}if(B==="|"){if(O.length>0){O[O.length-1].conditions++}push({type:"text",value:B});continue}if(B===","){let e=B;const t=M[M.length-1];if(t&&N[N.length-1]==="braces"){t.comma=true;e="|"}push({type:"comma",value:B,output:e});continue}if(B==="/"){if(L.type==="dot"&&C.index===C.start+1){C.start=C.index+1;C.consumed="";C.output="";f.pop();L=d;continue}push({type:"slash",value:B,output:b});continue}if(B==="."){if(C.braces>0&&L.type==="dot"){if(L.value===".")L.output=v;const e=M[M.length-1];L.type="dots";L.output+=B;L.value+=B;e.dots=true;continue}if(C.braces+C.parens===0&&L.type!=="bos"&&L.type!=="slash"){push({type:"text",value:B,output:v});continue}push({type:"dot",value:B,output:v});continue}if(B==="?"){const e=L&&L.value==="(";if(!e&&r.noextglob!==true&&F()==="("&&F(2)!=="?"){extglobOpen("qmark",B);continue}if(L&&L.type==="paren"){const e=F();let t=B;if(e==="<"&&!n.supportsLookbehinds()){throw new Error("Node.js v10 or higher is required for regex lookbehinds")}if(L.value==="("&&!/[!=<:]/.test(e)||e==="<"&&!/<([!=]|\w+>)/.test(remaining())){t=`\\${B}`}push({type:"text",value:B,output:t});continue}if(r.dot!==true&&(L.type==="slash"||L.type==="bos")){push({type:"qmark",value:B,output:R});continue}push({type:"qmark",value:B,output:E});continue}if(B==="!"){if(r.noextglob!==true&&F()==="("){if(F(2)!=="?"||!/[!=<:]/.test(F(3))){extglobOpen("negate",B);continue}}if(r.nonegate!==true&&C.index===0){negate();continue}}if(B==="+"){if(r.noextglob!==true&&F()==="("&&F(2)!=="?"){extglobOpen("plus",B);continue}if(L&&L.value==="("||r.regex===false){push({type:"plus",value:B,output:$});continue}if(L&&(L.type==="bracket"||L.type==="paren"||L.type==="brace")||C.parens>0){push({type:"plus",value:B});continue}push({type:"plus",value:$});continue}if(B==="@"){if(r.noextglob!==true&&F()==="("&&F(2)!=="?"){push({type:"at",extglob:true,value:B,output:""});continue}push({type:"text",value:B});continue}if(B!=="*"){if(B==="$"||B==="^"){B=`\\${B}`}const e=a.exec(remaining());if(e){B+=e[0];C.index+=e[0].length}push({type:"text",value:B});continue}if(L&&(L.type==="globstar"||L.star===true)){L.type="star";L.star=true;L.value+=B;L.output=T;C.backtrack=true;C.globstar=true;consume(B);continue}let t=remaining();if(r.noextglob!==true&&/^\([^?]/.test(t)){extglobOpen("star",B);continue}if(L.type==="star"){if(r.noglobstar===true){consume(B);continue}const s=L.prev;const n=s.prev;const o=s.type==="slash"||s.type==="bos";const i=n&&(n.type==="star"||n.type==="globstar");if(r.bash===true&&(!o||t[0]&&t[0]!=="/")){push({type:"star",value:B,output:""});continue}const a=C.braces>0&&(s.type==="comma"||s.type==="brace");const u=O.length&&(s.type==="pipe"||s.type==="paren");if(!o&&s.type!=="paren"&&!a&&!u){push({type:"star",value:B,output:""});continue}while(t.slice(0,3)==="/**"){const r=e[C.index+4];if(r&&r!=="/"){break}t=t.slice(3);consume("/**",3)}if(s.type==="bos"&&eos()){L.type="globstar";L.value+=B;L.output=globstar(r);C.output=L.output;C.globstar=true;consume(B);continue}if(s.type==="slash"&&s.prev.type!=="bos"&&!i&&eos()){C.output=C.output.slice(0,-(s.output+L.output).length);s.output=`(?:${s.output}`;L.type="globstar";L.output=globstar(r)+(r.strictSlashes?")":"|$)");L.value+=B;C.globstar=true;C.output+=s.output+L.output;consume(B);continue}if(s.type==="slash"&&s.prev.type!=="bos"&&t[0]==="/"){const e=t[1]!==void 0?"|$":"";C.output=C.output.slice(0,-(s.output+L.output).length);s.output=`(?:${s.output}`;L.type="globstar";L.output=`${globstar(r)}${b}|${b}${e})`;L.value+=B;C.output+=s.output+L.output;C.globstar=true;consume(B+D());push({type:"slash",value:"/",output:""});continue}if(s.type==="bos"&&t[0]==="/"){L.type="globstar";L.value+=B;L.output=`(?:^|${b}|${globstar(r)}${b})`;C.output=L.output;C.globstar=true;consume(B+D());push({type:"slash",value:"/",output:""});continue}C.output=C.output.slice(0,-L.output.length);L.type="globstar";L.output=globstar(r);L.value+=B;C.output+=L.output;C.globstar=true;consume(B);continue}const s={type:"star",value:B,output:T};if(r.bash===true){s.output=".*?";if(L.type==="bos"||L.type==="slash"){s.output=I+s.output}push(s);continue}if(L&&(L.type==="bracket"||L.type==="paren")&&r.regex===true){s.output=B;push(s);continue}if(C.index===C.start||L.type==="slash"||L.type==="dot"){if(L.type==="dot"){C.output+=S;L.output+=S}else if(r.dot===true){C.output+=j;L.output+=j}else{C.output+=I;L.output+=I}if(F()!=="*"){C.output+=w;L.output+=w}}push(s)}while(C.brackets>0){if(r.strictBrackets===true)throw new SyntaxError(syntaxError("closing","]"));C.output=n.escapeLast(C.output,"[");decrement("brackets")}while(C.parens>0){if(r.strictBrackets===true)throw new SyntaxError(syntaxError("closing",")"));C.output=n.escapeLast(C.output,"(");decrement("parens")}while(C.braces>0){if(r.strictBrackets===true)throw new SyntaxError(syntaxError("closing","}"));C.output=n.escapeLast(C.output,"{");decrement("braces")}if(r.strictSlashes!==true&&(L.type==="star"||L.type==="bracket")){push({type:"maybe_slash",value:"",output:`${b}?`})}if(C.backtrack===true){C.output="";for(const e of C.tokens){C.output+=e.output!=null?e.output:e.value;if(e.suffix){C.output+=e.suffix}}}return C};parse.fastpaths=(e,t)=>{const r={...t};const i=typeof r.maxLength==="number"?Math.min(o,r.maxLength):o;const a=e.length;if(a>i){throw new SyntaxError(`Input length: ${a}, exceeds maximum allowed length: ${i}`)}e=c[e]||e;const u=n.isWindows(t);const{DOT_LITERAL:p,SLASH_LITERAL:l,ONE_CHAR:d,DOTS_SLASH:f,NO_DOT:h,NO_DOTS:g,NO_DOTS_SLASH:m,STAR:y,START_ANCHOR:v}=s.globChars(u);const $=r.dot?g:h;const b=r.dot?m:h;const w=r.capture?"":"?:";const _={negated:false,prefix:""};let A=r.bash===true?".*?":y;if(r.capture){A=`(${A})`}const globstar=e=>{if(e.noglobstar===true)return A;return`(${w}(?:(?!${v}${e.dot?f:p}).)*?)`};const create=e=>{switch(e){case"*":return`${$}${d}${A}`;case".*":return`${p}${d}${A}`;case"*.*":return`${$}${A}${p}${d}${A}`;case"*/*":return`${$}${A}${l}${d}${b}${A}`;case"**":return $+globstar(r);case"**/*":return`(?:${$}${globstar(r)}${l})?${b}${d}${A}`;case"**/*.*":return`(?:${$}${globstar(r)}${l})?${b}${A}${p}${d}${A}`;case"**/.*":return`(?:${$}${globstar(r)}${l})?${p}${d}${A}`;default:{const t=/^(.*?)\.(\w+)$/.exec(e);if(!t)return;const r=create(t[1]);if(!r)return;return r+p+t[2]}}};const S=n.removePrefix(e,_);let j=create(S);if(j&&r.strictSlashes!==true){j+=`${l}?`}return j};e.exports=parse},4156:(e,t,r)=>{"use strict";const s=r(6928);const n=r(6745);const o=r(3717);const i=r(2599);const a=r(7223);const isObject=e=>e&&typeof e==="object"&&!Array.isArray(e);const picomatch=(e,t,r=false)=>{if(Array.isArray(e)){const s=e.map((e=>picomatch(e,t,r)));const arrayMatcher=e=>{for(const t of s){const r=t(e);if(r)return r}return false};return arrayMatcher}const s=isObject(e)&&e.tokens&&e.input;if(e===""||typeof e!=="string"&&!s){throw new TypeError("Expected pattern to be a non-empty string")}const n=t||{};const o=i.isWindows(t);const a=s?picomatch.compileRe(e,t):picomatch.makeRe(e,t,false,true);const u=a.state;delete a.state;let isIgnored=()=>false;if(n.ignore){const e={...t,ignore:null,onMatch:null,onResult:null};isIgnored=picomatch(n.ignore,e,r)}const matcher=(r,s=false)=>{const{isMatch:i,match:c,output:p}=picomatch.test(r,a,t,{glob:e,posix:o});const l={glob:e,state:u,regex:a,posix:o,input:r,output:p,match:c,isMatch:i};if(typeof n.onResult==="function"){n.onResult(l)}if(i===false){l.isMatch=false;return s?l:false}if(isIgnored(r)){if(typeof n.onIgnore==="function"){n.onIgnore(l)}l.isMatch=false;return s?l:false}if(typeof n.onMatch==="function"){n.onMatch(l)}return s?l:true};if(r){matcher.state=u}return matcher};picomatch.test=(e,t,r,{glob:s,posix:n}={})=>{if(typeof e!=="string"){throw new TypeError("Expected input to be a string")}if(e===""){return{isMatch:false,output:""}}const o=r||{};const a=o.format||(n?i.toPosixSlashes:null);let u=e===s;let c=u&&a?a(e):e;if(u===false){c=a?a(e):e;u=c===s}if(u===false||o.capture===true){if(o.matchBase===true||o.basename===true){u=picomatch.matchBase(e,t,r,n)}else{u=t.exec(c)}}return{isMatch:Boolean(u),match:u,output:c}};picomatch.matchBase=(e,t,r,n=i.isWindows(r))=>{const o=t instanceof RegExp?t:picomatch.makeRe(t,r);return o.test(s.basename(e))};picomatch.isMatch=(e,t,r)=>picomatch(t,r)(e);picomatch.parse=(e,t)=>{if(Array.isArray(e))return e.map((e=>picomatch.parse(e,t)));return o(e,{...t,fastpaths:false})};picomatch.scan=(e,t)=>n(e,t);picomatch.compileRe=(e,t,r=false,s=false)=>{if(r===true){return e.output}const n=t||{};const o=n.contains?"":"^";const i=n.contains?"":"$";let a=`${o}(?:${e.output})${i}`;if(e&&e.negated===true){a=`^(?!${a}).*$`}const u=picomatch.toRegex(a,t);if(s===true){u.state=e}return u};picomatch.makeRe=(e,t={},r=false,s=false)=>{if(!e||typeof e!=="string"){throw new TypeError("Expected a non-empty string")}let n={negated:false,fastpaths:true};if(t.fastpaths!==false&&(e[0]==="."||e[0]==="*")){n.output=o.fastpaths(e,t)}if(!n.output){n=o(e,t)}return picomatch.compileRe(n,t,r,s)};picomatch.toRegex=(e,t)=>{try{const r=t||{};return new RegExp(e,r.flags||(r.nocase?"i":""))}catch(e){if(t&&t.debug===true)throw e;return/$^/}};picomatch.constants=a;e.exports=picomatch},6745:(e,t,r)=>{"use strict";const s=r(2599);const{CHAR_ASTERISK:n,CHAR_AT:o,CHAR_BACKWARD_SLASH:i,CHAR_COMMA:a,CHAR_DOT:u,CHAR_EXCLAMATION_MARK:c,CHAR_FORWARD_SLASH:p,CHAR_LEFT_CURLY_BRACE:l,CHAR_LEFT_PARENTHESES:d,CHAR_LEFT_SQUARE_BRACKET:f,CHAR_PLUS:h,CHAR_QUESTION_MARK:g,CHAR_RIGHT_CURLY_BRACE:m,CHAR_RIGHT_PARENTHESES:y,CHAR_RIGHT_SQUARE_BRACKET:v}=r(7223);const isPathSeparator=e=>e===p||e===i;const depth=e=>{if(e.isPrefix!==true){e.depth=e.isGlobstar?Infinity:1}};const scan=(e,t)=>{const r=t||{};const $=e.length-1;const b=r.parts===true||r.scanToEnd===true;const w=[];const _=[];const A=[];let S=e;let j=-1;let E=0;let R=0;let x=false;let k=false;let I=false;let P=false;let T=false;let C=false;let O=false;let M=false;let N=false;let L=false;let B=0;let F;let D;let q={value:"",depth:0,isGlob:false};const eos=()=>j>=$;const peek=()=>S.charCodeAt(j+1);const advance=()=>{F=D;return S.charCodeAt(++j)};while(j<$){D=advance();let e;if(D===i){O=q.backslashes=true;D=advance();if(D===l){C=true}continue}if(C===true||D===l){B++;while(eos()!==true&&(D=advance())){if(D===i){O=q.backslashes=true;advance();continue}if(D===l){B++;continue}if(C!==true&&D===u&&(D=advance())===u){x=q.isBrace=true;I=q.isGlob=true;L=true;if(b===true){continue}break}if(C!==true&&D===a){x=q.isBrace=true;I=q.isGlob=true;L=true;if(b===true){continue}break}if(D===m){B--;if(B===0){C=false;x=q.isBrace=true;L=true;break}}}if(b===true){continue}break}if(D===p){w.push(j);_.push(q);q={value:"",depth:0,isGlob:false};if(L===true)continue;if(F===u&&j===E+1){E+=2;continue}R=j+1;continue}if(r.noext!==true){const e=D===h||D===o||D===n||D===g||D===c;if(e===true&&peek()===d){I=q.isGlob=true;P=q.isExtglob=true;L=true;if(D===c&&j===E){N=true}if(b===true){while(eos()!==true&&(D=advance())){if(D===i){O=q.backslashes=true;D=advance();continue}if(D===y){I=q.isGlob=true;L=true;break}}continue}break}}if(D===n){if(F===n)T=q.isGlobstar=true;I=q.isGlob=true;L=true;if(b===true){continue}break}if(D===g){I=q.isGlob=true;L=true;if(b===true){continue}break}if(D===f){while(eos()!==true&&(e=advance())){if(e===i){O=q.backslashes=true;advance();continue}if(e===v){k=q.isBracket=true;I=q.isGlob=true;L=true;break}}if(b===true){continue}break}if(r.nonegate!==true&&D===c&&j===E){M=q.negated=true;E++;continue}if(r.noparen!==true&&D===d){I=q.isGlob=true;if(b===true){while(eos()!==true&&(D=advance())){if(D===d){O=q.backslashes=true;D=advance();continue}if(D===y){L=true;break}}continue}break}if(I===true){L=true;if(b===true){continue}break}}if(r.noext===true){P=false;I=false}let G=S;let H="";let U="";if(E>0){H=S.slice(0,E);S=S.slice(E);R-=E}if(G&&I===true&&R>0){G=S.slice(0,R);U=S.slice(R)}else if(I===true){G="";U=S}else{G=S}if(G&&G!==""&&G!=="/"&&G!==S){if(isPathSeparator(G.charCodeAt(G.length-1))){G=G.slice(0,-1)}}if(r.unescape===true){if(U)U=s.removeBackslashes(U);if(G&&O===true){G=s.removeBackslashes(G)}}const K={prefix:H,input:e,start:E,base:G,glob:U,isBrace:x,isBracket:k,isGlob:I,isExtglob:P,isGlobstar:T,negated:M,negatedExtglob:N};if(r.tokens===true){K.maxDepth=0;if(!isPathSeparator(D)){_.push(q)}K.tokens=_}if(r.parts===true||r.tokens===true){let t;for(let s=0;s<w.length;s++){const n=t?t+1:E;const o=w[s];const i=e.slice(n,o);if(r.tokens){if(s===0&&E!==0){_[s].isPrefix=true;_[s].value=H}else{_[s].value=i}depth(_[s]);K.maxDepth+=_[s].depth}if(s!==0||i!==""){A.push(i)}t=o}if(t&&t+1<e.length){const s=e.slice(t+1);A.push(s);if(r.tokens){_[_.length-1].value=s;depth(_[_.length-1]);K.maxDepth+=_[_.length-1].depth}}K.slashes=w;K.parts=A}return K};e.exports=scan},2599:(e,t,r)=>{"use strict";const s=r(6928);const n=process.platform==="win32";const{REGEX_BACKSLASH:o,REGEX_REMOVE_BACKSLASH:i,REGEX_SPECIAL_CHARS:a,REGEX_SPECIAL_CHARS_GLOBAL:u}=r(7223);t.isObject=e=>e!==null&&typeof e==="object"&&!Array.isArray(e);t.hasRegexChars=e=>a.test(e);t.isRegexChar=e=>e.length===1&&t.hasRegexChars(e);t.escapeRegex=e=>e.replace(u,"\\$1");t.toPosixSlashes=e=>e.replace(o,"/");t.removeBackslashes=e=>e.replace(i,(e=>e==="\\"?"":e));t.supportsLookbehinds=()=>{const e=process.version.slice(1).split(".").map(Number);if(e.length===3&&e[0]>=9||e[0]===8&&e[1]>=10){return true}return false};t.isWindows=e=>{if(e&&typeof e.windows==="boolean"){return e.windows}return n===true||s.sep==="\\"};t.escapeLast=(e,r,s)=>{const n=e.lastIndexOf(r,s);if(n===-1)return e;if(e[n-1]==="\\")return t.escapeLast(e,r,n-1);return`${e.slice(0,n)}\\${e.slice(n)}`};t.removePrefix=(e,t={})=>{let r=e;if(r.startsWith("./")){r=r.slice(2);t.prefix="./"}return r};t.wrapOutput=(e,t={},r={})=>{const s=r.contains?"":"^";const n=r.contains?"":"$";let o=`${s}(?:${e})${n}`;if(t.negated===true){o=`(?:^(?!${o}).*$)`}return o}},7220:e=>{"use strict";var t=String.prototype.replace;var r=/%20/g;var s={RFC1738:"RFC1738",RFC3986:"RFC3986"};e.exports={default:s.RFC3986,formatters:{RFC1738:function(e){return t.call(e,r,"+")},RFC3986:function(e){return String(e)}},RFC1738:s.RFC1738,RFC3986:s.RFC3986}},5596:(e,t,r)=>{"use strict";var s=r(3809);var n=r(1359);var o=r(7220);e.exports={formats:o,parse:n,stringify:s}},1359:(e,t,r)=>{"use strict";var s=r(2965);var n=Object.prototype.hasOwnProperty;var o=Array.isArray;var i={allowDots:false,allowPrototypes:false,allowSparse:false,arrayLimit:20,charset:"utf-8",charsetSentinel:false,comma:false,decoder:s.decode,delimiter:"&",depth:5,ignoreQueryPrefix:false,interpretNumericEntities:false,parameterLimit:1e3,parseArrays:true,plainObjects:false,strictNullHandling:false};var interpretNumericEntities=function(e){return e.replace(/&#(\d+);/g,(function(e,t){return String.fromCharCode(parseInt(t,10))}))};var parseArrayValue=function(e,t){if(e&&typeof e==="string"&&t.comma&&e.indexOf(",")>-1){return e.split(",")}return e};var a="utf8=%26%2310003%3B";var u="utf8=%E2%9C%93";var c=function parseQueryStringValues(e,t){var r={__proto__:null};var c=t.ignoreQueryPrefix?e.replace(/^\?/,""):e;var p=t.parameterLimit===Infinity?undefined:t.parameterLimit;var l=c.split(t.delimiter,p);var d=-1;var f;var h=t.charset;if(t.charsetSentinel){for(f=0;f<l.length;++f){if(l[f].indexOf("utf8=")===0){if(l[f]===u){h="utf-8"}else if(l[f]===a){h="iso-8859-1"}d=f;f=l.length}}}for(f=0;f<l.length;++f){if(f===d){continue}var g=l[f];var m=g.indexOf("]=");var y=m===-1?g.indexOf("="):m+1;var v,$;if(y===-1){v=t.decoder(g,i.decoder,h,"key");$=t.strictNullHandling?null:""}else{v=t.decoder(g.slice(0,y),i.decoder,h,"key");$=s.maybeMap(parseArrayValue(g.slice(y+1),t),(function(e){return t.decoder(e,i.decoder,h,"value")}))}if($&&t.interpretNumericEntities&&h==="iso-8859-1"){$=interpretNumericEntities($)}if(g.indexOf("[]=")>-1){$=o($)?[$]:$}if(n.call(r,v)){r[v]=s.combine(r[v],$)}else{r[v]=$}}return r};var parseObject=function(e,t,r,s){var n=s?t:parseArrayValue(t,r);for(var o=e.length-1;o>=0;--o){var i;var a=e[o];if(a==="[]"&&r.parseArrays){i=[].concat(n)}else{i=r.plainObjects?Object.create(null):{};var u=a.charAt(0)==="["&&a.charAt(a.length-1)==="]"?a.slice(1,-1):a;var c=parseInt(u,10);if(!r.parseArrays&&u===""){i={0:n}}else if(!isNaN(c)&&a!==u&&String(c)===u&&c>=0&&(r.parseArrays&&c<=r.arrayLimit)){i=[];i[c]=n}else if(u!=="__proto__"){i[u]=n}}n=i}return n};var p=function parseQueryStringKeys(e,t,r,s){if(!e){return}var o=r.allowDots?e.replace(/\.([^.[]+)/g,"[$1]"):e;var i=/(\[[^[\]]*])/;var a=/(\[[^[\]]*])/g;var u=r.depth>0&&i.exec(o);var c=u?o.slice(0,u.index):o;var p=[];if(c){if(!r.plainObjects&&n.call(Object.prototype,c)){if(!r.allowPrototypes){return}}p.push(c)}var l=0;while(r.depth>0&&(u=a.exec(o))!==null&&l<r.depth){l+=1;if(!r.plainObjects&&n.call(Object.prototype,u[1].slice(1,-1))){if(!r.allowPrototypes){return}}p.push(u[1])}if(u){p.push("["+o.slice(u.index)+"]")}return parseObject(p,t,r,s)};var l=function normalizeParseOptions(e){if(!e){return i}if(e.decoder!==null&&e.decoder!==undefined&&typeof e.decoder!=="function"){throw new TypeError("Decoder has to be a function.")}if(typeof e.charset!=="undefined"&&e.charset!=="utf-8"&&e.charset!=="iso-8859-1"){throw new TypeError("The charset option must be either utf-8, iso-8859-1, or undefined")}var t=typeof e.charset==="undefined"?i.charset:e.charset;return{allowDots:typeof e.allowDots==="undefined"?i.allowDots:!!e.allowDots,allowPrototypes:typeof e.allowPrototypes==="boolean"?e.allowPrototypes:i.allowPrototypes,allowSparse:typeof e.allowSparse==="boolean"?e.allowSparse:i.allowSparse,arrayLimit:typeof e.arrayLimit==="number"?e.arrayLimit:i.arrayLimit,charset:t,charsetSentinel:typeof e.charsetSentinel==="boolean"?e.charsetSentinel:i.charsetSentinel,comma:typeof e.comma==="boolean"?e.comma:i.comma,decoder:typeof e.decoder==="function"?e.decoder:i.decoder,delimiter:typeof e.delimiter==="string"||s.isRegExp(e.delimiter)?e.delimiter:i.delimiter,depth:typeof e.depth==="number"||e.depth===false?+e.depth:i.depth,ignoreQueryPrefix:e.ignoreQueryPrefix===true,interpretNumericEntities:typeof e.interpretNumericEntities==="boolean"?e.interpretNumericEntities:i.interpretNumericEntities,parameterLimit:typeof e.parameterLimit==="number"?e.parameterLimit:i.parameterLimit,parseArrays:e.parseArrays!==false,plainObjects:typeof e.plainObjects==="boolean"?e.plainObjects:i.plainObjects,strictNullHandling:typeof e.strictNullHandling==="boolean"?e.strictNullHandling:i.strictNullHandling}};e.exports=function(e,t){var r=l(t);if(e===""||e===null||typeof e==="undefined"){return r.plainObjects?Object.create(null):{}}var n=typeof e==="string"?c(e,r):e;var o=r.plainObjects?Object.create(null):{};var i=Object.keys(n);for(var a=0;a<i.length;++a){var u=i[a];var d=p(u,n[u],r,typeof e==="string");o=s.merge(o,d,r)}if(r.allowSparse===true){return o}return s.compact(o)}},3809:(e,t,r)=>{"use strict";var s=r(7221);var n=r(2965);var o=r(7220);var i=Object.prototype.hasOwnProperty;var a={brackets:function brackets(e){return e+"[]"},comma:"comma",indices:function indices(e,t){return e+"["+t+"]"},repeat:function repeat(e){return e}};var u=Array.isArray;var c=Array.prototype.push;var pushToArray=function(e,t){c.apply(e,u(t)?t:[t])};var p=Date.prototype.toISOString;var l=o["default"];var d={addQueryPrefix:false,allowDots:false,charset:"utf-8",charsetSentinel:false,delimiter:"&",encode:true,encoder:n.encode,encodeValuesOnly:false,format:l,formatter:o.formatters[l],indices:false,serializeDate:function serializeDate(e){return p.call(e)},skipNulls:false,strictNullHandling:false};var f=function isNonNullishPrimitive(e){return typeof e==="string"||typeof e==="number"||typeof e==="boolean"||typeof e==="symbol"||typeof e==="bigint"};var h={};var g=function stringify(e,t,r,o,i,a,c,p,l,g,m,y,v,$,b,w){var _=e;var A=w;var S=0;var j=false;while((A=A.get(h))!==void undefined&&!j){var E=A.get(e);S+=1;if(typeof E!=="undefined"){if(E===S){throw new RangeError("Cyclic object value")}else{j=true}}if(typeof A.get(h)==="undefined"){S=0}}if(typeof p==="function"){_=p(t,_)}else if(_ instanceof Date){_=m(_)}else if(r==="comma"&&u(_)){_=n.maybeMap(_,(function(e){if(e instanceof Date){return m(e)}return e}))}if(_===null){if(i){return c&&!$?c(t,d.encoder,b,"key",y):t}_=""}if(f(_)||n.isBuffer(_)){if(c){var R=$?t:c(t,d.encoder,b,"key",y);return[v(R)+"="+v(c(_,d.encoder,b,"value",y))]}return[v(t)+"="+v(String(_))]}var x=[];if(typeof _==="undefined"){return x}var k;if(r==="comma"&&u(_)){if($&&c){_=n.maybeMap(_,c)}k=[{value:_.length>0?_.join(",")||null:void undefined}]}else if(u(p)){k=p}else{var I=Object.keys(_);k=l?I.sort(l):I}var P=o&&u(_)&&_.length===1?t+"[]":t;for(var T=0;T<k.length;++T){var C=k[T];var O=typeof C==="object"&&typeof C.value!=="undefined"?C.value:_[C];if(a&&O===null){continue}var M=u(_)?typeof r==="function"?r(P,C):P:P+(g?"."+C:"["+C+"]");w.set(e,S);var N=s();N.set(h,w);pushToArray(x,stringify(O,M,r,o,i,a,r==="comma"&&$&&u(_)?null:c,p,l,g,m,y,v,$,b,N))}return x};var m=function normalizeStringifyOptions(e){if(!e){return d}if(e.encoder!==null&&typeof e.encoder!=="undefined"&&typeof e.encoder!=="function"){throw new TypeError("Encoder has to be a function.")}var t=e.charset||d.charset;if(typeof e.charset!=="undefined"&&e.charset!=="utf-8"&&e.charset!=="iso-8859-1"){throw new TypeError("The charset option must be either utf-8, iso-8859-1, or undefined")}var r=o["default"];if(typeof e.format!=="undefined"){if(!i.call(o.formatters,e.format)){throw new TypeError("Unknown format option provided.")}r=e.format}var s=o.formatters[r];var n=d.filter;if(typeof e.filter==="function"||u(e.filter)){n=e.filter}return{addQueryPrefix:typeof e.addQueryPrefix==="boolean"?e.addQueryPrefix:d.addQueryPrefix,allowDots:typeof e.allowDots==="undefined"?d.allowDots:!!e.allowDots,charset:t,charsetSentinel:typeof e.charsetSentinel==="boolean"?e.charsetSentinel:d.charsetSentinel,delimiter:typeof e.delimiter==="undefined"?d.delimiter:e.delimiter,encode:typeof e.encode==="boolean"?e.encode:d.encode,encoder:typeof e.encoder==="function"?e.encoder:d.encoder,encodeValuesOnly:typeof e.encodeValuesOnly==="boolean"?e.encodeValuesOnly:d.encodeValuesOnly,filter:n,format:r,formatter:s,serializeDate:typeof e.serializeDate==="function"?e.serializeDate:d.serializeDate,skipNulls:typeof e.skipNulls==="boolean"?e.skipNulls:d.skipNulls,sort:typeof e.sort==="function"?e.sort:null,strictNullHandling:typeof e.strictNullHandling==="boolean"?e.strictNullHandling:d.strictNullHandling}};e.exports=function(e,t){var r=e;var n=m(t);var o;var i;if(typeof n.filter==="function"){i=n.filter;r=i("",r)}else if(u(n.filter)){i=n.filter;o=i}var c=[];if(typeof r!=="object"||r===null){return""}var p;if(t&&t.arrayFormat in a){p=t.arrayFormat}else if(t&&"indices"in t){p=t.indices?"indices":"repeat"}else{p="indices"}var l=a[p];if(t&&"commaRoundTrip"in t&&typeof t.commaRoundTrip!=="boolean"){throw new TypeError("`commaRoundTrip` must be a boolean, or absent")}var d=l==="comma"&&t&&t.commaRoundTrip;if(!o){o=Object.keys(r)}if(n.sort){o.sort(n.sort)}var f=s();for(var h=0;h<o.length;++h){var y=o[h];if(n.skipNulls&&r[y]===null){continue}pushToArray(c,g(r[y],y,l,d,n.strictNullHandling,n.skipNulls,n.encode?n.encoder:null,n.filter,n.sort,n.allowDots,n.serializeDate,n.format,n.formatter,n.encodeValuesOnly,n.charset,f))}var v=c.join(n.delimiter);var $=n.addQueryPrefix===true?"?":"";if(n.charsetSentinel){if(n.charset==="iso-8859-1"){$+="utf8=%26%2310003%3B&"}else{$+="utf8=%E2%9C%93&"}}return v.length>0?$+v:""}},2965:(e,t,r)=>{"use strict";var s=r(7220);var n=Object.prototype.hasOwnProperty;var o=Array.isArray;var i=function(){var e=[];for(var t=0;t<256;++t){e.push("%"+((t<16?"0":"")+t.toString(16)).toUpperCase())}return e}();var a=function compactQueue(e){while(e.length>1){var t=e.pop();var r=t.obj[t.prop];if(o(r)){var s=[];for(var n=0;n<r.length;++n){if(typeof r[n]!=="undefined"){s.push(r[n])}}t.obj[t.prop]=s}}};var u=function arrayToObject(e,t){var r=t&&t.plainObjects?Object.create(null):{};for(var s=0;s<e.length;++s){if(typeof e[s]!=="undefined"){r[s]=e[s]}}return r};var c=function merge(e,t,r){if(!t){return e}if(typeof t!=="object"){if(o(e)){e.push(t)}else if(e&&typeof e==="object"){if(r&&(r.plainObjects||r.allowPrototypes)||!n.call(Object.prototype,t)){e[t]=true}}else{return[e,t]}return e}if(!e||typeof e!=="object"){return[e].concat(t)}var s=e;if(o(e)&&!o(t)){s=u(e,r)}if(o(e)&&o(t)){t.forEach((function(t,s){if(n.call(e,s)){var o=e[s];if(o&&typeof o==="object"&&t&&typeof t==="object"){e[s]=merge(o,t,r)}else{e.push(t)}}else{e[s]=t}}));return e}return Object.keys(t).reduce((function(e,s){var o=t[s];if(n.call(e,s)){e[s]=merge(e[s],o,r)}else{e[s]=o}return e}),s)};var p=function assignSingleSource(e,t){return Object.keys(t).reduce((function(e,r){e[r]=t[r];return e}),e)};var decode=function(e,t,r){var s=e.replace(/\+/g," ");if(r==="iso-8859-1"){return s.replace(/%[0-9a-f]{2}/gi,unescape)}try{return decodeURIComponent(s)}catch(e){return s}};var l=function encode(e,t,r,n,o){if(e.length===0){return e}var a=e;if(typeof e==="symbol"){a=Symbol.prototype.toString.call(e)}else if(typeof e!=="string"){a=String(e)}if(r==="iso-8859-1"){return escape(a).replace(/%u[0-9a-f]{4}/gi,(function(e){return"%26%23"+parseInt(e.slice(2),16)+"%3B"}))}var u="";for(var c=0;c<a.length;++c){var p=a.charCodeAt(c);if(p===45||p===46||p===95||p===126||p>=48&&p<=57||p>=65&&p<=90||p>=97&&p<=122||o===s.RFC1738&&(p===40||p===41)){u+=a.charAt(c);continue}if(p<128){u=u+i[p];continue}if(p<2048){u=u+(i[192|p>>6]+i[128|p&63]);continue}if(p<55296||p>=57344){u=u+(i[224|p>>12]+i[128|p>>6&63]+i[128|p&63]);continue}c+=1;p=65536+((p&1023)<<10|a.charCodeAt(c)&1023);u+=i[240|p>>18]+i[128|p>>12&63]+i[128|p>>6&63]+i[128|p&63]}return u};var d=function compact(e){var t=[{obj:{o:e},prop:"o"}];var r=[];for(var s=0;s<t.length;++s){var n=t[s];var o=n.obj[n.prop];var i=Object.keys(o);for(var u=0;u<i.length;++u){var c=i[u];var p=o[c];if(typeof p==="object"&&p!==null&&r.indexOf(p)===-1){t.push({obj:o,prop:c});r.push(p)}}}a(t);return e};var f=function isRegExp(e){return Object.prototype.toString.call(e)==="[object RegExp]"};var h=function isBuffer(e){if(!e||typeof e!=="object"){return false}return!!(e.constructor&&e.constructor.isBuffer&&e.constructor.isBuffer(e))};var g=function combine(e,t){return[].concat(e,t)};var m=function maybeMap(e,t){if(o(e)){var r=[];for(var s=0;s<e.length;s+=1){r.push(t(e[s]))}return r}return t(e)};e.exports={arrayToObject:u,assign:p,combine:g,compact:d,decode:decode,encode:l,isBuffer:h,isRegExp:f,maybeMap:m,merge:c}},7230:(e,t,r)=>{"use strict";var s=r(978);var n=r(3968);var o=r(8421)();var i=r(6822);var a=r(1254);var u=s("%Math.floor%");e.exports=function setFunctionLength(e,t){if(typeof e!=="function"){throw new a("`fn` is not a function")}if(typeof t!=="number"||t<0||t>4294967295||u(t)!==t){throw new a("`length` must be a positive 32-bit integer")}var r=arguments.length>2&&!!arguments[2];var s=true;var c=true;if("length"in e&&i){var p=i(e,"length");if(p&&!p.configurable){s=false}if(p&&!p.writable){c=false}}if(s||c||!r){if(o){n(e,"length",t,true,true)}else{n(e,"length",t)}}return e}},7221:(e,t,r)=>{"use strict";var s=r(978);var n=r(1372);var o=r(5278);var i=s("%TypeError%");var a=s("%WeakMap%",true);var u=s("%Map%",true);var c=n("WeakMap.prototype.get",true);var p=n("WeakMap.prototype.set",true);var l=n("WeakMap.prototype.has",true);var d=n("Map.prototype.get",true);var f=n("Map.prototype.set",true);var h=n("Map.prototype.has",true);var listGetNode=function(e,t){for(var r=e,s;(s=r.next)!==null;r=s){if(s.key===t){r.next=s.next;s.next=e.next;e.next=s;return s}}};var listGet=function(e,t){var r=listGetNode(e,t);return r&&r.value};var listSet=function(e,t,r){var s=listGetNode(e,t);if(s){s.value=r}else{e.next={key:t,next:e.next,value:r}}};var listHas=function(e,t){return!!listGetNode(e,t)};e.exports=function getSideChannel(){var e;var t;var r;var s={assert:function(e){if(!s.has(e)){throw new i("Side channel does not contain "+o(e))}},get:function(s){if(a&&s&&(typeof s==="object"||typeof s==="function")){if(e){return c(e,s)}}else if(u){if(t){return d(t,s)}}else{if(r){return listGet(r,s)}}},has:function(s){if(a&&s&&(typeof s==="object"||typeof s==="function")){if(e){return l(e,s)}}else if(u){if(t){return h(t,s)}}else{if(r){return listHas(r,s)}}return false},set:function(s,n){if(a&&s&&(typeof s==="object"||typeof s==="function")){if(!e){e=new a}p(e,s,n)}else if(u){if(!t){t=new u}f(t,s,n)}else{if(!r){r={key:{},next:null}}listSet(r,s,n)}}};return s}},4395:(e,t,r)=>{"use strict";
-/*!
- * to-regex-range <https://github.com/micromatch/to-regex-range>
- *
- * Copyright (c) 2015-present, Jon Schlinkert.
- * Released under the MIT License.
- */const s=r(7850);const toRegexRange=(e,t,r)=>{if(s(e)===false){throw new TypeError("toRegexRange: expected the first argument to be a number")}if(t===void 0||e===t){return String(e)}if(s(t)===false){throw new TypeError("toRegexRange: expected the second argument to be a number.")}let n={relaxZeros:true,...r};if(typeof n.strictZeros==="boolean"){n.relaxZeros=n.strictZeros===false}let o=String(n.relaxZeros);let i=String(n.shorthand);let a=String(n.capture);let u=String(n.wrap);let c=e+":"+t+"="+o+i+a+u;if(toRegexRange.cache.hasOwnProperty(c)){return toRegexRange.cache[c].result}let p=Math.min(e,t);let l=Math.max(e,t);if(Math.abs(p-l)===1){let r=e+"|"+t;if(n.capture){return`(${r})`}if(n.wrap===false){return r}return`(?:${r})`}let d=hasPadding(e)||hasPadding(t);let f={min:e,max:t,a:p,b:l};let h=[];let g=[];if(d){f.isPadded=d;f.maxLen=String(f.max).length}if(p<0){let e=l<0?Math.abs(l):1;g=splitToPatterns(e,Math.abs(p),f,n);p=f.a=0}if(l>=0){h=splitToPatterns(p,l,f,n)}f.negatives=g;f.positives=h;f.result=collatePatterns(g,h,n);if(n.capture===true){f.result=`(${f.result})`}else if(n.wrap!==false&&h.length+g.length>1){f.result=`(?:${f.result})`}toRegexRange.cache[c]=f;return f.result};function collatePatterns(e,t,r){let s=filterPatterns(e,t,"-",false,r)||[];let n=filterPatterns(t,e,"",false,r)||[];let o=filterPatterns(e,t,"-?",true,r)||[];let i=s.concat(o).concat(n);return i.join("|")}function splitToRanges(e,t){let r=1;let s=1;let n=countNines(e,r);let o=new Set([t]);while(e<=n&&n<=t){o.add(n);r+=1;n=countNines(e,r)}n=countZeros(t+1,s)-1;while(e<n&&n<=t){o.add(n);s+=1;n=countZeros(t+1,s)-1}o=[...o];o.sort(compare);return o}function rangeToPattern(e,t,r){if(e===t){return{pattern:e,count:[],digits:0}}let s=zip(e,t);let n=s.length;let o="";let i=0;for(let e=0;e<n;e++){let[t,n]=s[e];if(t===n){o+=t}else if(t!=="0"||n!=="9"){o+=toCharacterClass(t,n,r)}else{i++}}if(i){o+=r.shorthand===true?"\\d":"[0-9]"}return{pattern:o,count:[i],digits:n}}function splitToPatterns(e,t,r,s){let n=splitToRanges(e,t);let o=[];let i=e;let a;for(let e=0;e<n.length;e++){let t=n[e];let u=rangeToPattern(String(i),String(t),s);let c="";if(!r.isPadded&&a&&a.pattern===u.pattern){if(a.count.length>1){a.count.pop()}a.count.push(u.count[0]);a.string=a.pattern+toQuantifier(a.count);i=t+1;continue}if(r.isPadded){c=padZeros(t,r,s)}u.string=c+u.pattern+toQuantifier(u.count);o.push(u);i=t+1;a=u}return o}function filterPatterns(e,t,r,s,n){let o=[];for(let n of e){let{string:e}=n;if(!s&&!contains(t,"string",e)){o.push(r+e)}if(s&&contains(t,"string",e)){o.push(r+e)}}return o}function zip(e,t){let r=[];for(let s=0;s<e.length;s++)r.push([e[s],t[s]]);return r}function compare(e,t){return e>t?1:t>e?-1:0}function contains(e,t,r){return e.some((e=>e[t]===r))}function countNines(e,t){return Number(String(e).slice(0,-t)+"9".repeat(t))}function countZeros(e,t){return e-e%Math.pow(10,t)}function toQuantifier(e){let[t=0,r=""]=e;if(r||t>1){return`{${t+(r?","+r:"")}}`}return""}function toCharacterClass(e,t,r){return`[${e}${t-e===1?"":"-"}${t}]`}function hasPadding(e){return/^-?(0+)\d/.test(e)}function padZeros(e,t,r){if(!t.isPadded){return e}let s=Math.abs(t.maxLen-String(e).length);let n=r.relaxZeros!==false;switch(s){case 0:return"";case 1:return n?"0?":"0";case 2:return n?"0{0,2}":"00";default:{return n?`0{0,${s}}`:`0{${s}}`}}}toRegexRange.cache={};toRegexRange.clearCache=()=>toRegexRange.cache={};e.exports=toRegexRange},5872:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});var r=typeof Symbol==="function"&&typeof Symbol.iterator==="symbol"?function(e){return typeof e}:function(e){return e&&typeof Symbol==="function"&&e.constructor===Symbol?"symbol":typeof e};function isLower(e){return e>=97&&e<=122}function isUpper(e){return e>=65&&e<=90}function isDigit(e){return e>=48&&e<=57}function toUpper(e){return e-32}function toUpperSafe(e){if(isLower(e)){return e-32}return e}function toLower(e){return e+32}function camelize$1(e,t){var r=e.charCodeAt(0);if(isDigit(r)||isUpper(r)||r==t){return e}var s=[];var n=false;if(isUpper(r)){n=true;s.push(toLower(r))}else{s.push(r)}var o=e.length;for(var i=1;i<o;++i){var a=e.charCodeAt(i);if(a===t){n=true;a=e.charCodeAt(++i);if(isNaN(a)){return e}s.push(toUpperSafe(a))}else{s.push(a)}}return n?String.fromCharCode.apply(undefined,s):e}function decamelize$1(e,t){var r=e.charCodeAt(0);if(!isLower(r)){return e}var s=e.length;var n=false;var o=[];for(var i=0;i<s;++i){var a=e.charCodeAt(i);if(isUpper(a)){o.push(t);o.push(toLower(a));n=true}else{o.push(a)}}return n?String.fromCharCode.apply(undefined,o):e}function pascalize$1(e,t){var r=e.charCodeAt(0);if(isDigit(r)||r==t){return e}var s=e.length;var n=false;var o=[];for(var i=0;i<s;++i){var a=e.charCodeAt(i);if(a===t){n=true;a=e.charCodeAt(++i);if(isNaN(a)){return e}o.push(toUpperSafe(a))}else if(i===0&&isLower(a)){n=true;o.push(toUpper(a))}else{o.push(a)}}return n?String.fromCharCode.apply(undefined,o):e}function depascalize$1(e,t){var r=e.charCodeAt(0);if(!isUpper(r)){return e}var s=e.length;var n=false;var o=[];for(var i=0;i<s;++i){var a=e.charCodeAt(i);if(isUpper(a)){if(i>0){o.push(t)}o.push(toLower(a));n=true}else{o.push(a)}}return n?String.fromCharCode.apply(undefined,o):e}function shouldProcessValue(e){return e&&(typeof e==="undefined"?"undefined":r(e))=="object"&&!(e instanceof Date)&&!(e instanceof Function)}function processKeys(e,t,r){var s=void 0;if(e instanceof Array){s=[]}else{if(typeof e.prototype!=="undefined"){return e}s={}}for(var n in e){var o=e[n];if(typeof n==="string")n=t(n,r&&r.separator);if(shouldProcessValue(o)){s[n]=processKeys(o,t,r)}else{s[n]=o}}return s}function processKeysInPlace(e,t,r){var s=Object.keys(e);for(var n=0;n<s.length;++n){var o=s[n];var i=e[o];var a=t(o,r&&r.separator);if(a!==o){delete e[o]}if(shouldProcessValue(i)){e[a]=processKeys(i,t,r)}else{e[a]=i}}return e}function camelize$$1(e,t){return camelize$1(e,t&&t.charCodeAt(0)||95)}function decamelize$$1(e,t){return decamelize$1(e,t&&t.charCodeAt(0)||95)}function pascalize$$1(e,t){return pascalize$1(e,t&&t.charCodeAt(0)||95)}function depascalize$$1(e,t){return depascalize$1(e,t&&t.charCodeAt(0)||95)}function camelizeKeys(e,t){t=t||{};if(!shouldProcessValue(e))return e;if(t.inPlace)return processKeysInPlace(e,camelize$$1,t);return processKeys(e,camelize$$1,t)}function decamelizeKeys(e,t){t=t||{};if(!shouldProcessValue(e))return e;if(t.inPlace)return processKeysInPlace(e,decamelize$$1,t);return processKeys(e,decamelize$$1,t)}function pascalizeKeys(e,t){t=t||{};if(!shouldProcessValue(e))return e;if(t.inPlace)return processKeysInPlace(e,pascalize$$1,t);return processKeys(e,pascalize$$1,t)}function depascalizeKeys(e,t){t=t||{};if(!shouldProcessValue(e))return e;if(t.inPlace)return processKeysInPlace(e,depascalize$$1,t);return processKeys(e,depascalize$$1,t)}t.camelize=camelize$$1;t.decamelize=decamelize$$1;t.pascalize=pascalize$$1;t.depascalize=depascalize$$1;t.camelizeKeys=camelizeKeys;t.decamelizeKeys=decamelizeKeys;t.pascalizeKeys=pascalizeKeys;t.depascalizeKeys=depascalizeKeys},5317:e=>{"use strict";e.exports=require("child_process")},4434:e=>{"use strict";e.exports=require("events")},1943:e=>{"use strict";e.exports=require("fs/promises")},5692:e=>{"use strict";e.exports=require("https")},6928:e=>{"use strict";e.exports=require("path")},9023:e=>{"use strict";e.exports=require("util")},1955:function(e,t,r){"use strict";var s=this&&this.__awaiter||function(e,t,r,s){function adopt(e){return e instanceof r?e:new r((function(t){t(e)}))}return new(r||(r=Promise))((function(r,n){function fulfilled(e){try{step(s.next(e))}catch(e){n(e)}}function rejected(e){try{step(s["throw"](e))}catch(e){n(e)}}function step(e){e.done?r(e.value):adopt(e.value).then(fulfilled,rejected)}step((s=s.apply(e,t||[])).next())}))};var n=this&&this.__generator||function(e,t){var r={label:0,sent:function(){if(o[0]&1)throw o[1];return o[1]},trys:[],ops:[]},s,n,o,i;return i={next:verb(0),throw:verb(1),return:verb(2)},typeof Symbol==="function"&&(i[Symbol.iterator]=function(){return this}),i;function verb(e){return function(t){return step([e,t])}}function step(a){if(s)throw new TypeError("Generator is already executing.");while(i&&(i=0,a[0]&&(r=0)),r)try{if(s=1,n&&(o=a[0]&2?n["return"]:a[0]?n["throw"]||((o=n["return"])&&o.call(n),0):n.next)&&!(o=o.call(n,a[1])).done)return o;if(n=0,o)a=[a[0]&2,o.value];switch(a[0]){case 0:case 1:o=a;break;case 4:r.label++;return{value:a[1],done:false};case 5:r.label++;n=a[1];a=[0];continue;case 7:a=r.ops.pop();r.trys.pop();continue;default:if(!(o=r.trys,o=o.length>0&&o[o.length-1])&&(a[0]===6||a[0]===2)){r=0;continue}if(a[0]===3&&(!o||a[1]>o[0]&&a[1]<o[3])){r.label=a[1];break}if(a[0]===6&&r.label<o[1]){r.label=o[1];o=a;break}if(o&&r.label<o[2]){r.label=o[2];r.ops.push(a);break}if(o[2])r.ops.pop();r.trys.pop();continue}a=t.call(e,r)}catch(e){a=[6,e];n=0}finally{s=o=0}if(a[0]&5)throw a[1];return{value:a[0]?a[1]:void 0,done:true}}};Object.defineProperty(t,"__esModule",{value:true});t.AsyncOption=void 0;var o=r(4883);var i=r(8593);var a=function(){function AsyncOption(e){this.promise=Promise.resolve(e)}AsyncOption.prototype.andThen=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){if(r.isNone()){return[2,r]}t=e(r.value);return[2,t instanceof AsyncOption?t.promise:t]}))}))}))};AsyncOption.prototype.map=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){switch(s.label){case 0:if(r.isNone()){return[2,r]}t=i.Some;return[4,e(r.value)];case 1:return[2,t.apply(void 0,[s.sent()])]}}))}))}))};AsyncOption.prototype.or=function(e){return this.orElse((function(){return e}))};AsyncOption.prototype.orElse=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){if(r.isSome()){return[2,r]}t=e();return[2,t instanceof AsyncOption?t.promise:t]}))}))}))};AsyncOption.prototype.toResult=function(e){return new o.AsyncResult(this.promise.then((function(t){return t.toResult(e)})))};AsyncOption.prototype.thenInternal=function(e){return new AsyncOption(this.promise.then(e))};return AsyncOption}();t.AsyncOption=a},4883:function(e,t,r){"use strict";var s=this&&this.__awaiter||function(e,t,r,s){function adopt(e){return e instanceof r?e:new r((function(t){t(e)}))}return new(r||(r=Promise))((function(r,n){function fulfilled(e){try{step(s.next(e))}catch(e){n(e)}}function rejected(e){try{step(s["throw"](e))}catch(e){n(e)}}function step(e){e.done?r(e.value):adopt(e.value).then(fulfilled,rejected)}step((s=s.apply(e,t||[])).next())}))};var n=this&&this.__generator||function(e,t){var r={label:0,sent:function(){if(o[0]&1)throw o[1];return o[1]},trys:[],ops:[]},s,n,o,i;return i={next:verb(0),throw:verb(1),return:verb(2)},typeof Symbol==="function"&&(i[Symbol.iterator]=function(){return this}),i;function verb(e){return function(t){return step([e,t])}}function step(a){if(s)throw new TypeError("Generator is already executing.");while(i&&(i=0,a[0]&&(r=0)),r)try{if(s=1,n&&(o=a[0]&2?n["return"]:a[0]?n["throw"]||((o=n["return"])&&o.call(n),0):n.next)&&!(o=o.call(n,a[1])).done)return o;if(n=0,o)a=[a[0]&2,o.value];switch(a[0]){case 0:case 1:o=a;break;case 4:r.label++;return{value:a[1],done:false};case 5:r.label++;n=a[1];a=[0];continue;case 7:a=r.ops.pop();r.trys.pop();continue;default:if(!(o=r.trys,o=o.length>0&&o[o.length-1])&&(a[0]===6||a[0]===2)){r=0;continue}if(a[0]===3&&(!o||a[1]>o[0]&&a[1]<o[3])){r.label=a[1];break}if(a[0]===6&&r.label<o[1]){r.label=o[1];o=a;break}if(o&&r.label<o[2]){r.label=o[2];r.ops.push(a);break}if(o[2])r.ops.pop();r.trys.pop();continue}a=t.call(e,r)}catch(e){a=[6,e];n=0}finally{s=o=0}if(a[0]&5)throw a[1];return{value:a[0]?a[1]:void 0,done:true}}};Object.defineProperty(t,"__esModule",{value:true});t.AsyncResult=void 0;var o=r(1955);var i=r(7493);var a=function(){function AsyncResult(e){this.promise=Promise.resolve(e)}AsyncResult.prototype.andThen=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){if(r.isErr()){return[2,r]}t=e(r.value);return[2,t instanceof AsyncResult?t.promise:t]}))}))}))};AsyncResult.prototype.map=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){switch(s.label){case 0:if(r.isErr()){return[2,r]}t=i.Ok;return[4,e(r.value)];case 1:return[2,t.apply(void 0,[s.sent()])]}}))}))}))};AsyncResult.prototype.mapErr=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){switch(s.label){case 0:if(r.isOk()){return[2,r]}t=i.Err;return[4,e(r.error)];case 1:return[2,t.apply(void 0,[s.sent()])]}}))}))}))};AsyncResult.prototype.or=function(e){return this.orElse((function(){return e}))};AsyncResult.prototype.orElse=function(e){var t=this;return this.thenInternal((function(r){return s(t,void 0,void 0,(function(){var t;return n(this,(function(s){if(r.isOk()){return[2,r]}t=e(r.error);return[2,t instanceof AsyncResult?t.promise:t]}))}))}))};AsyncResult.prototype.toOption=function(){return new o.AsyncOption(this.promise.then((function(e){return e.toOption()})))};AsyncResult.prototype.thenInternal=function(e){return new AsyncResult(this.promise.then(e))};return AsyncResult}();t.AsyncResult=a},1709:function(e,t,r){"use strict";var s=this&&this.__createBinding||(Object.create?function(e,t,r,s){if(s===undefined)s=r;var n=Object.getOwnPropertyDescriptor(t,r);if(!n||("get"in n?!t.__esModule:n.writable||n.configurable)){n={enumerable:true,get:function(){return t[r]}}}Object.defineProperty(e,s,n)}:function(e,t,r,s){if(s===undefined)s=r;e[s]=t[r]});var n=this&&this.__exportStar||function(e,t){for(var r in e)if(r!=="default"&&!Object.prototype.hasOwnProperty.call(t,r))s(t,e,r)};Object.defineProperty(t,"__esModule",{value:true});n(r(1955),t);n(r(4883),t);n(r(7493),t);n(r(8593),t)},8593:(e,t,r)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.Option=t.Some=t.None=void 0;var s=r(1955);var n=r(9483);var o=r(7493);var i=function(){function NoneImpl(){}NoneImpl.prototype.isSome=function(){return false};NoneImpl.prototype.isNone=function(){return true};NoneImpl.prototype[Symbol.iterator]=function(){return{next:function(){return{done:true,value:undefined}}}};NoneImpl.prototype.unwrapOr=function(e){return e};NoneImpl.prototype.expect=function(e){throw new Error("".concat(e))};NoneImpl.prototype.unwrap=function(){throw new Error("Tried to unwrap None")};NoneImpl.prototype.map=function(e){return this};NoneImpl.prototype.mapOr=function(e,t){return e};NoneImpl.prototype.mapOrElse=function(e,t){return e()};NoneImpl.prototype.or=function(e){return e};NoneImpl.prototype.orElse=function(e){return e()};NoneImpl.prototype.andThen=function(e){return this};NoneImpl.prototype.toResult=function(e){return(0,o.Err)(e)};NoneImpl.prototype.toString=function(){return"None"};NoneImpl.prototype.toAsyncOption=function(){return new s.AsyncOption(t.None)};return NoneImpl}();t.None=new i;Object.freeze(t.None);var a=function(){function SomeImpl(e){if(!(this instanceof SomeImpl)){return new SomeImpl(e)}this.value=e}SomeImpl.prototype.isSome=function(){return true};SomeImpl.prototype.isNone=function(){return false};SomeImpl.prototype[Symbol.iterator]=function(){var e=Object(this.value);return Symbol.iterator in e?e[Symbol.iterator]():{next:function(){return{done:true,value:undefined}}}};SomeImpl.prototype.unwrapOr=function(e){return this.value};SomeImpl.prototype.expect=function(e){return this.value};SomeImpl.prototype.unwrap=function(){return this.value};SomeImpl.prototype.map=function(e){return(0,t.Some)(e(this.value))};SomeImpl.prototype.mapOr=function(e,t){return t(this.value)};SomeImpl.prototype.mapOrElse=function(e,t){return t(this.value)};SomeImpl.prototype.or=function(e){return this};SomeImpl.prototype.orElse=function(e){return this};SomeImpl.prototype.andThen=function(e){return e(this.value)};SomeImpl.prototype.toResult=function(e){return(0,o.Ok)(this.value)};SomeImpl.prototype.toAsyncOption=function(){return new s.AsyncOption(this)};SomeImpl.prototype.safeUnwrap=function(){return this.value};SomeImpl.prototype.toString=function(){return"Some(".concat((0,n.toString)(this.value),")")};SomeImpl.EMPTY=new SomeImpl(undefined);return SomeImpl}();t.Some=a;var u;(function(e){function all(){var e=[];for(var r=0;r<arguments.length;r++){e[r]=arguments[r]}var s=[];for(var n=0,o=e;n<o.length;n++){var i=o[n];if(i.isSome()){s.push(i.value)}else{return i}}return(0,t.Some)(s)}e.all=all;function any(){var e=[];for(var r=0;r<arguments.length;r++){e[r]=arguments[r]}for(var s=0,n=e;s<n.length;s++){var o=n[s];if(o.isSome()){return o}else{continue}}return t.None}e.any=any;function isOption(e){return e instanceof t.Some||e===t.None}e.isOption=isOption})(u||(t.Option=u={}))},7493:function(e,t,r){"use strict";var s=this&&this.__spreadArray||function(e,t,r){if(r||arguments.length===2)for(var s=0,n=t.length,o;s<n;s++){if(o||!(s in t)){if(!o)o=Array.prototype.slice.call(t,0,s);o[s]=t[s]}}return e.concat(o||Array.prototype.slice.call(t))};Object.defineProperty(t,"__esModule",{value:true});t.Result=t.Ok=t.OkImpl=t.Err=t.ErrImpl=void 0;var n=r(9483);var o=r(8593);var i=r(4883);var a=function(){function ErrImpl(e){if(!(this instanceof ErrImpl)){return new ErrImpl(e)}this.error=e;var t=(new Error).stack.split("\n").slice(2);if(t&&t.length>0&&t[0].includes("ErrImpl")){t.shift()}this._stack=t.join("\n")}ErrImpl.prototype.isOk=function(){return false};ErrImpl.prototype.isErr=function(){return true};ErrImpl.prototype[Symbol.iterator]=function(){return{next:function(){return{done:true,value:undefined}}}};ErrImpl.prototype.else=function(e){return e};ErrImpl.prototype.unwrapOr=function(e){return e};ErrImpl.prototype.expect=function(e){throw new Error("".concat(e," - Error: ").concat((0,n.toString)(this.error),"\n").concat(this._stack),{cause:this.error})};ErrImpl.prototype.expectErr=function(e){return this.error};ErrImpl.prototype.unwrap=function(){throw new Error("Tried to unwrap Error: ".concat((0,n.toString)(this.error),"\n").concat(this._stack),{cause:this.error})};ErrImpl.prototype.unwrapErr=function(){return this.error};ErrImpl.prototype.map=function(e){return this};ErrImpl.prototype.andThen=function(e){return this};ErrImpl.prototype.mapErr=function(e){return new t.Err(e(this.error))};ErrImpl.prototype.mapOr=function(e,t){return e};ErrImpl.prototype.mapOrElse=function(e,t){return e(this.error)};ErrImpl.prototype.or=function(e){return e};ErrImpl.prototype.orElse=function(e){return e(this.error)};ErrImpl.prototype.toOption=function(){return o.None};ErrImpl.prototype.toString=function(){return"Err(".concat((0,n.toString)(this.error),")")};Object.defineProperty(ErrImpl.prototype,"stack",{get:function(){return"".concat(this,"\n").concat(this._stack)},enumerable:false,configurable:true});ErrImpl.prototype.toAsyncResult=function(){return new i.AsyncResult(this)};ErrImpl.EMPTY=new ErrImpl(undefined);return ErrImpl}();t.ErrImpl=a;t.Err=a;var u=function(){function OkImpl(e){if(!(this instanceof OkImpl)){return new OkImpl(e)}this.value=e}OkImpl.prototype.isOk=function(){return true};OkImpl.prototype.isErr=function(){return false};OkImpl.prototype[Symbol.iterator]=function(){var e=Object(this.value);return Symbol.iterator in e?e[Symbol.iterator]():{next:function(){return{done:true,value:undefined}}}};OkImpl.prototype.else=function(e){return this.value};OkImpl.prototype.unwrapOr=function(e){return this.value};OkImpl.prototype.expect=function(e){return this.value};OkImpl.prototype.expectErr=function(e){throw new Error(e)};OkImpl.prototype.unwrap=function(){return this.value};OkImpl.prototype.unwrapErr=function(){throw new Error("Tried to unwrap Ok: ".concat((0,n.toString)(this.value)),{cause:this.value})};OkImpl.prototype.map=function(e){return new t.Ok(e(this.value))};OkImpl.prototype.andThen=function(e){return e(this.value)};OkImpl.prototype.mapErr=function(e){return this};OkImpl.prototype.mapOr=function(e,t){return t(this.value)};OkImpl.prototype.mapOrElse=function(e,t){return t(this.value)};OkImpl.prototype.or=function(e){return this};OkImpl.prototype.orElse=function(e){return this};OkImpl.prototype.toOption=function(){return(0,o.Some)(this.value)};OkImpl.prototype.safeUnwrap=function(){return this.value};OkImpl.prototype.toString=function(){return"Ok(".concat((0,n.toString)(this.value),")")};OkImpl.prototype.toAsyncResult=function(){return new i.AsyncResult(this)};OkImpl.EMPTY=new OkImpl(undefined);return OkImpl}();t.OkImpl=u;t.Ok=u;var c;(function(e){function all(e){var r=[];for(var n=1;n<arguments.length;n++){r[n-1]=arguments[n]}var o=e===undefined?[]:Array.isArray(e)?e:s([e],r,true);var i=[];for(var a=0,u=o;a<u.length;a++){var c=u[a];if(c.isOk()){i.push(c.value)}else{return c}}return new t.Ok(i)}e.all=all;function any(e){var r=[];for(var n=1;n<arguments.length;n++){r[n-1]=arguments[n]}var o=e===undefined?[]:Array.isArray(e)?e:s([e],r,true);var i=[];for(var a=0,u=o;a<u.length;a++){var c=u[a];if(c.isOk()){return c}else{i.push(c.error)}}return new t.Err(i)}e.any=any;function wrap(e){try{return new t.Ok(e())}catch(e){return new t.Err(e)}}e.wrap=wrap;function wrapAsync(e){try{return e().then((function(e){return new t.Ok(e)})).catch((function(e){return new t.Err(e)}))}catch(e){return Promise.resolve(new t.Err(e))}}e.wrapAsync=wrapAsync;function partition(e){return e.reduce((function(e,t){var r=e[0],n=e[1];return t.isOk()?[s(s([],r,true),[t.value],false),n]:[r,s(s([],n,true),[t.error],false)]}),[[],[]])}e.partition=partition;function isResult(e){return e instanceof t.Err||e instanceof t.Ok}e.isResult=isResult})(c||(t.Result=c={}))},9483:(e,t)=>{"use strict";Object.defineProperty(t,"__esModule",{value:true});t.toString=void 0;function toString(e){var t=String(e);if(t==="[object Object]"){try{t=JSON.stringify(e)}catch(e){}}return t}t.toString=toString},6743:e=>{"use strict";e.exports=JSON.parse('[{"description":"No API keys or secrets are stored in repository","responsibles":1,"more":""},{"description":"The app does not provide password login","responsibles":1,"more":""},{"description":"Passwords are not stored","responsibles":1,"more":""},{"description":"No sensitive information (passwords, keys, user data, ...) is logged or traced","responsibles":1,"more":"[Logging guide](https://www.notion.so/panterch/Long-story-logging-022722bb878f4724ae5b49e17667b630?pvs=4#9e5a36b7158a4953b73ec6a345bd8989), [Tracing guide](https://www.notion.so/panterch/Long-story-tracing-d8a9ec1ac2ff4fa78cefa8991233224e?pvs=4#535121b5bf9741fbaf8654b4b64d879d)"},{"description":"Passwords are stored hashed with salt and salt is not stored in the repository","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/hash.md)"},{"description":"Input that ends up in DOM is properly sanitized","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/xss.md)"},{"description":"All user inputs have reasonable validations","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/validation.md)"},{"description":"The app is not using cookies","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cookies.md)"},{"description":"The app is using cookies and cookies are properly configured","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cookies.md)"},{"description":"The app uses JWT with a secret and the secret is not stored in the repository","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cookies.md)"},{"description":"Authorization and user roles (RBAC) were reviewed thoroughly","responsibles":2,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/authorization.md)"},{"description":"CORS headers do not use `*`","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cors.md)"},{"description":"CSP headers are properly configured (no `unsafe-inline` or `unsafe-eval`)","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/csp.md)"},{"description":"DoS defense mechanism is implemented","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/dos.md)"},{"description":"YAML/XML parsing is not used or used YAML/XML parsers have disabled DTD","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/dos.md)"},{"description":"The app implements CSRF prevention","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/csrf.md)"},{"description":"The app has a rate limitter","responsibles":1,"more":""},{"description":"The app has disabled GraphQL introspection and schema registry","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/graphql.md)"},{"description":"The app has set GraphQL complexity query limits","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/graphql.md)"},{"description":"`sitemap.xml` does not leak any routes with sensitive data","responsibles":1,"more":""},{"description":"Cloud storage is (private) configured to not leak any sensitive data publicly","responsibles":1,"more":""},{"description":"Security Dashboard checks weekly vulnerable dependencies https://dep.panter.swiss/","responsibles":1,"more":""},{"description":"The app has `.well-known/security.txt` https://securitytxt.org/","responsibles":1,"more":""}]')}};var t={};function __nccwpck_require__(r){var s=t[r];if(s!==undefined){return s.exports}var n=t[r]={exports:{}};var o=true;try{e[r].call(n.exports,n,n.exports,__nccwpck_require__);o=false}finally{if(o)delete t[r]}return n.exports}(()=>{var e=Object.getPrototypeOf?e=>Object.getPrototypeOf(e):e=>e.__proto__;var t;__nccwpck_require__.t=function(r,s){if(s&1)r=this(r);if(s&8)return r;if(typeof r==="object"&&r){if(s&4&&r.__esModule)return r;if(s&16&&typeof r.then==="function")return r}var n=Object.create(null);__nccwpck_require__.r(n);var o={};t=t||[null,e({}),e([]),e(e)];for(var i=s&2&&r;typeof i=="object"&&!~t.indexOf(i);i=e(i)){Object.getOwnPropertyNames(i).forEach((e=>o[e]=()=>r[e]))}o["default"]=()=>r;__nccwpck_require__.d(n,o);return n}})();(()=>{__nccwpck_require__.d=(e,t)=>{for(var r in t){if(__nccwpck_require__.o(t,r)&&!__nccwpck_require__.o(e,r)){Object.defineProperty(e,r,{enumerable:true,get:t[r]})}}}})();(()=>{__nccwpck_require__.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t)})();(()=>{__nccwpck_require__.r=e=>{if(typeof Symbol!=="undefined"&&Symbol.toStringTag){Object.defineProperty(e,Symbol.toStringTag,{value:"Module"})}Object.defineProperty(e,"__esModule",{value:true})}})();if(typeof __nccwpck_require__!=="undefined")__nccwpck_require__.ab=__dirname+"/";var r={};(()=>{"use strict";var e=r;Object.defineProperty(e,"__esModule",{value:true});const t=__nccwpck_require__(7650);const s=__nccwpck_require__(9392);const n=__nccwpck_require__(1276);const o=__nccwpck_require__(1206);const i=__nccwpck_require__(4472);const a=__nccwpck_require__(906);const u="https://git.panter.ch";const c=`catci — catladder CI companion\n\nusage:\n  catci security-audit ci-job <path> <gitlab-token> <main-branch> <project-id> <user-id>\n      evaluates ${n.SECURITY_AUDIT_FILE_NAME}; creates a gitlab MR with the\n      audit template when the document is missing (and exits 1)\n\n  catci security-audit check <path>\n      evaluates ${n.SECURITY_AUDIT_FILE_NAME}; exits 1 with instructions when\n      the document is missing or unanswered (no remediation — works on\n      any CI, including github)\n\n  catci release changesets\n      consumes pending .changeset/*.md files: computes the next version\n      from the last v* tag, writes the changelog, commits, tags and\n      pushes (no-op when no changesets are pending)\n\n  catci release changeset-check\n      MR/PR pipelines: reports which changesets the merge request adds,\n      what is pending and what version merging would release (job log,\n      changeset-report.md, sticky MR/PR comment where a token allows);\n      exits 1 when the merge request adds no changeset\n\n  catci release dispatch-tagged-workflow <tag>\n      github only: dispatches the generated taggedRelease workflow for\n      the tag (tags pushed with the job token don't trigger it)\n\n  catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]\n      npmPackage deploy job: derives version + dist-tag from the\n      pipeline trigger (tagged release -> tag version @latest; branch/MR\n      -> 0.0.0-<slug>-<sha> canary, with next/beta branches publishing\n      under their own dist-tag), stamps package.json and runs npm\n      publish (authenticated via the NPM_TOKEN secret)\n`;const fail=e=>{console.error(e);process.exit(1)};const evaluateGate=async e=>{const t=await(0,s.evaluateSecurityAudit)({path:e});if(t.isErr()){return null}if(t.value.score.answeredTopics===0){fail(`audit document has no answered topics\n`+`please answer security topics in ${n.SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`)}console.log((0,s.makeSecurityAuditOverview)(t.value));return t.value};const securityAuditCheck=async e=>{const t=await evaluateGate(e);if(!t){fail(`could not evaluate ${n.SECURITY_AUDIT_FILE_NAME}\n`+`please add a ${n.SECURITY_AUDIT_FILE_NAME} security audit document to the repository `+`(run \`catladder security audit create\` locally to generate the template)`)}};const securityAuditCiJob=async(e,r,s,o,i)=>{const a=await evaluateGate(e);if(a){return}console.log("could not evaluate security audit document");console.log("creating new merge request with security audit template...");const c=new t.Gitlab({host:u,token:r});const p=await(0,n.createSecurityAuditMergeRequest)({api:c,mainBranch:s,projectId:o,userId:parseInt(i)});if(p.isErr()){fail(`could not create merge request with security audit template: ${p.error}`);return}console.log("security audit merge request created successfully");console.log(`please finish the MR by updating ${n.SECURITY_AUDIT_FILE_NAME}: ${p.value.web_url}`);process.exit(1)};const main=async()=>{const[e,t,...r]=process.argv.slice(2);if(e==="security-audit"&&t==="ci-job"&&r.length===5){const[e,t,s,n,o]=r;return securityAuditCiJob(e,t,s,n,o)}if(e==="security-audit"&&t==="check"&&r.length===1){return securityAuditCheck(r[0])}if(e==="release"&&t==="changesets"&&r.length===0){return(0,o.changesetsReleaseJob)()}if(e==="release"&&t==="changeset-check"&&r.length===0){return(0,i.changesetCheckJob)()}if(e==="release"&&t==="dispatch-tagged-workflow"&&r.length===1){return(0,o.dispatchTaggedReleaseWorkflow)(r[0])}if(e==="publish"&&t==="npm"){const e=(0,a.parseNpmPublishArgs)(r);if(e){return(0,a.npmPublishJob)(e)}}fail(c)};main().catch((e=>{fail(`catci failed: ${e instanceof Error?e.message:e}`)}))})();module.exports=r})();
+(() => {
+  var e = {
+    906: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.parseNpmPublishArgs = t.npmPublishJob = t.DEFAULT_NPM_REGISTRY = void 0;
+      const s = r(5317);
+      const n = r(1943);
+      const o = r(6928);
+      const i = r(918);
+      t.DEFAULT_NPM_REGISTRY = "https://registry.npmjs.org/";
+      const readCiContext = (e) => {
+        var t, r, s, n;
+        const o = process.env;
+        if (o.GITLAB_CI === "true") {
+          return {
+            ciTag: o.CI_COMMIT_TAG || null,
+            refSlug:
+              (t = o.CI_COMMIT_REF_SLUG) !== null && t !== void 0 ? t : "",
+            shortSha:
+              (r = o.CI_COMMIT_SHORT_SHA) !== null && r !== void 0 ? r : "",
+          };
+        }
+        if (o.GITHUB_ACTIONS === "true") {
+          return {
+            ciTag:
+              o.GITHUB_REF_TYPE === "tag"
+                ? (s = o.GITHUB_REF_NAME) !== null && s !== void 0
+                  ? s
+                  : null
+                : null,
+            refSlug: (0, i.slugifyRef)(
+              o.GITHUB_HEAD_REF || o.GITHUB_REF_NAME || "",
+            ),
+            shortSha: ((n = o.GITHUB_SHA) !== null && n !== void 0
+              ? n
+              : ""
+            ).slice(0, 8),
+          };
+        }
+        throw new Error(
+          `publish npm for "${e.dir}" must run in a gitlab or github CI job (no CI provider detected)`,
+        );
+      };
+      const setPackageVersion = async (e, t) => {
+        const r = (0, o.join)(e, "package.json");
+        const s = JSON.parse(await (0, n.readFile)(r, "utf-8"));
+        s.version = t;
+        await (0, n.writeFile)(r, JSON.stringify(s, null, 2) + "\n");
+        return s.name;
+      };
+      const writeNpmrc = async (e, t) => {
+        const r = t.replace(/^https?:/, "").replace(/\/?$/, "/");
+        const s = (0, o.resolve)(e, ".npmrc");
+        await (0, n.writeFile)(s, `${r}:_authToken=\${NPM_TOKEN}\n`);
+        return s;
+      };
+      const npmPublish = (e, t, r) =>
+        new Promise((n, o) => {
+          const i = (0, s.spawn)("npm", ["publish", ...r], {
+            cwd: e,
+            stdio: "inherit",
+            env: { ...process.env, NPM_CONFIG_USERCONFIG: t },
+          });
+          i.on("error", o);
+          i.on("exit", (e) =>
+            e === 0 ? n() : o(new Error(`npm publish exited with ${e}`)),
+          );
+        });
+      const npmPublishJob = async (e) => {
+        var r, s;
+        if (!process.env.NPM_TOKEN) {
+          throw new Error(
+            "NPM_TOKEN is not set — configure it as a catladder secret for this component",
+          );
+        }
+        const n =
+          (r = e.registry) !== null && r !== void 0
+            ? r
+            : t.DEFAULT_NPM_REGISTRY;
+        const o = (0, i.computeNpmPublishPlan)({
+          envType: e.envType,
+          distTagOverride: e.distTag,
+          ...readCiContext(e),
+        });
+        const a = await setPackageVersion(e.dir, o.version);
+        const u = await writeNpmrc(e.dir, n);
+        console.log(
+          `publishing ${a}@${o.version} (dist-tag ${o.distTag}) to ${n}`,
+        );
+        await npmPublish(e.dir, u, [
+          "--tag",
+          o.distTag,
+          "--access",
+          (s = e.access) !== null && s !== void 0 ? s : "public",
+          "--registry",
+          n,
+          "--workspaces=false",
+        ]);
+        console.log(`published ${a}@${o.version} 🚀`);
+      };
+      t.npmPublishJob = npmPublishJob;
+      const parseNpmPublishArgs = (e) => {
+        const t = {};
+        for (let r = 0; r < e.length; r += 2) {
+          const s = e[r];
+          const n = e[r + 1];
+          if (
+            !(s === null || s === void 0 ? void 0 : s.startsWith("--")) ||
+            n === undefined
+          )
+            return null;
+          t[s.slice(2)] = n;
+        }
+        const { dir: r, access: s, registry: n } = t;
+        const o = t["env-type"];
+        const i = t["dist-tag"];
+        if (!r || !o) return null;
+        return { dir: r, envType: o, access: s, registry: n, distTag: i };
+      };
+      t.parseNpmPublishArgs = parseNpmPublishArgs;
+    },
+    918: (e, t) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.slugifyRef = t.computeNpmPublishPlan = t.BRANCH_DIST_TAGS = void 0;
+      t.BRANCH_DIST_TAGS = ["next", "beta"];
+      const computeNpmPublishPlan = (e) => {
+        var r, s;
+        if (e.envType === "prod" || e.envType === "stage") {
+          if (!e.ciTag) {
+            throw new Error(
+              `npm publish for env type "${e.envType}" expects a tagged-release pipeline, but no git tag is set`,
+            );
+          }
+          return {
+            version: e.ciTag.replace(/^v/, ""),
+            distTag:
+              (r = e.distTagOverride) !== null && r !== void 0 ? r : "latest",
+          };
+        }
+        return {
+          version: `0.0.0-${e.refSlug}-${e.shortSha}`,
+          distTag:
+            (s = e.distTagOverride) !== null && s !== void 0
+              ? s
+              : t.BRANCH_DIST_TAGS.includes(e.refSlug)
+                ? e.refSlug
+                : "canary",
+        };
+      };
+      t.computeNpmPublishPlan = computeNpmPublishPlan;
+      const slugifyRef = (e) =>
+        e
+          .toLowerCase()
+          .replace(/[^0-9a-z]/g, "-")
+          .slice(0, 63)
+          .replace(/^-+|-+$/g, "");
+      t.slugifyRef = slugifyRef;
+    },
+    2287: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.runChangesetCheck = t.CHANGESET_CHECK_MARKER = void 0;
+      const s = r(3810);
+      t.CHANGESET_CHECK_MARKER = "\x3c!-- catladder-changeset-check --\x3e";
+      const runChangesetCheck = ({
+        addedFiles: e,
+        pending: r,
+        lastTag: n,
+        requestLabel: o,
+      }) => {
+        const i = e.length > 0;
+        const a = [t.CHANGESET_CHECK_MARKER, "## 🦋 Changeset check", ""];
+        if (i) {
+          a.push(
+            `✅ This ${o} adds ${e.length} changeset${e.length === 1 ? "" : "s"}: ${e.map((e) => `\`${e}\``).join(", ")}`,
+          );
+        } else {
+          a.push(
+            `⚠️ **This ${o} adds no changeset.** If the change is user-facing it will be missing from the next release's changelog — add \`.changeset/<name>.md\` (or run \`yarn changeset\`). For docs/chore changes this warning can be ignored.`,
+          );
+        }
+        a.push("");
+        if (r.length === 0) {
+          a.push(
+            "No changesets are pending — merging will **not** trigger a release.",
+          );
+        } else {
+          const e = (0, s.getNextVersion)(
+            n,
+            (0, s.maxBump)(r.map((e) => e.bump)),
+          );
+          a.push(
+            `${r.length} changeset${r.length === 1 ? " is" : "s are"} pending after merge — the next release will be **v${e}**${n ? ` (from ${n})` : " (first release)"}:`,
+            "",
+            "<details><summary>Changelog preview</summary>",
+            "",
+            (0, s.renderChangelogEntries)(r),
+            "",
+            "</details>",
+          );
+        }
+        return { addsChangeset: i, markdown: a.join("\n") };
+      };
+      t.runChangesetCheck = runChangesetCheck;
+    },
+    4472: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.changesetCheckJob = t.CHANGESET_REPORT_FILE = void 0;
+      const s = r(1943);
+      const n = r(2287);
+      const o = r(1206);
+      const i = r(5320);
+      t.CHANGESET_REPORT_FILE = "changeset-report.md";
+      const onGithub = () => process.env.GITHUB_ACTIONS === "true";
+      const getAddedChangesetFiles = async () => {
+        const e = onGithub()
+          ? process.env.GITHUB_BASE_REF
+          : process.env.CI_MERGE_REQUEST_TARGET_BRANCH_NAME;
+        if (!e) {
+          return null;
+        }
+        await (0, i.git)("fetch", "--quiet", "origin", e);
+        const t = await (0, i.git)("merge-base", "HEAD", "FETCH_HEAD");
+        const r = await (0, i.git)(
+          "diff",
+          "--name-only",
+          "--diff-filter=A",
+          t,
+          "HEAD",
+        );
+        return r
+          .split("\n")
+          .filter(
+            (e) =>
+              e.startsWith(".changeset/") &&
+              e.endsWith(".md") &&
+              !e.toLowerCase().endsWith("readme.md"),
+          )
+          .map((e) => e.slice(".changeset/".length));
+      };
+      const findSticky = (e) =>
+        e.find((e) => {
+          var t;
+          return (t = e.body) === null || t === void 0
+            ? void 0
+            : t.includes(n.CHANGESET_CHECK_MARKER);
+        });
+      const request = async (e, t) => {
+        var r;
+        const s = await fetch(e, t);
+        if (!s.ok) {
+          throw new Error(
+            `${(r = t.method) !== null && r !== void 0 ? r : "GET"} ${e} failed: ${s.status} ${await s.text()}`,
+          );
+        }
+        return s;
+      };
+      const upsertGithubComment = async (e) => {
+        var t, r;
+        const s = process.env.GITHUB_TOKEN;
+        const n =
+          (t = process.env.GITHUB_API_URL) !== null && t !== void 0
+            ? t
+            : "https://api.github.com";
+        const o = process.env.GITHUB_REPOSITORY;
+        const i = parseInt(
+          (r = process.env.GITHUB_REF_NAME) !== null && r !== void 0 ? r : "",
+        );
+        if (!s || !o || !i) {
+          console.log("no PR context/token — skipping the PR comment");
+          return;
+        }
+        const a = {
+          authorization: `Bearer ${s}`,
+          accept: "application/vnd.github+json",
+          "content-type": "application/json",
+        };
+        const u = await (
+          await request(`${n}/repos/${o}/issues/${i}/comments?per_page=100`, {
+            headers: a,
+          })
+        ).json();
+        const c = findSticky(u);
+        if (c) {
+          await request(`${n}/repos/${o}/issues/comments/${c.id}`, {
+            method: "PATCH",
+            headers: a,
+            body: JSON.stringify({ body: e }),
+          });
+        } else {
+          await request(`${n}/repos/${o}/issues/${i}/comments`, {
+            method: "POST",
+            headers: a,
+            body: JSON.stringify({ body: e }),
+          });
+        }
+        console.log("updated the sticky PR comment");
+      };
+      const upsertGitlabComment = async (e) => {
+        const t = process.env.GL_TOKEN;
+        if (!t) {
+          console.log(
+            "GL_TOKEN is not available in this pipeline — skipping the MR comment (report available in the job log and the exposed artifact)",
+          );
+          return;
+        }
+        const r = process.env.CI_API_V4_URL;
+        const s = process.env.CI_PROJECT_ID;
+        const n = process.env.CI_MERGE_REQUEST_IID;
+        if (!r || !s || !n) {
+          console.log("no MR context — skipping the MR comment");
+          return;
+        }
+        const o = { "PRIVATE-TOKEN": t, "content-type": "application/json" };
+        const i = `${r}/projects/${s}/merge_requests/${n}/notes`;
+        const a = await (
+          await request(`${i}?per_page=100`, { headers: o })
+        ).json();
+        const u = findSticky(a);
+        if (u) {
+          await request(`${i}/${u.id}`, {
+            method: "PUT",
+            headers: o,
+            body: JSON.stringify({ body: e }),
+          });
+        } else {
+          await request(i, {
+            method: "POST",
+            headers: o,
+            body: JSON.stringify({ body: e }),
+          });
+        }
+        console.log("updated the sticky MR comment");
+      };
+      const changesetCheckJob = async () => {
+        await (0, i.ensureReleaseHistory)();
+        const e = await (0, o.readPendingChangesets)();
+        const r = await (0, i.getLastReleaseTag)();
+        const a = await getAddedChangesetFiles();
+        const u = (0, n.runChangesetCheck)({
+          addedFiles: a !== null && a !== void 0 ? a : [],
+          pending: e,
+          lastTag: r,
+          requestLabel: onGithub() ? "pull request" : "merge request",
+        });
+        console.log(u.markdown.replace(`${n.CHANGESET_CHECK_MARKER}\n`, ""));
+        await (0, s.writeFile)(t.CHANGESET_REPORT_FILE, u.markdown);
+        try {
+          if (onGithub()) {
+            await upsertGithubComment(u.markdown);
+          } else {
+            await upsertGitlabComment(u.markdown);
+          }
+        } catch (e) {
+          console.warn(`could not update the sticky comment: ${e}`);
+        }
+        if (a === null) {
+          console.log("not running against a merge request — check skipped");
+          return;
+        }
+        if (!u.addsChangeset) {
+          process.exitCode = 1;
+        }
+      };
+      t.changesetCheckJob = changesetCheckJob;
+    },
+    3810: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__importDefault) ||
+        function (e) {
+          return e && e.__esModule ? e : { default: e };
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.prependToChangelog =
+        t.renderChangelogEntries =
+        t.getNextVersion =
+        t.maxBump =
+        t.parseChangesetFile =
+        t.BUMPS =
+          void 0;
+      const n = s(r(7751));
+      t.BUMPS = ["patch", "minor", "major"];
+      const isBump = (e) => t.BUMPS.includes(e);
+      const parseChangesetFile = (e, r) => {
+        let s;
+        try {
+          s = (0, n.default)(r);
+        } catch (t) {
+          throw new Error(
+            `${e}: not a valid changeset (${t instanceof Error ? t.message : t})`,
+          );
+        }
+        const o = s.releases.map((e) => e.type).filter(isBump);
+        if (o.length === 0) {
+          throw new Error(
+            `${e}: changeset declares no effective version bump (major|minor|patch)`,
+          );
+        }
+        const i = s.summary.trim();
+        if (i === "") {
+          throw new Error(`${e}: changeset has no summary`);
+        }
+        return { fileName: e, bump: (0, t.maxBump)(o), summary: i };
+      };
+      t.parseChangesetFile = parseChangesetFile;
+      const maxBump = (e) =>
+        e.reduce((e, r) => (t.BUMPS.indexOf(r) > t.BUMPS.indexOf(e) ? r : e));
+      t.maxBump = maxBump;
+      const getNextVersion = (e, t) => {
+        if (e === null) {
+          return "1.0.0";
+        }
+        const r = e.match(/^v(\d+)\.(\d+)\.(\d+)$/);
+        if (!r) {
+          throw new Error(
+            `last release tag "${e}" is not of the form vX.Y.Z — cannot derive the next version`,
+          );
+        }
+        const [s, n, o] = r.slice(1).map(Number);
+        switch (t) {
+          case "major":
+            return `${s + 1}.0.0`;
+          case "minor":
+            return `${s}.${n + 1}.0`;
+          case "patch":
+            return `${s}.${n}.${o + 1}`;
+        }
+      };
+      t.getNextVersion = getNextVersion;
+      const o = {
+        major: "Major Changes",
+        minor: "Minor Changes",
+        patch: "Patch Changes",
+      };
+      const renderChangelogEntries = (e) =>
+        [...t.BUMPS]
+          .reverse()
+          .map((t) => {
+            const r = e.filter((e) => e.bump === t);
+            if (r.length === 0) return null;
+            return [
+              `### ${o[t]}`,
+              "",
+              ...r.map((e) => `- ${e.summary.replace(/\r?\n/g, "\n  ")}`),
+            ].join("\n");
+          })
+          .filter((e) => e !== null)
+          .join("\n\n");
+      t.renderChangelogEntries = renderChangelogEntries;
+      const i = "# Changelog";
+      const prependToChangelog = (e, t, r, s) => {
+        const n = `## ${t} (${r})\n\n${s}\n`;
+        const o = (e !== null && e !== void 0 ? e : "")
+          .replace(new RegExp(`^${i}\\s*\\n`), "")
+          .trim();
+        return [i, "", n + (o ? "\n" + o + "\n" : "")].join("\n");
+      };
+      t.prependToChangelog = prependToChangelog;
+    },
+    1206: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.changesetsReleaseJob =
+        t.dispatchTaggedReleaseWorkflow =
+        t.readPendingChangesets =
+          void 0;
+      const s = r(1943);
+      const n = r(6928);
+      const o = r(3810);
+      const i = r(5320);
+      const a = r(7817);
+      const u = ".changeset";
+      const c = "CHANGELOG.md";
+      const p = "catladder-release.yml";
+      const readPendingChangesets = async () => {
+        const e = await (0, s.readdir)(u).catch(() => []);
+        const t = e.filter(
+          (e) => e.endsWith(".md") && e.toLowerCase() !== "readme.md",
+        );
+        return Promise.all(
+          t.map(async (e) =>
+            (0, o.parseChangesetFile)(
+              e,
+              await (0, s.readFile)((0, n.join)(u, e), "utf-8"),
+            ),
+          ),
+        );
+      };
+      t.readPendingChangesets = readPendingChangesets;
+      const ensureGitIdentity = async () => {
+        const e = await (0, i.git)("config", "user.email").catch(() => "");
+        if (e !== "") return;
+        const t = process.env.GITHUB_ACTIONS === "true";
+        await (0, i.git)(
+          "config",
+          "user.name",
+          t ? "github-actions[bot]" : "catladder",
+        );
+        await (0, i.git)(
+          "config",
+          "user.email",
+          t
+            ? "41898282+github-actions[bot]@users.noreply.github.com"
+            : "catladder-release@panter.ch",
+        );
+      };
+      const requireEnv = (e) => {
+        const t = process.env[e];
+        if (!t) {
+          throw new Error(`${e} is not set — cannot push the release`);
+        }
+        return t;
+      };
+      const pushCommitAndTag = async (e) => {
+        if (process.env.GITHUB_ACTIONS === "true") {
+          const t = requireEnv("GITHUB_REF_NAME");
+          await (0, i.git)(
+            "push",
+            "--atomic",
+            "origin",
+            `HEAD:refs/heads/${t}`,
+            e,
+          );
+          return;
+        }
+        const t = requireEnv("GL_TOKEN");
+        const r = requireEnv("CI_SERVER_HOST");
+        const s = requireEnv("CI_PROJECT_PATH");
+        const n = requireEnv("CI_COMMIT_BRANCH");
+        const o = `https://oauth2:${t}@${r}/${s}.git`;
+        await (0, i.git)("push", "--atomic", o, `HEAD:refs/heads/${n}`, e);
+      };
+      const dispatchTaggedReleaseWorkflow = async (e) => {
+        var t;
+        const r =
+          (t = process.env.GITHUB_API_URL) !== null && t !== void 0
+            ? t
+            : "https://api.github.com";
+        const s = requireEnv("GITHUB_REPOSITORY");
+        const n = requireEnv("GITHUB_TOKEN");
+        const o = await fetch(
+          `${r}/repos/${s}/actions/workflows/${p}/dispatches`,
+          {
+            method: "POST",
+            headers: {
+              authorization: `Bearer ${n}`,
+              accept: "application/vnd.github+json",
+            },
+            body: JSON.stringify({ ref: e }),
+          },
+        );
+        if (!o.ok) {
+          throw new Error(
+            `dispatching ${p} for ${e} failed: ${o.status} ${await o.text()}`,
+          );
+        }
+        console.log(`dispatched ${p} for ${e}`);
+      };
+      t.dispatchTaggedReleaseWorkflow = dispatchTaggedReleaseWorkflow;
+      const l = {
+        fileName: "",
+        bump: "patch",
+        summary: "Forced release without pending changesets.",
+      };
+      const changesetsReleaseJob = async () => {
+        const e = await (0, t.readPendingChangesets)();
+        const r =
+          e.length === 0 && process.env.CATLADDER_FORCE_RELEASE === "true";
+        if (e.length === 0 && !r) {
+          console.log(`no changesets found in ${u}/ — nothing to release`);
+          console.log(
+            "add one with `yarn changeset` (or write .changeset/<name>.md by hand) and merge it to release",
+          );
+          console.log(
+            "to release anyway (patch bump), run the force release job instead",
+          );
+          (0, a.appendStepSummary)(
+            `ℹ️ **Nothing released** — no pending changesets in \`${u}/\`. ` +
+              "Merge a changeset and release again, or force the release for a patch bump.",
+          );
+          return;
+        }
+        const p = r ? [l] : e;
+        if (r) {
+          console.log(
+            "no changesets pending — forced release, bumping a patch",
+          );
+        }
+        await (0, i.ensureReleaseHistory)();
+        const d = await (0, i.getLastReleaseTag)();
+        const f = (0, o.getNextVersion)(
+          d,
+          (0, o.maxBump)(p.map((e) => e.bump)),
+        );
+        const h = `v${f}`;
+        console.log(
+          `releasing ${h} (${d !== null && d !== void 0 ? d : "first release"} + ${p.length} changeset(s))`,
+        );
+        const g = (0, o.renderChangelogEntries)(p);
+        const m = await (0, s.readFile)(c, "utf-8").catch(() => null);
+        const y = new Date().toISOString().slice(0, 10);
+        await (0, s.writeFile)(c, (0, o.prependToChangelog)(m, f, y, g));
+        await Promise.all(e.map((e) => (0, s.rm)((0, n.join)(u, e.fileName))));
+        await ensureGitIdentity();
+        if (r) {
+          await (0, i.git)("add", c);
+        } else {
+          await (0, i.git)("add", c, u);
+        }
+        await (0, i.git)("commit", "-m", `chore(release): ${f}\n\n${g}`);
+        await (0, i.git)("tag", h);
+        await pushCommitAndTag(h);
+        console.log(`released ${h}`);
+        (0, a.appendStepSummary)(`🚀 **Released ${h}**\n\n${g}`);
+        if (process.env.GITHUB_ACTIONS === "true") {
+          await (0, t.dispatchTaggedReleaseWorkflow)(h);
+        }
+      };
+      t.changesetsReleaseJob = changesetsReleaseJob;
+    },
+    2596: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.githubQueuedGuardJob = t.githubQueueCheckJob = void 0;
+      const s = r(9896);
+      const n = r(5320);
+      const o = r(7817);
+      const i = "catladder-main.yml";
+      const a = "catladder-release-on-green.yml";
+      const u = "refs/catladder/release-queued";
+      const ensureGitSafeDirectory = async () => {
+        await (0, n.git)(
+          "config",
+          "--global",
+          "--add",
+          "safe.directory",
+          process.cwd(),
+        );
+      };
+      const requireEnv = (e) => {
+        const t = process.env[e];
+        if (!t) {
+          throw new Error(`${e} is not set`);
+        }
+        return t;
+      };
+      const fail = (e) => {
+        console.error(e);
+        process.exit(1);
+      };
+      const setStepOutput = (e, t) => {
+        const r = process.env.GITHUB_OUTPUT;
+        if (!r) {
+          return;
+        }
+        (0, s.appendFileSync)(r, `${e}=${t}\n`);
+      };
+      const getMainWorkflowRun = async (e) => {
+        var t, r, s;
+        const n =
+          (t = process.env.GITHUB_API_URL) !== null && t !== void 0
+            ? t
+            : "https://api.github.com";
+        const o = requireEnv("GITHUB_REPOSITORY");
+        const a = requireEnv("GITHUB_TOKEN");
+        const u = await fetch(
+          `${n}/repos/${o}/actions/workflows/${i}/runs?head_sha=${e}&per_page=5`,
+          {
+            headers: {
+              authorization: `Bearer ${a}`,
+              accept: "application/vnd.github+json",
+            },
+          },
+        );
+        if (!u.ok) {
+          throw new Error(
+            `listing ${i} runs failed: ${u.status} ${await u.text()}`,
+          );
+        }
+        const c = await u.json();
+        return (s =
+          (r = c.workflow_runs) === null || r === void 0 ? void 0 : r[0]) !==
+          null && s !== void 0
+          ? s
+          : null;
+      };
+      const githubQueueCheckJob = async () => {
+        await ensureGitSafeDirectory();
+        const e = await (0, n.git)("rev-parse", "HEAD");
+        const t = await getMainWorkflowRun(e);
+        if (!t) {
+          console.log(
+            `no main workflow run found for ${e} — releasing right away`,
+          );
+          (0, o.appendStepSummary)(
+            `ℹ️ No main workflow run found for \`${e}\` — releasing right away.`,
+          );
+          setStepOutput("queued", "false");
+          return;
+        }
+        if (t.status === "completed") {
+          if (t.conclusion === "success") {
+            console.log(
+              `main workflow for ${e} succeeded — releasing right away`,
+            );
+            (0, o.appendStepSummary)(
+              `✅ The main workflow for \`${e}\` succeeded — releasing right away.`,
+            );
+            setStepOutput("queued", "false");
+            return;
+          }
+          (0, o.appendStepSummary)(
+            `❌ Not releasing: the ${(0, o.workflowLink)(i, "main workflow")} run for \`${e}\` concluded **${t.conclusion}**. ` +
+              `Fix the pipeline, or re-run with the force checkbox to release anyway.`,
+          );
+          fail(
+            `the main workflow for ${e} concluded '${t.conclusion}' — ` +
+              `fix the pipeline, or force the release to release anyway`,
+          );
+        }
+        await (0, n.git)("push", "origin", `+${e}:${u}`);
+        const r = t.status.replace(/_/g, " ");
+        console.log(
+          `main workflow for ${e} is ${r} — release queued: ` +
+            `the 'release on green' workflow creates the release as soon as the run succeeds`,
+        );
+        (0, o.appendStepSummary)(
+          `⏳ **Release queued** for \`${e}\` — the ${(0, o.workflowLink)(i, "main workflow")} run is still ${r}. ` +
+            `${(0, o.workflowLink)(a, "release on green")} creates the release as soon as it succeeds.`,
+        );
+        setStepOutput("queued", "true");
+      };
+      t.githubQueueCheckJob = githubQueueCheckJob;
+      const githubQueuedGuardJob = async (e, t) => {
+        var r;
+        await ensureGitSafeDirectory();
+        const s = await (0, n.git)("ls-remote", "origin", u);
+        const i = (r = s.split(/\s+/)[0]) !== null && r !== void 0 ? r : "";
+        if (!i) {
+          console.log("no release queued — nothing to do");
+          (0, o.appendStepSummary)("No release queued — nothing to do.");
+          setStepOutput("release", "false");
+          return;
+        }
+        if (i !== e) {
+          console.log(
+            `queued release is for ${i}, this run is for ${e} — leaving the queue untouched`,
+          );
+          (0, o.appendStepSummary)(
+            `Queued release is for \`${i}\`, this run is for \`${e}\` — leaving the queue untouched.`,
+          );
+          setStepOutput("release", "false");
+          return;
+        }
+        await (0, n.git)("push", "origin", `:${u}`);
+        if (t !== "success") {
+          (0, o.appendStepSummary)(
+            `❌ Queued release for \`${e}\` **not executed**: the main workflow concluded **${t}**. ` +
+              `Fix the pipeline and queue again via the 🚀 create release workflow.`,
+          );
+          fail(
+            `queued release not executed: the main workflow concluded '${t}' — ` +
+              `fix the pipeline and queue the release again`,
+          );
+        }
+        console.log(`main workflow for ${e} succeeded — releasing`);
+        (0, o.appendStepSummary)(
+          `✅ Main workflow for \`${e}\` succeeded — running the queued release.`,
+        );
+        setStepOutput("release", "true");
+      };
+      t.githubQueuedGuardJob = githubQueuedGuardJob;
+    },
+    5320: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.getLastReleaseTag = t.ensureReleaseHistory = t.git = void 0;
+      const s = r(5317);
+      const n = r(9023);
+      const o = (0, n.promisify)(s.execFile);
+      const git = async (...e) => {
+        const { stdout: t } = await o("git", e);
+        return t.trim();
+      };
+      t.git = git;
+      const ensureReleaseHistory = async () => {
+        const e = await (0, t.git)(
+          "rev-parse",
+          "--is-shallow-repository",
+        ).catch(() => "false");
+        try {
+          if (e === "true") {
+            await (0, t.git)(
+              "fetch",
+              "--quiet",
+              "--unshallow",
+              "--tags",
+              "origin",
+            );
+          } else {
+            await (0, t.git)("fetch", "--quiet", "--tags", "origin");
+          }
+        } catch (e) {
+          console.warn(
+            `could not fetch tags from origin (${e}) — version derivation may be wrong on a shallow clone`,
+          );
+        }
+      };
+      t.ensureReleaseHistory = ensureReleaseHistory;
+      const getLastReleaseTag = async () => {
+        try {
+          return await (0, t.git)(
+            "describe",
+            "--tags",
+            "--abbrev=0",
+            "--match",
+            "v[0-9]*",
+          );
+        } catch (e) {
+          return null;
+        }
+      };
+      t.getLastReleaseTag = getLastReleaseTag;
+    },
+    7817: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.workflowLink = t.appendStepSummary = void 0;
+      const s = r(9896);
+      const appendStepSummary = (e) => {
+        const t = process.env.GITHUB_STEP_SUMMARY;
+        if (!t) {
+          return;
+        }
+        (0, s.appendFileSync)(t, e + "\n");
+      };
+      t.appendStepSummary = appendStepSummary;
+      const workflowLink = (e, t) => {
+        var r;
+        const s =
+          (r = process.env.GITHUB_SERVER_URL) !== null && r !== void 0
+            ? r
+            : "https://github.com";
+        const n = process.env.GITHUB_REPOSITORY;
+        if (!n) {
+          return t;
+        }
+        return `[${t}](${s}/${n}/actions/workflows/${e})`;
+      };
+      t.workflowLink = workflowLink;
+    },
+    8226: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__importDefault) ||
+        function (e) {
+          return e && e.__esModule ? e : { default: e };
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.evaluateDocument = t.makeTemplate = void 0;
+      const n = s(r(6743));
+      const o = n.default;
+      const i = "✅";
+      const a = "❌";
+      const u = `${i}/${a}`;
+      const c = "@...";
+      const p = [
+        ["Responsible", u, "Description", "Note", "More Information"],
+      ].concat(
+        o.map((e) => [
+          Array(e.responsibles).fill(c).join(", "),
+          u,
+          e.description,
+          "",
+          e.more,
+        ]),
+      );
+      function makeTable(e) {
+        const t = calculateColumnWidths(e);
+        return `\n${makeRow(e[0], t, " ")}\n${makeRow(
+          e[0].map(() => ""),
+          t,
+          "-",
+        )}\n${e
+          .slice(1)
+          .map((e) => makeRow(e, t, " "))
+          .join("\n")}\n`;
+      }
+      function calculateColumnWidths(e) {
+        const t = e[0].length;
+        return Array.from({ length: t }, (e, t) => t).map((t) =>
+          Math.max(...e.map((e) => e[t].length)),
+        );
+      }
+      function makeRow(e, t, r) {
+        return `| ${e.map((e, s) => e.padEnd(t[s], r)).join(" | ")} |`;
+      }
+      function makeTemplate() {
+        return `\n# Security Audit Report\n\nA security audit report document is a comprehensive assessment of an application's security posture, containing security topics that auditors can mark to indicate the state of various security aspects.\n\nIt serves as a structured guide for security team to evaluate different security factors such as authentication, authorization, data encryption, input validation, and more.\n\n## General Information\n\n- Project Owner is @...\n- Dev team:\n  - @...\n  - @...\n  - @...\n\n## Project Security\n\n${makeTable(p)}\n\n`;
+      }
+      t.makeTemplate = makeTemplate;
+      function evaluateDocument(e) {
+        var t, r;
+        const s =
+          (r =
+            (t = e.match(/^\s*\|.*?\|\s*$/gm)) === null || t === void 0
+              ? void 0
+              : t.map((e) => e.trim())) !== null && r !== void 0
+            ? r
+            : [];
+        const n = s.map((e) => e.split("|").map((e) => e.trim())).slice(2);
+        const a = new Set(o.map((e) => e.description));
+        const p = n.map((e) => {
+          const t = e[1].split(", ");
+          const r = e[2];
+          const s = e[3];
+          const n = e[4];
+          const o = !a.has(s);
+          const p = !o && !r.includes(u) && !t.some((e) => e.includes(c));
+          const l = !o && p && r.includes(i);
+          return {
+            responsibles: t,
+            answer: r,
+            description: s,
+            note: n,
+            isUnknown: o,
+            isAnswered: p,
+            isSecured: l,
+          };
+        });
+        const l = o.length;
+        const d = p.filter((e) => e.isAnswered).length;
+        const f = p.filter((e) => e.isSecured).length;
+        const h = p.filter((e) => e.isUnknown).length;
+        const g = Math.round((f / l) * 100);
+        return {
+          topics: p,
+          score: {
+            rating: g,
+            totalTopics: l,
+            answeredTopics: d,
+            securedTopics: f,
+            unknownTopics: h,
+          },
+        };
+      }
+      t.evaluateDocument = evaluateDocument;
+    },
+    1276: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.createSecurityAuditMergeRequest = t.SECURITY_AUDIT_FILE_NAME = void 0;
+      const s = r(1709);
+      const n = r(8226);
+      function makeDatedBranchName(e) {
+        const t = new Date()
+          .toISOString()
+          .slice(0, -5)
+          .replaceAll(/[:.T]/g, "-");
+        return `${e}-${t}`;
+      }
+      const o = "Draft: chore(security): add security audit document";
+      t.SECURITY_AUDIT_FILE_NAME = "SECURITY.md";
+      async function createSecurityAuditMergeRequest({
+        projectId: e,
+        mainBranch: r,
+        userId: i,
+        api: a,
+      }) {
+        const u = (
+          await s.Result.wrapAsync(() =>
+            a.MergeRequests.all({
+              state: "opened",
+              wip: "yes",
+              labels: "security-audit",
+            }),
+          )
+        ).mapErr(() => `could not search for existing merge requests`);
+        if (u.isErr()) return u;
+        const c = u.value[0];
+        if (c)
+          return (0, s.Err)(
+            `open merge request with security audit already exists: ${c.web_url}`,
+          );
+        const p = s.Result.wrap(() => (0, n.makeTemplate)()).mapErr(
+          () => "could not make security audit template document",
+        );
+        if (p.isErr()) return p;
+        const l = (
+          await s.Result.wrapAsync(() =>
+            a.Branches.create(
+              e,
+              makeDatedBranchName("chore/security-audit"),
+              r,
+            ),
+          )
+        ).mapErr((e) => {
+          console.log(e);
+          return "could not create branch";
+        });
+        if (l.isErr()) return l;
+        const d = (
+          await s.Result.wrapAsync(() =>
+            a.Commits.create(
+              e,
+              l.value.name,
+              "chore(security): add empty security audit document template",
+              [
+                {
+                  action: "create",
+                  filePath: t.SECURITY_AUDIT_FILE_NAME,
+                  content: p.value,
+                  encoding: "text",
+                },
+              ],
+            ),
+          )
+        ).mapErr(() => "could not create commit");
+        if (d.isErr()) return d;
+        const f = (
+          await s.Result.wrapAsync(() =>
+            a.MergeRequests.create(e, l.value.name, r, o, {
+              description: `Please follow and update security audit document in \`${t.SECURITY_AUDIT_FILE_NAME}\`.`,
+              assigneeId: i,
+              squash: true,
+              labels: "security-audit",
+              removeSourceBranch: true,
+            }),
+          )
+        ).mapErr(() => "could not create merge request");
+        return f;
+      }
+      t.createSecurityAuditMergeRequest = createSecurityAuditMergeRequest;
+    },
+    9392: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.makeSecurityAuditOverview = t.evaluateSecurityAudit = void 0;
+      const s = r(1709);
+      const n = r(6928);
+      const o = r(1943);
+      const i = r(1276);
+      const a = r(8226);
+      async function evaluateSecurityAudit({ path: e }) {
+        return (
+          await s.Result.wrapAsync(async () => {
+            const t = (0, n.join)(e, i.SECURITY_AUDIT_FILE_NAME);
+            const r = await (0, o.readFile)(t);
+            const s = r.toString("utf-8");
+            return (0, a.evaluateDocument)(s);
+          })
+        ).mapErr(
+          (e) => `could not evaluate ${i.SECURITY_AUDIT_FILE_NAME}: ${e}`,
+        );
+      }
+      t.evaluateSecurityAudit = evaluateSecurityAudit;
+      function makeSecurityAuditOverview(e) {
+        const ratingToEmo = (e) => (e < 33 ? "🟥" : e < 66 ? "🟨" : "🟩");
+        return `Project security posture overview:\n 🧐 Total topics: ${e.score.totalTopics}\n 🔒 Secured topics: ${e.score.securedTopics}\n 📢 Answered topics: ${e.score.answeredTopics}\n ❔ Unknown topics: ${e.score.unknownTopics}\n 📊 Rating: ${ratingToEmo(e.score.rating)} ${e.score.rating}/100`;
+      }
+      t.makeSecurityAuditOverview = makeSecurityAuditOverview;
+    },
+    7751: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      var s = r(5130);
+      function _interopDefault(e) {
+        return e && e.__esModule ? e : { default: e };
+      }
+      var n = _interopDefault(s);
+      const o = /\s*---([^]*?)\n\s*---(\s*(?:\n|$)[^]*)/;
+      const i = `---\n"package-name": patch\n---`;
+      const a = ["major", "minor", "patch", "none"];
+      function truncate(e, t = 200) {
+        return e.length > t ? e.slice(0, t) + "..." : e;
+      }
+      function validateReleases(e, t) {
+        for (const r of e) {
+          if (typeof r.name !== "string" || r.name.trim() === "") {
+            throw new Error(
+              `could not parse changeset - invalid package name in frontmatter.\n` +
+                `Expected a non-empty string for package name, but got: ${JSON.stringify(r.name)}\n` +
+                `Changeset contents:\n${truncate(t)}`,
+            );
+          }
+          if (typeof r.type !== "string") {
+            throw new Error(
+              `could not parse changeset - invalid release type for package "${r.name}".\n` +
+                `Expected a string for release type, but got: ${typeof r.type}\n` +
+                `Changeset contents:\n${truncate(t)}`,
+            );
+          }
+          if (!a.includes(r.type)) {
+            throw new Error(
+              `could not parse changeset - invalid version type ${JSON.stringify(r.type)} for package "${r.name}".\n` +
+                `Valid version types are: ${a.join(", ")}\n` +
+                `Changeset contents:\n${truncate(t)}`,
+            );
+          }
+        }
+      }
+      function parseChangesetFile(e) {
+        const t = e.trim();
+        if (!t) {
+          throw new Error(
+            `could not parse changeset - file is empty.\n` +
+              `Changesets must have frontmatter with package names and version types.\n` +
+              `Example:\n${i}\n\nYour changeset summary here.`,
+          );
+        }
+        const r = o.exec(e);
+        if (!r) {
+          throw new Error(
+            `could not parse changeset - missing or invalid frontmatter.\n` +
+              `Changesets must start with frontmatter delimited by "---".\n` +
+              `Example:\n${i}\n\nYour changeset summary here.\n` +
+              `Received content:\n${truncate(t)}`,
+          );
+        }
+        let [, s, a] = r;
+        let u = a.trim();
+        let c;
+        let p;
+        try {
+          p = n["default"].load(s);
+        } catch (e) {
+          throw new Error(
+            `could not parse changeset - invalid YAML in frontmatter.\n` +
+              `The frontmatter between the "---" delimiters must be valid YAML.\n` +
+              `YAML error: ${e instanceof Error ? e.message : String(e)}\n` +
+              `Frontmatter content:\n${s}`,
+          );
+        }
+        if (p) {
+          if (typeof p !== "object" || Array.isArray(p)) {
+            throw new Error(
+              `could not parse changeset - frontmatter must be an object mapping package names to version types.\n` +
+                `Expected format:\n${i}\n` +
+                `Received:\n${s}`,
+            );
+          }
+          c = Object.entries(p).map(([e, t]) => ({ name: e, type: t }));
+        } else {
+          c = [];
+        }
+        validateReleases(c, e);
+        return { releases: c, summary: u };
+      }
+      t["default"] = parseChangesetFile;
+    },
+    5130: (e, t, r) => {
+      "use strict";
+      const s = r(7915);
+      const n = r(5485);
+      function renamed(e, t) {
+        return function () {
+          throw new Error(
+            "Function yaml." +
+              e +
+              " is removed in js-yaml 4. " +
+              "Use yaml." +
+              t +
+              " instead, which is now safe by default.",
+          );
+        };
+      }
+      e.exports.Type = r(9180);
+      e.exports.Schema = r(9079);
+      e.exports.FAILSAFE_SCHEMA = r(4111);
+      e.exports.JSON_SCHEMA = r(5480);
+      e.exports.CORE_SCHEMA = r(9193);
+      e.exports.DEFAULT_SCHEMA = r(177);
+      e.exports.load = s.load;
+      e.exports.loadAll = s.loadAll;
+      e.exports.dump = n.dump;
+      e.exports.YAMLException = r(2767);
+      e.exports.types = {
+        binary: r(3230),
+        float: r(9749),
+        map: r(6033),
+        null: r(8142),
+        pairs: r(6142),
+        set: r(3863),
+        timestamp: r(9727),
+        bool: r(7703),
+        int: r(1090),
+        merge: r(7739),
+        omap: r(6482),
+        seq: r(8892),
+        str: r(8828),
+      };
+      e.exports.safeLoad = renamed("safeLoad", "load");
+      e.exports.safeLoadAll = renamed("safeLoadAll", "loadAll");
+      e.exports.safeDump = renamed("safeDump", "dump");
+    },
+    6305: (e) => {
+      "use strict";
+      function isNothing(e) {
+        return typeof e === "undefined" || e === null;
+      }
+      function isObject(e) {
+        return typeof e === "object" && e !== null;
+      }
+      function toArray(e) {
+        if (Array.isArray(e)) return e;
+        else if (isNothing(e)) return [];
+        return [e];
+      }
+      function extend(e, t) {
+        if (t) {
+          const r = Object.keys(t);
+          for (let s = 0, n = r.length; s < n; s += 1) {
+            const n = r[s];
+            e[n] = t[n];
+          }
+        }
+        return e;
+      }
+      function repeat(e, t) {
+        let r = "";
+        for (let s = 0; s < t; s += 1) {
+          r += e;
+        }
+        return r;
+      }
+      function isNegativeZero(e) {
+        return e === 0 && Number.NEGATIVE_INFINITY === 1 / e;
+      }
+      e.exports.isNothing = isNothing;
+      e.exports.isObject = isObject;
+      e.exports.toArray = toArray;
+      e.exports.repeat = repeat;
+      e.exports.isNegativeZero = isNegativeZero;
+      e.exports.extend = extend;
+    },
+    5485: (e, t, r) => {
+      "use strict";
+      const s = r(6305);
+      const n = r(2767);
+      const o = r(177);
+      const i = Object.prototype.toString;
+      const a = Object.prototype.hasOwnProperty;
+      const u = 65279;
+      const c = 9;
+      const p = 10;
+      const l = 13;
+      const d = 32;
+      const f = 33;
+      const h = 34;
+      const g = 35;
+      const m = 37;
+      const y = 38;
+      const v = 39;
+      const $ = 42;
+      const b = 44;
+      const w = 45;
+      const _ = 58;
+      const A = 61;
+      const S = 62;
+      const j = 63;
+      const E = 64;
+      const R = 91;
+      const k = 93;
+      const x = 96;
+      const I = 123;
+      const P = 124;
+      const T = 125;
+      const C = {};
+      C[0] = "\\0";
+      C[7] = "\\a";
+      C[8] = "\\b";
+      C[9] = "\\t";
+      C[10] = "\\n";
+      C[11] = "\\v";
+      C[12] = "\\f";
+      C[13] = "\\r";
+      C[27] = "\\e";
+      C[34] = '\\"';
+      C[92] = "\\\\";
+      C[133] = "\\N";
+      C[160] = "\\_";
+      C[8232] = "\\L";
+      C[8233] = "\\P";
+      const O = [
+        "y",
+        "Y",
+        "yes",
+        "Yes",
+        "YES",
+        "on",
+        "On",
+        "ON",
+        "n",
+        "N",
+        "no",
+        "No",
+        "NO",
+        "off",
+        "Off",
+        "OFF",
+      ];
+      const M = /^[-+]?[0-9_]+(?::[0-9_]+)+(?:\.[0-9_]*)?$/;
+      function compileStyleMap(e, t) {
+        if (t === null) return {};
+        const r = {};
+        const s = Object.keys(t);
+        for (let n = 0, o = s.length; n < o; n += 1) {
+          let o = s[n];
+          let i = String(t[o]);
+          if (o.slice(0, 2) === "!!") {
+            o = "tag:yaml.org,2002:" + o.slice(2);
+          }
+          const u = e.compiledTypeMap["fallback"][o];
+          if (u && a.call(u.styleAliases, i)) {
+            i = u.styleAliases[i];
+          }
+          r[o] = i;
+        }
+        return r;
+      }
+      function encodeHex(e) {
+        let t;
+        let r;
+        const o = e.toString(16).toUpperCase();
+        if (e <= 255) {
+          t = "x";
+          r = 2;
+        } else if (e <= 65535) {
+          t = "u";
+          r = 4;
+        } else if (e <= 4294967295) {
+          t = "U";
+          r = 8;
+        } else {
+          throw new n(
+            "code point within a string may not be greater than 0xFFFFFFFF",
+          );
+        }
+        return "\\" + t + s.repeat("0", r - o.length) + o;
+      }
+      const N = 1;
+      const L = 2;
+      function State(e) {
+        this.schema = e["schema"] || o;
+        this.indent = Math.max(1, e["indent"] || 2);
+        this.noArrayIndent = e["noArrayIndent"] || false;
+        this.skipInvalid = e["skipInvalid"] || false;
+        this.flowLevel = s.isNothing(e["flowLevel"]) ? -1 : e["flowLevel"];
+        this.styleMap = compileStyleMap(this.schema, e["styles"] || null);
+        this.sortKeys = e["sortKeys"] || false;
+        this.lineWidth = e["lineWidth"] || 80;
+        this.noRefs = e["noRefs"] || false;
+        this.noCompatMode = e["noCompatMode"] || false;
+        this.condenseFlow = e["condenseFlow"] || false;
+        this.quotingType = e["quotingType"] === '"' ? L : N;
+        this.forceQuotes = e["forceQuotes"] || false;
+        this.replacer =
+          typeof e["replacer"] === "function" ? e["replacer"] : null;
+        this.implicitTypes = this.schema.compiledImplicit;
+        this.explicitTypes = this.schema.compiledExplicit;
+        this.tag = null;
+        this.result = "";
+        this.duplicates = [];
+        this.usedDuplicates = null;
+      }
+      function indentString(e, t) {
+        const r = s.repeat(" ", t);
+        let n = 0;
+        let o = "";
+        const i = e.length;
+        while (n < i) {
+          let t;
+          const s = e.indexOf("\n", n);
+          if (s === -1) {
+            t = e.slice(n);
+            n = i;
+          } else {
+            t = e.slice(n, s + 1);
+            n = s + 1;
+          }
+          if (t.length && t !== "\n") o += r;
+          o += t;
+        }
+        return o;
+      }
+      function generateNextLine(e, t) {
+        return "\n" + s.repeat(" ", e.indent * t);
+      }
+      function testImplicitResolving(e, t) {
+        for (let r = 0, s = e.implicitTypes.length; r < s; r += 1) {
+          const s = e.implicitTypes[r];
+          if (s.resolve(t)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      function isWhitespace(e) {
+        return e === d || e === c;
+      }
+      function isPrintable(e) {
+        return (
+          (e >= 32 && e <= 126) ||
+          (e >= 161 && e <= 55295 && e !== 8232 && e !== 8233) ||
+          (e >= 57344 && e <= 65533 && e !== u) ||
+          (e >= 65536 && e <= 1114111)
+        );
+      }
+      function isNsCharOrWhitespace(e) {
+        return isPrintable(e) && e !== u && e !== l && e !== p;
+      }
+      function isPlainSafe(e, t, r) {
+        const s = isNsCharOrWhitespace(e);
+        const n = s && !isWhitespace(e);
+        return (
+          ((r ? s : s && e !== b && e !== R && e !== k && e !== I && e !== T) &&
+            e !== g &&
+            !(t === _ && !n)) ||
+          (isNsCharOrWhitespace(t) && !isWhitespace(t) && e === g) ||
+          (t === _ && n)
+        );
+      }
+      function isPlainSafeFirst(e) {
+        return (
+          isPrintable(e) &&
+          e !== u &&
+          !isWhitespace(e) &&
+          e !== w &&
+          e !== j &&
+          e !== _ &&
+          e !== b &&
+          e !== R &&
+          e !== k &&
+          e !== I &&
+          e !== T &&
+          e !== g &&
+          e !== y &&
+          e !== $ &&
+          e !== f &&
+          e !== P &&
+          e !== A &&
+          e !== S &&
+          e !== v &&
+          e !== h &&
+          e !== m &&
+          e !== E &&
+          e !== x
+        );
+      }
+      function isPlainSafeLast(e) {
+        return !isWhitespace(e) && e !== _;
+      }
+      function codePointAt(e, t) {
+        const r = e.charCodeAt(t);
+        let s;
+        if (r >= 55296 && r <= 56319 && t + 1 < e.length) {
+          s = e.charCodeAt(t + 1);
+          if (s >= 56320 && s <= 57343) {
+            return (r - 55296) * 1024 + s - 56320 + 65536;
+          }
+        }
+        return r;
+      }
+      function needIndentIndicator(e) {
+        const t = /^\n* /;
+        return t.test(e);
+      }
+      const B = 1;
+      const F = 2;
+      const q = 3;
+      const G = 4;
+      const D = 5;
+      function chooseScalarStyle(e, t, r, s, n, o, i, a) {
+        let u;
+        let c = 0;
+        let l = null;
+        let d = false;
+        let f = false;
+        const h = s !== -1;
+        let g = -1;
+        let m =
+          isPlainSafeFirst(codePointAt(e, 0)) &&
+          isPlainSafeLast(codePointAt(e, e.length - 1));
+        if (t || i) {
+          for (u = 0; u < e.length; c >= 65536 ? (u += 2) : u++) {
+            c = codePointAt(e, u);
+            if (!isPrintable(c)) {
+              return D;
+            }
+            m = m && isPlainSafe(c, l, a);
+            l = c;
+          }
+        } else {
+          for (u = 0; u < e.length; c >= 65536 ? (u += 2) : u++) {
+            c = codePointAt(e, u);
+            if (c === p) {
+              d = true;
+              if (h) {
+                f = f || (u - g - 1 > s && e[g + 1] !== " ");
+                g = u;
+              }
+            } else if (!isPrintable(c)) {
+              return D;
+            }
+            m = m && isPlainSafe(c, l, a);
+            l = c;
+          }
+          f = f || (h && u - g - 1 > s && e[g + 1] !== " ");
+        }
+        if (!d && !f) {
+          if (m && !i && !n(e)) {
+            return B;
+          }
+          return o === L ? D : F;
+        }
+        if (r > 9 && needIndentIndicator(e)) {
+          return D;
+        }
+        if (!i) {
+          return f ? G : q;
+        }
+        return o === L ? D : F;
+      }
+      function writeScalar(e, t, r, s, o) {
+        e.dump = (function () {
+          if (t.length === 0) {
+            return e.quotingType === L ? '""' : "''";
+          }
+          if (!e.noCompatMode) {
+            if (O.indexOf(t) !== -1 || M.test(t)) {
+              return e.quotingType === L ? '"' + t + '"' : "'" + t + "'";
+            }
+          }
+          const i = e.indent * Math.max(1, r);
+          const a =
+            e.lineWidth === -1
+              ? -1
+              : Math.max(Math.min(e.lineWidth, 40), e.lineWidth - i);
+          const u = s || (e.flowLevel > -1 && r >= e.flowLevel);
+          function testAmbiguity(t) {
+            return testImplicitResolving(e, t);
+          }
+          switch (
+            chooseScalarStyle(
+              t,
+              u,
+              e.indent,
+              a,
+              testAmbiguity,
+              e.quotingType,
+              e.forceQuotes && !s,
+              o,
+            )
+          ) {
+            case B:
+              return t;
+            case F:
+              return "'" + t.replace(/'/g, "''") + "'";
+            case q:
+              return (
+                "|" +
+                blockHeader(t, e.indent) +
+                dropEndingNewline(indentString(t, i))
+              );
+            case G:
+              return (
+                ">" +
+                blockHeader(t, e.indent) +
+                dropEndingNewline(indentString(foldString(t, a), i))
+              );
+            case D:
+              return '"' + escapeString(t, a) + '"';
+            default:
+              throw new n("impossible error: invalid scalar style");
+          }
+        })();
+      }
+      function blockHeader(e, t) {
+        const r = needIndentIndicator(e) ? String(t) : "";
+        const s = e[e.length - 1] === "\n";
+        const n = s && (e[e.length - 2] === "\n" || e === "\n");
+        const o = n ? "+" : s ? "" : "-";
+        return r + o + "\n";
+      }
+      function dropEndingNewline(e) {
+        return e[e.length - 1] === "\n" ? e.slice(0, -1) : e;
+      }
+      function foldString(e, t) {
+        const r = /(\n+)([^\n]*)/g;
+        let s = (function () {
+          let s = e.indexOf("\n");
+          s = s !== -1 ? s : e.length;
+          r.lastIndex = s;
+          return foldLine(e.slice(0, s), t);
+        })();
+        let n = e[0] === "\n" || e[0] === " ";
+        let o;
+        let i;
+        while ((i = r.exec(e))) {
+          const e = i[1];
+          const r = i[2];
+          o = r[0] === " ";
+          s += e + (!n && !o && r !== "" ? "\n" : "") + foldLine(r, t);
+          n = o;
+        }
+        return s;
+      }
+      function foldLine(e, t) {
+        if (e === "" || e[0] === " ") return e;
+        const r = / [^ ]/g;
+        let s;
+        let n = 0;
+        let o;
+        let i = 0;
+        let a = 0;
+        let u = "";
+        while ((s = r.exec(e))) {
+          a = s.index;
+          if (a - n > t) {
+            o = i > n ? i : a;
+            u += "\n" + e.slice(n, o);
+            n = o + 1;
+          }
+          i = a;
+        }
+        u += "\n";
+        if (e.length - n > t && i > n) {
+          u += e.slice(n, i) + "\n" + e.slice(i + 1);
+        } else {
+          u += e.slice(n);
+        }
+        return u.slice(1);
+      }
+      function escapeString(e) {
+        let t = "";
+        let r = 0;
+        for (let s = 0; s < e.length; r >= 65536 ? (s += 2) : s++) {
+          r = codePointAt(e, s);
+          const n = C[r];
+          if (!n && isPrintable(r)) {
+            t += e[s];
+            if (r >= 65536) t += e[s + 1];
+          } else {
+            t += n || encodeHex(r);
+          }
+        }
+        return t;
+      }
+      function writeFlowSequence(e, t, r) {
+        let s = "";
+        const n = e.tag;
+        for (let n = 0, o = r.length; n < o; n += 1) {
+          let o = r[n];
+          if (e.replacer) {
+            o = e.replacer.call(r, String(n), o);
+          }
+          if (
+            writeNode(e, t, o, false, false) ||
+            (typeof o === "undefined" && writeNode(e, t, null, false, false))
+          ) {
+            if (s !== "") s += "," + (!e.condenseFlow ? " " : "");
+            s += e.dump;
+          }
+        }
+        e.tag = n;
+        e.dump = "[" + s + "]";
+      }
+      function writeBlockSequence(e, t, r, s) {
+        let n = "";
+        const o = e.tag;
+        for (let o = 0, i = r.length; o < i; o += 1) {
+          let i = r[o];
+          if (e.replacer) {
+            i = e.replacer.call(r, String(o), i);
+          }
+          if (
+            writeNode(e, t + 1, i, true, true, false, true) ||
+            (typeof i === "undefined" &&
+              writeNode(e, t + 1, null, true, true, false, true))
+          ) {
+            if (!s || n !== "") {
+              n += generateNextLine(e, t);
+            }
+            if (e.dump && p === e.dump.charCodeAt(0)) {
+              n += "-";
+            } else {
+              n += "- ";
+            }
+            n += e.dump;
+          }
+        }
+        e.tag = o;
+        e.dump = n || "[]";
+      }
+      function writeFlowMapping(e, t, r) {
+        let s = "";
+        const n = e.tag;
+        const o = Object.keys(r);
+        for (let n = 0, i = o.length; n < i; n += 1) {
+          let i = "";
+          if (s !== "") i += ", ";
+          if (e.condenseFlow) i += '"';
+          const a = o[n];
+          let u = r[a];
+          if (e.replacer) {
+            u = e.replacer.call(r, a, u);
+          }
+          if (!writeNode(e, t, a, false, false)) {
+            continue;
+          }
+          if (e.dump.length > 1024) i += "? ";
+          i +=
+            e.dump +
+            (e.condenseFlow ? '"' : "") +
+            ":" +
+            (e.condenseFlow ? "" : " ");
+          if (!writeNode(e, t, u, false, false)) {
+            continue;
+          }
+          i += e.dump;
+          s += i;
+        }
+        e.tag = n;
+        e.dump = "{" + s + "}";
+      }
+      function writeBlockMapping(e, t, r, s) {
+        let o = "";
+        const i = e.tag;
+        const a = Object.keys(r);
+        if (e.sortKeys === true) {
+          a.sort();
+        } else if (typeof e.sortKeys === "function") {
+          a.sort(e.sortKeys);
+        } else if (e.sortKeys) {
+          throw new n("sortKeys must be a boolean or a function");
+        }
+        for (let n = 0, i = a.length; n < i; n += 1) {
+          let i = "";
+          if (!s || o !== "") {
+            i += generateNextLine(e, t);
+          }
+          const u = a[n];
+          let c = r[u];
+          if (e.replacer) {
+            c = e.replacer.call(r, u, c);
+          }
+          if (!writeNode(e, t + 1, u, true, true, true)) {
+            continue;
+          }
+          const l =
+            (e.tag !== null && e.tag !== "?") ||
+            (e.dump && e.dump.length > 1024);
+          if (l) {
+            if (e.dump && p === e.dump.charCodeAt(0)) {
+              i += "?";
+            } else {
+              i += "? ";
+            }
+          }
+          i += e.dump;
+          if (l) {
+            i += generateNextLine(e, t);
+          }
+          if (!writeNode(e, t + 1, c, true, l)) {
+            continue;
+          }
+          if (e.dump && p === e.dump.charCodeAt(0)) {
+            i += ":";
+          } else {
+            i += ": ";
+          }
+          i += e.dump;
+          o += i;
+        }
+        e.tag = i;
+        e.dump = o || "{}";
+      }
+      function detectType(e, t, r) {
+        const s = r ? e.explicitTypes : e.implicitTypes;
+        for (let o = 0, u = s.length; o < u; o += 1) {
+          const u = s[o];
+          if (
+            (u.instanceOf || u.predicate) &&
+            (!u.instanceOf ||
+              (typeof t === "object" && t instanceof u.instanceOf)) &&
+            (!u.predicate || u.predicate(t))
+          ) {
+            if (r) {
+              if (u.multi && u.representName) {
+                e.tag = u.representName(t);
+              } else {
+                e.tag = u.tag;
+              }
+            } else {
+              e.tag = "?";
+            }
+            if (u.represent) {
+              const r = e.styleMap[u.tag] || u.defaultStyle;
+              let s;
+              if (i.call(u.represent) === "[object Function]") {
+                s = u.represent(t, r);
+              } else if (a.call(u.represent, r)) {
+                s = u.represent[r](t, r);
+              } else {
+                throw new n(
+                  "!<" + u.tag + '> tag resolver accepts not "' + r + '" style',
+                );
+              }
+              e.dump = s;
+            }
+            return true;
+          }
+        }
+        return false;
+      }
+      function writeNode(e, t, r, s, o, a, u) {
+        e.tag = null;
+        e.dump = r;
+        if (!detectType(e, r, false)) {
+          detectType(e, r, true);
+        }
+        const c = i.call(e.dump);
+        const p = s;
+        if (s) {
+          s = e.flowLevel < 0 || e.flowLevel > t;
+        }
+        const l = c === "[object Object]" || c === "[object Array]";
+        let d;
+        let f;
+        if (l) {
+          d = e.duplicates.indexOf(r);
+          f = d !== -1;
+        }
+        if (
+          (e.tag !== null && e.tag !== "?") ||
+          f ||
+          (e.indent !== 2 && t > 0)
+        ) {
+          o = false;
+        }
+        if (f && e.usedDuplicates[d]) {
+          e.dump = "*ref_" + d;
+        } else {
+          if (l && f && !e.usedDuplicates[d]) {
+            e.usedDuplicates[d] = true;
+          }
+          if (c === "[object Object]") {
+            if (s && Object.keys(e.dump).length !== 0) {
+              writeBlockMapping(e, t, e.dump, o);
+              if (f) {
+                e.dump = "&ref_" + d + e.dump;
+              }
+            } else {
+              writeFlowMapping(e, t, e.dump);
+              if (f) {
+                e.dump = "&ref_" + d + " " + e.dump;
+              }
+            }
+          } else if (c === "[object Array]") {
+            if (s && e.dump.length !== 0) {
+              if (e.noArrayIndent && !u && t > 0) {
+                writeBlockSequence(e, t - 1, e.dump, o);
+              } else {
+                writeBlockSequence(e, t, e.dump, o);
+              }
+              if (f) {
+                e.dump = "&ref_" + d + e.dump;
+              }
+            } else {
+              writeFlowSequence(e, t, e.dump);
+              if (f) {
+                e.dump = "&ref_" + d + " " + e.dump;
+              }
+            }
+          } else if (c === "[object String]") {
+            if (e.tag !== "?") {
+              writeScalar(e, e.dump, t, a, p);
+            }
+          } else if (c === "[object Undefined]") {
+            return false;
+          } else {
+            if (e.skipInvalid) return false;
+            throw new n("unacceptable kind of an object to dump " + c);
+          }
+          if (e.tag !== null && e.tag !== "?") {
+            let t = encodeURI(
+              e.tag[0] === "!" ? e.tag.slice(1) : e.tag,
+            ).replace(/!/g, "%21");
+            if (e.tag[0] === "!") {
+              t = "!" + t;
+            } else if (t.slice(0, 18) === "tag:yaml.org,2002:") {
+              t = "!!" + t.slice(18);
+            } else {
+              t = "!<" + t + ">";
+            }
+            e.dump = t + " " + e.dump;
+          }
+        }
+        return true;
+      }
+      function getDuplicateReferences(e, t) {
+        const r = [];
+        const s = [];
+        inspectNode(e, r, s);
+        const n = s.length;
+        for (let e = 0; e < n; e += 1) {
+          t.duplicates.push(r[s[e]]);
+        }
+        t.usedDuplicates = new Array(n);
+      }
+      function inspectNode(e, t, r) {
+        if (e !== null && typeof e === "object") {
+          const s = t.indexOf(e);
+          if (s !== -1) {
+            if (r.indexOf(s) === -1) {
+              r.push(s);
+            }
+          } else {
+            t.push(e);
+            if (Array.isArray(e)) {
+              for (let s = 0, n = e.length; s < n; s += 1) {
+                inspectNode(e[s], t, r);
+              }
+            } else {
+              const s = Object.keys(e);
+              for (let n = 0, o = s.length; n < o; n += 1) {
+                inspectNode(e[s[n]], t, r);
+              }
+            }
+          }
+        }
+      }
+      function dump(e, t) {
+        t = t || {};
+        const r = new State(t);
+        if (!r.noRefs) getDuplicateReferences(e, r);
+        let s = e;
+        if (r.replacer) {
+          s = r.replacer.call({ "": s }, "", s);
+        }
+        if (writeNode(r, 0, s, true, true)) return r.dump + "\n";
+        return "";
+      }
+      e.exports.dump = dump;
+    },
+    2767: (e) => {
+      "use strict";
+      function formatError(e, t) {
+        let r = "";
+        const s = e.reason || "(unknown reason)";
+        if (!e.mark) return s;
+        if (e.mark.name) {
+          r += 'in "' + e.mark.name + '" ';
+        }
+        r += "(" + (e.mark.line + 1) + ":" + (e.mark.column + 1) + ")";
+        if (!t && e.mark.snippet) {
+          r += "\n\n" + e.mark.snippet;
+        }
+        return s + " " + r;
+      }
+      function YAMLException(e, t) {
+        Error.call(this);
+        this.name = "YAMLException";
+        this.reason = e;
+        this.mark = t;
+        this.message = formatError(this, false);
+        if (Error.captureStackTrace) {
+          Error.captureStackTrace(this, this.constructor);
+        } else {
+          this.stack = new Error().stack || "";
+        }
+      }
+      YAMLException.prototype = Object.create(Error.prototype);
+      YAMLException.prototype.constructor = YAMLException;
+      YAMLException.prototype.toString = function toString(e) {
+        return this.name + ": " + formatError(this, e);
+      };
+      e.exports = YAMLException;
+    },
+    7915: (e, t, r) => {
+      "use strict";
+      const s = r(6305);
+      const n = r(2767);
+      const o = r(7075);
+      const i = r(177);
+      const a = Object.prototype.hasOwnProperty;
+      const u = 1;
+      const c = 2;
+      const p = 3;
+      const l = 4;
+      const d = 1;
+      const f = 2;
+      const h = 3;
+      const g =
+        /[\x00-\x08\x0B\x0C\x0E-\x1F\x7F-\x84\x86-\x9F\uFFFE\uFFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF]/;
+      const m = /[\x85\u2028\u2029]/;
+      const y = /[,\[\]{}]/;
+      const v = /^(?:!|!!|![0-9A-Za-z-]+!)$/;
+      const $ =
+        /^(?:!|[^,\[\]{}])(?:%[0-9a-f]{2}|[0-9a-z\-#;/?:@&=+$,_.!~*'()\[\]])*$/i;
+      function _class(e) {
+        return Object.prototype.toString.call(e);
+      }
+      function isEol(e) {
+        return e === 10 || e === 13;
+      }
+      function isWhiteSpace(e) {
+        return e === 9 || e === 32;
+      }
+      function isWsOrEol(e) {
+        return e === 9 || e === 32 || e === 10 || e === 13;
+      }
+      function isFlowIndicator(e) {
+        return e === 44 || e === 91 || e === 93 || e === 123 || e === 125;
+      }
+      function fromHexCode(e) {
+        if (e >= 48 && e <= 57) {
+          return e - 48;
+        }
+        const t = e | 32;
+        if (t >= 97 && t <= 102) {
+          return t - 97 + 10;
+        }
+        return -1;
+      }
+      function escapedHexLen(e) {
+        if (e === 120) {
+          return 2;
+        }
+        if (e === 117) {
+          return 4;
+        }
+        if (e === 85) {
+          return 8;
+        }
+        return 0;
+      }
+      function fromDecimalCode(e) {
+        if (e >= 48 && e <= 57) {
+          return e - 48;
+        }
+        return -1;
+      }
+      function simpleEscapeSequence(e) {
+        switch (e) {
+          case 48:
+            return "\0";
+          case 97:
+            return "";
+          case 98:
+            return "\b";
+          case 116:
+            return "\t";
+          case 9:
+            return "\t";
+          case 110:
+            return "\n";
+          case 118:
+            return "\v";
+          case 102:
+            return "\f";
+          case 114:
+            return "\r";
+          case 101:
+            return "";
+          case 32:
+            return " ";
+          case 34:
+            return '"';
+          case 47:
+            return "/";
+          case 92:
+            return "\\";
+          case 78:
+            return "";
+          case 95:
+            return " ";
+          case 76:
+            return "\u2028";
+          case 80:
+            return "\u2029";
+          default:
+            return "";
+        }
+      }
+      function charFromCodepoint(e) {
+        if (e <= 65535) {
+          return String.fromCharCode(e);
+        }
+        return String.fromCharCode(
+          ((e - 65536) >> 10) + 55296,
+          ((e - 65536) & 1023) + 56320,
+        );
+      }
+      function setProperty(e, t, r) {
+        if (t === "__proto__") {
+          Object.defineProperty(e, t, {
+            configurable: true,
+            enumerable: true,
+            writable: true,
+            value: r,
+          });
+        } else {
+          e[t] = r;
+        }
+      }
+      const b = new Array(256);
+      const w = new Array(256);
+      for (let e = 0; e < 256; e++) {
+        b[e] = simpleEscapeSequence(e) ? 1 : 0;
+        w[e] = simpleEscapeSequence(e);
+      }
+      function State(e, t) {
+        this.input = e;
+        this.filename = t["filename"] || null;
+        this.schema = t["schema"] || i;
+        this.onWarning = t["onWarning"] || null;
+        this.legacy = t["legacy"] || false;
+        this.json = t["json"] || false;
+        this.listener = t["listener"] || null;
+        this.maxDepth = typeof t["maxDepth"] === "number" ? t["maxDepth"] : 100;
+        this.maxTotalMergeKeys =
+          typeof t["maxTotalMergeKeys"] === "number"
+            ? t["maxTotalMergeKeys"]
+            : 1e4;
+        this.implicitTypes = this.schema.compiledImplicit;
+        this.typeMap = this.schema.compiledTypeMap;
+        this.length = e.length;
+        this.position = 0;
+        this.line = 0;
+        this.lineStart = 0;
+        this.lineIndent = 0;
+        this.depth = 0;
+        this.totalMergeKeys = 0;
+        this.firstTabInLine = -1;
+        this.documents = [];
+        this.anchorMapTransactions = [];
+      }
+      function generateError(e, t) {
+        const r = {
+          name: e.filename,
+          buffer: e.input.slice(0, -1),
+          position: e.position,
+          line: e.line,
+          column: e.position - e.lineStart,
+        };
+        r.snippet = o(r);
+        return new n(t, r);
+      }
+      function throwError(e, t) {
+        throw generateError(e, t);
+      }
+      function throwWarning(e, t) {
+        if (e.onWarning) {
+          e.onWarning.call(null, generateError(e, t));
+        }
+      }
+      function storeAnchor(e, t, r) {
+        const s = e.anchorMapTransactions;
+        if (s.length !== 0) {
+          const r = s[s.length - 1];
+          if (!a.call(r, t)) {
+            r[t] = { existed: a.call(e.anchorMap, t), value: e.anchorMap[t] };
+          }
+        }
+        e.anchorMap[t] = r;
+      }
+      function beginAnchorTransaction(e) {
+        e.anchorMapTransactions.push(Object.create(null));
+      }
+      function commitAnchorTransaction(e) {
+        const t = e.anchorMapTransactions.pop();
+        const r = e.anchorMapTransactions;
+        if (r.length === 0) return;
+        const s = r[r.length - 1];
+        const n = Object.keys(t);
+        for (let e = 0, r = n.length; e < r; e += 1) {
+          const r = n[e];
+          if (!a.call(s, r)) {
+            s[r] = t[r];
+          }
+        }
+      }
+      function rollbackAnchorTransaction(e) {
+        const t = e.anchorMapTransactions.pop();
+        const r = Object.keys(t);
+        for (let s = r.length - 1; s >= 0; s -= 1) {
+          const n = t[r[s]];
+          if (n.existed) {
+            e.anchorMap[r[s]] = n.value;
+          } else {
+            delete e.anchorMap[r[s]];
+          }
+        }
+      }
+      function snapshotState(e) {
+        return {
+          position: e.position,
+          line: e.line,
+          lineStart: e.lineStart,
+          lineIndent: e.lineIndent,
+          firstTabInLine: e.firstTabInLine,
+          tag: e.tag,
+          anchor: e.anchor,
+          kind: e.kind,
+          result: e.result,
+        };
+      }
+      function restoreState(e, t) {
+        e.position = t.position;
+        e.line = t.line;
+        e.lineStart = t.lineStart;
+        e.lineIndent = t.lineIndent;
+        e.firstTabInLine = t.firstTabInLine;
+        e.tag = t.tag;
+        e.anchor = t.anchor;
+        e.kind = t.kind;
+        e.result = t.result;
+      }
+      const _ = {
+        YAML: function handleYamlDirective(e, t, r) {
+          if (e.version !== null) {
+            throwError(e, "duplication of %YAML directive");
+          }
+          if (r.length !== 1) {
+            throwError(e, "YAML directive accepts exactly one argument");
+          }
+          const s = /^([0-9]+)\.([0-9]+)$/.exec(r[0]);
+          if (s === null) {
+            throwError(e, "ill-formed argument of the YAML directive");
+          }
+          const n = parseInt(s[1], 10);
+          const o = parseInt(s[2], 10);
+          if (n !== 1) {
+            throwError(e, "unacceptable YAML version of the document");
+          }
+          e.version = r[0];
+          e.checkLineBreaks = o < 2;
+          if (o !== 1 && o !== 2) {
+            throwWarning(e, "unsupported YAML version of the document");
+          }
+        },
+        TAG: function handleTagDirective(e, t, r) {
+          let s;
+          if (r.length !== 2) {
+            throwError(e, "TAG directive accepts exactly two arguments");
+          }
+          const n = r[0];
+          s = r[1];
+          if (!v.test(n)) {
+            throwError(
+              e,
+              "ill-formed tag handle (first argument) of the TAG directive",
+            );
+          }
+          if (a.call(e.tagMap, n)) {
+            throwError(
+              e,
+              'there is a previously declared suffix for "' +
+                n +
+                '" tag handle',
+            );
+          }
+          if (!$.test(s)) {
+            throwError(
+              e,
+              "ill-formed tag prefix (second argument) of the TAG directive",
+            );
+          }
+          try {
+            s = decodeURIComponent(s);
+          } catch (t) {
+            throwError(e, "tag prefix is malformed: " + s);
+          }
+          e.tagMap[n] = s;
+        },
+      };
+      function captureSegment(e, t, r, s) {
+        if (t < r) {
+          const n = e.input.slice(t, r);
+          if (s) {
+            for (let t = 0, r = n.length; t < r; t += 1) {
+              const r = n.charCodeAt(t);
+              if (!(r === 9 || (r >= 32 && r <= 1114111))) {
+                throwError(e, "expected valid JSON character");
+              }
+            }
+          } else if (g.test(n)) {
+            throwError(e, "the stream contains non-printable characters");
+          }
+          e.result += n;
+        }
+      }
+      function mergeMappings(e, t, r, n) {
+        if (!s.isObject(r)) {
+          throwError(
+            e,
+            "cannot merge mappings; the provided source object is unacceptable",
+          );
+        }
+        const o = Object.keys(r);
+        for (let s = 0, i = o.length; s < i; s += 1) {
+          const i = o[s];
+          if (
+            e.maxTotalMergeKeys !== -1 &&
+            ++e.totalMergeKeys > e.maxTotalMergeKeys
+          ) {
+            throwError(
+              e,
+              "merge keys exceeded maxTotalMergeKeys (" +
+                e.maxTotalMergeKeys +
+                ")",
+            );
+          }
+          if (!a.call(t, i)) {
+            setProperty(t, i, r[i]);
+            n[i] = true;
+          }
+        }
+      }
+      function storeMappingPair(e, t, r, s, n, o, i, u, c) {
+        if (Array.isArray(n)) {
+          n = Array.prototype.slice.call(n);
+          for (let t = 0, r = n.length; t < r; t += 1) {
+            if (Array.isArray(n[t])) {
+              throwError(e, "nested arrays are not supported inside keys");
+            }
+            if (typeof n === "object" && _class(n[t]) === "[object Object]") {
+              n[t] = "[object Object]";
+            }
+          }
+        }
+        if (typeof n === "object" && _class(n) === "[object Object]") {
+          n = "[object Object]";
+        }
+        n = String(n);
+        if (t === null) {
+          t = {};
+        }
+        if (s === "tag:yaml.org,2002:merge") {
+          if (Array.isArray(o)) {
+            for (let s = 0, n = o.length; s < n; s += 1) {
+              mergeMappings(e, t, o[s], r);
+            }
+          } else {
+            mergeMappings(e, t, o, r);
+          }
+        } else {
+          if (!e.json && !a.call(r, n) && a.call(t, n)) {
+            e.line = i || e.line;
+            e.lineStart = u || e.lineStart;
+            e.position = c || e.position;
+            throwError(e, "duplicated mapping key");
+          }
+          setProperty(t, n, o);
+          delete r[n];
+        }
+        return t;
+      }
+      function readLineBreak(e) {
+        const t = e.input.charCodeAt(e.position);
+        if (t === 10) {
+          e.position++;
+        } else if (t === 13) {
+          e.position++;
+          if (e.input.charCodeAt(e.position) === 10) {
+            e.position++;
+          }
+        } else {
+          throwError(e, "a line break is expected");
+        }
+        e.line += 1;
+        e.lineStart = e.position;
+        e.firstTabInLine = -1;
+      }
+      function skipSeparationSpace(e, t, r) {
+        let s = 0;
+        let n = e.input.charCodeAt(e.position);
+        while (n !== 0) {
+          while (isWhiteSpace(n)) {
+            if (n === 9 && e.firstTabInLine === -1) {
+              e.firstTabInLine = e.position;
+            }
+            n = e.input.charCodeAt(++e.position);
+          }
+          if (t && n === 35) {
+            do {
+              n = e.input.charCodeAt(++e.position);
+            } while (n !== 10 && n !== 13 && n !== 0);
+          }
+          if (isEol(n)) {
+            readLineBreak(e);
+            n = e.input.charCodeAt(e.position);
+            s++;
+            e.lineIndent = 0;
+            while (n === 32) {
+              e.lineIndent++;
+              n = e.input.charCodeAt(++e.position);
+            }
+          } else {
+            break;
+          }
+        }
+        if (r !== -1 && s !== 0 && e.lineIndent < r) {
+          throwWarning(e, "deficient indentation");
+        }
+        return s;
+      }
+      function testDocumentSeparator(e) {
+        let t = e.position;
+        let r = e.input.charCodeAt(t);
+        if (
+          (r === 45 || r === 46) &&
+          r === e.input.charCodeAt(t + 1) &&
+          r === e.input.charCodeAt(t + 2)
+        ) {
+          t += 3;
+          r = e.input.charCodeAt(t);
+          if (r === 0 || isWsOrEol(r)) {
+            return true;
+          }
+        }
+        return false;
+      }
+      function writeFoldedLines(e, t) {
+        if (t === 1) {
+          e.result += " ";
+        } else if (t > 1) {
+          e.result += s.repeat("\n", t - 1);
+        }
+      }
+      function readPlainScalar(e, t, r) {
+        let s;
+        let n;
+        let o;
+        let i;
+        let a;
+        let u;
+        const c = e.kind;
+        const p = e.result;
+        let l = e.input.charCodeAt(e.position);
+        if (
+          isWsOrEol(l) ||
+          isFlowIndicator(l) ||
+          l === 35 ||
+          l === 38 ||
+          l === 42 ||
+          l === 33 ||
+          l === 124 ||
+          l === 62 ||
+          l === 39 ||
+          l === 34 ||
+          l === 37 ||
+          l === 64 ||
+          l === 96
+        ) {
+          return false;
+        }
+        if (l === 63 || l === 45) {
+          const t = e.input.charCodeAt(e.position + 1);
+          if (isWsOrEol(t) || (r && isFlowIndicator(t))) {
+            return false;
+          }
+        }
+        e.kind = "scalar";
+        e.result = "";
+        s = n = e.position;
+        o = false;
+        while (l !== 0) {
+          if (l === 58) {
+            const t = e.input.charCodeAt(e.position + 1);
+            if (isWsOrEol(t) || (r && isFlowIndicator(t))) {
+              break;
+            }
+          } else if (l === 35) {
+            const t = e.input.charCodeAt(e.position - 1);
+            if (isWsOrEol(t)) {
+              break;
+            }
+          } else if (
+            (e.position === e.lineStart && testDocumentSeparator(e)) ||
+            (r && isFlowIndicator(l))
+          ) {
+            break;
+          } else if (isEol(l)) {
+            i = e.line;
+            a = e.lineStart;
+            u = e.lineIndent;
+            skipSeparationSpace(e, false, -1);
+            if (e.lineIndent >= t) {
+              o = true;
+              l = e.input.charCodeAt(e.position);
+              continue;
+            } else {
+              e.position = n;
+              e.line = i;
+              e.lineStart = a;
+              e.lineIndent = u;
+              break;
+            }
+          }
+          if (o) {
+            captureSegment(e, s, n, false);
+            writeFoldedLines(e, e.line - i);
+            s = n = e.position;
+            o = false;
+          }
+          if (!isWhiteSpace(l)) {
+            n = e.position + 1;
+          }
+          l = e.input.charCodeAt(++e.position);
+        }
+        captureSegment(e, s, n, false);
+        if (e.result) {
+          return true;
+        }
+        e.kind = c;
+        e.result = p;
+        return false;
+      }
+      function readSingleQuotedScalar(e, t) {
+        let r;
+        let s;
+        let n = e.input.charCodeAt(e.position);
+        if (n !== 39) {
+          return false;
+        }
+        e.kind = "scalar";
+        e.result = "";
+        e.position++;
+        r = s = e.position;
+        while ((n = e.input.charCodeAt(e.position)) !== 0) {
+          if (n === 39) {
+            captureSegment(e, r, e.position, true);
+            n = e.input.charCodeAt(++e.position);
+            if (n === 39) {
+              r = e.position;
+              e.position++;
+              s = e.position;
+            } else {
+              return true;
+            }
+          } else if (isEol(n)) {
+            captureSegment(e, r, s, true);
+            writeFoldedLines(e, skipSeparationSpace(e, false, t));
+            r = s = e.position;
+          } else if (e.position === e.lineStart && testDocumentSeparator(e)) {
+            throwError(
+              e,
+              "unexpected end of the document within a single quoted scalar",
+            );
+          } else {
+            e.position++;
+            if (!isWhiteSpace(n)) {
+              s = e.position;
+            }
+          }
+        }
+        throwError(
+          e,
+          "unexpected end of the stream within a single quoted scalar",
+        );
+      }
+      function readDoubleQuotedScalar(e, t) {
+        let r;
+        let s;
+        let n;
+        let o = e.input.charCodeAt(e.position);
+        if (o !== 34) {
+          return false;
+        }
+        e.kind = "scalar";
+        e.result = "";
+        e.position++;
+        r = s = e.position;
+        while ((o = e.input.charCodeAt(e.position)) !== 0) {
+          if (o === 34) {
+            captureSegment(e, r, e.position, true);
+            e.position++;
+            return true;
+          } else if (o === 92) {
+            captureSegment(e, r, e.position, true);
+            o = e.input.charCodeAt(++e.position);
+            if (isEol(o)) {
+              skipSeparationSpace(e, false, t);
+            } else if (o < 256 && b[o]) {
+              e.result += w[o];
+              e.position++;
+            } else if ((n = escapedHexLen(o)) > 0) {
+              let t = n;
+              let r = 0;
+              for (; t > 0; t--) {
+                o = e.input.charCodeAt(++e.position);
+                if ((n = fromHexCode(o)) >= 0) {
+                  r = (r << 4) + n;
+                } else {
+                  throwError(e, "expected hexadecimal character");
+                }
+              }
+              e.result += charFromCodepoint(r);
+              e.position++;
+            } else {
+              throwError(e, "unknown escape sequence");
+            }
+            r = s = e.position;
+          } else if (isEol(o)) {
+            captureSegment(e, r, s, true);
+            writeFoldedLines(e, skipSeparationSpace(e, false, t));
+            r = s = e.position;
+          } else if (e.position === e.lineStart && testDocumentSeparator(e)) {
+            throwError(
+              e,
+              "unexpected end of the document within a double quoted scalar",
+            );
+          } else {
+            e.position++;
+            if (!isWhiteSpace(o)) {
+              s = e.position;
+            }
+          }
+        }
+        throwError(
+          e,
+          "unexpected end of the stream within a double quoted scalar",
+        );
+      }
+      function readFlowCollection(e, t) {
+        let r = true;
+        let s;
+        let n;
+        let o;
+        const i = e.tag;
+        let a;
+        const c = e.anchor;
+        let p;
+        let l;
+        let d;
+        let f;
+        const h = Object.create(null);
+        let g;
+        let m;
+        let y;
+        let v = e.input.charCodeAt(e.position);
+        if (v === 91) {
+          p = 93;
+          f = false;
+          a = [];
+        } else if (v === 123) {
+          p = 125;
+          f = true;
+          a = {};
+        } else {
+          return false;
+        }
+        if (e.anchor !== null) {
+          storeAnchor(e, e.anchor, a);
+        }
+        v = e.input.charCodeAt(++e.position);
+        while (v !== 0) {
+          skipSeparationSpace(e, true, t);
+          v = e.input.charCodeAt(e.position);
+          if (v === p) {
+            e.position++;
+            e.tag = i;
+            e.anchor = c;
+            e.kind = f ? "mapping" : "sequence";
+            e.result = a;
+            return true;
+          } else if (!r) {
+            throwError(e, "missed comma between flow collection entries");
+          } else if (v === 44) {
+            throwError(e, "expected the node content, but found ','");
+          }
+          m = g = y = null;
+          l = d = false;
+          if (v === 63) {
+            const r = e.input.charCodeAt(e.position + 1);
+            if (isWsOrEol(r)) {
+              l = d = true;
+              e.position++;
+              skipSeparationSpace(e, true, t);
+            }
+          }
+          s = e.line;
+          n = e.lineStart;
+          o = e.position;
+          composeNode(e, t, u, false, true);
+          m = e.tag;
+          g = e.result;
+          skipSeparationSpace(e, true, t);
+          v = e.input.charCodeAt(e.position);
+          if ((d || e.line === s) && v === 58) {
+            l = true;
+            v = e.input.charCodeAt(++e.position);
+            skipSeparationSpace(e, true, t);
+            composeNode(e, t, u, false, true);
+            y = e.result;
+          }
+          if (f) {
+            storeMappingPair(e, a, h, m, g, y, s, n, o);
+          } else if (l) {
+            a.push(storeMappingPair(e, null, h, m, g, y, s, n, o));
+          } else {
+            a.push(g);
+          }
+          skipSeparationSpace(e, true, t);
+          v = e.input.charCodeAt(e.position);
+          if (v === 44) {
+            r = true;
+            v = e.input.charCodeAt(++e.position);
+          } else {
+            r = false;
+          }
+        }
+        throwError(e, "unexpected end of the stream within a flow collection");
+      }
+      function readBlockScalar(e, t) {
+        let r;
+        let n = d;
+        let o = false;
+        let i = false;
+        let a = t;
+        let u = 0;
+        let c = false;
+        let p;
+        let l = e.input.charCodeAt(e.position);
+        if (l === 124) {
+          r = false;
+        } else if (l === 62) {
+          r = true;
+        } else {
+          return false;
+        }
+        e.kind = "scalar";
+        e.result = "";
+        while (l !== 0) {
+          l = e.input.charCodeAt(++e.position);
+          if (l === 43 || l === 45) {
+            if (d === n) {
+              n = l === 43 ? h : f;
+            } else {
+              throwError(e, "repeat of a chomping mode identifier");
+            }
+          } else if ((p = fromDecimalCode(l)) >= 0) {
+            if (p === 0) {
+              throwError(
+                e,
+                "bad explicit indentation width of a block scalar; it cannot be less than one",
+              );
+            } else if (!i) {
+              a = t + p - 1;
+              i = true;
+            } else {
+              throwError(e, "repeat of an indentation width identifier");
+            }
+          } else {
+            break;
+          }
+        }
+        if (isWhiteSpace(l)) {
+          do {
+            l = e.input.charCodeAt(++e.position);
+          } while (isWhiteSpace(l));
+          if (l === 35) {
+            do {
+              l = e.input.charCodeAt(++e.position);
+            } while (!isEol(l) && l !== 0);
+          }
+        }
+        while (l !== 0) {
+          readLineBreak(e);
+          e.lineIndent = 0;
+          l = e.input.charCodeAt(e.position);
+          while ((!i || e.lineIndent < a) && l === 32) {
+            e.lineIndent++;
+            l = e.input.charCodeAt(++e.position);
+          }
+          if (!i && e.lineIndent > a) {
+            a = e.lineIndent;
+          }
+          if (isEol(l)) {
+            u++;
+            continue;
+          }
+          if (!i && a === 0) {
+            throwError(e, "missing indentation for block scalar");
+          }
+          if (e.lineIndent < a) {
+            if (n === h) {
+              e.result += s.repeat("\n", o ? 1 + u : u);
+            } else if (n === d) {
+              if (o) {
+                e.result += "\n";
+              }
+            }
+            break;
+          }
+          if (r) {
+            if (isWhiteSpace(l)) {
+              c = true;
+              e.result += s.repeat("\n", o ? 1 + u : u);
+            } else if (c) {
+              c = false;
+              e.result += s.repeat("\n", u + 1);
+            } else if (u === 0) {
+              if (o) {
+                e.result += " ";
+              }
+            } else {
+              e.result += s.repeat("\n", u);
+            }
+          } else {
+            e.result += s.repeat("\n", o ? 1 + u : u);
+          }
+          o = true;
+          i = true;
+          u = 0;
+          const t = e.position;
+          while (!isEol(l) && l !== 0) {
+            l = e.input.charCodeAt(++e.position);
+          }
+          captureSegment(e, t, e.position, false);
+        }
+        return true;
+      }
+      function readBlockSequence(e, t) {
+        const r = e.tag;
+        const s = e.anchor;
+        const n = [];
+        let o = false;
+        if (e.firstTabInLine !== -1) return false;
+        if (e.anchor !== null) {
+          storeAnchor(e, e.anchor, n);
+        }
+        let i = e.input.charCodeAt(e.position);
+        while (i !== 0) {
+          if (e.firstTabInLine !== -1) {
+            e.position = e.firstTabInLine;
+            throwError(e, "tab characters must not be used in indentation");
+          }
+          if (i !== 45) {
+            break;
+          }
+          const r = e.input.charCodeAt(e.position + 1);
+          if (!isWsOrEol(r)) {
+            break;
+          }
+          o = true;
+          e.position++;
+          if (skipSeparationSpace(e, true, -1)) {
+            if (e.lineIndent <= t) {
+              n.push(null);
+              i = e.input.charCodeAt(e.position);
+              continue;
+            }
+          }
+          const s = e.line;
+          composeNode(e, t, p, false, true);
+          n.push(e.result);
+          skipSeparationSpace(e, true, -1);
+          i = e.input.charCodeAt(e.position);
+          if ((e.line === s || e.lineIndent > t) && i !== 0) {
+            throwError(e, "bad indentation of a sequence entry");
+          } else if (e.lineIndent < t) {
+            break;
+          }
+        }
+        if (o) {
+          e.tag = r;
+          e.anchor = s;
+          e.kind = "sequence";
+          e.result = n;
+          return true;
+        }
+        return false;
+      }
+      function readBlockMapping(e, t, r) {
+        let s;
+        let n;
+        let o;
+        let i;
+        const a = e.tag;
+        const u = e.anchor;
+        const p = {};
+        const d = Object.create(null);
+        let f = null;
+        let h = null;
+        let g = null;
+        let m = false;
+        let y = false;
+        if (e.firstTabInLine !== -1) return false;
+        if (e.anchor !== null) {
+          storeAnchor(e, e.anchor, p);
+        }
+        let v = e.input.charCodeAt(e.position);
+        while (v !== 0) {
+          if (!m && e.firstTabInLine !== -1) {
+            e.position = e.firstTabInLine;
+            throwError(e, "tab characters must not be used in indentation");
+          }
+          const $ = e.input.charCodeAt(e.position + 1);
+          const b = e.line;
+          if ((v === 63 || v === 58) && isWsOrEol($)) {
+            if (v === 63) {
+              if (m) {
+                storeMappingPair(e, p, d, f, h, null, n, o, i);
+                f = h = g = null;
+              }
+              y = true;
+              m = true;
+              s = true;
+            } else if (m) {
+              m = false;
+              s = true;
+            } else {
+              throwError(
+                e,
+                "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line",
+              );
+            }
+            e.position += 1;
+            v = $;
+          } else {
+            n = e.line;
+            o = e.lineStart;
+            i = e.position;
+            if (!composeNode(e, r, c, false, true)) {
+              break;
+            }
+            if (e.line === b) {
+              v = e.input.charCodeAt(e.position);
+              while (isWhiteSpace(v)) {
+                v = e.input.charCodeAt(++e.position);
+              }
+              if (v === 58) {
+                v = e.input.charCodeAt(++e.position);
+                if (!isWsOrEol(v)) {
+                  throwError(
+                    e,
+                    "a whitespace character is expected after the key-value separator within a block mapping",
+                  );
+                }
+                if (m) {
+                  storeMappingPair(e, p, d, f, h, null, n, o, i);
+                  f = h = g = null;
+                }
+                y = true;
+                m = false;
+                s = false;
+                f = e.tag;
+                h = e.result;
+              } else if (y) {
+                throwError(
+                  e,
+                  "can not read an implicit mapping pair; a colon is missed",
+                );
+              } else {
+                e.tag = a;
+                e.anchor = u;
+                return true;
+              }
+            } else if (y) {
+              throwError(
+                e,
+                "can not read a block mapping entry; a multiline key may not be an implicit key",
+              );
+            } else {
+              e.tag = a;
+              e.anchor = u;
+              return true;
+            }
+          }
+          if (e.line === b || e.lineIndent > t) {
+            if (m) {
+              n = e.line;
+              o = e.lineStart;
+              i = e.position;
+            }
+            if (composeNode(e, t, l, true, s)) {
+              if (m) {
+                h = e.result;
+              } else {
+                g = e.result;
+              }
+            }
+            if (!m) {
+              storeMappingPair(e, p, d, f, h, g, n, o, i);
+              f = h = g = null;
+            }
+            skipSeparationSpace(e, true, -1);
+            v = e.input.charCodeAt(e.position);
+          }
+          if ((e.line === b || e.lineIndent > t) && v !== 0) {
+            throwError(e, "bad indentation of a mapping entry");
+          } else if (e.lineIndent < t) {
+            break;
+          }
+        }
+        if (m) {
+          storeMappingPair(e, p, d, f, h, null, n, o, i);
+        }
+        if (y) {
+          e.tag = a;
+          e.anchor = u;
+          e.kind = "mapping";
+          e.result = p;
+        }
+        return y;
+      }
+      function readTagProperty(e) {
+        let t = false;
+        let r = false;
+        let s;
+        let n;
+        let o = e.input.charCodeAt(e.position);
+        if (o !== 33) return false;
+        if (e.tag !== null) {
+          throwError(e, "duplication of a tag property");
+        }
+        o = e.input.charCodeAt(++e.position);
+        if (o === 60) {
+          t = true;
+          o = e.input.charCodeAt(++e.position);
+        } else if (o === 33) {
+          r = true;
+          s = "!!";
+          o = e.input.charCodeAt(++e.position);
+        } else {
+          s = "!";
+        }
+        let i = e.position;
+        if (t) {
+          do {
+            o = e.input.charCodeAt(++e.position);
+          } while (o !== 0 && o !== 62);
+          if (e.position < e.length) {
+            n = e.input.slice(i, e.position);
+            o = e.input.charCodeAt(++e.position);
+          } else {
+            throwError(e, "unexpected end of the stream within a verbatim tag");
+          }
+        } else {
+          while (o !== 0 && !isWsOrEol(o)) {
+            if (o === 33) {
+              if (!r) {
+                s = e.input.slice(i - 1, e.position + 1);
+                if (!v.test(s)) {
+                  throwError(
+                    e,
+                    "named tag handle cannot contain such characters",
+                  );
+                }
+                r = true;
+                i = e.position + 1;
+              } else {
+                throwError(e, "tag suffix cannot contain exclamation marks");
+              }
+            }
+            o = e.input.charCodeAt(++e.position);
+          }
+          n = e.input.slice(i, e.position);
+          if (y.test(n)) {
+            throwError(
+              e,
+              "tag suffix cannot contain flow indicator characters",
+            );
+          }
+        }
+        if (n && !$.test(n)) {
+          throwError(e, "tag name cannot contain such characters: " + n);
+        }
+        try {
+          n = decodeURIComponent(n);
+        } catch (t) {
+          throwError(e, "tag name is malformed: " + n);
+        }
+        if (t) {
+          e.tag = n;
+        } else if (a.call(e.tagMap, s)) {
+          e.tag = e.tagMap[s] + n;
+        } else if (s === "!") {
+          e.tag = "!" + n;
+        } else if (s === "!!") {
+          e.tag = "tag:yaml.org,2002:" + n;
+        } else {
+          throwError(e, 'undeclared tag handle "' + s + '"');
+        }
+        return true;
+      }
+      function readAnchorProperty(e) {
+        let t = e.input.charCodeAt(e.position);
+        if (t !== 38) return false;
+        if (e.anchor !== null) {
+          throwError(e, "duplication of an anchor property");
+        }
+        t = e.input.charCodeAt(++e.position);
+        const r = e.position;
+        while (t !== 0 && !isWsOrEol(t) && !isFlowIndicator(t)) {
+          t = e.input.charCodeAt(++e.position);
+        }
+        if (e.position === r) {
+          throwError(
+            e,
+            "name of an anchor node must contain at least one character",
+          );
+        }
+        e.anchor = e.input.slice(r, e.position);
+        return true;
+      }
+      function readAlias(e) {
+        let t = e.input.charCodeAt(e.position);
+        if (t !== 42) return false;
+        t = e.input.charCodeAt(++e.position);
+        const r = e.position;
+        while (t !== 0 && !isWsOrEol(t) && !isFlowIndicator(t)) {
+          t = e.input.charCodeAt(++e.position);
+        }
+        if (e.position === r) {
+          throwError(
+            e,
+            "name of an alias node must contain at least one character",
+          );
+        }
+        const s = e.input.slice(r, e.position);
+        if (!a.call(e.anchorMap, s)) {
+          throwError(e, 'unidentified alias "' + s + '"');
+        }
+        e.result = e.anchorMap[s];
+        skipSeparationSpace(e, true, -1);
+        return true;
+      }
+      function tryReadBlockMappingFromProperty(e, t, r, s) {
+        const n = snapshotState(e);
+        beginAnchorTransaction(e);
+        restoreState(e, t);
+        e.tag = null;
+        e.anchor = null;
+        e.kind = null;
+        e.result = null;
+        if (readBlockMapping(e, r, s) && e.kind === "mapping") {
+          commitAnchorTransaction(e);
+          return true;
+        }
+        rollbackAnchorTransaction(e);
+        restoreState(e, n);
+        return false;
+      }
+      function composeNode(e, t, r, s, n) {
+        let o;
+        let i;
+        let d = 1;
+        let f = false;
+        let h = false;
+        let g = null;
+        let m;
+        let y;
+        let v;
+        if (e.depth >= e.maxDepth) {
+          throwError(e, "nesting exceeded maxDepth (" + e.maxDepth + ")");
+        }
+        e.depth += 1;
+        if (e.listener !== null) {
+          e.listener("open", e);
+        }
+        e.tag = null;
+        e.anchor = null;
+        e.kind = null;
+        e.result = null;
+        const $ = (o = i = l === r || p === r);
+        if (s) {
+          if (skipSeparationSpace(e, true, -1)) {
+            f = true;
+            if (e.lineIndent > t) {
+              d = 1;
+            } else if (e.lineIndent === t) {
+              d = 0;
+            } else if (e.lineIndent < t) {
+              d = -1;
+            }
+          }
+        }
+        if (d === 1) {
+          while (true) {
+            const r = e.input.charCodeAt(e.position);
+            const s = snapshotState(e);
+            if (
+              f &&
+              ((r === 33 && e.tag !== null) || (r === 38 && e.anchor !== null))
+            ) {
+              break;
+            }
+            if (!readTagProperty(e) && !readAnchorProperty(e)) {
+              break;
+            }
+            if (g === null) {
+              g = s;
+            }
+            if (skipSeparationSpace(e, true, -1)) {
+              f = true;
+              i = $;
+              if (e.lineIndent > t) {
+                d = 1;
+              } else if (e.lineIndent === t) {
+                d = 0;
+              } else if (e.lineIndent < t) {
+                d = -1;
+              }
+            } else {
+              i = false;
+            }
+          }
+        }
+        if (i) {
+          i = f || n;
+        }
+        if (d === 1 || l === r) {
+          if (u === r || c === r) {
+            y = t;
+          } else {
+            y = t + 1;
+          }
+          v = e.position - e.lineStart;
+          if (d === 1) {
+            if (
+              (i && (readBlockSequence(e, v) || readBlockMapping(e, v, y))) ||
+              readFlowCollection(e, y)
+            ) {
+              h = true;
+            } else {
+              const t = e.input.charCodeAt(e.position);
+              if (
+                g !== null &&
+                $ &&
+                !i &&
+                t !== 124 &&
+                t !== 62 &&
+                tryReadBlockMappingFromProperty(
+                  e,
+                  g,
+                  g.position - g.lineStart,
+                  y,
+                )
+              ) {
+                h = true;
+              } else if (
+                (o && readBlockScalar(e, y)) ||
+                readSingleQuotedScalar(e, y) ||
+                readDoubleQuotedScalar(e, y)
+              ) {
+                h = true;
+              } else if (readAlias(e)) {
+                h = true;
+                if (e.tag !== null || e.anchor !== null) {
+                  throwError(e, "alias node should not have any properties");
+                }
+              } else if (readPlainScalar(e, y, u === r)) {
+                h = true;
+                if (e.tag === null) {
+                  e.tag = "?";
+                }
+              }
+              if (e.anchor !== null) {
+                storeAnchor(e, e.anchor, e.result);
+              }
+            }
+          } else if (d === 0) {
+            h = i && readBlockSequence(e, v);
+          }
+        }
+        if (e.tag === null) {
+          if (e.anchor !== null) {
+            storeAnchor(e, e.anchor, e.result);
+          }
+        } else if (e.tag === "?") {
+          if (e.result !== null && e.kind !== "scalar") {
+            throwError(
+              e,
+              'unacceptable node kind for !<?> tag; it should be "scalar", not "' +
+                e.kind +
+                '"',
+            );
+          }
+          for (let t = 0, r = e.implicitTypes.length; t < r; t += 1) {
+            m = e.implicitTypes[t];
+            if (m.resolve(e.result)) {
+              e.result = m.construct(e.result);
+              e.tag = m.tag;
+              if (e.anchor !== null) {
+                storeAnchor(e, e.anchor, e.result);
+              }
+              break;
+            }
+          }
+        } else if (e.tag !== "!") {
+          if (a.call(e.typeMap[e.kind || "fallback"], e.tag)) {
+            m = e.typeMap[e.kind || "fallback"][e.tag];
+          } else {
+            m = null;
+            const t = e.typeMap.multi[e.kind || "fallback"];
+            for (let r = 0, s = t.length; r < s; r += 1) {
+              if (e.tag.slice(0, t[r].tag.length) === t[r].tag) {
+                m = t[r];
+                break;
+              }
+            }
+          }
+          if (!m) {
+            throwError(e, "unknown tag !<" + e.tag + ">");
+          }
+          if (e.result !== null && m.kind !== e.kind) {
+            throwError(
+              e,
+              "unacceptable node kind for !<" +
+                e.tag +
+                '> tag; it should be "' +
+                m.kind +
+                '", not "' +
+                e.kind +
+                '"',
+            );
+          }
+          if (!m.resolve(e.result, e.tag)) {
+            throwError(
+              e,
+              "cannot resolve a node with !<" + e.tag + "> explicit tag",
+            );
+          } else {
+            e.result = m.construct(e.result, e.tag);
+            if (e.anchor !== null) {
+              storeAnchor(e, e.anchor, e.result);
+            }
+          }
+        }
+        if (e.listener !== null) {
+          e.listener("close", e);
+        }
+        e.depth -= 1;
+        return e.tag !== null || e.anchor !== null || h;
+      }
+      function readDocument(e) {
+        const t = e.position;
+        let r = false;
+        let s;
+        e.version = null;
+        e.checkLineBreaks = e.legacy;
+        e.tagMap = Object.create(null);
+        e.anchorMap = Object.create(null);
+        while ((s = e.input.charCodeAt(e.position)) !== 0) {
+          skipSeparationSpace(e, true, -1);
+          s = e.input.charCodeAt(e.position);
+          if (e.lineIndent > 0 || s !== 37) {
+            break;
+          }
+          r = true;
+          s = e.input.charCodeAt(++e.position);
+          let t = e.position;
+          while (s !== 0 && !isWsOrEol(s)) {
+            s = e.input.charCodeAt(++e.position);
+          }
+          const n = e.input.slice(t, e.position);
+          const o = [];
+          if (n.length < 1) {
+            throwError(
+              e,
+              "directive name must not be less than one character in length",
+            );
+          }
+          while (s !== 0) {
+            while (isWhiteSpace(s)) {
+              s = e.input.charCodeAt(++e.position);
+            }
+            if (s === 35) {
+              do {
+                s = e.input.charCodeAt(++e.position);
+              } while (s !== 0 && !isEol(s));
+              break;
+            }
+            if (isEol(s)) break;
+            t = e.position;
+            while (s !== 0 && !isWsOrEol(s)) {
+              s = e.input.charCodeAt(++e.position);
+            }
+            o.push(e.input.slice(t, e.position));
+          }
+          if (s !== 0) readLineBreak(e);
+          if (a.call(_, n)) {
+            _[n](e, n, o);
+          } else {
+            throwWarning(e, 'unknown document directive "' + n + '"');
+          }
+        }
+        skipSeparationSpace(e, true, -1);
+        if (
+          e.lineIndent === 0 &&
+          e.input.charCodeAt(e.position) === 45 &&
+          e.input.charCodeAt(e.position + 1) === 45 &&
+          e.input.charCodeAt(e.position + 2) === 45
+        ) {
+          e.position += 3;
+          skipSeparationSpace(e, true, -1);
+        } else if (r) {
+          throwError(e, "directives end mark is expected");
+        }
+        composeNode(e, e.lineIndent - 1, l, false, true);
+        skipSeparationSpace(e, true, -1);
+        if (e.checkLineBreaks && m.test(e.input.slice(t, e.position))) {
+          throwWarning(e, "non-ASCII line breaks are interpreted as content");
+        }
+        e.documents.push(e.result);
+        if (e.position === e.lineStart && testDocumentSeparator(e)) {
+          if (e.input.charCodeAt(e.position) === 46) {
+            e.position += 3;
+            skipSeparationSpace(e, true, -1);
+          }
+          return;
+        }
+        if (e.position < e.length - 1) {
+          throwError(
+            e,
+            "end of the stream or a document separator is expected",
+          );
+        }
+      }
+      function loadDocuments(e, t) {
+        e = String(e);
+        t = t || {};
+        if (e.length !== 0) {
+          if (
+            e.charCodeAt(e.length - 1) !== 10 &&
+            e.charCodeAt(e.length - 1) !== 13
+          ) {
+            e += "\n";
+          }
+          if (e.charCodeAt(0) === 65279) {
+            e = e.slice(1);
+          }
+        }
+        const r = new State(e, t);
+        const s = e.indexOf("\0");
+        if (s !== -1) {
+          r.position = s;
+          throwError(r, "null byte is not allowed in input");
+        }
+        r.input += "\0";
+        while (r.input.charCodeAt(r.position) === 32) {
+          r.lineIndent += 1;
+          r.position += 1;
+        }
+        while (r.position < r.length - 1) {
+          readDocument(r);
+        }
+        return r.documents;
+      }
+      function loadAll(e, t, r) {
+        if (t !== null && typeof t === "object" && typeof r === "undefined") {
+          r = t;
+          t = null;
+        }
+        const s = loadDocuments(e, r);
+        if (typeof t !== "function") {
+          return s;
+        }
+        for (let e = 0, r = s.length; e < r; e += 1) {
+          t(s[e]);
+        }
+      }
+      function load(e, t) {
+        const r = loadDocuments(e, t);
+        if (r.length === 0) {
+          return undefined;
+        } else if (r.length === 1) {
+          return r[0];
+        }
+        throw new n("expected a single document in the stream, but found more");
+      }
+      e.exports.loadAll = loadAll;
+      e.exports.load = load;
+    },
+    9079: (e, t, r) => {
+      "use strict";
+      const s = r(2767);
+      const n = r(9180);
+      function compileList(e, t) {
+        const r = [];
+        e[t].forEach(function (e) {
+          let t = r.length;
+          r.forEach(function (r, s) {
+            if (r.tag === e.tag && r.kind === e.kind && r.multi === e.multi) {
+              t = s;
+            }
+          });
+          r[t] = e;
+        });
+        return r;
+      }
+      function compileMap() {
+        const e = {
+          scalar: {},
+          sequence: {},
+          mapping: {},
+          fallback: {},
+          multi: { scalar: [], sequence: [], mapping: [], fallback: [] },
+        };
+        function collectType(t) {
+          if (t.multi) {
+            e.multi[t.kind].push(t);
+            e.multi["fallback"].push(t);
+          } else {
+            e[t.kind][t.tag] = e["fallback"][t.tag] = t;
+          }
+        }
+        for (let e = 0, t = arguments.length; e < t; e += 1) {
+          arguments[e].forEach(collectType);
+        }
+        return e;
+      }
+      function Schema(e) {
+        return this.extend(e);
+      }
+      Schema.prototype.extend = function extend(e) {
+        let t = [];
+        let r = [];
+        if (e instanceof n) {
+          r.push(e);
+        } else if (Array.isArray(e)) {
+          r = r.concat(e);
+        } else if (
+          e &&
+          (Array.isArray(e.implicit) || Array.isArray(e.explicit))
+        ) {
+          if (e.implicit) t = t.concat(e.implicit);
+          if (e.explicit) r = r.concat(e.explicit);
+        } else {
+          throw new s(
+            "Schema.extend argument should be a Type, [ Type ], " +
+              "or a schema definition ({ implicit: [...], explicit: [...] })",
+          );
+        }
+        t.forEach(function (e) {
+          if (!(e instanceof n)) {
+            throw new s(
+              "Specified list of YAML types (or a single Type object) contains a non-Type object.",
+            );
+          }
+          if (e.loadKind && e.loadKind !== "scalar") {
+            throw new s(
+              "There is a non-scalar type in the implicit list of a schema. Implicit resolving of such types is not supported.",
+            );
+          }
+          if (e.multi) {
+            throw new s(
+              "There is a multi type in the implicit list of a schema. Multi tags can only be listed as explicit.",
+            );
+          }
+        });
+        r.forEach(function (e) {
+          if (!(e instanceof n)) {
+            throw new s(
+              "Specified list of YAML types (or a single Type object) contains a non-Type object.",
+            );
+          }
+        });
+        const o = Object.create(Schema.prototype);
+        o.implicit = (this.implicit || []).concat(t);
+        o.explicit = (this.explicit || []).concat(r);
+        o.compiledImplicit = compileList(o, "implicit");
+        o.compiledExplicit = compileList(o, "explicit");
+        o.compiledTypeMap = compileMap(o.compiledImplicit, o.compiledExplicit);
+        return o;
+      };
+      e.exports = Schema;
+    },
+    9193: (e, t, r) => {
+      "use strict";
+      e.exports = r(5480);
+    },
+    177: (e, t, r) => {
+      "use strict";
+      e.exports = r(9193).extend({
+        implicit: [r(9727), r(7739)],
+        explicit: [r(3230), r(6482), r(6142), r(3863)],
+      });
+    },
+    4111: (e, t, r) => {
+      "use strict";
+      const s = r(9079);
+      e.exports = new s({ explicit: [r(8828), r(8892), r(6033)] });
+    },
+    5480: (e, t, r) => {
+      "use strict";
+      e.exports = r(4111).extend({
+        implicit: [r(8142), r(7703), r(1090), r(9749)],
+      });
+    },
+    7075: (e, t, r) => {
+      "use strict";
+      const s = r(6305);
+      function getLine(e, t, r, s, n) {
+        let o = "";
+        let i = "";
+        const a = Math.floor(n / 2) - 1;
+        if (s - t > a) {
+          o = " ... ";
+          t = s - a + o.length;
+        }
+        if (r - s > a) {
+          i = " ...";
+          r = s + a - i.length;
+        }
+        return {
+          str: o + e.slice(t, r).replace(/\t/g, "→") + i,
+          pos: s - t + o.length,
+        };
+      }
+      function padStart(e, t) {
+        return s.repeat(" ", t - e.length) + e;
+      }
+      function makeSnippet(e, t) {
+        t = Object.create(t || null);
+        if (!e.buffer) return null;
+        if (!t.maxLength) t.maxLength = 79;
+        if (typeof t.indent !== "number") t.indent = 1;
+        if (typeof t.linesBefore !== "number") t.linesBefore = 3;
+        if (typeof t.linesAfter !== "number") t.linesAfter = 2;
+        const r = /\r?\n|\r|\0/g;
+        const n = [0];
+        const o = [];
+        let i;
+        let a = -1;
+        while ((i = r.exec(e.buffer))) {
+          o.push(i.index);
+          n.push(i.index + i[0].length);
+          if (e.position <= i.index && a < 0) {
+            a = n.length - 2;
+          }
+        }
+        if (a < 0) a = n.length - 1;
+        let u = "";
+        const c = Math.min(e.line + t.linesAfter, o.length).toString().length;
+        const p = t.maxLength - (t.indent + c + 3);
+        for (let r = 1; r <= t.linesBefore; r++) {
+          if (a - r < 0) break;
+          const i = getLine(
+            e.buffer,
+            n[a - r],
+            o[a - r],
+            e.position - (n[a] - n[a - r]),
+            p,
+          );
+          u =
+            s.repeat(" ", t.indent) +
+            padStart((e.line - r + 1).toString(), c) +
+            " | " +
+            i.str +
+            "\n" +
+            u;
+        }
+        const l = getLine(e.buffer, n[a], o[a], e.position, p);
+        u +=
+          s.repeat(" ", t.indent) +
+          padStart((e.line + 1).toString(), c) +
+          " | " +
+          l.str +
+          "\n";
+        u += s.repeat("-", t.indent + c + 3 + l.pos) + "^" + "\n";
+        for (let r = 1; r <= t.linesAfter; r++) {
+          if (a + r >= o.length) break;
+          const i = getLine(
+            e.buffer,
+            n[a + r],
+            o[a + r],
+            e.position - (n[a] - n[a + r]),
+            p,
+          );
+          u +=
+            s.repeat(" ", t.indent) +
+            padStart((e.line + r + 1).toString(), c) +
+            " | " +
+            i.str +
+            "\n";
+        }
+        return u.replace(/\n$/, "");
+      }
+      e.exports = makeSnippet;
+    },
+    9180: (e, t, r) => {
+      "use strict";
+      const s = r(2767);
+      const n = [
+        "kind",
+        "multi",
+        "resolve",
+        "construct",
+        "instanceOf",
+        "predicate",
+        "represent",
+        "representName",
+        "defaultStyle",
+        "styleAliases",
+      ];
+      const o = ["scalar", "sequence", "mapping"];
+      function compileStyleAliases(e) {
+        const t = {};
+        if (e !== null) {
+          Object.keys(e).forEach(function (r) {
+            e[r].forEach(function (e) {
+              t[String(e)] = r;
+            });
+          });
+        }
+        return t;
+      }
+      function Type(e, t) {
+        t = t || {};
+        Object.keys(t).forEach(function (t) {
+          if (n.indexOf(t) === -1) {
+            throw new s(
+              'Unknown option "' +
+                t +
+                '" is met in definition of "' +
+                e +
+                '" YAML type.',
+            );
+          }
+        });
+        this.options = t;
+        this.tag = e;
+        this.kind = t["kind"] || null;
+        this.resolve =
+          t["resolve"] ||
+          function () {
+            return true;
+          };
+        this.construct =
+          t["construct"] ||
+          function (e) {
+            return e;
+          };
+        this.instanceOf = t["instanceOf"] || null;
+        this.predicate = t["predicate"] || null;
+        this.represent = t["represent"] || null;
+        this.representName = t["representName"] || null;
+        this.defaultStyle = t["defaultStyle"] || null;
+        this.multi = t["multi"] || false;
+        this.styleAliases = compileStyleAliases(t["styleAliases"] || null);
+        if (o.indexOf(this.kind) === -1) {
+          throw new s(
+            'Unknown kind "' +
+              this.kind +
+              '" is specified for "' +
+              e +
+              '" YAML type.',
+          );
+        }
+      }
+      e.exports = Type;
+    },
+    3230: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      const n =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=\n\r";
+      function resolveYamlBinary(e) {
+        if (e === null) return false;
+        let t = 0;
+        const r = e.length;
+        const s = n;
+        for (let n = 0; n < r; n++) {
+          const r = s.indexOf(e.charAt(n));
+          if (r > 64) continue;
+          if (r < 0) return false;
+          t += 6;
+        }
+        return t % 8 === 0;
+      }
+      function constructYamlBinary(e) {
+        const t = e.replace(/[\r\n=]/g, "");
+        const r = t.length;
+        const s = n;
+        let o = 0;
+        const i = [];
+        for (let e = 0; e < r; e++) {
+          if (e % 4 === 0 && e) {
+            i.push((o >> 16) & 255);
+            i.push((o >> 8) & 255);
+            i.push(o & 255);
+          }
+          o = (o << 6) | s.indexOf(t.charAt(e));
+        }
+        const a = (r % 4) * 6;
+        if (a === 0) {
+          i.push((o >> 16) & 255);
+          i.push((o >> 8) & 255);
+          i.push(o & 255);
+        } else if (a === 18) {
+          i.push((o >> 10) & 255);
+          i.push((o >> 2) & 255);
+        } else if (a === 12) {
+          i.push((o >> 4) & 255);
+        }
+        return new Uint8Array(i);
+      }
+      function representYamlBinary(e) {
+        let t = "";
+        let r = 0;
+        const s = e.length;
+        const o = n;
+        for (let n = 0; n < s; n++) {
+          if (n % 3 === 0 && n) {
+            t += o[(r >> 18) & 63];
+            t += o[(r >> 12) & 63];
+            t += o[(r >> 6) & 63];
+            t += o[r & 63];
+          }
+          r = (r << 8) + e[n];
+        }
+        const i = s % 3;
+        if (i === 0) {
+          t += o[(r >> 18) & 63];
+          t += o[(r >> 12) & 63];
+          t += o[(r >> 6) & 63];
+          t += o[r & 63];
+        } else if (i === 2) {
+          t += o[(r >> 10) & 63];
+          t += o[(r >> 4) & 63];
+          t += o[(r << 2) & 63];
+          t += o[64];
+        } else if (i === 1) {
+          t += o[(r >> 2) & 63];
+          t += o[(r << 4) & 63];
+          t += o[64];
+          t += o[64];
+        }
+        return t;
+      }
+      function isBinary(e) {
+        return Object.prototype.toString.call(e) === "[object Uint8Array]";
+      }
+      e.exports = new s("tag:yaml.org,2002:binary", {
+        kind: "scalar",
+        resolve: resolveYamlBinary,
+        construct: constructYamlBinary,
+        predicate: isBinary,
+        represent: representYamlBinary,
+      });
+    },
+    7703: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      function resolveYamlBoolean(e) {
+        if (e === null) return false;
+        const t = e.length;
+        return (
+          (t === 4 && (e === "true" || e === "True" || e === "TRUE")) ||
+          (t === 5 && (e === "false" || e === "False" || e === "FALSE"))
+        );
+      }
+      function constructYamlBoolean(e) {
+        return e === "true" || e === "True" || e === "TRUE";
+      }
+      function isBoolean(e) {
+        return Object.prototype.toString.call(e) === "[object Boolean]";
+      }
+      e.exports = new s("tag:yaml.org,2002:bool", {
+        kind: "scalar",
+        resolve: resolveYamlBoolean,
+        construct: constructYamlBoolean,
+        predicate: isBoolean,
+        represent: {
+          lowercase: function (e) {
+            return e ? "true" : "false";
+          },
+          uppercase: function (e) {
+            return e ? "TRUE" : "FALSE";
+          },
+          camelcase: function (e) {
+            return e ? "True" : "False";
+          },
+        },
+        defaultStyle: "lowercase",
+      });
+    },
+    9749: (e, t, r) => {
+      "use strict";
+      const s = r(6305);
+      const n = r(9180);
+      const o = new RegExp(
+        "^(?:[-+]?(?:[0-9]+)(?:\\.[0-9]*)?(?:[eE][-+]?[0-9]+)?" +
+          "|\\.[0-9]+(?:[eE][-+]?[0-9]+)?" +
+          "|[-+]?\\.(?:inf|Inf|INF)" +
+          "|\\.(?:nan|NaN|NAN))$",
+      );
+      const i = new RegExp(
+        "^(?:" + "[-+]?\\.(?:inf|Inf|INF)" + "|\\.(?:nan|NaN|NAN))$",
+      );
+      function resolveYamlFloat(e) {
+        if (e === null) return false;
+        if (!o.test(e)) {
+          return false;
+        }
+        if (isFinite(parseFloat(e, 10))) {
+          return true;
+        }
+        return i.test(e);
+      }
+      function constructYamlFloat(e) {
+        let t = e.toLowerCase();
+        const r = t[0] === "-" ? -1 : 1;
+        if ("+-".indexOf(t[0]) >= 0) {
+          t = t.slice(1);
+        }
+        if (t === ".inf") {
+          return r === 1 ? Number.POSITIVE_INFINITY : Number.NEGATIVE_INFINITY;
+        } else if (t === ".nan") {
+          return NaN;
+        }
+        return r * parseFloat(t, 10);
+      }
+      const a = /^[-+]?[0-9]+e/;
+      function representYamlFloat(e, t) {
+        if (isNaN(e)) {
+          switch (t) {
+            case "lowercase":
+              return ".nan";
+            case "uppercase":
+              return ".NAN";
+            case "camelcase":
+              return ".NaN";
+          }
+        } else if (Number.POSITIVE_INFINITY === e) {
+          switch (t) {
+            case "lowercase":
+              return ".inf";
+            case "uppercase":
+              return ".INF";
+            case "camelcase":
+              return ".Inf";
+          }
+        } else if (Number.NEGATIVE_INFINITY === e) {
+          switch (t) {
+            case "lowercase":
+              return "-.inf";
+            case "uppercase":
+              return "-.INF";
+            case "camelcase":
+              return "-.Inf";
+          }
+        } else if (s.isNegativeZero(e)) {
+          return "-0.0";
+        }
+        const r = e.toString(10);
+        return a.test(r) ? r.replace("e", ".e") : r;
+      }
+      function isFloat(e) {
+        return (
+          Object.prototype.toString.call(e) === "[object Number]" &&
+          (e % 1 !== 0 || s.isNegativeZero(e))
+        );
+      }
+      e.exports = new n("tag:yaml.org,2002:float", {
+        kind: "scalar",
+        resolve: resolveYamlFloat,
+        construct: constructYamlFloat,
+        predicate: isFloat,
+        represent: representYamlFloat,
+        defaultStyle: "lowercase",
+      });
+    },
+    1090: (e, t, r) => {
+      "use strict";
+      const s = r(6305);
+      const n = r(9180);
+      function isHexCode(e) {
+        return (
+          (e >= 48 && e <= 57) || (e >= 65 && e <= 70) || (e >= 97 && e <= 102)
+        );
+      }
+      function isOctCode(e) {
+        return e >= 48 && e <= 55;
+      }
+      function isDecCode(e) {
+        return e >= 48 && e <= 57;
+      }
+      function resolveYamlInteger(e) {
+        if (e === null) return false;
+        const t = e.length;
+        let r = 0;
+        let s = false;
+        if (!t) return false;
+        let n = e[r];
+        if (n === "-" || n === "+") {
+          n = e[++r];
+        }
+        if (n === "0") {
+          if (r + 1 === t) return true;
+          n = e[++r];
+          if (n === "b") {
+            r++;
+            for (; r < t; r++) {
+              n = e[r];
+              if (n !== "0" && n !== "1") return false;
+              s = true;
+            }
+            return s && isFinite(parseYamlInteger(e));
+          }
+          if (n === "x") {
+            r++;
+            for (; r < t; r++) {
+              if (!isHexCode(e.charCodeAt(r))) return false;
+              s = true;
+            }
+            return s && isFinite(parseYamlInteger(e));
+          }
+          if (n === "o") {
+            r++;
+            for (; r < t; r++) {
+              if (!isOctCode(e.charCodeAt(r))) return false;
+              s = true;
+            }
+            return s && isFinite(parseYamlInteger(e));
+          }
+        }
+        for (; r < t; r++) {
+          if (!isDecCode(e.charCodeAt(r))) {
+            return false;
+          }
+          s = true;
+        }
+        if (!s) return false;
+        return isFinite(parseYamlInteger(e));
+      }
+      function parseYamlInteger(e) {
+        let t = e;
+        let r = 1;
+        let s = t[0];
+        if (s === "-" || s === "+") {
+          if (s === "-") r = -1;
+          t = t.slice(1);
+          s = t[0];
+        }
+        if (t === "0") return 0;
+        if (s === "0") {
+          if (t[1] === "b") return r * parseInt(t.slice(2), 2);
+          if (t[1] === "x") return r * parseInt(t.slice(2), 16);
+          if (t[1] === "o") return r * parseInt(t.slice(2), 8);
+        }
+        return r * parseInt(t, 10);
+      }
+      function constructYamlInteger(e) {
+        return parseYamlInteger(e);
+      }
+      function isInteger(e) {
+        return (
+          Object.prototype.toString.call(e) === "[object Number]" &&
+          e % 1 === 0 &&
+          !s.isNegativeZero(e)
+        );
+      }
+      e.exports = new n("tag:yaml.org,2002:int", {
+        kind: "scalar",
+        resolve: resolveYamlInteger,
+        construct: constructYamlInteger,
+        predicate: isInteger,
+        represent: {
+          binary: function (e) {
+            return e >= 0
+              ? "0b" + e.toString(2)
+              : "-0b" + e.toString(2).slice(1);
+          },
+          octal: function (e) {
+            return e >= 0
+              ? "0o" + e.toString(8)
+              : "-0o" + e.toString(8).slice(1);
+          },
+          decimal: function (e) {
+            return e.toString(10);
+          },
+          hexadecimal: function (e) {
+            return e >= 0
+              ? "0x" + e.toString(16).toUpperCase()
+              : "-0x" + e.toString(16).toUpperCase().slice(1);
+          },
+        },
+        defaultStyle: "decimal",
+        styleAliases: {
+          binary: [2, "bin"],
+          octal: [8, "oct"],
+          decimal: [10, "dec"],
+          hexadecimal: [16, "hex"],
+        },
+      });
+    },
+    6033: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      e.exports = new s("tag:yaml.org,2002:map", {
+        kind: "mapping",
+        construct: function (e) {
+          return e !== null ? e : {};
+        },
+      });
+    },
+    7739: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      function resolveYamlMerge(e) {
+        return e === "<<" || e === null;
+      }
+      e.exports = new s("tag:yaml.org,2002:merge", {
+        kind: "scalar",
+        resolve: resolveYamlMerge,
+      });
+    },
+    8142: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      function resolveYamlNull(e) {
+        if (e === null) return true;
+        const t = e.length;
+        return (
+          (t === 1 && e === "~") ||
+          (t === 4 && (e === "null" || e === "Null" || e === "NULL"))
+        );
+      }
+      function constructYamlNull() {
+        return null;
+      }
+      function isNull(e) {
+        return e === null;
+      }
+      e.exports = new s("tag:yaml.org,2002:null", {
+        kind: "scalar",
+        resolve: resolveYamlNull,
+        construct: constructYamlNull,
+        predicate: isNull,
+        represent: {
+          canonical: function () {
+            return "~";
+          },
+          lowercase: function () {
+            return "null";
+          },
+          uppercase: function () {
+            return "NULL";
+          },
+          camelcase: function () {
+            return "Null";
+          },
+          empty: function () {
+            return "";
+          },
+        },
+        defaultStyle: "lowercase",
+      });
+    },
+    6482: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      const n = Object.prototype.hasOwnProperty;
+      const o = Object.prototype.toString;
+      function resolveYamlOmap(e) {
+        if (e === null) return true;
+        const t = [];
+        const r = e;
+        for (let e = 0, s = r.length; e < s; e += 1) {
+          const s = r[e];
+          let i = false;
+          if (o.call(s) !== "[object Object]") return false;
+          let a;
+          for (a in s) {
+            if (n.call(s, a)) {
+              if (!i) i = true;
+              else return false;
+            }
+          }
+          if (!i) return false;
+          if (t.indexOf(a) === -1) t.push(a);
+          else return false;
+        }
+        return true;
+      }
+      function constructYamlOmap(e) {
+        return e !== null ? e : [];
+      }
+      e.exports = new s("tag:yaml.org,2002:omap", {
+        kind: "sequence",
+        resolve: resolveYamlOmap,
+        construct: constructYamlOmap,
+      });
+    },
+    6142: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      const n = Object.prototype.toString;
+      function resolveYamlPairs(e) {
+        if (e === null) return true;
+        const t = e;
+        const r = new Array(t.length);
+        for (let e = 0, s = t.length; e < s; e += 1) {
+          const s = t[e];
+          if (n.call(s) !== "[object Object]") return false;
+          const o = Object.keys(s);
+          if (o.length !== 1) return false;
+          r[e] = [o[0], s[o[0]]];
+        }
+        return true;
+      }
+      function constructYamlPairs(e) {
+        if (e === null) return [];
+        const t = e;
+        const r = new Array(t.length);
+        for (let e = 0, s = t.length; e < s; e += 1) {
+          const s = t[e];
+          const n = Object.keys(s);
+          r[e] = [n[0], s[n[0]]];
+        }
+        return r;
+      }
+      e.exports = new s("tag:yaml.org,2002:pairs", {
+        kind: "sequence",
+        resolve: resolveYamlPairs,
+        construct: constructYamlPairs,
+      });
+    },
+    8892: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      e.exports = new s("tag:yaml.org,2002:seq", {
+        kind: "sequence",
+        construct: function (e) {
+          return e !== null ? e : [];
+        },
+      });
+    },
+    3863: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      const n = Object.prototype.hasOwnProperty;
+      function resolveYamlSet(e) {
+        if (e === null) return true;
+        const t = e;
+        for (const e in t) {
+          if (n.call(t, e)) {
+            if (t[e] !== null) return false;
+          }
+        }
+        return true;
+      }
+      function constructYamlSet(e) {
+        return e !== null ? e : {};
+      }
+      e.exports = new s("tag:yaml.org,2002:set", {
+        kind: "mapping",
+        resolve: resolveYamlSet,
+        construct: constructYamlSet,
+      });
+    },
+    8828: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      e.exports = new s("tag:yaml.org,2002:str", {
+        kind: "scalar",
+        construct: function (e) {
+          return e !== null ? e : "";
+        },
+      });
+    },
+    9727: (e, t, r) => {
+      "use strict";
+      const s = r(9180);
+      const n = new RegExp(
+        "^([0-9][0-9][0-9][0-9])" + "-([0-9][0-9])" + "-([0-9][0-9])$",
+      );
+      const o = new RegExp(
+        "^([0-9][0-9][0-9][0-9])" +
+          "-([0-9][0-9]?)" +
+          "-([0-9][0-9]?)" +
+          "(?:[Tt]|[ \\t]+)" +
+          "([0-9][0-9]?)" +
+          ":([0-9][0-9])" +
+          ":([0-9][0-9])" +
+          "(?:\\.([0-9]*))?" +
+          "(?:[ \\t]*(Z|([-+])([0-9][0-9]?)" +
+          "(?::([0-9][0-9]))?))?$",
+      );
+      function resolveYamlTimestamp(e) {
+        if (e === null) return false;
+        if (n.exec(e) !== null) return true;
+        if (o.exec(e) !== null) return true;
+        return false;
+      }
+      function constructYamlTimestamp(e) {
+        let t = 0;
+        let r = null;
+        let s = n.exec(e);
+        if (s === null) s = o.exec(e);
+        if (s === null) throw new Error("Date resolve error");
+        const i = +s[1];
+        const a = +s[2] - 1;
+        const u = +s[3];
+        if (!s[4]) {
+          return new Date(Date.UTC(i, a, u));
+        }
+        const c = +s[4];
+        const p = +s[5];
+        const l = +s[6];
+        if (s[7]) {
+          t = s[7].slice(0, 3);
+          while (t.length < 3) {
+            t += "0";
+          }
+          t = +t;
+        }
+        if (s[9]) {
+          const e = +s[10];
+          const t = +(s[11] || 0);
+          r = (e * 60 + t) * 6e4;
+          if (s[9] === "-") r = -r;
+        }
+        const d = new Date(Date.UTC(i, a, u, c, p, l, t));
+        if (r) d.setTime(d.getTime() - r);
+        return d;
+      }
+      function representYamlTimestamp(e) {
+        return e.toISOString();
+      }
+      e.exports = new s("tag:yaml.org,2002:timestamp", {
+        kind: "scalar",
+        resolve: resolveYamlTimestamp,
+        construct: constructYamlTimestamp,
+        instanceOf: Date,
+        represent: representYamlTimestamp,
+      });
+    },
+    7925: (e, t, r) => {
+      "use strict";
+      var s = r(1292);
+      var n = r(5872);
+      var o = r(5596);
+      function _interopDefault(e) {
+        return e && e.__esModule ? e : { default: e };
+      }
+      var i = _interopDefault(o);
+      function appendFormFromObject(e) {
+        const t = new FormData();
+        Object.entries(e).forEach(([e, r]) => {
+          if (!r) return;
+          if (Array.isArray(r)) t.append(e, r[0], r[1]);
+          else t.append(e, r);
+        });
+        return t;
+      }
+      function endpoint(e, ...t) {
+        return t.reduce(
+          (t, r, s) => t + encodeURIComponent(r) + e[s + 1],
+          e[0],
+        );
+      }
+      function parseLinkHeader(e) {
+        const t = {};
+        const r = /<([^>]+)>; rel="([^"]+)"/g;
+        let s;
+        while ((s = r.exec(e))) {
+          const [, e, r] = s;
+          t[r] = e;
+        }
+        return t;
+      }
+      function reformatObjectOptions(e, t, r = false) {
+        const s = r ? n.decamelizeKeys(e) : e;
+        return i.default
+          .stringify({ [t]: s }, { encode: false })
+          .split("&")
+          .reduce((e, t) => {
+            const [r, s] = t.split("=");
+            e[r] = s;
+            return e;
+          }, {});
+      }
+      function packageResponse(e, t) {
+        return t
+          ? { data: e.body, status: e.status, headers: e.headers }
+          : e.body;
+      }
+      function getStream(e, t) {
+        return packageResponse(e, t);
+      }
+      function getSingle(e, t, r) {
+        const { status: s, headers: o } = t;
+        let { body: i } = t;
+        if (e) i = n.camelizeKeys(i);
+        return packageResponse({ body: i, status: s, headers: o }, r);
+      }
+      async function getManyMore(e, t, r, s, i, a) {
+        const {
+          sudo: u,
+          showExpanded: c,
+          maxPages: p,
+          pagination: l,
+          page: d,
+          perPage: f,
+          idAfter: h,
+          orderBy: g,
+          sort: m,
+        } = i;
+        if (e) s.body = n.camelizeKeys(s?.body);
+        const y = [...(a || []), ...s.body];
+        const v = p && f ? y.length / +f < p : true;
+        const { next: $ = "" } = parseLinkHeader(s.headers.link);
+        if (!(d && (a || []).length === 0) && $ && v) {
+          const s = o.parse($.split("?")[1]);
+          const i = { ...n.camelizeKeys(s) };
+          const a = { ...i, maxPages: p, sudo: u, showExpanded: c };
+          const l = await t(r, { searchParams: i, sudo: u });
+          return getManyMore(e, t, r, l, a, y);
+        }
+        if (!c) return y;
+        const b =
+          l === "keyset"
+            ? {
+                idAfter: h ? +h : null,
+                perPage: f ? +f : null,
+                orderBy: g,
+                sort: m,
+              }
+            : {
+                total: parseInt(s.headers["x-total"], 10),
+                next: parseInt(s.headers["x-next-page"], 10) || null,
+                current: parseInt(s.headers["x-page"], 10) || 1,
+                previous: parseInt(s.headers["x-prev-page"], 10) || null,
+                perPage: parseInt(s.headers["x-per-page"], 10),
+                totalPages: parseInt(s.headers["x-total-pages"], 10),
+              };
+        return { data: y, paginationInfo: b };
+      }
+      function get() {
+        return async (e, t, r) => {
+          const {
+            asStream: s,
+            sudo: n,
+            showExpanded: o,
+            maxPages: i,
+            ...a
+          } = r || {};
+          const u = e.queryTimeout
+            ? AbortSignal.timeout(e.queryTimeout)
+            : void 0;
+          const c = await e.requester.get(t, {
+            searchParams: a,
+            sudo: n,
+            asStream: s,
+            signal: u,
+          });
+          const p = e.camelize || false;
+          if (s) return getStream(c, o);
+          if (!Array.isArray(c.body)) return getSingle(p, c, o);
+          const l = { sudo: n, showExpanded: o, maxPages: i, ...a };
+          return getManyMore(
+            p,
+            (t, r) => e.requester.get(t, { ...r, signal: u }),
+            t,
+            c,
+            l,
+          );
+        };
+      }
+      function post() {
+        return async (
+          e,
+          t,
+          { searchParams: r, isForm: s, sudo: o, showExpanded: i, ...a } = {},
+        ) => {
+          const u = s ? appendFormFromObject(a) : a;
+          const c = await e.requester.post(t, {
+            searchParams: r,
+            body: u,
+            sudo: o,
+            signal: e.queryTimeout
+              ? AbortSignal.timeout(e.queryTimeout)
+              : void 0,
+          });
+          if (e.camelize) c.body = n.camelizeKeys(c.body);
+          return packageResponse(c, i);
+        };
+      }
+      function put() {
+        return async (
+          e,
+          t,
+          { searchParams: r, isForm: s, sudo: o, showExpanded: i, ...a } = {},
+        ) => {
+          const u = s ? appendFormFromObject(a) : a;
+          const c = await e.requester.put(t, {
+            body: u,
+            searchParams: r,
+            sudo: o,
+            signal: e.queryTimeout
+              ? AbortSignal.timeout(e.queryTimeout)
+              : void 0,
+          });
+          if (e.camelize) c.body = n.camelizeKeys(c.body);
+          return packageResponse(c, i);
+        };
+      }
+      function patch() {
+        return async (
+          e,
+          t,
+          { searchParams: r, isForm: s, sudo: o, showExpanded: i, ...a } = {},
+        ) => {
+          const u = s ? appendFormFromObject(a) : a;
+          const c = await e.requester.patch(t, {
+            body: u,
+            searchParams: r,
+            sudo: o,
+            signal: e.queryTimeout
+              ? AbortSignal.timeout(e.queryTimeout)
+              : void 0,
+          });
+          if (e.camelize) c.body = n.camelizeKeys(c.body);
+          return packageResponse(c, i);
+        };
+      }
+      function del() {
+        return async (
+          e,
+          t,
+          { sudo: r, showExpanded: s, searchParams: n, ...o } = {},
+        ) => {
+          const i = await e.requester.delete(t, {
+            body: o,
+            searchParams: n,
+            sudo: r,
+            signal: e.queryTimeout
+              ? AbortSignal.timeout(e.queryTimeout)
+              : void 0,
+          });
+          return packageResponse(i, s);
+        };
+      }
+      var a = { post: post, put: put, patch: patch, get: get, del: del };
+      var u = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/cluster_agents`, t);
+        }
+        allTokens(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/cluster_agents/${t}/tokens`,
+            r,
+          );
+        }
+        createToken(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/cluster_agents/${t}/tokens`,
+            { name: r, ...s },
+          );
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/cluster_agents/${t}`, r);
+        }
+        showToken(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/cluster_agents/${t}/tokens/${r}`,
+            s,
+          );
+        }
+        register(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/cluster_agents`, {
+            name: t,
+            ...r,
+          });
+        }
+        removeToken(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/cluster_agents/${t}/tokens/${r}`,
+            s,
+          );
+        }
+        unregister(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/cluster_agents/${t}`, r);
+        }
+      };
+      var c = class extends s.BaseResource {
+        allMetricImages(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/alert_management_alerts/${t}/metric_images`,
+            r,
+          );
+        }
+        editMetricImage(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/alert_management_alerts/${t}/metric_images/${r}`,
+            s,
+          );
+        }
+        removeMetricImage(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/alert_management_alerts/${t}/metric_images/${r}`,
+            s,
+          );
+        }
+        uploadMetricImage(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/alert_management_alerts/${t}/metric_images`,
+            { isForm: true, file: [r.content, r.filename], ...s },
+          );
+        }
+      };
+      var p = class extends s.BaseResource {
+        show(e) {
+          return a.get()(this, "application/appearence", e);
+        }
+        edit({ logo: e, pwaIcon: t, ...r } = {}) {
+          if (e || t) {
+            const s = { ...r, isForm: true };
+            if (e) s.logo = [e.content, e.filename];
+            if (t) s.pwaIcon = [t.content, t.filename];
+            return a.put()(this, "application/appearence", s);
+          }
+          return a.put()(this, "application/appearence", r);
+        }
+      };
+      var l = class extends s.BaseResource {
+        show(e) {
+          return a.get()(this, "application/plan_limits", e);
+        }
+        edit(e, t = {}) {
+          const {
+            ciPipelineSize: r,
+            ciActiveJobs: s,
+            ciActivePipelines: n,
+            ciProjectSubscriptions: o,
+            ciPipelineSchedules: i,
+            ciNeedsSizeLimit: u,
+            ciRegisteredGroupRunners: c,
+            ciRegisteredProjectRunners: p,
+            conanMaxFileSize: l,
+            genericPackagesMaxFileSize: d,
+            helmMaxFileSize: f,
+            mavenMaxFileSize: h,
+            npmMaxFileSize: g,
+            nugetMaxFileSize: m,
+            pypiMaxFileSize: y,
+            terraformModuleMaxFileSize: v,
+            storageSizeLimit: $,
+            ...b
+          } = t;
+          return a.put()(this, "application/plan_limits", {
+            ...b,
+            searchParams: {
+              planName: e,
+              ciPipelineSize: r,
+              ciActiveJobs: s,
+              ciActivePipelines: n,
+              ciProjectSubscriptions: o,
+              ciPipelineSchedules: i,
+              ciNeedsSizeLimit: u,
+              ciRegisteredGroupRunners: c,
+              ciRegisteredProjectRunners: p,
+              conanMaxFileSize: l,
+              genericPackagesMaxFileSize: d,
+              helmMaxFileSize: f,
+              mavenMaxFileSize: h,
+              npmMaxFileSize: g,
+              nugetMaxFileSize: m,
+              pypiMaxFileSize: y,
+              terraformModuleMaxFileSize: v,
+              storageSizeLimit: $,
+            },
+          });
+        }
+      };
+      var d = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "applications", e);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, "applications", {
+            name: e,
+            redirectUri: t,
+            scopes: r,
+            ...s,
+          });
+        }
+        remove(e, t) {
+          return a.del()(this, `applications/${e}`, t);
+        }
+      };
+      var f = class extends s.BaseResource {
+        show(e) {
+          return a.get()(this, "application/settings", e);
+        }
+        edit(e) {
+          return a.put()(this, "application/settings", e);
+        }
+      };
+      var h = class extends s.BaseResource {
+        show(e) {
+          return a.get()(this, "application/statistics", e);
+        }
+      };
+      function url({ projectId: e, groupId: t } = {}) {
+        let r = "";
+        if (e) r = endpoint`projects/${e}/`;
+        else if (t) r = endpoint`groups/${t}/`;
+        return `${r}audit_events`;
+      }
+      var g = class extends s.BaseResource {
+        all({ projectId: e, groupId: t, ...r } = {}) {
+          const s = url({ projectId: e, groupId: t });
+          return a.get()(this, s, r);
+        }
+        show(e, { projectId: t, groupId: r, ...s } = {}) {
+          const n = url({ projectId: t, groupId: r });
+          return a.get()(this, `${n}/${e}`, s);
+        }
+      };
+      var m = class extends s.BaseResource {
+        show(e, t) {
+          return a.get()(this, "avatar", { email: e, ...t });
+        }
+      };
+      var y = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "broadcast_messages", e);
+        }
+        create(e) {
+          return a.post()(this, "broadcast_messages", e);
+        }
+        edit(e, t) {
+          return a.put()(this, `broadcast_messages/${e}`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, `broadcast_messages/${e}`, t);
+        }
+        show(e, t) {
+          return a.get()(this, `broadcast_messages/${e}`, t);
+        }
+      };
+      var v = class extends s.BaseResource {
+        createAccessToken(e) {
+          return a.post()(this, "code_suggestions/tokens", e);
+        }
+        generateCompletion(e) {
+          return a.post()(this, "code_suggestions/completions", e);
+        }
+      };
+      var $ = class extends s.BaseResource {
+        create(e, t) {
+          return a.post()(this, endpoint`projects/${e}/packages/composer`, t);
+        }
+        download(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/composer/archives/${t}`,
+            { searchParams: { sha: r }, ...s },
+          );
+        }
+        showMetadata(e, t, r) {
+          let s;
+          if (r && r.sha) {
+            s = endpoint`groups/${e}/-/packages/composer/${t}$${r.sha}`;
+          } else {
+            s = endpoint`groups/${e}/-/packages/composer/p2/${t}`;
+          }
+          return a.get()(this, s, r);
+        }
+        showPackages(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`groups/${e}/-/packages/composer/p/${t}`,
+            r,
+          );
+        }
+        showBaseRepository(e, t) {
+          const r = { ...this };
+          if (t && t.composerVersion === "2") {
+            r.headers["User-Agent"] = "Composer/2";
+          }
+          return a.get()(
+            r,
+            endpoint`groups/${e}/-/packages/composer/packages`,
+            t,
+          );
+        }
+      };
+      function url2(e) {
+        return e
+          ? endpoint`projects/${e}/packages/conan/v1`
+          : "packages/conan/v1";
+      }
+      var b = class extends s.BaseResource {
+        authenticate({ projectId: e, ...t } = {}) {
+          return a.get()(this, `${url2(e)}/users/authenticate`, t);
+        }
+        checkCredentials({ projectId: e, ...t } = {}) {
+          const r = url2(e);
+          return a.get()(this, `${r}/users/check_credentials`, t);
+        }
+        downloadPackageFile(
+          e,
+          t,
+          r,
+          s,
+          n,
+          o,
+          i,
+          u,
+          { projectId: c, ...p } = {},
+        ) {
+          const l = url2(c);
+          return a.get()(
+            this,
+            `${l}/conans/${e}/${t}/${r}/${s}/${o}/package/${n}/${i}/${u}`,
+            p,
+          );
+        }
+        downloadRecipeFile(e, t, r, s, n, o, { projectId: i, ...u } = {}) {
+          const c = url2(i);
+          return a.get()(
+            this,
+            `${c}/conans/${e}/${t}/${r}/${s}/${n}/export/${o}`,
+            u,
+          );
+        }
+        showPackageUploadUrls(e, t, r, s, n, { projectId: o, ...i } = {}) {
+          const u = url2(o);
+          return a.get()(
+            this,
+            `${u}/conans/${e}/${t}/${r}/${s}/packages/${n}/upload_urls`,
+            i,
+          );
+        }
+        showPackageDownloadUrls(e, t, r, s, n, { projectId: o, ...i } = {}) {
+          const u = url2(o);
+          return a.get()(
+            this,
+            `${u}/conans/${e}/${t}/${r}/${s}/packages/${n}/download_urls`,
+            i,
+          );
+        }
+        showPackageManifest(e, t, r, s, n, { projectId: o, ...i } = {}) {
+          const u = url2(o);
+          return a.get()(
+            this,
+            `${u}/conans/${e}/${t}/${r}/${s}/packages/${n}/digest`,
+            i,
+          );
+        }
+        showPackageSnapshot(e, t, r, s, n, { projectId: o, ...i } = {}) {
+          const u = url2(o);
+          return a.get()(
+            this,
+            `${u}/conans/${e}/${t}/${r}/${s}/packages/${n}`,
+            i,
+          );
+        }
+        ping({ projectId: e, ...t } = {}) {
+          return a.post()(this, `${url2(e)}/ping`, t);
+        }
+        showRecipeUploadUrls(e, t, r, s, { projectId: n, ...o } = {}) {
+          const i = url2(n);
+          return a.get()(
+            this,
+            `${i}/conans/${e}/${t}/${r}/${s}/upload_urls`,
+            o,
+          );
+        }
+        showRecipeDownloadUrls(e, t, r, s, { projectId: n, ...o } = {}) {
+          const i = url2(n);
+          return a.get()(
+            this,
+            `${i}/conans/${e}/${t}/${r}/${s}/download_urls`,
+            o,
+          );
+        }
+        showRecipeManifest(e, t, r, s, { projectId: n, ...o } = {}) {
+          const i = url2(n);
+          return a.get()(this, `${i}/conans/${e}/${t}/${r}/${s}/digest`, o);
+        }
+        showRecipeSnapshot(e, t, r, s, { projectId: n, ...o } = {}) {
+          const i = url2(n);
+          return a.get()(this, `${i}/conans/${e}/${t}/${r}/${s}`, o);
+        }
+        removePackageFile(e, t, r, s, { projectId: n, ...o } = {}) {
+          const i = url2(n);
+          return a.get()(this, `${i}/conans/${e}/${t}/${r}/${s}`, o);
+        }
+        search({ projectId: e, ...t } = {}) {
+          const r = url2(e);
+          return a.get()(this, `${r}/conans/search`, t);
+        }
+        uploadPackageFile(e, t, r, s, n, o, i, u, c) {
+          const p = url2();
+          return a.get()(
+            this,
+            `${p}/files/${t}/${r}/${s}/${n}/${i}/package/${o}/${u}/${e.filename}`,
+            { isForm: true, ...c, file: [e.content, e.filename] },
+          );
+        }
+        uploadRecipeFile(e, t, r, s, n, o, i) {
+          const u = url2();
+          return a.get()(
+            this,
+            `${u}/files/${t}/${r}/${s}/${n}/${o}/export/${e.filename}`,
+            { isForm: true, ...i, file: [e.content, e.filename] },
+          );
+        }
+      };
+      var w = class extends s.BaseResource {
+        create(e, t, r, { environmentId: s, clusterId: n, ...o } = {}) {
+          let i;
+          if (s) i = endpoint`environments/${s}/metrics_dashboard/annotations`;
+          else if (n) i = endpoint`clusters/${n}/metrics_dashboard/annotations`;
+          else
+            throw new Error(
+              "Missing required argument. Please supply a environmentId or a cluserId in the options parameter.",
+            );
+          return a.post()(this, i, {
+            dashboardPath: e,
+            startingAt: t,
+            description: r,
+            ...o,
+          });
+        }
+      };
+      function url3({ projectId: e, groupId: t } = {}) {
+        if (e) return endpoint`/projects/${e}/packages/debian`;
+        if (t) return endpoint`/groups/${t}/-/packages/debian`;
+        throw new Error(
+          "Missing required argument. Please supply a projectId or a groupId in the options parameter",
+        );
+      }
+      var _ = class extends s.BaseResource {
+        downloadBinaryFileIndex(e, t, r, { projectId: s, groupId: n, ...o }) {
+          const i = url3({ projectId: s, groupId: n });
+          return a.get()(this, `${i}/dists/${e}/${t}/binary-${r}/Packages`, o);
+        }
+        downloadDistributionReleaseFile(e, { projectId: t, groupId: r, ...s }) {
+          const n = url3({ projectId: t, groupId: r });
+          return a.get()(this, `${n}/dists/${e}/Release`, s);
+        }
+        downloadSignedDistributionReleaseFile(
+          e,
+          { projectId: t, groupId: r, ...s },
+        ) {
+          const n = url3({ projectId: t, groupId: r });
+          return a.get()(this, `${n}/dists/${e}/InRelease`, s);
+        }
+        downloadReleaseFileSignature(e, { projectId: t, groupId: r, ...s }) {
+          const n = url3({ projectId: t, groupId: r });
+          return a.get()(this, `${n}/dists/${e}/Release.gpg`, s);
+        }
+        downloadPackageFile(e, t, r, s, n, o, i) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/debian/pool/${t}/${r}/${s}/${n}/${o}`,
+            i,
+          );
+        }
+        uploadPackageFile(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/packages/debian/${t.filename}`,
+            { isForm: true, ...r, file: [t.content, t.filename] },
+          );
+        }
+      };
+      var A = class extends s.BaseResource {
+        remove(e, t) {
+          return a.post()(this, `groups/${e}/dependency_proxy/cache`, t);
+        }
+      };
+      var S = class extends s.BaseResource {
+        all({ projectId: e, userId: t, ...r } = {}) {
+          let s;
+          if (e) {
+            s = endpoint`projects/${e}/deploy_keys`;
+          } else if (t) {
+            s = endpoint`users/${t}/project_deploy_keys`;
+          } else {
+            s = "deploy_keys";
+          }
+          return a.get()(this, s, r);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/deploy_keys`, {
+            title: t,
+            key: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/deploy_keys/${t}`, r);
+        }
+        enable(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/deploy_keys/${t}/enable`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/deploy_keys/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/deploy_keys/${t}`, r);
+        }
+      };
+      var j = class extends s.BaseResource {
+        all({ projectId: e, groupId: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`projects/${e}/deploy_tokens`;
+          else if (t) s = endpoint`groups/${t}/deploy_tokens`;
+          else s = "deploy_tokens";
+          return a.get()(this, s, r);
+        }
+        create(e, t, { projectId: r, groupId: s, ...n } = {}) {
+          let o;
+          if (r) o = endpoint`projects/${r}/deploy_tokens`;
+          else if (s) o = endpoint`groups/${s}/deploy_tokens`;
+          else {
+            throw new Error(
+              "Missing required argument. Please supply a projectId or a groupId in the options parameter.",
+            );
+          }
+          return a.post()(this, o, { name: e, scopes: t, ...n });
+        }
+        remove(e, { projectId: t, groupId: r, ...s } = {}) {
+          let n;
+          if (t) n = endpoint`projects/${t}/deploy_tokens/${e}`;
+          else if (r) n = endpoint`groups/${r}/deploy_tokens/${e}`;
+          else {
+            throw new Error(
+              "Missing required argument. Please supply a projectId or a groupId in the options parameter.",
+            );
+          }
+          return a.del()(this, n, s);
+        }
+        show(e, { projectId: t, groupId: r, ...s } = {}) {
+          let n;
+          if (t) n = endpoint`projects/${t}/deploy_tokens/${e}`;
+          else if (r) n = endpoint`groups/${r}/deploy_tokens/${e}`;
+          else {
+            throw new Error(
+              "Missing required argument. Please supply a projectId or a groupId in the options parameter.",
+            );
+          }
+          return a.get()(this, n, s);
+        }
+      };
+      var E = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/access_requests`, t);
+        }
+        request(e, t) {
+          return a.post()(this, endpoint`${e}/access_requests`, t);
+        }
+        approve(e, t, r) {
+          return a.post()(this, endpoint`${e}/access_requests/${t}/approve`, r);
+        }
+        deny(e, t, r) {
+          return a.del()(this, endpoint`${e}/access_requests/${t}`, r);
+        }
+      };
+      var R = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/access_tokens`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`${e}/access_tokens`, {
+            name: t,
+            scopes: r,
+            ...s,
+          });
+        }
+        revoke(e, t, r) {
+          return a.del()(this, endpoint`${e}/access_tokens/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/access_tokens/${t}`, r);
+        }
+      };
+      function url4(e, t, r, s) {
+        const [n, o] = [e, r].map(encodeURIComponent);
+        const i = [n, t, o];
+        i.push("award_emoji");
+        if (s) i.push(s);
+        return i.join("/");
+      }
+      var k = class extends s.BaseResource {
+        resourceType2;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resourceType2 = t;
+        }
+        all(e, t, r) {
+          return a.get()(this, url4(e, this.resourceType2, t), r);
+        }
+        award(e, t, r, s) {
+          return a.post()(this, url4(e, this.resourceType2, t), {
+            name: r,
+            ...s,
+          });
+        }
+        remove(e, t, r, s) {
+          return a.del()(this, url4(e, this.resourceType2, t, r), s);
+        }
+        show(e, t, r, s) {
+          return a.get()(this, url4(e, this.resourceType2, t, r), s);
+        }
+      };
+      function url5(e, t, r, s, n) {
+        const [o, i] = [e, r].map(encodeURIComponent);
+        const a = [o, t, i];
+        a.push("notes");
+        a.push(s);
+        a.push("award_emoji");
+        if (n) a.push(n);
+        return a.join("/");
+      }
+      var x = class extends s.BaseResource {
+        resourceType;
+        constructor(e, t) {
+          super({ prefixUrl: "projects", ...t });
+          this.resourceType = e;
+        }
+        all(e, t, r, s) {
+          return a.get()(this, url5(e, this.resourceType, t, r), s);
+        }
+        award(e, t, r, s, n) {
+          return a.post()(this, url5(e, this.resourceType, t, r), {
+            name: s,
+            ...n,
+          });
+        }
+        remove(e, t, r, s, n) {
+          return a.del()(this, url5(e, this.resourceType, t, r, s), n);
+        }
+        show(e, t, r, s, n) {
+          return a.get()(this, url5(e, this.resourceType, t, r, s), n);
+        }
+      };
+      var I = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        add(e, t, r, s) {
+          return a.post()(this, endpoint`${e}/badges`, {
+            linkUrl: t,
+            imageUrl: r,
+            ...s,
+          });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/badges`, t);
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`${e}/badges/${t}`, r);
+        }
+        preview(e, t, r, s) {
+          return a.get()(this, endpoint`${e}/badges/render`, {
+            linkUrl: t,
+            imageUrl: r,
+            ...s,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/badges/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/badges/${t}`, r);
+        }
+      };
+      var P = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/custom_attributes`, t);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/custom_attributes/${t}`, r);
+        }
+        set(e, t, r, s) {
+          return a.put()(this, endpoint`${e}/custom_attributes/${t}`, {
+            value: r,
+            ...s,
+          });
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/custom_attributes/${t}`, r);
+        }
+      };
+      var T = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t, r) {
+          return a.get()(this, endpoint`${e}/dora/metrics`, {
+            metric: t,
+            ...r,
+          });
+        }
+      };
+      var C = class extends s.BaseResource {
+        resource2Type;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resource2Type = t;
+        }
+        addNote(e, t, r, s, n, o) {
+          return a.post()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}/notes`,
+            { ...o, body: n, noteId: s },
+          );
+        }
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/discussions`,
+            r,
+          );
+        }
+        create(e, t, r, { position: s, ...n } = {}) {
+          const o = { ...n, body: r };
+          if (s) {
+            Object.assign(o, reformatObjectOptions(s, "position", true));
+            o.isForm = true;
+          }
+          return a.post()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/discussions`,
+            o,
+          );
+        }
+        editNote(e, t, r, s, n) {
+          return a.put()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}/notes/${s}`,
+            n,
+          );
+        }
+        removeNote(e, t, r, s, n) {
+          return a.del()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}/notes/${s}`,
+            n,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/discussions/${r}`,
+            s,
+          );
+        }
+      };
+      var O = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/boards`, t);
+        }
+        allLists(e, t, r) {
+          return a.get()(this, endpoint`${e}/boards/${t}/lists`, r);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`${e}/boards`, { name: t, ...r });
+        }
+        createList(e, t, r) {
+          return a.post()(this, endpoint`${e}/boards/${t}/lists`, r);
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`${e}/boards/${t}`, r);
+        }
+        editList(e, t, r, s, n) {
+          return a.put()(this, endpoint`${e}/boards/${t}/lists/${r}`, {
+            position: s,
+            ...n,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/boards/${t}`, r);
+        }
+        removeList(e, t, r, s) {
+          return a.del()(this, endpoint`${e}/boards/${t}/lists/${r}`, s);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/boards/${t}`, r);
+        }
+        showList(e, t, r, s) {
+          return a.get()(this, endpoint`${e}/boards/${t}/lists/${r}`, s);
+        }
+      };
+      var M = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/labels`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`${e}/labels`, {
+            name: t,
+            color: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          if (!r?.newName && !r?.color)
+            throw new Error(
+              "Missing required argument. Please supply a color or a newName in the options parameter.",
+            );
+          return a.put()(this, endpoint`${e}/labels/${t}`, r);
+        }
+        promote(e, t, r) {
+          return a.put()(this, endpoint`${e}/labels/${t}/promote`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/labels/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/labels/${t}`, r);
+        }
+        subscribe(e, t, r) {
+          return a.post()(this, endpoint`${e}/issues/${t}/subscribe`, r);
+        }
+        unsubscribe(e, t, r) {
+          return a.post()(this, endpoint`${e}/issues/${t}/unsubscribe`, r);
+        }
+      };
+      var N = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        add(e, t, r, s) {
+          return a.post()(this, endpoint`${e}/members`, {
+            userId: String(t),
+            accessLevel: r,
+            ...s,
+          });
+        }
+        all(e, { includeInherited: t, ...r } = {}) {
+          let s = endpoint`${e}/members`;
+          if (t) s += "/all";
+          return a.get()(this, s, r);
+        }
+        edit(e, t, r, s) {
+          return a.put()(this, endpoint`${e}/members/${t}`, {
+            accessLevel: r,
+            ...s,
+          });
+        }
+        show(e, t, { includeInherited: r, ...s } = {}) {
+          const [n, o] = [e, t].map(encodeURIComponent);
+          const i = [n, "members"];
+          if (r) i.push("all");
+          i.push(o);
+          return a.get()(this, i.join("/"), s);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/members/${t}`, r);
+        }
+      };
+      var L = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/milestones`, t);
+        }
+        allAssignedIssues(e, t, r) {
+          return a.get()(this, endpoint`${e}/milestones/${t}/issues`, r);
+        }
+        allAssignedMergeRequests(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/milestones/${t}/merge_requests`,
+            r,
+          );
+        }
+        allBurndownChartEvents(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/milestones/${t}/burndown_events`,
+            r,
+          );
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`${e}/milestones`, { title: t, ...r });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`${e}/milestones/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/milestones/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/milestones/${t}`, r);
+        }
+      };
+      var B = class extends s.BaseResource {
+        resource2Type;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resource2Type = t;
+        }
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/notes`,
+            r,
+          );
+        }
+        create(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/notes`,
+            { body: r, ...s },
+          );
+        }
+        edit(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/notes/${r}`,
+            s,
+          );
+        }
+        remove(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/notes/${r}`,
+            s,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/notes/${r}`,
+            s,
+          );
+        }
+      };
+      var F = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: ["templates", e].join("/"), ...t });
+        }
+        all(e) {
+          process.emitWarning(
+            'This API will be deprecated as of Gitlabs v5 API. Please make the switch to "ProjectTemplates".',
+            "DeprecationWarning",
+          );
+          return a.get()(this, "", e);
+        }
+        show(e, t) {
+          process.emitWarning(
+            'This API will be deprecated as of Gitlabs v5 API. Please make the switch to "ProjectTemplates".',
+            "DeprecationWarning",
+          );
+          return a.get()(this, encodeURIComponent(e), t);
+        }
+      };
+      var q = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/variables`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`${e}/variables`, {
+            key: t,
+            value: r,
+            ...s,
+          });
+        }
+        edit(e, t, r, s) {
+          return a.put()(this, endpoint`${e}/variables/${t}`, {
+            value: r,
+            ...s,
+          });
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/variables/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/variables/${t}`, r);
+        }
+      };
+      var G = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/wikis`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`${e}/wikis`, {
+            content: t,
+            title: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`${e}/wikis/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/wikis/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/wikis/${t}`, r);
+        }
+        uploadAttachment(e, t, r) {
+          return a.post()(this, endpoint`${e}/wikis/attachments`, {
+            ...r,
+            isForm: true,
+            file: [t.content, t.filename],
+          });
+        }
+      };
+      var D = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        add(e, t, r) {
+          return a.post()(this, endpoint`${e}/hooks`, { url: t, ...r });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/hooks`, t);
+        }
+        edit(e, t, r, s) {
+          return a.put()(this, endpoint`${e}/hooks/${t}`, { url: r, ...s });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`${e}/hooks/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`${e}/hooks/${t}`, r);
+        }
+      };
+      var H = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        create(e, t) {
+          return a.post()(this, endpoint`${e}/push_rule`, t);
+        }
+        edit(e, t) {
+          return a.put()(this, endpoint`${e}/push_rule`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, endpoint`${e}/push_rule`, t);
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`${e}/push_rule`, t);
+        }
+      };
+      var U = class extends s.BaseResource {
+        resourceType;
+        resourceTypeSingular;
+        constructor(e, t) {
+          super(t);
+          this.resourceType = e;
+          this.resourceTypeSingular = e.substring(0, e.length - 1);
+        }
+        all(e) {
+          const t = e?.[`${this.resourceTypeSingular}Id`];
+          const r = t
+            ? endpoint`${this.resourceType}/${t}/repository_storage_moves`
+            : `${this.resourceTypeSingular}_repository_storage_moves`;
+          return a.get()(this, r, e);
+        }
+        show(e, t) {
+          const r = t?.[`${this.resourceTypeSingular}Id`];
+          const s = r
+            ? endpoint`${this.resourceType}/${r}/repository_storage_moves`
+            : `${this.resourceTypeSingular}_repository_storage_moves`;
+          return a.get()(this, `${s}/${e}`, t);
+        }
+        schedule(e, t) {
+          const r = t?.[`${this.resourceTypeSingular}Id`];
+          const s = r
+            ? endpoint`${this.resourceType}/${r}/repository_storage_moves`
+            : `${this.resourceTypeSingular}_repository_storage_moves`;
+          return a.post()(this, s, { sourceStorageName: e, ...t });
+        }
+      };
+      var K = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        add(e, t, r) {
+          if (!r?.email && !r?.userId)
+            throw new Error(
+              "Missing required argument. Please supply a email or a userId in the options parameter.",
+            );
+          return a.post()(this, endpoint`${e}/invitations`, {
+            accessLevel: t,
+            ...r,
+          });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/invitations`, t);
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`${e}/invitations/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.put()(this, endpoint`${e}/invitations/${t}`, r);
+        }
+      };
+      var W = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`${e}/iterations`, t);
+        }
+      };
+      var z = class extends s.BaseResource {
+        constructor(e, t) {
+          super({ prefixUrl: e, ...t });
+        }
+        all(e, t) {
+          return a.get()(this, `${e}/protected_environments`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, `${e}/protected_environments`, {
+            name: t,
+            deployAccessLevel: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, `${e}/protected_environments/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, `${e}/protected_environments/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, `${e}/protected_environments/${t}`, r);
+        }
+      };
+      var Y = class extends s.BaseResource {
+        resource2Type;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resource2Type = t;
+        }
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_iteration_events`,
+            r,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_iteration_events/${r}`,
+            s,
+          );
+        }
+      };
+      var Q = class extends s.BaseResource {
+        resource2Type;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resource2Type = t;
+        }
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_label_events`,
+            r,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_label_events/${r}`,
+            s,
+          );
+        }
+      };
+      var V = class extends s.BaseResource {
+        resource2Type;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resource2Type = t;
+        }
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_milestone_events`,
+            r,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_milestone_events/${r}`,
+            s,
+          );
+        }
+      };
+      var J = class extends s.BaseResource {
+        resource2Type;
+        constructor(e, t, r) {
+          super({ prefixUrl: e, ...r });
+          this.resource2Type = t;
+        }
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_state_events`,
+            r,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`${e}/${this.resource2Type}/${t}/resource_state_events/${r}`,
+            s,
+          );
+        }
+      };
+      var Z = class extends F {
+        constructor(e) {
+          super("dockerfiles", e);
+        }
+      };
+      var X = class extends s.BaseResource {
+        all({ projectId: e, userId: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`projects/${e}/events`;
+          else if (t) s = endpoint`users/${t}/events`;
+          else s = "events";
+          return a.get()(this, s, r);
+        }
+      };
+      var ee = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "experiments", e);
+        }
+      };
+      var te = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "geo_nodes", e);
+        }
+        allStatuses(e) {
+          return a.get()(this, "geo_nodes/statuses", e);
+        }
+        allFailures(e) {
+          return a.get()(this, "geo_nodes/current/failures", e);
+        }
+        create(e, t, r) {
+          return a.post()(this, "geo_nodes", { name: e, url: t, ...r });
+        }
+        edit(e, t) {
+          return a.put()(this, `geo_nodes/${e}`, t);
+        }
+        repair(e, t) {
+          return a.post()(this, `geo_nodes/${e}/repair`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, `geo_nodes/${e}`, t);
+        }
+        show(e, t) {
+          return a.get()(this, `geo_nodes/${e}`, t);
+        }
+        showStatus(e, t) {
+          return a.get()(this, `geo_nodes/${e}/status`, t);
+        }
+      };
+      var re = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "geo_sites", e);
+        }
+        allStatuses(e) {
+          return a.get()(this, "geo_sites/statuses", e);
+        }
+        allFailures(e) {
+          return a.get()(this, "geo_sites/current/failures", e);
+        }
+        create(e, t, r) {
+          return a.post()(this, "geo_sites", { name: e, url: t, ...r });
+        }
+        edit(e, t) {
+          return a.put()(this, `geo_sites/${e}`, t);
+        }
+        repair(e, t) {
+          return a.post()(this, `geo_sites/${e}/repair`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, `geo_sites/${e}`, t);
+        }
+        show(e, t) {
+          return a.get()(this, `geo_sites/${e}`, t);
+        }
+        showStatus(e, t) {
+          return a.get()(this, `geo_sites/${e}/status`, t);
+        }
+      };
+      var se = class extends F {
+        constructor(e) {
+          super("gitignores", e);
+        }
+      };
+      var ne = class extends F {
+        constructor(e) {
+          super("gitlab_ci_ymls", e);
+        }
+      };
+      var oe = class extends s.BaseResource {
+        importGithubRepository(e, t, r, s) {
+          return a.post()(this, "import/github", {
+            personalAccessToken: e,
+            repoId: t,
+            targetNamespace: r,
+            ...s,
+          });
+        }
+        cancelGithubRepositoryImport(e, t) {
+          return a.post()(this, "import/github/cancel", { projectId: e, ...t });
+        }
+        importGithubGists(e, t) {
+          return a.post()(this, "import/github/gists", {
+            personalAccessToken: e,
+            ...t,
+          });
+        }
+        importBitbucketServerRepository(e, t, r, s, n, o) {
+          return a.post()(this, "import/bitbucket_server", {
+            bitbucketServerUrl: e,
+            bitbucketServerUsername: t,
+            personalAccessToken: r,
+            bitbucketServerProject: s,
+            bitbucketServerRepo: n,
+            ...o,
+          });
+        }
+      };
+      var ie = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "admin/ci/variables", e);
+        }
+        create(e, t, r) {
+          return a.post()(this, "admin/ci/variables", {
+            key: e,
+            value: t,
+            ...r,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`admin/ci/variables/${e}`, {
+            value: t,
+            ...r,
+          });
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`admin/ci/variables/${e}`, t);
+        }
+        remove(e, t) {
+          return a.get()(this, endpoint`admin/ci/variables/${e}`, t);
+        }
+      };
+      var ae = class extends s.BaseResource {
+        show({ keyId: e, fingerprint: t, ...r } = {}) {
+          let s;
+          if (e) s = `keys/${e}`;
+          else if (t) s = `keys?fingerprint=${t}`;
+          else {
+            throw new Error(
+              "Missing required argument. Please supply a fingerprint or a keyId in the options parameter",
+            );
+          }
+          return a.get()(this, s, r);
+        }
+      };
+      var ue = class extends s.BaseResource {
+        add(e, t) {
+          return a.post()(this, "license", {
+            searchParams: { license: e },
+            ...t,
+          });
+        }
+        all(e) {
+          return a.get()(this, "licenses", e);
+        }
+        show(e) {
+          return a.get()(this, "license", e);
+        }
+        remove(e, t) {
+          return a.del()(this, `license/${e}`, t);
+        }
+        recalculateBillableUsers(e, t) {
+          return a.put()(this, `license/${e}/refresh_billable_users`, t);
+        }
+      };
+      var ce = class extends F {
+        constructor(e) {
+          super("Licenses", e);
+        }
+      };
+      var pe = class extends s.BaseResource {
+        check(e, t) {
+          return a.get()(this, endpoint`projects/${e}/ci/lint`, t);
+        }
+        lint(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/ci/lint`, {
+            ...r,
+            content: t,
+          });
+        }
+      };
+      var le = class extends s.BaseResource {
+        render(e, t) {
+          return a.post()(this, "markdown", { text: e, ...t });
+        }
+      };
+      var de = class extends s.BaseResource {
+        downloadPackageFile(e, t, { projectId: r, groupId: s, ...n }) {
+          let o = endpoint`packages/maven/${e}/${t}`;
+          if (r) o = endpoint`projects/${r}/${o}`;
+          else if (s) o = endpoint`groups/${s}/-/${o}`;
+          return a.get()(this, o, n);
+        }
+        uploadPackageFile(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/packages/maven/${t}/${r.filename}`,
+            { isForm: true, ...s, file: [r.content, r.filename] },
+          );
+        }
+      };
+      var fe = class extends s.BaseResource {
+        show(e) {
+          return a.get()(this, "metadata", e);
+        }
+      };
+      var he = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "bulk_imports", e);
+        }
+        create(e, t, r) {
+          return a.post()(this, "bulk_imports", {
+            configuration: e,
+            entities: t,
+            ...r,
+          });
+        }
+        allEntities({ bulkImportId: e, ...t } = {}) {
+          const r = e
+            ? endpoint`bulk_imports/${e}/entities`
+            : "bulk_imports/entities";
+          return a.get()(this, r, t);
+        }
+        show(e, t) {
+          return a.get()(this, `bulk_imports/${e}`, t);
+        }
+        showEntity(e, t, r) {
+          return a.get()(this, `bulk_imports/${e}/entities/${t}`, r);
+        }
+      };
+      var ge = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "namespaces", e);
+        }
+        exists(e, t) {
+          return a.get()(this, endpoint`namespaces/${e}/exists`, t);
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`namespaces/${e}`, t);
+        }
+      };
+      function url6({ projectId: e, groupId: t } = {}) {
+        let r = "";
+        if (e) r = endpoint`projects/${e}/`;
+        if (t) r = endpoint`groups/${t}/`;
+        return `${r}notification_settings`;
+      }
+      var me = class extends s.BaseResource {
+        edit({ groupId: e, projectId: t, ...r } = {}) {
+          const s = url6({ groupId: e, projectId: t });
+          return a.put()(this, s, r);
+        }
+        show({ groupId: e, projectId: t, ...r } = {}) {
+          const s = url6({ groupId: e, projectId: t });
+          return a.get()(this, s, r);
+        }
+      };
+      function url7(e) {
+        return e ? endpoint`/projects/${e}/packages/npm` : "packages/npm";
+      }
+      var ye = class extends s.BaseResource {
+        downloadPackageFile(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/npm/${t}/-/${r}`,
+            s,
+          );
+        }
+        removeDistTag(e, t, r) {
+          const s = url7(r?.projectId);
+          return a.del()(this, `${s}/-/package/${e}/dist-tags/${t}`, r);
+        }
+        setDistTag(e, t, r) {
+          const s = url7(r?.projectId);
+          return a.put()(this, `${s}/-/package/${e}/dist-tags/${t}`, r);
+        }
+        showDistTags(e, t) {
+          const r = url7(t?.projectId);
+          return a.get()(this, `${r}/-/package/${e}/dist-tags`, t);
+        }
+        showMetadata(e, t) {
+          const r = url7(t?.projectId);
+          return a.get()(this, `${r}/${e}`, t);
+        }
+        uploadPackageFile(e, t, r, s, n) {
+          return a.put()(this, endpoint`projects/${e}/packages/npm/${t}`, {
+            ...n,
+            versions: r,
+            ...s,
+          });
+        }
+      };
+      function url8({ projectId: e, groupId: t } = {}) {
+        if (e) return endpoint`/projects/${e}/packages/nuget`;
+        if (t) return endpoint`/groups/${t}/-/packages/nuget`;
+        throw new Error(
+          "Missing required argument. Please supply a projectId or a groupId in the options parameter",
+        );
+      }
+      var ve = class extends s.BaseResource {
+        downloadPackageFile(e, t, r, s, n) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/nuget/download/${t}/${r}/${s}`,
+            n,
+          );
+        }
+        search(e, { projectId: t, groupId: r, ...s }) {
+          const n = url8({ projectId: t, groupId: r });
+          return a.get()(this, `${n}/query`, { q: e, ...s });
+        }
+        showMetadata(e, { projectId: t, groupId: r, ...s }) {
+          const n = url8({ projectId: t, groupId: r });
+          return a.get()(this, `${n}/metadata/${e}/index`, s);
+        }
+        showPackageIndex(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/nuget/download/${t}/index`,
+            r,
+          );
+        }
+        showServiceIndex({ projectId: e, groupId: t, ...r }) {
+          const s = url8({ projectId: e, groupId: t });
+          return a.get()(this, `${s}/index`, r);
+        }
+        showVersionMetadata(e, t, { projectId: r, groupId: s, ...n }) {
+          const o = url8({ projectId: r, groupId: s });
+          return a.get()(this, `${o}/metadata/${e}/${t}`, n);
+        }
+        uploadPackageFile(e, t, r, s, n) {
+          return a.put()(this, endpoint`projects/${e}/packages/nuget`, {
+            isForm: true,
+            ...n,
+            packageName: t,
+            packageVersion: r,
+            file: [s.content, s.filename],
+          });
+        }
+        uploadSymbolPackage(e, t, r, s, n) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/packages/nuget/symbolpackage`,
+            {
+              isForm: true,
+              ...n,
+              packageName: t,
+              packageVersion: r,
+              file: [s.content, s.filename],
+            },
+          );
+        }
+      };
+      var $e = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "personal_access_tokens", e);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`users/${e}/personal_access_tokens`, {
+            name: t,
+            scopes: r,
+            ...s,
+          });
+        }
+        remove({ tokenId: e, ...t } = {}) {
+          const r = e
+            ? endpoint`personal_access_tokens/${e}`
+            : "personal_access_tokens/self";
+          return a.del()(this, r, t);
+        }
+        rotate(e, t) {
+          return a.post()(
+            this,
+            endpoint`personal_access_tokens/${e}/rotate`,
+            t,
+          );
+        }
+        show({ tokenId: e, ...t } = {}) {
+          const r = e
+            ? endpoint`personal_access_tokens/${e}`
+            : "personal_access_tokens/self";
+          return a.get()(this, r, t);
+        }
+      };
+      var be = class extends s.BaseResource {
+        downloadPackageFile(e, t, { projectId: r, groupId: s, ...n } = {}) {
+          let o;
+          if (r) {
+            o = endpoint`projects/${r}/packages/pypi/files/${e}/${t}`;
+          } else if (s) {
+            o = endpoint`groups/${s}/packages/pypi/files/${e}/${t}`;
+          } else {
+            throw new Error(
+              "Missing required argument. Please supply a projectId or a groupId in the options parameter",
+            );
+          }
+          return a.get()(this, o, n);
+        }
+        showPackageDescriptor(e, { projectId: t, groupId: r, ...s }) {
+          let n;
+          if (t) {
+            n = endpoint`projects/${t}/packages/pypi/simple/${e}`;
+          } else if (r) {
+            n = endpoint`groups/${r}/packages/pypi/simple/${e}`;
+          } else {
+            throw new Error(
+              "Missing required argument. Please supply a projectId or a groupId in the options parameter",
+            );
+          }
+          return a.get()(this, n, s);
+        }
+        uploadPackageFile(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/packages/pypi`, {
+            ...r,
+            isForm: true,
+            file: [t.content, t.filename],
+          });
+        }
+      };
+      var we = class extends s.BaseResource {
+        allDependencies(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/rubygems/api/v1/dependencies`,
+            t,
+          );
+        }
+        downloadGemFile(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/rubygems/gems/${t}`,
+            r,
+          );
+        }
+        uploadGemFile(e, t, r) {
+          return a.post()(this, `projects/${e}/packages/rubygems/api/v1/gems`, {
+            isForm: true,
+            ...r,
+            file: [t.content, t.filename],
+          });
+        }
+      };
+      var _e = class extends s.BaseResource {
+        all(e, t, r) {
+          const { projectId: s, groupId: n, ...o } = r || {};
+          let i;
+          if (s) i = endpoint`projects/${s}/`;
+          else if (n) i = endpoint`groups/${n}/`;
+          else i = "";
+          return a.get()(this, `${i}search`, { scope: e, search: t, ...o });
+        }
+      };
+      var Ae = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "admin/search/migrations", e);
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`admin/search/migrations/${e}`, t);
+        }
+      };
+      var Se = class extends s.BaseResource {
+        create(e) {
+          return a.post()(this, endpoint`service_accounts`, e);
+        }
+      };
+      var je = class extends s.BaseResource {
+        showMetricDefinitions(e) {
+          return a.get()(this, "usage_data/metric_definitions", e);
+        }
+        showServicePingSQLQueries(e) {
+          return a.get()(this, "usage_data/queries", e);
+        }
+        showUsageDataNonSQLMetrics(e) {
+          return a.get()(this, "usage_data/non_sql_metrics", e);
+        }
+      };
+      var Ee = class extends s.BaseResource {
+        queueMetrics() {
+          return a.get()(this, "sidekiq/queue_metrics");
+        }
+        processMetrics() {
+          return a.get()(this, "sidekiq/process_metrics");
+        }
+        jobStats() {
+          return a.get()(this, "sidekiq/job_stats");
+        }
+        compoundMetrics() {
+          return a.get()(this, "sidekiq/compound_metrics");
+        }
+      };
+      var Re = class extends s.BaseResource {
+        remove(e, t) {
+          return a.get()(this, endpoint`admin/sidekiq/queues/${e}`, t);
+        }
+      };
+      var ke = class extends U {
+        constructor(e) {
+          super("snippets", e);
+        }
+      };
+      var xe = class extends s.BaseResource {
+        all({ public: e, ...t } = {}) {
+          const r = e ? "snippets/public" : "snippets";
+          return a.get()(this, r, t);
+        }
+        create(e, t) {
+          return a.post()(this, "snippets", { title: e, ...t });
+        }
+        edit(e, t) {
+          return a.put()(this, `snippets/${e}`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, `snippets/${e}`, t);
+        }
+        show(e, t) {
+          return a.get()(this, `snippets/${e}`, t);
+        }
+        showContent(e, t) {
+          return a.get()(this, `snippets/${e}/raw`, t);
+        }
+        showRepositoryFileContent(e, t, r, s) {
+          return a.get()(this, endpoint`snippets/${e}/files/${t}/${r}/raw`, s);
+        }
+        showUserAgentDetails(e, t) {
+          return a.get()(this, `snippets/${e}/user_agent_detail`, t);
+        }
+      };
+      var Ie = class extends s.BaseResource {
+        edit(e, t) {
+          return a.put()(this, `suggestions/${e}/apply`, t);
+        }
+        editBatch(e, t) {
+          return a.put()(this, `suggestions/batch_apply`, { ...t, ids: e });
+        }
+      };
+      var Pe = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "hooks", e);
+        }
+        add(e, t) {
+          return this.create(e, t);
+        }
+        create(e, t) {
+          return a.post()(this, "hooks", { url: e, ...t });
+        }
+        test(e, t) {
+          return a.post()(this, `hooks/${e}`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, `hooks/${e}`, t);
+        }
+        show(e, t) {
+          return a.post()(this, `hooks/${e}`, t);
+        }
+      };
+      var Te = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "todos", e);
+        }
+        done({ todoId: e, ...t } = {}) {
+          let r = "todos";
+          if (e) r += `/${e}`;
+          return a.post()(this, `${r}/mark_as_done`, t);
+        }
+      };
+      var Ce = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "topics", e);
+        }
+        create(e, { avatar: t, ...r } = {}) {
+          const s = { name: e, ...r };
+          if (t) {
+            s.isForm = true;
+            s.file = [t.content, t.filename];
+          }
+          return a.post()(this, "topics", s);
+        }
+        edit(e, { avatar: t, ...r } = {}) {
+          const s = { ...r };
+          if (t) {
+            s.isForm = true;
+            s.file = [t.content, t.filename];
+          }
+          return a.put()(this, `topics/${e}`, s);
+        }
+        merge(e, t, r) {
+          return a.post()(this, `topics/merge`, {
+            sourceTopicId: e,
+            targetTopicId: t,
+            ...r,
+          });
+        }
+        remove(e, t) {
+          return a.del()(this, `topics/${e}`, t);
+        }
+        show(e, t) {
+          return a.get()(this, `topics/${e}`, t);
+        }
+      };
+      var Oe = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/repository/branches`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/repository/branches`, {
+            branch: t,
+            ref: r,
+            ...s,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/repository/branches/${t}`,
+            r,
+          );
+        }
+        removeMerged(e, t) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/repository/merged_branches`,
+            t,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/branches/${t}`,
+            r,
+          );
+        }
+      };
+      var Me = class extends C {
+        constructor(e) {
+          super("projects", "repository/commits", e);
+        }
+      };
+      var Ne = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/repository/commits`, t);
+        }
+        allComments(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/comments`,
+            r,
+          );
+        }
+        allDiscussions(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/discussions`,
+            r,
+          );
+        }
+        allMergeRequests(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/merge_requests`,
+            r,
+          );
+        }
+        allReferences(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/refs`,
+            r,
+          );
+        }
+        allStatuses(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/statuses`,
+            r,
+          );
+        }
+        cherryPick(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/cherry_pick`,
+            { branch: r, ...s },
+          );
+        }
+        create(e, t, r, s = [], n = {}) {
+          return a.post()(this, endpoint`projects/${e}/repository/commits`, {
+            branch: t,
+            commitMessage: r,
+            actions: s,
+            ...n,
+          });
+        }
+        createComment(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/comments`,
+            { note: r, ...s },
+          );
+        }
+        editStatus(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/statuses/${t}`, {
+            state: r,
+            ...s,
+          });
+        }
+        revert(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/revert`,
+            { ...s, branch: r },
+          );
+        }
+        show(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}`,
+            r,
+          );
+        }
+        showDiff(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/diff`,
+            r,
+          );
+        }
+        showGPGSignature(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/commits/${t}/signature`,
+            r,
+          );
+        }
+      };
+      var Le = class extends s.BaseResource {
+        allRepositories({ groupId: e, projectId: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`groups/${e}/registry/repositories`;
+          else if (t) s = endpoint`projects/${t}/registry/repositories`;
+          else
+            throw new Error(
+              "Missing required argument. Please supply a groupId or a projectId in the options parameter.",
+            );
+          return a.get()(this, s, r);
+        }
+        allTags(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/registry/repositories/${t}/tags`,
+            r,
+          );
+        }
+        editRegistryVisibility(e, t) {
+          return a.get()(this, endpoint`projects/${e}`, t);
+        }
+        removeRepository(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/registry/repositories/${t}`,
+            r,
+          );
+        }
+        removeTag(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/registry/repositories/${t}/tags/${r}`,
+            s,
+          );
+        }
+        removeTags(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/registry/repositories/${t}/tags`,
+            { nameRegexDelete: r, ...s },
+          );
+        }
+        showRepository(e, t) {
+          return a.get()(this, endpoint`registry/repositories/${e}`, t);
+        }
+        showTag(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/registry/repositories/${t}/tags/${r}`,
+            s,
+          );
+        }
+      };
+      var Be = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/deployments`, t);
+        }
+        allMergeRequests(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/deployments/${t}/merge_requests`,
+            r,
+          );
+        }
+        create(e, t, r, s, n, o) {
+          return a.post()(this, endpoint`projects/${e}/deployments`, {
+            environment: t,
+            sha: r,
+            ref: s,
+            tag: n,
+            ...o,
+          });
+        }
+        edit(e, t, r, s) {
+          return a.put()(this, endpoint`projects/${e}/deployments/${t}`, {
+            ...s,
+            status: r,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/deployments/${t}`, r);
+        }
+        setApproval(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/deployments/${t}/approval`,
+            { ...s, status: r },
+          );
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/deployments/${t}`, r);
+        }
+      };
+      var Fe = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/environments`, t);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/environments`, {
+            name: t,
+            ...r,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/environments/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/environments/${t}`, r);
+        }
+        removeReviewApps(e, t) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/environments/review_apps`,
+            t,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/environments/${t}`, r);
+        }
+        stop(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/environments/${t}/stop`,
+            r,
+          );
+        }
+        stopStale(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/environments/stop_stale`,
+            { searchParams: { before: t }, ...r },
+          );
+        }
+      };
+      var qe = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/error_tracking/client_keys`,
+            t,
+          );
+        }
+        create(e, t) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/error_tracking/client_keys`,
+            t,
+          );
+        }
+        remove(e, t) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/error_tracking/client_keys`,
+            t,
+          );
+        }
+      };
+      var Ge = class extends s.BaseResource {
+        create(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/error_tracking/settings`,
+            { searchParams: { active: t, integrated: r }, ...s },
+          );
+        }
+        edit(e, t, { integrated: r, ...s } = {}) {
+          return a.patch()(
+            this,
+            endpoint`projects/${e}/error_tracking/settings`,
+            { searchParams: { active: t, integrated: r }, ...s },
+          );
+        }
+        show(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/error_tracking/settings`,
+            t,
+          );
+        }
+      };
+      var De = class extends s.BaseResource {
+        all(e, t) {
+          const { mergerequestIId: r, ...s } = t || {};
+          let n = endpoint`projects/${e}`;
+          if (r) {
+            n += endpoint`/merge_requests/${r}/status_checks`;
+          } else {
+            n += "/external_status_checks";
+          }
+          return a.get()(this, n, s);
+        }
+        create(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/external_status_checks`,
+            { name: t, externalUrl: r, ...s },
+          );
+        }
+        edit(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/external_status_checks/${t}`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/external_status_checks/${t}`,
+            r,
+          );
+        }
+        set(e, t, r, s, n) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/status_check_responses`,
+            { sha: r, externalStatusCheckId: s, ...n },
+          );
+        }
+      };
+      var He = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/feature_flags`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/feature_flags`, {
+            name: t,
+            version: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/feature_flags/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/feature_flags/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/feature_flags/${t}`, r);
+        }
+      };
+      var Ue = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/feature_flags_user_lists`,
+            t,
+          );
+        }
+        create(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/feature_flags_user_lists`,
+            { name: t, userXids: r, ...s },
+          );
+        }
+        edit(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/feature_flags_user_lists/${t}`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/feature_flags_user_lists/${t}`,
+            r,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/feature_flags_user_lists/${t}`,
+            r,
+          );
+        }
+      };
+      var Ke = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/freeze_periods`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/freeze_periods`, {
+            freezeStart: t,
+            freezeEnd: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/freeze_periods/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/freeze_periods/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/freeze_periods/${t}`, r);
+        }
+      };
+      var We = class extends s.BaseResource {
+        remove(e, t) {
+          return a.del()(this, endpoint`projects/${e}/pages`, t);
+        }
+      };
+      var ze = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/go/${t}/@v/list`,
+            r,
+          );
+        }
+        showVersionMetadata(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/go/${t}/@v/${r}.info`,
+            s,
+          );
+        }
+        downloadModuleFile(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/go/${t}/@v/${r}.mod`,
+            s,
+          );
+        }
+        downloadModuleSource(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/go/${t}/@v/${r}.zip`,
+            s,
+          );
+        }
+      };
+      var Ye = class extends s.BaseResource {
+        downloadChartIndex(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/helm/${t}/index.yaml`,
+            r,
+          );
+        }
+        downloadChart(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/helm/${t}/charts/${r}.tgz`,
+            s,
+          );
+        }
+        import(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/packages/helm/api/${t}/charts`,
+            { isForm: true, ...s, chart: [r.content, r.filename] },
+          );
+        }
+      };
+      var Qe = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/integrations`, t);
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/integrations/${t}`, r);
+        }
+        disable(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/integrations/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/integrations/${t}`, r);
+        }
+      };
+      var Ve = class extends k {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var Je = class extends C {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var Ze = class extends Y {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var Xe = class extends Q {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var et = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/issues/${t}/links`, r);
+        }
+        create(e, t, r, s, n) {
+          return a.post()(this, endpoint`projects/${e}/issues/${t}/links`, {
+            targetProjectId: r,
+            targetIssueIid: s,
+            ...n,
+          });
+        }
+        remove(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/issues/${t}/links/${r}`,
+            s,
+          );
+        }
+      };
+      var tt = class extends V {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var rt = class extends x {
+        constructor(e) {
+          super("issues", e);
+        }
+      };
+      var st = class extends B {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var nt = class extends s.BaseResource {
+        addSpentTime(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/add_spent_time`,
+            { duration: r, ...s },
+          );
+        }
+        addTimeEstimate(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/time_estimate`,
+            { duration: r, ...s },
+          );
+        }
+        all({ projectId: e, groupId: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`projects/${e}/issues`;
+          else if (t) s = endpoint`groups/${t}/issues`;
+          else s = "issues";
+          return a.get()(this, s, r);
+        }
+        allMetricImages(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/issues/${t}/metric_images`,
+            r,
+          );
+        }
+        allParticipants(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/issues/${t}/participants`,
+            r,
+          );
+        }
+        allRelatedMergeRequests(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/issues/${t}/related_merge_requests`,
+            r,
+          );
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/issues`, {
+            ...r,
+            title: t,
+          });
+        }
+        createTodo(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/issues/${t}/todo`, r);
+        }
+        clone(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/issues/${t}/clone`, {
+            toProjectId: r,
+            ...s,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/issues/${t}`, r);
+        }
+        editMetricImage(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/issues/${t}/metric_images/${r}`,
+            s,
+          );
+        }
+        move(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/issues/${t}/move`, {
+            toProjectId: r,
+            ...s,
+          });
+        }
+        promote(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/issues/${t}/notes`, {
+            searchParams: { body: `${r} \n /promote` },
+            ...s,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/issues/${t}`, r);
+        }
+        removeMetricImage(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/issues/${t}/metric_images/${r}`,
+            s,
+          );
+        }
+        reorder(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/issues/${t}/reorder`, r);
+        }
+        resetSpentTime(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/reset_spent_time`,
+            r,
+          );
+        }
+        resetTimeEstimate(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/reset_time_estimate`,
+            r,
+          );
+        }
+        show(e, { projectId: t, ...r } = {}) {
+          const s = t ? endpoint`projects/${t}/issues/${e}` : `issues/${e}`;
+          return a.get()(this, s, r);
+        }
+        subscribe(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/subscribe`,
+            r,
+          );
+        }
+        allClosedByMergeRequestst(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/issues/${t}/closed_by`,
+            r,
+          );
+        }
+        showTimeStats(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/issues/${t}/time_stats`,
+            r,
+          );
+        }
+        unsubscribe(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/unsubscribe`,
+            r,
+          );
+        }
+        uploadMetricImage(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/issues/${t}/metric_images`,
+            { isForm: true, ...s, file: [r.content, r.filename] },
+          );
+        }
+        showUserAgentDetails(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/issues/${t}/user_agent_details`,
+            r,
+          );
+        }
+      };
+      var ot = class extends s.BaseResource {
+        all({ projectId: e, groupId: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`projects/${e}/issues_statistics`;
+          else if (t) s = endpoint`groups/${t}/issues_statistics`;
+          else s = "issues_statistics";
+          return a.get()(this, s, r);
+        }
+      };
+      var it = class extends J {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      var at = class extends J {
+        constructor(e) {
+          super("projects", "issues", e);
+        }
+      };
+      function generateDownloadPathForJob(e, t, r) {
+        let s = endpoint`projects/${e}/jobs/${t}/artifacts`;
+        if (r) s += `/${r}`;
+        return s;
+      }
+      function generateDownloadPath(e, t, r) {
+        let s = endpoint`projects/${e}/jobs/artifacts/${t}`;
+        if (r) {
+          s += endpoint`/raw/${r}`;
+        } else {
+          s += endpoint`/download`;
+        }
+        return s;
+      }
+      var ut = class extends s.BaseResource {
+        downloadArchive(e, { jobId: t, artifactPath: r, ref: s, ...n } = {}) {
+          let o;
+          if (t) o = generateDownloadPathForJob(e, t, r);
+          else if (n?.job && s) o = generateDownloadPath(e, s, r);
+          else
+            throw new Error(
+              "Missing one of the required parameters. See typing documentation for available arguments.",
+            );
+          return a.get()(this, o, n);
+        }
+        keep(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/jobs/${t}/artifacts/keep`,
+            r,
+          );
+        }
+        remove(e, { jobId: t, ...r } = {}) {
+          let s;
+          if (t) {
+            s = endpoint`projects/${e}/jobs/${t}/artifacts`;
+          } else {
+            s = endpoint`projects/${e}/artifacts`;
+          }
+          return a.del()(this, s, r);
+        }
+      };
+      var ct = class extends s.BaseResource {
+        all(e, { pipelineId: t, ...r } = {}) {
+          const s = t
+            ? endpoint`projects/${e}/pipelines/${t}/jobs`
+            : endpoint`projects/${e}/jobs`;
+          return a.get()(this, s, r);
+        }
+        allPipelineBridges(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipelines/${t}/bridges`,
+            r,
+          );
+        }
+        cancel(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/jobs/${t}/cancel`, r);
+        }
+        erase(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/jobs/${t}/erase`, r);
+        }
+        play(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/jobs/${t}/play`, r);
+        }
+        retry(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/jobs/${t}/retry`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/jobs/${t}`, r);
+        }
+        showConnectedJob(e) {
+          if (!this.headers["job-token"])
+            throw new Error('Missing required header "job-token"');
+          return a.get()(this, "job", e);
+        }
+        showConnectedJobK8Agents(e) {
+          if (!this.headers["job-token"])
+            throw new Error('Missing required header "job-token"');
+          return a.get()(this, "job/allowed_agents", e);
+        }
+        showLog(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/jobs/${t}/trace`, r);
+        }
+      };
+      var pt = class extends s.BaseResource {
+        allApprovalRules(e, { mergerequestIId: t, ...r } = {}) {
+          let s;
+          if (t) {
+            s = endpoint`projects/${e}/merge_requests/${t}/approval_rules`;
+          } else {
+            s = endpoint`projects/${e}/approval_rules`;
+          }
+          return a.get()(this, s, r);
+        }
+        approve(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/approve`,
+            r,
+          );
+        }
+        createApprovalRule(e, t, r, { mergerequestIId: s, ...n } = {}) {
+          let o;
+          if (s) {
+            o = endpoint`projects/${e}/merge_requests/${s}/approval_rules`;
+          } else {
+            o = endpoint`projects/${e}/approval_rules`;
+          }
+          return a.post()(this, o, { name: t, approvalsRequired: r, ...n });
+        }
+        editApprovalRule(e, t, r, s, { mergerequestIId: n, ...o } = {}) {
+          let i;
+          if (n) {
+            i = endpoint`projects/${e}/merge_requests/${n}/approval_rules/${t}`;
+          } else {
+            i = endpoint`projects/${e}/approval_rules/${t}`;
+          }
+          return a.put()(this, i, { name: r, approvalsRequired: s, ...o });
+        }
+        editConfiguration(e, t) {
+          return a.post()(this, endpoint`projects/${e}/approvals`, t);
+        }
+        removeApprovalRule(e, t, { mergerequestIId: r, ...s } = {}) {
+          let n;
+          if (r) {
+            n = endpoint`projects/${e}/merge_requests/${r}/approval_rules/${t}`;
+          } else {
+            n = endpoint`projects/${e}/approval_rules/${t}`;
+          }
+          return a.del()(this, n, s);
+        }
+        showApprovalRule(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/approval_rules/${t}`, r);
+        }
+        showApprovalState(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/approval_state`,
+            r,
+          );
+        }
+        showConfiguration(e, { mergerequestIId: t, ...r } = {}) {
+          let s;
+          if (t) {
+            s = endpoint`projects/${e}/merge_requests/${t}/approvals`;
+          } else {
+            s = endpoint`projects/${e}/approvals`;
+          }
+          return a.get()(this, s, r);
+        }
+        unapprove(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/unapprove`,
+            r,
+          );
+        }
+      };
+      var lt = class extends k {
+        constructor(e) {
+          super("projects", "merge_requests", e);
+        }
+      };
+      var dt = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/context_commits`,
+            r,
+          );
+        }
+        create(e, t, { mergerequestIId: r, ...s } = {}) {
+          const n = endpoint`projects/${e}/merge_requests`;
+          const o = r ? `${n}/${r}/context_commits` : n;
+          return a.post()(this, o, { commits: t, ...s });
+        }
+        remove(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/context_commits`,
+            r,
+          );
+        }
+      };
+      var ft = class extends C {
+        constructor(e) {
+          super("projects", "merge_requests", e);
+        }
+        resolve(e, t, r, s, n) {
+          return a.put()(
+            this,
+            endpoint`${e}/merge_requests/${t}/discussions/${r}`,
+            { searchParams: { resolved: s }, ...n },
+          );
+        }
+      };
+      var ht = class extends Q {
+        constructor(e) {
+          super("projects", "merge_requests", e);
+        }
+      };
+      var gt = class extends V {
+        constructor(e) {
+          super("projects", "merge_requests", e);
+        }
+      };
+      var mt = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes`,
+            r,
+          );
+        }
+        create(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes`,
+            { ...s, note: r },
+          );
+        }
+        edit(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}`,
+            s,
+          );
+        }
+        publish(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}/publish`,
+            s,
+          );
+        }
+        publishBulk(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes/bulk_publish`,
+            r,
+          );
+        }
+        remove(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}`,
+            s,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/draft_notes/${r}`,
+            s,
+          );
+        }
+      };
+      var yt = class extends B {
+        constructor(e) {
+          super("projects", "merge_requests", e);
+        }
+      };
+      var vt = class extends x {
+        constructor(e) {
+          super("merge_requests", e);
+        }
+      };
+      var $t = class extends s.BaseResource {
+        accept(e, t, r) {
+          return this.merge(e, t, r);
+        }
+        addSpentTime(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/add_spent_time`,
+            { duration: r, ...s },
+          );
+        }
+        all({ projectId: e, groupId: t, ...r } = {}) {
+          let s = "";
+          if (e) {
+            s = endpoint`projects/${e}/`;
+          } else if (t) {
+            s = endpoint`groups/${t}/`;
+          }
+          return a.get()(this, `${s}merge_requests`, r);
+        }
+        allDiffs(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/diffs`,
+            r,
+          );
+        }
+        allCommits(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/commits`,
+            r,
+          );
+        }
+        allDiffVersions(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/versions`,
+            r,
+          );
+        }
+        allIssuesClosed(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/closes_issues`,
+            r,
+          );
+        }
+        allParticipants(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/participants`,
+            r,
+          );
+        }
+        allPipelines(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/pipelines`,
+            r,
+          );
+        }
+        cancelOnPipelineSuccess(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/cancel_merge_when_pipeline_succeeds`,
+            r,
+          );
+        }
+        create(e, t, r, s, n) {
+          return a.post()(this, endpoint`projects/${e}/merge_requests`, {
+            sourceBranch: t,
+            targetBranch: r,
+            title: s,
+            ...n,
+          });
+        }
+        createPipeline(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/pipelines`,
+            r,
+          );
+        }
+        createTodo(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/todo`,
+            r,
+          );
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/merge_requests/${t}`, r);
+        }
+        merge(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/merge`,
+            r,
+          );
+        }
+        mergeToDefault(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/merge_ref`,
+            r,
+          );
+        }
+        rebase(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/rebase`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/merge_requests/${t}`, r);
+        }
+        resetSpentTime(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/reset_spent_time`,
+            r,
+          );
+        }
+        resetTimeEstimate(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/reset_time_estimate`,
+            r,
+          );
+        }
+        setTimeEstimate(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/time_estimate`,
+            { duration: r, ...s },
+          );
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/merge_requests/${t}`, r);
+        }
+        showChanges(e, t, r) {
+          process.emitWarning(
+            'This endpoint was deprecated in Gitlab API 15.7 and will be removed in API v5. Please use the "allDiffs" function instead.',
+            "DeprecationWarning",
+          );
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/changes`,
+            r,
+          );
+        }
+        showDiffVersion(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/versions/${r}`,
+            s,
+          );
+        }
+        showTimeStats(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/time_stats`,
+            r,
+          );
+        }
+        subscribe(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/subscribe`,
+            r,
+          );
+        }
+        unsubscribe(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_requests/${t}/unsubscribe`,
+            r,
+          );
+        }
+      };
+      var bt = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/merge_trains`, t);
+        }
+        showStatus(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/merge_trains/merge_requests/${t}`,
+            r,
+          );
+        }
+        addMergeRequest(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/merge_trains/merge_requests/${t}`,
+            r,
+          );
+        }
+      };
+      var wt = class extends s.BaseResource {
+        publish(e, t, r, s, { contentType: n, ...o } = {}) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/packages/generic/${t}/${r}/${s.filename}`,
+            { isForm: true, file: [s.content, s.filename], ...o },
+          );
+        }
+        download(e, t, r, s, n) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/generic/${t}/${r}/${s}`,
+            n,
+          );
+        }
+      };
+      var _t = class extends s.BaseResource {
+        all({ projectId: e, groupId: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`projects/${e}/packages`;
+          else if (t) s = endpoint`groups/${t}/packages`;
+          else {
+            throw new Error(
+              "Missing required argument. Please supply a projectId or a groupId in the options parameter.",
+            );
+          }
+          return a.get()(this, s, r);
+        }
+        allFiles(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/packages/${t}/package_files`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/packages/${t}`, r);
+        }
+        removeFile(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/packages/${t}/package_files/${r}`,
+            s,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/packages/${t}`, r);
+        }
+      };
+      var At = class extends s.BaseResource {
+        all({ projectId: e, ...t } = {}) {
+          const r = e ? endpoint`projects/${e}/` : "";
+          return a.get()(this, `${r}pages/domains`, t);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/pages/domains`, {
+            domain: t,
+            ...r,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/pages/domains/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/pages/domains/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/pages/domains/${t}`, r);
+        }
+      };
+      var St = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/pipelines`, t);
+        }
+        allVariables(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipelines/${t}/variables`,
+            r,
+          );
+        }
+        cancel(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/pipelines/${t}/cancel`,
+            r,
+          );
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/pipeline`, {
+            ref: t,
+            ...r,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/pipelines/${t}`, r);
+        }
+        retry(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/pipelines/${t}/retry`,
+            r,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/pipelines/${t}`, r);
+        }
+        showTestReport(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipelines/${t}/test_report`,
+            r,
+          );
+        }
+        showTestReportSummary(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipelines/${t}/test_report_summary`,
+            r,
+          );
+        }
+      };
+      var jt = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/pipeline_schedules`, t);
+        }
+        allTriggeredPipelines(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/pipelines`,
+            r,
+          );
+        }
+        create(e, t, r, s, n) {
+          return a.post()(this, endpoint`projects/${e}/pipeline_schedules`, {
+            description: t,
+            ref: r,
+            cron: s,
+            ...n,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}`,
+            r,
+          );
+        }
+        run(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/play`,
+            r,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}`,
+            r,
+          );
+        }
+        takeOwnership(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/take_ownership`,
+            r,
+          );
+        }
+      };
+      var Et = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/variables`,
+            r,
+          );
+        }
+        create(e, t, r, s, n) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/variables`,
+            { ...n, key: r, value: s },
+          );
+        }
+        edit(e, t, r, s, n) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/variables/${r}`,
+            { ...n, value: s },
+          );
+        }
+        remove(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/pipeline_schedules/${t}/variables/${r}`,
+            s,
+          );
+        }
+      };
+      var Rt = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/triggers`, t);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/triggers`, {
+            description: t,
+            ...r,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/triggers/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/triggers/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/triggers/${t}`, r);
+        }
+        trigger(e, t, r, { variables: s, ...n } = {}) {
+          const o = { ...n, searchParams: { token: r, ref: t } };
+          if (s) {
+            o.isForm = true;
+            Object.assign(o, reformatObjectOptions(s, "variables"));
+          }
+          return a.post()(this, endpoint`projects/${e}/trigger/pipeline`, o);
+        }
+      };
+      var kt = class extends s.BaseResource {
+        allFunnels(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/product_analytics/funnels`,
+            t,
+          );
+        }
+        load(e, t) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/product_analytics/request/load`,
+            t,
+          );
+        }
+        dryRun(e, t) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/product_analytics/request/dry-run`,
+            t,
+          );
+        }
+        showMetadata(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/product_analytics/request/meta`,
+            t,
+          );
+        }
+      };
+      var xt = class extends E {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var It = class extends R {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Pt = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "project_aliases", e);
+        }
+        create(e, t, r) {
+          return a.post()(this, "project_aliases", {
+            name: t,
+            projectId: e,
+            ...r,
+          });
+        }
+        edit(e, t) {
+          return a.post()(this, `project_aliases/${e}`, t);
+        }
+        remove(e, t) {
+          return a.del()(this, `project_aliases/${e}`, t);
+        }
+      };
+      var Tt = class extends I {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Ct = class extends P {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Ot = class extends T {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Mt = class extends D {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Nt = class extends s.BaseResource {
+        download(e, t) {
+          return a.get()(this, endpoint`projects/${e}/export/download`, t);
+        }
+        import(e, t, r) {
+          return a.post()(this, "projects/import", {
+            isForm: true,
+            ...r,
+            file: [e.content, e.filename],
+            path: t,
+          });
+        }
+        importRemote(e, t, r) {
+          return a.post()(this, "projects/remote-import", {
+            ...r,
+            path: t,
+            url: e,
+          });
+        }
+        importRemoteS3(e, t, r, s, n, o, i) {
+          return a.post()(this, "projects/remote-import", {
+            ...i,
+            accessKeyId: e,
+            bucketName: t,
+            fileKey: r,
+            path: s,
+            region: n,
+            secretAccessKey: o,
+          });
+        }
+        showExportStatus(e, t) {
+          return a.get()(this, endpoint`projects/${e}/export`, t);
+        }
+        showImportStatus(e, t) {
+          return a.get()(this, endpoint`projects/${e}/import`, t);
+        }
+        scheduleExport(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/export`, {
+            ...r,
+            upload: t,
+          });
+        }
+      };
+      var Lt = class extends K {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Bt = class extends O {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Ft = class extends W {
+        constructor(e) {
+          super("project", e);
+        }
+      };
+      var qt = class extends M {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Gt = class extends N {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Dt = class extends L {
+        constructor(e) {
+          super("projects", e);
+        }
+        promote(e, t, r) {
+          return a.post()(this, endpoint`${e}/milestones/${t}/promote`, r);
+        }
+      };
+      var Ht = class extends z {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Ut = class extends H {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Kt = class extends s.BaseResource {
+        download(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/export_relations/download`,
+            { relation: t, ...r },
+          );
+        }
+        showExportStatus(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/export_relations/status`,
+            t,
+          );
+        }
+        scheduleExport(e, t) {
+          return a.post()(this, endpoint`projects/${e}/export_relations`, t);
+        }
+      };
+      var Wt = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/releases`, t);
+        }
+        create(e, t) {
+          return a.post()(this, endpoint`projects/${e}/releases`, t);
+        }
+        createEvidence(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/releases/${t}/evidence`,
+            r,
+          );
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/releases/${t}`, r);
+        }
+        download(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/releases/${t}/downloads/${r}`,
+            s,
+          );
+        }
+        downloadLatest(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/releases/permalink/latest/downloads/${t}`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/releases/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/releases/${t}`, r);
+        }
+        showLatest(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/releases/permalink/latest`,
+            t,
+          );
+        }
+        showLatestEvidence(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/releases/permalink/latest/evidence`,
+            t,
+          );
+        }
+      };
+      var zt = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/remote_mirrors`, t);
+        }
+        createPullMirror(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/mirror/pull`, {
+            importUrl: t,
+            mirror: r,
+            ...s,
+          });
+        }
+        createPushMirror(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/remote_mirrors`, {
+            url: t,
+            ...r,
+          });
+        }
+        edit(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/remote_mirrors/${t}`, r);
+        }
+        remove(e, t) {
+          return a.del()(this, `project_aliases/${e}`, t);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/remote_mirrors/${t}`, r);
+        }
+      };
+      var Yt = class extends U {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var Qt = class extends s.BaseResource {
+        all({ userId: e, starredOnly: t, ...r } = {}) {
+          let s;
+          if (e && t) s = endpoint`users/${e}/starred_projects`;
+          else if (e) s = endpoint`users/${e}/projects`;
+          else s = "projects";
+          return a.get()(this, s, r);
+        }
+        allTransferLocations(e, t) {
+          return a.get()(this, endpoint`projects/${e}/transfer_locations`, t);
+        }
+        allUsers(e, t) {
+          return a.get()(this, endpoint`projects/${e}/users`, t);
+        }
+        allGroups(e, t) {
+          return a.get()(this, endpoint`projects/${e}/groups`, t);
+        }
+        allSharableGroups(e, t) {
+          return a.get()(this, endpoint`projects/${e}/share_locations`, t);
+        }
+        allForks(e, t) {
+          return a.get()(this, endpoint`projects/${e}/forks`, t);
+        }
+        allStarrers(e, t) {
+          return a.get()(this, endpoint`projects/${e}/starrers`, t);
+        }
+        allStoragePaths(e, t) {
+          return a.get()(this, endpoint`projects/${e}/storage`, t);
+        }
+        archive(e, t) {
+          return a.post()(this, endpoint`projects/${e}/archive`, t);
+        }
+        create({ userId: e, avatar: t, ...r } = {}) {
+          const s = e ? `projects/user/${e}` : "projects";
+          if (t) {
+            return a.post()(this, s, {
+              ...r,
+              isForm: true,
+              avatar: [t.content, t.filename],
+            });
+          }
+          return a.post()(this, s, { ...r, avatar: t });
+        }
+        createForkRelationship(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/fork/${t}`, r);
+        }
+        createPullMirror(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/mirror/pull`, {
+            importUrl: t,
+            mirror: r,
+            ...s,
+          });
+        }
+        downloadSnapshot(e, t) {
+          return a.get()(this, endpoint`projects/${e}/snapshot`, t);
+        }
+        edit(e, { avatar: t, ...r } = {}) {
+          const s = endpoint`projects/${e}`;
+          if (t) {
+            return a.put()(this, s, {
+              ...r,
+              isForm: true,
+              avatar: [t.content, t.filename],
+            });
+          }
+          return a.put()(this, s, { ...r, avatar: t });
+        }
+        fork(e, t) {
+          return a.post()(this, endpoint`projects/${e}/fork`, t);
+        }
+        housekeeping(e, t) {
+          return a.post()(this, endpoint`projects/${e}/housekeeping`, t);
+        }
+        importProjectMembers(e, t, r) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/import_project_members/${t}`,
+            r,
+          );
+        }
+        remove(e, t) {
+          return a.del()(this, endpoint`projects/${e}`, t);
+        }
+        removeForkRelationship(e, t) {
+          return a.del()(this, endpoint`projects/${e}/fork`, t);
+        }
+        removeAvatar(e, t) {
+          return a.put()(this, endpoint`projects/${e}`, { ...t, avatar: "" });
+        }
+        restore(e, t) {
+          return a.post()(this, endpoint`projects/${e}/restore`, t);
+        }
+        search(e, t) {
+          return a.get()(this, "projects", { search: e, ...t });
+        }
+        share(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/share`, {
+            groupId: t,
+            groupAccess: r,
+            ...s,
+          });
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`projects/${e}`, t);
+        }
+        showLanguages(e, t) {
+          return a.get()(this, endpoint`projects/${e}/languages`, t);
+        }
+        showPullMirror(e, t) {
+          return a.get()(this, endpoint`projects/${e}/mirror/pull`, t);
+        }
+        star(e, t) {
+          return a.post()(this, endpoint`projects/${e}/star`, t);
+        }
+        transfer(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/transfer`, {
+            ...r,
+            namespace: t,
+          });
+        }
+        unarchive(e, t) {
+          return a.post()(this, endpoint`projects/${e}/unarchive`, t);
+        }
+        unshare(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/share/${t}`, r);
+        }
+        unstar(e, t) {
+          return a.post()(this, endpoint`projects/${e}/unstar`, t);
+        }
+        uploadForReference(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/uploads`, {
+            ...r,
+            isForm: true,
+            file: [t.content, t.filename],
+          });
+        }
+        uploadAvatar(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}`, {
+            ...r,
+            isForm: true,
+            avatar: [t.content, t.filename],
+          });
+        }
+      };
+      var Vt = class extends k {
+        constructor(e) {
+          super("projects", "snippets", e);
+        }
+      };
+      var Jt = class extends C {
+        constructor(e) {
+          super("projects", "snippets", e);
+        }
+      };
+      var Zt = class extends B {
+        constructor(e) {
+          super("projects", "snippets", e);
+        }
+      };
+      var Xt = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/snippets`, t);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/snippets`, {
+            title: t,
+            ...r,
+          });
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/snippets/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/snippets/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/snippets/${t}`, r);
+        }
+        showContent(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/snippets/${t}/raw`, r);
+        }
+        showRepositoryFileContent(e, t, r, s, n) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/snippets/${t}/files/${r}/${s}/raw`,
+            n,
+          );
+        }
+        showUserAgentDetails(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/snippets/${t}/user_agent_detail`,
+            r,
+          );
+        }
+      };
+      var er = class extends s.BaseResource {
+        show(e, t) {
+          return a.get()(this, endpoint`projects/${e}/statistics`, t);
+        }
+      };
+      var tr = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/templates/${t}`, r);
+        }
+        show(e, t, r, s) {
+          return a.get()(this, endpoint`projects/${e}/templates/${t}/${r}`, s);
+        }
+      };
+      var rr = class extends q {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var sr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/vulnerabilities`, t);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/vulnerabilities`, {
+            ...r,
+            searchParams: { findingId: t },
+          });
+        }
+      };
+      var nr = class extends G {
+        constructor(e) {
+          super("projects", e);
+        }
+      };
+      var or = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/protected_branches`, t);
+        }
+        create(e, t, r) {
+          const { sudo: s, showExpanded: n, ...o } = r || {};
+          return a.post()(this, endpoint`projects/${e}/protected_branches`, {
+            searchParams: { ...o, name: t },
+            sudo: s,
+            showExpanded: n,
+          });
+        }
+        protect(e, t, r) {
+          return this.create(e, t, r);
+        }
+        edit(e, t, r) {
+          return a.patch()(
+            this,
+            endpoint`projects/${e}/protected_branches/${t}`,
+            r,
+          );
+        }
+        show(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/protected_branches/${t}`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/protected_branches/${t}`,
+            r,
+          );
+        }
+        unprotect(e, t, r) {
+          return this.remove(e, t, r);
+        }
+      };
+      var ir = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/protected_tags`, t);
+        }
+        create(e, t, r) {
+          const { sudo: s, showExpanded: n, ...o } = r || {};
+          return a.post()(this, endpoint`projects/${e}/protected_tags`, {
+            searchParams: { name: t, ...o },
+            sudo: s,
+            showExpanded: n,
+          });
+        }
+        protect(e, t, r) {
+          return this.create(e, t, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/protected_tags/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/protected_tags/${t}`, r);
+        }
+        unprotect(e, t, r) {
+          return this.remove(e, t, r);
+        }
+      };
+      var ar = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/releases/${t}/assets/links`,
+            r,
+          );
+        }
+        create(e, t, r, s, n) {
+          return a.post()(
+            this,
+            endpoint`projects/${e}/releases/${t}/assets/links`,
+            { name: r, url: s, ...n },
+          );
+        }
+        edit(e, t, r, s) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/releases/${t}/assets/links/${r}`,
+            s,
+          );
+        }
+        remove(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/releases/${t}/assets/links/${r}`,
+            s,
+          );
+        }
+        show(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/releases/${t}/assets/links/${r}`,
+            s,
+          );
+        }
+      };
+      var ur = class extends s.BaseResource {
+        allContributors(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/contributors`,
+            t,
+          );
+        }
+        allRepositoryTrees(e, t) {
+          return a.get()(this, endpoint`projects/${e}/repository/tree`, t);
+        }
+        compare(e, t, r, s) {
+          return a.get()(this, endpoint`projects/${e}/repository/compare`, {
+            from: t,
+            to: r,
+            ...s,
+          });
+        }
+        editChangelog(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/repository/changelog`, {
+            ...r,
+            version: t,
+          });
+        }
+        mergeBase(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/repository/merge_base`, {
+            ...r,
+            refs: t,
+          });
+        }
+        showArchive(e, { fileType: t = "tar.gz", ...r } = {}) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/archive.${t}`,
+            r,
+          );
+        }
+        showBlob(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/blobs/${t}`,
+            r,
+          );
+        }
+        showBlobRaw(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/blobs/${t}/raw`,
+            r,
+          );
+        }
+        showChangelog(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/repository/changelog`, {
+            ...r,
+            version: t,
+          });
+        }
+      };
+      var cr = class extends s.BaseResource {
+        allFileBlames(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/files/${t}/blame`,
+            { ref: r, ...s },
+          );
+        }
+        create(e, t, r, s, n, o) {
+          return a.post()(this, endpoint`projects/${e}/repository/files/${t}`, {
+            branch: r,
+            content: s,
+            commitMessage: n,
+            ...o,
+          });
+        }
+        edit(e, t, r, s, n, o) {
+          return a.put()(this, endpoint`projects/${e}/repository/files/${t}`, {
+            branch: r,
+            content: s,
+            commitMessage: n,
+            ...o,
+          });
+        }
+        remove(e, t, r, s, n) {
+          return a.del()(this, endpoint`projects/${e}/repository/files/${t}`, {
+            branch: r,
+            commitMessage: s,
+            ...n,
+          });
+        }
+        show(e, t, r, s) {
+          return a.get()(this, endpoint`projects/${e}/repository/files/${t}`, {
+            ref: r,
+            ...s,
+          });
+        }
+        showRaw(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/files/${t}/raw`,
+            { ref: r, ...s },
+          );
+        }
+      };
+      var pr = class extends s.BaseResource {
+        edit(e, t, r, s, n) {
+          return a.put()(
+            this,
+            endpoint`projects/${e}/repository/submodules/${t}`,
+            { branch: r, commitSha: s, ...n },
+          );
+        }
+      };
+      var lr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/resource_groups`, t);
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`projects/${e}/resource_groups/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/resource_groups/${t}`, r);
+        }
+        allUpcomingJobs(e, t) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/resource_groups/upcoming_jobs`,
+            t,
+          );
+        }
+      };
+      var dr = class extends s.BaseResource {
+        all({ projectId: e, groupId: t, owned: r, ...s } = {}) {
+          let n;
+          if (e) n = endpoint`projects/${e}/runners`;
+          else if (t) n = endpoint`groups/${t}/runners`;
+          else if (r) n = "runners";
+          else n = "runners/all";
+          return a.get()(this, n, s);
+        }
+        allJobs(e, t) {
+          return a.get()(this, `runners/${e}/jobs`, t);
+        }
+        create(e, t) {
+          return a.post()(this, `runners`, { token: e, ...t });
+        }
+        edit(e, t) {
+          return a.put()(this, `runners/${e}`, t);
+        }
+        enable(e, t, r) {
+          return a.post()(this, endpoint`projects/${e}/runners`, {
+            runnerId: t,
+            ...r,
+          });
+        }
+        disable(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/runners/${t}`, r);
+        }
+        register(e, t) {
+          return this.create(e, t);
+        }
+        remove({ runnerId: e, token: t, ...r }) {
+          let s;
+          if (e) s = `runners/${e}`;
+          else if (t) {
+            s = "runners";
+          } else
+            throw new Error(
+              "Missing required argument. Please supply a runnerId or a token in the options parameter",
+            );
+          return a.del()(this, s, { token: t, ...r });
+        }
+        resetRegistrationToken({ runnerId: e, token: t, ...r } = {}) {
+          let s;
+          if (e) s = endpoint`runners/${e}/reset_registration_token`;
+          else if (t) s = "runners/reset_registration_token";
+          else {
+            throw new Error("Missing either runnerId or token parameters");
+          }
+          return a.post()(this, s, { token: t, ...r });
+        }
+        show(e, t) {
+          return a.get()(this, `runners/${e}`, t);
+        }
+        verify(e) {
+          return a.post()(this, `runners/verify`, e);
+        }
+      };
+      var fr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/secure_files`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, `projects/${e}/secure_files`, {
+            isForm: true,
+            ...s,
+            file: [r.content, r.filename],
+            name: t,
+          });
+        }
+        download(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/secure_files/${t}/download`,
+            r,
+          );
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/secure_files/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/secure_files/${t}`, r);
+        }
+      };
+      var hr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`projects/${e}/repository/tags`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`projects/${e}/repository/tags`, {
+            searchParams: { tagName: t, ref: r },
+            ...s,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`projects/${e}/repository/tags/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`projects/${e}/repository/tags/${t}`, r);
+        }
+        showSignature(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/repository/tags/${t}/signature`,
+            r,
+          );
+        }
+      };
+      var gr = class extends s.BaseResource {
+        create(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`projects/${e}/metrics/user_starred_dashboards`,
+            { dashboardPath: t, ...r },
+          );
+        }
+        remove(e, t) {
+          return a.del()(
+            this,
+            endpoint`projects/${e}/metrics/user_starred_dashboards`,
+            t,
+          );
+        }
+      };
+      var mr = class extends k {
+        constructor(e) {
+          super("epics", "issues", e);
+        }
+      };
+      var yr = class extends C {
+        constructor(e) {
+          super("groups", "epics", e);
+        }
+      };
+      var vr = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(this, endpoint`groups/${e}/epics/${t}/issues`, r);
+        }
+        assign(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`groups/${e}/epics/${t}/issues/${r}`,
+            s,
+          );
+        }
+        edit(e, t, r, s) {
+          return a.put()(this, endpoint`groups/${e}/epics/${t}/issues/${r}`, s);
+        }
+        remove(e, t, r, s) {
+          return a.del()(this, endpoint`groups/${e}/epics/${t}/issues/${r}`, s);
+        }
+      };
+      var $r = class extends Q {
+        constructor(e) {
+          super("groups", "epic", e);
+        }
+      };
+      var br = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(this, endpoint`groups/${e}/epics/${t}/links`, r);
+        }
+        assign(e, t, r, s) {
+          return a.post()(this, endpoint`groups/${e}/epics/${t}/links/${r}`, s);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`groups/${e}/epics/${t}/links`, {
+            searchParams: { title: r },
+            ...s,
+          });
+        }
+        reorder(e, t, r, s) {
+          return a.put()(this, endpoint`groups/${e}/epics/${t}/links/${r}`, s);
+        }
+        unassign(e, t, r, s) {
+          return a.del()(this, endpoint`groups/${e}/epics/${t}/links/${r}`, s);
+        }
+      };
+      var wr = class extends B {
+        constructor(e) {
+          super("groups", "epics", e);
+        }
+      };
+      var _r = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/epics`, t);
+        }
+        create(e, t, r) {
+          return a.post()(this, endpoint`groups/${e}/epics`, {
+            title: t,
+            ...r,
+          });
+        }
+        createTodo(e, t, r) {
+          return a.post()(this, endpoint`groups/${e}/epics/${t}/todos`, r);
+        }
+        edit(e, t, r) {
+          return a.put()(this, endpoint`groups/${e}/epics/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`groups/${e}/epics/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`groups/${e}/epics/${t}`, r);
+        }
+      };
+      var Ar = class extends E {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Sr = class extends R {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var jr = class extends s.BaseResource {
+        showIssuesCount(e, t) {
+          return a.get()(this, "analytics/group_activity/issues_count", {
+            searchParams: { groupPath: e },
+            ...t,
+          });
+        }
+        showMergeRequestsCount(e, t) {
+          return a.get()(
+            this,
+            "analytics/group_activity/merge_requests_count",
+            { searchParams: { groupPath: e }, ...t },
+          );
+        }
+        showNewMembersCount(e, t) {
+          return a.get()(this, "analytics/group_activity/new_members_count", {
+            searchParams: { groupPath: e },
+            ...t,
+          });
+        }
+      };
+      var Er = class extends I {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Rr = class extends P {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var kr = class extends T {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var xr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/epic_boards`, t);
+        }
+        allLists(e, t, r) {
+          return a.get()(this, endpoint`groups/${e}/epic_boards/${t}/lists`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`groups/${e}/epic_boards/${t}`, r);
+        }
+        showList(e, t, r, s) {
+          return a.get()(
+            this,
+            endpoint`groups/${e}/epic_boards/${t}/lists/${r}`,
+            s,
+          );
+        }
+      };
+      var Ir = class extends D {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Pr = class extends s.BaseResource {
+        download(e, t) {
+          return a.get()(this, endpoint`groups/${e}/export/download`, t);
+        }
+        import(e, t, { parentId: r, name: s, ...n }) {
+          return a.post()(this, "groups/import", {
+            isForm: true,
+            ...n,
+            file: [e.content, e.filename],
+            path: t,
+            name: s || t.split("/").at(0),
+            parentId: r,
+          });
+        }
+        scheduleExport(e, t) {
+          return a.post()(this, endpoint`groups/${e}/export`, t);
+        }
+      };
+      var Tr = class extends K {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Cr = class extends O {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Or = class extends W {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Mr = class extends M {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Nr = class extends s.BaseResource {
+        add(e, t, r, s) {
+          return a.post()(this, endpoint`groups/${e}/ldap_group_links`, {
+            groupAccess: t,
+            provider: r,
+            ...s,
+          });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/ldap_group_links`, t);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`groups/${e}/ldap_group_links`, {
+            provider: t,
+            ...r,
+          });
+        }
+        sync(e, t) {
+          return a.post()(this, endpoint`groups/${e}/ldap_sync`, t);
+        }
+      };
+      var Lr = class extends N {
+        constructor(e) {
+          super("groups", e);
+        }
+        allBillable(e, t) {
+          return a.get()(this, endpoint`${e}/billable_members`, t);
+        }
+        allPending(e, t) {
+          return a.get()(this, endpoint`${e}/pending_members`, t);
+        }
+        allBillableMemberships(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`${e}/billable_members/${t}/memberships`,
+            r,
+          );
+        }
+        approve(e, t, r) {
+          return a.put()(this, endpoint`${e}/members/${t}/approve`, r);
+        }
+        approveAll(e, t) {
+          return a.put()(this, endpoint`${e}/members/approve_all`, t);
+        }
+        removeBillable(e, t, r) {
+          return a.del()(this, endpoint`${e}/billable_members/${t}`, r);
+        }
+        removeOverrideFlag(e, t, r) {
+          return a.del()(this, endpoint`${e}/members/${t}/override`, r);
+        }
+        setOverrideFlag(e, t, r) {
+          return a.post()(this, endpoint`${e}/members/${t}/override`, r);
+        }
+      };
+      var Br = class extends s.BaseResource {
+        add(e, t, r) {
+          return a.post()(this, endpoint`groups/${e}/members`, {
+            baseAccessLevel: t,
+            ...r,
+          });
+        }
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/member_roles`, t);
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`groups/${e}/member_roles/${t}`, r);
+        }
+      };
+      var Fr = class extends L {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var qr = class extends z {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Gr = class extends H {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Dr = class extends s.BaseResource {
+        download(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`groups/${e}/export_relations/download`,
+            { searchParams: { relation: t }, ...r },
+          );
+        }
+        exportStatus(e, t) {
+          return a.get()(this, endpoint`groups/${e}/export_relations`, t);
+        }
+        scheduleExport(e, t) {
+          return a.post()(this, endpoint`groups/${e}/export_relations`, t);
+        }
+      };
+      var Hr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/releases`, t);
+        }
+      };
+      var Ur = class extends U {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Kr = class extends s.BaseResource {
+        all(e) {
+          return a.get()(this, "groups", e);
+        }
+        allDescendantGroups(e, t) {
+          return a.get()(this, endpoint`groups/${e}/descendant_groups`, t);
+        }
+        allProjects(e, t) {
+          return a.get()(this, endpoint`groups/${e}/projects`, t);
+        }
+        allSharedProjects(e, t) {
+          return a.get()(this, endpoint`groups/${e}/projects/shared`, t);
+        }
+        allSubgroups(e, t) {
+          return a.get()(this, endpoint`groups/${e}/subgroups`, t);
+        }
+        allProvisionedUsers(e, t) {
+          return a.get()(this, endpoint`groups/${e}/provisioned_users`, t);
+        }
+        allTransferLocations(e, t) {
+          return a.get()(this, endpoint`groups/${e}/transfer_locations`, t);
+        }
+        create(e, t, { avatar: r, ...s } = {}) {
+          if (r) {
+            return a.post()(this, "groups", {
+              ...s,
+              isForm: true,
+              avatar: [r.content, r.filename],
+              name: e,
+              path: t,
+            });
+          }
+          return a.post()(this, "groups", { name: e, path: t, ...s });
+        }
+        downloadAvatar(e, t) {
+          return a.get()(this, endpoint`groups/${e}/avatar`, t);
+        }
+        edit(e, { avatar: t, ...r } = {}) {
+          if (t) {
+            return a.post()(this, endpoint`groups/${e}`, {
+              ...r,
+              isForm: true,
+              avatar: [t.content, t.filename],
+            });
+          }
+          return a.put()(this, endpoint`groups/${e}`, r);
+        }
+        remove(e, t) {
+          return a.del()(this, endpoint`groups/${e}`, t);
+        }
+        removeAvatar(e, t) {
+          return a.put()(this, endpoint`groups/${e}`, { ...t, avatar: "" });
+        }
+        restore(e, t) {
+          return a.post()(this, endpoint`groups/${e}/restore`, t);
+        }
+        search(e, t) {
+          return a.get()(this, "groups", { search: e, ...t });
+        }
+        share(e, t, r, s) {
+          return a.post()(this, endpoint`groups/${e}/share`, {
+            groupId: t,
+            groupAccess: r,
+            ...s,
+          });
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`groups/${e}`, t);
+        }
+        transfer(e, t) {
+          return a.post()(this, endpoint`groups/${e}/transfer`, t);
+        }
+        transferProject(e, t, r) {
+          return a.post()(this, endpoint`groups/${e}/projects/${t}`, r);
+        }
+        unshare(e, t, r) {
+          return a.del()(this, endpoint`groups/${e}/share/${t}`, r);
+        }
+        uploadAvatar(e, t, { filename: r, ...s } = {}) {
+          return a.put()(this, endpoint`groups/${e}/avatar`, {
+            isForm: true,
+            ...s,
+            file: [t, r],
+          });
+        }
+      };
+      var Wr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/saml/identities`, t);
+        }
+        edit(e, t, r) {
+          return a.patch()(this, endpoint`groups/${e}/saml/${t}`, r);
+        }
+      };
+      var zr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/saml_group_links`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, endpoint`groups/${e}/saml_group_links`, {
+            accessLevel: r,
+            samlGroupName: t,
+            ...s,
+          });
+        }
+        remove(e, t, r) {
+          return a.del()(this, endpoint`groups/${e}/saml_group_links/${t}`, r);
+        }
+        show(e, t, r) {
+          return a.get()(this, endpoint`groups/${e}/saml_group_links/${t}`, r);
+        }
+      };
+      var Yr = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, endpoint`groups/${e}/scim/identities`, t);
+        }
+        edit(e, t, r) {
+          return a.patch()(this, endpoint`groups/${e}/scim/${t}`, r);
+        }
+      };
+      var Qr = class extends s.BaseResource {
+        create(e, t) {
+          return a.post()(this, endpoint`groups/${e}/service_accounts`, t);
+        }
+        addPersonalAccessToken(e, t, r) {
+          return a.post()(this, endpoint`groups/${e}/service_accounts/${t}`, r);
+        }
+        rotatePersonalAccessToken(e, t, r, s) {
+          return a.post()(
+            this,
+            endpoint`groups/${e}/service_accounts/${t}/personal_access_tokens/${r}/rotate`,
+            s,
+          );
+        }
+      };
+      var Vr = class extends q {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Jr = class extends G {
+        constructor(e) {
+          super("groups", e);
+        }
+      };
+      var Zr = class extends s.BaseResource {
+        all(e, t, r) {
+          return a.get()(
+            this,
+            endpoint`groups/${e}/epics/${t}/related_epics`,
+            r,
+          );
+        }
+        create(e, t, r, s, n) {
+          return a.post()(
+            this,
+            endpoint`groups/${e}/epics/${t}/related_epics`,
+            { searchParams: { targetGroupId: s, targetEpicIid: r }, ...n },
+          );
+        }
+        remove(e, t, r, s) {
+          return a.del()(
+            this,
+            endpoint`groups/${e}/epics/${t}/related_epics/${r}`,
+            s,
+          );
+        }
+      };
+      var Xr = class extends P {
+        constructor(e) {
+          super("users", e);
+        }
+      };
+      var url9 = (e) => (e ? `users/${e}/emails` : "user/emails");
+      var es = class extends s.BaseResource {
+        add(e, t) {
+          return this.create(e, t);
+        }
+        all({ userId: e, ...t } = {}) {
+          return a.get()(this, url9(e), t);
+        }
+        create(e, { userId: t, ...r } = {}) {
+          return a.post()(this, url9(t), { email: e, ...r });
+        }
+        show(e, t) {
+          return a.get()(this, `user/emails/${e}`, t);
+        }
+        remove(e, { userId: t, ...r } = {}) {
+          return a.del()(this, `${url9(t)}/${e}`, r);
+        }
+      };
+      var url10 = (e) => (e ? `users/${e}/gpg_keys` : "user/gpg_keys");
+      var ts = class extends s.BaseResource {
+        add(e, t) {
+          return this.create(e, t);
+        }
+        all({ userId: e, ...t } = {}) {
+          return a.get()(this, url10(e), t);
+        }
+        create(e, { userId: t, ...r } = {}) {
+          return a.post()(this, url10(t), { key: e, ...r });
+        }
+        show(e, { userId: t, ...r } = {}) {
+          return a.get()(this, `${url10(t)}/${e}`, r);
+        }
+        remove(e, { userId: t, ...r } = {}) {
+          return a.del()(this, `${url10(t)}/${e}`, r);
+        }
+      };
+      var rs = class extends s.BaseResource {
+        all(e, t) {
+          return a.get()(this, `users/${e}/impersonation_tokens`, t);
+        }
+        create(e, t, r, s) {
+          return a.post()(this, `users/${e}/impersonation_tokens`, {
+            name: t,
+            scopes: r,
+            ...s,
+          });
+        }
+        show(e, t, r) {
+          return a.get()(this, `users/${e}/impersonation_tokens/${t}`, r);
+        }
+        remove(e, t, r) {
+          return a.del()(this, `users/${e}/impersonation_tokens/${t}`, r);
+        }
+        revoke(e, t, r) {
+          return this.remove(e, t, r);
+        }
+      };
+      var ss = class extends s.BaseResource {
+        activate(e, t) {
+          return a.post()(this, endpoint`users/${e}/activate`, t);
+        }
+        all(e) {
+          return a.get()(this, "users", e);
+        }
+        allActivities(e) {
+          return a.get()(this, "user/activities", e);
+        }
+        allEvents(e, t) {
+          return a.get()(this, endpoint`users/${e}/events`, t);
+        }
+        allFollowers(e, t) {
+          return a.get()(this, endpoint`users/${e}/followers`, t);
+        }
+        allFollowing(e, t) {
+          return a.get()(this, endpoint`users/${e}/following`, t);
+        }
+        allMemberships(e, t) {
+          return a.get()(this, endpoint`users/${e}/memberships`, t);
+        }
+        allProjects(e, t) {
+          return a.get()(this, endpoint`users/${e}/projects`, t);
+        }
+        allContributedProjects(e, t) {
+          return a.get()(this, endpoint`users/${e}/contributed_projects`, t);
+        }
+        allStarredProjects(e, t) {
+          return a.get()(this, endpoint`users/${e}/starred_projects`, t);
+        }
+        approve(e, t) {
+          return a.post()(this, endpoint`users/${e}/approve`, t);
+        }
+        ban(e, t) {
+          return a.post()(this, endpoint`users/${e}/ban`, t);
+        }
+        block(e, t) {
+          return a.post()(this, endpoint`users/${e}/block`, t);
+        }
+        create(e) {
+          return a.post()(this, "users", e);
+        }
+        createPersonalAccessToken(e, t, r, s) {
+          return a.post()(this, endpoint`users/${e}/personal_access_tokens`, {
+            name: t,
+            scopes: r,
+            ...s,
+          });
+        }
+        createCIRunner(e, t) {
+          return a.post()(this, "user/runners", { ...t, runnerType: e });
+        }
+        deactivate(e, t) {
+          return a.post()(this, endpoint`users/${e}/deactivate`, t);
+        }
+        disableTwoFactor(e, t) {
+          return a.patch()(this, endpoint`users/${e}/disable_two_factor`, t);
+        }
+        edit(e, t) {
+          return a.put()(this, endpoint`users/${e}`, t);
+        }
+        editStatus(e) {
+          return a.put()(this, "user/status", e);
+        }
+        editCurrentUserPreferences(e, t, r) {
+          return a.put()(this, "user/preferences", {
+            viewDiffsFileByFile: e,
+            showWhitespaceInDiffs: t,
+            ...r,
+          });
+        }
+        follow(e, t) {
+          return a.post()(this, endpoint`users/${e}/follow`, t);
+        }
+        reject(e, t) {
+          return a.post()(this, endpoint`users/${e}/reject`, t);
+        }
+        show(e, t) {
+          return a.get()(this, endpoint`users/${e}`, t);
+        }
+        showCount(e) {
+          return a.get()(this, "user_counts", e);
+        }
+        showAssociationsCount(e, t) {
+          return a.get()(this, `users/${e}/associations_count`, t);
+        }
+        showCurrentUser(e) {
+          return a.get()(this, "user", e);
+        }
+        showCurrentUserPreferences(e) {
+          return a.get()(this, "user/preferences", e);
+        }
+        showStatus({ iDOrUsername: e, ...t } = {}) {
+          let r;
+          if (e) r = `users/${e}/status`;
+          else r = "user/status";
+          return a.get()(this, r, t);
+        }
+        remove(e, t) {
+          return a.del()(this, endpoint`users/${e}`, t);
+        }
+        removeAuthenticationIdentity(e, t, r) {
+          return a.del()(this, endpoint`users/${e}/identities/${t}`, r);
+        }
+        unban(e, t) {
+          return a.post()(this, endpoint`users/${e}/unban`, t);
+        }
+        unblock(e, t) {
+          return a.post()(this, endpoint`users/${e}/unblock`, t);
+        }
+        unfollow(e, t) {
+          return a.post()(this, endpoint`users/${e}/unfollow`, t);
+        }
+      };
+      var url11 = (e) => (e ? `users/${e}/keys` : "user/keys");
+      var ns = class extends s.BaseResource {
+        add(e, t, r) {
+          return this.create(e, t, r);
+        }
+        all({ userId: e, ...t } = {}) {
+          return a.get()(this, url11(e), t);
+        }
+        create(e, t, { userId: r, ...s } = {}) {
+          return a.post()(this, url11(r), { title: e, key: t, ...s });
+        }
+        show(e, { userId: t, ...r } = {}) {
+          return a.get()(this, `${url11(t)}/${e}`, r);
+        }
+        remove(e, { userId: t, ...r } = {}) {
+          return a.del()(this, `${url11(t)}/${e}`, r);
+        }
+      };
+      var os = {
+        Agents: u,
+        AlertManagement: c,
+        ApplicationAppearance: p,
+        ApplicationPlanLimits: l,
+        Applications: d,
+        ApplicationSettings: f,
+        ApplicationStatistics: h,
+        AuditEvents: g,
+        Avatar: m,
+        BroadcastMessages: y,
+        CodeSuggestions: v,
+        Composer: $,
+        Conan: b,
+        DashboardAnnotations: w,
+        Debian: _,
+        DependencyProxy: A,
+        DeployKeys: S,
+        DeployTokens: j,
+        DockerfileTemplates: Z,
+        Events: X,
+        Experiments: ee,
+        GeoNodes: te,
+        GeoSites: re,
+        GitignoreTemplates: se,
+        GitLabCIYMLTemplates: ne,
+        Import: oe,
+        InstanceLevelCICDVariables: ie,
+        Keys: ae,
+        License: ue,
+        LicenseTemplates: ce,
+        Lint: pe,
+        Markdown: le,
+        Maven: de,
+        Metadata: fe,
+        Migrations: he,
+        Namespaces: ge,
+        NotificationSettings: me,
+        NPM: ye,
+        NuGet: ve,
+        PersonalAccessTokens: $e,
+        PyPI: be,
+        RubyGems: we,
+        Search: _e,
+        SearchAdmin: Ae,
+        ServiceAccounts: Se,
+        ServiceData: je,
+        SidekiqMetrics: Ee,
+        SidekiqQueues: Re,
+        SnippetRepositoryStorageMoves: ke,
+        Snippets: xe,
+        Suggestions: Ie,
+        SystemHooks: Pe,
+        TodoLists: Te,
+        Topics: Ce,
+        Branches: Oe,
+        CommitDiscussions: Me,
+        Commits: Ne,
+        ContainerRegistry: Le,
+        Deployments: Be,
+        Environments: Fe,
+        ErrorTrackingClientKeys: qe,
+        ErrorTrackingSettings: Ge,
+        ExternalStatusChecks: De,
+        FeatureFlags: He,
+        FeatureFlagUserLists: Ue,
+        FreezePeriods: Ke,
+        GitlabPages: We,
+        GoProxy: ze,
+        Helm: Ye,
+        Integrations: Qe,
+        IssueAwardEmojis: Ve,
+        IssueDiscussions: Je,
+        IssueIterationEvents: Ze,
+        IssueLabelEvents: Xe,
+        IssueLinks: et,
+        IssueMilestoneEvents: tt,
+        IssueNoteAwardEmojis: rt,
+        IssueNotes: st,
+        Issues: nt,
+        IssuesStatistics: ot,
+        IssueStateEvents: it,
+        IssueWeightEvents: at,
+        JobArtifacts: ut,
+        Jobs: ct,
+        MergeRequestApprovals: pt,
+        MergeRequestAwardEmojis: lt,
+        MergeRequestContextCommits: dt,
+        MergeRequestDiscussions: ft,
+        MergeRequestLabelEvents: ht,
+        MergeRequestMilestoneEvents: gt,
+        MergeRequestDraftNotes: mt,
+        MergeRequestNotes: yt,
+        MergeRequestNoteAwardEmojis: vt,
+        MergeRequests: $t,
+        MergeTrains: bt,
+        PackageRegistry: wt,
+        Packages: _t,
+        PagesDomains: At,
+        Pipelines: St,
+        PipelineSchedules: jt,
+        PipelineScheduleVariables: Et,
+        PipelineTriggerTokens: Rt,
+        ProductAnalytics: kt,
+        ProjectAccessRequests: xt,
+        ProjectAccessTokens: It,
+        ProjectAliases: Pt,
+        ProjectBadges: Tt,
+        ProjectCustomAttributes: Ct,
+        ProjectDORA4Metrics: Ot,
+        ProjectHooks: Mt,
+        ProjectImportExports: Nt,
+        ProjectInvitations: Lt,
+        ProjectIssueBoards: Bt,
+        ProjectIterations: Ft,
+        ProjectLabels: qt,
+        ProjectMembers: Gt,
+        ProjectMilestones: Dt,
+        ProjectProtectedEnvironments: Ht,
+        ProjectPushRules: Ut,
+        ProjectRelationsExport: Kt,
+        ProjectReleases: Wt,
+        ProjectRemoteMirrors: zt,
+        ProjectRepositoryStorageMoves: Yt,
+        Projects: Qt,
+        ProjectSnippetAwardEmojis: Vt,
+        ProjectSnippetDiscussions: Jt,
+        ProjectSnippetNotes: Zt,
+        ProjectSnippets: Xt,
+        ProjectStatistics: er,
+        ProjectTemplates: tr,
+        ProjectVariables: rr,
+        ProjectVulnerabilities: sr,
+        ProjectWikis: nr,
+        ProtectedBranches: or,
+        ProtectedTags: ir,
+        ReleaseLinks: ar,
+        Repositories: ur,
+        RepositoryFiles: cr,
+        RepositorySubmodules: pr,
+        ResourceGroups: lr,
+        Runners: dr,
+        SecureFiles: fr,
+        Tags: hr,
+        UserStarredMetricsDashboard: gr,
+        EpicAwardEmojis: mr,
+        EpicDiscussions: yr,
+        EpicIssues: vr,
+        EpicLabelEvents: $r,
+        EpicLinks: br,
+        EpicNotes: wr,
+        Epics: _r,
+        GroupAccessRequests: Ar,
+        GroupAccessTokens: Sr,
+        GroupActivityAnalytics: jr,
+        GroupBadges: Er,
+        GroupCustomAttributes: Rr,
+        GroupDORA4Metrics: kr,
+        GroupEpicBoards: xr,
+        GroupHooks: Ir,
+        GroupImportExports: Pr,
+        GroupInvitations: Tr,
+        GroupIssueBoards: Cr,
+        GroupIterations: Or,
+        GroupLabels: Mr,
+        GroupLDAPLinks: Nr,
+        GroupMembers: Lr,
+        GroupMemberRoles: Br,
+        GroupMilestones: Fr,
+        GroupProtectedEnvironments: qr,
+        GroupPushRules: Gr,
+        GroupRelationExports: Dr,
+        GroupReleases: Hr,
+        GroupRepositoryStorageMoves: Ur,
+        Groups: Kr,
+        GroupSAMLIdentities: Wr,
+        GroupSAMLLinks: zr,
+        GroupSCIMIdentities: Yr,
+        GroupServiceAccounts: Qr,
+        GroupVariables: Vr,
+        GroupWikis: Jr,
+        LinkedEpics: Zr,
+        UserCustomAttributes: Xr,
+        UserEmails: es,
+        UserGPGKeys: ts,
+        UserImpersonationTokens: rs,
+        Users: ss,
+        UserSSHKeys: ns,
+      };
+      var is = class extends s.BaseResource {
+        constructor(e) {
+          super(e);
+          Object.keys(os).forEach((t) => {
+            this[t] = new os[t](e);
+          });
+        }
+      };
+      var as = ((e) => {
+        e[(e["NO_ACCESS"] = 0)] = "NO_ACCESS";
+        e[(e["MINIMAL_ACCESS"] = 5)] = "MINIMAL_ACCESS";
+        e[(e["GUEST"] = 10)] = "GUEST";
+        e[(e["REPORTER"] = 20)] = "REPORTER";
+        e[(e["DEVELOPER"] = 30)] = "DEVELOPER";
+        e[(e["MAINTAINER"] = 40)] = "MAINTAINER";
+        e[(e["OWNER"] = 50)] = "OWNER";
+        e[(e["ADMIN"] = 60)] = "ADMIN";
+        return e;
+      })(as || {});
+      t.AccessLevel = as;
+      t.Agents = u;
+      t.AlertManagement = c;
+      t.ApplicationAppearance = p;
+      t.ApplicationPlanLimits = l;
+      t.ApplicationSettings = f;
+      t.ApplicationStatistics = h;
+      t.Applications = d;
+      t.AuditEvents = g;
+      t.Avatar = m;
+      t.Branches = Oe;
+      t.BroadcastMessages = y;
+      t.CodeSuggestions = v;
+      t.CommitDiscussions = Me;
+      t.Commits = Ne;
+      t.Composer = $;
+      t.Conan = b;
+      t.ContainerRegistry = Le;
+      t.DashboardAnnotations = w;
+      t.Debian = _;
+      t.DependencyProxy = A;
+      t.DeployKeys = S;
+      t.DeployTokens = j;
+      t.Deployments = Be;
+      t.DockerfileTemplates = Z;
+      t.Environments = Fe;
+      t.EpicAwardEmojis = mr;
+      t.EpicDiscussions = yr;
+      t.EpicIssues = vr;
+      t.EpicLabelEvents = $r;
+      t.EpicLinks = br;
+      t.EpicNotes = wr;
+      t.Epics = _r;
+      t.ErrorTrackingClientKeys = qe;
+      t.ErrorTrackingSettings = Ge;
+      t.Events = X;
+      t.Experiments = ee;
+      t.ExternalStatusChecks = De;
+      t.FeatureFlagUserLists = Ue;
+      t.FeatureFlags = He;
+      t.FreezePeriods = Ke;
+      t.GeoNodes = te;
+      t.GeoSites = re;
+      t.GitLabCIYMLTemplates = ne;
+      t.GitignoreTemplates = se;
+      t.Gitlab = is;
+      t.GitlabPages = We;
+      t.GoProxy = ze;
+      t.GroupAccessRequests = Ar;
+      t.GroupAccessTokens = Sr;
+      t.GroupActivityAnalytics = jr;
+      t.GroupBadges = Er;
+      t.GroupCustomAttributes = Rr;
+      t.GroupDORA4Metrics = kr;
+      t.GroupEpicBoards = xr;
+      t.GroupHooks = Ir;
+      t.GroupImportExports = Pr;
+      t.GroupInvitations = Tr;
+      t.GroupIssueBoards = Cr;
+      t.GroupIterations = Or;
+      t.GroupLDAPLinks = Nr;
+      t.GroupLabels = Mr;
+      t.GroupMemberRoles = Br;
+      t.GroupMembers = Lr;
+      t.GroupMilestones = Fr;
+      t.GroupProtectedEnvironments = qr;
+      t.GroupPushRules = Gr;
+      t.GroupRelationExports = Dr;
+      t.GroupReleases = Hr;
+      t.GroupRepositoryStorageMoves = Ur;
+      t.GroupSAMLIdentities = Wr;
+      t.GroupSAMLLinks = zr;
+      t.GroupSCIMIdentities = Yr;
+      t.GroupServiceAccounts = Qr;
+      t.GroupVariables = Vr;
+      t.GroupWikis = Jr;
+      t.Groups = Kr;
+      t.Helm = Ye;
+      t.Import = oe;
+      t.InstanceLevelCICDVariables = ie;
+      t.Integrations = Qe;
+      t.IssueAwardEmojis = Ve;
+      t.IssueDiscussions = Je;
+      t.IssueIterationEvents = Ze;
+      t.IssueLabelEvents = Xe;
+      t.IssueLinks = et;
+      t.IssueMilestoneEvents = tt;
+      t.IssueNoteAwardEmojis = rt;
+      t.IssueNotes = st;
+      t.IssueStateEvents = it;
+      t.IssueWeightEvents = at;
+      t.Issues = nt;
+      t.IssuesStatistics = ot;
+      t.JobArtifacts = ut;
+      t.Jobs = ct;
+      t.Keys = ae;
+      t.License = ue;
+      t.LicenseTemplates = ce;
+      t.LinkedEpics = Zr;
+      t.Lint = pe;
+      t.Markdown = le;
+      t.Maven = de;
+      t.MergeRequestApprovals = pt;
+      t.MergeRequestAwardEmojis = lt;
+      t.MergeRequestContextCommits = dt;
+      t.MergeRequestDiscussions = ft;
+      t.MergeRequestDraftNotes = mt;
+      t.MergeRequestLabelEvents = ht;
+      t.MergeRequestMilestoneEvents = gt;
+      t.MergeRequestNoteAwardEmojis = vt;
+      t.MergeRequestNotes = yt;
+      t.MergeRequests = $t;
+      t.MergeTrains = bt;
+      t.Metadata = fe;
+      t.Migrations = he;
+      t.NPM = ye;
+      t.Namespaces = ge;
+      t.NotificationSettings = me;
+      t.NuGet = ve;
+      t.PackageRegistry = wt;
+      t.Packages = _t;
+      t.PagesDomains = At;
+      t.PersonalAccessTokens = $e;
+      t.PipelineScheduleVariables = Et;
+      t.PipelineSchedules = jt;
+      t.PipelineTriggerTokens = Rt;
+      t.Pipelines = St;
+      t.ProductAnalytics = kt;
+      t.ProjectAccessRequests = xt;
+      t.ProjectAccessTokens = It;
+      t.ProjectAliases = Pt;
+      t.ProjectBadges = Tt;
+      t.ProjectCustomAttributes = Ct;
+      t.ProjectDORA4Metrics = Ot;
+      t.ProjectHooks = Mt;
+      t.ProjectImportExports = Nt;
+      t.ProjectInvitations = Lt;
+      t.ProjectIssueBoards = Bt;
+      t.ProjectIterations = Ft;
+      t.ProjectLabels = qt;
+      t.ProjectMembers = Gt;
+      t.ProjectMilestones = Dt;
+      t.ProjectProtectedEnvironments = Ht;
+      t.ProjectPushRules = Ut;
+      t.ProjectRelationsExport = Kt;
+      t.ProjectReleases = Wt;
+      t.ProjectRemoteMirrors = zt;
+      t.ProjectRepositoryStorageMoves = Yt;
+      t.ProjectSnippetAwardEmojis = Vt;
+      t.ProjectSnippetDiscussions = Jt;
+      t.ProjectSnippetNotes = Zt;
+      t.ProjectSnippets = Xt;
+      t.ProjectStatistics = er;
+      t.ProjectTemplates = tr;
+      t.ProjectVariables = rr;
+      t.ProjectVulnerabilities = sr;
+      t.ProjectWikis = nr;
+      t.Projects = Qt;
+      t.ProtectedBranches = or;
+      t.ProtectedTags = ir;
+      t.PyPI = be;
+      t.ReleaseLinks = ar;
+      t.Repositories = ur;
+      t.RepositoryFiles = cr;
+      t.RepositorySubmodules = pr;
+      t.ResourceGroups = lr;
+      t.RubyGems = we;
+      t.Runners = dr;
+      t.Search = _e;
+      t.SearchAdmin = Ae;
+      t.SecureFiles = fr;
+      t.ServiceAccounts = Se;
+      t.ServiceData = je;
+      t.SidekiqMetrics = Ee;
+      t.SidekiqQueues = Re;
+      t.SnippetRepositoryStorageMoves = ke;
+      t.Snippets = xe;
+      t.Suggestions = Ie;
+      t.SystemHooks = Pe;
+      t.Tags = hr;
+      t.TodoLists = Te;
+      t.Topics = Ce;
+      t.UserCustomAttributes = Xr;
+      t.UserEmails = es;
+      t.UserGPGKeys = ts;
+      t.UserImpersonationTokens = rs;
+      t.UserSSHKeys = ns;
+      t.UserStarredMetricsDashboard = gr;
+      t.Users = ss;
+    },
+    1292: (e, t, r) => {
+      "use strict";
+      var s = r(5596);
+      var n = r(5872);
+      var o = r(173);
+      var i = r(7805);
+      function _interopDefault(e) {
+        return e && e.__esModule ? e : { default: e };
+      }
+      var a = _interopDefault(i);
+      function formatQuery(e = {}) {
+        const t = n.decamelizeKeys(e);
+        return s.stringify(t, { arrayFormat: "brackets" });
+      }
+      async function defaultOptionsHandler(
+        e,
+        {
+          body: t,
+          searchParams: r,
+          sudo: s,
+          signal: o,
+          asStream: i = false,
+          method: a = "GET",
+        } = {},
+      ) {
+        const { headers: u, authHeaders: c, url: p } = e;
+        const l = { ...u };
+        const d = { method: a, asStream: i, signal: o, prefixUrl: p };
+        d.headers = l;
+        if (s) d.headers.sudo = `${s}`;
+        if (t) {
+          if (t instanceof FormData) {
+            d.body = t;
+          } else {
+            d.body = JSON.stringify(n.decamelizeKeys(t));
+            d.headers["content-type"] = "application/json";
+          }
+        }
+        const [f, h] = Object.entries(c)[0];
+        d.headers[f] = await h();
+        const g = formatQuery(r);
+        if (g) d.searchParams = g;
+        return Promise.resolve(d);
+      }
+      function createRateLimiters(e = {}) {
+        const t = {};
+        Object.entries(e).forEach(([e, r]) => {
+          if (typeof r === "number") t[e] = o.RateLimit(r, { timeUnit: 6e4 });
+          else
+            t[e] = {
+              method: r.method.toUpperCase(),
+              limit: o.RateLimit(r.limit, { timeUnit: 6e4 }),
+            };
+        });
+        return t;
+      }
+      function createRequesterFn(e, t) {
+        const r = ["get", "post", "put", "patch", "delete"];
+        return (s) => {
+          const n = {};
+          const o = createRateLimiters(s.rateLimits);
+          r.forEach((r) => {
+            n[r] = async (n, i) => {
+              const a = await defaultOptionsHandler(s, {
+                ...i,
+                method: r.toUpperCase(),
+              });
+              const u = await e(s, a);
+              return t(n, { ...u, rateLimiters: o });
+            };
+          });
+          return n;
+        };
+      }
+      function extendClass(e, t) {
+        return class extends e {
+          constructor(...e) {
+            const [r, ...s] = e;
+            super({ ...t, ...r }, ...s);
+          }
+        };
+      }
+      function presetResourceArguments(e, t = {}) {
+        const r = {};
+        Object.entries(e)
+          .filter(([, e]) => typeof e === "function")
+          .forEach(([e, s]) => {
+            r[e] = extendClass(s, t);
+          });
+        return r;
+      }
+      function getMatchingRateLimiter(e, t = {}, r = "GET") {
+        const s = Object.keys(t).sort().reverse();
+        const n = s.find((t) => a.default.isMatch(e, t));
+        const i = n && t[n];
+        if (i && typeof i !== "object") {
+          return i;
+        }
+        if (i && i.method.toUpperCase() === r.toUpperCase()) {
+          return i.limit;
+        }
+        return o.RateLimit(3e3, { timeUnit: 6e4 });
+      }
+      function getDynamicToken(e) {
+        return e instanceof Function ? e() : Promise.resolve(e);
+      }
+      var u = Object.freeze({
+        "**": 3e3,
+        "projects/import": 6,
+        "projects/*/export": 6,
+        "projects/*/download": 1,
+        "groups/import": 6,
+        "groups/*/export": 6,
+        "groups/*/download": 1,
+        "projects/*/issues/*/notes": { method: "post", limit: 300 },
+        "projects/*/snippets/*/notes": { method: "post", limit: 300 },
+        "projects/*/merge_requests/*/notes": { method: "post", limit: 300 },
+        "groups/*/epics/*/notes": { method: "post", limit: 300 },
+        "projects/*/repository/archive*": 5,
+        "projects/*/jobs": 600,
+        "projects/*/members": 60,
+        "groups/*/members": 60,
+      });
+      var c = class {
+        url;
+        requester;
+        queryTimeout;
+        headers;
+        authHeaders;
+        camelize;
+        rejectUnauthorized;
+        constructor({
+          sudo: e,
+          profileToken: t,
+          camelize: r,
+          requesterFn: s,
+          profileMode: n = "execution",
+          host: o = "https://gitlab.com",
+          prefixUrl: i = "",
+          rejectUnauthorized: a = true,
+          queryTimeout: c = 3e5,
+          rateLimits: p = u,
+          ...l
+        }) {
+          if (!s) throw new ReferenceError("requesterFn must be passed");
+          this.url = [o, "api", "v4", i].join("/");
+          this.headers = {};
+          this.authHeaders = {};
+          this.rejectUnauthorized = a;
+          this.camelize = r;
+          this.queryTimeout = c;
+          if ("oauthToken" in l)
+            this.authHeaders.authorization = async () => {
+              const e = await getDynamicToken(l.oauthToken);
+              return `Bearer ${e}`;
+            };
+          else if ("jobToken" in l)
+            this.authHeaders["job-token"] = async () =>
+              getDynamicToken(l.jobToken);
+          else if ("token" in l)
+            this.authHeaders["private-token"] = async () =>
+              getDynamicToken(l.token);
+          else {
+            throw new ReferenceError(
+              "A token, oauthToken or jobToken must be passed",
+            );
+          }
+          if (t) {
+            this.headers["X-Profile-Token"] = t;
+            this.headers["X-Profile-Mode"] = n;
+          }
+          if (e) this.headers.Sudo = `${e}`;
+          this.requester = s({ ...this, rateLimits: p });
+        }
+      };
+      var p = class extends Error {
+        constructor(e, t) {
+          super(e, t);
+          this.name = "GitbeakerRequestError";
+        }
+      };
+      var l = class extends Error {
+        constructor(e) {
+          super(e);
+          this.name = "GitbeakerTimeoutError";
+        }
+      };
+      var d = class extends Error {
+        constructor(e) {
+          super(e);
+          this.name = "GitbeakerTimeoutError";
+        }
+      };
+      t.BaseResource = c;
+      t.GitbeakerRequestError = p;
+      t.GitbeakerRetryError = d;
+      t.GitbeakerTimeoutError = l;
+      t.createRateLimiters = createRateLimiters;
+      t.createRequesterFn = createRequesterFn;
+      t.defaultOptionsHandler = defaultOptionsHandler;
+      t.formatQuery = formatQuery;
+      t.getMatchingRateLimiter = getMatchingRateLimiter;
+      t.presetResourceArguments = presetResourceArguments;
+    },
+    7650: (e, t, r) => {
+      "use strict";
+      var s = r(7925);
+      var n = r(1292);
+      function _interopNamespace(e) {
+        if (e && e.__esModule) return e;
+        var t = Object.create(null);
+        if (e) {
+          Object.keys(e).forEach(function (r) {
+            if (r !== "default") {
+              var s = Object.getOwnPropertyDescriptor(e, r);
+              Object.defineProperty(
+                t,
+                r,
+                s.get
+                  ? s
+                  : {
+                      enumerable: true,
+                      get: function () {
+                        return e[r];
+                      },
+                    },
+              );
+            }
+          });
+        }
+        t.default = e;
+        return Object.freeze(t);
+      }
+      var o = _interopNamespace(s);
+      async function defaultOptionsHandler(e, t) {
+        const s = { ...t };
+        if (
+          e.url.includes("https") &&
+          e.rejectUnauthorized != null &&
+          e.rejectUnauthorized === false
+        ) {
+          if (typeof window !== "object") {
+            const { Agent: e } = await Promise.resolve().then(
+              r.t.bind(r, 5692, 23),
+            );
+            s.agent = new e({ rejectUnauthorized: false });
+          }
+        }
+        return s;
+      }
+      async function processBody(e) {
+        const t = (e.headers.get("content-type") || "").split(";")[0].trim();
+        if (t === "application/json") {
+          return e.json().then((e) => e || {});
+        }
+        if (t.startsWith("text/")) {
+          return e.text().then((e) => e || "");
+        }
+        return e.blob();
+      }
+      function delay(e) {
+        return new Promise((t) => {
+          setTimeout(t, e);
+        });
+      }
+      async function parseResponse(e, t = false) {
+        const { status: r, headers: s } = e;
+        const n = Object.fromEntries(s.entries());
+        let o;
+        if (t) {
+          o = e.body;
+        } else {
+          o = r === 204 ? null : await processBody(e);
+        }
+        return { body: o, headers: n, status: r };
+      }
+      async function throwFailedRequestError(e, t) {
+        const r = await t.text();
+        const s = t.headers.get("Content-Type");
+        let o = "API Request Error";
+        if (s?.includes("application/json")) {
+          const e = JSON.parse(r);
+          o = JSON.stringify(e.error || e.message, null, 2);
+        } else {
+          o = r;
+        }
+        throw new n.GitbeakerRequestError(t.statusText, {
+          cause: { description: o, request: e, response: t },
+        });
+      }
+      function getConditionalMode(e) {
+        if (e.includes("repository/archive")) return "same-origin";
+        return void 0;
+      }
+      async function defaultRequestHandler(e, t) {
+        const r = [429, 502];
+        const s = 10;
+        const {
+          prefixUrl: o,
+          asStream: i,
+          searchParams: a,
+          rateLimiters: u,
+          method: c,
+          ...p
+        } = t || {};
+        const l = n.getMatchingRateLimiter(e, u, c);
+        let d;
+        if (o) d = o.endsWith("/") ? o : `${o}/`;
+        const f = new URL(e, d);
+        f.search = a || "";
+        const h = getConditionalMode(e);
+        for (let e = 0; e < s; e += 1) {
+          const t = new Request(f, { ...p, method: c, mode: h });
+          await l();
+          const s = await fetch(t).catch((e) => {
+            if (e.name === "TimeoutError" || e.name === "AbortError") {
+              throw new n.GitbeakerTimeoutError("Query timeout was reached");
+            }
+            throw e;
+          });
+          if (s.ok) return parseResponse(s, i);
+          if (!r.includes(s.status)) await throwFailedRequestError(t, s);
+          await delay(2 ** e * 0.25);
+          continue;
+        }
+        throw new n.GitbeakerRetryError(
+          `Could not successfully complete this request due to Error 429. Check the applicable rate limits for this endpoint.`,
+        );
+      }
+      var i = n.createRequesterFn(defaultOptionsHandler, defaultRequestHandler);
+      var { AccessLevel: a, ...u } = o;
+      var c = n.presetResourceArguments(u, { requesterFn: i });
+      var p = a;
+      var {
+        Agents: l,
+        AlertManagement: d,
+        ApplicationAppearance: f,
+        ApplicationPlanLimits: h,
+        Applications: g,
+        ApplicationSettings: m,
+        ApplicationStatistics: y,
+        AuditEvents: v,
+        Avatar: $,
+        BroadcastMessages: b,
+        CodeSuggestions: w,
+        Composer: _,
+        Conan: A,
+        DashboardAnnotations: S,
+        Debian: j,
+        DependencyProxy: E,
+        DeployKeys: R,
+        DeployTokens: k,
+        DockerfileTemplates: x,
+        Events: I,
+        Experiments: P,
+        GeoNodes: T,
+        GeoSites: C,
+        GitignoreTemplates: O,
+        GitLabCIYMLTemplates: M,
+        Import: N,
+        InstanceLevelCICDVariables: L,
+        Keys: B,
+        License: F,
+        LicenseTemplates: q,
+        Lint: G,
+        Markdown: D,
+        Maven: H,
+        Metadata: U,
+        Migrations: K,
+        Namespaces: W,
+        NotificationSettings: z,
+        NPM: Y,
+        NuGet: Q,
+        PersonalAccessTokens: V,
+        PyPI: J,
+        RubyGems: Z,
+        Search: X,
+        SearchAdmin: ee,
+        ServiceAccounts: te,
+        ServiceData: re,
+        SidekiqMetrics: se,
+        SidekiqQueues: ne,
+        SnippetRepositoryStorageMoves: oe,
+        Snippets: ie,
+        Suggestions: ae,
+        SystemHooks: ue,
+        TodoLists: ce,
+        Topics: pe,
+        Branches: le,
+        CommitDiscussions: de,
+        Commits: fe,
+        ContainerRegistry: he,
+        Deployments: ge,
+        Environments: me,
+        ErrorTrackingClientKeys: ye,
+        ErrorTrackingSettings: ve,
+        ExternalStatusChecks: $e,
+        FeatureFlags: be,
+        FeatureFlagUserLists: we,
+        FreezePeriods: _e,
+        GitlabPages: Ae,
+        GoProxy: Se,
+        Helm: je,
+        Integrations: Ee,
+        IssueAwardEmojis: Re,
+        IssueDiscussions: ke,
+        IssueIterationEvents: xe,
+        IssueLabelEvents: Ie,
+        IssueLinks: Pe,
+        IssueMilestoneEvents: Te,
+        IssueNoteAwardEmojis: Ce,
+        IssueNotes: Oe,
+        Issues: Me,
+        IssuesStatistics: Ne,
+        IssueStateEvents: Le,
+        IssueWeightEvents: Be,
+        JobArtifacts: Fe,
+        Jobs: qe,
+        MergeRequestApprovals: Ge,
+        MergeRequestAwardEmojis: De,
+        MergeRequestContextCommits: He,
+        MergeRequestDiscussions: Ue,
+        MergeRequestLabelEvents: Ke,
+        MergeRequestMilestoneEvents: We,
+        MergeRequestDraftNotes: ze,
+        MergeRequestNotes: Ye,
+        MergeRequestNoteAwardEmojis: Qe,
+        MergeRequests: Ve,
+        MergeTrains: Je,
+        PackageRegistry: Ze,
+        Packages: Xe,
+        PagesDomains: et,
+        Pipelines: tt,
+        PipelineSchedules: rt,
+        PipelineScheduleVariables: st,
+        PipelineTriggerTokens: nt,
+        ProductAnalytics: ot,
+        ProjectAccessRequests: it,
+        ProjectAccessTokens: at,
+        ProjectAliases: ut,
+        ProjectBadges: ct,
+        ProjectCustomAttributes: pt,
+        ProjectDORA4Metrics: lt,
+        ProjectHooks: dt,
+        ProjectImportExports: ft,
+        ProjectInvitations: ht,
+        ProjectIssueBoards: gt,
+        ProjectIterations: mt,
+        ProjectLabels: yt,
+        ProjectMembers: vt,
+        ProjectMilestones: $t,
+        ProjectProtectedEnvironments: bt,
+        ProjectPushRules: wt,
+        ProjectRelationsExport: _t,
+        ProjectReleases: At,
+        ProjectRemoteMirrors: St,
+        ProjectRepositoryStorageMoves: jt,
+        Projects: Et,
+        ProjectSnippetAwardEmojis: Rt,
+        ProjectSnippetDiscussions: kt,
+        ProjectSnippetNotes: xt,
+        ProjectSnippets: It,
+        ProjectStatistics: Pt,
+        ProjectTemplates: Tt,
+        ProjectVariables: Ct,
+        ProjectVulnerabilities: Ot,
+        ProjectWikis: Mt,
+        ProtectedBranches: Nt,
+        ProtectedTags: Lt,
+        ReleaseLinks: Bt,
+        Repositories: Ft,
+        RepositoryFiles: qt,
+        RepositorySubmodules: Gt,
+        ResourceGroups: Dt,
+        Runners: Ht,
+        SecureFiles: Ut,
+        Tags: Kt,
+        UserStarredMetricsDashboard: Wt,
+        EpicAwardEmojis: zt,
+        EpicDiscussions: Yt,
+        EpicIssues: Qt,
+        EpicLabelEvents: Vt,
+        EpicLinks: Jt,
+        EpicNotes: Zt,
+        Epics: Xt,
+        GroupAccessRequests: er,
+        GroupAccessTokens: tr,
+        GroupActivityAnalytics: rr,
+        GroupBadges: sr,
+        GroupCustomAttributes: nr,
+        GroupDORA4Metrics: or,
+        GroupEpicBoards: ir,
+        GroupHooks: ar,
+        GroupImportExports: ur,
+        GroupInvitations: cr,
+        GroupIssueBoards: pr,
+        GroupIterations: lr,
+        GroupLabels: dr,
+        GroupLDAPLinks: fr,
+        GroupMembers: hr,
+        GroupMemberRoles: gr,
+        GroupMilestones: mr,
+        GroupProtectedEnvironments: yr,
+        GroupPushRules: vr,
+        GroupRelationExports: $r,
+        GroupReleases: br,
+        GroupRepositoryStorageMoves: wr,
+        Groups: _r,
+        GroupSAMLIdentities: Ar,
+        GroupSAMLLinks: Sr,
+        GroupSCIMIdentities: jr,
+        GroupServiceAccounts: Er,
+        GroupVariables: Rr,
+        GroupWikis: kr,
+        LinkedEpics: xr,
+        UserCustomAttributes: Ir,
+        UserEmails: Pr,
+        UserGPGKeys: Tr,
+        UserImpersonationTokens: Cr,
+        Users: Or,
+        UserSSHKeys: Mr,
+        Gitlab: Nr,
+      } = c;
+      t.AccessLevel = p;
+      t.Agents = l;
+      t.AlertManagement = d;
+      t.ApplicationAppearance = f;
+      t.ApplicationPlanLimits = h;
+      t.ApplicationSettings = m;
+      t.ApplicationStatistics = y;
+      t.Applications = g;
+      t.AuditEvents = v;
+      t.Avatar = $;
+      t.Branches = le;
+      t.BroadcastMessages = b;
+      t.CodeSuggestions = w;
+      t.CommitDiscussions = de;
+      t.Commits = fe;
+      t.Composer = _;
+      t.Conan = A;
+      t.ContainerRegistry = he;
+      t.DashboardAnnotations = S;
+      t.Debian = j;
+      t.DependencyProxy = E;
+      t.DeployKeys = R;
+      t.DeployTokens = k;
+      t.Deployments = ge;
+      t.DockerfileTemplates = x;
+      t.Environments = me;
+      t.EpicAwardEmojis = zt;
+      t.EpicDiscussions = Yt;
+      t.EpicIssues = Qt;
+      t.EpicLabelEvents = Vt;
+      t.EpicLinks = Jt;
+      t.EpicNotes = Zt;
+      t.Epics = Xt;
+      t.ErrorTrackingClientKeys = ye;
+      t.ErrorTrackingSettings = ve;
+      t.Events = I;
+      t.Experiments = P;
+      t.ExternalStatusChecks = $e;
+      t.FeatureFlagUserLists = we;
+      t.FeatureFlags = be;
+      t.FreezePeriods = _e;
+      t.GeoNodes = T;
+      t.GeoSites = C;
+      t.GitLabCIYMLTemplates = M;
+      t.GitignoreTemplates = O;
+      t.Gitlab = Nr;
+      t.GitlabPages = Ae;
+      t.GoProxy = Se;
+      t.GroupAccessRequests = er;
+      t.GroupAccessTokens = tr;
+      t.GroupActivityAnalytics = rr;
+      t.GroupBadges = sr;
+      t.GroupCustomAttributes = nr;
+      t.GroupDORA4Metrics = or;
+      t.GroupEpicBoards = ir;
+      t.GroupHooks = ar;
+      t.GroupImportExports = ur;
+      t.GroupInvitations = cr;
+      t.GroupIssueBoards = pr;
+      t.GroupIterations = lr;
+      t.GroupLDAPLinks = fr;
+      t.GroupLabels = dr;
+      t.GroupMemberRoles = gr;
+      t.GroupMembers = hr;
+      t.GroupMilestones = mr;
+      t.GroupProtectedEnvironments = yr;
+      t.GroupPushRules = vr;
+      t.GroupRelationExports = $r;
+      t.GroupReleases = br;
+      t.GroupRepositoryStorageMoves = wr;
+      t.GroupSAMLIdentities = Ar;
+      t.GroupSAMLLinks = Sr;
+      t.GroupSCIMIdentities = jr;
+      t.GroupServiceAccounts = Er;
+      t.GroupVariables = Rr;
+      t.GroupWikis = kr;
+      t.Groups = _r;
+      t.Helm = je;
+      t.Import = N;
+      t.InstanceLevelCICDVariables = L;
+      t.Integrations = Ee;
+      t.IssueAwardEmojis = Re;
+      t.IssueDiscussions = ke;
+      t.IssueIterationEvents = xe;
+      t.IssueLabelEvents = Ie;
+      t.IssueLinks = Pe;
+      t.IssueMilestoneEvents = Te;
+      t.IssueNoteAwardEmojis = Ce;
+      t.IssueNotes = Oe;
+      t.IssueStateEvents = Le;
+      t.IssueWeightEvents = Be;
+      t.Issues = Me;
+      t.IssuesStatistics = Ne;
+      t.JobArtifacts = Fe;
+      t.Jobs = qe;
+      t.Keys = B;
+      t.License = F;
+      t.LicenseTemplates = q;
+      t.LinkedEpics = xr;
+      t.Lint = G;
+      t.Markdown = D;
+      t.Maven = H;
+      t.MergeRequestApprovals = Ge;
+      t.MergeRequestAwardEmojis = De;
+      t.MergeRequestContextCommits = He;
+      t.MergeRequestDiscussions = Ue;
+      t.MergeRequestDraftNotes = ze;
+      t.MergeRequestLabelEvents = Ke;
+      t.MergeRequestMilestoneEvents = We;
+      t.MergeRequestNoteAwardEmojis = Qe;
+      t.MergeRequestNotes = Ye;
+      t.MergeRequests = Ve;
+      t.MergeTrains = Je;
+      t.Metadata = U;
+      t.Migrations = K;
+      t.NPM = Y;
+      t.Namespaces = W;
+      t.NotificationSettings = z;
+      t.NuGet = Q;
+      t.PackageRegistry = Ze;
+      t.Packages = Xe;
+      t.PagesDomains = et;
+      t.PersonalAccessTokens = V;
+      t.PipelineScheduleVariables = st;
+      t.PipelineSchedules = rt;
+      t.PipelineTriggerTokens = nt;
+      t.Pipelines = tt;
+      t.ProductAnalytics = ot;
+      t.ProjectAccessRequests = it;
+      t.ProjectAccessTokens = at;
+      t.ProjectAliases = ut;
+      t.ProjectBadges = ct;
+      t.ProjectCustomAttributes = pt;
+      t.ProjectDORA4Metrics = lt;
+      t.ProjectHooks = dt;
+      t.ProjectImportExports = ft;
+      t.ProjectInvitations = ht;
+      t.ProjectIssueBoards = gt;
+      t.ProjectIterations = mt;
+      t.ProjectLabels = yt;
+      t.ProjectMembers = vt;
+      t.ProjectMilestones = $t;
+      t.ProjectProtectedEnvironments = bt;
+      t.ProjectPushRules = wt;
+      t.ProjectRelationsExport = _t;
+      t.ProjectReleases = At;
+      t.ProjectRemoteMirrors = St;
+      t.ProjectRepositoryStorageMoves = jt;
+      t.ProjectSnippetAwardEmojis = Rt;
+      t.ProjectSnippetDiscussions = kt;
+      t.ProjectSnippetNotes = xt;
+      t.ProjectSnippets = It;
+      t.ProjectStatistics = Pt;
+      t.ProjectTemplates = Tt;
+      t.ProjectVariables = Ct;
+      t.ProjectVulnerabilities = Ot;
+      t.ProjectWikis = Mt;
+      t.Projects = Et;
+      t.ProtectedBranches = Nt;
+      t.ProtectedTags = Lt;
+      t.PyPI = J;
+      t.ReleaseLinks = Bt;
+      t.Repositories = Ft;
+      t.RepositoryFiles = qt;
+      t.RepositorySubmodules = Gt;
+      t.ResourceGroups = Dt;
+      t.RubyGems = Z;
+      t.Runners = Ht;
+      t.Search = X;
+      t.SearchAdmin = ee;
+      t.SecureFiles = Ut;
+      t.ServiceAccounts = te;
+      t.ServiceData = re;
+      t.SidekiqMetrics = se;
+      t.SidekiqQueues = ne;
+      t.SnippetRepositoryStorageMoves = oe;
+      t.Snippets = ie;
+      t.Suggestions = ae;
+      t.SystemHooks = ue;
+      t.Tags = Kt;
+      t.TodoLists = ce;
+      t.Topics = pe;
+      t.UserCustomAttributes = Ir;
+      t.UserEmails = Pr;
+      t.UserGPGKeys = Tr;
+      t.UserImpersonationTokens = Cr;
+      t.UserSSHKeys = Mr;
+      t.UserStarredMetricsDashboard = Wt;
+      t.Users = Or;
+    },
+    173: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__importDefault) ||
+        function (e) {
+          return e && e.__esModule ? e : { default: e };
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.RateLimit = t.Sema = void 0;
+      const n = s(r(4434));
+      function arrayMove(e, t, r, s, n) {
+        for (let o = 0; o < n; ++o) {
+          r[o + s] = e[o + t];
+          e[o + t] = void 0;
+        }
+      }
+      function pow2AtLeast(e) {
+        e = e >>> 0;
+        e = e - 1;
+        e = e | (e >> 1);
+        e = e | (e >> 2);
+        e = e | (e >> 4);
+        e = e | (e >> 8);
+        e = e | (e >> 16);
+        return e + 1;
+      }
+      function getCapacity(e) {
+        return pow2AtLeast(Math.min(Math.max(16, e), 1073741824));
+      }
+      class Deque {
+        constructor(e) {
+          this._capacity = getCapacity(e);
+          this._length = 0;
+          this._front = 0;
+          this.arr = [];
+        }
+        push(e) {
+          const t = this._length;
+          this.checkCapacity(t + 1);
+          const r = (this._front + t) & (this._capacity - 1);
+          this.arr[r] = e;
+          this._length = t + 1;
+          return t + 1;
+        }
+        pop() {
+          const e = this._length;
+          if (e === 0) {
+            return void 0;
+          }
+          const t = (this._front + e - 1) & (this._capacity - 1);
+          const r = this.arr[t];
+          this.arr[t] = void 0;
+          this._length = e - 1;
+          return r;
+        }
+        shift() {
+          const e = this._length;
+          if (e === 0) {
+            return void 0;
+          }
+          const t = this._front;
+          const r = this.arr[t];
+          this.arr[t] = void 0;
+          this._front = (t + 1) & (this._capacity - 1);
+          this._length = e - 1;
+          return r;
+        }
+        get length() {
+          return this._length;
+        }
+        checkCapacity(e) {
+          if (this._capacity < e) {
+            this.resizeTo(getCapacity(this._capacity * 1.5 + 16));
+          }
+        }
+        resizeTo(e) {
+          const t = this._capacity;
+          this._capacity = e;
+          const r = this._front;
+          const s = this._length;
+          if (r + s > t) {
+            const e = (r + s) & (t - 1);
+            arrayMove(this.arr, 0, this.arr, t, e);
+          }
+        }
+      }
+      class ReleaseEmitter extends n.default {}
+      function isFn(e) {
+        return typeof e === "function";
+      }
+      function defaultInit() {
+        return "1";
+      }
+      class Sema {
+        constructor(
+          e,
+          {
+            initFn: t = defaultInit,
+            pauseFn: r,
+            resumeFn: s,
+            capacity: n = 10,
+          } = {},
+        ) {
+          if (isFn(r) !== isFn(s)) {
+            throw new Error(
+              "pauseFn and resumeFn must be both set for pausing",
+            );
+          }
+          this.nrTokens = e;
+          this.free = new Deque(e);
+          this.waiting = new Deque(n);
+          this.releaseEmitter = new ReleaseEmitter();
+          this.noTokens = t === defaultInit;
+          this.pauseFn = r;
+          this.resumeFn = s;
+          this.paused = false;
+          this.releaseEmitter.on("release", (e) => {
+            const t = this.waiting.shift();
+            if (t) {
+              t.resolve(e);
+            } else {
+              if (this.resumeFn && this.paused) {
+                this.paused = false;
+                this.resumeFn();
+              }
+              this.free.push(e);
+            }
+          });
+          for (let r = 0; r < e; r++) {
+            this.free.push(t());
+          }
+        }
+        tryAcquire() {
+          return this.free.pop();
+        }
+        async acquire() {
+          let e = this.tryAcquire();
+          if (e !== void 0) {
+            return e;
+          }
+          return new Promise((e, t) => {
+            if (this.pauseFn && !this.paused) {
+              this.paused = true;
+              this.pauseFn();
+            }
+            this.waiting.push({ resolve: e, reject: t });
+          });
+        }
+        release(e) {
+          this.releaseEmitter.emit("release", this.noTokens ? "1" : e);
+        }
+        drain() {
+          const e = new Array(this.nrTokens);
+          for (let t = 0; t < this.nrTokens; t++) {
+            e[t] = this.acquire();
+          }
+          return Promise.all(e);
+        }
+        nrWaiting() {
+          return this.waiting.length;
+        }
+      }
+      t.Sema = Sema;
+      function RateLimit(
+        e,
+        { timeUnit: t = 1e3, uniformDistribution: r = false } = {},
+      ) {
+        const s = new Sema(r ? 1 : e);
+        const n = r ? t / e : t;
+        return async function rl() {
+          await s.acquire();
+          setTimeout(() => s.release(), n);
+        };
+      }
+      t.RateLimit = RateLimit;
+    },
+    7120: (e, t, r) => {
+      "use strict";
+      const s = r(641);
+      const n = r(6453);
+      const o = r(6374);
+      const i = r(5583);
+      const braces = (e, t = {}) => {
+        let r = [];
+        if (Array.isArray(e)) {
+          for (const s of e) {
+            const e = braces.create(s, t);
+            if (Array.isArray(e)) {
+              r.push(...e);
+            } else {
+              r.push(e);
+            }
+          }
+        } else {
+          r = [].concat(braces.create(e, t));
+        }
+        if (t && t.expand === true && t.nodupes === true) {
+          r = [...new Set(r)];
+        }
+        return r;
+      };
+      braces.parse = (e, t = {}) => i(e, t);
+      braces.stringify = (e, t = {}) => {
+        if (typeof e === "string") {
+          return s(braces.parse(e, t), t);
+        }
+        return s(e, t);
+      };
+      braces.compile = (e, t = {}) => {
+        if (typeof e === "string") {
+          e = braces.parse(e, t);
+        }
+        return n(e, t);
+      };
+      braces.expand = (e, t = {}) => {
+        if (typeof e === "string") {
+          e = braces.parse(e, t);
+        }
+        let r = o(e, t);
+        if (t.noempty === true) {
+          r = r.filter(Boolean);
+        }
+        if (t.nodupes === true) {
+          r = [...new Set(r)];
+        }
+        return r;
+      };
+      braces.create = (e, t = {}) => {
+        if (e === "" || e.length < 3) {
+          return [e];
+        }
+        return t.expand !== true ? braces.compile(e, t) : braces.expand(e, t);
+      };
+      e.exports = braces;
+    },
+    6453: (e, t, r) => {
+      "use strict";
+      const s = r(9073);
+      const n = r(837);
+      const compile = (e, t = {}) => {
+        const walk = (e, r = {}) => {
+          const o = n.isInvalidBrace(r);
+          const i = e.invalid === true && t.escapeInvalid === true;
+          const a = o === true || i === true;
+          const u = t.escapeInvalid === true ? "\\" : "";
+          let c = "";
+          if (e.isOpen === true) {
+            return u + e.value;
+          }
+          if (e.isClose === true) {
+            console.log("node.isClose", u, e.value);
+            return u + e.value;
+          }
+          if (e.type === "open") {
+            return a ? u + e.value : "(";
+          }
+          if (e.type === "close") {
+            return a ? u + e.value : ")";
+          }
+          if (e.type === "comma") {
+            return e.prev.type === "comma" ? "" : a ? e.value : "|";
+          }
+          if (e.value) {
+            return e.value;
+          }
+          if (e.nodes && e.ranges > 0) {
+            const r = n.reduce(e.nodes);
+            const o = s(...r, {
+              ...t,
+              wrap: false,
+              toRegex: true,
+              strictZeros: true,
+            });
+            if (o.length !== 0) {
+              return r.length > 1 && o.length > 1 ? `(${o})` : o;
+            }
+          }
+          if (e.nodes) {
+            for (const t of e.nodes) {
+              c += walk(t, e);
+            }
+          }
+          return c;
+        };
+        return walk(e);
+      };
+      e.exports = compile;
+    },
+    7201: (e) => {
+      "use strict";
+      e.exports = {
+        MAX_LENGTH: 1e4,
+        CHAR_0: "0",
+        CHAR_9: "9",
+        CHAR_UPPERCASE_A: "A",
+        CHAR_LOWERCASE_A: "a",
+        CHAR_UPPERCASE_Z: "Z",
+        CHAR_LOWERCASE_Z: "z",
+        CHAR_LEFT_PARENTHESES: "(",
+        CHAR_RIGHT_PARENTHESES: ")",
+        CHAR_ASTERISK: "*",
+        CHAR_AMPERSAND: "&",
+        CHAR_AT: "@",
+        CHAR_BACKSLASH: "\\",
+        CHAR_BACKTICK: "`",
+        CHAR_CARRIAGE_RETURN: "\r",
+        CHAR_CIRCUMFLEX_ACCENT: "^",
+        CHAR_COLON: ":",
+        CHAR_COMMA: ",",
+        CHAR_DOLLAR: "$",
+        CHAR_DOT: ".",
+        CHAR_DOUBLE_QUOTE: '"',
+        CHAR_EQUAL: "=",
+        CHAR_EXCLAMATION_MARK: "!",
+        CHAR_FORM_FEED: "\f",
+        CHAR_FORWARD_SLASH: "/",
+        CHAR_HASH: "#",
+        CHAR_HYPHEN_MINUS: "-",
+        CHAR_LEFT_ANGLE_BRACKET: "<",
+        CHAR_LEFT_CURLY_BRACE: "{",
+        CHAR_LEFT_SQUARE_BRACKET: "[",
+        CHAR_LINE_FEED: "\n",
+        CHAR_NO_BREAK_SPACE: " ",
+        CHAR_PERCENT: "%",
+        CHAR_PLUS: "+",
+        CHAR_QUESTION_MARK: "?",
+        CHAR_RIGHT_ANGLE_BRACKET: ">",
+        CHAR_RIGHT_CURLY_BRACE: "}",
+        CHAR_RIGHT_SQUARE_BRACKET: "]",
+        CHAR_SEMICOLON: ";",
+        CHAR_SINGLE_QUOTE: "'",
+        CHAR_SPACE: " ",
+        CHAR_TAB: "\t",
+        CHAR_UNDERSCORE: "_",
+        CHAR_VERTICAL_LINE: "|",
+        CHAR_ZERO_WIDTH_NOBREAK_SPACE: "\ufeff",
+      };
+    },
+    6374: (e, t, r) => {
+      "use strict";
+      const s = r(9073);
+      const n = r(641);
+      const o = r(837);
+      const append = (e = "", t = "", r = false) => {
+        const s = [];
+        e = [].concat(e);
+        t = [].concat(t);
+        if (!t.length) return e;
+        if (!e.length) {
+          return r ? o.flatten(t).map((e) => `{${e}}`) : t;
+        }
+        for (const n of e) {
+          if (Array.isArray(n)) {
+            for (const e of n) {
+              s.push(append(e, t, r));
+            }
+          } else {
+            for (let e of t) {
+              if (r === true && typeof e === "string") e = `{${e}}`;
+              s.push(Array.isArray(e) ? append(n, e, r) : n + e);
+            }
+          }
+        }
+        return o.flatten(s);
+      };
+      const expand = (e, t = {}) => {
+        const r = t.rangeLimit === undefined ? 1e3 : t.rangeLimit;
+        const walk = (e, i = {}) => {
+          e.queue = [];
+          let a = i;
+          let u = i.queue;
+          while (a.type !== "brace" && a.type !== "root" && a.parent) {
+            a = a.parent;
+            u = a.queue;
+          }
+          if (e.invalid || e.dollar) {
+            u.push(append(u.pop(), n(e, t)));
+            return;
+          }
+          if (
+            e.type === "brace" &&
+            e.invalid !== true &&
+            e.nodes.length === 2
+          ) {
+            u.push(append(u.pop(), ["{}"]));
+            return;
+          }
+          if (e.nodes && e.ranges > 0) {
+            const i = o.reduce(e.nodes);
+            if (o.exceedsLimit(...i, t.step, r)) {
+              throw new RangeError(
+                "expanded array length exceeds range limit. Use options.rangeLimit to increase or disable the limit.",
+              );
+            }
+            let a = s(...i, t);
+            if (a.length === 0) {
+              a = n(e, t);
+            }
+            u.push(append(u.pop(), a));
+            e.nodes = [];
+            return;
+          }
+          const c = o.encloseBrace(e);
+          let p = e.queue;
+          let l = e;
+          while (l.type !== "brace" && l.type !== "root" && l.parent) {
+            l = l.parent;
+            p = l.queue;
+          }
+          for (let t = 0; t < e.nodes.length; t++) {
+            const r = e.nodes[t];
+            if (r.type === "comma" && e.type === "brace") {
+              if (t === 1) p.push("");
+              p.push("");
+              continue;
+            }
+            if (r.type === "close") {
+              u.push(append(u.pop(), p, c));
+              continue;
+            }
+            if (r.value && r.type !== "open") {
+              p.push(append(p.pop(), r.value));
+              continue;
+            }
+            if (r.nodes) {
+              walk(r, e);
+            }
+          }
+          return p;
+        };
+        return o.flatten(walk(e));
+      };
+      e.exports = expand;
+    },
+    5583: (e, t, r) => {
+      "use strict";
+      const s = r(641);
+      const {
+        MAX_LENGTH: n,
+        CHAR_BACKSLASH: o,
+        CHAR_BACKTICK: i,
+        CHAR_COMMA: a,
+        CHAR_DOT: u,
+        CHAR_LEFT_PARENTHESES: c,
+        CHAR_RIGHT_PARENTHESES: p,
+        CHAR_LEFT_CURLY_BRACE: l,
+        CHAR_RIGHT_CURLY_BRACE: d,
+        CHAR_LEFT_SQUARE_BRACKET: f,
+        CHAR_RIGHT_SQUARE_BRACKET: h,
+        CHAR_DOUBLE_QUOTE: g,
+        CHAR_SINGLE_QUOTE: m,
+        CHAR_NO_BREAK_SPACE: y,
+        CHAR_ZERO_WIDTH_NOBREAK_SPACE: v,
+      } = r(7201);
+      const parse = (e, t = {}) => {
+        if (typeof e !== "string") {
+          throw new TypeError("Expected a string");
+        }
+        const r = t || {};
+        const $ =
+          typeof r.maxLength === "number" ? Math.min(n, r.maxLength) : n;
+        if (e.length > $) {
+          throw new SyntaxError(
+            `Input length (${e.length}), exceeds max characters (${$})`,
+          );
+        }
+        const b = { type: "root", input: e, nodes: [] };
+        const w = [b];
+        let _ = b;
+        let A = b;
+        let S = 0;
+        const j = e.length;
+        let E = 0;
+        let R = 0;
+        let k;
+        const advance = () => e[E++];
+        const push = (e) => {
+          if (e.type === "text" && A.type === "dot") {
+            A.type = "text";
+          }
+          if (A && A.type === "text" && e.type === "text") {
+            A.value += e.value;
+            return;
+          }
+          _.nodes.push(e);
+          e.parent = _;
+          e.prev = A;
+          A = e;
+          return e;
+        };
+        push({ type: "bos" });
+        while (E < j) {
+          _ = w[w.length - 1];
+          k = advance();
+          if (k === v || k === y) {
+            continue;
+          }
+          if (k === o) {
+            push({
+              type: "text",
+              value: (t.keepEscaping ? k : "") + advance(),
+            });
+            continue;
+          }
+          if (k === h) {
+            push({ type: "text", value: "\\" + k });
+            continue;
+          }
+          if (k === f) {
+            S++;
+            let e;
+            while (E < j && (e = advance())) {
+              k += e;
+              if (e === f) {
+                S++;
+                continue;
+              }
+              if (e === o) {
+                k += advance();
+                continue;
+              }
+              if (e === h) {
+                S--;
+                if (S === 0) {
+                  break;
+                }
+              }
+            }
+            push({ type: "text", value: k });
+            continue;
+          }
+          if (k === c) {
+            _ = push({ type: "paren", nodes: [] });
+            w.push(_);
+            push({ type: "text", value: k });
+            continue;
+          }
+          if (k === p) {
+            if (_.type !== "paren") {
+              push({ type: "text", value: k });
+              continue;
+            }
+            _ = w.pop();
+            push({ type: "text", value: k });
+            _ = w[w.length - 1];
+            continue;
+          }
+          if (k === g || k === m || k === i) {
+            const e = k;
+            let r;
+            if (t.keepQuotes !== true) {
+              k = "";
+            }
+            while (E < j && (r = advance())) {
+              if (r === o) {
+                k += r + advance();
+                continue;
+              }
+              if (r === e) {
+                if (t.keepQuotes === true) k += r;
+                break;
+              }
+              k += r;
+            }
+            push({ type: "text", value: k });
+            continue;
+          }
+          if (k === l) {
+            R++;
+            const e =
+              (A.value && A.value.slice(-1) === "$") || _.dollar === true;
+            const t = {
+              type: "brace",
+              open: true,
+              close: false,
+              dollar: e,
+              depth: R,
+              commas: 0,
+              ranges: 0,
+              nodes: [],
+            };
+            _ = push(t);
+            w.push(_);
+            push({ type: "open", value: k });
+            continue;
+          }
+          if (k === d) {
+            if (_.type !== "brace") {
+              push({ type: "text", value: k });
+              continue;
+            }
+            const e = "close";
+            _ = w.pop();
+            _.close = true;
+            push({ type: e, value: k });
+            R--;
+            _ = w[w.length - 1];
+            continue;
+          }
+          if (k === a && R > 0) {
+            if (_.ranges > 0) {
+              _.ranges = 0;
+              const e = _.nodes.shift();
+              _.nodes = [e, { type: "text", value: s(_) }];
+            }
+            push({ type: "comma", value: k });
+            _.commas++;
+            continue;
+          }
+          if (k === u && R > 0 && _.commas === 0) {
+            const e = _.nodes;
+            if (R === 0 || e.length === 0) {
+              push({ type: "text", value: k });
+              continue;
+            }
+            if (A.type === "dot") {
+              _.range = [];
+              A.value += k;
+              A.type = "range";
+              if (_.nodes.length !== 3 && _.nodes.length !== 5) {
+                _.invalid = true;
+                _.ranges = 0;
+                A.type = "text";
+                continue;
+              }
+              _.ranges++;
+              _.args = [];
+              continue;
+            }
+            if (A.type === "range") {
+              e.pop();
+              const t = e[e.length - 1];
+              t.value += A.value + k;
+              A = t;
+              _.ranges--;
+              continue;
+            }
+            push({ type: "dot", value: k });
+            continue;
+          }
+          push({ type: "text", value: k });
+        }
+        do {
+          _ = w.pop();
+          if (_.type !== "root") {
+            _.nodes.forEach((e) => {
+              if (!e.nodes) {
+                if (e.type === "open") e.isOpen = true;
+                if (e.type === "close") e.isClose = true;
+                if (!e.nodes) e.type = "text";
+                e.invalid = true;
+              }
+            });
+            const e = w[w.length - 1];
+            const t = e.nodes.indexOf(_);
+            e.nodes.splice(t, 1, ..._.nodes);
+          }
+        } while (w.length > 0);
+        push({ type: "eos" });
+        return b;
+      };
+      e.exports = parse;
+    },
+    641: (e, t, r) => {
+      "use strict";
+      const s = r(837);
+      e.exports = (e, t = {}) => {
+        const stringify = (e, r = {}) => {
+          const n = t.escapeInvalid && s.isInvalidBrace(r);
+          const o = e.invalid === true && t.escapeInvalid === true;
+          let i = "";
+          if (e.value) {
+            if ((n || o) && s.isOpenOrClose(e)) {
+              return "\\" + e.value;
+            }
+            return e.value;
+          }
+          if (e.value) {
+            return e.value;
+          }
+          if (e.nodes) {
+            for (const t of e.nodes) {
+              i += stringify(t);
+            }
+          }
+          return i;
+        };
+        return stringify(e);
+      };
+    },
+    837: (e, t) => {
+      "use strict";
+      t.isInteger = (e) => {
+        if (typeof e === "number") {
+          return Number.isInteger(e);
+        }
+        if (typeof e === "string" && e.trim() !== "") {
+          return Number.isInteger(Number(e));
+        }
+        return false;
+      };
+      t.find = (e, t) => e.nodes.find((e) => e.type === t);
+      t.exceedsLimit = (e, r, s = 1, n) => {
+        if (n === false) return false;
+        if (!t.isInteger(e) || !t.isInteger(r)) return false;
+        return (Number(r) - Number(e)) / Number(s) >= n;
+      };
+      t.escapeNode = (e, t = 0, r) => {
+        const s = e.nodes[t];
+        if (!s) return;
+        if ((r && s.type === r) || s.type === "open" || s.type === "close") {
+          if (s.escaped !== true) {
+            s.value = "\\" + s.value;
+            s.escaped = true;
+          }
+        }
+      };
+      t.encloseBrace = (e) => {
+        if (e.type !== "brace") return false;
+        if ((e.commas >> (0 + e.ranges)) >> 0 === 0) {
+          e.invalid = true;
+          return true;
+        }
+        return false;
+      };
+      t.isInvalidBrace = (e) => {
+        if (e.type !== "brace") return false;
+        if (e.invalid === true || e.dollar) return true;
+        if ((e.commas >> (0 + e.ranges)) >> 0 === 0) {
+          e.invalid = true;
+          return true;
+        }
+        if (e.open !== true || e.close !== true) {
+          e.invalid = true;
+          return true;
+        }
+        return false;
+      };
+      t.isOpenOrClose = (e) => {
+        if (e.type === "open" || e.type === "close") {
+          return true;
+        }
+        return e.open === true || e.close === true;
+      };
+      t.reduce = (e) =>
+        e.reduce((e, t) => {
+          if (t.type === "text") e.push(t.value);
+          if (t.type === "range") t.type = "text";
+          return e;
+        }, []);
+      t.flatten = (...e) => {
+        const t = [];
+        const flat = (e) => {
+          for (let r = 0; r < e.length; r++) {
+            const s = e[r];
+            if (Array.isArray(s)) {
+              flat(s);
+              continue;
+            }
+            if (s !== undefined) {
+              t.push(s);
+            }
+          }
+          return t;
+        };
+        flat(e);
+        return t;
+      };
+    },
+    1372: (e, t, r) => {
+      "use strict";
+      var s = r(978);
+      var n = r(8960);
+      var o = n(s("String.prototype.indexOf"));
+      e.exports = function callBoundIntrinsic(e, t) {
+        var r = s(e, !!t);
+        if (typeof r === "function" && o(e, ".prototype.") > -1) {
+          return n(r);
+        }
+        return r;
+      };
+    },
+    8960: (e, t, r) => {
+      "use strict";
+      var s = r(5112);
+      var n = r(978);
+      var o = r(7230);
+      var i = r(1254);
+      var a = n("%Function.prototype.apply%");
+      var u = n("%Function.prototype.call%");
+      var c = n("%Reflect.apply%", true) || s.call(u, a);
+      var p = r(4090);
+      var l = n("%Math.max%");
+      e.exports = function callBind(e) {
+        if (typeof e !== "function") {
+          throw new i("a function is required");
+        }
+        var t = c(s, u, arguments);
+        return o(t, 1 + l(0, e.length - (arguments.length - 1)), true);
+      };
+      var d = function applyBind() {
+        return c(s, a, arguments);
+      };
+      if (p) {
+        p(e.exports, "apply", { value: d });
+      } else {
+        e.exports.apply = d;
+      }
+    },
+    3968: (e, t, r) => {
+      "use strict";
+      var s = r(4090);
+      var n = r(1821);
+      var o = r(1254);
+      var i = r(6822);
+      e.exports = function defineDataProperty(e, t, r) {
+        if (!e || (typeof e !== "object" && typeof e !== "function")) {
+          throw new o("`obj` must be an object or a function`");
+        }
+        if (typeof t !== "string" && typeof t !== "symbol") {
+          throw new o("`property` must be a string or a symbol`");
+        }
+        if (
+          arguments.length > 3 &&
+          typeof arguments[3] !== "boolean" &&
+          arguments[3] !== null
+        ) {
+          throw new o(
+            "`nonEnumerable`, if provided, must be a boolean or null",
+          );
+        }
+        if (
+          arguments.length > 4 &&
+          typeof arguments[4] !== "boolean" &&
+          arguments[4] !== null
+        ) {
+          throw new o("`nonWritable`, if provided, must be a boolean or null");
+        }
+        if (
+          arguments.length > 5 &&
+          typeof arguments[5] !== "boolean" &&
+          arguments[5] !== null
+        ) {
+          throw new o(
+            "`nonConfigurable`, if provided, must be a boolean or null",
+          );
+        }
+        if (arguments.length > 6 && typeof arguments[6] !== "boolean") {
+          throw new o("`loose`, if provided, must be a boolean");
+        }
+        var a = arguments.length > 3 ? arguments[3] : null;
+        var u = arguments.length > 4 ? arguments[4] : null;
+        var c = arguments.length > 5 ? arguments[5] : null;
+        var p = arguments.length > 6 ? arguments[6] : false;
+        var l = !!i && i(e, t);
+        if (s) {
+          s(e, t, {
+            configurable: c === null && l ? l.configurable : !c,
+            enumerable: a === null && l ? l.enumerable : !a,
+            value: r,
+            writable: u === null && l ? l.writable : !u,
+          });
+        } else if (p || (!a && !u && !c)) {
+          e[t] = r;
+        } else {
+          throw new n(
+            "This environment does not support defining a property as non-configurable, non-writable, or non-enumerable.",
+          );
+        }
+      };
+    },
+    4090: (e, t, r) => {
+      "use strict";
+      var s = r(978);
+      var n = s("%Object.defineProperty%", true) || false;
+      if (n) {
+        try {
+          n({}, "a", { value: 1 });
+        } catch (e) {
+          n = false;
+        }
+      }
+      e.exports = n;
+    },
+    8060: (e) => {
+      "use strict";
+      e.exports = EvalError;
+    },
+    2472: (e) => {
+      "use strict";
+      e.exports = Error;
+    },
+    2957: (e) => {
+      "use strict";
+      e.exports = RangeError;
+    },
+    9157: (e) => {
+      "use strict";
+      e.exports = ReferenceError;
+    },
+    1821: (e) => {
+      "use strict";
+      e.exports = SyntaxError;
+    },
+    1254: (e) => {
+      "use strict";
+      e.exports = TypeError;
+    },
+    662: (e) => {
+      "use strict";
+      e.exports = URIError;
+    },
+    9073: (e, t, r) => {
+      "use strict";
+      /*!
+       * fill-range <https://github.com/jonschlinkert/fill-range>
+       *
+       * Copyright (c) 2014-present, Jon Schlinkert.
+       * Licensed under the MIT License.
+       */ const s = r(9023);
+      const n = r(4395);
+      const isObject = (e) =>
+        e !== null && typeof e === "object" && !Array.isArray(e);
+      const transform = (e) => (t) => (e === true ? Number(t) : String(t));
+      const isValidValue = (e) =>
+        typeof e === "number" || (typeof e === "string" && e !== "");
+      const isNumber = (e) => Number.isInteger(+e);
+      const zeros = (e) => {
+        let t = `${e}`;
+        let r = -1;
+        if (t[0] === "-") t = t.slice(1);
+        if (t === "0") return false;
+        while (t[++r] === "0");
+        return r > 0;
+      };
+      const stringify = (e, t, r) => {
+        if (typeof e === "string" || typeof t === "string") {
+          return true;
+        }
+        return r.stringify === true;
+      };
+      const pad = (e, t, r) => {
+        if (t > 0) {
+          let r = e[0] === "-" ? "-" : "";
+          if (r) e = e.slice(1);
+          e = r + e.padStart(r ? t - 1 : t, "0");
+        }
+        if (r === false) {
+          return String(e);
+        }
+        return e;
+      };
+      const toMaxLen = (e, t) => {
+        let r = e[0] === "-" ? "-" : "";
+        if (r) {
+          e = e.slice(1);
+          t--;
+        }
+        while (e.length < t) e = "0" + e;
+        return r ? "-" + e : e;
+      };
+      const toSequence = (e, t, r) => {
+        e.negatives.sort((e, t) => (e < t ? -1 : e > t ? 1 : 0));
+        e.positives.sort((e, t) => (e < t ? -1 : e > t ? 1 : 0));
+        let s = t.capture ? "" : "?:";
+        let n = "";
+        let o = "";
+        let i;
+        if (e.positives.length) {
+          n = e.positives.map((e) => toMaxLen(String(e), r)).join("|");
+        }
+        if (e.negatives.length) {
+          o = `-(${s}${e.negatives.map((e) => toMaxLen(String(e), r)).join("|")})`;
+        }
+        if (n && o) {
+          i = `${n}|${o}`;
+        } else {
+          i = n || o;
+        }
+        if (t.wrap) {
+          return `(${s}${i})`;
+        }
+        return i;
+      };
+      const toRange = (e, t, r, s) => {
+        if (r) {
+          return n(e, t, { wrap: false, ...s });
+        }
+        let o = String.fromCharCode(e);
+        if (e === t) return o;
+        let i = String.fromCharCode(t);
+        return `[${o}-${i}]`;
+      };
+      const toRegex = (e, t, r) => {
+        if (Array.isArray(e)) {
+          let t = r.wrap === true;
+          let s = r.capture ? "" : "?:";
+          return t ? `(${s}${e.join("|")})` : e.join("|");
+        }
+        return n(e, t, r);
+      };
+      const rangeError = (...e) =>
+        new RangeError("Invalid range arguments: " + s.inspect(...e));
+      const invalidRange = (e, t, r) => {
+        if (r.strictRanges === true) throw rangeError([e, t]);
+        return [];
+      };
+      const invalidStep = (e, t) => {
+        if (t.strictRanges === true) {
+          throw new TypeError(`Expected step "${e}" to be a number`);
+        }
+        return [];
+      };
+      const fillNumbers = (e, t, r = 1, s = {}) => {
+        let n = Number(e);
+        let o = Number(t);
+        if (!Number.isInteger(n) || !Number.isInteger(o)) {
+          if (s.strictRanges === true) throw rangeError([e, t]);
+          return [];
+        }
+        if (n === 0) n = 0;
+        if (o === 0) o = 0;
+        let i = n > o;
+        let a = String(e);
+        let u = String(t);
+        let c = String(r);
+        r = Math.max(Math.abs(r), 1);
+        let p = zeros(a) || zeros(u) || zeros(c);
+        let l = p ? Math.max(a.length, u.length, c.length) : 0;
+        let d = p === false && stringify(e, t, s) === false;
+        let f = s.transform || transform(d);
+        if (s.toRegex && r === 1) {
+          return toRange(toMaxLen(e, l), toMaxLen(t, l), true, s);
+        }
+        let h = { negatives: [], positives: [] };
+        let push = (e) =>
+          h[e < 0 ? "negatives" : "positives"].push(Math.abs(e));
+        let g = [];
+        let m = 0;
+        while (i ? n >= o : n <= o) {
+          if (s.toRegex === true && r > 1) {
+            push(n);
+          } else {
+            g.push(pad(f(n, m), l, d));
+          }
+          n = i ? n - r : n + r;
+          m++;
+        }
+        if (s.toRegex === true) {
+          return r > 1
+            ? toSequence(h, s, l)
+            : toRegex(g, null, { wrap: false, ...s });
+        }
+        return g;
+      };
+      const fillLetters = (e, t, r = 1, s = {}) => {
+        if ((!isNumber(e) && e.length > 1) || (!isNumber(t) && t.length > 1)) {
+          return invalidRange(e, t, s);
+        }
+        let n = s.transform || ((e) => String.fromCharCode(e));
+        let o = `${e}`.charCodeAt(0);
+        let i = `${t}`.charCodeAt(0);
+        let a = o > i;
+        let u = Math.min(o, i);
+        let c = Math.max(o, i);
+        if (s.toRegex && r === 1) {
+          return toRange(u, c, false, s);
+        }
+        let p = [];
+        let l = 0;
+        while (a ? o >= i : o <= i) {
+          p.push(n(o, l));
+          o = a ? o - r : o + r;
+          l++;
+        }
+        if (s.toRegex === true) {
+          return toRegex(p, null, { wrap: false, options: s });
+        }
+        return p;
+      };
+      const fill = (e, t, r, s = {}) => {
+        if (t == null && isValidValue(e)) {
+          return [e];
+        }
+        if (!isValidValue(e) || !isValidValue(t)) {
+          return invalidRange(e, t, s);
+        }
+        if (typeof r === "function") {
+          return fill(e, t, 1, { transform: r });
+        }
+        if (isObject(r)) {
+          return fill(e, t, 0, r);
+        }
+        let n = { ...s };
+        if (n.capture === true) n.wrap = true;
+        r = r || n.step || 1;
+        if (!isNumber(r)) {
+          if (r != null && !isObject(r)) return invalidStep(r, n);
+          return fill(e, t, 1, r);
+        }
+        if (isNumber(e) && isNumber(t)) {
+          return fillNumbers(e, t, r, n);
+        }
+        return fillLetters(e, t, Math.max(Math.abs(r), 1), n);
+      };
+      e.exports = fill;
+    },
+    4124: (e) => {
+      "use strict";
+      var t = "Function.prototype.bind called on incompatible ";
+      var r = Object.prototype.toString;
+      var s = Math.max;
+      var n = "[object Function]";
+      var o = function concatty(e, t) {
+        var r = [];
+        for (var s = 0; s < e.length; s += 1) {
+          r[s] = e[s];
+        }
+        for (var n = 0; n < t.length; n += 1) {
+          r[n + e.length] = t[n];
+        }
+        return r;
+      };
+      var i = function slicy(e, t) {
+        var r = [];
+        for (var s = t || 0, n = 0; s < e.length; s += 1, n += 1) {
+          r[n] = e[s];
+        }
+        return r;
+      };
+      var joiny = function (e, t) {
+        var r = "";
+        for (var s = 0; s < e.length; s += 1) {
+          r += e[s];
+          if (s + 1 < e.length) {
+            r += t;
+          }
+        }
+        return r;
+      };
+      e.exports = function bind(e) {
+        var a = this;
+        if (typeof a !== "function" || r.apply(a) !== n) {
+          throw new TypeError(t + a);
+        }
+        var u = i(arguments, 1);
+        var c;
+        var binder = function () {
+          if (this instanceof c) {
+            var t = a.apply(this, o(u, arguments));
+            if (Object(t) === t) {
+              return t;
+            }
+            return this;
+          }
+          return a.apply(e, o(u, arguments));
+        };
+        var p = s(0, a.length - u.length);
+        var l = [];
+        for (var d = 0; d < p; d++) {
+          l[d] = "$" + d;
+        }
+        c = Function(
+          "binder",
+          "return function (" +
+            joiny(l, ",") +
+            "){ return binder.apply(this,arguments); }",
+        )(binder);
+        if (a.prototype) {
+          var f = function Empty() {};
+          f.prototype = a.prototype;
+          c.prototype = new f();
+          f.prototype = null;
+        }
+        return c;
+      };
+    },
+    5112: (e, t, r) => {
+      "use strict";
+      var s = r(4124);
+      e.exports = Function.prototype.bind || s;
+    },
+    978: (e, t, r) => {
+      "use strict";
+      var s;
+      var n = r(2472);
+      var o = r(8060);
+      var i = r(2957);
+      var a = r(9157);
+      var u = r(1821);
+      var c = r(1254);
+      var p = r(662);
+      var l = Function;
+      var getEvalledConstructor = function (e) {
+        try {
+          return l('"use strict"; return (' + e + ").constructor;")();
+        } catch (e) {}
+      };
+      var d = Object.getOwnPropertyDescriptor;
+      if (d) {
+        try {
+          d({}, "");
+        } catch (e) {
+          d = null;
+        }
+      }
+      var throwTypeError = function () {
+        throw new c();
+      };
+      var f = d
+        ? (function () {
+            try {
+              arguments.callee;
+              return throwTypeError;
+            } catch (e) {
+              try {
+                return d(arguments, "callee").get;
+              } catch (e) {
+                return throwTypeError;
+              }
+            }
+          })()
+        : throwTypeError;
+      var h = r(4428)();
+      var g = r(375)();
+      var m =
+        Object.getPrototypeOf ||
+        (g
+          ? function (e) {
+              return e.__proto__;
+            }
+          : null);
+      var y = {};
+      var v = typeof Uint8Array === "undefined" || !m ? s : m(Uint8Array);
+      var $ = {
+        __proto__: null,
+        "%AggregateError%":
+          typeof AggregateError === "undefined" ? s : AggregateError,
+        "%Array%": Array,
+        "%ArrayBuffer%": typeof ArrayBuffer === "undefined" ? s : ArrayBuffer,
+        "%ArrayIteratorPrototype%": h && m ? m([][Symbol.iterator]()) : s,
+        "%AsyncFromSyncIteratorPrototype%": s,
+        "%AsyncFunction%": y,
+        "%AsyncGenerator%": y,
+        "%AsyncGeneratorFunction%": y,
+        "%AsyncIteratorPrototype%": y,
+        "%Atomics%": typeof Atomics === "undefined" ? s : Atomics,
+        "%BigInt%": typeof BigInt === "undefined" ? s : BigInt,
+        "%BigInt64Array%":
+          typeof BigInt64Array === "undefined" ? s : BigInt64Array,
+        "%BigUint64Array%":
+          typeof BigUint64Array === "undefined" ? s : BigUint64Array,
+        "%Boolean%": Boolean,
+        "%DataView%": typeof DataView === "undefined" ? s : DataView,
+        "%Date%": Date,
+        "%decodeURI%": decodeURI,
+        "%decodeURIComponent%": decodeURIComponent,
+        "%encodeURI%": encodeURI,
+        "%encodeURIComponent%": encodeURIComponent,
+        "%Error%": n,
+        "%eval%": eval,
+        "%EvalError%": o,
+        "%Float32Array%":
+          typeof Float32Array === "undefined" ? s : Float32Array,
+        "%Float64Array%":
+          typeof Float64Array === "undefined" ? s : Float64Array,
+        "%FinalizationRegistry%":
+          typeof FinalizationRegistry === "undefined"
+            ? s
+            : FinalizationRegistry,
+        "%Function%": l,
+        "%GeneratorFunction%": y,
+        "%Int8Array%": typeof Int8Array === "undefined" ? s : Int8Array,
+        "%Int16Array%": typeof Int16Array === "undefined" ? s : Int16Array,
+        "%Int32Array%": typeof Int32Array === "undefined" ? s : Int32Array,
+        "%isFinite%": isFinite,
+        "%isNaN%": isNaN,
+        "%IteratorPrototype%": h && m ? m(m([][Symbol.iterator]())) : s,
+        "%JSON%": typeof JSON === "object" ? JSON : s,
+        "%Map%": typeof Map === "undefined" ? s : Map,
+        "%MapIteratorPrototype%":
+          typeof Map === "undefined" || !h || !m
+            ? s
+            : m(new Map()[Symbol.iterator]()),
+        "%Math%": Math,
+        "%Number%": Number,
+        "%Object%": Object,
+        "%parseFloat%": parseFloat,
+        "%parseInt%": parseInt,
+        "%Promise%": typeof Promise === "undefined" ? s : Promise,
+        "%Proxy%": typeof Proxy === "undefined" ? s : Proxy,
+        "%RangeError%": i,
+        "%ReferenceError%": a,
+        "%Reflect%": typeof Reflect === "undefined" ? s : Reflect,
+        "%RegExp%": RegExp,
+        "%Set%": typeof Set === "undefined" ? s : Set,
+        "%SetIteratorPrototype%":
+          typeof Set === "undefined" || !h || !m
+            ? s
+            : m(new Set()[Symbol.iterator]()),
+        "%SharedArrayBuffer%":
+          typeof SharedArrayBuffer === "undefined" ? s : SharedArrayBuffer,
+        "%String%": String,
+        "%StringIteratorPrototype%": h && m ? m(""[Symbol.iterator]()) : s,
+        "%Symbol%": h ? Symbol : s,
+        "%SyntaxError%": u,
+        "%ThrowTypeError%": f,
+        "%TypedArray%": v,
+        "%TypeError%": c,
+        "%Uint8Array%": typeof Uint8Array === "undefined" ? s : Uint8Array,
+        "%Uint8ClampedArray%":
+          typeof Uint8ClampedArray === "undefined" ? s : Uint8ClampedArray,
+        "%Uint16Array%": typeof Uint16Array === "undefined" ? s : Uint16Array,
+        "%Uint32Array%": typeof Uint32Array === "undefined" ? s : Uint32Array,
+        "%URIError%": p,
+        "%WeakMap%": typeof WeakMap === "undefined" ? s : WeakMap,
+        "%WeakRef%": typeof WeakRef === "undefined" ? s : WeakRef,
+        "%WeakSet%": typeof WeakSet === "undefined" ? s : WeakSet,
+      };
+      if (m) {
+        try {
+          null.error;
+        } catch (e) {
+          var b = m(m(e));
+          $["%Error.prototype%"] = b;
+        }
+      }
+      var w = function doEval(e) {
+        var t;
+        if (e === "%AsyncFunction%") {
+          t = getEvalledConstructor("async function () {}");
+        } else if (e === "%GeneratorFunction%") {
+          t = getEvalledConstructor("function* () {}");
+        } else if (e === "%AsyncGeneratorFunction%") {
+          t = getEvalledConstructor("async function* () {}");
+        } else if (e === "%AsyncGenerator%") {
+          var r = doEval("%AsyncGeneratorFunction%");
+          if (r) {
+            t = r.prototype;
+          }
+        } else if (e === "%AsyncIteratorPrototype%") {
+          var s = doEval("%AsyncGenerator%");
+          if (s && m) {
+            t = m(s.prototype);
+          }
+        }
+        $[e] = t;
+        return t;
+      };
+      var _ = {
+        __proto__: null,
+        "%ArrayBufferPrototype%": ["ArrayBuffer", "prototype"],
+        "%ArrayPrototype%": ["Array", "prototype"],
+        "%ArrayProto_entries%": ["Array", "prototype", "entries"],
+        "%ArrayProto_forEach%": ["Array", "prototype", "forEach"],
+        "%ArrayProto_keys%": ["Array", "prototype", "keys"],
+        "%ArrayProto_values%": ["Array", "prototype", "values"],
+        "%AsyncFunctionPrototype%": ["AsyncFunction", "prototype"],
+        "%AsyncGenerator%": ["AsyncGeneratorFunction", "prototype"],
+        "%AsyncGeneratorPrototype%": [
+          "AsyncGeneratorFunction",
+          "prototype",
+          "prototype",
+        ],
+        "%BooleanPrototype%": ["Boolean", "prototype"],
+        "%DataViewPrototype%": ["DataView", "prototype"],
+        "%DatePrototype%": ["Date", "prototype"],
+        "%ErrorPrototype%": ["Error", "prototype"],
+        "%EvalErrorPrototype%": ["EvalError", "prototype"],
+        "%Float32ArrayPrototype%": ["Float32Array", "prototype"],
+        "%Float64ArrayPrototype%": ["Float64Array", "prototype"],
+        "%FunctionPrototype%": ["Function", "prototype"],
+        "%Generator%": ["GeneratorFunction", "prototype"],
+        "%GeneratorPrototype%": ["GeneratorFunction", "prototype", "prototype"],
+        "%Int8ArrayPrototype%": ["Int8Array", "prototype"],
+        "%Int16ArrayPrototype%": ["Int16Array", "prototype"],
+        "%Int32ArrayPrototype%": ["Int32Array", "prototype"],
+        "%JSONParse%": ["JSON", "parse"],
+        "%JSONStringify%": ["JSON", "stringify"],
+        "%MapPrototype%": ["Map", "prototype"],
+        "%NumberPrototype%": ["Number", "prototype"],
+        "%ObjectPrototype%": ["Object", "prototype"],
+        "%ObjProto_toString%": ["Object", "prototype", "toString"],
+        "%ObjProto_valueOf%": ["Object", "prototype", "valueOf"],
+        "%PromisePrototype%": ["Promise", "prototype"],
+        "%PromiseProto_then%": ["Promise", "prototype", "then"],
+        "%Promise_all%": ["Promise", "all"],
+        "%Promise_reject%": ["Promise", "reject"],
+        "%Promise_resolve%": ["Promise", "resolve"],
+        "%RangeErrorPrototype%": ["RangeError", "prototype"],
+        "%ReferenceErrorPrototype%": ["ReferenceError", "prototype"],
+        "%RegExpPrototype%": ["RegExp", "prototype"],
+        "%SetPrototype%": ["Set", "prototype"],
+        "%SharedArrayBufferPrototype%": ["SharedArrayBuffer", "prototype"],
+        "%StringPrototype%": ["String", "prototype"],
+        "%SymbolPrototype%": ["Symbol", "prototype"],
+        "%SyntaxErrorPrototype%": ["SyntaxError", "prototype"],
+        "%TypedArrayPrototype%": ["TypedArray", "prototype"],
+        "%TypeErrorPrototype%": ["TypeError", "prototype"],
+        "%Uint8ArrayPrototype%": ["Uint8Array", "prototype"],
+        "%Uint8ClampedArrayPrototype%": ["Uint8ClampedArray", "prototype"],
+        "%Uint16ArrayPrototype%": ["Uint16Array", "prototype"],
+        "%Uint32ArrayPrototype%": ["Uint32Array", "prototype"],
+        "%URIErrorPrototype%": ["URIError", "prototype"],
+        "%WeakMapPrototype%": ["WeakMap", "prototype"],
+        "%WeakSetPrototype%": ["WeakSet", "prototype"],
+      };
+      var A = r(5112);
+      var S = r(9776);
+      var j = A.call(Function.call, Array.prototype.concat);
+      var E = A.call(Function.apply, Array.prototype.splice);
+      var R = A.call(Function.call, String.prototype.replace);
+      var k = A.call(Function.call, String.prototype.slice);
+      var x = A.call(Function.call, RegExp.prototype.exec);
+      var I =
+        /[^%.[\]]+|\[(?:(-?\d+(?:\.\d+)?)|(["'])((?:(?!\2)[^\\]|\\.)*?)\2)\]|(?=(?:\.|\[\])(?:\.|\[\]|%$))/g;
+      var P = /\\(\\)?/g;
+      var T = function stringToPath(e) {
+        var t = k(e, 0, 1);
+        var r = k(e, -1);
+        if (t === "%" && r !== "%") {
+          throw new u("invalid intrinsic syntax, expected closing `%`");
+        } else if (r === "%" && t !== "%") {
+          throw new u("invalid intrinsic syntax, expected opening `%`");
+        }
+        var s = [];
+        R(e, I, function (e, t, r, n) {
+          s[s.length] = r ? R(n, P, "$1") : t || e;
+        });
+        return s;
+      };
+      var C = function getBaseIntrinsic(e, t) {
+        var r = e;
+        var s;
+        if (S(_, r)) {
+          s = _[r];
+          r = "%" + s[0] + "%";
+        }
+        if (S($, r)) {
+          var n = $[r];
+          if (n === y) {
+            n = w(r);
+          }
+          if (typeof n === "undefined" && !t) {
+            throw new c(
+              "intrinsic " +
+                e +
+                " exists, but is not available. Please file an issue!",
+            );
+          }
+          return { alias: s, name: r, value: n };
+        }
+        throw new u("intrinsic " + e + " does not exist!");
+      };
+      e.exports = function GetIntrinsic(e, t) {
+        if (typeof e !== "string" || e.length === 0) {
+          throw new c("intrinsic name must be a non-empty string");
+        }
+        if (arguments.length > 1 && typeof t !== "boolean") {
+          throw new c('"allowMissing" argument must be a boolean');
+        }
+        if (x(/^%?[^%]*%?$/, e) === null) {
+          throw new u(
+            "`%` may not be present anywhere but at the beginning and end of the intrinsic name",
+          );
+        }
+        var r = T(e);
+        var n = r.length > 0 ? r[0] : "";
+        var o = C("%" + n + "%", t);
+        var i = o.name;
+        var a = o.value;
+        var p = false;
+        var l = o.alias;
+        if (l) {
+          n = l[0];
+          E(r, j([0, 1], l));
+        }
+        for (var f = 1, h = true; f < r.length; f += 1) {
+          var g = r[f];
+          var m = k(g, 0, 1);
+          var y = k(g, -1);
+          if (
+            (m === '"' ||
+              m === "'" ||
+              m === "`" ||
+              y === '"' ||
+              y === "'" ||
+              y === "`") &&
+            m !== y
+          ) {
+            throw new u("property names with quotes must have matching quotes");
+          }
+          if (g === "constructor" || !h) {
+            p = true;
+          }
+          n += "." + g;
+          i = "%" + n + "%";
+          if (S($, i)) {
+            a = $[i];
+          } else if (a != null) {
+            if (!(g in a)) {
+              if (!t) {
+                throw new c(
+                  "base intrinsic for " +
+                    e +
+                    " exists, but the property is not available.",
+                );
+              }
+              return void s;
+            }
+            if (d && f + 1 >= r.length) {
+              var v = d(a, g);
+              h = !!v;
+              if (h && "get" in v && !("originalValue" in v.get)) {
+                a = v.get;
+              } else {
+                a = a[g];
+              }
+            } else {
+              h = S(a, g);
+              a = a[g];
+            }
+            if (h && !p) {
+              $[i] = a;
+            }
+          }
+        }
+        return a;
+      };
+    },
+    6822: (e, t, r) => {
+      "use strict";
+      var s = r(978);
+      var n = s("%Object.getOwnPropertyDescriptor%", true);
+      if (n) {
+        try {
+          n([], "length");
+        } catch (e) {
+          n = null;
+        }
+      }
+      e.exports = n;
+    },
+    8421: (e, t, r) => {
+      "use strict";
+      var s = r(4090);
+      var n = function hasPropertyDescriptors() {
+        return !!s;
+      };
+      n.hasArrayLengthDefineBug = function hasArrayLengthDefineBug() {
+        if (!s) {
+          return null;
+        }
+        try {
+          return s([], "length", { value: 1 }).length !== 1;
+        } catch (e) {
+          return true;
+        }
+      };
+      e.exports = n;
+    },
+    375: (e) => {
+      "use strict";
+      var t = { __proto__: null, foo: {} };
+      var r = Object;
+      e.exports = function hasProto() {
+        return { __proto__: t }.foo === t.foo && !(t instanceof r);
+      };
+    },
+    4428: (e, t, r) => {
+      "use strict";
+      var s = typeof Symbol !== "undefined" && Symbol;
+      var n = r(2542);
+      e.exports = function hasNativeSymbols() {
+        if (typeof s !== "function") {
+          return false;
+        }
+        if (typeof Symbol !== "function") {
+          return false;
+        }
+        if (typeof s("foo") !== "symbol") {
+          return false;
+        }
+        if (typeof Symbol("bar") !== "symbol") {
+          return false;
+        }
+        return n();
+      };
+    },
+    2542: (e) => {
+      "use strict";
+      e.exports = function hasSymbols() {
+        if (
+          typeof Symbol !== "function" ||
+          typeof Object.getOwnPropertySymbols !== "function"
+        ) {
+          return false;
+        }
+        if (typeof Symbol.iterator === "symbol") {
+          return true;
+        }
+        var e = {};
+        var t = Symbol("test");
+        var r = Object(t);
+        if (typeof t === "string") {
+          return false;
+        }
+        if (Object.prototype.toString.call(t) !== "[object Symbol]") {
+          return false;
+        }
+        if (Object.prototype.toString.call(r) !== "[object Symbol]") {
+          return false;
+        }
+        var s = 42;
+        e[t] = s;
+        for (t in e) {
+          return false;
+        }
+        if (typeof Object.keys === "function" && Object.keys(e).length !== 0) {
+          return false;
+        }
+        if (
+          typeof Object.getOwnPropertyNames === "function" &&
+          Object.getOwnPropertyNames(e).length !== 0
+        ) {
+          return false;
+        }
+        var n = Object.getOwnPropertySymbols(e);
+        if (n.length !== 1 || n[0] !== t) {
+          return false;
+        }
+        if (!Object.prototype.propertyIsEnumerable.call(e, t)) {
+          return false;
+        }
+        if (typeof Object.getOwnPropertyDescriptor === "function") {
+          var o = Object.getOwnPropertyDescriptor(e, t);
+          if (o.value !== s || o.enumerable !== true) {
+            return false;
+          }
+        }
+        return true;
+      };
+    },
+    9776: (e, t, r) => {
+      "use strict";
+      var s = Function.prototype.call;
+      var n = Object.prototype.hasOwnProperty;
+      var o = r(5112);
+      e.exports = o.call(s, n);
+    },
+    7850: (e) => {
+      "use strict";
+      /*!
+       * is-number <https://github.com/jonschlinkert/is-number>
+       *
+       * Copyright (c) 2014-present, Jon Schlinkert.
+       * Released under the MIT License.
+       */ e.exports = function (e) {
+        if (typeof e === "number") {
+          return e - e === 0;
+        }
+        if (typeof e === "string" && e.trim() !== "") {
+          return Number.isFinite ? Number.isFinite(+e) : isFinite(+e);
+        }
+        return false;
+      };
+    },
+    7805: (e, t, r) => {
+      "use strict";
+      const s = r(9023);
+      const n = r(7120);
+      const o = r(1026);
+      const i = r(2599);
+      const isEmptyString = (e) => e === "" || e === "./";
+      const micromatch = (e, t, r) => {
+        t = [].concat(t);
+        e = [].concat(e);
+        let s = new Set();
+        let n = new Set();
+        let i = new Set();
+        let a = 0;
+        let onResult = (e) => {
+          i.add(e.output);
+          if (r && r.onResult) {
+            r.onResult(e);
+          }
+        };
+        for (let i = 0; i < t.length; i++) {
+          let u = o(String(t[i]), { ...r, onResult: onResult }, true);
+          let c = u.state.negated || u.state.negatedExtglob;
+          if (c) a++;
+          for (let t of e) {
+            let e = u(t, true);
+            let r = c ? !e.isMatch : e.isMatch;
+            if (!r) continue;
+            if (c) {
+              s.add(e.output);
+            } else {
+              s.delete(e.output);
+              n.add(e.output);
+            }
+          }
+        }
+        let u = a === t.length ? [...i] : [...n];
+        let c = u.filter((e) => !s.has(e));
+        if (r && c.length === 0) {
+          if (r.failglob === true) {
+            throw new Error(`No matches found for "${t.join(", ")}"`);
+          }
+          if (r.nonull === true || r.nullglob === true) {
+            return r.unescape ? t.map((e) => e.replace(/\\/g, "")) : t;
+          }
+        }
+        return c;
+      };
+      micromatch.match = micromatch;
+      micromatch.matcher = (e, t) => o(e, t);
+      micromatch.isMatch = (e, t, r) => o(t, r)(e);
+      micromatch.any = micromatch.isMatch;
+      micromatch.not = (e, t, r = {}) => {
+        t = [].concat(t).map(String);
+        let s = new Set();
+        let n = [];
+        let onResult = (e) => {
+          if (r.onResult) r.onResult(e);
+          n.push(e.output);
+        };
+        let o = new Set(micromatch(e, t, { ...r, onResult: onResult }));
+        for (let e of n) {
+          if (!o.has(e)) {
+            s.add(e);
+          }
+        }
+        return [...s];
+      };
+      micromatch.contains = (e, t, r) => {
+        if (typeof e !== "string") {
+          throw new TypeError(`Expected a string: "${s.inspect(e)}"`);
+        }
+        if (Array.isArray(t)) {
+          return t.some((t) => micromatch.contains(e, t, r));
+        }
+        if (typeof t === "string") {
+          if (isEmptyString(e) || isEmptyString(t)) {
+            return false;
+          }
+          if (e.includes(t) || (e.startsWith("./") && e.slice(2).includes(t))) {
+            return true;
+          }
+        }
+        return micromatch.isMatch(e, t, { ...r, contains: true });
+      };
+      micromatch.matchKeys = (e, t, r) => {
+        if (!i.isObject(e)) {
+          throw new TypeError("Expected the first argument to be an object");
+        }
+        let s = micromatch(Object.keys(e), t, r);
+        let n = {};
+        for (let t of s) n[t] = e[t];
+        return n;
+      };
+      micromatch.some = (e, t, r) => {
+        let s = [].concat(e);
+        for (let e of [].concat(t)) {
+          let t = o(String(e), r);
+          if (s.some((e) => t(e))) {
+            return true;
+          }
+        }
+        return false;
+      };
+      micromatch.every = (e, t, r) => {
+        let s = [].concat(e);
+        for (let e of [].concat(t)) {
+          let t = o(String(e), r);
+          if (!s.every((e) => t(e))) {
+            return false;
+          }
+        }
+        return true;
+      };
+      micromatch.all = (e, t, r) => {
+        if (typeof e !== "string") {
+          throw new TypeError(`Expected a string: "${s.inspect(e)}"`);
+        }
+        return [].concat(t).every((t) => o(t, r)(e));
+      };
+      micromatch.capture = (e, t, r) => {
+        let s = i.isWindows(r);
+        let n = o.makeRe(String(e), { ...r, capture: true });
+        let a = n.exec(s ? i.toPosixSlashes(t) : t);
+        if (a) {
+          return a.slice(1).map((e) => (e === void 0 ? "" : e));
+        }
+      };
+      micromatch.makeRe = (...e) => o.makeRe(...e);
+      micromatch.scan = (...e) => o.scan(...e);
+      micromatch.parse = (e, t) => {
+        let r = [];
+        for (let s of [].concat(e || [])) {
+          for (let e of n(String(s), t)) {
+            r.push(o.parse(e, t));
+          }
+        }
+        return r;
+      };
+      micromatch.braces = (e, t) => {
+        if (typeof e !== "string") throw new TypeError("Expected a string");
+        if ((t && t.nobrace === true) || !/\{.*\}/.test(e)) {
+          return [e];
+        }
+        return n(e, t);
+      };
+      micromatch.braceExpand = (e, t) => {
+        if (typeof e !== "string") throw new TypeError("Expected a string");
+        return micromatch.braces(e, { ...t, expand: true });
+      };
+      e.exports = micromatch;
+    },
+    5278: (e, t, r) => {
+      var s = typeof Map === "function" && Map.prototype;
+      var n =
+        Object.getOwnPropertyDescriptor && s
+          ? Object.getOwnPropertyDescriptor(Map.prototype, "size")
+          : null;
+      var o = s && n && typeof n.get === "function" ? n.get : null;
+      var i = s && Map.prototype.forEach;
+      var a = typeof Set === "function" && Set.prototype;
+      var u =
+        Object.getOwnPropertyDescriptor && a
+          ? Object.getOwnPropertyDescriptor(Set.prototype, "size")
+          : null;
+      var c = a && u && typeof u.get === "function" ? u.get : null;
+      var p = a && Set.prototype.forEach;
+      var l = typeof WeakMap === "function" && WeakMap.prototype;
+      var d = l ? WeakMap.prototype.has : null;
+      var f = typeof WeakSet === "function" && WeakSet.prototype;
+      var h = f ? WeakSet.prototype.has : null;
+      var g = typeof WeakRef === "function" && WeakRef.prototype;
+      var m = g ? WeakRef.prototype.deref : null;
+      var y = Boolean.prototype.valueOf;
+      var v = Object.prototype.toString;
+      var $ = Function.prototype.toString;
+      var b = String.prototype.match;
+      var w = String.prototype.slice;
+      var _ = String.prototype.replace;
+      var A = String.prototype.toUpperCase;
+      var S = String.prototype.toLowerCase;
+      var j = RegExp.prototype.test;
+      var E = Array.prototype.concat;
+      var R = Array.prototype.join;
+      var k = Array.prototype.slice;
+      var x = Math.floor;
+      var I = typeof BigInt === "function" ? BigInt.prototype.valueOf : null;
+      var P = Object.getOwnPropertySymbols;
+      var T =
+        typeof Symbol === "function" && typeof Symbol.iterator === "symbol"
+          ? Symbol.prototype.toString
+          : null;
+      var C =
+        typeof Symbol === "function" && typeof Symbol.iterator === "object";
+      var O =
+        typeof Symbol === "function" &&
+        Symbol.toStringTag &&
+        (typeof Symbol.toStringTag === C ? "object" : "symbol")
+          ? Symbol.toStringTag
+          : null;
+      var M = Object.prototype.propertyIsEnumerable;
+      var N =
+        (typeof Reflect === "function"
+          ? Reflect.getPrototypeOf
+          : Object.getPrototypeOf) ||
+        ([].__proto__ === Array.prototype
+          ? function (e) {
+              return e.__proto__;
+            }
+          : null);
+      function addNumericSeparator(e, t) {
+        if (
+          e === Infinity ||
+          e === -Infinity ||
+          e !== e ||
+          (e && e > -1e3 && e < 1e3) ||
+          j.call(/e/, t)
+        ) {
+          return t;
+        }
+        var r = /[0-9](?=(?:[0-9]{3})+(?![0-9]))/g;
+        if (typeof e === "number") {
+          var s = e < 0 ? -x(-e) : x(e);
+          if (s !== e) {
+            var n = String(s);
+            var o = w.call(t, n.length + 1);
+            return (
+              _.call(n, r, "$&_") +
+              "." +
+              _.call(_.call(o, /([0-9]{3})/g, "$&_"), /_$/, "")
+            );
+          }
+        }
+        return _.call(t, r, "$&_");
+      }
+      var L = r(8050);
+      var B = L.custom;
+      var F = isSymbol(B) ? B : null;
+      e.exports = function inspect_(e, t, r, s) {
+        var n = t || {};
+        if (
+          has(n, "quoteStyle") &&
+          n.quoteStyle !== "single" &&
+          n.quoteStyle !== "double"
+        ) {
+          throw new TypeError(
+            'option "quoteStyle" must be "single" or "double"',
+          );
+        }
+        if (
+          has(n, "maxStringLength") &&
+          (typeof n.maxStringLength === "number"
+            ? n.maxStringLength < 0 && n.maxStringLength !== Infinity
+            : n.maxStringLength !== null)
+        ) {
+          throw new TypeError(
+            'option "maxStringLength", if provided, must be a positive integer, Infinity, or `null`',
+          );
+        }
+        var a = has(n, "customInspect") ? n.customInspect : true;
+        if (typeof a !== "boolean" && a !== "symbol") {
+          throw new TypeError(
+            "option \"customInspect\", if provided, must be `true`, `false`, or `'symbol'`",
+          );
+        }
+        if (
+          has(n, "indent") &&
+          n.indent !== null &&
+          n.indent !== "\t" &&
+          !(parseInt(n.indent, 10) === n.indent && n.indent > 0)
+        ) {
+          throw new TypeError(
+            'option "indent" must be "\\t", an integer > 0, or `null`',
+          );
+        }
+        if (
+          has(n, "numericSeparator") &&
+          typeof n.numericSeparator !== "boolean"
+        ) {
+          throw new TypeError(
+            'option "numericSeparator", if provided, must be `true` or `false`',
+          );
+        }
+        var u = n.numericSeparator;
+        if (typeof e === "undefined") {
+          return "undefined";
+        }
+        if (e === null) {
+          return "null";
+        }
+        if (typeof e === "boolean") {
+          return e ? "true" : "false";
+        }
+        if (typeof e === "string") {
+          return inspectString(e, n);
+        }
+        if (typeof e === "number") {
+          if (e === 0) {
+            return Infinity / e > 0 ? "0" : "-0";
+          }
+          var l = String(e);
+          return u ? addNumericSeparator(e, l) : l;
+        }
+        if (typeof e === "bigint") {
+          var d = String(e) + "n";
+          return u ? addNumericSeparator(e, d) : d;
+        }
+        var f = typeof n.depth === "undefined" ? 5 : n.depth;
+        if (typeof r === "undefined") {
+          r = 0;
+        }
+        if (r >= f && f > 0 && typeof e === "object") {
+          return isArray(e) ? "[Array]" : "[Object]";
+        }
+        var h = getIndent(n, r);
+        if (typeof s === "undefined") {
+          s = [];
+        } else if (indexOf(s, e) >= 0) {
+          return "[Circular]";
+        }
+        function inspect(e, t, o) {
+          if (t) {
+            s = k.call(s);
+            s.push(t);
+          }
+          if (o) {
+            var i = { depth: n.depth };
+            if (has(n, "quoteStyle")) {
+              i.quoteStyle = n.quoteStyle;
+            }
+            return inspect_(e, i, r + 1, s);
+          }
+          return inspect_(e, n, r + 1, s);
+        }
+        if (typeof e === "function" && !isRegExp(e)) {
+          var g = nameOf(e);
+          var m = arrObjKeys(e, inspect);
+          return (
+            "[Function" +
+            (g ? ": " + g : " (anonymous)") +
+            "]" +
+            (m.length > 0 ? " { " + R.call(m, ", ") + " }" : "")
+          );
+        }
+        if (isSymbol(e)) {
+          var v = C
+            ? _.call(String(e), /^(Symbol\(.*\))_[^)]*$/, "$1")
+            : T.call(e);
+          return typeof e === "object" && !C ? markBoxed(v) : v;
+        }
+        if (isElement(e)) {
+          var $ = "<" + S.call(String(e.nodeName));
+          var b = e.attributes || [];
+          for (var A = 0; A < b.length; A++) {
+            $ +=
+              " " +
+              b[A].name +
+              "=" +
+              wrapQuotes(quote(b[A].value), "double", n);
+          }
+          $ += ">";
+          if (e.childNodes && e.childNodes.length) {
+            $ += "...";
+          }
+          $ += "</" + S.call(String(e.nodeName)) + ">";
+          return $;
+        }
+        if (isArray(e)) {
+          if (e.length === 0) {
+            return "[]";
+          }
+          var j = arrObjKeys(e, inspect);
+          if (h && !singleLineValues(j)) {
+            return "[" + indentedJoin(j, h) + "]";
+          }
+          return "[ " + R.call(j, ", ") + " ]";
+        }
+        if (isError(e)) {
+          var x = arrObjKeys(e, inspect);
+          if (
+            !("cause" in Error.prototype) &&
+            "cause" in e &&
+            !M.call(e, "cause")
+          ) {
+            return (
+              "{ [" +
+              String(e) +
+              "] " +
+              R.call(E.call("[cause]: " + inspect(e.cause), x), ", ") +
+              " }"
+            );
+          }
+          if (x.length === 0) {
+            return "[" + String(e) + "]";
+          }
+          return "{ [" + String(e) + "] " + R.call(x, ", ") + " }";
+        }
+        if (typeof e === "object" && a) {
+          if (F && typeof e[F] === "function" && L) {
+            return L(e, { depth: f - r });
+          } else if (a !== "symbol" && typeof e.inspect === "function") {
+            return e.inspect();
+          }
+        }
+        if (isMap(e)) {
+          var P = [];
+          if (i) {
+            i.call(e, function (t, r) {
+              P.push(inspect(r, e, true) + " => " + inspect(t, e));
+            });
+          }
+          return collectionOf("Map", o.call(e), P, h);
+        }
+        if (isSet(e)) {
+          var B = [];
+          if (p) {
+            p.call(e, function (t) {
+              B.push(inspect(t, e));
+            });
+          }
+          return collectionOf("Set", c.call(e), B, h);
+        }
+        if (isWeakMap(e)) {
+          return weakCollectionOf("WeakMap");
+        }
+        if (isWeakSet(e)) {
+          return weakCollectionOf("WeakSet");
+        }
+        if (isWeakRef(e)) {
+          return weakCollectionOf("WeakRef");
+        }
+        if (isNumber(e)) {
+          return markBoxed(inspect(Number(e)));
+        }
+        if (isBigInt(e)) {
+          return markBoxed(inspect(I.call(e)));
+        }
+        if (isBoolean(e)) {
+          return markBoxed(y.call(e));
+        }
+        if (isString(e)) {
+          return markBoxed(inspect(String(e)));
+        }
+        if (!isDate(e) && !isRegExp(e)) {
+          var q = arrObjKeys(e, inspect);
+          var G = N
+            ? N(e) === Object.prototype
+            : e instanceof Object || e.constructor === Object;
+          var D = e instanceof Object ? "" : "null prototype";
+          var H =
+            !G && O && Object(e) === e && O in e
+              ? w.call(toStr(e), 8, -1)
+              : D
+                ? "Object"
+                : "";
+          var U =
+            G || typeof e.constructor !== "function"
+              ? ""
+              : e.constructor.name
+                ? e.constructor.name + " "
+                : "";
+          var K =
+            U +
+            (H || D
+              ? "[" + R.call(E.call([], H || [], D || []), ": ") + "] "
+              : "");
+          if (q.length === 0) {
+            return K + "{}";
+          }
+          if (h) {
+            return K + "{" + indentedJoin(q, h) + "}";
+          }
+          return K + "{ " + R.call(q, ", ") + " }";
+        }
+        return String(e);
+      };
+      function wrapQuotes(e, t, r) {
+        var s = (r.quoteStyle || t) === "double" ? '"' : "'";
+        return s + e + s;
+      }
+      function quote(e) {
+        return _.call(String(e), /"/g, "&quot;");
+      }
+      function isArray(e) {
+        return (
+          toStr(e) === "[object Array]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isDate(e) {
+        return (
+          toStr(e) === "[object Date]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isRegExp(e) {
+        return (
+          toStr(e) === "[object RegExp]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isError(e) {
+        return (
+          toStr(e) === "[object Error]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isString(e) {
+        return (
+          toStr(e) === "[object String]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isNumber(e) {
+        return (
+          toStr(e) === "[object Number]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isBoolean(e) {
+        return (
+          toStr(e) === "[object Boolean]" &&
+          (!O || !(typeof e === "object" && O in e))
+        );
+      }
+      function isSymbol(e) {
+        if (C) {
+          return e && typeof e === "object" && e instanceof Symbol;
+        }
+        if (typeof e === "symbol") {
+          return true;
+        }
+        if (!e || typeof e !== "object" || !T) {
+          return false;
+        }
+        try {
+          T.call(e);
+          return true;
+        } catch (e) {}
+        return false;
+      }
+      function isBigInt(e) {
+        if (!e || typeof e !== "object" || !I) {
+          return false;
+        }
+        try {
+          I.call(e);
+          return true;
+        } catch (e) {}
+        return false;
+      }
+      var q =
+        Object.prototype.hasOwnProperty ||
+        function (e) {
+          return e in this;
+        };
+      function has(e, t) {
+        return q.call(e, t);
+      }
+      function toStr(e) {
+        return v.call(e);
+      }
+      function nameOf(e) {
+        if (e.name) {
+          return e.name;
+        }
+        var t = b.call($.call(e), /^function\s*([\w$]+)/);
+        if (t) {
+          return t[1];
+        }
+        return null;
+      }
+      function indexOf(e, t) {
+        if (e.indexOf) {
+          return e.indexOf(t);
+        }
+        for (var r = 0, s = e.length; r < s; r++) {
+          if (e[r] === t) {
+            return r;
+          }
+        }
+        return -1;
+      }
+      function isMap(e) {
+        if (!o || !e || typeof e !== "object") {
+          return false;
+        }
+        try {
+          o.call(e);
+          try {
+            c.call(e);
+          } catch (e) {
+            return true;
+          }
+          return e instanceof Map;
+        } catch (e) {}
+        return false;
+      }
+      function isWeakMap(e) {
+        if (!d || !e || typeof e !== "object") {
+          return false;
+        }
+        try {
+          d.call(e, d);
+          try {
+            h.call(e, h);
+          } catch (e) {
+            return true;
+          }
+          return e instanceof WeakMap;
+        } catch (e) {}
+        return false;
+      }
+      function isWeakRef(e) {
+        if (!m || !e || typeof e !== "object") {
+          return false;
+        }
+        try {
+          m.call(e);
+          return true;
+        } catch (e) {}
+        return false;
+      }
+      function isSet(e) {
+        if (!c || !e || typeof e !== "object") {
+          return false;
+        }
+        try {
+          c.call(e);
+          try {
+            o.call(e);
+          } catch (e) {
+            return true;
+          }
+          return e instanceof Set;
+        } catch (e) {}
+        return false;
+      }
+      function isWeakSet(e) {
+        if (!h || !e || typeof e !== "object") {
+          return false;
+        }
+        try {
+          h.call(e, h);
+          try {
+            d.call(e, d);
+          } catch (e) {
+            return true;
+          }
+          return e instanceof WeakSet;
+        } catch (e) {}
+        return false;
+      }
+      function isElement(e) {
+        if (!e || typeof e !== "object") {
+          return false;
+        }
+        if (typeof HTMLElement !== "undefined" && e instanceof HTMLElement) {
+          return true;
+        }
+        return (
+          typeof e.nodeName === "string" && typeof e.getAttribute === "function"
+        );
+      }
+      function inspectString(e, t) {
+        if (e.length > t.maxStringLength) {
+          var r = e.length - t.maxStringLength;
+          var s = "... " + r + " more character" + (r > 1 ? "s" : "");
+          return inspectString(w.call(e, 0, t.maxStringLength), t) + s;
+        }
+        var n = _.call(_.call(e, /(['\\])/g, "\\$1"), /[\x00-\x1f]/g, lowbyte);
+        return wrapQuotes(n, "single", t);
+      }
+      function lowbyte(e) {
+        var t = e.charCodeAt(0);
+        var r = { 8: "b", 9: "t", 10: "n", 12: "f", 13: "r" }[t];
+        if (r) {
+          return "\\" + r;
+        }
+        return "\\x" + (t < 16 ? "0" : "") + A.call(t.toString(16));
+      }
+      function markBoxed(e) {
+        return "Object(" + e + ")";
+      }
+      function weakCollectionOf(e) {
+        return e + " { ? }";
+      }
+      function collectionOf(e, t, r, s) {
+        var n = s ? indentedJoin(r, s) : R.call(r, ", ");
+        return e + " (" + t + ") {" + n + "}";
+      }
+      function singleLineValues(e) {
+        for (var t = 0; t < e.length; t++) {
+          if (indexOf(e[t], "\n") >= 0) {
+            return false;
+          }
+        }
+        return true;
+      }
+      function getIndent(e, t) {
+        var r;
+        if (e.indent === "\t") {
+          r = "\t";
+        } else if (typeof e.indent === "number" && e.indent > 0) {
+          r = R.call(Array(e.indent + 1), " ");
+        } else {
+          return null;
+        }
+        return { base: r, prev: R.call(Array(t + 1), r) };
+      }
+      function indentedJoin(e, t) {
+        if (e.length === 0) {
+          return "";
+        }
+        var r = "\n" + t.prev + t.base;
+        return r + R.call(e, "," + r) + "\n" + t.prev;
+      }
+      function arrObjKeys(e, t) {
+        var r = isArray(e);
+        var s = [];
+        if (r) {
+          s.length = e.length;
+          for (var n = 0; n < e.length; n++) {
+            s[n] = has(e, n) ? t(e[n], e) : "";
+          }
+        }
+        var o = typeof P === "function" ? P(e) : [];
+        var i;
+        if (C) {
+          i = {};
+          for (var a = 0; a < o.length; a++) {
+            i["$" + o[a]] = o[a];
+          }
+        }
+        for (var u in e) {
+          if (!has(e, u)) {
+            continue;
+          }
+          if (r && String(Number(u)) === u && u < e.length) {
+            continue;
+          }
+          if (C && i["$" + u] instanceof Symbol) {
+            continue;
+          } else if (j.call(/[^\w$]/, u)) {
+            s.push(t(u, e) + ": " + t(e[u], e));
+          } else {
+            s.push(u + ": " + t(e[u], e));
+          }
+        }
+        if (typeof P === "function") {
+          for (var c = 0; c < o.length; c++) {
+            if (M.call(e, o[c])) {
+              s.push("[" + t(o[c]) + "]: " + t(e[o[c]], e));
+            }
+          }
+        }
+        return s;
+      }
+    },
+    8050: (e, t, r) => {
+      e.exports = r(9023).inspect;
+    },
+    1026: (e, t, r) => {
+      "use strict";
+      e.exports = r(4156);
+    },
+    7223: (e, t, r) => {
+      "use strict";
+      const s = r(6928);
+      const n = "\\\\/";
+      const o = `[^${n}]`;
+      const i = "\\.";
+      const a = "\\+";
+      const u = "\\?";
+      const c = "\\/";
+      const p = "(?=.)";
+      const l = "[^/]";
+      const d = `(?:${c}|$)`;
+      const f = `(?:^|${c})`;
+      const h = `${i}{1,2}${d}`;
+      const g = `(?!${i})`;
+      const m = `(?!${f}${h})`;
+      const y = `(?!${i}{0,1}${d})`;
+      const v = `(?!${h})`;
+      const $ = `[^.${c}]`;
+      const b = `${l}*?`;
+      const w = {
+        DOT_LITERAL: i,
+        PLUS_LITERAL: a,
+        QMARK_LITERAL: u,
+        SLASH_LITERAL: c,
+        ONE_CHAR: p,
+        QMARK: l,
+        END_ANCHOR: d,
+        DOTS_SLASH: h,
+        NO_DOT: g,
+        NO_DOTS: m,
+        NO_DOT_SLASH: y,
+        NO_DOTS_SLASH: v,
+        QMARK_NO_DOT: $,
+        STAR: b,
+        START_ANCHOR: f,
+      };
+      const _ = {
+        ...w,
+        SLASH_LITERAL: `[${n}]`,
+        QMARK: o,
+        STAR: `${o}*?`,
+        DOTS_SLASH: `${i}{1,2}(?:[${n}]|$)`,
+        NO_DOT: `(?!${i})`,
+        NO_DOTS: `(?!(?:^|[${n}])${i}{1,2}(?:[${n}]|$))`,
+        NO_DOT_SLASH: `(?!${i}{0,1}(?:[${n}]|$))`,
+        NO_DOTS_SLASH: `(?!${i}{1,2}(?:[${n}]|$))`,
+        QMARK_NO_DOT: `[^.${n}]`,
+        START_ANCHOR: `(?:^|[${n}])`,
+        END_ANCHOR: `(?:[${n}]|$)`,
+      };
+      const A = {
+        alnum: "a-zA-Z0-9",
+        alpha: "a-zA-Z",
+        ascii: "\\x00-\\x7F",
+        blank: " \\t",
+        cntrl: "\\x00-\\x1F\\x7F",
+        digit: "0-9",
+        graph: "\\x21-\\x7E",
+        lower: "a-z",
+        print: "\\x20-\\x7E ",
+        punct: "\\-!\"#$%&'()\\*+,./:;<=>?@[\\]^_`{|}~",
+        space: " \\t\\r\\n\\v\\f",
+        upper: "A-Z",
+        word: "A-Za-z0-9_",
+        xdigit: "A-Fa-f0-9",
+      };
+      e.exports = {
+        MAX_LENGTH: 1024 * 64,
+        POSIX_REGEX_SOURCE: A,
+        REGEX_BACKSLASH: /\\(?![*+?^${}(|)[\]])/g,
+        REGEX_NON_SPECIAL_CHARS: /^[^@![\].,$*+?^{}()|\\/]+/,
+        REGEX_SPECIAL_CHARS: /[-*+?.^${}(|)[\]]/,
+        REGEX_SPECIAL_CHARS_BACKREF: /(\\?)((\W)(\3*))/g,
+        REGEX_SPECIAL_CHARS_GLOBAL: /([-*+?.^${}(|)[\]])/g,
+        REGEX_REMOVE_BACKSLASH: /(?:\[.*?[^\\]\]|\\(?=.))/g,
+        REPLACEMENTS: { "***": "*", "**/**": "**", "**/**/**": "**" },
+        CHAR_0: 48,
+        CHAR_9: 57,
+        CHAR_UPPERCASE_A: 65,
+        CHAR_LOWERCASE_A: 97,
+        CHAR_UPPERCASE_Z: 90,
+        CHAR_LOWERCASE_Z: 122,
+        CHAR_LEFT_PARENTHESES: 40,
+        CHAR_RIGHT_PARENTHESES: 41,
+        CHAR_ASTERISK: 42,
+        CHAR_AMPERSAND: 38,
+        CHAR_AT: 64,
+        CHAR_BACKWARD_SLASH: 92,
+        CHAR_CARRIAGE_RETURN: 13,
+        CHAR_CIRCUMFLEX_ACCENT: 94,
+        CHAR_COLON: 58,
+        CHAR_COMMA: 44,
+        CHAR_DOT: 46,
+        CHAR_DOUBLE_QUOTE: 34,
+        CHAR_EQUAL: 61,
+        CHAR_EXCLAMATION_MARK: 33,
+        CHAR_FORM_FEED: 12,
+        CHAR_FORWARD_SLASH: 47,
+        CHAR_GRAVE_ACCENT: 96,
+        CHAR_HASH: 35,
+        CHAR_HYPHEN_MINUS: 45,
+        CHAR_LEFT_ANGLE_BRACKET: 60,
+        CHAR_LEFT_CURLY_BRACE: 123,
+        CHAR_LEFT_SQUARE_BRACKET: 91,
+        CHAR_LINE_FEED: 10,
+        CHAR_NO_BREAK_SPACE: 160,
+        CHAR_PERCENT: 37,
+        CHAR_PLUS: 43,
+        CHAR_QUESTION_MARK: 63,
+        CHAR_RIGHT_ANGLE_BRACKET: 62,
+        CHAR_RIGHT_CURLY_BRACE: 125,
+        CHAR_RIGHT_SQUARE_BRACKET: 93,
+        CHAR_SEMICOLON: 59,
+        CHAR_SINGLE_QUOTE: 39,
+        CHAR_SPACE: 32,
+        CHAR_TAB: 9,
+        CHAR_UNDERSCORE: 95,
+        CHAR_VERTICAL_LINE: 124,
+        CHAR_ZERO_WIDTH_NOBREAK_SPACE: 65279,
+        SEP: s.sep,
+        extglobChars(e) {
+          return {
+            "!": { type: "negate", open: "(?:(?!(?:", close: `))${e.STAR})` },
+            "?": { type: "qmark", open: "(?:", close: ")?" },
+            "+": { type: "plus", open: "(?:", close: ")+" },
+            "*": { type: "star", open: "(?:", close: ")*" },
+            "@": { type: "at", open: "(?:", close: ")" },
+          };
+        },
+        globChars(e) {
+          return e === true ? _ : w;
+        },
+      };
+    },
+    3717: (e, t, r) => {
+      "use strict";
+      const s = r(7223);
+      const n = r(2599);
+      const {
+        MAX_LENGTH: o,
+        POSIX_REGEX_SOURCE: i,
+        REGEX_NON_SPECIAL_CHARS: a,
+        REGEX_SPECIAL_CHARS_BACKREF: u,
+        REPLACEMENTS: c,
+      } = s;
+      const expandRange = (e, t) => {
+        if (typeof t.expandRange === "function") {
+          return t.expandRange(...e, t);
+        }
+        e.sort();
+        const r = `[${e.join("-")}]`;
+        try {
+          new RegExp(r);
+        } catch (t) {
+          return e.map((e) => n.escapeRegex(e)).join("..");
+        }
+        return r;
+      };
+      const syntaxError = (e, t) =>
+        `Missing ${e}: "${t}" - use "\\\\${t}" to match literal characters`;
+      const parse = (e, t) => {
+        if (typeof e !== "string") {
+          throw new TypeError("Expected a string");
+        }
+        e = c[e] || e;
+        const r = { ...t };
+        const p =
+          typeof r.maxLength === "number" ? Math.min(o, r.maxLength) : o;
+        let l = e.length;
+        if (l > p) {
+          throw new SyntaxError(
+            `Input length: ${l}, exceeds maximum allowed length: ${p}`,
+          );
+        }
+        const d = { type: "bos", value: "", output: r.prepend || "" };
+        const f = [d];
+        const h = r.capture ? "" : "?:";
+        const g = n.isWindows(t);
+        const m = s.globChars(g);
+        const y = s.extglobChars(m);
+        const {
+          DOT_LITERAL: v,
+          PLUS_LITERAL: $,
+          SLASH_LITERAL: b,
+          ONE_CHAR: w,
+          DOTS_SLASH: _,
+          NO_DOT: A,
+          NO_DOT_SLASH: S,
+          NO_DOTS_SLASH: j,
+          QMARK: E,
+          QMARK_NO_DOT: R,
+          STAR: k,
+          START_ANCHOR: x,
+        } = m;
+        const globstar = (e) => `(${h}(?:(?!${x}${e.dot ? _ : v}).)*?)`;
+        const I = r.dot ? "" : A;
+        const P = r.dot ? E : R;
+        let T = r.bash === true ? globstar(r) : k;
+        if (r.capture) {
+          T = `(${T})`;
+        }
+        if (typeof r.noext === "boolean") {
+          r.noextglob = r.noext;
+        }
+        const C = {
+          input: e,
+          index: -1,
+          start: 0,
+          dot: r.dot === true,
+          consumed: "",
+          output: "",
+          prefix: "",
+          backtrack: false,
+          negated: false,
+          brackets: 0,
+          braces: 0,
+          parens: 0,
+          quotes: 0,
+          globstar: false,
+          tokens: f,
+        };
+        e = n.removePrefix(e, C);
+        l = e.length;
+        const O = [];
+        const M = [];
+        const N = [];
+        let L = d;
+        let B;
+        const eos = () => C.index === l - 1;
+        const F = (C.peek = (t = 1) => e[C.index + t]);
+        const q = (C.advance = () => e[++C.index] || "");
+        const remaining = () => e.slice(C.index + 1);
+        const consume = (e = "", t = 0) => {
+          C.consumed += e;
+          C.index += t;
+        };
+        const append = (e) => {
+          C.output += e.output != null ? e.output : e.value;
+          consume(e.value);
+        };
+        const negate = () => {
+          let e = 1;
+          while (F() === "!" && (F(2) !== "(" || F(3) === "?")) {
+            q();
+            C.start++;
+            e++;
+          }
+          if (e % 2 === 0) {
+            return false;
+          }
+          C.negated = true;
+          C.start++;
+          return true;
+        };
+        const increment = (e) => {
+          C[e]++;
+          N.push(e);
+        };
+        const decrement = (e) => {
+          C[e]--;
+          N.pop();
+        };
+        const push = (e) => {
+          if (L.type === "globstar") {
+            const t =
+              C.braces > 0 && (e.type === "comma" || e.type === "brace");
+            const r =
+              e.extglob === true ||
+              (O.length && (e.type === "pipe" || e.type === "paren"));
+            if (e.type !== "slash" && e.type !== "paren" && !t && !r) {
+              C.output = C.output.slice(0, -L.output.length);
+              L.type = "star";
+              L.value = "*";
+              L.output = T;
+              C.output += L.output;
+            }
+          }
+          if (O.length && e.type !== "paren") {
+            O[O.length - 1].inner += e.value;
+          }
+          if (e.value || e.output) append(e);
+          if (L && L.type === "text" && e.type === "text") {
+            L.value += e.value;
+            L.output = (L.output || "") + e.value;
+            return;
+          }
+          e.prev = L;
+          f.push(e);
+          L = e;
+        };
+        const extglobOpen = (e, t) => {
+          const s = { ...y[t], conditions: 1, inner: "" };
+          s.prev = L;
+          s.parens = C.parens;
+          s.output = C.output;
+          const n = (r.capture ? "(" : "") + s.open;
+          increment("parens");
+          push({ type: e, value: t, output: C.output ? "" : w });
+          push({ type: "paren", extglob: true, value: q(), output: n });
+          O.push(s);
+        };
+        const extglobClose = (e) => {
+          let s = e.close + (r.capture ? ")" : "");
+          let n;
+          if (e.type === "negate") {
+            let o = T;
+            if (e.inner && e.inner.length > 1 && e.inner.includes("/")) {
+              o = globstar(r);
+            }
+            if (o !== T || eos() || /^\)+$/.test(remaining())) {
+              s = e.close = `)$))${o}`;
+            }
+            if (
+              e.inner.includes("*") &&
+              (n = remaining()) &&
+              /^\.[^\\/.]+$/.test(n)
+            ) {
+              const r = parse(n, { ...t, fastpaths: false }).output;
+              s = e.close = `)${r})${o})`;
+            }
+            if (e.prev.type === "bos") {
+              C.negatedExtglob = true;
+            }
+          }
+          push({ type: "paren", extglob: true, value: B, output: s });
+          decrement("parens");
+        };
+        if (r.fastpaths !== false && !/(^[*!]|[/()[\]{}"])/.test(e)) {
+          let s = false;
+          let o = e.replace(u, (e, t, r, n, o, i) => {
+            if (n === "\\") {
+              s = true;
+              return e;
+            }
+            if (n === "?") {
+              if (t) {
+                return t + n + (o ? E.repeat(o.length) : "");
+              }
+              if (i === 0) {
+                return P + (o ? E.repeat(o.length) : "");
+              }
+              return E.repeat(r.length);
+            }
+            if (n === ".") {
+              return v.repeat(r.length);
+            }
+            if (n === "*") {
+              if (t) {
+                return t + n + (o ? T : "");
+              }
+              return T;
+            }
+            return t ? e : `\\${e}`;
+          });
+          if (s === true) {
+            if (r.unescape === true) {
+              o = o.replace(/\\/g, "");
+            } else {
+              o = o.replace(/\\+/g, (e) =>
+                e.length % 2 === 0 ? "\\\\" : e ? "\\" : "",
+              );
+            }
+          }
+          if (o === e && r.contains === true) {
+            C.output = e;
+            return C;
+          }
+          C.output = n.wrapOutput(o, C, t);
+          return C;
+        }
+        while (!eos()) {
+          B = q();
+          if (B === "\0") {
+            continue;
+          }
+          if (B === "\\") {
+            const e = F();
+            if (e === "/" && r.bash !== true) {
+              continue;
+            }
+            if (e === "." || e === ";") {
+              continue;
+            }
+            if (!e) {
+              B += "\\";
+              push({ type: "text", value: B });
+              continue;
+            }
+            const t = /^\\+/.exec(remaining());
+            let s = 0;
+            if (t && t[0].length > 2) {
+              s = t[0].length;
+              C.index += s;
+              if (s % 2 !== 0) {
+                B += "\\";
+              }
+            }
+            if (r.unescape === true) {
+              B = q();
+            } else {
+              B += q();
+            }
+            if (C.brackets === 0) {
+              push({ type: "text", value: B });
+              continue;
+            }
+          }
+          if (
+            C.brackets > 0 &&
+            (B !== "]" || L.value === "[" || L.value === "[^")
+          ) {
+            if (r.posix !== false && B === ":") {
+              const e = L.value.slice(1);
+              if (e.includes("[")) {
+                L.posix = true;
+                if (e.includes(":")) {
+                  const e = L.value.lastIndexOf("[");
+                  const t = L.value.slice(0, e);
+                  const r = L.value.slice(e + 2);
+                  const s = i[r];
+                  if (s) {
+                    L.value = t + s;
+                    C.backtrack = true;
+                    q();
+                    if (!d.output && f.indexOf(L) === 1) {
+                      d.output = w;
+                    }
+                    continue;
+                  }
+                }
+              }
+            }
+            if ((B === "[" && F() !== ":") || (B === "-" && F() === "]")) {
+              B = `\\${B}`;
+            }
+            if (B === "]" && (L.value === "[" || L.value === "[^")) {
+              B = `\\${B}`;
+            }
+            if (r.posix === true && B === "!" && L.value === "[") {
+              B = "^";
+            }
+            L.value += B;
+            append({ value: B });
+            continue;
+          }
+          if (C.quotes === 1 && B !== '"') {
+            B = n.escapeRegex(B);
+            L.value += B;
+            append({ value: B });
+            continue;
+          }
+          if (B === '"') {
+            C.quotes = C.quotes === 1 ? 0 : 1;
+            if (r.keepQuotes === true) {
+              push({ type: "text", value: B });
+            }
+            continue;
+          }
+          if (B === "(") {
+            increment("parens");
+            push({ type: "paren", value: B });
+            continue;
+          }
+          if (B === ")") {
+            if (C.parens === 0 && r.strictBrackets === true) {
+              throw new SyntaxError(syntaxError("opening", "("));
+            }
+            const e = O[O.length - 1];
+            if (e && C.parens === e.parens + 1) {
+              extglobClose(O.pop());
+              continue;
+            }
+            push({ type: "paren", value: B, output: C.parens ? ")" : "\\)" });
+            decrement("parens");
+            continue;
+          }
+          if (B === "[") {
+            if (r.nobracket === true || !remaining().includes("]")) {
+              if (r.nobracket !== true && r.strictBrackets === true) {
+                throw new SyntaxError(syntaxError("closing", "]"));
+              }
+              B = `\\${B}`;
+            } else {
+              increment("brackets");
+            }
+            push({ type: "bracket", value: B });
+            continue;
+          }
+          if (B === "]") {
+            if (
+              r.nobracket === true ||
+              (L && L.type === "bracket" && L.value.length === 1)
+            ) {
+              push({ type: "text", value: B, output: `\\${B}` });
+              continue;
+            }
+            if (C.brackets === 0) {
+              if (r.strictBrackets === true) {
+                throw new SyntaxError(syntaxError("opening", "["));
+              }
+              push({ type: "text", value: B, output: `\\${B}` });
+              continue;
+            }
+            decrement("brackets");
+            const e = L.value.slice(1);
+            if (L.posix !== true && e[0] === "^" && !e.includes("/")) {
+              B = `/${B}`;
+            }
+            L.value += B;
+            append({ value: B });
+            if (r.literalBrackets === false || n.hasRegexChars(e)) {
+              continue;
+            }
+            const t = n.escapeRegex(L.value);
+            C.output = C.output.slice(0, -L.value.length);
+            if (r.literalBrackets === true) {
+              C.output += t;
+              L.value = t;
+              continue;
+            }
+            L.value = `(${h}${t}|${L.value})`;
+            C.output += L.value;
+            continue;
+          }
+          if (B === "{" && r.nobrace !== true) {
+            increment("braces");
+            const e = {
+              type: "brace",
+              value: B,
+              output: "(",
+              outputIndex: C.output.length,
+              tokensIndex: C.tokens.length,
+            };
+            M.push(e);
+            push(e);
+            continue;
+          }
+          if (B === "}") {
+            const e = M[M.length - 1];
+            if (r.nobrace === true || !e) {
+              push({ type: "text", value: B, output: B });
+              continue;
+            }
+            let t = ")";
+            if (e.dots === true) {
+              const e = f.slice();
+              const s = [];
+              for (let t = e.length - 1; t >= 0; t--) {
+                f.pop();
+                if (e[t].type === "brace") {
+                  break;
+                }
+                if (e[t].type !== "dots") {
+                  s.unshift(e[t].value);
+                }
+              }
+              t = expandRange(s, r);
+              C.backtrack = true;
+            }
+            if (e.comma !== true && e.dots !== true) {
+              const r = C.output.slice(0, e.outputIndex);
+              const s = C.tokens.slice(e.tokensIndex);
+              e.value = e.output = "\\{";
+              B = t = "\\}";
+              C.output = r;
+              for (const e of s) {
+                C.output += e.output || e.value;
+              }
+            }
+            push({ type: "brace", value: B, output: t });
+            decrement("braces");
+            M.pop();
+            continue;
+          }
+          if (B === "|") {
+            if (O.length > 0) {
+              O[O.length - 1].conditions++;
+            }
+            push({ type: "text", value: B });
+            continue;
+          }
+          if (B === ",") {
+            let e = B;
+            const t = M[M.length - 1];
+            if (t && N[N.length - 1] === "braces") {
+              t.comma = true;
+              e = "|";
+            }
+            push({ type: "comma", value: B, output: e });
+            continue;
+          }
+          if (B === "/") {
+            if (L.type === "dot" && C.index === C.start + 1) {
+              C.start = C.index + 1;
+              C.consumed = "";
+              C.output = "";
+              f.pop();
+              L = d;
+              continue;
+            }
+            push({ type: "slash", value: B, output: b });
+            continue;
+          }
+          if (B === ".") {
+            if (C.braces > 0 && L.type === "dot") {
+              if (L.value === ".") L.output = v;
+              const e = M[M.length - 1];
+              L.type = "dots";
+              L.output += B;
+              L.value += B;
+              e.dots = true;
+              continue;
+            }
+            if (
+              C.braces + C.parens === 0 &&
+              L.type !== "bos" &&
+              L.type !== "slash"
+            ) {
+              push({ type: "text", value: B, output: v });
+              continue;
+            }
+            push({ type: "dot", value: B, output: v });
+            continue;
+          }
+          if (B === "?") {
+            const e = L && L.value === "(";
+            if (!e && r.noextglob !== true && F() === "(" && F(2) !== "?") {
+              extglobOpen("qmark", B);
+              continue;
+            }
+            if (L && L.type === "paren") {
+              const e = F();
+              let t = B;
+              if (e === "<" && !n.supportsLookbehinds()) {
+                throw new Error(
+                  "Node.js v10 or higher is required for regex lookbehinds",
+                );
+              }
+              if (
+                (L.value === "(" && !/[!=<:]/.test(e)) ||
+                (e === "<" && !/<([!=]|\w+>)/.test(remaining()))
+              ) {
+                t = `\\${B}`;
+              }
+              push({ type: "text", value: B, output: t });
+              continue;
+            }
+            if (r.dot !== true && (L.type === "slash" || L.type === "bos")) {
+              push({ type: "qmark", value: B, output: R });
+              continue;
+            }
+            push({ type: "qmark", value: B, output: E });
+            continue;
+          }
+          if (B === "!") {
+            if (r.noextglob !== true && F() === "(") {
+              if (F(2) !== "?" || !/[!=<:]/.test(F(3))) {
+                extglobOpen("negate", B);
+                continue;
+              }
+            }
+            if (r.nonegate !== true && C.index === 0) {
+              negate();
+              continue;
+            }
+          }
+          if (B === "+") {
+            if (r.noextglob !== true && F() === "(" && F(2) !== "?") {
+              extglobOpen("plus", B);
+              continue;
+            }
+            if ((L && L.value === "(") || r.regex === false) {
+              push({ type: "plus", value: B, output: $ });
+              continue;
+            }
+            if (
+              (L &&
+                (L.type === "bracket" ||
+                  L.type === "paren" ||
+                  L.type === "brace")) ||
+              C.parens > 0
+            ) {
+              push({ type: "plus", value: B });
+              continue;
+            }
+            push({ type: "plus", value: $ });
+            continue;
+          }
+          if (B === "@") {
+            if (r.noextglob !== true && F() === "(" && F(2) !== "?") {
+              push({ type: "at", extglob: true, value: B, output: "" });
+              continue;
+            }
+            push({ type: "text", value: B });
+            continue;
+          }
+          if (B !== "*") {
+            if (B === "$" || B === "^") {
+              B = `\\${B}`;
+            }
+            const e = a.exec(remaining());
+            if (e) {
+              B += e[0];
+              C.index += e[0].length;
+            }
+            push({ type: "text", value: B });
+            continue;
+          }
+          if (L && (L.type === "globstar" || L.star === true)) {
+            L.type = "star";
+            L.star = true;
+            L.value += B;
+            L.output = T;
+            C.backtrack = true;
+            C.globstar = true;
+            consume(B);
+            continue;
+          }
+          let t = remaining();
+          if (r.noextglob !== true && /^\([^?]/.test(t)) {
+            extglobOpen("star", B);
+            continue;
+          }
+          if (L.type === "star") {
+            if (r.noglobstar === true) {
+              consume(B);
+              continue;
+            }
+            const s = L.prev;
+            const n = s.prev;
+            const o = s.type === "slash" || s.type === "bos";
+            const i = n && (n.type === "star" || n.type === "globstar");
+            if (r.bash === true && (!o || (t[0] && t[0] !== "/"))) {
+              push({ type: "star", value: B, output: "" });
+              continue;
+            }
+            const a =
+              C.braces > 0 && (s.type === "comma" || s.type === "brace");
+            const u = O.length && (s.type === "pipe" || s.type === "paren");
+            if (!o && s.type !== "paren" && !a && !u) {
+              push({ type: "star", value: B, output: "" });
+              continue;
+            }
+            while (t.slice(0, 3) === "/**") {
+              const r = e[C.index + 4];
+              if (r && r !== "/") {
+                break;
+              }
+              t = t.slice(3);
+              consume("/**", 3);
+            }
+            if (s.type === "bos" && eos()) {
+              L.type = "globstar";
+              L.value += B;
+              L.output = globstar(r);
+              C.output = L.output;
+              C.globstar = true;
+              consume(B);
+              continue;
+            }
+            if (s.type === "slash" && s.prev.type !== "bos" && !i && eos()) {
+              C.output = C.output.slice(0, -(s.output + L.output).length);
+              s.output = `(?:${s.output}`;
+              L.type = "globstar";
+              L.output = globstar(r) + (r.strictSlashes ? ")" : "|$)");
+              L.value += B;
+              C.globstar = true;
+              C.output += s.output + L.output;
+              consume(B);
+              continue;
+            }
+            if (s.type === "slash" && s.prev.type !== "bos" && t[0] === "/") {
+              const e = t[1] !== void 0 ? "|$" : "";
+              C.output = C.output.slice(0, -(s.output + L.output).length);
+              s.output = `(?:${s.output}`;
+              L.type = "globstar";
+              L.output = `${globstar(r)}${b}|${b}${e})`;
+              L.value += B;
+              C.output += s.output + L.output;
+              C.globstar = true;
+              consume(B + q());
+              push({ type: "slash", value: "/", output: "" });
+              continue;
+            }
+            if (s.type === "bos" && t[0] === "/") {
+              L.type = "globstar";
+              L.value += B;
+              L.output = `(?:^|${b}|${globstar(r)}${b})`;
+              C.output = L.output;
+              C.globstar = true;
+              consume(B + q());
+              push({ type: "slash", value: "/", output: "" });
+              continue;
+            }
+            C.output = C.output.slice(0, -L.output.length);
+            L.type = "globstar";
+            L.output = globstar(r);
+            L.value += B;
+            C.output += L.output;
+            C.globstar = true;
+            consume(B);
+            continue;
+          }
+          const s = { type: "star", value: B, output: T };
+          if (r.bash === true) {
+            s.output = ".*?";
+            if (L.type === "bos" || L.type === "slash") {
+              s.output = I + s.output;
+            }
+            push(s);
+            continue;
+          }
+          if (
+            L &&
+            (L.type === "bracket" || L.type === "paren") &&
+            r.regex === true
+          ) {
+            s.output = B;
+            push(s);
+            continue;
+          }
+          if (C.index === C.start || L.type === "slash" || L.type === "dot") {
+            if (L.type === "dot") {
+              C.output += S;
+              L.output += S;
+            } else if (r.dot === true) {
+              C.output += j;
+              L.output += j;
+            } else {
+              C.output += I;
+              L.output += I;
+            }
+            if (F() !== "*") {
+              C.output += w;
+              L.output += w;
+            }
+          }
+          push(s);
+        }
+        while (C.brackets > 0) {
+          if (r.strictBrackets === true)
+            throw new SyntaxError(syntaxError("closing", "]"));
+          C.output = n.escapeLast(C.output, "[");
+          decrement("brackets");
+        }
+        while (C.parens > 0) {
+          if (r.strictBrackets === true)
+            throw new SyntaxError(syntaxError("closing", ")"));
+          C.output = n.escapeLast(C.output, "(");
+          decrement("parens");
+        }
+        while (C.braces > 0) {
+          if (r.strictBrackets === true)
+            throw new SyntaxError(syntaxError("closing", "}"));
+          C.output = n.escapeLast(C.output, "{");
+          decrement("braces");
+        }
+        if (
+          r.strictSlashes !== true &&
+          (L.type === "star" || L.type === "bracket")
+        ) {
+          push({ type: "maybe_slash", value: "", output: `${b}?` });
+        }
+        if (C.backtrack === true) {
+          C.output = "";
+          for (const e of C.tokens) {
+            C.output += e.output != null ? e.output : e.value;
+            if (e.suffix) {
+              C.output += e.suffix;
+            }
+          }
+        }
+        return C;
+      };
+      parse.fastpaths = (e, t) => {
+        const r = { ...t };
+        const i =
+          typeof r.maxLength === "number" ? Math.min(o, r.maxLength) : o;
+        const a = e.length;
+        if (a > i) {
+          throw new SyntaxError(
+            `Input length: ${a}, exceeds maximum allowed length: ${i}`,
+          );
+        }
+        e = c[e] || e;
+        const u = n.isWindows(t);
+        const {
+          DOT_LITERAL: p,
+          SLASH_LITERAL: l,
+          ONE_CHAR: d,
+          DOTS_SLASH: f,
+          NO_DOT: h,
+          NO_DOTS: g,
+          NO_DOTS_SLASH: m,
+          STAR: y,
+          START_ANCHOR: v,
+        } = s.globChars(u);
+        const $ = r.dot ? g : h;
+        const b = r.dot ? m : h;
+        const w = r.capture ? "" : "?:";
+        const _ = { negated: false, prefix: "" };
+        let A = r.bash === true ? ".*?" : y;
+        if (r.capture) {
+          A = `(${A})`;
+        }
+        const globstar = (e) => {
+          if (e.noglobstar === true) return A;
+          return `(${w}(?:(?!${v}${e.dot ? f : p}).)*?)`;
+        };
+        const create = (e) => {
+          switch (e) {
+            case "*":
+              return `${$}${d}${A}`;
+            case ".*":
+              return `${p}${d}${A}`;
+            case "*.*":
+              return `${$}${A}${p}${d}${A}`;
+            case "*/*":
+              return `${$}${A}${l}${d}${b}${A}`;
+            case "**":
+              return $ + globstar(r);
+            case "**/*":
+              return `(?:${$}${globstar(r)}${l})?${b}${d}${A}`;
+            case "**/*.*":
+              return `(?:${$}${globstar(r)}${l})?${b}${A}${p}${d}${A}`;
+            case "**/.*":
+              return `(?:${$}${globstar(r)}${l})?${p}${d}${A}`;
+            default: {
+              const t = /^(.*?)\.(\w+)$/.exec(e);
+              if (!t) return;
+              const r = create(t[1]);
+              if (!r) return;
+              return r + p + t[2];
+            }
+          }
+        };
+        const S = n.removePrefix(e, _);
+        let j = create(S);
+        if (j && r.strictSlashes !== true) {
+          j += `${l}?`;
+        }
+        return j;
+      };
+      e.exports = parse;
+    },
+    4156: (e, t, r) => {
+      "use strict";
+      const s = r(6928);
+      const n = r(6745);
+      const o = r(3717);
+      const i = r(2599);
+      const a = r(7223);
+      const isObject = (e) => e && typeof e === "object" && !Array.isArray(e);
+      const picomatch = (e, t, r = false) => {
+        if (Array.isArray(e)) {
+          const s = e.map((e) => picomatch(e, t, r));
+          const arrayMatcher = (e) => {
+            for (const t of s) {
+              const r = t(e);
+              if (r) return r;
+            }
+            return false;
+          };
+          return arrayMatcher;
+        }
+        const s = isObject(e) && e.tokens && e.input;
+        if (e === "" || (typeof e !== "string" && !s)) {
+          throw new TypeError("Expected pattern to be a non-empty string");
+        }
+        const n = t || {};
+        const o = i.isWindows(t);
+        const a = s
+          ? picomatch.compileRe(e, t)
+          : picomatch.makeRe(e, t, false, true);
+        const u = a.state;
+        delete a.state;
+        let isIgnored = () => false;
+        if (n.ignore) {
+          const e = { ...t, ignore: null, onMatch: null, onResult: null };
+          isIgnored = picomatch(n.ignore, e, r);
+        }
+        const matcher = (r, s = false) => {
+          const {
+            isMatch: i,
+            match: c,
+            output: p,
+          } = picomatch.test(r, a, t, { glob: e, posix: o });
+          const l = {
+            glob: e,
+            state: u,
+            regex: a,
+            posix: o,
+            input: r,
+            output: p,
+            match: c,
+            isMatch: i,
+          };
+          if (typeof n.onResult === "function") {
+            n.onResult(l);
+          }
+          if (i === false) {
+            l.isMatch = false;
+            return s ? l : false;
+          }
+          if (isIgnored(r)) {
+            if (typeof n.onIgnore === "function") {
+              n.onIgnore(l);
+            }
+            l.isMatch = false;
+            return s ? l : false;
+          }
+          if (typeof n.onMatch === "function") {
+            n.onMatch(l);
+          }
+          return s ? l : true;
+        };
+        if (r) {
+          matcher.state = u;
+        }
+        return matcher;
+      };
+      picomatch.test = (e, t, r, { glob: s, posix: n } = {}) => {
+        if (typeof e !== "string") {
+          throw new TypeError("Expected input to be a string");
+        }
+        if (e === "") {
+          return { isMatch: false, output: "" };
+        }
+        const o = r || {};
+        const a = o.format || (n ? i.toPosixSlashes : null);
+        let u = e === s;
+        let c = u && a ? a(e) : e;
+        if (u === false) {
+          c = a ? a(e) : e;
+          u = c === s;
+        }
+        if (u === false || o.capture === true) {
+          if (o.matchBase === true || o.basename === true) {
+            u = picomatch.matchBase(e, t, r, n);
+          } else {
+            u = t.exec(c);
+          }
+        }
+        return { isMatch: Boolean(u), match: u, output: c };
+      };
+      picomatch.matchBase = (e, t, r, n = i.isWindows(r)) => {
+        const o = t instanceof RegExp ? t : picomatch.makeRe(t, r);
+        return o.test(s.basename(e));
+      };
+      picomatch.isMatch = (e, t, r) => picomatch(t, r)(e);
+      picomatch.parse = (e, t) => {
+        if (Array.isArray(e)) return e.map((e) => picomatch.parse(e, t));
+        return o(e, { ...t, fastpaths: false });
+      };
+      picomatch.scan = (e, t) => n(e, t);
+      picomatch.compileRe = (e, t, r = false, s = false) => {
+        if (r === true) {
+          return e.output;
+        }
+        const n = t || {};
+        const o = n.contains ? "" : "^";
+        const i = n.contains ? "" : "$";
+        let a = `${o}(?:${e.output})${i}`;
+        if (e && e.negated === true) {
+          a = `^(?!${a}).*$`;
+        }
+        const u = picomatch.toRegex(a, t);
+        if (s === true) {
+          u.state = e;
+        }
+        return u;
+      };
+      picomatch.makeRe = (e, t = {}, r = false, s = false) => {
+        if (!e || typeof e !== "string") {
+          throw new TypeError("Expected a non-empty string");
+        }
+        let n = { negated: false, fastpaths: true };
+        if (t.fastpaths !== false && (e[0] === "." || e[0] === "*")) {
+          n.output = o.fastpaths(e, t);
+        }
+        if (!n.output) {
+          n = o(e, t);
+        }
+        return picomatch.compileRe(n, t, r, s);
+      };
+      picomatch.toRegex = (e, t) => {
+        try {
+          const r = t || {};
+          return new RegExp(e, r.flags || (r.nocase ? "i" : ""));
+        } catch (e) {
+          if (t && t.debug === true) throw e;
+          return /$^/;
+        }
+      };
+      picomatch.constants = a;
+      e.exports = picomatch;
+    },
+    6745: (e, t, r) => {
+      "use strict";
+      const s = r(2599);
+      const {
+        CHAR_ASTERISK: n,
+        CHAR_AT: o,
+        CHAR_BACKWARD_SLASH: i,
+        CHAR_COMMA: a,
+        CHAR_DOT: u,
+        CHAR_EXCLAMATION_MARK: c,
+        CHAR_FORWARD_SLASH: p,
+        CHAR_LEFT_CURLY_BRACE: l,
+        CHAR_LEFT_PARENTHESES: d,
+        CHAR_LEFT_SQUARE_BRACKET: f,
+        CHAR_PLUS: h,
+        CHAR_QUESTION_MARK: g,
+        CHAR_RIGHT_CURLY_BRACE: m,
+        CHAR_RIGHT_PARENTHESES: y,
+        CHAR_RIGHT_SQUARE_BRACKET: v,
+      } = r(7223);
+      const isPathSeparator = (e) => e === p || e === i;
+      const depth = (e) => {
+        if (e.isPrefix !== true) {
+          e.depth = e.isGlobstar ? Infinity : 1;
+        }
+      };
+      const scan = (e, t) => {
+        const r = t || {};
+        const $ = e.length - 1;
+        const b = r.parts === true || r.scanToEnd === true;
+        const w = [];
+        const _ = [];
+        const A = [];
+        let S = e;
+        let j = -1;
+        let E = 0;
+        let R = 0;
+        let k = false;
+        let x = false;
+        let I = false;
+        let P = false;
+        let T = false;
+        let C = false;
+        let O = false;
+        let M = false;
+        let N = false;
+        let L = false;
+        let B = 0;
+        let F;
+        let q;
+        let G = { value: "", depth: 0, isGlob: false };
+        const eos = () => j >= $;
+        const peek = () => S.charCodeAt(j + 1);
+        const advance = () => {
+          F = q;
+          return S.charCodeAt(++j);
+        };
+        while (j < $) {
+          q = advance();
+          let e;
+          if (q === i) {
+            O = G.backslashes = true;
+            q = advance();
+            if (q === l) {
+              C = true;
+            }
+            continue;
+          }
+          if (C === true || q === l) {
+            B++;
+            while (eos() !== true && (q = advance())) {
+              if (q === i) {
+                O = G.backslashes = true;
+                advance();
+                continue;
+              }
+              if (q === l) {
+                B++;
+                continue;
+              }
+              if (C !== true && q === u && (q = advance()) === u) {
+                k = G.isBrace = true;
+                I = G.isGlob = true;
+                L = true;
+                if (b === true) {
+                  continue;
+                }
+                break;
+              }
+              if (C !== true && q === a) {
+                k = G.isBrace = true;
+                I = G.isGlob = true;
+                L = true;
+                if (b === true) {
+                  continue;
+                }
+                break;
+              }
+              if (q === m) {
+                B--;
+                if (B === 0) {
+                  C = false;
+                  k = G.isBrace = true;
+                  L = true;
+                  break;
+                }
+              }
+            }
+            if (b === true) {
+              continue;
+            }
+            break;
+          }
+          if (q === p) {
+            w.push(j);
+            _.push(G);
+            G = { value: "", depth: 0, isGlob: false };
+            if (L === true) continue;
+            if (F === u && j === E + 1) {
+              E += 2;
+              continue;
+            }
+            R = j + 1;
+            continue;
+          }
+          if (r.noext !== true) {
+            const e = q === h || q === o || q === n || q === g || q === c;
+            if (e === true && peek() === d) {
+              I = G.isGlob = true;
+              P = G.isExtglob = true;
+              L = true;
+              if (q === c && j === E) {
+                N = true;
+              }
+              if (b === true) {
+                while (eos() !== true && (q = advance())) {
+                  if (q === i) {
+                    O = G.backslashes = true;
+                    q = advance();
+                    continue;
+                  }
+                  if (q === y) {
+                    I = G.isGlob = true;
+                    L = true;
+                    break;
+                  }
+                }
+                continue;
+              }
+              break;
+            }
+          }
+          if (q === n) {
+            if (F === n) T = G.isGlobstar = true;
+            I = G.isGlob = true;
+            L = true;
+            if (b === true) {
+              continue;
+            }
+            break;
+          }
+          if (q === g) {
+            I = G.isGlob = true;
+            L = true;
+            if (b === true) {
+              continue;
+            }
+            break;
+          }
+          if (q === f) {
+            while (eos() !== true && (e = advance())) {
+              if (e === i) {
+                O = G.backslashes = true;
+                advance();
+                continue;
+              }
+              if (e === v) {
+                x = G.isBracket = true;
+                I = G.isGlob = true;
+                L = true;
+                break;
+              }
+            }
+            if (b === true) {
+              continue;
+            }
+            break;
+          }
+          if (r.nonegate !== true && q === c && j === E) {
+            M = G.negated = true;
+            E++;
+            continue;
+          }
+          if (r.noparen !== true && q === d) {
+            I = G.isGlob = true;
+            if (b === true) {
+              while (eos() !== true && (q = advance())) {
+                if (q === d) {
+                  O = G.backslashes = true;
+                  q = advance();
+                  continue;
+                }
+                if (q === y) {
+                  L = true;
+                  break;
+                }
+              }
+              continue;
+            }
+            break;
+          }
+          if (I === true) {
+            L = true;
+            if (b === true) {
+              continue;
+            }
+            break;
+          }
+        }
+        if (r.noext === true) {
+          P = false;
+          I = false;
+        }
+        let D = S;
+        let H = "";
+        let U = "";
+        if (E > 0) {
+          H = S.slice(0, E);
+          S = S.slice(E);
+          R -= E;
+        }
+        if (D && I === true && R > 0) {
+          D = S.slice(0, R);
+          U = S.slice(R);
+        } else if (I === true) {
+          D = "";
+          U = S;
+        } else {
+          D = S;
+        }
+        if (D && D !== "" && D !== "/" && D !== S) {
+          if (isPathSeparator(D.charCodeAt(D.length - 1))) {
+            D = D.slice(0, -1);
+          }
+        }
+        if (r.unescape === true) {
+          if (U) U = s.removeBackslashes(U);
+          if (D && O === true) {
+            D = s.removeBackslashes(D);
+          }
+        }
+        const K = {
+          prefix: H,
+          input: e,
+          start: E,
+          base: D,
+          glob: U,
+          isBrace: k,
+          isBracket: x,
+          isGlob: I,
+          isExtglob: P,
+          isGlobstar: T,
+          negated: M,
+          negatedExtglob: N,
+        };
+        if (r.tokens === true) {
+          K.maxDepth = 0;
+          if (!isPathSeparator(q)) {
+            _.push(G);
+          }
+          K.tokens = _;
+        }
+        if (r.parts === true || r.tokens === true) {
+          let t;
+          for (let s = 0; s < w.length; s++) {
+            const n = t ? t + 1 : E;
+            const o = w[s];
+            const i = e.slice(n, o);
+            if (r.tokens) {
+              if (s === 0 && E !== 0) {
+                _[s].isPrefix = true;
+                _[s].value = H;
+              } else {
+                _[s].value = i;
+              }
+              depth(_[s]);
+              K.maxDepth += _[s].depth;
+            }
+            if (s !== 0 || i !== "") {
+              A.push(i);
+            }
+            t = o;
+          }
+          if (t && t + 1 < e.length) {
+            const s = e.slice(t + 1);
+            A.push(s);
+            if (r.tokens) {
+              _[_.length - 1].value = s;
+              depth(_[_.length - 1]);
+              K.maxDepth += _[_.length - 1].depth;
+            }
+          }
+          K.slashes = w;
+          K.parts = A;
+        }
+        return K;
+      };
+      e.exports = scan;
+    },
+    2599: (e, t, r) => {
+      "use strict";
+      const s = r(6928);
+      const n = process.platform === "win32";
+      const {
+        REGEX_BACKSLASH: o,
+        REGEX_REMOVE_BACKSLASH: i,
+        REGEX_SPECIAL_CHARS: a,
+        REGEX_SPECIAL_CHARS_GLOBAL: u,
+      } = r(7223);
+      t.isObject = (e) =>
+        e !== null && typeof e === "object" && !Array.isArray(e);
+      t.hasRegexChars = (e) => a.test(e);
+      t.isRegexChar = (e) => e.length === 1 && t.hasRegexChars(e);
+      t.escapeRegex = (e) => e.replace(u, "\\$1");
+      t.toPosixSlashes = (e) => e.replace(o, "/");
+      t.removeBackslashes = (e) => e.replace(i, (e) => (e === "\\" ? "" : e));
+      t.supportsLookbehinds = () => {
+        const e = process.version.slice(1).split(".").map(Number);
+        if ((e.length === 3 && e[0] >= 9) || (e[0] === 8 && e[1] >= 10)) {
+          return true;
+        }
+        return false;
+      };
+      t.isWindows = (e) => {
+        if (e && typeof e.windows === "boolean") {
+          return e.windows;
+        }
+        return n === true || s.sep === "\\";
+      };
+      t.escapeLast = (e, r, s) => {
+        const n = e.lastIndexOf(r, s);
+        if (n === -1) return e;
+        if (e[n - 1] === "\\") return t.escapeLast(e, r, n - 1);
+        return `${e.slice(0, n)}\\${e.slice(n)}`;
+      };
+      t.removePrefix = (e, t = {}) => {
+        let r = e;
+        if (r.startsWith("./")) {
+          r = r.slice(2);
+          t.prefix = "./";
+        }
+        return r;
+      };
+      t.wrapOutput = (e, t = {}, r = {}) => {
+        const s = r.contains ? "" : "^";
+        const n = r.contains ? "" : "$";
+        let o = `${s}(?:${e})${n}`;
+        if (t.negated === true) {
+          o = `(?:^(?!${o}).*$)`;
+        }
+        return o;
+      };
+    },
+    7220: (e) => {
+      "use strict";
+      var t = String.prototype.replace;
+      var r = /%20/g;
+      var s = { RFC1738: "RFC1738", RFC3986: "RFC3986" };
+      e.exports = {
+        default: s.RFC3986,
+        formatters: {
+          RFC1738: function (e) {
+            return t.call(e, r, "+");
+          },
+          RFC3986: function (e) {
+            return String(e);
+          },
+        },
+        RFC1738: s.RFC1738,
+        RFC3986: s.RFC3986,
+      };
+    },
+    5596: (e, t, r) => {
+      "use strict";
+      var s = r(3809);
+      var n = r(1359);
+      var o = r(7220);
+      e.exports = { formats: o, parse: n, stringify: s };
+    },
+    1359: (e, t, r) => {
+      "use strict";
+      var s = r(2965);
+      var n = Object.prototype.hasOwnProperty;
+      var o = Array.isArray;
+      var i = {
+        allowDots: false,
+        allowPrototypes: false,
+        allowSparse: false,
+        arrayLimit: 20,
+        charset: "utf-8",
+        charsetSentinel: false,
+        comma: false,
+        decoder: s.decode,
+        delimiter: "&",
+        depth: 5,
+        ignoreQueryPrefix: false,
+        interpretNumericEntities: false,
+        parameterLimit: 1e3,
+        parseArrays: true,
+        plainObjects: false,
+        strictNullHandling: false,
+      };
+      var interpretNumericEntities = function (e) {
+        return e.replace(/&#(\d+);/g, function (e, t) {
+          return String.fromCharCode(parseInt(t, 10));
+        });
+      };
+      var parseArrayValue = function (e, t) {
+        if (e && typeof e === "string" && t.comma && e.indexOf(",") > -1) {
+          return e.split(",");
+        }
+        return e;
+      };
+      var a = "utf8=%26%2310003%3B";
+      var u = "utf8=%E2%9C%93";
+      var c = function parseQueryStringValues(e, t) {
+        var r = { __proto__: null };
+        var c = t.ignoreQueryPrefix ? e.replace(/^\?/, "") : e;
+        var p = t.parameterLimit === Infinity ? undefined : t.parameterLimit;
+        var l = c.split(t.delimiter, p);
+        var d = -1;
+        var f;
+        var h = t.charset;
+        if (t.charsetSentinel) {
+          for (f = 0; f < l.length; ++f) {
+            if (l[f].indexOf("utf8=") === 0) {
+              if (l[f] === u) {
+                h = "utf-8";
+              } else if (l[f] === a) {
+                h = "iso-8859-1";
+              }
+              d = f;
+              f = l.length;
+            }
+          }
+        }
+        for (f = 0; f < l.length; ++f) {
+          if (f === d) {
+            continue;
+          }
+          var g = l[f];
+          var m = g.indexOf("]=");
+          var y = m === -1 ? g.indexOf("=") : m + 1;
+          var v, $;
+          if (y === -1) {
+            v = t.decoder(g, i.decoder, h, "key");
+            $ = t.strictNullHandling ? null : "";
+          } else {
+            v = t.decoder(g.slice(0, y), i.decoder, h, "key");
+            $ = s.maybeMap(parseArrayValue(g.slice(y + 1), t), function (e) {
+              return t.decoder(e, i.decoder, h, "value");
+            });
+          }
+          if ($ && t.interpretNumericEntities && h === "iso-8859-1") {
+            $ = interpretNumericEntities($);
+          }
+          if (g.indexOf("[]=") > -1) {
+            $ = o($) ? [$] : $;
+          }
+          if (n.call(r, v)) {
+            r[v] = s.combine(r[v], $);
+          } else {
+            r[v] = $;
+          }
+        }
+        return r;
+      };
+      var parseObject = function (e, t, r, s) {
+        var n = s ? t : parseArrayValue(t, r);
+        for (var o = e.length - 1; o >= 0; --o) {
+          var i;
+          var a = e[o];
+          if (a === "[]" && r.parseArrays) {
+            i = [].concat(n);
+          } else {
+            i = r.plainObjects ? Object.create(null) : {};
+            var u =
+              a.charAt(0) === "[" && a.charAt(a.length - 1) === "]"
+                ? a.slice(1, -1)
+                : a;
+            var c = parseInt(u, 10);
+            if (!r.parseArrays && u === "") {
+              i = { 0: n };
+            } else if (
+              !isNaN(c) &&
+              a !== u &&
+              String(c) === u &&
+              c >= 0 &&
+              r.parseArrays &&
+              c <= r.arrayLimit
+            ) {
+              i = [];
+              i[c] = n;
+            } else if (u !== "__proto__") {
+              i[u] = n;
+            }
+          }
+          n = i;
+        }
+        return n;
+      };
+      var p = function parseQueryStringKeys(e, t, r, s) {
+        if (!e) {
+          return;
+        }
+        var o = r.allowDots ? e.replace(/\.([^.[]+)/g, "[$1]") : e;
+        var i = /(\[[^[\]]*])/;
+        var a = /(\[[^[\]]*])/g;
+        var u = r.depth > 0 && i.exec(o);
+        var c = u ? o.slice(0, u.index) : o;
+        var p = [];
+        if (c) {
+          if (!r.plainObjects && n.call(Object.prototype, c)) {
+            if (!r.allowPrototypes) {
+              return;
+            }
+          }
+          p.push(c);
+        }
+        var l = 0;
+        while (r.depth > 0 && (u = a.exec(o)) !== null && l < r.depth) {
+          l += 1;
+          if (!r.plainObjects && n.call(Object.prototype, u[1].slice(1, -1))) {
+            if (!r.allowPrototypes) {
+              return;
+            }
+          }
+          p.push(u[1]);
+        }
+        if (u) {
+          p.push("[" + o.slice(u.index) + "]");
+        }
+        return parseObject(p, t, r, s);
+      };
+      var l = function normalizeParseOptions(e) {
+        if (!e) {
+          return i;
+        }
+        if (
+          e.decoder !== null &&
+          e.decoder !== undefined &&
+          typeof e.decoder !== "function"
+        ) {
+          throw new TypeError("Decoder has to be a function.");
+        }
+        if (
+          typeof e.charset !== "undefined" &&
+          e.charset !== "utf-8" &&
+          e.charset !== "iso-8859-1"
+        ) {
+          throw new TypeError(
+            "The charset option must be either utf-8, iso-8859-1, or undefined",
+          );
+        }
+        var t = typeof e.charset === "undefined" ? i.charset : e.charset;
+        return {
+          allowDots:
+            typeof e.allowDots === "undefined" ? i.allowDots : !!e.allowDots,
+          allowPrototypes:
+            typeof e.allowPrototypes === "boolean"
+              ? e.allowPrototypes
+              : i.allowPrototypes,
+          allowSparse:
+            typeof e.allowSparse === "boolean" ? e.allowSparse : i.allowSparse,
+          arrayLimit:
+            typeof e.arrayLimit === "number" ? e.arrayLimit : i.arrayLimit,
+          charset: t,
+          charsetSentinel:
+            typeof e.charsetSentinel === "boolean"
+              ? e.charsetSentinel
+              : i.charsetSentinel,
+          comma: typeof e.comma === "boolean" ? e.comma : i.comma,
+          decoder: typeof e.decoder === "function" ? e.decoder : i.decoder,
+          delimiter:
+            typeof e.delimiter === "string" || s.isRegExp(e.delimiter)
+              ? e.delimiter
+              : i.delimiter,
+          depth:
+            typeof e.depth === "number" || e.depth === false
+              ? +e.depth
+              : i.depth,
+          ignoreQueryPrefix: e.ignoreQueryPrefix === true,
+          interpretNumericEntities:
+            typeof e.interpretNumericEntities === "boolean"
+              ? e.interpretNumericEntities
+              : i.interpretNumericEntities,
+          parameterLimit:
+            typeof e.parameterLimit === "number"
+              ? e.parameterLimit
+              : i.parameterLimit,
+          parseArrays: e.parseArrays !== false,
+          plainObjects:
+            typeof e.plainObjects === "boolean"
+              ? e.plainObjects
+              : i.plainObjects,
+          strictNullHandling:
+            typeof e.strictNullHandling === "boolean"
+              ? e.strictNullHandling
+              : i.strictNullHandling,
+        };
+      };
+      e.exports = function (e, t) {
+        var r = l(t);
+        if (e === "" || e === null || typeof e === "undefined") {
+          return r.plainObjects ? Object.create(null) : {};
+        }
+        var n = typeof e === "string" ? c(e, r) : e;
+        var o = r.plainObjects ? Object.create(null) : {};
+        var i = Object.keys(n);
+        for (var a = 0; a < i.length; ++a) {
+          var u = i[a];
+          var d = p(u, n[u], r, typeof e === "string");
+          o = s.merge(o, d, r);
+        }
+        if (r.allowSparse === true) {
+          return o;
+        }
+        return s.compact(o);
+      };
+    },
+    3809: (e, t, r) => {
+      "use strict";
+      var s = r(7221);
+      var n = r(2965);
+      var o = r(7220);
+      var i = Object.prototype.hasOwnProperty;
+      var a = {
+        brackets: function brackets(e) {
+          return e + "[]";
+        },
+        comma: "comma",
+        indices: function indices(e, t) {
+          return e + "[" + t + "]";
+        },
+        repeat: function repeat(e) {
+          return e;
+        },
+      };
+      var u = Array.isArray;
+      var c = Array.prototype.push;
+      var pushToArray = function (e, t) {
+        c.apply(e, u(t) ? t : [t]);
+      };
+      var p = Date.prototype.toISOString;
+      var l = o["default"];
+      var d = {
+        addQueryPrefix: false,
+        allowDots: false,
+        charset: "utf-8",
+        charsetSentinel: false,
+        delimiter: "&",
+        encode: true,
+        encoder: n.encode,
+        encodeValuesOnly: false,
+        format: l,
+        formatter: o.formatters[l],
+        indices: false,
+        serializeDate: function serializeDate(e) {
+          return p.call(e);
+        },
+        skipNulls: false,
+        strictNullHandling: false,
+      };
+      var f = function isNonNullishPrimitive(e) {
+        return (
+          typeof e === "string" ||
+          typeof e === "number" ||
+          typeof e === "boolean" ||
+          typeof e === "symbol" ||
+          typeof e === "bigint"
+        );
+      };
+      var h = {};
+      var g = function stringify(
+        e,
+        t,
+        r,
+        o,
+        i,
+        a,
+        c,
+        p,
+        l,
+        g,
+        m,
+        y,
+        v,
+        $,
+        b,
+        w,
+      ) {
+        var _ = e;
+        var A = w;
+        var S = 0;
+        var j = false;
+        while ((A = A.get(h)) !== void undefined && !j) {
+          var E = A.get(e);
+          S += 1;
+          if (typeof E !== "undefined") {
+            if (E === S) {
+              throw new RangeError("Cyclic object value");
+            } else {
+              j = true;
+            }
+          }
+          if (typeof A.get(h) === "undefined") {
+            S = 0;
+          }
+        }
+        if (typeof p === "function") {
+          _ = p(t, _);
+        } else if (_ instanceof Date) {
+          _ = m(_);
+        } else if (r === "comma" && u(_)) {
+          _ = n.maybeMap(_, function (e) {
+            if (e instanceof Date) {
+              return m(e);
+            }
+            return e;
+          });
+        }
+        if (_ === null) {
+          if (i) {
+            return c && !$ ? c(t, d.encoder, b, "key", y) : t;
+          }
+          _ = "";
+        }
+        if (f(_) || n.isBuffer(_)) {
+          if (c) {
+            var R = $ ? t : c(t, d.encoder, b, "key", y);
+            return [v(R) + "=" + v(c(_, d.encoder, b, "value", y))];
+          }
+          return [v(t) + "=" + v(String(_))];
+        }
+        var k = [];
+        if (typeof _ === "undefined") {
+          return k;
+        }
+        var x;
+        if (r === "comma" && u(_)) {
+          if ($ && c) {
+            _ = n.maybeMap(_, c);
+          }
+          x = [{ value: _.length > 0 ? _.join(",") || null : void undefined }];
+        } else if (u(p)) {
+          x = p;
+        } else {
+          var I = Object.keys(_);
+          x = l ? I.sort(l) : I;
+        }
+        var P = o && u(_) && _.length === 1 ? t + "[]" : t;
+        for (var T = 0; T < x.length; ++T) {
+          var C = x[T];
+          var O =
+            typeof C === "object" && typeof C.value !== "undefined"
+              ? C.value
+              : _[C];
+          if (a && O === null) {
+            continue;
+          }
+          var M = u(_)
+            ? typeof r === "function"
+              ? r(P, C)
+              : P
+            : P + (g ? "." + C : "[" + C + "]");
+          w.set(e, S);
+          var N = s();
+          N.set(h, w);
+          pushToArray(
+            k,
+            stringify(
+              O,
+              M,
+              r,
+              o,
+              i,
+              a,
+              r === "comma" && $ && u(_) ? null : c,
+              p,
+              l,
+              g,
+              m,
+              y,
+              v,
+              $,
+              b,
+              N,
+            ),
+          );
+        }
+        return k;
+      };
+      var m = function normalizeStringifyOptions(e) {
+        if (!e) {
+          return d;
+        }
+        if (
+          e.encoder !== null &&
+          typeof e.encoder !== "undefined" &&
+          typeof e.encoder !== "function"
+        ) {
+          throw new TypeError("Encoder has to be a function.");
+        }
+        var t = e.charset || d.charset;
+        if (
+          typeof e.charset !== "undefined" &&
+          e.charset !== "utf-8" &&
+          e.charset !== "iso-8859-1"
+        ) {
+          throw new TypeError(
+            "The charset option must be either utf-8, iso-8859-1, or undefined",
+          );
+        }
+        var r = o["default"];
+        if (typeof e.format !== "undefined") {
+          if (!i.call(o.formatters, e.format)) {
+            throw new TypeError("Unknown format option provided.");
+          }
+          r = e.format;
+        }
+        var s = o.formatters[r];
+        var n = d.filter;
+        if (typeof e.filter === "function" || u(e.filter)) {
+          n = e.filter;
+        }
+        return {
+          addQueryPrefix:
+            typeof e.addQueryPrefix === "boolean"
+              ? e.addQueryPrefix
+              : d.addQueryPrefix,
+          allowDots:
+            typeof e.allowDots === "undefined" ? d.allowDots : !!e.allowDots,
+          charset: t,
+          charsetSentinel:
+            typeof e.charsetSentinel === "boolean"
+              ? e.charsetSentinel
+              : d.charsetSentinel,
+          delimiter:
+            typeof e.delimiter === "undefined" ? d.delimiter : e.delimiter,
+          encode: typeof e.encode === "boolean" ? e.encode : d.encode,
+          encoder: typeof e.encoder === "function" ? e.encoder : d.encoder,
+          encodeValuesOnly:
+            typeof e.encodeValuesOnly === "boolean"
+              ? e.encodeValuesOnly
+              : d.encodeValuesOnly,
+          filter: n,
+          format: r,
+          formatter: s,
+          serializeDate:
+            typeof e.serializeDate === "function"
+              ? e.serializeDate
+              : d.serializeDate,
+          skipNulls:
+            typeof e.skipNulls === "boolean" ? e.skipNulls : d.skipNulls,
+          sort: typeof e.sort === "function" ? e.sort : null,
+          strictNullHandling:
+            typeof e.strictNullHandling === "boolean"
+              ? e.strictNullHandling
+              : d.strictNullHandling,
+        };
+      };
+      e.exports = function (e, t) {
+        var r = e;
+        var n = m(t);
+        var o;
+        var i;
+        if (typeof n.filter === "function") {
+          i = n.filter;
+          r = i("", r);
+        } else if (u(n.filter)) {
+          i = n.filter;
+          o = i;
+        }
+        var c = [];
+        if (typeof r !== "object" || r === null) {
+          return "";
+        }
+        var p;
+        if (t && t.arrayFormat in a) {
+          p = t.arrayFormat;
+        } else if (t && "indices" in t) {
+          p = t.indices ? "indices" : "repeat";
+        } else {
+          p = "indices";
+        }
+        var l = a[p];
+        if (
+          t &&
+          "commaRoundTrip" in t &&
+          typeof t.commaRoundTrip !== "boolean"
+        ) {
+          throw new TypeError("`commaRoundTrip` must be a boolean, or absent");
+        }
+        var d = l === "comma" && t && t.commaRoundTrip;
+        if (!o) {
+          o = Object.keys(r);
+        }
+        if (n.sort) {
+          o.sort(n.sort);
+        }
+        var f = s();
+        for (var h = 0; h < o.length; ++h) {
+          var y = o[h];
+          if (n.skipNulls && r[y] === null) {
+            continue;
+          }
+          pushToArray(
+            c,
+            g(
+              r[y],
+              y,
+              l,
+              d,
+              n.strictNullHandling,
+              n.skipNulls,
+              n.encode ? n.encoder : null,
+              n.filter,
+              n.sort,
+              n.allowDots,
+              n.serializeDate,
+              n.format,
+              n.formatter,
+              n.encodeValuesOnly,
+              n.charset,
+              f,
+            ),
+          );
+        }
+        var v = c.join(n.delimiter);
+        var $ = n.addQueryPrefix === true ? "?" : "";
+        if (n.charsetSentinel) {
+          if (n.charset === "iso-8859-1") {
+            $ += "utf8=%26%2310003%3B&";
+          } else {
+            $ += "utf8=%E2%9C%93&";
+          }
+        }
+        return v.length > 0 ? $ + v : "";
+      };
+    },
+    2965: (e, t, r) => {
+      "use strict";
+      var s = r(7220);
+      var n = Object.prototype.hasOwnProperty;
+      var o = Array.isArray;
+      var i = (function () {
+        var e = [];
+        for (var t = 0; t < 256; ++t) {
+          e.push("%" + ((t < 16 ? "0" : "") + t.toString(16)).toUpperCase());
+        }
+        return e;
+      })();
+      var a = function compactQueue(e) {
+        while (e.length > 1) {
+          var t = e.pop();
+          var r = t.obj[t.prop];
+          if (o(r)) {
+            var s = [];
+            for (var n = 0; n < r.length; ++n) {
+              if (typeof r[n] !== "undefined") {
+                s.push(r[n]);
+              }
+            }
+            t.obj[t.prop] = s;
+          }
+        }
+      };
+      var u = function arrayToObject(e, t) {
+        var r = t && t.plainObjects ? Object.create(null) : {};
+        for (var s = 0; s < e.length; ++s) {
+          if (typeof e[s] !== "undefined") {
+            r[s] = e[s];
+          }
+        }
+        return r;
+      };
+      var c = function merge(e, t, r) {
+        if (!t) {
+          return e;
+        }
+        if (typeof t !== "object") {
+          if (o(e)) {
+            e.push(t);
+          } else if (e && typeof e === "object") {
+            if (
+              (r && (r.plainObjects || r.allowPrototypes)) ||
+              !n.call(Object.prototype, t)
+            ) {
+              e[t] = true;
+            }
+          } else {
+            return [e, t];
+          }
+          return e;
+        }
+        if (!e || typeof e !== "object") {
+          return [e].concat(t);
+        }
+        var s = e;
+        if (o(e) && !o(t)) {
+          s = u(e, r);
+        }
+        if (o(e) && o(t)) {
+          t.forEach(function (t, s) {
+            if (n.call(e, s)) {
+              var o = e[s];
+              if (o && typeof o === "object" && t && typeof t === "object") {
+                e[s] = merge(o, t, r);
+              } else {
+                e.push(t);
+              }
+            } else {
+              e[s] = t;
+            }
+          });
+          return e;
+        }
+        return Object.keys(t).reduce(function (e, s) {
+          var o = t[s];
+          if (n.call(e, s)) {
+            e[s] = merge(e[s], o, r);
+          } else {
+            e[s] = o;
+          }
+          return e;
+        }, s);
+      };
+      var p = function assignSingleSource(e, t) {
+        return Object.keys(t).reduce(function (e, r) {
+          e[r] = t[r];
+          return e;
+        }, e);
+      };
+      var decode = function (e, t, r) {
+        var s = e.replace(/\+/g, " ");
+        if (r === "iso-8859-1") {
+          return s.replace(/%[0-9a-f]{2}/gi, unescape);
+        }
+        try {
+          return decodeURIComponent(s);
+        } catch (e) {
+          return s;
+        }
+      };
+      var l = function encode(e, t, r, n, o) {
+        if (e.length === 0) {
+          return e;
+        }
+        var a = e;
+        if (typeof e === "symbol") {
+          a = Symbol.prototype.toString.call(e);
+        } else if (typeof e !== "string") {
+          a = String(e);
+        }
+        if (r === "iso-8859-1") {
+          return escape(a).replace(/%u[0-9a-f]{4}/gi, function (e) {
+            return "%26%23" + parseInt(e.slice(2), 16) + "%3B";
+          });
+        }
+        var u = "";
+        for (var c = 0; c < a.length; ++c) {
+          var p = a.charCodeAt(c);
+          if (
+            p === 45 ||
+            p === 46 ||
+            p === 95 ||
+            p === 126 ||
+            (p >= 48 && p <= 57) ||
+            (p >= 65 && p <= 90) ||
+            (p >= 97 && p <= 122) ||
+            (o === s.RFC1738 && (p === 40 || p === 41))
+          ) {
+            u += a.charAt(c);
+            continue;
+          }
+          if (p < 128) {
+            u = u + i[p];
+            continue;
+          }
+          if (p < 2048) {
+            u = u + (i[192 | (p >> 6)] + i[128 | (p & 63)]);
+            continue;
+          }
+          if (p < 55296 || p >= 57344) {
+            u =
+              u +
+              (i[224 | (p >> 12)] +
+                i[128 | ((p >> 6) & 63)] +
+                i[128 | (p & 63)]);
+            continue;
+          }
+          c += 1;
+          p = 65536 + (((p & 1023) << 10) | (a.charCodeAt(c) & 1023));
+          u +=
+            i[240 | (p >> 18)] +
+            i[128 | ((p >> 12) & 63)] +
+            i[128 | ((p >> 6) & 63)] +
+            i[128 | (p & 63)];
+        }
+        return u;
+      };
+      var d = function compact(e) {
+        var t = [{ obj: { o: e }, prop: "o" }];
+        var r = [];
+        for (var s = 0; s < t.length; ++s) {
+          var n = t[s];
+          var o = n.obj[n.prop];
+          var i = Object.keys(o);
+          for (var u = 0; u < i.length; ++u) {
+            var c = i[u];
+            var p = o[c];
+            if (typeof p === "object" && p !== null && r.indexOf(p) === -1) {
+              t.push({ obj: o, prop: c });
+              r.push(p);
+            }
+          }
+        }
+        a(t);
+        return e;
+      };
+      var f = function isRegExp(e) {
+        return Object.prototype.toString.call(e) === "[object RegExp]";
+      };
+      var h = function isBuffer(e) {
+        if (!e || typeof e !== "object") {
+          return false;
+        }
+        return !!(
+          e.constructor &&
+          e.constructor.isBuffer &&
+          e.constructor.isBuffer(e)
+        );
+      };
+      var g = function combine(e, t) {
+        return [].concat(e, t);
+      };
+      var m = function maybeMap(e, t) {
+        if (o(e)) {
+          var r = [];
+          for (var s = 0; s < e.length; s += 1) {
+            r.push(t(e[s]));
+          }
+          return r;
+        }
+        return t(e);
+      };
+      e.exports = {
+        arrayToObject: u,
+        assign: p,
+        combine: g,
+        compact: d,
+        decode: decode,
+        encode: l,
+        isBuffer: h,
+        isRegExp: f,
+        maybeMap: m,
+        merge: c,
+      };
+    },
+    7230: (e, t, r) => {
+      "use strict";
+      var s = r(978);
+      var n = r(3968);
+      var o = r(8421)();
+      var i = r(6822);
+      var a = r(1254);
+      var u = s("%Math.floor%");
+      e.exports = function setFunctionLength(e, t) {
+        if (typeof e !== "function") {
+          throw new a("`fn` is not a function");
+        }
+        if (typeof t !== "number" || t < 0 || t > 4294967295 || u(t) !== t) {
+          throw new a("`length` must be a positive 32-bit integer");
+        }
+        var r = arguments.length > 2 && !!arguments[2];
+        var s = true;
+        var c = true;
+        if ("length" in e && i) {
+          var p = i(e, "length");
+          if (p && !p.configurable) {
+            s = false;
+          }
+          if (p && !p.writable) {
+            c = false;
+          }
+        }
+        if (s || c || !r) {
+          if (o) {
+            n(e, "length", t, true, true);
+          } else {
+            n(e, "length", t);
+          }
+        }
+        return e;
+      };
+    },
+    7221: (e, t, r) => {
+      "use strict";
+      var s = r(978);
+      var n = r(1372);
+      var o = r(5278);
+      var i = s("%TypeError%");
+      var a = s("%WeakMap%", true);
+      var u = s("%Map%", true);
+      var c = n("WeakMap.prototype.get", true);
+      var p = n("WeakMap.prototype.set", true);
+      var l = n("WeakMap.prototype.has", true);
+      var d = n("Map.prototype.get", true);
+      var f = n("Map.prototype.set", true);
+      var h = n("Map.prototype.has", true);
+      var listGetNode = function (e, t) {
+        for (var r = e, s; (s = r.next) !== null; r = s) {
+          if (s.key === t) {
+            r.next = s.next;
+            s.next = e.next;
+            e.next = s;
+            return s;
+          }
+        }
+      };
+      var listGet = function (e, t) {
+        var r = listGetNode(e, t);
+        return r && r.value;
+      };
+      var listSet = function (e, t, r) {
+        var s = listGetNode(e, t);
+        if (s) {
+          s.value = r;
+        } else {
+          e.next = { key: t, next: e.next, value: r };
+        }
+      };
+      var listHas = function (e, t) {
+        return !!listGetNode(e, t);
+      };
+      e.exports = function getSideChannel() {
+        var e;
+        var t;
+        var r;
+        var s = {
+          assert: function (e) {
+            if (!s.has(e)) {
+              throw new i("Side channel does not contain " + o(e));
+            }
+          },
+          get: function (s) {
+            if (a && s && (typeof s === "object" || typeof s === "function")) {
+              if (e) {
+                return c(e, s);
+              }
+            } else if (u) {
+              if (t) {
+                return d(t, s);
+              }
+            } else {
+              if (r) {
+                return listGet(r, s);
+              }
+            }
+          },
+          has: function (s) {
+            if (a && s && (typeof s === "object" || typeof s === "function")) {
+              if (e) {
+                return l(e, s);
+              }
+            } else if (u) {
+              if (t) {
+                return h(t, s);
+              }
+            } else {
+              if (r) {
+                return listHas(r, s);
+              }
+            }
+            return false;
+          },
+          set: function (s, n) {
+            if (a && s && (typeof s === "object" || typeof s === "function")) {
+              if (!e) {
+                e = new a();
+              }
+              p(e, s, n);
+            } else if (u) {
+              if (!t) {
+                t = new u();
+              }
+              f(t, s, n);
+            } else {
+              if (!r) {
+                r = { key: {}, next: null };
+              }
+              listSet(r, s, n);
+            }
+          },
+        };
+        return s;
+      };
+    },
+    4395: (e, t, r) => {
+      "use strict";
+      /*!
+       * to-regex-range <https://github.com/micromatch/to-regex-range>
+       *
+       * Copyright (c) 2015-present, Jon Schlinkert.
+       * Released under the MIT License.
+       */ const s = r(7850);
+      const toRegexRange = (e, t, r) => {
+        if (s(e) === false) {
+          throw new TypeError(
+            "toRegexRange: expected the first argument to be a number",
+          );
+        }
+        if (t === void 0 || e === t) {
+          return String(e);
+        }
+        if (s(t) === false) {
+          throw new TypeError(
+            "toRegexRange: expected the second argument to be a number.",
+          );
+        }
+        let n = { relaxZeros: true, ...r };
+        if (typeof n.strictZeros === "boolean") {
+          n.relaxZeros = n.strictZeros === false;
+        }
+        let o = String(n.relaxZeros);
+        let i = String(n.shorthand);
+        let a = String(n.capture);
+        let u = String(n.wrap);
+        let c = e + ":" + t + "=" + o + i + a + u;
+        if (toRegexRange.cache.hasOwnProperty(c)) {
+          return toRegexRange.cache[c].result;
+        }
+        let p = Math.min(e, t);
+        let l = Math.max(e, t);
+        if (Math.abs(p - l) === 1) {
+          let r = e + "|" + t;
+          if (n.capture) {
+            return `(${r})`;
+          }
+          if (n.wrap === false) {
+            return r;
+          }
+          return `(?:${r})`;
+        }
+        let d = hasPadding(e) || hasPadding(t);
+        let f = { min: e, max: t, a: p, b: l };
+        let h = [];
+        let g = [];
+        if (d) {
+          f.isPadded = d;
+          f.maxLen = String(f.max).length;
+        }
+        if (p < 0) {
+          let e = l < 0 ? Math.abs(l) : 1;
+          g = splitToPatterns(e, Math.abs(p), f, n);
+          p = f.a = 0;
+        }
+        if (l >= 0) {
+          h = splitToPatterns(p, l, f, n);
+        }
+        f.negatives = g;
+        f.positives = h;
+        f.result = collatePatterns(g, h, n);
+        if (n.capture === true) {
+          f.result = `(${f.result})`;
+        } else if (n.wrap !== false && h.length + g.length > 1) {
+          f.result = `(?:${f.result})`;
+        }
+        toRegexRange.cache[c] = f;
+        return f.result;
+      };
+      function collatePatterns(e, t, r) {
+        let s = filterPatterns(e, t, "-", false, r) || [];
+        let n = filterPatterns(t, e, "", false, r) || [];
+        let o = filterPatterns(e, t, "-?", true, r) || [];
+        let i = s.concat(o).concat(n);
+        return i.join("|");
+      }
+      function splitToRanges(e, t) {
+        let r = 1;
+        let s = 1;
+        let n = countNines(e, r);
+        let o = new Set([t]);
+        while (e <= n && n <= t) {
+          o.add(n);
+          r += 1;
+          n = countNines(e, r);
+        }
+        n = countZeros(t + 1, s) - 1;
+        while (e < n && n <= t) {
+          o.add(n);
+          s += 1;
+          n = countZeros(t + 1, s) - 1;
+        }
+        o = [...o];
+        o.sort(compare);
+        return o;
+      }
+      function rangeToPattern(e, t, r) {
+        if (e === t) {
+          return { pattern: e, count: [], digits: 0 };
+        }
+        let s = zip(e, t);
+        let n = s.length;
+        let o = "";
+        let i = 0;
+        for (let e = 0; e < n; e++) {
+          let [t, n] = s[e];
+          if (t === n) {
+            o += t;
+          } else if (t !== "0" || n !== "9") {
+            o += toCharacterClass(t, n, r);
+          } else {
+            i++;
+          }
+        }
+        if (i) {
+          o += r.shorthand === true ? "\\d" : "[0-9]";
+        }
+        return { pattern: o, count: [i], digits: n };
+      }
+      function splitToPatterns(e, t, r, s) {
+        let n = splitToRanges(e, t);
+        let o = [];
+        let i = e;
+        let a;
+        for (let e = 0; e < n.length; e++) {
+          let t = n[e];
+          let u = rangeToPattern(String(i), String(t), s);
+          let c = "";
+          if (!r.isPadded && a && a.pattern === u.pattern) {
+            if (a.count.length > 1) {
+              a.count.pop();
+            }
+            a.count.push(u.count[0]);
+            a.string = a.pattern + toQuantifier(a.count);
+            i = t + 1;
+            continue;
+          }
+          if (r.isPadded) {
+            c = padZeros(t, r, s);
+          }
+          u.string = c + u.pattern + toQuantifier(u.count);
+          o.push(u);
+          i = t + 1;
+          a = u;
+        }
+        return o;
+      }
+      function filterPatterns(e, t, r, s, n) {
+        let o = [];
+        for (let n of e) {
+          let { string: e } = n;
+          if (!s && !contains(t, "string", e)) {
+            o.push(r + e);
+          }
+          if (s && contains(t, "string", e)) {
+            o.push(r + e);
+          }
+        }
+        return o;
+      }
+      function zip(e, t) {
+        let r = [];
+        for (let s = 0; s < e.length; s++) r.push([e[s], t[s]]);
+        return r;
+      }
+      function compare(e, t) {
+        return e > t ? 1 : t > e ? -1 : 0;
+      }
+      function contains(e, t, r) {
+        return e.some((e) => e[t] === r);
+      }
+      function countNines(e, t) {
+        return Number(String(e).slice(0, -t) + "9".repeat(t));
+      }
+      function countZeros(e, t) {
+        return e - (e % Math.pow(10, t));
+      }
+      function toQuantifier(e) {
+        let [t = 0, r = ""] = e;
+        if (r || t > 1) {
+          return `{${t + (r ? "," + r : "")}}`;
+        }
+        return "";
+      }
+      function toCharacterClass(e, t, r) {
+        return `[${e}${t - e === 1 ? "" : "-"}${t}]`;
+      }
+      function hasPadding(e) {
+        return /^-?(0+)\d/.test(e);
+      }
+      function padZeros(e, t, r) {
+        if (!t.isPadded) {
+          return e;
+        }
+        let s = Math.abs(t.maxLen - String(e).length);
+        let n = r.relaxZeros !== false;
+        switch (s) {
+          case 0:
+            return "";
+          case 1:
+            return n ? "0?" : "0";
+          case 2:
+            return n ? "0{0,2}" : "00";
+          default: {
+            return n ? `0{0,${s}}` : `0{${s}}`;
+          }
+        }
+      }
+      toRegexRange.cache = {};
+      toRegexRange.clearCache = () => (toRegexRange.cache = {});
+      e.exports = toRegexRange;
+    },
+    5872: (e, t) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      var r =
+        typeof Symbol === "function" && typeof Symbol.iterator === "symbol"
+          ? function (e) {
+              return typeof e;
+            }
+          : function (e) {
+              return e &&
+                typeof Symbol === "function" &&
+                e.constructor === Symbol
+                ? "symbol"
+                : typeof e;
+            };
+      function isLower(e) {
+        return e >= 97 && e <= 122;
+      }
+      function isUpper(e) {
+        return e >= 65 && e <= 90;
+      }
+      function isDigit(e) {
+        return e >= 48 && e <= 57;
+      }
+      function toUpper(e) {
+        return e - 32;
+      }
+      function toUpperSafe(e) {
+        if (isLower(e)) {
+          return e - 32;
+        }
+        return e;
+      }
+      function toLower(e) {
+        return e + 32;
+      }
+      function camelize$1(e, t) {
+        var r = e.charCodeAt(0);
+        if (isDigit(r) || isUpper(r) || r == t) {
+          return e;
+        }
+        var s = [];
+        var n = false;
+        if (isUpper(r)) {
+          n = true;
+          s.push(toLower(r));
+        } else {
+          s.push(r);
+        }
+        var o = e.length;
+        for (var i = 1; i < o; ++i) {
+          var a = e.charCodeAt(i);
+          if (a === t) {
+            n = true;
+            a = e.charCodeAt(++i);
+            if (isNaN(a)) {
+              return e;
+            }
+            s.push(toUpperSafe(a));
+          } else {
+            s.push(a);
+          }
+        }
+        return n ? String.fromCharCode.apply(undefined, s) : e;
+      }
+      function decamelize$1(e, t) {
+        var r = e.charCodeAt(0);
+        if (!isLower(r)) {
+          return e;
+        }
+        var s = e.length;
+        var n = false;
+        var o = [];
+        for (var i = 0; i < s; ++i) {
+          var a = e.charCodeAt(i);
+          if (isUpper(a)) {
+            o.push(t);
+            o.push(toLower(a));
+            n = true;
+          } else {
+            o.push(a);
+          }
+        }
+        return n ? String.fromCharCode.apply(undefined, o) : e;
+      }
+      function pascalize$1(e, t) {
+        var r = e.charCodeAt(0);
+        if (isDigit(r) || r == t) {
+          return e;
+        }
+        var s = e.length;
+        var n = false;
+        var o = [];
+        for (var i = 0; i < s; ++i) {
+          var a = e.charCodeAt(i);
+          if (a === t) {
+            n = true;
+            a = e.charCodeAt(++i);
+            if (isNaN(a)) {
+              return e;
+            }
+            o.push(toUpperSafe(a));
+          } else if (i === 0 && isLower(a)) {
+            n = true;
+            o.push(toUpper(a));
+          } else {
+            o.push(a);
+          }
+        }
+        return n ? String.fromCharCode.apply(undefined, o) : e;
+      }
+      function depascalize$1(e, t) {
+        var r = e.charCodeAt(0);
+        if (!isUpper(r)) {
+          return e;
+        }
+        var s = e.length;
+        var n = false;
+        var o = [];
+        for (var i = 0; i < s; ++i) {
+          var a = e.charCodeAt(i);
+          if (isUpper(a)) {
+            if (i > 0) {
+              o.push(t);
+            }
+            o.push(toLower(a));
+            n = true;
+          } else {
+            o.push(a);
+          }
+        }
+        return n ? String.fromCharCode.apply(undefined, o) : e;
+      }
+      function shouldProcessValue(e) {
+        return (
+          e &&
+          (typeof e === "undefined" ? "undefined" : r(e)) == "object" &&
+          !(e instanceof Date) &&
+          !(e instanceof Function)
+        );
+      }
+      function processKeys(e, t, r) {
+        var s = void 0;
+        if (e instanceof Array) {
+          s = [];
+        } else {
+          if (typeof e.prototype !== "undefined") {
+            return e;
+          }
+          s = {};
+        }
+        for (var n in e) {
+          var o = e[n];
+          if (typeof n === "string") n = t(n, r && r.separator);
+          if (shouldProcessValue(o)) {
+            s[n] = processKeys(o, t, r);
+          } else {
+            s[n] = o;
+          }
+        }
+        return s;
+      }
+      function processKeysInPlace(e, t, r) {
+        var s = Object.keys(e);
+        for (var n = 0; n < s.length; ++n) {
+          var o = s[n];
+          var i = e[o];
+          var a = t(o, r && r.separator);
+          if (a !== o) {
+            delete e[o];
+          }
+          if (shouldProcessValue(i)) {
+            e[a] = processKeys(i, t, r);
+          } else {
+            e[a] = i;
+          }
+        }
+        return e;
+      }
+      function camelize$$1(e, t) {
+        return camelize$1(e, (t && t.charCodeAt(0)) || 95);
+      }
+      function decamelize$$1(e, t) {
+        return decamelize$1(e, (t && t.charCodeAt(0)) || 95);
+      }
+      function pascalize$$1(e, t) {
+        return pascalize$1(e, (t && t.charCodeAt(0)) || 95);
+      }
+      function depascalize$$1(e, t) {
+        return depascalize$1(e, (t && t.charCodeAt(0)) || 95);
+      }
+      function camelizeKeys(e, t) {
+        t = t || {};
+        if (!shouldProcessValue(e)) return e;
+        if (t.inPlace) return processKeysInPlace(e, camelize$$1, t);
+        return processKeys(e, camelize$$1, t);
+      }
+      function decamelizeKeys(e, t) {
+        t = t || {};
+        if (!shouldProcessValue(e)) return e;
+        if (t.inPlace) return processKeysInPlace(e, decamelize$$1, t);
+        return processKeys(e, decamelize$$1, t);
+      }
+      function pascalizeKeys(e, t) {
+        t = t || {};
+        if (!shouldProcessValue(e)) return e;
+        if (t.inPlace) return processKeysInPlace(e, pascalize$$1, t);
+        return processKeys(e, pascalize$$1, t);
+      }
+      function depascalizeKeys(e, t) {
+        t = t || {};
+        if (!shouldProcessValue(e)) return e;
+        if (t.inPlace) return processKeysInPlace(e, depascalize$$1, t);
+        return processKeys(e, depascalize$$1, t);
+      }
+      t.camelize = camelize$$1;
+      t.decamelize = decamelize$$1;
+      t.pascalize = pascalize$$1;
+      t.depascalize = depascalize$$1;
+      t.camelizeKeys = camelizeKeys;
+      t.decamelizeKeys = decamelizeKeys;
+      t.pascalizeKeys = pascalizeKeys;
+      t.depascalizeKeys = depascalizeKeys;
+    },
+    5317: (e) => {
+      "use strict";
+      e.exports = require("child_process");
+    },
+    4434: (e) => {
+      "use strict";
+      e.exports = require("events");
+    },
+    9896: (e) => {
+      "use strict";
+      e.exports = require("fs");
+    },
+    1943: (e) => {
+      "use strict";
+      e.exports = require("fs/promises");
+    },
+    5692: (e) => {
+      "use strict";
+      e.exports = require("https");
+    },
+    6928: (e) => {
+      "use strict";
+      e.exports = require("path");
+    },
+    9023: (e) => {
+      "use strict";
+      e.exports = require("util");
+    },
+    1955: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__awaiter) ||
+        function (e, t, r, s) {
+          function adopt(e) {
+            return e instanceof r
+              ? e
+              : new r(function (t) {
+                  t(e);
+                });
+          }
+          return new (r || (r = Promise))(function (r, n) {
+            function fulfilled(e) {
+              try {
+                step(s.next(e));
+              } catch (e) {
+                n(e);
+              }
+            }
+            function rejected(e) {
+              try {
+                step(s["throw"](e));
+              } catch (e) {
+                n(e);
+              }
+            }
+            function step(e) {
+              e.done ? r(e.value) : adopt(e.value).then(fulfilled, rejected);
+            }
+            step((s = s.apply(e, t || [])).next());
+          });
+        };
+      var n =
+        (this && this.__generator) ||
+        function (e, t) {
+          var r = {
+              label: 0,
+              sent: function () {
+                if (o[0] & 1) throw o[1];
+                return o[1];
+              },
+              trys: [],
+              ops: [],
+            },
+            s,
+            n,
+            o,
+            i;
+          return (
+            (i = { next: verb(0), throw: verb(1), return: verb(2) }),
+            typeof Symbol === "function" &&
+              (i[Symbol.iterator] = function () {
+                return this;
+              }),
+            i
+          );
+          function verb(e) {
+            return function (t) {
+              return step([e, t]);
+            };
+          }
+          function step(a) {
+            if (s) throw new TypeError("Generator is already executing.");
+            while ((i && ((i = 0), a[0] && (r = 0)), r))
+              try {
+                if (
+                  ((s = 1),
+                  n &&
+                    (o =
+                      a[0] & 2
+                        ? n["return"]
+                        : a[0]
+                          ? n["throw"] || ((o = n["return"]) && o.call(n), 0)
+                          : n.next) &&
+                    !(o = o.call(n, a[1])).done)
+                )
+                  return o;
+                if (((n = 0), o)) a = [a[0] & 2, o.value];
+                switch (a[0]) {
+                  case 0:
+                  case 1:
+                    o = a;
+                    break;
+                  case 4:
+                    r.label++;
+                    return { value: a[1], done: false };
+                  case 5:
+                    r.label++;
+                    n = a[1];
+                    a = [0];
+                    continue;
+                  case 7:
+                    a = r.ops.pop();
+                    r.trys.pop();
+                    continue;
+                  default:
+                    if (
+                      !((o = r.trys), (o = o.length > 0 && o[o.length - 1])) &&
+                      (a[0] === 6 || a[0] === 2)
+                    ) {
+                      r = 0;
+                      continue;
+                    }
+                    if (a[0] === 3 && (!o || (a[1] > o[0] && a[1] < o[3]))) {
+                      r.label = a[1];
+                      break;
+                    }
+                    if (a[0] === 6 && r.label < o[1]) {
+                      r.label = o[1];
+                      o = a;
+                      break;
+                    }
+                    if (o && r.label < o[2]) {
+                      r.label = o[2];
+                      r.ops.push(a);
+                      break;
+                    }
+                    if (o[2]) r.ops.pop();
+                    r.trys.pop();
+                    continue;
+                }
+                a = t.call(e, r);
+              } catch (e) {
+                a = [6, e];
+                n = 0;
+              } finally {
+                s = o = 0;
+              }
+            if (a[0] & 5) throw a[1];
+            return { value: a[0] ? a[1] : void 0, done: true };
+          }
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.AsyncOption = void 0;
+      var o = r(4883);
+      var i = r(8593);
+      var a = (function () {
+        function AsyncOption(e) {
+          this.promise = Promise.resolve(e);
+        }
+        AsyncOption.prototype.andThen = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                if (r.isNone()) {
+                  return [2, r];
+                }
+                t = e(r.value);
+                return [2, t instanceof AsyncOption ? t.promise : t];
+              });
+            });
+          });
+        };
+        AsyncOption.prototype.map = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                switch (s.label) {
+                  case 0:
+                    if (r.isNone()) {
+                      return [2, r];
+                    }
+                    t = i.Some;
+                    return [4, e(r.value)];
+                  case 1:
+                    return [2, t.apply(void 0, [s.sent()])];
+                }
+              });
+            });
+          });
+        };
+        AsyncOption.prototype.or = function (e) {
+          return this.orElse(function () {
+            return e;
+          });
+        };
+        AsyncOption.prototype.orElse = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                if (r.isSome()) {
+                  return [2, r];
+                }
+                t = e();
+                return [2, t instanceof AsyncOption ? t.promise : t];
+              });
+            });
+          });
+        };
+        AsyncOption.prototype.toResult = function (e) {
+          return new o.AsyncResult(
+            this.promise.then(function (t) {
+              return t.toResult(e);
+            }),
+          );
+        };
+        AsyncOption.prototype.thenInternal = function (e) {
+          return new AsyncOption(this.promise.then(e));
+        };
+        return AsyncOption;
+      })();
+      t.AsyncOption = a;
+    },
+    4883: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__awaiter) ||
+        function (e, t, r, s) {
+          function adopt(e) {
+            return e instanceof r
+              ? e
+              : new r(function (t) {
+                  t(e);
+                });
+          }
+          return new (r || (r = Promise))(function (r, n) {
+            function fulfilled(e) {
+              try {
+                step(s.next(e));
+              } catch (e) {
+                n(e);
+              }
+            }
+            function rejected(e) {
+              try {
+                step(s["throw"](e));
+              } catch (e) {
+                n(e);
+              }
+            }
+            function step(e) {
+              e.done ? r(e.value) : adopt(e.value).then(fulfilled, rejected);
+            }
+            step((s = s.apply(e, t || [])).next());
+          });
+        };
+      var n =
+        (this && this.__generator) ||
+        function (e, t) {
+          var r = {
+              label: 0,
+              sent: function () {
+                if (o[0] & 1) throw o[1];
+                return o[1];
+              },
+              trys: [],
+              ops: [],
+            },
+            s,
+            n,
+            o,
+            i;
+          return (
+            (i = { next: verb(0), throw: verb(1), return: verb(2) }),
+            typeof Symbol === "function" &&
+              (i[Symbol.iterator] = function () {
+                return this;
+              }),
+            i
+          );
+          function verb(e) {
+            return function (t) {
+              return step([e, t]);
+            };
+          }
+          function step(a) {
+            if (s) throw new TypeError("Generator is already executing.");
+            while ((i && ((i = 0), a[0] && (r = 0)), r))
+              try {
+                if (
+                  ((s = 1),
+                  n &&
+                    (o =
+                      a[0] & 2
+                        ? n["return"]
+                        : a[0]
+                          ? n["throw"] || ((o = n["return"]) && o.call(n), 0)
+                          : n.next) &&
+                    !(o = o.call(n, a[1])).done)
+                )
+                  return o;
+                if (((n = 0), o)) a = [a[0] & 2, o.value];
+                switch (a[0]) {
+                  case 0:
+                  case 1:
+                    o = a;
+                    break;
+                  case 4:
+                    r.label++;
+                    return { value: a[1], done: false };
+                  case 5:
+                    r.label++;
+                    n = a[1];
+                    a = [0];
+                    continue;
+                  case 7:
+                    a = r.ops.pop();
+                    r.trys.pop();
+                    continue;
+                  default:
+                    if (
+                      !((o = r.trys), (o = o.length > 0 && o[o.length - 1])) &&
+                      (a[0] === 6 || a[0] === 2)
+                    ) {
+                      r = 0;
+                      continue;
+                    }
+                    if (a[0] === 3 && (!o || (a[1] > o[0] && a[1] < o[3]))) {
+                      r.label = a[1];
+                      break;
+                    }
+                    if (a[0] === 6 && r.label < o[1]) {
+                      r.label = o[1];
+                      o = a;
+                      break;
+                    }
+                    if (o && r.label < o[2]) {
+                      r.label = o[2];
+                      r.ops.push(a);
+                      break;
+                    }
+                    if (o[2]) r.ops.pop();
+                    r.trys.pop();
+                    continue;
+                }
+                a = t.call(e, r);
+              } catch (e) {
+                a = [6, e];
+                n = 0;
+              } finally {
+                s = o = 0;
+              }
+            if (a[0] & 5) throw a[1];
+            return { value: a[0] ? a[1] : void 0, done: true };
+          }
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.AsyncResult = void 0;
+      var o = r(1955);
+      var i = r(7493);
+      var a = (function () {
+        function AsyncResult(e) {
+          this.promise = Promise.resolve(e);
+        }
+        AsyncResult.prototype.andThen = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                if (r.isErr()) {
+                  return [2, r];
+                }
+                t = e(r.value);
+                return [2, t instanceof AsyncResult ? t.promise : t];
+              });
+            });
+          });
+        };
+        AsyncResult.prototype.map = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                switch (s.label) {
+                  case 0:
+                    if (r.isErr()) {
+                      return [2, r];
+                    }
+                    t = i.Ok;
+                    return [4, e(r.value)];
+                  case 1:
+                    return [2, t.apply(void 0, [s.sent()])];
+                }
+              });
+            });
+          });
+        };
+        AsyncResult.prototype.mapErr = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                switch (s.label) {
+                  case 0:
+                    if (r.isOk()) {
+                      return [2, r];
+                    }
+                    t = i.Err;
+                    return [4, e(r.error)];
+                  case 1:
+                    return [2, t.apply(void 0, [s.sent()])];
+                }
+              });
+            });
+          });
+        };
+        AsyncResult.prototype.or = function (e) {
+          return this.orElse(function () {
+            return e;
+          });
+        };
+        AsyncResult.prototype.orElse = function (e) {
+          var t = this;
+          return this.thenInternal(function (r) {
+            return s(t, void 0, void 0, function () {
+              var t;
+              return n(this, function (s) {
+                if (r.isOk()) {
+                  return [2, r];
+                }
+                t = e(r.error);
+                return [2, t instanceof AsyncResult ? t.promise : t];
+              });
+            });
+          });
+        };
+        AsyncResult.prototype.toOption = function () {
+          return new o.AsyncOption(
+            this.promise.then(function (e) {
+              return e.toOption();
+            }),
+          );
+        };
+        AsyncResult.prototype.thenInternal = function (e) {
+          return new AsyncResult(this.promise.then(e));
+        };
+        return AsyncResult;
+      })();
+      t.AsyncResult = a;
+    },
+    1709: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__createBinding) ||
+        (Object.create
+          ? function (e, t, r, s) {
+              if (s === undefined) s = r;
+              var n = Object.getOwnPropertyDescriptor(t, r);
+              if (
+                !n ||
+                ("get" in n ? !t.__esModule : n.writable || n.configurable)
+              ) {
+                n = {
+                  enumerable: true,
+                  get: function () {
+                    return t[r];
+                  },
+                };
+              }
+              Object.defineProperty(e, s, n);
+            }
+          : function (e, t, r, s) {
+              if (s === undefined) s = r;
+              e[s] = t[r];
+            });
+      var n =
+        (this && this.__exportStar) ||
+        function (e, t) {
+          for (var r in e)
+            if (r !== "default" && !Object.prototype.hasOwnProperty.call(t, r))
+              s(t, e, r);
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      n(r(1955), t);
+      n(r(4883), t);
+      n(r(7493), t);
+      n(r(8593), t);
+    },
+    8593: (e, t, r) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.Option = t.Some = t.None = void 0;
+      var s = r(1955);
+      var n = r(9483);
+      var o = r(7493);
+      var i = (function () {
+        function NoneImpl() {}
+        NoneImpl.prototype.isSome = function () {
+          return false;
+        };
+        NoneImpl.prototype.isNone = function () {
+          return true;
+        };
+        NoneImpl.prototype[Symbol.iterator] = function () {
+          return {
+            next: function () {
+              return { done: true, value: undefined };
+            },
+          };
+        };
+        NoneImpl.prototype.unwrapOr = function (e) {
+          return e;
+        };
+        NoneImpl.prototype.expect = function (e) {
+          throw new Error("".concat(e));
+        };
+        NoneImpl.prototype.unwrap = function () {
+          throw new Error("Tried to unwrap None");
+        };
+        NoneImpl.prototype.map = function (e) {
+          return this;
+        };
+        NoneImpl.prototype.mapOr = function (e, t) {
+          return e;
+        };
+        NoneImpl.prototype.mapOrElse = function (e, t) {
+          return e();
+        };
+        NoneImpl.prototype.or = function (e) {
+          return e;
+        };
+        NoneImpl.prototype.orElse = function (e) {
+          return e();
+        };
+        NoneImpl.prototype.andThen = function (e) {
+          return this;
+        };
+        NoneImpl.prototype.toResult = function (e) {
+          return (0, o.Err)(e);
+        };
+        NoneImpl.prototype.toString = function () {
+          return "None";
+        };
+        NoneImpl.prototype.toAsyncOption = function () {
+          return new s.AsyncOption(t.None);
+        };
+        return NoneImpl;
+      })();
+      t.None = new i();
+      Object.freeze(t.None);
+      var a = (function () {
+        function SomeImpl(e) {
+          if (!(this instanceof SomeImpl)) {
+            return new SomeImpl(e);
+          }
+          this.value = e;
+        }
+        SomeImpl.prototype.isSome = function () {
+          return true;
+        };
+        SomeImpl.prototype.isNone = function () {
+          return false;
+        };
+        SomeImpl.prototype[Symbol.iterator] = function () {
+          var e = Object(this.value);
+          return Symbol.iterator in e
+            ? e[Symbol.iterator]()
+            : {
+                next: function () {
+                  return { done: true, value: undefined };
+                },
+              };
+        };
+        SomeImpl.prototype.unwrapOr = function (e) {
+          return this.value;
+        };
+        SomeImpl.prototype.expect = function (e) {
+          return this.value;
+        };
+        SomeImpl.prototype.unwrap = function () {
+          return this.value;
+        };
+        SomeImpl.prototype.map = function (e) {
+          return (0, t.Some)(e(this.value));
+        };
+        SomeImpl.prototype.mapOr = function (e, t) {
+          return t(this.value);
+        };
+        SomeImpl.prototype.mapOrElse = function (e, t) {
+          return t(this.value);
+        };
+        SomeImpl.prototype.or = function (e) {
+          return this;
+        };
+        SomeImpl.prototype.orElse = function (e) {
+          return this;
+        };
+        SomeImpl.prototype.andThen = function (e) {
+          return e(this.value);
+        };
+        SomeImpl.prototype.toResult = function (e) {
+          return (0, o.Ok)(this.value);
+        };
+        SomeImpl.prototype.toAsyncOption = function () {
+          return new s.AsyncOption(this);
+        };
+        SomeImpl.prototype.safeUnwrap = function () {
+          return this.value;
+        };
+        SomeImpl.prototype.toString = function () {
+          return "Some(".concat((0, n.toString)(this.value), ")");
+        };
+        SomeImpl.EMPTY = new SomeImpl(undefined);
+        return SomeImpl;
+      })();
+      t.Some = a;
+      var u;
+      (function (e) {
+        function all() {
+          var e = [];
+          for (var r = 0; r < arguments.length; r++) {
+            e[r] = arguments[r];
+          }
+          var s = [];
+          for (var n = 0, o = e; n < o.length; n++) {
+            var i = o[n];
+            if (i.isSome()) {
+              s.push(i.value);
+            } else {
+              return i;
+            }
+          }
+          return (0, t.Some)(s);
+        }
+        e.all = all;
+        function any() {
+          var e = [];
+          for (var r = 0; r < arguments.length; r++) {
+            e[r] = arguments[r];
+          }
+          for (var s = 0, n = e; s < n.length; s++) {
+            var o = n[s];
+            if (o.isSome()) {
+              return o;
+            } else {
+              continue;
+            }
+          }
+          return t.None;
+        }
+        e.any = any;
+        function isOption(e) {
+          return e instanceof t.Some || e === t.None;
+        }
+        e.isOption = isOption;
+      })(u || (t.Option = u = {}));
+    },
+    7493: function (e, t, r) {
+      "use strict";
+      var s =
+        (this && this.__spreadArray) ||
+        function (e, t, r) {
+          if (r || arguments.length === 2)
+            for (var s = 0, n = t.length, o; s < n; s++) {
+              if (o || !(s in t)) {
+                if (!o) o = Array.prototype.slice.call(t, 0, s);
+                o[s] = t[s];
+              }
+            }
+          return e.concat(o || Array.prototype.slice.call(t));
+        };
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.Result = t.Ok = t.OkImpl = t.Err = t.ErrImpl = void 0;
+      var n = r(9483);
+      var o = r(8593);
+      var i = r(4883);
+      var a = (function () {
+        function ErrImpl(e) {
+          if (!(this instanceof ErrImpl)) {
+            return new ErrImpl(e);
+          }
+          this.error = e;
+          var t = new Error().stack.split("\n").slice(2);
+          if (t && t.length > 0 && t[0].includes("ErrImpl")) {
+            t.shift();
+          }
+          this._stack = t.join("\n");
+        }
+        ErrImpl.prototype.isOk = function () {
+          return false;
+        };
+        ErrImpl.prototype.isErr = function () {
+          return true;
+        };
+        ErrImpl.prototype[Symbol.iterator] = function () {
+          return {
+            next: function () {
+              return { done: true, value: undefined };
+            },
+          };
+        };
+        ErrImpl.prototype.else = function (e) {
+          return e;
+        };
+        ErrImpl.prototype.unwrapOr = function (e) {
+          return e;
+        };
+        ErrImpl.prototype.expect = function (e) {
+          throw new Error(
+            ""
+              .concat(e, " - Error: ")
+              .concat((0, n.toString)(this.error), "\n")
+              .concat(this._stack),
+            { cause: this.error },
+          );
+        };
+        ErrImpl.prototype.expectErr = function (e) {
+          return this.error;
+        };
+        ErrImpl.prototype.unwrap = function () {
+          throw new Error(
+            "Tried to unwrap Error: "
+              .concat((0, n.toString)(this.error), "\n")
+              .concat(this._stack),
+            { cause: this.error },
+          );
+        };
+        ErrImpl.prototype.unwrapErr = function () {
+          return this.error;
+        };
+        ErrImpl.prototype.map = function (e) {
+          return this;
+        };
+        ErrImpl.prototype.andThen = function (e) {
+          return this;
+        };
+        ErrImpl.prototype.mapErr = function (e) {
+          return new t.Err(e(this.error));
+        };
+        ErrImpl.prototype.mapOr = function (e, t) {
+          return e;
+        };
+        ErrImpl.prototype.mapOrElse = function (e, t) {
+          return e(this.error);
+        };
+        ErrImpl.prototype.or = function (e) {
+          return e;
+        };
+        ErrImpl.prototype.orElse = function (e) {
+          return e(this.error);
+        };
+        ErrImpl.prototype.toOption = function () {
+          return o.None;
+        };
+        ErrImpl.prototype.toString = function () {
+          return "Err(".concat((0, n.toString)(this.error), ")");
+        };
+        Object.defineProperty(ErrImpl.prototype, "stack", {
+          get: function () {
+            return "".concat(this, "\n").concat(this._stack);
+          },
+          enumerable: false,
+          configurable: true,
+        });
+        ErrImpl.prototype.toAsyncResult = function () {
+          return new i.AsyncResult(this);
+        };
+        ErrImpl.EMPTY = new ErrImpl(undefined);
+        return ErrImpl;
+      })();
+      t.ErrImpl = a;
+      t.Err = a;
+      var u = (function () {
+        function OkImpl(e) {
+          if (!(this instanceof OkImpl)) {
+            return new OkImpl(e);
+          }
+          this.value = e;
+        }
+        OkImpl.prototype.isOk = function () {
+          return true;
+        };
+        OkImpl.prototype.isErr = function () {
+          return false;
+        };
+        OkImpl.prototype[Symbol.iterator] = function () {
+          var e = Object(this.value);
+          return Symbol.iterator in e
+            ? e[Symbol.iterator]()
+            : {
+                next: function () {
+                  return { done: true, value: undefined };
+                },
+              };
+        };
+        OkImpl.prototype.else = function (e) {
+          return this.value;
+        };
+        OkImpl.prototype.unwrapOr = function (e) {
+          return this.value;
+        };
+        OkImpl.prototype.expect = function (e) {
+          return this.value;
+        };
+        OkImpl.prototype.expectErr = function (e) {
+          throw new Error(e);
+        };
+        OkImpl.prototype.unwrap = function () {
+          return this.value;
+        };
+        OkImpl.prototype.unwrapErr = function () {
+          throw new Error(
+            "Tried to unwrap Ok: ".concat((0, n.toString)(this.value)),
+            { cause: this.value },
+          );
+        };
+        OkImpl.prototype.map = function (e) {
+          return new t.Ok(e(this.value));
+        };
+        OkImpl.prototype.andThen = function (e) {
+          return e(this.value);
+        };
+        OkImpl.prototype.mapErr = function (e) {
+          return this;
+        };
+        OkImpl.prototype.mapOr = function (e, t) {
+          return t(this.value);
+        };
+        OkImpl.prototype.mapOrElse = function (e, t) {
+          return t(this.value);
+        };
+        OkImpl.prototype.or = function (e) {
+          return this;
+        };
+        OkImpl.prototype.orElse = function (e) {
+          return this;
+        };
+        OkImpl.prototype.toOption = function () {
+          return (0, o.Some)(this.value);
+        };
+        OkImpl.prototype.safeUnwrap = function () {
+          return this.value;
+        };
+        OkImpl.prototype.toString = function () {
+          return "Ok(".concat((0, n.toString)(this.value), ")");
+        };
+        OkImpl.prototype.toAsyncResult = function () {
+          return new i.AsyncResult(this);
+        };
+        OkImpl.EMPTY = new OkImpl(undefined);
+        return OkImpl;
+      })();
+      t.OkImpl = u;
+      t.Ok = u;
+      var c;
+      (function (e) {
+        function all(e) {
+          var r = [];
+          for (var n = 1; n < arguments.length; n++) {
+            r[n - 1] = arguments[n];
+          }
+          var o = e === undefined ? [] : Array.isArray(e) ? e : s([e], r, true);
+          var i = [];
+          for (var a = 0, u = o; a < u.length; a++) {
+            var c = u[a];
+            if (c.isOk()) {
+              i.push(c.value);
+            } else {
+              return c;
+            }
+          }
+          return new t.Ok(i);
+        }
+        e.all = all;
+        function any(e) {
+          var r = [];
+          for (var n = 1; n < arguments.length; n++) {
+            r[n - 1] = arguments[n];
+          }
+          var o = e === undefined ? [] : Array.isArray(e) ? e : s([e], r, true);
+          var i = [];
+          for (var a = 0, u = o; a < u.length; a++) {
+            var c = u[a];
+            if (c.isOk()) {
+              return c;
+            } else {
+              i.push(c.error);
+            }
+          }
+          return new t.Err(i);
+        }
+        e.any = any;
+        function wrap(e) {
+          try {
+            return new t.Ok(e());
+          } catch (e) {
+            return new t.Err(e);
+          }
+        }
+        e.wrap = wrap;
+        function wrapAsync(e) {
+          try {
+            return e()
+              .then(function (e) {
+                return new t.Ok(e);
+              })
+              .catch(function (e) {
+                return new t.Err(e);
+              });
+          } catch (e) {
+            return Promise.resolve(new t.Err(e));
+          }
+        }
+        e.wrapAsync = wrapAsync;
+        function partition(e) {
+          return e.reduce(
+            function (e, t) {
+              var r = e[0],
+                n = e[1];
+              return t.isOk()
+                ? [s(s([], r, true), [t.value], false), n]
+                : [r, s(s([], n, true), [t.error], false)];
+            },
+            [[], []],
+          );
+        }
+        e.partition = partition;
+        function isResult(e) {
+          return e instanceof t.Err || e instanceof t.Ok;
+        }
+        e.isResult = isResult;
+      })(c || (t.Result = c = {}));
+    },
+    9483: (e, t) => {
+      "use strict";
+      Object.defineProperty(t, "__esModule", { value: true });
+      t.toString = void 0;
+      function toString(e) {
+        var t = String(e);
+        if (t === "[object Object]") {
+          try {
+            t = JSON.stringify(e);
+          } catch (e) {}
+        }
+        return t;
+      }
+      t.toString = toString;
+    },
+    6743: (e) => {
+      "use strict";
+      e.exports = JSON.parse(
+        '[{"description":"No API keys or secrets are stored in repository","responsibles":1,"more":""},{"description":"The app does not provide password login","responsibles":1,"more":""},{"description":"Passwords are not stored","responsibles":1,"more":""},{"description":"No sensitive information (passwords, keys, user data, ...) is logged or traced","responsibles":1,"more":"[Logging guide](https://www.notion.so/panterch/Long-story-logging-022722bb878f4724ae5b49e17667b630?pvs=4#9e5a36b7158a4953b73ec6a345bd8989), [Tracing guide](https://www.notion.so/panterch/Long-story-tracing-d8a9ec1ac2ff4fa78cefa8991233224e?pvs=4#535121b5bf9741fbaf8654b4b64d879d)"},{"description":"Passwords are stored hashed with salt and salt is not stored in the repository","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/hash.md)"},{"description":"Input that ends up in DOM is properly sanitized","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/xss.md)"},{"description":"All user inputs have reasonable validations","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/validation.md)"},{"description":"The app is not using cookies","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cookies.md)"},{"description":"The app is using cookies and cookies are properly configured","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cookies.md)"},{"description":"The app uses JWT with a secret and the secret is not stored in the repository","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cookies.md)"},{"description":"Authorization and user roles (RBAC) were reviewed thoroughly","responsibles":2,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/authorization.md)"},{"description":"CORS headers do not use `*`","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/cors.md)"},{"description":"CSP headers are properly configured (no `unsafe-inline` or `unsafe-eval`)","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/csp.md)"},{"description":"DoS defense mechanism is implemented","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/dos.md)"},{"description":"YAML/XML parsing is not used or used YAML/XML parsers have disabled DTD","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/dos.md)"},{"description":"The app implements CSRF prevention","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/csrf.md)"},{"description":"The app has a rate limitter","responsibles":1,"more":""},{"description":"The app has disabled GraphQL introspection and schema registry","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/graphql.md)"},{"description":"The app has set GraphQL complexity query limits","responsibles":1,"more":"[guide](https://git.panter.ch/panter/security-guide/-/blob/main/docs/audit/graphql.md)"},{"description":"`sitemap.xml` does not leak any routes with sensitive data","responsibles":1,"more":""},{"description":"Cloud storage is (private) configured to not leak any sensitive data publicly","responsibles":1,"more":""},{"description":"Security Dashboard checks weekly vulnerable dependencies https://dep.panter.swiss/","responsibles":1,"more":""},{"description":"The app has `.well-known/security.txt` https://securitytxt.org/","responsibles":1,"more":""}]',
+      );
+    },
+  };
+  var t = {};
+  function __nccwpck_require__(r) {
+    var s = t[r];
+    if (s !== undefined) {
+      return s.exports;
+    }
+    var n = (t[r] = { exports: {} });
+    var o = true;
+    try {
+      e[r].call(n.exports, n, n.exports, __nccwpck_require__);
+      o = false;
+    } finally {
+      if (o) delete t[r];
+    }
+    return n.exports;
+  }
+  (() => {
+    var e = Object.getPrototypeOf
+      ? (e) => Object.getPrototypeOf(e)
+      : (e) => e.__proto__;
+    var t;
+    __nccwpck_require__.t = function (r, s) {
+      if (s & 1) r = this(r);
+      if (s & 8) return r;
+      if (typeof r === "object" && r) {
+        if (s & 4 && r.__esModule) return r;
+        if (s & 16 && typeof r.then === "function") return r;
+      }
+      var n = Object.create(null);
+      __nccwpck_require__.r(n);
+      var o = {};
+      t = t || [null, e({}), e([]), e(e)];
+      for (
+        var i = s & 2 && r;
+        typeof i == "object" && !~t.indexOf(i);
+        i = e(i)
+      ) {
+        Object.getOwnPropertyNames(i).forEach((e) => (o[e] = () => r[e]));
+      }
+      o["default"] = () => r;
+      __nccwpck_require__.d(n, o);
+      return n;
+    };
+  })();
+  (() => {
+    __nccwpck_require__.d = (e, t) => {
+      for (var r in t) {
+        if (__nccwpck_require__.o(t, r) && !__nccwpck_require__.o(e, r)) {
+          Object.defineProperty(e, r, { enumerable: true, get: t[r] });
+        }
+      }
+    };
+  })();
+  (() => {
+    __nccwpck_require__.o = (e, t) =>
+      Object.prototype.hasOwnProperty.call(e, t);
+  })();
+  (() => {
+    __nccwpck_require__.r = (e) => {
+      if (typeof Symbol !== "undefined" && Symbol.toStringTag) {
+        Object.defineProperty(e, Symbol.toStringTag, { value: "Module" });
+      }
+      Object.defineProperty(e, "__esModule", { value: true });
+    };
+  })();
+  if (typeof __nccwpck_require__ !== "undefined")
+    __nccwpck_require__.ab = __dirname + "/";
+  var r = {};
+  (() => {
+    "use strict";
+    var e = r;
+    Object.defineProperty(e, "__esModule", { value: true });
+    const t = __nccwpck_require__(7650);
+    const s = __nccwpck_require__(9392);
+    const n = __nccwpck_require__(1276);
+    const o = __nccwpck_require__(1206);
+    const i = __nccwpck_require__(4472);
+    const a = __nccwpck_require__(2596);
+    const u = __nccwpck_require__(906);
+    const c = "https://git.panter.ch";
+    const p = `catci — catladder CI companion\n\nusage:\n  catci security-audit ci-job <path> <gitlab-token> <main-branch> <project-id> <user-id>\n      evaluates ${n.SECURITY_AUDIT_FILE_NAME}; creates a gitlab MR with the\n      audit template when the document is missing (and exits 1)\n\n  catci security-audit check <path>\n      evaluates ${n.SECURITY_AUDIT_FILE_NAME}; exits 1 with instructions when\n      the document is missing or unanswered (no remediation — works on\n      any CI, including github)\n\n  catci release changesets\n      consumes pending .changeset/*.md files: computes the next version\n      from the last v* tag, writes the changelog, commits, tags and\n      pushes (no-op when no changesets are pending)\n\n  catci release changeset-check\n      MR/PR pipelines: reports which changesets the merge request adds,\n      what is pending and what version merging would release (job log,\n      changeset-report.md, sticky MR/PR comment where a token allows);\n      exits 1 when the merge request adds no changeset\n\n  catci release dispatch-tagged-workflow <tag>\n      github only: dispatches the generated taggedRelease workflow for\n      the tag (tags pushed with the job token don't trigger it)\n\n  catci release github-queue-check\n      github only, first step of the manual create-release task:\n      releases right away when the main workflow run for HEAD is green\n      (queued=false step output), queues the release when it is still\n      running (queued=true, marker ref for the release-on-green\n      workflow), fails when it concluded red\n\n  catci release github-queued-guard <head-sha> <conclusion>\n      github only, guard of the release-on-green workflow: consumes the\n      queue marker when it matches the completed main run and decides\n      whether the release step runs (release=true step output)\n\n  catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]\n      npmPackage deploy job: derives version + dist-tag from the\n      pipeline trigger (tagged release -> tag version @latest; branch/MR\n      -> 0.0.0-<slug>-<sha> canary, with next/beta branches publishing\n      under their own dist-tag), stamps package.json and runs npm\n      publish (authenticated via the NPM_TOKEN secret)\n`;
+    const fail = (e) => {
+      console.error(e);
+      process.exit(1);
+    };
+    const evaluateGate = async (e) => {
+      const t = await (0, s.evaluateSecurityAudit)({ path: e });
+      if (t.isErr()) {
+        return null;
+      }
+      if (t.value.score.answeredTopics === 0) {
+        fail(
+          `audit document has no answered topics\n` +
+            `please answer security topics in ${n.SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`,
+        );
+      }
+      console.log((0, s.makeSecurityAuditOverview)(t.value));
+      return t.value;
+    };
+    const securityAuditCheck = async (e) => {
+      const t = await evaluateGate(e);
+      if (!t) {
+        fail(
+          `could not evaluate ${n.SECURITY_AUDIT_FILE_NAME}\n` +
+            `please add a ${n.SECURITY_AUDIT_FILE_NAME} security audit document to the repository ` +
+            `(run \`catladder security audit create\` locally to generate the template)`,
+        );
+      }
+    };
+    const securityAuditCiJob = async (e, r, s, o, i) => {
+      const a = await evaluateGate(e);
+      if (a) {
+        return;
+      }
+      console.log("could not evaluate security audit document");
+      console.log("creating new merge request with security audit template...");
+      const u = new t.Gitlab({ host: c, token: r });
+      const p = await (0, n.createSecurityAuditMergeRequest)({
+        api: u,
+        mainBranch: s,
+        projectId: o,
+        userId: parseInt(i),
+      });
+      if (p.isErr()) {
+        fail(
+          `could not create merge request with security audit template: ${p.error}`,
+        );
+        return;
+      }
+      console.log("security audit merge request created successfully");
+      console.log(
+        `please finish the MR by updating ${n.SECURITY_AUDIT_FILE_NAME}: ${p.value.web_url}`,
+      );
+      process.exit(1);
+    };
+    const main = async () => {
+      const [e, t, ...r] = process.argv.slice(2);
+      if (e === "security-audit" && t === "ci-job" && r.length === 5) {
+        const [e, t, s, n, o] = r;
+        return securityAuditCiJob(e, t, s, n, o);
+      }
+      if (e === "security-audit" && t === "check" && r.length === 1) {
+        return securityAuditCheck(r[0]);
+      }
+      if (e === "release" && t === "changesets" && r.length === 0) {
+        return (0, o.changesetsReleaseJob)();
+      }
+      if (e === "release" && t === "changeset-check" && r.length === 0) {
+        return (0, i.changesetCheckJob)();
+      }
+      if (
+        e === "release" &&
+        t === "dispatch-tagged-workflow" &&
+        r.length === 1
+      ) {
+        return (0, o.dispatchTaggedReleaseWorkflow)(r[0]);
+      }
+      if (e === "release" && t === "github-queue-check" && r.length === 0) {
+        return (0, a.githubQueueCheckJob)();
+      }
+      if (e === "release" && t === "github-queued-guard" && r.length === 2) {
+        return (0, a.githubQueuedGuardJob)(r[0], r[1]);
+      }
+      if (e === "publish" && t === "npm") {
+        const e = (0, u.parseNpmPublishArgs)(r);
+        if (e) {
+          return (0, u.npmPublishJob)(e);
+        }
+      }
+      fail(p);
+    };
+    main().catch((e) => {
+      fail(`catci failed: ${e instanceof Error ? e.message : e}`);
+    });
+  })();
+  module.exports = r;
+})();

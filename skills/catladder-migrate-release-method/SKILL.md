@@ -1,0 +1,233 @@
+---
+name: catladder-migrate-release-method
+description: Migrating a catladder project from one release method to another — semantic-release (conventional commits) ↔ changesets (`.changeset/*.md` files) — including backfilling changesets for everything merged since the last release tag so the changelog and the version bump stay correct. Use when switching `releases.method`, adopting changesets in a project that has been releasing with semantic-release, or going back. Triggers on "switch to changesets", "migrate to changesets", "adopt changesets", "use changesets instead", "back to semantic-release", "change the release method", "backfill changesets".
+---
+
+# Migrating the release method
+
+catladder projects release either with **semantic-release** (version
+derived from conventional commit messages) or with **changesets**
+(version derived from `.changeset/*.md` files that developers write
+deliberately). The method is one field in `catladder.ts`:
+
+```ts
+releases: {
+  when: "manual",
+  method: "changesets", // "semantic-release" (default) | "changesets"
+}
+```
+
+Flipping that field is **not** the whole migration. Read
+`catladder-releases` first if you are unsure how either method works.
+
+## Why a config flip is not enough
+
+The two methods disagree about where "what changed since the last
+release" lives:
+
+| | semantic-release | changesets |
+|---|---|---|
+| source of the bump | commit messages since the last `v*` tag | pending `.changeset/*.md` |
+| changelog text | generated from those commits | the changeset summaries |
+
+Everything up to and including the **last `v*` tag** is already written
+into `CHANGELOG.md` — that part is settled and must not be touched.
+But everything merged **after** that tag is exactly what semantic-release
+would have released next, and after the switch the release job can no
+longer see it. Without a backfill:
+
+- those changes silently disappear from the changelog, and
+- the next version is likely too small (a `feat:` merged since the tag
+  releases as a patch, or nothing releases at all).
+
+So the migration is: **backfill changesets for the commits since the
+last release tag, then flip the config, in one merge request.**
+
+## Step 1 — establish the range
+
+Work on a branch (never directly on the main branch).
+
+```bash
+git fetch --tags
+git describe --tags --abbrev=0 --match "v[0-9]*"
+```
+
+That is the same tag the release job uses. Then list the candidates:
+
+```bash
+git log <tag>..HEAD --no-merges --pretty=format:"%h %s"
+```
+
+Cases:
+
+- **No `v*` tag at all** — the project has never released. There is
+  nothing to backfill; the first changesets release will be `1.0.0`
+  regardless of the bump levels. Skip to step 5.
+- **The tag is the current HEAD** — nothing merged since the release,
+  nothing to backfill. Skip to step 5.
+
+## Step 2 — drop what is not user-facing
+
+From that list, remove:
+
+- `chore(release): X.Y.Z` commits (semantic-release's own commits)
+- pure `chore:` / `ci:` / `build:` / `test:` / internal-refactor commits
+- documentation-only changes, unless the docs *are* the product
+
+Keep everything a user of this app would notice. When a commit message
+is too vague to judge, look at the diff (`git show <sha> --stat`) before
+deciding — do not guess from the subject line alone.
+
+## Step 3 — group the remaining commits
+
+A changeset is **one user-facing change**, not one commit. Several
+commits that built the same feature belong in one changeset; one commit
+that shipped two unrelated things belongs in two.
+
+**Decide yourself** when the remaining set is small (roughly ≤ 5
+commits) and the grouping is obvious — then show the user the resulting
+changesets and let them correct.
+
+**Ask the user first** when there are many commits, or when the grouping
+is genuinely ambiguous. Ask once, with a concrete proposal attached
+rather than an open question — for example:
+
+- the proposed grouping as a list ("these 4 commits → one changeset
+  *Export endpoint*"), asking whether to merge or split any of them
+- the commits you could not classify: user-facing or internal?
+- any change they consider **breaking** — that alone decides whether the
+  next release is a major
+
+Do not ask about things you can answer from the diff.
+
+## Step 4 — pick the bump level per changeset
+
+- **major** — breaking change (`feat!:`/`fix!:`, or a `BREAKING CHANGE:`
+  footer, or anything that forces consumers to adapt)
+- **minor** — a new feature (`feat:`)
+- **patch** — fixes, performance, reverts, and anything else user-facing
+
+Only the **highest** pending bump decides the next version, but write
+the honest level on each changeset anyway: the changelog groups by it.
+Note that `0.x` versions get no special treatment — a minor bump on
+`v0.3.1` produces `0.4.0`.
+
+## Step 5 — write the changeset files
+
+One file per changeset, `.changeset/<kebab-case-slug>.md`:
+
+```md
+---
+"<appName>": minor
+---
+
+One or two sentences describing the change from the user's perspective.
+```
+
+- The package name in the frontmatter is **ignored** (catladder versions
+  from git tags, not from package.json) — use the project's `appName`
+  for readability.
+- Write the summary for someone reading the changelog, not the commit
+  log: what changed and why it matters, not `refactor foo helper`.
+- Reference the MR/PR or issue when it helps the reader.
+
+Also add `.changeset/README.md` so the next developer knows what the
+folder is:
+
+````md
+# Changesets
+
+This repo releases with catladder's `changesets` release method: every
+user-facing change merges together with a changeset file in this
+directory. The release job consumes all pending changesets — the highest
+bump (applied to the last `v*` tag) becomes the new version, the
+summaries become the changelog entries.
+
+Write one by hand (`.changeset/<descriptive-name>.md`):
+
+```md
+---
+"<appName>": minor
+---
+
+One or two sentences describing the change from the user's perspective.
+```
+
+Bump levels: `major` (breaking), `minor` (feature), `patch` (fix).
+The package name in the frontmatter is ignored — only the bump counts.
+`yarn changeset` also works if you prefer the interactive prompt.
+
+No pending changesets on the main branch means the release job is a
+no-op.
+````
+
+## Step 6 — flip the config and regenerate
+
+```ts
+releases: {
+  when: "manual",       // unchanged — `when` is independent of `method`
+  method: "changesets",
+}
+```
+
+```bash
+yarn catenv
+```
+
+Commit the regenerated files (`.catladder-generated/`, `.gitlab-ci.yml`,
+`.github/workflows/catladder-*`) together with the config change and the
+changesets — see the `catladder-config` skill.
+
+## Step 7 — verify before merging
+
+- State the expected outcome explicitly: *last tag `vX.Y.Z` + highest
+  pending bump = next release `vA.B.C`*. If that is not what the user
+  expects, the bump levels are wrong.
+- The merge request now runs the **`🦋 changeset check`** job. It should
+  report the pending changesets and that same version. A yellow check
+  only means "this MR adds no changeset" — for the migration MR itself
+  that is not the case, so expect it green.
+- Do **not** hand-write `CHANGELOG.md`. The release job prepends the new
+  section; anything you write by hand there gets duplicated.
+- Leave any `.releaserc` / `release.config.js` alone if the project has
+  one — it becomes inert, and deleting it is a separate cleanup.
+
+## Step 8 — hand over to the team
+
+After merging, tell the user what changes for everyone:
+
+- every user-facing MR now needs a `.changeset/*.md` file; the
+  `🦋 changeset check` job warns (without blocking) when one is missing
+- commit messages no longer decide the version — conventional commits
+  are still nice, but purely cosmetic now
+- if something was merged without a changeset and must ship anyway, the
+  **force release** escape hatch releases a patch (GitLab:
+  `⚠️ force create release`, GitHub: the *force* checkbox of the
+  `🚀 catladder create release` workflow)
+
+## The other direction: changesets → semantic-release
+
+Same shape, mirrored, with one loss to flag up front:
+
+1. **Pending changesets are not converted.** Their summaries would
+   simply vanish from the changelog. Either cut one last changesets
+   release first (draining `.changeset/`), or fold each summary into the
+   changelog by hand before removing the files. Tell the user which one
+   you are doing.
+2. Commits since the last tag must carry conventional messages for
+   semantic-release to see them — history cannot be rewritten after the
+   fact, so accept that the first semantic-release version may
+   under-report. Say so rather than silently releasing a patch.
+3. Set `method: "semantic-release"` (or drop the field — it is the
+   default), run `yarn catenv`, commit the regenerated files.
+4. Delete `.changeset/` including its `README.md`.
+5. From then on the version comes from commit messages again, and the
+   `🦋 changeset check` job disappears from MR pipelines.
+
+## Related skills
+
+- `catladder-releases` — how both methods work, the release jobs and the
+  security-audit gate
+- `catladder-config` — catladder.ts structure and regeneration
+- `catladder-migrate-ci-backend` — migrating between GitLab CI and
+  GitHub Actions

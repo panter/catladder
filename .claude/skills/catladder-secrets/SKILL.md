@@ -109,3 +109,5 @@ suspecting anything else.
 - `catladder-deploys` — runtime deploy config
 - `catladder-pipelines` — how the generated pipelines work
 - `catladder-cli` — non-interactive CLI usage and command reference
+- `catladder-migrate-ci-backend` — moving between CI backends (the vault
+  is what blocks decommissioning the old one)

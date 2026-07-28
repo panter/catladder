@@ -25,15 +25,32 @@ are generated, never hand-edited.
 ## `when` — who triggers the release
 
 - **`manual`** (default) — the `create release` job on the main branch
-  is manual; someone runs it to cut a release.
+  can be clicked **at any time**, even while the pipeline is still
+  running: it queues the release, which then runs automatically as soon
+  as every other job of the pipeline succeeded (and is skipped if the
+  pipeline fails). Clicking after a green pipeline releases right away.
+  - On GitLab the button is a quick no-op job; the actual release runs
+    in the automatic `🚀 release once pipeline succeeds` job (skipped
+    when the button was never clicked — never run it by hand).
+  - On GitHub, releasing is the **`🚀 catladder create release`**
+    workflow (Actions sidebar → Run workflow): it releases immediately
+    when the main workflow for HEAD is green, queues the release when
+    it is still running (the `🛠️ catladder release on green` workflow then
+    picks it up on completion), and fails when the run concluded red.
 - **`auto`** — the release job runs automatically on every main-branch
   pipeline (it still no-ops when there is nothing to release).
 
-There is always also a manual **`⚠️ force create release`** job as an
-escape hatch. With `method: "changesets"` it has an extra meaning: it
-releases **even when no changesets are pending** (patch bump with a
-generic changelog entry) — the recovery path when a change was merged
-without a changeset and must ship now.
+There is always also a **force release** escape hatch that releases
+**immediately**, ignoring the state of the pipeline: on GitLab the
+manual `⚠️ force create release` job, on GitHub the *force* checkbox of
+the `🚀 catladder create release` workflow. With `method: "changesets"`
+forcing has an extra meaning: it releases **even when no changesets are
+pending** (patch bump with a generic changelog entry) — the recovery
+path when a change was merged without a changeset and must ship now.
+
+On GitHub, other manual tasks are split into per-kind dispatch
+workflows the same way (`▶️ catladder deploy`, `⏹️ catladder stop`,
+`↩️ catladder rollback`), each with a dropdown of its tasks.
 
 ## `method` — how the version is decided
 
@@ -99,8 +116,9 @@ the `security` commands in the `catladder-cli` reference.
 
 - Fails immediately on the audit → handle the security-audit gate above.
 - `changesets` released nothing → no `.changeset/*.md` files were
-  pending. To ship anyway, run `⚠️ force create release` (patch bump),
-  or merge an MR adding a changeset describing the accumulated work.
+  pending. To ship anyway, force the release (patch bump) — gitlab:
+  `⚠️ force create release` job, github: force checkbox — or merge an
+  MR adding a changeset describing the accumulated work.
 - Wrong version bump → check commit types (semantic-release) or the bump
   levels in the changeset files (changesets).
 - Inspect the job with `yarn catladder project ci job-log` (see the
@@ -111,3 +129,6 @@ the `security` commands in the `catladder-cli` reference.
 - `catladder-config` — catladder.ts structure and regeneration
 - `catladder-pipelines` — the `taggedRelease` trigger and stage/prod deploys
 - `catladder-cli` — `project ci` and `security` commands
+- `catladder-migrate-release-method` — switching an existing project
+  between semantic-release and changesets (incl. backfilling changesets
+  for everything merged since the last release tag)

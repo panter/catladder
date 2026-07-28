@@ -127,3 +127,6 @@ the `security` commands in the `catladder-cli` reference.
 - `catladder-config` — catladder.ts structure and regeneration
 - `catladder-pipelines` — the `taggedRelease` trigger and stage/prod deploys
 - `catladder-cli` — `project ci` and `security` commands
+- `catladder-migrate-release-method` — switching an existing project
+  between semantic-release and changesets (incl. backfilling changesets
+  for everything merged since the last release tag)
