@@ -11,6 +11,7 @@ import { writeFile } from "fs/promises";
 import { CHANGESET_CHECK_MARKER, runChangesetCheck } from "./changesetCheck";
 import { readPendingChangesets } from "./changesetsReleaseJob";
 import { ensureReleaseHistory, getLastReleaseTag, git } from "./releaseGit";
+import { appendStepSummary } from "./stepSummary";
 
 export const CHANGESET_REPORT_FILE = "changeset-report.md";
 
@@ -193,7 +194,22 @@ export const changesetCheckJob = async () => {
     return;
   }
   if (!result.addsChangeset) {
-    // exit 1 turns the (allow_failure) job yellow so reviewers notice
+    if (onGithub()) {
+      // github has no "warning" job state: exiting non-zero would show
+      // the job as failed (a red ❌ and "exit code 1"), which reads like
+      // something broke. A warning annotation plus the step summary and
+      // the sticky PR comment carry the signal instead.
+      console.log(
+        "::warning title=No changeset::this pull request adds no changeset — " +
+          "if the change is user-facing, add one so it appears in the next release's changelog",
+      );
+      appendStepSummary(
+        result.markdown.replace(`${CHANGESET_CHECK_MARKER}\n`, ""),
+      );
+      return;
+    }
+    // gitlab: exit 1 turns the (allow_failure) job yellow so reviewers
+    // notice
     process.exitCode = 1;
   }
 };
