@@ -20,17 +20,10 @@ const DbComponent = (name: string): ComponentConfig => ({
     type: "google-cloudrun",
     projectId: "google-project-id",
     region: "europe-west6",
-    cloudSql: {
-      ...CLOUD_SQL_BASE,
-      /*
-      there is a flaw in the current implementation, 
-      that the db-url does not embed the env vars like DB_NAME, DB_USER, DB_PASSWORD, etc, 
-      This leads to the problem that if you reference the DATABASE_URL from another component,
-      it will not work properly, as it only contains var names instead of the actual values.
-      Setting this to "embedded" will embed the actual values into the db-url, which solves this problem.
-      */
-      dbConnectionStringVariablesMode: "embedded",
-    },
+    // the default "embedded" connection string mode embeds the final values
+    // into the db-url, so referencing DATABASE_URL from another component
+    // (like DATABASE_URL_2 below) just works
+    cloudSql: CLOUD_SQL_BASE,
     service: false,
     jobs: {
       migrate: {

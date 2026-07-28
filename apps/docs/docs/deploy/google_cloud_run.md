@@ -84,6 +84,40 @@ Catladder will automatically create the databases on this instance. You can reus
 
 To use a DB from another project, refer to this https://stackoverflow.com/a/70770872/1463534
 
+### Connection string env vars
+
+With `cloudSql` configured, catladder injects `CLOUD_SQL_INSTANCE_CONNECTION_NAME`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` plus ready-made connection strings `DATABASE_URL` and `DATABASE_JDBC_URL` (format via `dbConnectionStringFormat`: `"prisma"` (default), `"rails"` or `"jdbc"`).
+
+The connection strings embed the component's final values, so they are self-contained: you can reference them from another component (e.g. `SECOND_DATABASE_URL: "${otherComponent:DATABASE_URL}"`) and overrides of the `DB_*` vars in `vars.public` flow into them.
+
+:::note
+Before catladder 5, the default mode kept placeholders like `$DB_PASSWORD` in the connection string (`dbConnectionStringVariablesMode: "legacy"`), which only expanded correctly inside the component's own jobs. The old behaviour is still available as an escape hatch by setting `dbConnectionStringVariablesMode: "legacy"`, but it will be removed in a future major.
+:::
+
+### Reusing a database from another component
+
+By default each component gets its own database. To point a component at another component's database, set `dbBaseName` to that component's name and reference its password:
+
+```ts
+worker: {
+  deploy: {
+    type: "google-cloudrun",
+    // ...
+    cloudSql: {
+      ...CLOUD_SQL,
+      dbBaseName: "api", // use the api component's database
+    },
+  },
+  vars: {
+    public: {
+      // the db password lives in the api component's secret;
+      // this override also flows into DATABASE_URL / DATABASE_JDBC_URL
+      DB_PASSWORD: "${api:DB_PASSWORD}",
+    },
+  },
+},
+```
+
 ## Jobs and migrations
 
 Jobs are either for one-time work that needs to be done or for recurring tasks on a schedule (cronjobs)

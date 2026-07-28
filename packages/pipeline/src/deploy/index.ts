@@ -1,5 +1,5 @@
 import type { BuildConfig, SecretEnvVar } from "..";
-import type { BashExpression } from "@catladder/bash";
+import type { VariableValue } from "@catladder/bash";
 import type { ComponentContext } from "../types/context";
 import type { EnvironmentContext } from "../types/environmentContext";
 import type { CatladderJob } from "../types/jobs";
@@ -30,7 +30,7 @@ export type DeployTypeDefinition<D extends DeployConfig> = {
   ) => SecretEnvVar[];
   getAdditionalEnvVars: (
     envContext: EnvironmentContext<BuildConfig, D>,
-  ) => Record<string, string | BashExpression | undefined | null>;
+  ) => Record<string, VariableValue | undefined | null>;
   /**
    * script lines the deploy type contributes to the start of the verify job,
    * e.g. to authenticate against a non-public service

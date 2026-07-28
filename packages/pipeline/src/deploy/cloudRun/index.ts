@@ -53,11 +53,13 @@ const getCloudSqlVariables = ({
       DATABASE_URL: getDatabaseConnectionString(
         deployConfigRaw.cloudSql,
         dbVars,
+        componentName,
       ).concat(additionalQueryParamsString),
       DATABASE_JDBC_URL: getDatabaseJdbcUrl(
         dbVars,
         deployConfigRaw.cloudSql.dbConnectionStringVariablesMode ??
           DEFAULT_DB_VARIABLES_MODE,
+        componentName,
       ),
     };
   }

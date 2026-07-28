@@ -40,7 +40,8 @@ const config = {
       },
       vars: {
         public: {
-          // need to reference the password
+          // reference the owning component's password. This override also
+          // flows into the generated DATABASE_URL / DATABASE_JDBC_URL
           DB_PASSWORD: "${api:DB_PASSWORD}",
         },
       },

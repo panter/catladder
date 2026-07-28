@@ -758,8 +758,8 @@ export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"
 export DB_NAME="pan-my-n8n-app-dev-n8n"
 export DB_USER="postgres"
 export DB_PASSWORD="$CL_dev_n8n_DB_PASSWORD"
-export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+export DATABASE_URL="postgresql://postgres:$CL_dev_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-dev-n8n?host=/cloudsql/projectId:region:instancename"
+export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-dev-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_dev_n8n_DB_PASSWORD"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-n8n-app-dev-n8n"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -821,9 +821,9 @@ DB_USER: |-
 DB_PASSWORD: |-
   $(printf %s "$CL_dev_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DATABASE_URL: |-
-  postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+  postgresql://postgres:$(printf %s "$CL_dev_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/pan-my-n8n-app-dev-n8n?host=/cloudsql/projectId:region:instancename
 DATABASE_JDBC_URL: |-
-  jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+  jdbc:postgresql:///pan-my-n8n-app-dev-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_dev_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   pan-my-n8n-app-dev-n8n
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -928,8 +928,8 @@ export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"
 export DB_NAME="pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n"
 export DB_USER="postgres"
 export DB_PASSWORD="$CL_review_n8n_DB_PASSWORD"
-export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+export DATABASE_URL="postgresql://postgres:$CL_review_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n?host=/cloudsql/projectId:region:instancename"
+export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_review_n8n_DB_PASSWORD"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -991,9 +991,9 @@ DB_USER: |-
 DB_PASSWORD: |-
   $(printf %s "$CL_review_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DATABASE_URL: |-
-  postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+  postgresql://postgres:$(printf %s "$CL_review_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/$(printf %s "pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n" | sed '1!s/^/  /')?host=/cloudsql/projectId:region:instancename
 DATABASE_JDBC_URL: |-
-  jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+  jdbc:postgresql:///$(printf %s "pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n" | sed '1!s/^/  /')?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_review_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   $(printf %s "$(printf %s "pan-my-n8n-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-n8n" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -1101,8 +1101,8 @@ export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"
 export DB_NAME="pan-my-n8n-app-stage-n8n"
 export DB_USER="postgres"
 export DB_PASSWORD="$CL_stage_n8n_DB_PASSWORD"
-export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+export DATABASE_URL="postgresql://postgres:$CL_stage_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-stage-n8n?host=/cloudsql/projectId:region:instancename"
+export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-stage-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_stage_n8n_DB_PASSWORD"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-n8n-app-stage-n8n"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -1164,9 +1164,9 @@ DB_USER: |-
 DB_PASSWORD: |-
   $(printf %s "$CL_stage_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DATABASE_URL: |-
-  postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+  postgresql://postgres:$(printf %s "$CL_stage_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/pan-my-n8n-app-stage-n8n?host=/cloudsql/projectId:region:instancename
 DATABASE_JDBC_URL: |-
-  jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+  jdbc:postgresql:///pan-my-n8n-app-stage-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_stage_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   pan-my-n8n-app-stage-n8n
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -1271,8 +1271,8 @@ export CLOUD_SQL_INSTANCE_CONNECTION_NAME="projectId:region:instancename"
 export DB_NAME="pan-my-n8n-app-prod-n8n"
 export DB_USER="postgres"
 export DB_PASSWORD="$CL_prod_n8n_DB_PASSWORD"
-export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+export DATABASE_URL="postgresql://postgres:$CL_prod_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-prod-n8n?host=/cloudsql/projectId:region:instancename"
+export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-prod-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_prod_n8n_DB_PASSWORD"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-n8n-app-prod-n8n"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -1334,9 +1334,9 @@ DB_USER: |-
 DB_PASSWORD: |-
   $(printf %s "$CL_prod_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DATABASE_URL: |-
-  postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+  postgresql://postgres:$(printf %s "$CL_prod_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/pan-my-n8n-app-prod-n8n?host=/cloudsql/projectId:region:instancename
 DATABASE_JDBC_URL: |-
-  jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+  jdbc:postgresql:///pan-my-n8n-app-prod-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_prod_n8n_DB_PASSWORD" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   pan-my-n8n-app-prod-n8n
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -1621,8 +1621,8 @@ create release:
     - export DB_NAME="pan-my-n8n-app-dev-n8n"
     - export DB_USER="postgres"
     - export DB_PASSWORD="$CL_dev_n8n_DB_PASSWORD"
-    - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-    - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+    - export DATABASE_URL="postgresql://postgres:$CL_dev_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-dev-n8n?host=/cloudsql/projectId:region:instancename"
+    - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-dev-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_dev_n8n_DB_PASSWORD"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-n8n-app-dev-n8n"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -1685,9 +1685,9 @@ create release:
       DB_PASSWORD: |-
         $(printf %s "$CL_dev_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
-        postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+        postgresql://postgres:$(printf %s "$CL_dev_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/pan-my-n8n-app-dev-n8n?host=/cloudsql/projectId:region:instancename
       DATABASE_JDBC_URL: |-
-        jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+        jdbc:postgresql:///pan-my-n8n-app-dev-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_dev_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         pan-my-n8n-app-dev-n8n
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -1816,8 +1816,8 @@ create release:
     - export DB_NAME="pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n"
     - export DB_USER="postgres"
     - export DB_PASSWORD="$CL_review_n8n_DB_PASSWORD"
-    - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-    - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+    - export DATABASE_URL="postgresql://postgres:$CL_review_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n?host=/cloudsql/projectId:region:instancename"
+    - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_review_n8n_DB_PASSWORD"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -1880,9 +1880,9 @@ create release:
       DB_PASSWORD: |-
         $(printf %s "$CL_review_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
-        postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+        postgresql://postgres:$(printf %s "$CL_review_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/$(printf %s "pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n" | sed '1!s/^/  /')?host=/cloudsql/projectId:region:instancename
       DATABASE_JDBC_URL: |-
-        jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+        jdbc:postgresql:///$(printf %s "pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n" | sed '1!s/^/  /')?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_review_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         $(printf %s "$(printf %s "pan-my-n8n-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-n8n" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -2020,8 +2020,8 @@ create release:
     - export DB_NAME="pan-my-n8n-app-stage-n8n"
     - export DB_USER="postgres"
     - export DB_PASSWORD="$CL_stage_n8n_DB_PASSWORD"
-    - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-    - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+    - export DATABASE_URL="postgresql://postgres:$CL_stage_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-stage-n8n?host=/cloudsql/projectId:region:instancename"
+    - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-stage-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_stage_n8n_DB_PASSWORD"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-n8n-app-stage-n8n"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -2084,9 +2084,9 @@ create release:
       DB_PASSWORD: |-
         $(printf %s "$CL_stage_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
-        postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+        postgresql://postgres:$(printf %s "$CL_stage_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/pan-my-n8n-app-stage-n8n?host=/cloudsql/projectId:region:instancename
       DATABASE_JDBC_URL: |-
-        jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+        jdbc:postgresql:///pan-my-n8n-app-stage-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_stage_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         pan-my-n8n-app-stage-n8n
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -2214,8 +2214,8 @@ create release:
     - export DB_NAME="pan-my-n8n-app-prod-n8n"
     - export DB_USER="postgres"
     - export DB_PASSWORD="$CL_prod_n8n_DB_PASSWORD"
-    - export DATABASE_URL="postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME"
-    - export DATABASE_JDBC_URL="jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD"
+    - export DATABASE_URL="postgresql://postgres:$CL_prod_n8n_DB_PASSWORD@localhost/pan-my-n8n-app-prod-n8n?host=/cloudsql/projectId:region:instancename"
+    - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-my-n8n-app-prod-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$CL_prod_n8n_DB_PASSWORD"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-my-n8n-app-prod-n8n"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -2278,9 +2278,9 @@ create release:
       DB_PASSWORD: |-
         $(printf %s "$CL_prod_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DATABASE_URL: |-
-        postgresql://$DB_USER:$DB_PASSWORD@localhost/$DB_NAME?host=/cloudsql/$CLOUD_SQL_INSTANCE_CONNECTION_NAME
+        postgresql://postgres:$(printf %s "$CL_prod_n8n_DB_PASSWORD" | sed '1!s/^/  /')@localhost/pan-my-n8n-app-prod-n8n?host=/cloudsql/projectId:region:instancename
       DATABASE_JDBC_URL: |-
-        jdbc:postgresql:///$DB_NAME?cloudSqlInstance=$CLOUD_SQL_INSTANCE_CONNECTION_NAME&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=$DB_USER&password=$DB_PASSWORD
+        jdbc:postgresql:///pan-my-n8n-app-prod-n8n?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=postgres&password=$(printf %s "$CL_prod_n8n_DB_PASSWORD" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         pan-my-n8n-app-prod-n8n
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
