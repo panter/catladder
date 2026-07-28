@@ -40,9 +40,11 @@ edit.
 Projects can declare their own job images under `images` in
 `catladder.ts` (`🐳 image <name>` build jobs, pushed to `job-images/` in
 the registry) and reference them in any `jobImage` field via
-`{ image: "<name>" }` — see the `catladder-builds` skill. Their
-Dockerfile dirs are used in place (nothing is materialized); the build
-job is skipped when the content hash already exists in the registry.
+`{ image: "<name>" }` — see the `catladder-builds` skill. A declared
+Dockerfile directory is used in place; an inline `dockerfile` is
+materialized into `.catladder-generated/images/project/<name>/`. Either
+way the build job is skipped when the content hash already exists in
+the registry.
 
 ## Caching
 
