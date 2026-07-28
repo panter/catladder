@@ -123,9 +123,9 @@ export class GithubBackend implements PipelineBackend {
     // was chosen, not on their own). A closure job serving leaves of
     // several kinds is duplicated into each kind's workflow.
     const manualKindBuckets: Record<ManualKind, ManualKindBucket> = {
-      deploy: { jobs: {}, conditions: {}, options: [] },
-      stop: { jobs: {}, conditions: {}, options: [] },
-      rollback: { jobs: {}, conditions: {}, options: [] },
+      deploy: { jobs: {}, conditions: {}, options: [], envTypes: [] },
+      stop: { jobs: {}, conditions: {}, options: [], envTypes: [] },
+      rollback: { jobs: {}, conditions: {}, options: [], envTypes: [] },
     };
 
     for (const trigger of ALL_PIPELINE_TRIGGERS) {
@@ -244,7 +244,12 @@ export class GithubBackend implements PipelineBackend {
         }
       }
       for (const id of leafIds) {
-        manualKindBuckets[kindOfLeaf.get(id)!].options.push(id);
+        const bucket = manualKindBuckets[kindOfLeaf.get(id)!];
+        bucket.options.push(id);
+        const context = triggerJobs.get(id)!.context;
+        if (context.type === "component") {
+          bucket.envTypes.push(context.environment.envType);
+        }
       }
 
       if (trigger === "mr") {
@@ -307,8 +312,17 @@ export class GithubBackend implements PipelineBackend {
       const options = [...new Set(bucket.options)];
       // a single candidate needs no dropdown — the dispatch just runs it
       const singleTask = options.length === 1;
+      // one common env across the kind's tasks → carry it in the name
+      // ("▶️ catladder deploy prod"); mixed envs keep the generic name
+      // and the dropdown distinguishes
+      const envTypes = [...new Set(bucket.envTypes)];
+      const envSuffix =
+        envTypes.length === 1 &&
+        bucket.envTypes.length === bucket.options.length
+          ? ` ${envTypes[0]}`
+          : "";
       workflows[`${GENERATED_FILE_PREFIX}${kind}.yml`] = {
-        name: MANUAL_KIND_WORKFLOW_NAMES[kind],
+        name: `${MANUAL_KIND_WORKFLOW_NAMES[kind]}${envSuffix}`,
         on: {
           workflow_dispatch: singleTask
             ? {}
@@ -392,6 +406,11 @@ type ManualKindBucket = {
   jobs: Record<string, GithubJob>;
   conditions: Record<string, string>;
   options: string[];
+  /**
+   * env types of the kind's leaf tasks: when they all target one env,
+   * the workflow name carries it (e.g. "▶️ catladder deploy prod")
+   */
+  envTypes: string[];
 };
 
 const MANUAL_KIND_WORKFLOW_NAMES: Record<ManualKind, string> = {

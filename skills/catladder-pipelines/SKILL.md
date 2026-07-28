@@ -26,8 +26,9 @@ Generated layout:
   actions are per-kind `workflow_dispatch` workflows, visually grouped
   by their emoji prefix in the Actions sidebar: `🚀 catladder create
   release`, `▶️ catladder deploy` (manual-gated deploys), `⏹️ catladder
-  stop`, `↩️ catladder rollback` — pick the task from the workflow's
-  dropdown (gitlab runs these as manual jobs inside the pipeline
+  stop`, `↩️ catladder rollback` — when all of a kind's tasks target one
+  env the name carries it (e.g. `▶️ catladder deploy prod`); otherwise
+  pick the task from the workflow's dropdown (gitlab runs these as manual jobs inside the pipeline
   instead).
 
 Stages: setup → test → build → deploy → verify (post-deploy checks),
