@@ -24,6 +24,10 @@ import {
   dispatchTaggedReleaseWorkflow,
 } from "./release/changesetsReleaseJob";
 import { changesetCheckJob } from "./release/changesetCheckJob";
+import {
+  githubQueueCheckJob,
+  githubQueuedGuardJob,
+} from "./release/githubQueuedRelease";
 import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
 
 const GITLAB_HOST = "https://git.panter.ch";
@@ -54,6 +58,18 @@ usage:
   catci release dispatch-tagged-workflow <tag>
       github only: dispatches the generated taggedRelease workflow for
       the tag (tags pushed with the job token don't trigger it)
+
+  catci release github-queue-check
+      github only, first step of the manual create-release task:
+      releases right away when the main workflow run for HEAD is green
+      (queued=false step output), queues the release when it is still
+      running (queued=true, marker ref for the release-on-green
+      workflow), fails when it concluded red
+
+  catci release github-queued-guard <head-sha> <conclusion>
+      github only, guard of the release-on-green workflow: consumes the
+      queue marker when it matches the completed main run and decides
+      whether the release step runs (release=true step output)
 
   catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]
       npmPackage deploy job: derives version + dist-tag from the
@@ -159,6 +175,20 @@ const main = async () => {
     args.length === 1
   ) {
     return dispatchTaggedReleaseWorkflow(args[0]);
+  }
+  if (
+    group === "release" &&
+    command === "github-queue-check" &&
+    args.length === 0
+  ) {
+    return githubQueueCheckJob();
+  }
+  if (
+    group === "release" &&
+    command === "github-queued-guard" &&
+    args.length === 2
+  ) {
+    return githubQueuedGuardJob(args[0], args[1]);
   }
   if (group === "publish" && command === "npm") {
     const options = parseNpmPublishArgs(args);

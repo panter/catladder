@@ -1,7 +1,63 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`matches snapshot for cloud-run-service-custom-vpc-connector github workflows YAML 1`] = `
-"catladder-main.yml:
+"catladder-release-on-green.yml:
+  name: catladder release on green
+  on:
+    workflow_run:
+      workflows:
+        - catladder main
+      types:
+        - completed
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    guard:
+      name: check queued release
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        release: \${{ steps.guard.outputs.release }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: check queued release
+          id: guard
+          run: node .catladder-generated/catci/index.js release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - guard
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ needs.guard.outputs.release == 'true' }}
+catladder-main.yml:
   name: catladder main
   on:
     push:
@@ -10,12 +66,7 @@ exports[`matches snapshot for cloud-run-service-custom-vpc-connector github work
   permissions:
     contents: read
     packages: write
-  env: &a1
-    CL_JOB_TOKEN: \${{ github.token }}
-    CL_REGISTRY: ghcr.io
-    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
-    CL_REGISTRY_USER: \${{ github.actor }}
-    CL_PR_NUMBER: \${{ github.event.number }}
+  env: *a1
   jobs:
     catladder-image-jobs-default:
       name: 🐳 catladder image jobs-default
@@ -1714,7 +1765,12 @@ catladder-manual.yml:
           uses: actions/checkout@v4
           with:
             fetch-depth: 0
+        - name: check main workflow
+          id: queue
+          run: node .catladder-generated/catci/index.js release github-queue-check
+          shell: bash
         - name: create release
+          if: steps.queue.outputs.queued != 'true'
           run: semanticRelease
           shell: bash
       if: \${{ inputs.job == 'create-release' }}
@@ -3485,10 +3541,8 @@ create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
   script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
+    - echo "release queued — '🚀 release once pipeline succeeds' runs it as soon as every other job in this pipeline succeeded"
+  rules: &a7
     - &a3
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
@@ -3500,21 +3554,51 @@ create release:
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
-⚠️ force create release:
+  needs: []
+  allow_failure: true
+🚀 release once pipeline succeeds:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
-  script:
+  script: &a5
     - semanticRelease
-  after_script:
+  after_script: &a6
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
     - *a3
     - *a1
     - *a4
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+      when: on_success
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
+      when: on_success
+  needs:
+    - job: create release
+    - job: 🐳 catladder image semantic-release
+      optional: true
+    - job: 🐳 catladder image jobs-default
+      optional: true
+    - job: 🐳 catladder image jobs-testing-chrome
+      optional: true
+    - job: 🐳 catladder image docker-build
+      optional: true
+    - job: 'api 🛡 audit | dev '
+      optional: true
+    - job: 'api 👮 lint | dev '
+      optional: true
+    - job: 'api 🧪 test | dev '
+      optional: true
+    - job: 'api 🔨 app | dev '
+      optional: true
+    - job: 'api 🔨 docker | dev '
+      optional: true
+    - job: 'api 🚀 Deploy | dev '
+      optional: true
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
+  script: *a5
+  after_script: *a6
+  rules: *a7
   needs: []
 'api 🛡 audit | dev ':
   stage: test
@@ -3571,7 +3655,7 @@ create release:
         - api/.yarn
     - key: api-node-modules
       policy: pull
-      paths: &a5
+      paths: &a8
         - api/node_modules
         - api/.yarn/install-state.gz
   rules:
@@ -3615,7 +3699,7 @@ create release:
         - api/.yarn
     - key: api-node-modules
       policy: pull
-      paths: *a5
+      paths: *a8
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -3987,7 +4071,7 @@ create release:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a6
+      paths: &a9
         - api/node_modules
         - api/.yarn/install-state.gz
       fallback_keys:
@@ -4035,7 +4119,7 @@ create release:
         - api-yarn
     - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: *a6
+      paths: *a9
       fallback_keys:
         - api-node-modules
   rules:

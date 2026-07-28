@@ -15,7 +15,13 @@ export type ReleaseMethod = "semantic-release" | "changesets";
 export type ReleaseConfig = {
   /**
    * Whether to release automatically or manually on main branch.
-   * Defaults to "manuel"
+   * - "manual" (default): the pipeline offers a `create release`
+   *   button that can be clicked at any time — the release then runs
+   *   automatically as soon as every other job of the pipeline
+   *   succeeded (clicking after a green pipeline releases right away).
+   *   A `force create release` button releases immediately, ignoring
+   *   the pipeline state.
+   * - "auto": every main-branch pipeline releases at the end.
    */
   when?: "manual" | "auto";
   /**

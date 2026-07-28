@@ -245,10 +245,8 @@ create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
   script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
+    - echo "release queued — '🚀 release once pipeline succeeds' runs it as soon as every other job in this pipeline succeeded"
+  rules: &a7
     - &a3
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
@@ -260,21 +258,47 @@ create release:
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
-⚠️ force create release:
+  needs: []
+  allow_failure: true
+🚀 release once pipeline succeeds:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
-  script:
+  script: &a5
     - semanticRelease
-  after_script:
+  after_script: &a6
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
     - *a3
     - *a1
     - *a4
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+      when: on_success
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
+      when: on_success
+  needs:
+    - job: create release
+    - job: 🐳 catladder image semantic-release
+      optional: true
+    - job: 🐳 catladder image docker-build
+      optional: true
+    - job: 🐳 catladder image kubernetes
+      optional: true
+    - job: 'app 🛡 audit | dev '
+      optional: true
+    - job: 'app 👮 lint | dev '
+      optional: true
+    - job: 'app 🧪 test | dev '
+      optional: true
+    - job: 'app 🔨 docker | dev '
+      optional: true
+    - job: 'app 🚀 Deploy | dev '
+      optional: true
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
+  script: *a5
+  after_script: *a6
+  rules: *a7
   needs: []
 'app 🛡 audit | dev ':
   stage: test
@@ -305,7 +329,7 @@ create release:
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
     - bundle exec rubocop
-  cache: &a5
+  cache: &a8
     key:
       files:
         - Gemfile.lock
@@ -339,7 +363,7 @@ create release:
     - bundle exec rake db:test:prepare
     - bundle exec rake assets:precompile assets:clean
     - bundle exec rspec
-  cache: *a5
+  cache: *a8
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -690,7 +714,7 @@ create release:
     - bundle config set path 'tmp/cache'
     - bundle install -j $(nproc)
     - bundle exec rubocop
-  cache: &a6
+  cache: &a9
     key:
       files:
         - Gemfile.lock
@@ -724,7 +748,7 @@ create release:
     - bundle exec rake db:test:prepare
     - bundle exec rake assets:precompile assets:clean
     - bundle exec rspec
-  cache: *a6
+  cache: *a9
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"

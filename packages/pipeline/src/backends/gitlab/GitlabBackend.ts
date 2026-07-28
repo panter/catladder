@@ -18,6 +18,7 @@ import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
 import { createAllJobs } from "../../pipeline/createAllJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
+import { getReleaseMethod } from "../../release";
 import type { PipelineBackend, PipelineFile } from "../types";
 import { getPipelineOptions } from "../index";
 import type { GitlabJobWithContext } from "./createGitlabJobs";
@@ -137,22 +138,44 @@ export class GitlabBackend implements PipelineBackend {
   ): Promise<Pipeline<"gitlab">> {
     const stages = getPipelineStages(config);
 
-    // release jobs first: they register their image on the plan, and the
-    // per-trigger job creation below emits the build jobs of all images
-    // registered so far
-    const releaseJobs = getGitlabReleaseJobs(config, images);
+    // register the release image first: the per-trigger job creation
+    // below emits the build jobs of all images registered so far. The
+    // release jobs themselves are created afterwards — they need the
+    // main-branch job list for the queued-release executor's needs.
+    images.resolveRef({ catladderImage: getReleaseMethod(config).image });
 
     // for all triggers create jobs and add base rules
-    const allJobsPerTrigger = await Promise.all(
-      ALL_PIPELINE_TRIGGERS.map(
-        async (trigger) =>
-          await createGitlabJobs(
-            await createAllJobs({ config, trigger, pipelineType: this.type }),
-            images,
-            getGitlabRulesForTrigger(trigger),
-          ),
+    const jobsPerTrigger = await Promise.all(
+      ALL_PIPELINE_TRIGGERS.map(async (trigger) => ({
+        trigger,
+        jobs: await createGitlabJobs(
+          await createAllJobs({ config, trigger, pipelineType: this.type }),
+          images,
+          getGitlabRulesForTrigger(trigger),
+        ),
+      })),
+    );
+    const allJobsPerTrigger = jobsPerTrigger.flatMap(({ jobs }) => jobs);
+
+    // the jobs the queued-release executor waits for: everything that
+    // runs automatically in a main-branch pipeline. Manual jobs (stop,
+    // rollback, gates) are excluded — gitlab skips a job whose needs
+    // include an unplayed manual job.
+    const mainBranchJobNames = [
+      ...new Set(
+        jobsPerTrigger
+          .filter(({ trigger }) => trigger === "mainBranch")
+          .flatMap(({ jobs }) => jobs)
+          .filter(({ gitlabJob }) => !isManualGitlabJob(gitlabJob))
+          .map(({ name }) => name),
       ),
-    ).then((j) => j.flat());
+    ];
+
+    const releaseJobs = getGitlabReleaseJobs(
+      config,
+      images,
+      mainBranchJobNames,
+    );
 
     const allWorkspaceJobs = allJobsPerTrigger
       .filter((j) => j.context?.type === "workspace") // sort by componentName in the same order as they appear in the config
@@ -237,6 +260,14 @@ export class GitlabBackend implements PipelineBackend {
       },
     });
   }
+}
+
+/**
+ * whether a job can end up waiting for a human in a main-branch
+ * pipeline (catladder expresses manual-ness only through rules)
+ */
+function isManualGitlabJob(job: GitlabJobDef): boolean {
+  return (job.rules ?? []).some((rule) => rule.when === "manual");
 }
 
 function getGitlabRulesForTrigger(trigger: PipelineTrigger): GitlabRule[] {

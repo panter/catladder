@@ -21,6 +21,7 @@ import { notNil } from "../../utils";
 import {
   getGithubReleaseCheckJobs,
   getGithubReleaseJobs,
+  getGithubReleaseOnGreenWorkflow,
 } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
 
@@ -242,6 +243,19 @@ export class GithubBackend implements PipelineBackend {
           manualJobs[id] = job;
           manualJobConditions[id] = `inputs.job == '${id}'`;
           manualDispatchOptions.push(id);
+        }
+
+        // manual release mode: the workflow that runs a queued release
+        // once the main workflow completed green
+        const releaseOnGreen = getGithubReleaseOnGreenWorkflow(
+          config,
+          images,
+          TRIGGER_WORKFLOWS.mainBranch.name,
+          workflowEnv,
+        );
+        if (releaseOnGreen) {
+          workflows[`${GENERATED_FILE_PREFIX}release-on-green.yml`] =
+            releaseOnGreen;
         }
       }
 

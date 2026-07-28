@@ -23,6 +23,17 @@ const config = {
 };
 ```
 
+## Manual releases: click any time
+
+With `when: "manual"` the `create release` button can be clicked **at any point of the pipeline** — you don't have to wait for it to finish:
+
+- clicked while the pipeline is still running, the release is **queued** and runs automatically as soon as every other job succeeded (nothing happens if the pipeline fails — queue again after fixing it);
+- clicked after a green pipeline, the release runs right away.
+
+On GitLab the button is a quick no-op job that records the intent; the actual release runs in the automatic `🚀 release once pipeline succeeds` job (shown as *skipped* in pipelines where nobody clicked — it is never triggered by hand). On GitHub the `create-release` manual task performs the same check itself and, when the main workflow is still running, hands over to the generated `catladder release on green` workflow.
+
+`⚠️ force create release` skips all of this and releases **immediately**, whatever the pipeline state.
+
 ## Release methods
 
 ### `semantic-release` (default)

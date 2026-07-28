@@ -3476,16 +3476,16 @@ before_script:
 create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
-  script:
+  script: &a3
     - changesetsRelease
-  after_script:
+  after_script: &a4
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - &a3
+    - &a5
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
     - *a1
-    - &a4
+    - &a6
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -3497,14 +3497,12 @@ create release:
   image: $CI_REGISTRY_IMAGE/catladder/changesets:d9899ef59230
   variables:
     CATLADDER_FORCE_RELEASE: 'true'
-  script:
-    - changesetsRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  script: *a3
+  after_script: *a4
   rules:
-    - *a3
+    - *a5
     - *a1
-    - *a4
+    - *a6
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
@@ -3522,7 +3520,7 @@ create release:
     when: always
   rules:
     - *a1
-    - *a4
+    - *a6
     - if: $CI_MERGE_REQUEST_ID
   allow_failure: true
 'www 🛡 audit | dev ':
@@ -3580,7 +3578,7 @@ create release:
         - www/.yarn
     - key: www-node-modules
       policy: pull
-      paths: &a5
+      paths: &a7
         - www/node_modules
         - www/.yarn/install-state.gz
   rules:
@@ -3624,7 +3622,7 @@ create release:
         - www/.yarn
     - key: www-node-modules
       policy: pull
-      paths: *a5
+      paths: *a7
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -3979,7 +3977,7 @@ create release:
         - www-yarn
     - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a6
+      paths: &a8
         - www/node_modules
         - www/.yarn/install-state.gz
       fallback_keys:
@@ -4027,7 +4025,7 @@ create release:
         - www-yarn
     - key: www-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: *a6
+      paths: *a8
       fallback_keys:
         - www-node-modules
   rules:

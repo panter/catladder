@@ -23,12 +23,23 @@ are generated, never hand-edited.
 ## `when` — who triggers the release
 
 - **`manual`** (default) — the `create release` job on the main branch
-  is manual; someone runs it to cut a release.
+  can be clicked **at any time**, even while the pipeline is still
+  running: it queues the release, which then runs automatically as soon
+  as every other job of the pipeline succeeded (and is skipped if the
+  pipeline fails). Clicking after a green pipeline releases right away.
+  - On GitLab the button is a quick no-op job; the actual release runs
+    in the automatic `🚀 release once pipeline succeeds` job (skipped
+    when the button was never clicked — never run it by hand).
+  - On GitHub the `create-release` dispatch task releases immediately
+    when the main workflow for HEAD is green, queues the release when
+    it is still running (the `catladder release on green` workflow then
+    picks it up on completion), and fails when the run concluded red.
 - **`auto`** — the release job runs automatically on every main-branch
   pipeline (it still no-ops when there is nothing to release).
 
 There is always also a manual **`⚠️ force create release`** job as an
-escape hatch. With `method: "changesets"` it has an extra meaning: it
+escape hatch: it releases **immediately**, ignoring the state of the
+pipeline. With `method: "changesets"` it has an extra meaning: it
 releases **even when no changesets are pending** (patch bump with a
 generic changelog entry) — the recovery path when a change was merged
 without a changeset and must ship now.

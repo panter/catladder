@@ -1992,16 +1992,16 @@ before_script:
 create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
-  script:
+  script: &a3
     - semanticRelease
-  after_script:
+  after_script: &a4
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
-    - &a3
+    - &a5
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
     - *a1
-    - &a4
+    - &a6
       if: $CI_PIPELINE_SOURCE  == "schedule"
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
@@ -2011,14 +2011,12 @@ create release:
 ⚠️ force create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
-  script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  script: *a3
+  after_script: *a4
   rules:
-    - *a3
+    - *a5
     - *a1
-    - *a4
+    - *a6
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
@@ -2079,7 +2077,7 @@ create release:
         - lib/.yarn
     - key: lib-node-modules
       policy: pull
-      paths: &a5
+      paths: &a7
         - lib/node_modules
         - lib/.yarn/install-state.gz
   rules:
@@ -2123,7 +2121,7 @@ create release:
         - lib/.yarn
     - key: lib-node-modules
       policy: pull
-      paths: *a5
+      paths: *a7
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -2322,7 +2320,7 @@ create release:
         - lib-yarn
     - key: lib-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: &a6
+      paths: &a8
         - lib/node_modules
         - lib/.yarn/install-state.gz
       fallback_keys:
@@ -2370,7 +2368,7 @@ create release:
         - lib-yarn
     - key: lib-node-modules-mr$CI_MERGE_REQUEST_IID
       policy: pull
-      paths: *a6
+      paths: *a8
       fallback_keys:
         - lib-node-modules
   rules:

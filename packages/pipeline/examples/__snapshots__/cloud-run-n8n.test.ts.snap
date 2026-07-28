@@ -1,7 +1,63 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`matches snapshot for cloud-run-n8n github workflows YAML 1`] = `
-"catladder-main.yml:
+"catladder-release-on-green.yml:
+  name: catladder release on green
+  on:
+    workflow_run:
+      workflows:
+        - catladder main
+      types:
+        - completed
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    guard:
+      name: check queued release
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        release: \${{ steps.guard.outputs.release }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: check queued release
+          id: guard
+          run: node .catladder-generated/catci/index.js release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - guard
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ needs.guard.outputs.release == 'true' }}
+catladder-main.yml:
   name: catladder main
   on:
     push:
@@ -10,12 +66,7 @@ exports[`matches snapshot for cloud-run-n8n github workflows YAML 1`] = `
   permissions:
     contents: read
     packages: write
-  env: &a1
-    CL_JOB_TOKEN: \${{ github.token }}
-    CL_REGISTRY: ghcr.io
-    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
-    CL_REGISTRY_USER: \${{ github.actor }}
-    CL_PR_NUMBER: \${{ github.event.number }}
+  env: *a1
   jobs:
     catladder-image-semantic-release:
       name: 🐳 catladder image semantic-release
@@ -528,7 +579,12 @@ catladder-manual.yml:
           uses: actions/checkout@v4
           with:
             fetch-depth: 0
+        - name: check main workflow
+          id: queue
+          run: node .catladder-generated/catci/index.js release github-queue-check
+          shell: bash
         - name: create release
+          if: steps.queue.outputs.queued != 'true'
           run: semanticRelease
           shell: bash
       if: \${{ inputs.job == 'create-release' }}
@@ -1491,17 +1547,15 @@ before_script:
       changes:
         - .catladder-generated/images/semantic-release/**/*
   needs: []
-  retry: &a4
+  retry: &a7
     max: 2
   interruptible: true
 create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
   script:
-    - semanticRelease
-  after_script:
-    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
-  rules:
+    - echo "release queued — '🚀 release once pipeline succeeds' runs it as soon as every other job in this pipeline succeeded"
+  rules: &a6
     - &a2
       if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
       when: never
@@ -1513,21 +1567,35 @@ create release:
       when: manual
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
-⚠️ force create release:
+  needs: []
+  allow_failure: true
+🚀 release once pipeline succeeds:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
-  script:
+  script: &a4
     - semanticRelease
-  after_script:
+  after_script: &a5
     - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
   rules:
     - *a2
     - *a1
     - *a3
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
+      when: on_success
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
-      when: manual
+      when: on_success
+  needs:
+    - job: create release
+    - job: 🐳 catladder image semantic-release
+      optional: true
+    - job: 'n8n 🚀 Deploy | dev '
+      optional: true
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
+  script: *a4
+  after_script: *a5
+  rules: *a6
   needs: []
 'n8n 🚀 Deploy | dev ':
   stage: deploy dev
@@ -1691,7 +1759,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: false
 'n8n 🛑 Stop ⚠️ | dev ':
@@ -1721,7 +1789,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: true
 'n8n 🚀 Deploy | review ':
@@ -1889,7 +1957,7 @@ create release:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: false
 'n8n 🛑 Stop ⚠️ | review ':
@@ -1925,7 +1993,7 @@ create release:
     - when: manual
       if: $CI_MERGE_REQUEST_ID
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: true
 'n8n 🚀 Deploy | stage ':
@@ -2089,7 +2157,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: false
 'n8n 🛑 Stop ⚠️ | stage ':
@@ -2119,7 +2187,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: true
 'n8n 🚀 Deploy | prod ':
@@ -2283,7 +2351,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: true
 'n8n 🛑 Stop ⚠️ | prod ':
@@ -2313,7 +2381,7 @@ create release:
     - when: manual
       if: $CI_COMMIT_TAG
   needs: []
-  retry: *a4
+  retry: *a7
   interruptible: true
   allow_failure: true
 "
