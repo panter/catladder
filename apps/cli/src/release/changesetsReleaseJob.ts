@@ -16,6 +16,7 @@ import {
   renderChangelogEntries,
 } from "./changesets";
 import { ensureReleaseHistory, getLastReleaseTag, git } from "./releaseGit";
+import { appendStepSummary } from "./stepSummary";
 
 const CHANGESET_DIR = ".changeset";
 const CHANGELOG_FILE = "CHANGELOG.md";
@@ -149,6 +150,10 @@ export const changesetsReleaseJob = async () => {
     console.log(
       "to release anyway (patch bump), run the force release job instead",
     );
+    appendStepSummary(
+      `ℹ️ **Nothing released** — no pending changesets in \`${CHANGESET_DIR}/\`. ` +
+        "Merge a changeset and release again, or force the release for a patch bump.",
+    );
     return;
   }
   const changesets = forcedEmpty ? [FORCED_RELEASE_CHANGESET] : pending;
@@ -194,6 +199,7 @@ export const changesetsReleaseJob = async () => {
   await git("tag", tag);
   await pushCommitAndTag(tag);
   console.log(`released ${tag}`);
+  appendStepSummary(`🚀 **Released ${tag}**\n\n${entries}`);
 
   if (process.env.GITHUB_ACTIONS === "true") {
     await dispatchTaggedReleaseWorkflow(tag);

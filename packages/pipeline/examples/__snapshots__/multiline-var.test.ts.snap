@@ -1,7 +1,100 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
-"catladder-release-on-green.yml:
+"catladder-create-release.yml:
+  name: 🚀 catladder create release
+  on:
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - catladder-image-semantic-release
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: check main workflow
+          id: queue
+          run: node .catladder-generated/catci/index.js release github-queue-check
+          shell: bash
+        - name: create release
+          if: steps.queue.outputs.queued != 'true'
+          run: semanticRelease
+          shell: bash
+catladder-release-on-green.yml:
   name: catladder release on green
   on:
     workflow_run:
@@ -9,12 +102,7 @@ exports[`matches snapshot for multiline-var github workflows YAML 1`] = `
         - catladder main
       types:
         - completed
-  env: &a1
-    CL_JOB_TOKEN: \${{ github.token }}
-    CL_REGISTRY: ghcr.io
-    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
-    CL_REGISTRY_USER: \${{ github.actor }}
-    CL_PR_NUMBER: \${{ github.event.number }}
+  env: *a1
   jobs:
     guard:
       name: check queued release
@@ -2834,8 +2922,594 @@ catladder-review-stop.yml:
             kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
             kubernetesDelete
           shell: bash
-catladder-manual.yml:
-  name: catladder manual tasks
+catladder-deploy.yml:
+  name: ▶️ catladder deploy
+  on:
+    workflow_dispatch:
+      inputs:
+        job:
+          description: the task to run
+          required: true
+          type: choice
+          options:
+            - app1-deploy-prod
+            - app2-deploy-prod
+            - kube-deploy-prod
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    app1-app-prod:
+      name: app1 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app1-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app1/node_modules
+              app1/.yarn/install-state.gz
+            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-node-modules-
+        - name: Cache app1-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/app1-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: app1-app-prod
+            path: |-
+              app1/__build_info.json
+              app1/.next
+              app1/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'app1-deploy-prod' }}
+    app1-docker-prod:
+      name: app1 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - app1-app-prod
+        - catladder-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app1-yarn
+          uses: actions/cache/restore@v4
+          with:
+            path: app1/.yarn
+            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
+            restore-keys: app1-yarn-
+        - name: Download artifacts from app1-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: app1-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/app1-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'app1-deploy-prod' }}
+    app1-deploy-prod:
+      name: app1 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - app1-app-prod
+        - app1-docker-prod
+      container:
+        image: google/cloud-sdk:525.0.0
+      environment:
+        name: prod-app1
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/app1-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'app1-deploy-prod' }}
+    app2-app-prod:
+      name: app2 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app2-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              app2/node_modules
+              app2/.yarn/install-state.gz
+            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-node-modules-
+        - name: Cache app2-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/app2-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: app2-app-prod
+            path: |-
+              app2/__build_info.json
+              app2/.next
+              app2/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'app2-deploy-prod' }}
+    app2-docker-prod:
+      name: app2 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - app2-app-prod
+        - catladder-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache app2-yarn
+          uses: actions/cache/restore@v4
+          with:
+            path: app2/.yarn
+            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
+            restore-keys: app2-yarn-
+        - name: Download artifacts from app2-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: app2-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/app2-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'app2-deploy-prod' }}
+    app2-deploy-prod:
+      name: app2 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - app2-app-prod
+        - app2-docker-prod
+      container:
+        image: google/cloud-sdk:525.0.0
+      environment:
+        name: prod-app2
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/app2-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'app2-deploy-prod' }}
+    kube-app-prod:
+      name: kube 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache kube-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              kube/node_modules
+              kube/.yarn/install-state.gz
+            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-node-modules-
+        - name: Cache kube-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/kube-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: kube-app-prod
+            path: |-
+              kube/__build_info.json
+              kube/.next
+              kube/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+      if: \${{ inputs.job == 'kube-deploy-prod' }}
+    kube-docker-prod:
+      name: kube 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-docker-build
+        - kube-app-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache kube-yarn
+          uses: actions/cache/restore@v4
+          with:
+            path: kube/.yarn
+            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
+            restore-keys: kube-yarn-
+        - name: Download artifacts from kube-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: kube-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/kube-docker-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'kube-deploy-prod' }}
+    kube-deploy-prod:
+      name: kube 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+        - kube-app-prod
+        - kube-docker-prod
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-kube
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_kube_KUBE_URL: \${{ secrets.CL_prod_kube_KUBE_URL }}
+        CL_prod_kube_KUBE_CA_PEM: \${{ secrets.CL_prod_kube_KUBE_CA_PEM }}
+        CL_prod_kube_KUBE_TOKEN: \${{ secrets.CL_prod_kube_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/kube-deploy-prod.sh
+          shell: bash
+      if: \${{ inputs.job == 'kube-deploy-prod' }}
+catladder-stop.yml:
+  name: ⏹️ catladder stop
   on:
     workflow_dispatch:
       inputs:
@@ -2847,20 +3521,12 @@ catladder-manual.yml:
             - app1-stop-dev
             - app2-stop-dev
             - kube-stop-dev
-            - kube-rollback-dev
-            - create-release
-            - kube-rollback-review
             - app1-stop-stage
-            - app1-deploy-prod
             - app1-stop-prod
             - app2-stop-stage
-            - app2-deploy-prod
             - app2-stop-prod
             - kube-stop-stage
-            - kube-rollback-stage
-            - kube-deploy-prod
             - kube-stop-prod
-            - kube-rollback-prod
   permissions:
     contents: read
     packages: write
@@ -3325,254 +3991,6 @@ catladder-manual.yml:
             kubernetesDelete
           shell: bash
       if: \${{ inputs.job == 'kube-stop-dev' }}
-    kube-rollback-dev:
-      name: kube ↩️ Rollback ⚠️ | dev
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: dev-kube
-      env:
-        CL_dev_kube_KUBE_URL: \${{ secrets.CL_dev_kube_KUBE_URL }}
-        CL_dev_kube_KUBE_CA_PEM: \${{ secrets.CL_dev_kube_KUBE_CA_PEM }}
-        CL_dev_kube_KUBE_TOKEN: \${{ secrets.CL_dev_kube_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: ↩️ Rollback ⚠️
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="dev"
-            export APP_DIR="kube"
-            export ENV_TYPE="dev"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="kube.dev.test-app.pan.panter.cloud"
-            export ROOT_URL="https://kube.dev.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="kube.dev.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://kube.dev.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-dev"
-            export KUBE_APP_NAME="kube"
-            export KUBE_APP_NAME_PREFIX=""
-            export multiline_from_app1="app1 line1
-            app1 line2
-            app1 line3  
-
-            the url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"
-
-
-            app1 single quote: '
-            app1 doouble quote: \\"
-            "
-            export multiline="kube yeah
-            kube yeah2
-            kube yeah3  
-
-            kube single quote: '
-            kube doouble quote: \\"
-
-            the url of self: \\"https://kube.dev.test-app.pan.panter.cloud\\"
-            the url of app1: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"
-
-            value from app1:
-            -------
-            app1 line1
-            app1 line2
-            app1 line3  
-
-            the url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"
-
-
-            app1 single quote: '
-            app1 doouble quote: \\"
-
-            --------
-            "
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
-            export RELEASE_NAME="pan-test-app-dev-kube"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="kube"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-dev-kube" --server="$CL_dev_kube_KUBE_URL" --certificate-authority <(echo $CL_dev_kube_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-dev-kube" --token="$CL_dev_kube_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-dev-kube" --cluster="kube-pan-test-app-dev-kube" --user="kube-pan-test-app-dev-kube" --namespace="pan-test-app-dev"
-            kubectl config use-context "kube-pan-test-app-dev-kube"
-            kubernetesRollback
-          shell: bash
-      if: \${{ inputs.job == 'kube-rollback-dev' }}
-    create-release:
-      name: create release
-      runs-on: ubuntu-latest
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      permissions:
-        contents: write
-        actions: write
-        packages: read
-      needs:
-        - catladder-image-semantic-release
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-        - name: check main workflow
-          id: queue
-          run: node .catladder-generated/catci/index.js release github-queue-check
-          shell: bash
-        - name: create release
-          if: steps.queue.outputs.queued != 'true'
-          run: semanticRelease
-          shell: bash
-      if: \${{ inputs.job == 'create-release' }}
-    kube-rollback-review:
-      name: kube ↩️ Rollback ⚠️ | review
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: review-kube
-      env:
-        CL_review_kube_KUBE_URL: \${{ secrets.CL_review_kube_KUBE_URL }}
-        CL_review_kube_KUBE_CA_PEM: \${{ secrets.CL_review_kube_KUBE_CA_PEM }}
-        CL_review_kube_KUBE_TOKEN: \${{ secrets.CL_review_kube_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: ↩️ Rollback ⚠️
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="review"
-            export APP_DIR="kube"
-            export ENV_TYPE="review"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL="https://kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-review"
-            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
-            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
-            export multiline_from_app1="app1 line1
-            app1 line2
-            app1 line3  
-
-            the url of self: \\"https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')\\"
-
-
-            app1 single quote: '
-            app1 doouble quote: \\"
-            "
-            export multiline="kube yeah
-            kube yeah2
-            kube yeah3  
-
-            kube single quote: '
-            kube doouble quote: \\"
-
-            the url of self: \\"https://kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud\\"
-            the url of app1: \\"https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')\\"
-
-            value from app1:
-            -------
-            app1 line1
-            app1 line2
-            app1 line3  
-
-            the url of self: \\"https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')\\"
-
-
-            app1 single quote: '
-            app1 doouble quote: \\"
-
-            --------
-            "
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
-            export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="kube"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --server="$CL_review_kube_KUBE_URL" --certificate-authority <(echo $CL_review_kube_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --token="$CL_review_kube_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --namespace="pan-test-app-review"
-            kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
-            kubernetesRollback
-          shell: bash
-      if: \${{ inputs.job == 'kube-rollback-review' }}
     app1-stop-stage:
       name: app1 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
@@ -3623,112 +4041,6 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'app1-stop-stage' }}
-    app1-app-prod:
-      name: app1 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache app1-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              app1/node_modules
-              app1/.yarn/install-state.gz
-            key: app1-node-modules-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-node-modules-
-        - name: Cache app1-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/app1-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: app1-app-prod
-            path: |-
-              app1/__build_info.json
-              app1/.next
-              app1/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-      if: \${{ inputs.job == 'app1-deploy-prod' }}
-    app1-docker-prod:
-      name: app1 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - app1-app-prod
-        - catladder-image-docker-build
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache app1-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app1/.yarn
-            key: app1-yarn-\${{ hashFiles('app1/yarn.lock') }}
-            restore-keys: app1-yarn-
-        - name: Download artifacts from app1-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: app1-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/app1-docker-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'app1-deploy-prod' }}
-    app1-deploy-prod:
-      name: app1 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - app1-app-prod
-        - app1-docker-prod
-      container:
-        image: google/cloud-sdk:525.0.0
-      environment:
-        name: prod-app1
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app1_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/app1-deploy-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'app1-deploy-prod' }}
     app1-stop-prod:
       name: app1 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
@@ -3829,112 +4141,6 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'app2-stop-stage' }}
-    app2-app-prod:
-      name: app2 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache app2-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              app2/node_modules
-              app2/.yarn/install-state.gz
-            key: app2-node-modules-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-node-modules-
-        - name: Cache app2-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/app2-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: app2-app-prod
-            path: |-
-              app2/__build_info.json
-              app2/.next
-              app2/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-      if: \${{ inputs.job == 'app2-deploy-prod' }}
-    app2-docker-prod:
-      name: app2 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - app2-app-prod
-        - catladder-image-docker-build
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache app2-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: app2/.yarn
-            key: app2-yarn-\${{ hashFiles('app2/yarn.lock') }}
-            restore-keys: app2-yarn-
-        - name: Download artifacts from app2-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: app2-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/app2-docker-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'app2-deploy-prod' }}
-    app2-deploy-prod:
-      name: app2 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - app2-app-prod
-        - app2-docker-prod
-      container:
-        image: google/cloud-sdk:525.0.0
-      environment:
-        name: prod-app2
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_app2_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/app2-deploy-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'app2-deploy-prod' }}
     app2-stop-prod:
       name: app2 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
@@ -4094,221 +4300,6 @@ catladder-manual.yml:
             kubernetesDelete
           shell: bash
       if: \${{ inputs.job == 'kube-stop-stage' }}
-    kube-rollback-stage:
-      name: kube ↩️ Rollback ⚠️ | stage
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: stage-kube
-      env:
-        CL_stage_kube_KUBE_URL: \${{ secrets.CL_stage_kube_KUBE_URL }}
-        CL_stage_kube_KUBE_CA_PEM: \${{ secrets.CL_stage_kube_KUBE_CA_PEM }}
-        CL_stage_kube_KUBE_TOKEN: \${{ secrets.CL_stage_kube_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: ↩️ Rollback ⚠️
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="stage"
-            export APP_DIR="kube"
-            export ENV_TYPE="stage"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="kube.stage.test-app.pan.panter.cloud"
-            export ROOT_URL="https://kube.stage.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="kube.stage.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://kube.stage.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-stage"
-            export KUBE_APP_NAME="kube"
-            export KUBE_APP_NAME_PREFIX=""
-            export multiline_from_app1="app1 line1
-            app1 line2
-            app1 line3  
-
-            the url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"
-
-
-            app1 single quote: '
-            app1 doouble quote: \\"
-            "
-            export multiline="kube yeah
-            kube yeah2
-            kube yeah3  
-
-            kube single quote: '
-            kube doouble quote: \\"
-
-            the url of self: \\"https://kube.stage.test-app.pan.panter.cloud\\"
-            the url of app1: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"
-
-            value from app1:
-            -------
-            app1 line1
-            app1 line2
-            app1 line3  
-
-            the url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"
-
-
-            app1 single quote: '
-            app1 doouble quote: \\"
-
-            --------
-            "
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
-            export RELEASE_NAME="pan-test-app-stage-kube"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="kube"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-stage-kube" --server="$CL_stage_kube_KUBE_URL" --certificate-authority <(echo $CL_stage_kube_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-stage-kube" --token="$CL_stage_kube_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-stage-kube" --cluster="kube-pan-test-app-stage-kube" --user="kube-pan-test-app-stage-kube" --namespace="pan-test-app-stage"
-            kubectl config use-context "kube-pan-test-app-stage-kube"
-            kubernetesRollback
-          shell: bash
-      if: \${{ inputs.job == 'kube-rollback-stage' }}
-    kube-app-prod:
-      name: kube 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      env:
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache kube-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              kube/node_modules
-              kube/.yarn/install-state.gz
-            key: kube-node-modules-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-node-modules-
-        - name: Cache kube-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/kube-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: kube-app-prod
-            path: |-
-              kube/__build_info.json
-              kube/.next
-              kube/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-      if: \${{ inputs.job == 'kube-deploy-prod' }}
-    kube-docker-prod:
-      name: kube 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-docker-build
-        - kube-app-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache kube-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: kube/.yarn
-            key: kube-yarn-\${{ hashFiles('kube/yarn.lock') }}
-            restore-keys: kube-yarn-
-        - name: Download artifacts from kube-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: kube-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/kube-docker-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'kube-deploy-prod' }}
-    kube-deploy-prod:
-      name: kube 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-        - kube-app-prod
-        - kube-docker-prod
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-kube
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_kube_KUBE_URL: \${{ secrets.CL_prod_kube_KUBE_URL }}
-        CL_prod_kube_KUBE_CA_PEM: \${{ secrets.CL_prod_kube_KUBE_CA_PEM }}
-        CL_prod_kube_KUBE_TOKEN: \${{ secrets.CL_prod_kube_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/kube-deploy-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'kube-deploy-prod' }}
     kube-stop-prod:
       name: kube 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
@@ -4418,6 +4409,602 @@ catladder-manual.yml:
             kubernetesDelete
           shell: bash
       if: \${{ inputs.job == 'kube-stop-prod' }}
+catladder-rollback.yml:
+  name: ↩️ catladder rollback
+  on:
+    workflow_dispatch:
+      inputs:
+        job:
+          description: the task to run
+          required: true
+          type: choice
+          options:
+            - kube-rollback-dev
+            - kube-rollback-review
+            - kube-rollback-stage
+            - kube-rollback-prod
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    kube-rollback-dev:
+      name: kube ↩️ Rollback ⚠️ | dev
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: dev-kube
+      env:
+        CL_dev_kube_KUBE_URL: \${{ secrets.CL_dev_kube_KUBE_URL }}
+        CL_dev_kube_KUBE_CA_PEM: \${{ secrets.CL_dev_kube_KUBE_CA_PEM }}
+        CL_dev_kube_KUBE_TOKEN: \${{ secrets.CL_dev_kube_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="dev"
+            export APP_DIR="kube"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="kube.dev.test-app.pan.panter.cloud"
+            export ROOT_URL="https://kube.dev.test-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="kube.dev.test-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://kube.dev.test-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-test-app-dev"
+            export KUBE_APP_NAME="kube"
+            export KUBE_APP_NAME_PREFIX=""
+            export multiline_from_app1="app1 line1
+            app1 line2
+            app1 line3  
+
+            the url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"
+
+
+            app1 single quote: '
+            app1 doouble quote: \\"
+            "
+            export multiline="kube yeah
+            kube yeah2
+            kube yeah3  
+
+            kube single quote: '
+            kube doouble quote: \\"
+
+            the url of self: \\"https://kube.dev.test-app.pan.panter.cloud\\"
+            the url of app1: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"
+
+            value from app1:
+            -------
+            app1 line1
+            app1 line2
+            app1 line3  
+
+            the url of self: \\"https://pan-test-app-dev-app1-123456789012.asia-east1.run.app\\"
+
+
+            app1 single quote: '
+            app1 doouble quote: \\"
+
+            --------
+            "
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+            export RELEASE_NAME="pan-test-app-dev-kube"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="kube"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-test-app-dev-kube" --server="$CL_dev_kube_KUBE_URL" --certificate-authority <(echo $CL_dev_kube_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-test-app-dev-kube" --token="$CL_dev_kube_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-test-app-dev-kube" --cluster="kube-pan-test-app-dev-kube" --user="kube-pan-test-app-dev-kube" --namespace="pan-test-app-dev"
+            kubectl config use-context "kube-pan-test-app-dev-kube"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'kube-rollback-dev' }}
+    kube-rollback-review:
+      name: kube ↩️ Rollback ⚠️ | review
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: review-kube
+      env:
+        CL_review_kube_KUBE_URL: \${{ secrets.CL_review_kube_KUBE_URL }}
+        CL_review_kube_KUBE_CA_PEM: \${{ secrets.CL_review_kube_KUBE_CA_PEM }}
+        CL_review_kube_KUBE_TOKEN: \${{ secrets.CL_review_kube_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="review"
+            export APP_DIR="kube"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export ROOT_URL="https://kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-test-app-review"
+            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
+            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+            export multiline_from_app1="app1 line1
+            app1 line2
+            app1 line3  
+
+            the url of self: \\"https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')\\"
+
+
+            app1 single quote: '
+            app1 doouble quote: \\"
+            "
+            export multiline="kube yeah
+            kube yeah2
+            kube yeah3  
+
+            kube single quote: '
+            kube doouble quote: \\"
+
+            the url of self: \\"https://kube.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud\\"
+            the url of app1: \\"https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')\\"
+
+            value from app1:
+            -------
+            app1 line1
+            app1 line2
+            app1 line3  
+
+            the url of self: \\"https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')\\"
+
+
+            app1 single quote: '
+            app1 doouble quote: \\"
+
+            --------
+            "
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+            export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="kube"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --server="$CL_review_kube_KUBE_URL" --certificate-authority <(echo $CL_review_kube_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --token="$CL_review_kube_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube" --namespace="pan-test-app-review"
+            kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-kube"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'kube-rollback-review' }}
+    kube-rollback-stage:
+      name: kube ↩️ Rollback ⚠️ | stage
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: stage-kube
+      env:
+        CL_stage_kube_KUBE_URL: \${{ secrets.CL_stage_kube_KUBE_URL }}
+        CL_stage_kube_KUBE_CA_PEM: \${{ secrets.CL_stage_kube_KUBE_CA_PEM }}
+        CL_stage_kube_KUBE_TOKEN: \${{ secrets.CL_stage_kube_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="stage"
+            export APP_DIR="kube"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="kube.stage.test-app.pan.panter.cloud"
+            export ROOT_URL="https://kube.stage.test-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="kube.stage.test-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://kube.stage.test-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-test-app-stage"
+            export KUBE_APP_NAME="kube"
+            export KUBE_APP_NAME_PREFIX=""
+            export multiline_from_app1="app1 line1
+            app1 line2
+            app1 line3  
+
+            the url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"
+
+
+            app1 single quote: '
+            app1 doouble quote: \\"
+            "
+            export multiline="kube yeah
+            kube yeah2
+            kube yeah3  
+
+            kube single quote: '
+            kube doouble quote: \\"
+
+            the url of self: \\"https://kube.stage.test-app.pan.panter.cloud\\"
+            the url of app1: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"
+
+            value from app1:
+            -------
+            app1 line1
+            app1 line2
+            app1 line3  
+
+            the url of self: \\"https://pan-test-app-stage-app1-123456789012.asia-east1.run.app\\"
+
+
+            app1 single quote: '
+            app1 doouble quote: \\"
+
+            --------
+            "
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"multiline_from_app1\\",\\"multiline\\"]"
+            export RELEASE_NAME="pan-test-app-stage-kube"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-kube"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="kube"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-test-app-stage-kube" --server="$CL_stage_kube_KUBE_URL" --certificate-authority <(echo $CL_stage_kube_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-test-app-stage-kube" --token="$CL_stage_kube_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-test-app-stage-kube" --cluster="kube-pan-test-app-stage-kube" --user="kube-pan-test-app-stage-kube" --namespace="pan-test-app-stage"
+            kubectl config use-context "kube-pan-test-app-stage-kube"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'kube-rollback-stage' }}
     kube-rollback-prod:
       name: kube ↩️ Rollback ⚠️ | prod
       runs-on: ubuntu-latest

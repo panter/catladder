@@ -11,14 +11,13 @@ import { getPipelineOptions } from "../index";
 import {
   collectSecretKinds,
   getUploadProviderIds,
-  githubGlobalJobId,
   makeGithubJob,
 } from "./createGithubJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
-import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
+import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
-import { notNil } from "../../utils";
 import {
+  getGithubCreateReleaseWorkflow,
   getGithubReleaseCheckJobs,
   getGithubReleaseJobs,
   getGithubReleaseOnGreenWorkflow,
@@ -112,15 +111,18 @@ export class GithubBackend implements PipelineBackend {
     };
 
     const reviewStopJobs: Record<string, GithubJob> = {};
-    // jobs routed to the workflow_dispatch "manual tasks" workflow. A
-    // manual job and its build closure live here instead of an automatic
-    // workflow; `manualJobConditions` is the `if` that selects each one
-    // from the dispatch input, `manualDispatchOptions` the leaf jobs that
-    // become dropdown choices (closure jobs run because their leaf was
-    // chosen, not on their own).
-    const manualJobs: Record<string, GithubJob> = {};
-    const manualJobConditions: Record<string, string> = {};
-    const manualDispatchOptions: string[] = [];
+    // jobs routed to the per-kind workflow_dispatch workflows (deploy /
+    // stop / rollback). A manual job and its build closure live there
+    // instead of an automatic workflow; `conditions` is the `if` that
+    // selects each one from the dispatch input, `options` the leaf jobs
+    // that become dropdown choices (closure jobs run because their leaf
+    // was chosen, not on their own). A closure job serving leaves of
+    // several kinds is duplicated into each kind's workflow.
+    const manualKindBuckets: Record<ManualKind, ManualKindBucket> = {
+      deploy: { jobs: {}, conditions: {}, options: [] },
+      stop: { jobs: {}, conditions: {}, options: [] },
+      rollback: { jobs: {}, conditions: {}, options: [] },
+    };
 
     for (const trigger of ALL_PIPELINE_TRIGGERS) {
       const allJobs = await createAllJobs({
@@ -213,37 +215,50 @@ export class GithubBackend implements PipelineBackend {
         }
       }
 
+      const kindOfLeaf = new Map<string, ManualKind>(
+        leafIds.map((id) => [id, manualKind(triggerJobs.get(id)!.job)]),
+      );
       const jobs: Record<string, GithubJob> = {};
       for (const [id, { githubJob }] of triggerJobs) {
         const leaves = servesLeaves.get(id);
         if (leaves) {
-          manualJobs[id] = githubJob;
-          manualJobConditions[id] = [...leaves]
-            .sort()
-            .map((leaf) => `inputs.job == '${leaf}'`)
-            .join(" || ");
+          // one entry per kind the job serves — restricted to that
+          // kind's leaves, so the `if` only references its own inputs
+          for (const kind of new Set(
+            [...leaves].map((leaf) => kindOfLeaf.get(leaf)!),
+          )) {
+            const bucket = manualKindBuckets[kind];
+            bucket.jobs[id] = githubJob;
+            bucket.conditions[id] = [...leaves]
+              .filter((leaf) => kindOfLeaf.get(leaf) === kind)
+              .sort()
+              .map((leaf) => `inputs.job == '${leaf}'`)
+              .join(" || ");
+          }
         } else {
           jobs[id] = githubJob;
         }
       }
-      manualDispatchOptions.push(...leafIds);
+      for (const id of leafIds) {
+        manualKindBuckets[kindOfLeaf.get(id)!].options.push(id);
+      }
 
       if (trigger === "mr") {
         Object.assign(jobs, getGithubReleaseCheckJobs(config, images));
       }
 
       if (trigger === "mainBranch") {
-        const releaseJobs = getGithubReleaseJobs(
-          config,
-          Object.keys(jobs),
-          images,
+        // auto release mode: the release job runs at the end of the
+        // main workflow itself
+        Object.assign(
+          jobs,
+          getGithubReleaseJobs(config, Object.keys(jobs), images),
         );
-        Object.assign(jobs, releaseJobs.main);
-        for (const [id, job] of Object.entries(releaseJobs.manual)) {
-          manualJobs[id] = job;
-          manualJobConditions[id] = `inputs.job == '${id}'`;
-          manualDispatchOptions.push(id);
-        }
+
+        // the dispatch workflow to trigger a release by hand (with a
+        // force checkbox where the method distinguishes it)
+        workflows[`${GENERATED_FILE_PREFIX}create-release.yml`] =
+          getGithubCreateReleaseWorkflow(config, images, workflowEnv);
 
         // manual release mode: the workflow that runs a queued release
         // once the main workflow completed green
@@ -279,29 +294,41 @@ export class GithubBackend implements PipelineBackend {
       };
     }
 
-    if (Object.keys(manualJobs).length > 0) {
-      workflows[`${GENERATED_FILE_PREFIX}manual.yml`] = {
-        name: "catladder manual tasks",
+    for (const [kind, bucket] of Object.entries(manualKindBuckets) as Array<
+      [ManualKind, ManualKindBucket]
+    >) {
+      if (Object.keys(bucket.jobs).length === 0) {
+        continue;
+      }
+      const options = [...new Set(bucket.options)];
+      // a single candidate needs no dropdown — the dispatch just runs it
+      const singleTask = options.length === 1;
+      workflows[`${GENERATED_FILE_PREFIX}${kind}.yml`] = {
+        name: MANUAL_KIND_WORKFLOW_NAMES[kind],
         on: {
-          workflow_dispatch: {
-            inputs: {
-              job: {
-                description: "the task to run",
-                required: true,
-                type: "choice",
-                options: [...new Set(manualDispatchOptions)],
+          workflow_dispatch: singleTask
+            ? {}
+            : {
+                inputs: {
+                  job: {
+                    description: "the task to run",
+                    required: true,
+                    type: "choice",
+                    options,
+                  },
+                },
               },
-            },
-          },
         },
         ...workflowPermissions(images),
         env: workflowEnv,
         jobs: {
           ...makeEnsureImageGithubJobs(images),
           ...Object.fromEntries(
-            Object.entries(manualJobs).map(([id, job]) => [
+            Object.entries(bucket.jobs).map(([id, job]) => [
               id,
-              { ...job, if: `\${{ ${manualJobConditions[id]} }}` },
+              singleTask
+                ? job
+                : { ...job, if: `\${{ ${bucket.conditions[id]} }}` },
             ]),
           ),
         },
@@ -318,36 +345,6 @@ export class GithubBackend implements PipelineBackend {
 const workflowPermissions = (_images: JobImagesPlan) => ({
   permissions: { contents: "read", packages: "write" },
 });
-
-/**
- * the image build jobs: always run (github has no server-side
- * changes-filter), the existence check makes unchanged runs fast.
- * Docker is native on github runners — no container, no dind.
- */
-const makeEnsureImageGithubJobs = (
-  images: JobImagesPlan,
-): Record<string, GithubJob> =>
-  Object.fromEntries(
-    images.getEnsureJobs().map((job) => [
-      githubGlobalJobId(job.name),
-      {
-        name: job.name,
-        "runs-on": "ubuntu-latest",
-        steps: [
-          { name: "Checkout", uses: "actions/checkout@v4" },
-          {
-            name: job.name,
-            id: "main",
-            run: [
-              ...getGithubScriptFunctionDefinitions(),
-              ...(job.script?.filter(notNil) ?? []),
-            ].join("\n"),
-            shell: "bash",
-          },
-        ],
-      } satisfies GithubJob,
-    ]),
-  );
 
 const workflowFileName = (trigger: PipelineTrigger): string => {
   switch (trigger) {
@@ -372,8 +369,36 @@ const isReviewStopJob = (context: Context, job: CatladderJob) =>
 
 /**
  * stop/rollback jobs of non-review environments have no automatic
- * trigger; they are collected in a workflow_dispatch workflow
+ * trigger; they are collected in workflow_dispatch workflows
  * (gitlab runs them as manual jobs inside the pipeline)
  */
 const isManualTaskJob = (job: CatladderJob) =>
   job.stage === "stop" || job.stage === "rollback";
+
+/**
+ * manual tasks are split into one workflow_dispatch workflow per kind
+ * of action, so each kind is its own entry in the Actions sidebar with
+ * a homogeneous run history and a short same-kind dropdown (the emoji
+ * prefixes make the triggerable workflows stand out from the pipeline
+ * workflows)
+ */
+type ManualKind = "deploy" | "stop" | "rollback";
+
+type ManualKindBucket = {
+  jobs: Record<string, GithubJob>;
+  conditions: Record<string, string>;
+  options: string[];
+};
+
+const MANUAL_KIND_WORKFLOW_NAMES: Record<ManualKind, string> = {
+  deploy: "▶️ catladder deploy",
+  stop: "⏹️ catladder stop",
+  rollback: "↩️ catladder rollback",
+};
+
+const manualKind = (job: CatladderJob): ManualKind =>
+  job.stage === "stop"
+    ? "stop"
+    : job.stage === "rollback"
+      ? "rollback"
+      : "deploy";

@@ -1,7 +1,100 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`matches snapshot for cloud-run-existing-image github workflows YAML 1`] = `
-"catladder-release-on-green.yml:
+"catladder-create-release.yml:
+  name: 🚀 catladder create release
+  on:
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - catladder-image-semantic-release
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: check main workflow
+          id: queue
+          run: node .catladder-generated/catci/index.js release github-queue-check
+          shell: bash
+        - name: create release
+          if: steps.queue.outputs.queued != 'true'
+          run: semanticRelease
+          shell: bash
+catladder-release-on-green.yml:
   name: catladder release on green
   on:
     workflow_run:
@@ -9,12 +102,7 @@ exports[`matches snapshot for cloud-run-existing-image github workflows YAML 1`]
         - catladder main
       types:
         - completed
-  env: &a1
-    CL_JOB_TOKEN: \${{ github.token }}
-    CL_REGISTRY: ghcr.io
-    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
-    CL_REGISTRY_USER: \${{ github.actor }}
-    CL_PR_NUMBER: \${{ github.event.number }}
+  env: *a1
   jobs:
     guard:
       name: check queued release
@@ -413,8 +501,85 @@ catladder-review-stop.yml:
             set -e
             set -e
           shell: bash
-catladder-manual.yml:
-  name: catladder manual tasks
+catladder-deploy.yml:
+  name: ▶️ catladder deploy
+  on:
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    www-deploy-prod:
+      name: www 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      container:
+        image: google/cloud-sdk:525.0.0
+      environment:
+        name: prod-www
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/www-deploy-prod.sh
+          shell: bash
+catladder-stop.yml:
+  name: ⏹️ catladder stop
   on:
     workflow_dispatch:
       inputs:
@@ -424,9 +589,7 @@ catladder-manual.yml:
           type: choice
           options:
             - www-stop-dev
-            - create-release
             - www-stop-stage
-            - www-deploy-prod
             - www-stop-prod
   permissions:
     contents: read
@@ -533,36 +696,6 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'www-stop-dev' }}
-    create-release:
-      name: create release
-      runs-on: ubuntu-latest
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      permissions:
-        contents: write
-        actions: write
-        packages: read
-      needs:
-        - catladder-image-semantic-release
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-        - name: check main workflow
-          id: queue
-          run: node .catladder-generated/catci/index.js release github-queue-check
-          shell: bash
-        - name: create release
-          if: steps.queue.outputs.queued != 'true'
-          run: semanticRelease
-          shell: bash
-      if: \${{ inputs.job == 'create-release' }}
     www-stop-stage:
       name: www 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
@@ -613,25 +746,6 @@ catladder-manual.yml:
             set -e
           shell: bash
       if: \${{ inputs.job == 'www-stop-stage' }}
-    www-deploy-prod:
-      name: www 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      container:
-        image: google/cloud-sdk:525.0.0
-      environment:
-        name: prod-www
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_prod_www_GCLOUD_DEPLOY_credentialsKey }}
-        CL_JOB_IMAGE: google/cloud-sdk:525.0.0
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/www-deploy-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'www-deploy-prod' }}
     www-stop-prod:
       name: www 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest

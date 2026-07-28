@@ -1,11 +1,29 @@
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { githubGlobalJobId } from "./createGithubJobs";
+import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
 import { getReleaseMethod } from "../../release";
 import { GENERATED_CATCI_FOLDER } from "../../catci/shippedCatci";
 import type { Config } from "../../types";
 import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 
 const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
+
+/**
+ * the build job of the release image only — the create-release
+ * dispatch workflow needs no other image (empty for external images)
+ */
+const makeReleaseImageEnsureJobs = (
+  config: Config,
+  images: JobImagesPlan,
+): Record<string, GithubJob> => {
+  const resolved = images.resolveRef({
+    catladderImage: getReleaseMethod(config).image,
+  });
+  if (!resolved.need || typeof resolved.need !== "object") {
+    return {};
+  }
+  return makeEnsureImageGithubJobs(images, { only: [resolved.need.job] });
+};
 
 const createReleaseJob = (
   config: Config,
@@ -25,6 +43,12 @@ const createReleaseJob = (
      * concluded red
      */
     queueCheck?: boolean;
+    /**
+     * `if` expression on the queue-check step (e.g. skip it on a forced
+     * release); a skipped check leaves `queued` empty, so the release
+     * step still runs
+     */
+    queueCheckIf?: string;
   } = {},
 ): GithubJob => {
   const method = getReleaseMethod(config);
@@ -79,6 +103,7 @@ const createReleaseJob = (
             {
               name: "check main workflow",
               id: "queue",
+              ...(options.queueCheckIf ? { if: options.queueCheckIf } : {}),
               run: `node ${CATCI} release github-queue-check`,
               shell: "bash",
             },
@@ -97,53 +122,81 @@ const createReleaseJob = (
 };
 
 /**
- * the release jobs for the github backend (the counterpart of the
- * gitlab release jobs):
- * - releases.when === "auto": the release job runs in the main-branch
- *   workflow after all other jobs; a force variant goes to the manual
- *   tasks workflow
- * - otherwise (manual, the default): the release job goes to the
- *   manual tasks workflow. Its queue-check step releases right away on
- *   a green main run and otherwise queues the release for the
- *   release-on-green workflow (see getGithubReleaseOnGreenWorkflow) —
- *   the counterpart of gitlab's queue button + executor pair.
+ * the release jobs of the main-branch workflow: with releases.when ===
+ * "auto" the release runs at the end of every main workflow run.
+ * Manual releasing happens via the create-release dispatch workflow
+ * (see getGithubCreateReleaseWorkflow) instead.
  */
 export const getGithubReleaseJobs = (
   config: Config,
   mainWorkflowJobIds: string[],
   images: JobImagesPlan,
-): {
-  main: Record<string, GithubJob>;
-  manual: Record<string, GithubJob>;
-} => {
-  const method = getReleaseMethod(config);
-  if (config.releases?.when === "auto") {
-    return {
-      main: {
-        "create-release": createReleaseJob(config, images, {
-          needs: mainWorkflowJobIds,
-        }),
-      },
-      manual: {
-        "force-create-release": createReleaseJob(config, images, {
-          extraEnv: method.forceReleaseVariables,
-        }),
-      },
-    };
+): Record<string, GithubJob> => {
+  if (config.releases?.when !== "auto") {
+    return {};
   }
   return {
-    main: {},
-    manual: {
-      "create-release": createReleaseJob(config, images, { queueCheck: true }),
-      // an explicit force option wherever the method distinguishes it
-      // (e.g. changesets: release a patch bump without changesets)
-      ...(method.forceReleaseVariables
+    "create-release": createReleaseJob(config, images, {
+      needs: mainWorkflowJobIds,
+    }),
+  };
+};
+
+/**
+ * the dispatch workflow to trigger a release by hand — a first-class
+ * entry in the Actions sidebar (the counterpart of gitlab's `create
+ * release` button). Its queue-check step releases right away when the
+ * main workflow run for HEAD is green and otherwise queues the release
+ * for the release-on-green workflow. Where the release method
+ * distinguishes a force mode (e.g. changesets: release a patch bump
+ * without pending changesets), forcing is a checkbox input — a forced
+ * release skips the queue-check and releases immediately, whatever the
+ * pipeline state.
+ */
+export const getGithubCreateReleaseWorkflow = (
+  config: Config,
+  images: JobImagesPlan,
+  workflowEnv: Record<string, string>,
+): GithubWorkflow => {
+  const method = getReleaseMethod(config);
+  const forceVariables = method.forceReleaseVariables;
+  const job = createReleaseJob(config, images, {
+    queueCheck: true,
+    ...(forceVariables
+      ? {
+          queueCheckIf: "${{ !inputs.force }}",
+          // only effective when the force checkbox is ticked
+          extraEnv: Object.fromEntries(
+            Object.entries(forceVariables).map(([key, value]) => [
+              key,
+              `\${{ inputs.force && '${value}' || '' }}`,
+            ]),
+          ),
+        }
+      : {}),
+  });
+  return {
+    name: "🚀 catladder create release",
+    on: {
+      workflow_dispatch: forceVariables
         ? {
-            "force-create-release": createReleaseJob(config, images, {
-              extraEnv: method.forceReleaseVariables,
-            }),
+            inputs: {
+              force: {
+                description:
+                  "force: release even without pending changes (patch bump), ignoring the pipeline state",
+                required: false,
+                type: "boolean",
+                default: false,
+              },
+            },
           }
-        : {}),
+        : {},
+    },
+    permissions: { contents: "read", packages: "write" },
+    env: workflowEnv,
+    jobs: {
+      ...makeReleaseImageEnsureJobs(config, images),
+      "create-release": job,
     },
   };
 };

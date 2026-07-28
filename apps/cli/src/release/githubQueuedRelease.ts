@@ -19,6 +19,7 @@
  */
 import { appendFileSync } from "fs";
 import { git } from "./releaseGit";
+import { appendStepSummary, workflowLink } from "./stepSummary";
 
 /**
  * the generated main-branch workflow whose runs gate a queued release.
@@ -26,6 +27,13 @@ import { git } from "./releaseGit";
  * pipeline/src/backends/github/GithubBackend.ts.
  */
 const GITHUB_MAIN_WORKFLOW = "catladder-main.yml";
+
+/**
+ * the workflow that picks up a queued release, for summary links. Keep
+ * in sync with the release-on-green file name in
+ * pipeline/src/backends/github/GithubBackend.ts.
+ */
+const GITHUB_ON_GREEN_WORKFLOW = "catladder-release-on-green.yml";
 
 /**
  * where a queued release is recorded: a ref outside refs/heads and
@@ -109,18 +117,28 @@ export const githubQueueCheckJob = async () => {
   const run = await getMainWorkflowRun(sha);
   if (!run) {
     console.log(`no main workflow run found for ${sha} — releasing right away`);
+    appendStepSummary(
+      `ℹ️ No main workflow run found for \`${sha}\` — releasing right away.`,
+    );
     setStepOutput("queued", "false");
     return;
   }
   if (run.status === "completed") {
     if (run.conclusion === "success") {
       console.log(`main workflow for ${sha} succeeded — releasing right away`);
+      appendStepSummary(
+        `✅ The main workflow for \`${sha}\` succeeded — releasing right away.`,
+      );
       setStepOutput("queued", "false");
       return;
     }
+    appendStepSummary(
+      `❌ Not releasing: the ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run for \`${sha}\` concluded **${run.conclusion}**. ` +
+        `Fix the pipeline, or re-run with the force checkbox to release anyway.`,
+    );
     fail(
       `the main workflow for ${sha} concluded '${run.conclusion}' — ` +
-        `fix the pipeline, or use the force-create-release task to release anyway`,
+        `fix the pipeline, or force the release to release anyway`,
     );
   }
   // queued / in_progress / waiting: record the intent and let the
@@ -130,6 +148,10 @@ export const githubQueueCheckJob = async () => {
   console.log(
     `main workflow for ${sha} is ${run.status} — release queued: ` +
       `the 'release on green' workflow creates the release as soon as the run succeeds`,
+  );
+  appendStepSummary(
+    `⏳ **Release queued** for \`${sha}\` — the ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run is still ${run.status}. ` +
+      `${workflowLink(GITHUB_ON_GREEN_WORKFLOW, "catladder release on green")} creates the release as soon as it succeeds.`,
   );
   setStepOutput("queued", "true");
 };
@@ -149,12 +171,16 @@ export const githubQueuedGuardJob = async (
   const marker = markerLine.split(/\s+/)[0] ?? "";
   if (!marker) {
     console.log("no release queued — nothing to do");
+    appendStepSummary("No release queued — nothing to do.");
     setStepOutput("release", "false");
     return;
   }
   if (marker !== headSha) {
     console.log(
       `queued release is for ${marker}, this run is for ${headSha} — leaving the queue untouched`,
+    );
+    appendStepSummary(
+      `Queued release is for \`${marker}\`, this run is for \`${headSha}\` — leaving the queue untouched.`,
     );
     setStepOutput("release", "false");
     return;
@@ -163,11 +189,18 @@ export const githubQueuedGuardJob = async (
   // this run, whatever its outcome
   await git("push", "origin", `:${QUEUE_MARKER_REF}`);
   if (conclusion !== "success") {
+    appendStepSummary(
+      `❌ Queued release for \`${headSha}\` **not executed**: the main workflow concluded **${conclusion}**. ` +
+        `Fix the pipeline and queue again via the 🚀 create release workflow.`,
+    );
     fail(
       `queued release not executed: the main workflow concluded '${conclusion}' — ` +
-        `fix the pipeline and queue again (create-release task)`,
+        `fix the pipeline and queue the release again`,
     );
   }
   console.log(`main workflow for ${headSha} succeeded — releasing`);
+  appendStepSummary(
+    `✅ Main workflow for \`${headSha}\` succeeded — running the queued release.`,
+  );
   setStepOutput("release", "true");
 };

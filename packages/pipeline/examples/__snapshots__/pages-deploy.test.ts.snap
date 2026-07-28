@@ -1,77 +1,19 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`matches snapshot for pages-deploy github workflows YAML 1`] = `
-"catladder-release-on-green.yml:
-  name: catladder release on green
+"catladder-create-release.yml:
+  name: 🚀 catladder create release
   on:
-    workflow_run:
-      workflows:
-        - catladder main
-      types:
-        - completed
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
   env: &a1
     CL_JOB_TOKEN: \${{ github.token }}
     CL_REGISTRY: ghcr.io
     CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
-  jobs:
-    guard:
-      name: check queued release
-      runs-on: ubuntu-latest
-      permissions:
-        contents: write
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      outputs:
-        release: \${{ steps.guard.outputs.release }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: check queued release
-          id: guard
-          run: node .catladder-generated/catci/index.js release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"
-          shell: bash
-    create-release:
-      name: create release
-      runs-on: ubuntu-latest
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      permissions:
-        contents: write
-        actions: write
-        packages: read
-      needs:
-        - guard
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-        - name: create release
-          run: semanticRelease
-          shell: bash
-      if: \${{ needs.guard.outputs.release == 'true' }}
-catladder-manual.yml:
-  name: catladder manual tasks
-  on:
-    workflow_dispatch:
-      inputs:
-        job:
-          description: the task to run
-          required: true
-          type: choice
-          options:
-            - create-release
-  permissions:
-    contents: read
-    packages: write
-  env: *a1
   jobs:
     catladder-image-semantic-release:
       name: 🐳 catladder image semantic-release
@@ -152,7 +94,57 @@ catladder-manual.yml:
           if: steps.queue.outputs.queued != 'true'
           run: semanticRelease
           shell: bash
-      if: \${{ inputs.job == 'create-release' }}
+catladder-release-on-green.yml:
+  name: catladder release on green
+  on:
+    workflow_run:
+      workflows:
+        - catladder main
+      types:
+        - completed
+  env: *a1
+  jobs:
+    guard:
+      name: check queued release
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        release: \${{ steps.guard.outputs.release }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: check queued release
+          id: guard
+          run: node .catladder-generated/catci/index.js release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - guard
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ needs.guard.outputs.release == 'true' }}
 "
 `;
 

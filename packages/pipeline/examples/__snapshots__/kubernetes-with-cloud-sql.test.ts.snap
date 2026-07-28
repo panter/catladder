@@ -1,7 +1,100 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`] = `
-"catladder-release-on-green.yml:
+"catladder-create-release.yml:
+  name: 🚀 catladder create release
+  on:
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - catladder-image-semantic-release
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: check main workflow
+          id: queue
+          run: node .catladder-generated/catci/index.js release github-queue-check
+          shell: bash
+        - name: create release
+          if: steps.queue.outputs.queued != 'true'
+          run: semanticRelease
+          shell: bash
+catladder-release-on-green.yml:
   name: catladder release on green
   on:
     workflow_run:
@@ -9,12 +102,7 @@ exports[`matches snapshot for kubernetes-with-cloud-sql github workflows YAML 1`
         - catladder main
       types:
         - completed
-  env: &a1
-    CL_JOB_TOKEN: \${{ github.token }}
-    CL_REGISTRY: ghcr.io
-    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
-    CL_REGISTRY_USER: \${{ github.actor }}
-    CL_PR_NUMBER: \${{ github.event.number }}
+  env: *a1
   jobs:
     guard:
       name: check queued release
@@ -1732,8 +1820,380 @@ catladder-review-stop.yml:
             kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
             kubernetesDelete
           shell: bash
-catladder-manual.yml:
-  name: catladder manual tasks
+catladder-deploy.yml:
+  name: ▶️ catladder deploy
+  on:
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    api-app-prod:
+      name: api 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
+        CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-prod
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+    api-docker-prod:
+      name: api 🔨 docker | prod
+      runs-on: ubuntu-latest
+      needs:
+        - api-app-prod
+        - catladder-image-docker-build
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod
+      env:
+        DOCKER_BUILDKIT: '1'
+        CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
+        CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-yarn
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: Download artifacts from api-app-prod
+          uses: actions/download-artifact@v4
+          with:
+            name: api-app-prod
+        - name: 🔨 docker
+          id: main
+          run: bash .catladder-generated/github/scripts/api-docker-prod.sh
+          shell: bash
+    api-deploy-prod:
+      name: api 🚀 Deploy | prod
+      runs-on: ubuntu-latest
+      needs:
+        - api-app-prod
+        - api-docker-prod
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: prod-api
+        url: \${{ steps.main.outputs.url }}
+      env:
+        CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
+        CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
+        CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
+        CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
+        CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🚀 Deploy
+          id: main
+          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
+          shell: bash
+catladder-stop.yml:
+  name: ⏹️ catladder stop
   on:
     workflow_dispatch:
       inputs:
@@ -1743,14 +2203,8 @@ catladder-manual.yml:
           type: choice
           options:
             - api-stop-dev
-            - api-rollback-dev
-            - create-release
-            - api-rollback-review
             - api-stop-stage
-            - api-rollback-stage
-            - api-deploy-prod
             - api-stop-prod
-            - api-rollback-prod
   permissions:
     contents: read
     packages: write
@@ -2085,194 +2539,6 @@ catladder-manual.yml:
             kubernetesDelete
           shell: bash
       if: \${{ inputs.job == 'api-stop-dev' }}
-    api-rollback-dev:
-      name: api ↩️ Rollback ⚠️ | dev
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: dev-api
-      env:
-        CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
-        CL_dev_api_cloudsqlProxyCredentials: \${{ secrets.CL_dev_api_cloudsqlProxyCredentials }}
-        CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
-        CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
-        CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: ↩️ Rollback ⚠️
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="dev"
-            export APP_DIR="api"
-            export ENV_TYPE="dev"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.dev.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.dev.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-dev"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export RELEASE_NAME="pan-test-app-dev-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"
-            kubectl config use-context "kube-pan-test-app-dev-api"
-            kubernetesRollback
-          shell: bash
-      if: \${{ inputs.job == 'api-rollback-dev' }}
-    create-release:
-      name: create release
-      runs-on: ubuntu-latest
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      permissions:
-        contents: write
-        actions: write
-        packages: read
-      needs:
-        - catladder-image-semantic-release
-      env:
-        GITHUB_TOKEN: \${{ github.token }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            fetch-depth: 0
-        - name: check main workflow
-          id: queue
-          run: node .catladder-generated/catci/index.js release github-queue-check
-          shell: bash
-        - name: create release
-          if: steps.queue.outputs.queued != 'true'
-          run: semanticRelease
-          shell: bash
-      if: \${{ inputs.job == 'create-release' }}
-    api-rollback-review:
-      name: api ↩️ Rollback ⚠️ | review
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: review-api
-      env:
-        CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
-        CL_review_api_cloudsqlProxyCredentials: \${{ secrets.CL_review_api_cloudsqlProxyCredentials }}
-        CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
-        CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
-        CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: ↩️ Rollback ⚠️
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="review"
-            export APP_DIR="api"
-            export ENV_TYPE="review"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-review"
-            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
-            export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --token="$CL_review_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --namespace="pan-test-app-review"
-            kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
-            kubernetesRollback
-          shell: bash
-      if: \${{ inputs.job == 'api-rollback-review' }}
     api-stop-stage:
       name: api 🛑 Stop ⚠️ | stage
       runs-on: ubuntu-latest
@@ -2352,201 +2618,6 @@ catladder-manual.yml:
             kubernetesDelete
           shell: bash
       if: \${{ inputs.job == 'api-stop-stage' }}
-    api-rollback-stage:
-      name: api ↩️ Rollback ⚠️ | stage
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: stage-api
-      env:
-        CL_stage_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_api_POSTGRESQL_PASSWORD }}
-        CL_stage_api_cloudsqlProxyCredentials: \${{ secrets.CL_stage_api_cloudsqlProxyCredentials }}
-        CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
-        CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
-        CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: ↩️ Rollback ⚠️
-          id: main
-          run: |-
-            function escapeForDotEnv () {
-            input="\${1:-$(cat)}"
-             input="\${input//$'\\n'/\\\\n}"
-              if [[ "$input" == *\\\\n* ]]; then
-                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
-                  printf "\\"%s\\"\\n" "$input" 
-                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
-                  printf "\`%s\`\\n" "$input"
-                elif [[ "$input" == *\\"* ]]; then
-                  printf "'%s'\\n" "$input"
-                else
-                  printf "\\"%s\\"\\n" "$input"
-                fi
-              else
-                printf "%s\\n" "$input"
-              fi
-            }
-            function collapseable_section_start () {
-            local section_title="\${1}"
-              local section_description="\${2:-$section_title}"
-              echo "::group::\${section_description}"
-            }
-            function collapseable_section_end () {
-            echo "::endgroup::"
-            }
-            collapseable_section_start "injectvars" "Injecting variables"
-            export ENV_SHORT="stage"
-            export APP_DIR="api"
-            export ENV_TYPE="stage"
-            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
-            export BUILD_INFO_BUILD_TIME="unknown-build-time"
-            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
-            export HOSTNAME="api.stage.test-app.pan.panter.cloud"
-            export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"
-            export HOSTNAME_INTERNAL="api.stage.test-app.pan.panter.cloud"
-            export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"
-            export KUBE_NAMESPACE="pan-test-app-stage"
-            export KUBE_APP_NAME="api"
-            export KUBE_APP_NAME_PREFIX=""
-            export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"
-            export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"
-            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
-            export RELEASE_NAME="pan-test-app-stage-api"
-            export HELM_EXPERIMENTAL_OCI="1"
-            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
-            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
-            export HELM_ARGS=""
-            export COMPONENT_NAME="api"
-            collapseable_section_end "injectvars"
-            kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
-            kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"
-            kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"
-            kubectl config use-context "kube-pan-test-app-stage-api"
-            kubernetesRollback
-          shell: bash
-      if: \${{ inputs.job == 'api-rollback-stage' }}
-    api-app-prod:
-      name: api 🔨 app | prod
-      runs-on: ubuntu-latest
-      needs:
-        - catladder-image-jobs-default
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
-        CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache api-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: |-
-              api/node_modules
-              api/.yarn/install-state.gz
-            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-node-modules-
-        - name: Cache api-yarn
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
-        - name: 🔨 app
-          id: main
-          run: bash .catladder-generated/github/scripts/api-app-prod.sh
-          shell: bash
-        - name: Upload artifacts
-          uses: actions/upload-artifact@v4
-          with:
-            name: api-app-prod
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
-      if: \${{ inputs.job == 'api-deploy-prod' }}
-    api-docker-prod:
-      name: api 🔨 docker | prod
-      runs-on: ubuntu-latest
-      needs:
-        - api-app-prod
-        - catladder-image-docker-build
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod
-      env:
-        DOCKER_BUILDKIT: '1'
-        CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
-        CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: Cache api-yarn
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.yarn
-            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
-            restore-keys: api-yarn-
-        - name: Download artifacts from api-app-prod
-          uses: actions/download-artifact@v4
-          with:
-            name: api-app-prod
-        - name: 🔨 docker
-          id: main
-          run: bash .catladder-generated/github/scripts/api-docker-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'api-deploy-prod' }}
-    api-deploy-prod:
-      name: api 🚀 Deploy | prod
-      runs-on: ubuntu-latest
-      needs:
-        - api-app-prod
-        - api-docker-prod
-        - catladder-image-kubernetes
-      container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-        credentials:
-          username: \${{ github.actor }}
-          password: \${{ github.token }}
-      environment:
-        name: prod-api
-        url: \${{ steps.main.outputs.url }}
-      env:
-        CL_prod_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_prod_api_POSTGRESQL_PASSWORD }}
-        CL_prod_api_cloudsqlProxyCredentials: \${{ secrets.CL_prod_api_cloudsqlProxyCredentials }}
-        CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
-        CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
-        CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-        - name: 🚀 Deploy
-          id: main
-          run: bash .catladder-generated/github/scripts/api-deploy-prod.sh
-          shell: bash
-      if: \${{ inputs.job == 'api-deploy-prod' }}
     api-stop-prod:
       name: api 🛑 Stop ⚠️ | prod
       runs-on: ubuntu-latest
@@ -2626,6 +2697,512 @@ catladder-manual.yml:
             kubernetesDelete
           shell: bash
       if: \${{ inputs.job == 'api-stop-prod' }}
+catladder-rollback.yml:
+  name: ↩️ catladder rollback
+  on:
+    workflow_dispatch:
+      inputs:
+        job:
+          description: the task to run
+          required: true
+          type: choice
+          options:
+            - api-rollback-dev
+            - api-rollback-review
+            - api-rollback-stage
+            - api-rollback-prod
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-jobs-testing-chrome:
+      name: 🐳 catladder image jobs-testing-chrome
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-testing-chrome
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-docker-build:
+      name: 🐳 catladder image docker-build
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image docker-build
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e -f .catladder-generated/images/docker-build/Dockerfile .catladder-generated/images/docker-build
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:b343b099980e
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-kubernetes:
+      name: 🐳 catladder image kubernetes
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image kubernetes
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    api-rollback-dev:
+      name: api ↩️ Rollback ⚠️ | dev
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: dev-api
+      env:
+        CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
+        CL_dev_api_cloudsqlProxyCredentials: \${{ secrets.CL_dev_api_cloudsqlProxyCredentials }}
+        CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
+        CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
+        CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="dev"
+            export APP_DIR="api"
+            export ENV_TYPE="dev"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="api.dev.test-app.pan.panter.cloud"
+            export ROOT_URL="https://api.dev.test-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="api.dev.test-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://api.dev.test-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-test-app-dev"
+            export KUBE_APP_NAME="api"
+            export KUBE_APP_NAME_PREFIX=""
+            export POSTGRESQL_PASSWORD="$CL_dev_api_POSTGRESQL_PASSWORD"
+            export cloudsqlProxyCredentials="$CL_dev_api_cloudsqlProxyCredentials"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+            export RELEASE_NAME="pan-test-app-dev-api"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="api"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-test-app-dev-api" --server="$CL_dev_api_KUBE_URL" --certificate-authority <(echo $CL_dev_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-test-app-dev-api" --token="$CL_dev_api_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-test-app-dev-api" --cluster="kube-pan-test-app-dev-api" --user="kube-pan-test-app-dev-api" --namespace="pan-test-app-dev"
+            kubectl config use-context "kube-pan-test-app-dev-api"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'api-rollback-dev' }}
+    api-rollback-review:
+      name: api ↩️ Rollback ⚠️ | review
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: review-api
+      env:
+        CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
+        CL_review_api_cloudsqlProxyCredentials: \${{ secrets.CL_review_api_cloudsqlProxyCredentials }}
+        CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
+        CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
+        CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="review"
+            export APP_DIR="api"
+            export ENV_TYPE="review"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export ROOT_URL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://api.$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown").review.test-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-test-app-review"
+            export KUBE_APP_NAME="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+            export KUBE_APP_NAME_PREFIX="$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-"
+            export POSTGRESQL_PASSWORD="$CL_review_api_POSTGRESQL_PASSWORD"
+            export cloudsqlProxyCredentials="$CL_review_api_cloudsqlProxyCredentials"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+            export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="api"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --server="$CL_review_api_KUBE_URL" --certificate-authority <(echo $CL_review_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --token="$CL_review_api_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" --namespace="pan-test-app-review"
+            kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'api-rollback-review' }}
+    api-rollback-stage:
+      name: api ↩️ Rollback ⚠️ | stage
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-kubernetes
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: stage-api
+      env:
+        CL_stage_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_stage_api_POSTGRESQL_PASSWORD }}
+        CL_stage_api_cloudsqlProxyCredentials: \${{ secrets.CL_stage_api_cloudsqlProxyCredentials }}
+        CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
+        CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
+        CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+      steps:
+        - name: ↩️ Rollback ⚠️
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "injectvars" "Injecting variables"
+            export ENV_SHORT="stage"
+            export APP_DIR="api"
+            export ENV_TYPE="stage"
+            export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+            export BUILD_INFO_BUILD_TIME="unknown-build-time"
+            export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+            export HOSTNAME="api.stage.test-app.pan.panter.cloud"
+            export ROOT_URL="https://api.stage.test-app.pan.panter.cloud"
+            export HOSTNAME_INTERNAL="api.stage.test-app.pan.panter.cloud"
+            export ROOT_URL_INTERNAL="https://api.stage.test-app.pan.panter.cloud"
+            export KUBE_NAMESPACE="pan-test-app-stage"
+            export KUBE_APP_NAME="api"
+            export KUBE_APP_NAME_PREFIX=""
+            export POSTGRESQL_PASSWORD="$CL_stage_api_POSTGRESQL_PASSWORD"
+            export cloudsqlProxyCredentials="$CL_stage_api_cloudsqlProxyCredentials"
+            export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"KUBE_NAMESPACE\\",\\"KUBE_APP_NAME\\",\\"KUBE_APP_NAME_PREFIX\\",\\"POSTGRESQL_PASSWORD\\",\\"cloudsqlProxyCredentials\\"]"
+            export RELEASE_NAME="pan-test-app-stage-api"
+            export HELM_EXPERIMENTAL_OCI="1"
+            export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
+            export HELM_ARGS=""
+            export COMPONENT_NAME="api"
+            collapseable_section_end "injectvars"
+            kubectl config set-cluster "kube-pan-test-app-stage-api" --server="$CL_stage_api_KUBE_URL" --certificate-authority <(echo $CL_stage_api_KUBE_CA_PEM | base64 -d) --embed-certs=true
+            kubectl config set-credentials "kube-pan-test-app-stage-api" --token="$CL_stage_api_KUBE_TOKEN"
+            kubectl config set-context "kube-pan-test-app-stage-api" --cluster="kube-pan-test-app-stage-api" --user="kube-pan-test-app-stage-api" --namespace="pan-test-app-stage"
+            kubectl config use-context "kube-pan-test-app-stage-api"
+            kubernetesRollback
+          shell: bash
+      if: \${{ inputs.job == 'api-rollback-stage' }}
     api-rollback-prod:
       name: api ↩️ Rollback ⚠️ | prod
       runs-on: ubuntu-latest

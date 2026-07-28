@@ -30,9 +30,9 @@ With `when: "manual"` the `create release` button can be clicked **at any point 
 - clicked while the pipeline is still running, the release is **queued** and runs automatically as soon as every other job succeeded (nothing happens if the pipeline fails — queue again after fixing it);
 - clicked after a green pipeline, the release runs right away.
 
-On GitLab the button is a quick no-op job that records the intent; the actual release runs in the automatic `🚀 release once pipeline succeeds` job (shown as *skipped* in pipelines where nobody clicked — it is never triggered by hand). On GitHub the `create-release` manual task performs the same check itself and, when the main workflow is still running, hands over to the generated `catladder release on green` workflow.
+On GitLab the button is a quick no-op job that records the intent; the actual release runs in the automatic `🚀 release once pipeline succeeds` job (shown as *skipped* in pipelines where nobody clicked — it is never triggered by hand). On GitHub, releasing is the **`🚀 catladder create release`** workflow (Actions sidebar → *Run workflow*): it performs the same check itself and, when the main workflow is still running, hands over to the generated `catladder release on green` workflow — each run's summary tells you what happened and where the release will appear.
 
-`⚠️ force create release` skips all of this and releases **immediately**, whatever the pipeline state.
+Forcing a release skips all of this and releases **immediately**, whatever the pipeline state: on GitLab via the `⚠️ force create release` job, on GitHub via the *force* checkbox of the create-release workflow.
 
 ## Release methods
 
@@ -56,7 +56,7 @@ Releases are declared intentionally: whoever makes a noteworthy change commits a
 Signups can now use their company SSO account
 ```
 
-The release job consumes all pending changeset files: it takes the highest declared bump, computes the next version from the last `v*` tag, prepends the summaries to `CHANGELOG.md`, commits, tags and pushes. When no changesets are pending, the job succeeds without releasing — to release anyway (e.g. a hotfix was merged without a changeset), the `⚠️ force create release` job releases a patch bump with a generic changelog entry.
+The release job consumes all pending changeset files: it takes the highest declared bump, computes the next version from the last `v*` tag, prepends the summaries to `CHANGELOG.md`, commits, tags and pushes. When no changesets are pending, the job succeeds without releasing — to release anyway (e.g. a hotfix was merged without a changeset), force the release (GitLab: `⚠️ force create release` job, GitHub: force checkbox): it releases a patch bump with a generic changelog entry.
 
 #### The changeset check
 
@@ -80,4 +80,4 @@ Both methods derive the version from the last `vX.Y.Z` tag reachable from the br
 
 ## GitHub notes
 
-On the GitHub backend the release job runs in the main workflow (`when: "auto"`) or as a manual task (`workflow_dispatch`). Because tags pushed with the job's `GITHUB_TOKEN` do not trigger `on: push: tags` workflows, the release job explicitly dispatches the generated tagged-release workflow for the new tag — no extra setup (PAT or GitHub App) is needed.
+On the GitHub backend the release job runs in the main workflow (`when: "auto"`) and/or via the `🚀 catladder create release` dispatch workflow. Manual tasks in general are generated as per-kind dispatch workflows — `▶️ catladder deploy`, `⏹️ catladder stop`, `↩️ catladder rollback` — so each kind is its own entry in the Actions sidebar with its own run history (the emoji prefix groups the triggerable workflows). Because tags pushed with the job's `GITHUB_TOKEN` do not trigger `on: push: tags` workflows, the release job explicitly dispatches the generated tagged-release workflow for the new tag — no extra setup (PAT or GitHub App) is needed.
