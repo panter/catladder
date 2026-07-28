@@ -295,10 +295,31 @@ export class GithubBackend implements PipelineBackend {
 
     if (Object.keys(reviewStopJobs).length > 0) {
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = {
-        name: "🛠️ catladder review stop",
-        on: { pull_request: { types: ["closed"] } },
+        name: "⏹️ catladder stop review app",
+        on: {
+          pull_request: { types: ["closed"] },
+          // tearing a review app down while its pull request is still
+          // open (gitlab offers this as a manual job in the MR
+          // pipeline); the automatic teardown on close stays the
+          // normal path
+          workflow_dispatch: {
+            inputs: {
+              pr: {
+                description:
+                  "number of the pull request whose review app to stop",
+                required: true,
+                type: "string",
+              },
+            },
+          },
+        },
         ...workflowPermissions(images),
-        env: workflowEnv,
+        env: {
+          ...workflowEnv,
+          // a dispatched run has no pull_request event to take the
+          // number from — fall back to the input
+          CL_PR_NUMBER: "${{ github.event.number || inputs.pr }}",
+        },
         jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
       };
     }
