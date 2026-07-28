@@ -145,12 +145,13 @@ export const githubQueueCheckJob = async () => {
   // release-on-green workflow do the release. Force-push: a re-queue
   // (or a stale marker of an older commit) just moves the marker.
   await git("push", "origin", `+${sha}:${QUEUE_MARKER_REF}`);
+  const runState = run.status.replace(/_/g, " ");
   console.log(
-    `main workflow for ${sha} is ${run.status} — release queued: ` +
+    `main workflow for ${sha} is ${runState} — release queued: ` +
       `the 'release on green' workflow creates the release as soon as the run succeeds`,
   );
   appendStepSummary(
-    `⏳ **Release queued** for \`${sha}\` — the ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run is still ${run.status}. ` +
+    `⏳ **Release queued** for \`${sha}\` — the ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run is still ${runState}. ` +
       `${workflowLink(GITHUB_ON_GREEN_WORKFLOW, "release on green")} creates the release as soon as it succeeds.`,
   );
   setStepOutput("queued", "true");
