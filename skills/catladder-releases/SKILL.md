@@ -33,7 +33,7 @@ are generated, never hand-edited.
   - On GitHub, releasing is the **`🚀 catladder create release`**
     workflow (Actions sidebar → Run workflow): it releases immediately
     when the main workflow for HEAD is green, queues the release when
-    it is still running (the `catladder release on green` workflow then
+    it is still running (the `🛠️ catladder release on green` workflow then
     picks it up on completion), and fails when the run concluded red.
 - **`auto`** — the release job runs automatically on every main-branch
   pipeline (it still no-ops when there is nothing to release).

@@ -223,7 +223,7 @@ export const getGithubReleaseOnGreenWorkflow = (
     return null;
   }
   return {
-    name: "catladder release on green",
+    name: "🛠️ catladder release on green",
     on: {
       workflow_run: {
         workflows: [mainWorkflowName],

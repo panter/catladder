@@ -151,7 +151,7 @@ export const githubQueueCheckJob = async () => {
   );
   appendStepSummary(
     `⏳ **Release queued** for \`${sha}\` — the ${workflowLink(GITHUB_MAIN_WORKFLOW, "main workflow")} run is still ${run.status}. ` +
-      `${workflowLink(GITHUB_ON_GREEN_WORKFLOW, "catladder release on green")} creates the release as soon as it succeeds.`,
+      `${workflowLink(GITHUB_ON_GREEN_WORKFLOW, "release on green")} creates the release as soon as it succeeds.`,
   );
   setStepOutput("queued", "true");
 };

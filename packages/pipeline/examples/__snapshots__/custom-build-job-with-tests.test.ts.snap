@@ -95,11 +95,11 @@ exports[`matches snapshot for custom-build-job-with-tests github workflows YAML 
           run: semanticRelease
           shell: bash
 catladder-release-on-green.yml:
-  name: catladder release on green
+  name: 🛠️ catladder release on green
   on:
     workflow_run:
       workflows:
-        - catladder main
+        - 🛠️ catladder main
       types:
         - completed
   env: *a1
@@ -146,7 +146,7 @@ catladder-release-on-green.yml:
           shell: bash
       if: \${{ needs.guard.outputs.release == 'true' }}
 catladder-main.yml:
-  name: catladder main
+  name: 🛠️ catladder main
   on:
     push:
       branches:
@@ -398,7 +398,7 @@ catladder-main.yml:
           run: bash .catladder-generated/github/scripts/www-deploy-dev.sh
           shell: bash
 catladder-review.yml:
-  name: catladder review
+  name: 🛠️ catladder review
   on:
     pull_request:
       types:
@@ -655,7 +655,7 @@ catladder-review.yml:
           run: bash .catladder-generated/github/scripts/www-deploy-review.sh
           shell: bash
 catladder-release.yml:
-  name: catladder release
+  name: 🛠️ catladder release
   on:
     push:
       tags:
@@ -845,7 +845,7 @@ catladder-release.yml:
           run: bash .catladder-generated/github/scripts/www-deploy-stage.sh
           shell: bash
 catladder-review-stop.yml:
-  name: catladder review stop
+  name: 🛠️ catladder review stop
   on:
     pull_request:
       types:

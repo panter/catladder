@@ -32,12 +32,16 @@ const WORKFLOWS_FOLDER = ".github/workflows";
  */
 const GENERATED_FILE_PREFIX = "catladder-";
 
+// NOTE on the emoji prefixes: github sorts the Actions sidebar by raw
+// code point, so the 🛠️ (U+1F6E0) prefix makes the pipeline workflows
+// sort BELOW the triggerable action workflows (↩️ ⏹️ ▶️ 🚀, all lower
+// code points) — the things a human clicks come first.
 const TRIGGER_WORKFLOWS: Record<
   PipelineTrigger,
   Pick<GithubWorkflow, "name" | "on" | "concurrency">
 > = {
   mr: {
-    name: "catladder review",
+    name: "🛠️ catladder review",
     on: { pull_request: { types: ["opened", "synchronize", "reopened"] } },
     concurrency: {
       group: "catladder-review-${{ github.event.number }}",
@@ -45,12 +49,12 @@ const TRIGGER_WORKFLOWS: Record<
     },
   },
   mainBranch: {
-    name: "catladder main",
+    name: "🛠️ catladder main",
     // TODO: make the default branch configurable
     on: { push: { branches: ["main"] } },
   },
   taggedRelease: {
-    name: "catladder release",
+    name: "🛠️ catladder release",
     // tags pushed with the default GITHUB_TOKEN (as the release job
     // does) don't trigger `on: push: tags` — the release job therefore
     // also dispatches this workflow explicitly for the new tag
@@ -286,7 +290,7 @@ export class GithubBackend implements PipelineBackend {
 
     if (Object.keys(reviewStopJobs).length > 0) {
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = {
-        name: "catladder review stop",
+        name: "🛠️ catladder review stop",
         on: { pull_request: { types: ["closed"] } },
         ...workflowPermissions(images),
         env: workflowEnv,
