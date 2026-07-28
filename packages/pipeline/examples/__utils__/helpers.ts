@@ -5,6 +5,8 @@ import {
   getGitlabCompletePipeline,
   GithubBackend,
   GithubScriptFiles,
+  JobImagesPlan,
+  PROJECT_IMAGES_FOLDER,
   yamlStringifyOptions,
 } from "../../src";
 
@@ -61,16 +63,22 @@ export const createYamlGithubWorkflows = async (
 ): Promise<string> => {
   const backend = new GithubBackend();
   const scripts = new GithubScriptFiles();
+  const images = new JobImagesPlan("github", config.images);
   const workflows = await backend.createWorkflows(
     withFakeStore(config),
-    undefined,
+    images,
     scripts,
   );
   return [
     stringify(workflows, yamlStringifyOptions),
-    // the materialized job scripts, so their content stays snapshotted
-    ...scripts
-      .getGeneratedFiles()
-      .map(({ path, content }) => `# ===== ${path} =====\n${content}`),
+    // the materialized job scripts and inline Dockerfiles, so their
+    // content stays snapshotted. The definitions catladder ships are
+    // skipped — they are not part of what an example demonstrates
+    ...[
+      ...scripts.getGeneratedFiles(),
+      ...images
+        .getGeneratedFiles()
+        .filter(({ path }) => path.startsWith(PROJECT_IMAGES_FOLDER)),
+    ].map(({ path, content }) => `# ===== ${path} =====\n${content}`),
   ].join("\n");
 };

@@ -73,7 +73,7 @@ When your build or test jobs need a specific Docker image (e.g. Java + Maven, Pl
 
 ### How it works
 
-1. You put a `Dockerfile` in a directory in your repo (e.g. `docker/java-build/Dockerfile`)
+1. You provide a `Dockerfile` — either a directory in your repo (e.g. `docker/java-build/Dockerfile`) or written inline in the config
 2. You declare it in your catladder config under `images`
 3. You reference it in any `jobImage` field using `{ image: "<name>" }`
 
@@ -87,16 +87,26 @@ This means: **zero pipeline overhead** when the image hasn't changed, and automa
 
 ### Configuration
 
+An image is declared either with a **directory** or with an **inline Dockerfile**:
+
 ```ts title="catladder.ts"
 const config = {
   images: {
+    // (a) a directory in the repository
     "java-build": {
-      // directory containing a Dockerfile (also used as build context)
+      // directory containing a Dockerfile (also the default build context)
       dir: "docker/java-build",
       // optional: Docker build arguments (part of the content hash)
       buildArgs: { MAVEN_VERSION: "3.9.9" },
-      // optional: extra files outside `dir` to include in hash + change detection
+      // optional: extra files to include in hash + change detection
       hashExtraPaths: ["shared/settings.xml"],
+    },
+    // (b) an inline Dockerfile — as lines or as one string
+    "db-tools": {
+      dockerfile: [
+        "FROM alpine:3.21",
+        "RUN apk add --no-cache postgresql17-client",
+      ],
     },
   },
   components: {
@@ -113,7 +123,24 @@ const config = {
 } satisfies Config;
 ```
 
-The `dir` must contain a `Dockerfile`. All files in that directory are part of the content hash and watched for changes — nothing is copied into `.catladder-generated`, the directory is used in place.
+With `dir`, the directory must contain a `Dockerfile`. All files in it are part of the content hash and watched for changes — nothing is copied into `.catladder-generated`, the directory is used in place.
+
+With `dockerfile`, the content is written to `.catladder-generated/images/project/<name>/Dockerfile` (generated, never edit it) so the pipeline builds from a committed, reviewable file. Use it for small images that only need `FROM` + a few `RUN`s.
+
+### Build context
+
+`context` sets the docker build context, relative to the repository root:
+
+| declaration | default context |
+|---|---|
+| `dir` | the `dir` itself |
+| `dockerfile` | the repository root (`.`) |
+
+Set it explicitly when the image needs to `COPY` files from elsewhere, e.g. `{ dir: "docker/java-build", context: "." }` to build a Dockerfile that copies from the repository root.
+
+:::warning
+The build context is **not** part of the content hash — it can be the whole repository. Only the Dockerfile (or `dir`), `buildArgs` and `hashExtraPaths` are hashed. If your image `COPY`s a file and changing that file should rebuild the image, list it in `hashExtraPaths`.
+:::
 
 `{ image: "<name>" }` works in every `jobImage` field: build jobs, test jobs (`build.test.jobImage`), custom and pages deploys, and post-deploy verify jobs:
 
@@ -142,6 +169,8 @@ The `job-images/` prefix keeps them apart from your deployable component images 
 - a `jobImage` references a name that isn't declared in `images` — the error lists the declared names
 - the declared `dir` doesn't exist
 - the declared `dir` has no `Dockerfile`
+
+(`dir` and `dockerfile` are mutually exclusive — declaring both is a type error.)
 
 ### Edge cases
 

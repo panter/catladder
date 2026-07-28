@@ -4,6 +4,7 @@ export * from "./types";
 export * from "./rules";
 export * from "./runner";
 export * from "./customImages/projectImages";
+export * from "./customImages/jobImagesPlan";
 export * from "./config";
 export * from "./store";
 export * from "./context";

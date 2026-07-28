@@ -4,11 +4,20 @@ const config = {
   appName: "test-app",
   customerName: "pan",
   images: {
+    // a directory in the repository containing a Dockerfile
     "java-build": {
       dir: "packages/pipeline/examples/__fixtures__/project-image",
       buildArgs: {
         JAVA_VERSION: "21",
       },
+    },
+    // an inline Dockerfile — materialized into the generated files,
+    // built with the repository root as context
+    "db-tools": {
+      dockerfile: [
+        "FROM alpine:3.21",
+        "RUN apk add --no-cache postgresql17-client",
+      ],
     },
   },
   components: {
@@ -17,6 +26,10 @@ const config = {
       build: {
         type: "custom",
         jobImage: { image: "java-build" },
+        test: {
+          command: "yarn test:db",
+          jobImage: { image: "db-tools" },
+        },
         docker: {
           type: "custom",
         },

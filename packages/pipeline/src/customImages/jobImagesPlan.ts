@@ -7,7 +7,7 @@ import { isCatladderImageRef } from "../runner";
 import type { GitlabJobImage, PipelineType } from "../types";
 import type { CatladderJob, CatladderJobNeed } from "../types/jobs";
 import { collapseableSection } from "../utils/gitlab";
-import { computeCustomImageHash } from "./hash";
+import { computeCustomImageHash, computeInlineImageHash } from "./hash";
 import type { ProjectImageConfig, ProjectImageRef } from "./projectImages";
 import { isProjectImageRef } from "./projectImages";
 import {
@@ -35,6 +35,65 @@ export type ResolvedJobImage = {
 
 export type GeneratedImageFile = { path: string; content: string };
 
+/**
+ * one planned image build, shared by catladder's own shipped images and
+ * the project's declared ones: everything the build job and the
+ * materialization need, independent of where the definition came from.
+ */
+type PlannedImage = {
+  /** the content hash, i.e. the image tag */
+  hash: string;
+  /** the build job name */
+  jobName: string;
+  /** the full image url in the repository registry */
+  imageRef: string;
+  /** the `-f` argument of the docker build */
+  dockerfilePath: string;
+  /** the docker build context */
+  contextDir: string;
+  /** what gitlab's `rules:changes` watches */
+  watchedPaths: string[];
+  /** `--build-arg` values */
+  buildArgs?: Record<string, string>;
+  /**
+   * definition files to write into the generated files — shipped image
+   * dirs and inline Dockerfiles are materialized, a project image dir
+   * is used in place and contributes nothing
+   */
+  files: GeneratedImageFile[];
+};
+
+/**
+ * every planned image is consumed the same way: its url, plus an
+ * optional dependency on its build job
+ */
+const toResolvedJobImage = ({
+  imageRef,
+  jobName,
+}: PlannedImage): ResolvedJobImage => ({
+  image: imageRef,
+  fromRepoRegistry: true,
+  need: {
+    job: jobName,
+    artifacts: false,
+    optional: true,
+    global: true,
+  },
+});
+
+/**
+ * materializes an image definition directory into the generated files
+ * (used for the definitions catladder ships)
+ */
+const materializeDir = (
+  sourceDir: string,
+  targetDir: string,
+): GeneratedImageFile[] =>
+  listFilesRecursive(sourceDir).map((file) => ({
+    path: join(targetDir, file),
+    content: readFileSync(join(sourceDir, file), "utf-8"),
+  }));
+
 // built-in (catladder-shipped) images carry the catladder marker in
 // their job name; project-declared images get the short plain name
 const ensureJobName = (name: RunnerImageName) => `🐳 catladder image ${name}`;
@@ -49,6 +108,12 @@ const projectEnsureJobName = (name: string) => `🐳 image ${name}`;
 const CONFIG_FILE = "catladder.ts";
 
 /**
+ * where inline project Dockerfiles are materialized — a subfolder, so a
+ * project image can carry the same name as a shipped one
+ */
+export const PROJECT_IMAGES_FOLDER = `${GENERATED_IMAGES_FOLDER}/project`;
+
+/**
  * plans the catladder job images of one backend run: resolves image
  * references, collects the image build jobs, and the image definitions
  * to materialize into the generated files. Each referenced catladder
@@ -58,11 +123,8 @@ const CONFIG_FILE = "catladder.ts";
  * Reference-driven: only images actually used by a job are built.
  */
 export class JobImagesPlan {
-  private used = new Map<RunnerImageName, { hash: string }>();
-  private usedProject = new Map<
-    string,
-    { hash: string; watchedPaths: string[] }
-  >();
+  private used = new Map<RunnerImageName, PlannedImage>();
+  private usedProject = new Map<string, PlannedImage>();
 
   constructor(
     private readonly pipelineType: PipelineType,
@@ -88,35 +150,11 @@ export class JobImagesPlan {
   }
 
   resolveRef(ref: CatladderImageRef): ResolvedJobImage {
-    const name = ref.catladderImage;
-    const { hash } = this.use(name);
-    return {
-      image: `${this.registryImageRef()}/catladder/${name}:${hash}`,
-      fromRepoRegistry: true,
-      need: {
-        job: ensureJobName(name),
-        artifacts: false,
-        optional: true,
-        global: true,
-      },
-    };
+    return toResolvedJobImage(this.use(ref.catladderImage));
   }
 
   resolveProjectRef(ref: ProjectImageRef): ResolvedJobImage {
-    const name = ref.image;
-    const { hash } = this.useProject(name);
-    return {
-      // `job-images/` keeps the project's job images apart from its
-      // deployable component images (registry root) and build caches
-      image: `${this.registryImageRef()}/job-images/${name}:${hash}`,
-      fromRepoRegistry: true,
-      need: {
-        job: projectEnsureJobName(name),
-        artifacts: false,
-        optional: true,
-        global: true,
-      },
-    };
+    return toResolvedJobImage(this.useProject(ref.image));
   }
 
   /**
@@ -129,7 +167,7 @@ export class JobImagesPlan {
       : `${getCiVariable({ pipelineType: this.pipelineType }, "registryImage")}`;
   }
 
-  private useProject(name: string): { hash: string; watchedPaths: string[] } {
+  private useProject(name: string): PlannedImage {
     const existing = this.usedProject.get(name);
     if (existing) {
       return existing;
@@ -145,30 +183,88 @@ export class JobImagesPlan {
         }`,
       );
     }
+
+    const source = this.planProjectSource(name, imageConfig);
+    const planned: PlannedImage = {
+      ...source,
+      jobName: projectEnsureJobName(name),
+      buildArgs: imageConfig.buildArgs,
+      // `job-images/` keeps the project's job images apart from its
+      // deployable component images (registry root) and build caches
+      imageRef: `${this.registryImageRef()}/job-images/${name}:${source.hash}`,
+    };
+
+    this.usedProject.set(name, planned);
+    return planned;
+  }
+
+  /**
+   * the source-dependent half of a project image: an inline Dockerfile
+   * is materialized into the generated files and hashed by its content,
+   * a directory is hashed and watched in place
+   */
+  private planProjectSource(
+    name: string,
+    imageConfig: ProjectImageConfig,
+  ): Pick<
+    PlannedImage,
+    "hash" | "dockerfilePath" | "contextDir" | "watchedPaths" | "files"
+  > {
+    if (imageConfig.dockerfile !== undefined) {
+      const content = toDockerfileContent(imageConfig.dockerfile);
+      const dockerfilePath = `${PROJECT_IMAGES_FOLDER}/${name}/Dockerfile`;
+      const { hash, watchedPaths } = computeInlineImageHash({
+        dockerfileContent: content,
+        hashExtraPaths: imageConfig.hashExtraPaths,
+        buildArgs: imageConfig.buildArgs,
+      });
+      return {
+        hash,
+        dockerfilePath,
+        // an inline definition carries no directory of its own — the
+        // repository root is the sensible default context
+        contextDir: imageConfig.context ?? ".",
+        watchedPaths: [
+          `${PROJECT_IMAGES_FOLDER}/${name}/**/*`,
+          ...watchedPaths,
+          CONFIG_FILE,
+        ],
+        files: [{ path: dockerfilePath, content }],
+      };
+    }
+
+    const dir = imageConfig.dir;
     // fail at generation time with the offending image named: an
     // unreadable dir would otherwise surface as a bare fs ENOENT, and a
     // missing Dockerfile only as a docker build failure in CI
-    if (!existsSync(imageConfig.dir)) {
+    if (!existsSync(dir)) {
       throw new Error(
-        `job image "${name}": the directory "${imageConfig.dir}" does not exist (config.images.${name}.dir, relative to the repository root)`,
+        `job image "${name}": the directory "${dir}" does not exist (config.images.${name}.dir, relative to the repository root)`,
       );
     }
-    if (!existsSync(join(imageConfig.dir, "Dockerfile"))) {
+    if (!existsSync(join(dir, "Dockerfile"))) {
       throw new Error(
-        `job image "${name}": no Dockerfile in "${imageConfig.dir}" (config.images.${name}.dir)`,
+        `job image "${name}": no Dockerfile in "${dir}" (config.images.${name}.dir)`,
       );
     }
     const { hash, watchedPaths } = computeCustomImageHash({
-      dir: imageConfig.dir,
+      dir,
       hashExtraPaths: imageConfig.hashExtraPaths,
       buildArgs: imageConfig.buildArgs,
     });
-    const entry = { hash, watchedPaths };
-    this.usedProject.set(name, entry);
-    return entry;
+    return {
+      hash,
+      dockerfilePath: `${dir}/Dockerfile`,
+      contextDir: imageConfig.context ?? dir,
+      // the dir is committed in the project — watched in place, nothing
+      // is materialized. The config file is watched too: buildArgs /
+      // hashExtraPaths changes alter the tag without touching the dir
+      watchedPaths: [...watchedPaths, CONFIG_FILE],
+      files: [],
+    };
   }
 
-  private use(name: RunnerImageName): { hash: string } {
+  private use(name: RunnerImageName): PlannedImage {
     const existing = this.used.get(name);
     if (existing) {
       return existing;
@@ -183,78 +279,53 @@ export class JobImagesPlan {
         getShippedImageDir(dependency),
       ),
     });
-    const entry = { hash };
-    this.used.set(name, entry);
-    return entry;
+
+    const targetDir = `${GENERATED_IMAGES_FOLDER}/${name}`;
+    const planned: PlannedImage = {
+      hash,
+      jobName: ensureJobName(name),
+      imageRef: `${this.registryImageRef()}/catladder/${name}:${hash}`,
+      dockerfilePath: `${targetDir}/Dockerfile`,
+      // the jobs family INCLUDEs sibling images, so it builds from the
+      // images root; the others from their own dir
+      contextDir:
+        RUNNER_IMAGE_BUILD_CONTEXT[name] === "root"
+          ? GENERATED_IMAGES_FOLDER
+          : targetDir,
+      watchedPaths: [name, ...dependencies].map(
+        (dir) => `${GENERATED_IMAGES_FOLDER}/${dir}/**/*`,
+      ),
+      // pipelines build from committed, reviewable files (and gitlab's
+      // rules:changes can watch them)
+      files: materializeDir(getShippedImageDir(name), targetDir),
+    };
+
+    this.used.set(name, planned);
+    return planned;
   }
 
   /**
    * the image build jobs for all used images
    */
   getEnsureJobs(): CatladderJob[] {
-    return [
-      ...[...this.used.entries()].map(([name, { hash }]) =>
-        this.createEnsureJob(name, hash),
-      ),
-      ...[...this.usedProject.entries()].map(([name, entry]) =>
-        this.createProjectEnsureJob(name, entry),
-      ),
-    ];
-  }
-
-  private createEnsureJob(name: RunnerImageName, hash: string): CatladderJob {
-    const imageRef = `${this.registryImageRef()}/catladder/${name}:${hash}`;
-
-    const watchedDirs = [name, ...(RUNNER_IMAGE_DEPENDENCIES[name] ?? [])];
-
-    return this.createImageBuildJob({
-      jobName: ensureJobName(name),
-      imageRef,
-      watchedPaths: watchedDirs.map(
-        (dir) => `${GENERATED_IMAGES_FOLDER}/${dir}/**/*`,
-      ),
-      buildCommand: `DOCKER_BUILDKIT=1 docker build -t ${imageRef} -f ${GENERATED_IMAGES_FOLDER}/${name}/Dockerfile ${
-        RUNNER_IMAGE_BUILD_CONTEXT[name] === "root"
-          ? GENERATED_IMAGES_FOLDER
-          : `${GENERATED_IMAGES_FOLDER}/${name}`
-      }`,
-    });
-  }
-
-  private createProjectEnsureJob(
-    name: string,
-    { hash, watchedPaths }: { hash: string; watchedPaths: string[] },
-  ): CatladderJob {
-    const imageConfig = this.projectImages[name];
-    const imageRef = `${this.registryImageRef()}/job-images/${name}:${hash}`;
-
-    const buildArgFlags = Object.entries(imageConfig.buildArgs ?? {})
-      .map(([key, value]) => ` --build-arg '${key}=${value}'`)
-      .join("");
-
-    return this.createImageBuildJob({
-      jobName: projectEnsureJobName(name),
-      imageRef,
-      // the image dir is committed in the project repository — watched
-      // in place, nothing is materialized. The config file is watched
-      // too: buildArgs / hashExtraPaths changes alter the tag without
-      // touching the dir
-      watchedPaths: [...watchedPaths, CONFIG_FILE],
-      buildCommand: `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${imageConfig.dir}/Dockerfile ${imageConfig.dir}`,
-    });
+    return [...this.used.values(), ...this.usedProject.values()].map(
+      (planned) => this.createImageBuildJob(planned),
+    );
   }
 
   private createImageBuildJob({
     jobName,
     imageRef,
     watchedPaths,
-    buildCommand,
-  }: {
-    jobName: string;
-    imageRef: string;
-    watchedPaths: string[];
-    buildCommand: string;
-  }): CatladderJob {
+    dockerfilePath,
+    contextDir,
+    buildArgs,
+  }: PlannedImage): CatladderJob {
+    const buildArgFlags = Object.entries(buildArgs ?? {})
+      .map(([key, value]) => ` --build-arg '${key}=${value}'`)
+      .join("");
+    const buildCommand = `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${dockerfilePath} ${contextDir}`;
+
     const ctx = { pipelineType: this.pipelineType };
     const registryUser = getCiVariable(ctx, "registryUser");
     const jobToken = getCiVariable(ctx, "jobToken");
@@ -273,7 +344,9 @@ export class JobImagesPlan {
       // no equivalent and always runs (the existence check is fast)
       rules: [
         {
-          changes: watchedPaths,
+          // a fresh array per job: the yaml serializer anchors repeated
+          // objects, and a shared reference would reshuffle anchors
+          changes: [...watchedPaths],
         },
       ],
       variables: {},
@@ -306,20 +379,29 @@ export class JobImagesPlan {
   }
 
   /**
-   * the image definitions of all used images, materialized into the
-   * generated files (so pipelines build from committed, reviewable
-   * files and gitlab's rules:changes can watch them)
+   * the image definitions to materialize into the generated files (so
+   * pipelines build from committed, reviewable files and gitlab's
+   * rules:changes can watch them): the definitions catladder ships and
+   * the project's inline Dockerfiles. A project image directory is
+   * already committed and contributes nothing.
    */
   getGeneratedFiles(): GeneratedImageFile[] {
-    return [...this.used.keys()].flatMap((name) => {
-      const dir = getShippedImageDir(name);
-      return listFilesRecursive(dir).map((file) => ({
-        path: join(GENERATED_IMAGES_FOLDER, name, file),
-        content: readFileSync(join(dir, file), "utf-8"),
-      }));
-    });
+    return [...this.used.values(), ...this.usedProject.values()].flatMap(
+      ({ files }) => files,
+    );
   }
 }
+
+/**
+ * an inline Dockerfile is written as given — as one string, or as lines
+ * joined with newlines (always newline-terminated)
+ */
+const toDockerfileContent = (dockerfile: string | string[]): string => {
+  const content = Array.isArray(dockerfile)
+    ? dockerfile.join("\n")
+    : dockerfile;
+  return content.endsWith("\n") ? content : `${content}\n`;
+};
 
 const IGNORED_FILES = new Set([".DS_Store", "Thumbs.db"]);
 

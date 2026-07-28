@@ -1,3 +1,4 @@
+import type { Hash } from "crypto";
 import { createHash } from "crypto";
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join, resolve } from "path";
@@ -37,6 +38,38 @@ function listFilesRecursive(dir: string): string[] {
     .sort();
 }
 
+/**
+ * the parts every image definition hashes on top of its content:
+ * files outside the definition, and the build args
+ */
+function hashExtras(
+  hash: Hash,
+  config: Pick<ImageHashConfig, "hashExtraPaths" | "buildArgs">,
+): string[] {
+  const watchedPaths: string[] = [];
+
+  // Hash extra paths (for files outside the dir)
+  if (config.hashExtraPaths) {
+    // Extra paths are literal file paths (not globs) for simplicity
+    const extraFiles = [...config.hashExtraPaths].sort();
+    for (const file of extraFiles) {
+      hash.update(file);
+      hash.update(readFileSync(file));
+    }
+    watchedPaths.push(...config.hashExtraPaths);
+  }
+
+  // Hash build args (sorted keys for determinism)
+  if (config.buildArgs) {
+    const sorted = Object.entries(config.buildArgs).sort(([a], [b]) =>
+      a.localeCompare(b),
+    );
+    hash.update(JSON.stringify(sorted));
+  }
+
+  return watchedPaths;
+}
+
 export function computeCustomImageHash(
   config: ImageHashConfig,
 ): CustomImageHashResult {
@@ -62,24 +95,28 @@ export function computeCustomImageHash(
     watchedPaths.push(`${extraDir}/**/*`);
   }
 
-  // Hash extra paths (for files outside the dir)
-  if (config.hashExtraPaths) {
-    // Extra paths are literal file paths (not globs) for simplicity
-    const extraFiles = [...config.hashExtraPaths].sort();
-    for (const file of extraFiles) {
-      hash.update(file);
-      hash.update(readFileSync(file));
-    }
-    watchedPaths.push(...config.hashExtraPaths);
-  }
+  watchedPaths.push(...hashExtras(hash, config));
 
-  // Hash build args (sorted keys for determinism)
-  if (config.buildArgs) {
-    const sorted = Object.entries(config.buildArgs).sort(([a], [b]) =>
-      a.localeCompare(b),
-    );
-    hash.update(JSON.stringify(sorted));
-  }
+  return {
+    hash: hash.digest("hex").slice(0, 12),
+    watchedPaths,
+  };
+}
+
+/**
+ * the hash of an image defined by an inline Dockerfile: its content
+ * stands in for the definition dir. The build context is deliberately
+ * NOT hashed (it may be the whole repository) — `hashExtraPaths` is how
+ * context files opt into the hash.
+ */
+export function computeInlineImageHash(
+  config: Pick<ImageHashConfig, "hashExtraPaths" | "buildArgs"> & {
+    dockerfileContent: string;
+  },
+): CustomImageHashResult {
+  const hash = createHash("sha256");
+  hash.update(config.dockerfileContent);
+  const watchedPaths = hashExtras(hash, config);
 
   return {
     hash: hash.digest("hex").slice(0, 12),

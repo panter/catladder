@@ -117,6 +117,56 @@ exports[`matches snapshot for project-images github workflows YAML 1`] = `
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
             collapseable_section_end "docker-push"
           shell: bash
+    image-db-tools:
+      name: 🐳 image db-tools
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 image db-tools
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 -f .catladder-generated/images/project/db-tools/Dockerfile .
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+            collapseable_section_end "docker-push"
+          shell: bash
     image-java-build:
       name: 🐳 image java-build
       runs-on: ubuntu-latest
@@ -166,6 +216,28 @@ exports[`matches snapshot for project-images github workflows YAML 1`] = `
             collapseable_section_start "docker-push" "Pushing image"
             docker push ghcr.io/\${{ github.repository }}/job-images/java-build:75104a2b20ec
             collapseable_section_end "docker-push"
+          shell: bash
+    api-test-dev:
+      name: api 🧪 test | dev
+      runs-on: ubuntu-latest
+      needs:
+        - image-db-tools
+      container:
+        image: ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: dev
+      env:
+        CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🧪 test
+          id: main
+          run: bash .catladder-generated/github/scripts/api-test-dev.sh
           shell: bash
     api-app-dev:
       name: api 🔨 app | dev
@@ -232,6 +304,7 @@ exports[`matches snapshot for project-images github workflows YAML 1`] = `
       needs:
         - api-app-dev
         - api-docker-dev
+        - api-test-dev
       container:
         image: google/cloud-sdk:525.0.0
       environment:
@@ -363,6 +436,56 @@ catladder-review.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
             collapseable_section_end "docker-push"
           shell: bash
+    image-db-tools:
+      name: 🐳 image db-tools
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 image db-tools
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 -f .catladder-generated/images/project/db-tools/Dockerfile .
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+            collapseable_section_end "docker-push"
+          shell: bash
     image-java-build:
       name: 🐳 image java-build
       runs-on: ubuntu-latest
@@ -412,6 +535,28 @@ catladder-review.yml:
             collapseable_section_start "docker-push" "Pushing image"
             docker push ghcr.io/\${{ github.repository }}/job-images/java-build:75104a2b20ec
             collapseable_section_end "docker-push"
+          shell: bash
+    api-test-review:
+      name: api 🧪 test | review
+      runs-on: ubuntu-latest
+      needs:
+        - image-db-tools
+      container:
+        image: ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      environment:
+        name: review
+      env:
+        CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🧪 test
+          id: main
+          run: bash .catladder-generated/github/scripts/api-test-review.sh
           shell: bash
     api-app-review:
       name: api 🔨 app | review
@@ -478,6 +623,7 @@ catladder-review.yml:
       needs:
         - api-app-review
         - api-docker-review
+        - api-test-review
       container:
         image: google/cloud-sdk:525.0.0
       environment:
@@ -603,6 +749,56 @@ catladder-release.yml:
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    image-db-tools:
+      name: 🐳 image db-tools
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 image db-tools
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 -f .catladder-generated/images/project/db-tools/Dockerfile .
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
             collapseable_section_end "docker-push"
           shell: bash
     image-java-build:
@@ -846,6 +1042,56 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
             collapseable_section_end "docker-push"
           shell: bash
+    image-db-tools:
+      name: 🐳 image db-tools
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 image db-tools
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 -f .catladder-generated/images/project/db-tools/Dockerfile .
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
+            collapseable_section_end "docker-push"
+          shell: bash
     image-java-build:
       name: 🐳 image java-build
       runs-on: ubuntu-latest
@@ -1066,6 +1312,56 @@ catladder-manual.yml:
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:a9d7c7ca552f
+            collapseable_section_end "docker-push"
+          shell: bash
+    image-db-tools:
+      name: 🐳 image db-tools
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 image db-tools
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2 -f .catladder-generated/images/project/db-tools/Dockerfile .
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/job-images/db-tools:0510e25773d2
             collapseable_section_end "docker-push"
           shell: bash
     image-java-build:
@@ -1377,6 +1673,40 @@ catladder-manual.yml:
           shell: bash
       if: \${{ inputs.job == 'api-stop-prod' }}
 
+# ===== .catladder-generated/github/scripts/api-test-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+yarn test:db
+
 # ===== .catladder-generated/github/scripts/api-app-dev.sh =====
 #!/usr/bin/env bash
 set -eo pipefail
@@ -1595,6 +1925,40 @@ gcloud artifacts docker images list europe-west1-docker.pkg.dev/test-project/cat
 set -e
 collapseable_section_end "cleanup"
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/github/scripts/api-test-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+yarn test:db
 
 # ===== .catladder-generated/github/scripts/api-app-review.sh =====
 #!/usr/bin/env bash
@@ -2255,6 +2619,10 @@ gcloud artifacts docker images list europe-west1-docker.pkg.dev/test-project/cat
 set -e
 collapseable_section_end "cleanup"
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"
+
+# ===== .catladder-generated/images/project/db-tools/Dockerfile =====
+FROM alpine:3.21
+RUN apk add --no-cache postgresql17-client
 "
 `;
 
@@ -2454,6 +2822,54 @@ before_script:
   needs: []
   retry: *a2
   interruptible: true
+🐳 image db-tools:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/job-images/db-tools:0510e25773d2 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/job-images/db-tools:0510e25773d2 already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/job-images/db-tools:0510e25773d2 -f .catladder-generated/images/project/db-tools/Dockerfile .
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/job-images/db-tools:0510e25773d2
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/project/db-tools/**/*
+        - catladder.ts
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/project/db-tools/**/*
+        - catladder.ts
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/project/db-tools/**/*
+        - catladder.ts
+  needs: []
+  retry: *a2
+  interruptible: true
 🐳 image java-build:
   stage: setup
   image: docker.io/docker:29.5.1
@@ -2537,6 +2953,28 @@ create release:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
   needs: []
+'api 🧪 test | dev ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/job-images/db-tools:0510e25773d2
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - yarn test:db
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+  needs:
+    - job: 🐳 image db-tools
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
 'api 🔨 app | dev ':
   stage: build
   image: $CI_REGISTRY_IMAGE/job-images/java-build:75104a2b20ec
@@ -2748,6 +3186,8 @@ create release:
       artifacts: false
     - job: 'api 🔨 docker | dev '
       artifacts: false
+    - job: 'api 🧪 test | dev '
+      artifacts: false
   retry: *a2
   interruptible: true
   allow_failure: false
@@ -2781,6 +3221,28 @@ create release:
   retry: *a2
   interruptible: true
   allow_failure: true
+'api 🧪 test | review ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/job-images/db-tools:0510e25773d2
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - yarn test:db
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs:
+    - job: 🐳 image db-tools
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
 'api 🔨 app | review ':
   stage: build
   image: $CI_REGISTRY_IMAGE/job-images/java-build:75104a2b20ec
@@ -2994,6 +3456,8 @@ create release:
     - job: 'api 🔨 app | review '
       artifacts: false
     - job: 'api 🔨 docker | review '
+      artifacts: false
+    - job: 'api 🧪 test | review '
       artifacts: false
   retry: *a2
   interruptible: true

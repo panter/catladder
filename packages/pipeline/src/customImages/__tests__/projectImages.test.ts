@@ -155,6 +155,74 @@ describe("JobImagesPlan project images", () => {
     );
   });
 
+  it("materializes an inline dockerfile and builds it from the repo root", () => {
+    const plan = new JobImagesPlan("gitlab", {
+      "db-tools": { dockerfile: ["FROM alpine:3.21", "RUN apk add curl"] },
+    });
+
+    plan.resolve({ image: "db-tools" });
+
+    expect(plan.getGeneratedFiles()).toEqual([
+      {
+        path: ".catladder-generated/images/project/db-tools/Dockerfile",
+        content: "FROM alpine:3.21\nRUN apk add curl\n",
+      },
+    ]);
+    const [job] = plan.getEnsureJobs();
+    expect(job.rules).toEqual([
+      {
+        changes: [
+          ".catladder-generated/images/project/db-tools/**/*",
+          "catladder.ts",
+        ],
+      },
+    ]);
+    expect((job.script ?? []).join("\n")).toContain(
+      "-f .catladder-generated/images/project/db-tools/Dockerfile .",
+    );
+  });
+
+  it("accepts an inline dockerfile as one string", () => {
+    const asLines = new JobImagesPlan("gitlab", {
+      img: { dockerfile: ["FROM alpine:3.21", "RUN apk add curl"] },
+    }).resolve({ image: "img" });
+    const asString = new JobImagesPlan("gitlab", {
+      img: { dockerfile: "FROM alpine:3.21\nRUN apk add curl\n" },
+    }).resolve({ image: "img" });
+
+    expect(asString.image).toBe(asLines.image);
+  });
+
+  it("honours an explicit build context for both sources", () => {
+    const dir = setupFixture("context", { Dockerfile: "FROM node:22\n" });
+    const plan = new JobImagesPlan("gitlab", {
+      "from-dir": { dir, context: "." },
+      inline: { dockerfile: "FROM node:22\n", context: "packages" },
+    });
+
+    plan.resolve({ image: "from-dir" });
+    plan.resolve({ image: "inline" });
+    const [dirJob, inlineJob] = plan.getEnsureJobs();
+
+    expect((dirJob.script ?? []).join("\n")).toContain(
+      `-f ${dir}/Dockerfile .`,
+    );
+    expect((inlineJob.script ?? []).join("\n")).toContain(
+      "-f .catladder-generated/images/project/inline/Dockerfile packages",
+    );
+  });
+
+  it("changes the inline image tag when the dockerfile content changes", () => {
+    const resolveWith = (from: string) =>
+      new JobImagesPlan("gitlab", {
+        img: { dockerfile: `FROM ${from}\n` },
+      }).resolve({ image: "img" });
+
+    expect(resolveWith("alpine:3.21").image).not.toBe(
+      resolveWith("alpine:3.20").image,
+    );
+  });
+
   it("does not materialize project image dirs into generated files", () => {
     const dir = setupFixture("materialize", { Dockerfile: "FROM node:22\n" });
     const plan = new JobImagesPlan("gitlab", { "my-image": { dir } });

@@ -87,10 +87,16 @@ verify):
 
 ```ts
 images: {
+  // (a) a directory in the repo (default context = the dir)
   "java-build": {
-    dir: "docker/java-build",                 // contains the Dockerfile (= build context)
+    dir: "docker/java-build",                 // contains the Dockerfile
     buildArgs: { MAVEN_VERSION: "3.9.9" },    // optional, part of the content hash
     hashExtraPaths: ["shared/settings.xml"],  // optional extra hashed+watched files
+  },
+  // (b) inline (default context = repo root); materialized into
+  // .catladder-generated/images/project/<name>/Dockerfile
+  "db-tools": {
+    dockerfile: ["FROM alpine:3.21", "RUN apk add --no-cache postgresql17-client"],
   },
 },
 components: {
@@ -100,10 +106,19 @@ components: {
 }
 ```
 
+`dir` and `dockerfile` are mutually exclusive. `context` overrides the
+build context (relative to the repo root) — needed when the image
+`COPY`s files from outside its `dir`.
+
 Catladder generates a `🐳 image <name>` job (setup stage) that builds
 the image content-hashed into the project registry
 (`…/job-images/<name>:<hash>`) and skips when it already exists — works
 on GitLab and GitHub.
+
+**The build context is not hashed** (it can be the whole repo) — only
+the Dockerfile / `dir`, `buildArgs` and `hashExtraPaths` are. Files
+pulled in via `COPY` that should trigger a rebuild belong in
+`hashExtraPaths`.
 
 Generation (`yarn catenv`) fails fast on an undeclared image name, a
 missing `dir`, or a `dir` without a `Dockerfile`.

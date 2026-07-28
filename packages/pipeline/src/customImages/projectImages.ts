@@ -5,15 +5,22 @@ import type { GitlabJobImage } from "../types/gitlab-types";
  * automatically in the pipeline, content-hashed into the project's own
  * registry and rebuilt only when its inputs change.
  */
-export type ProjectImageConfig = {
+type ProjectImageCommon = {
   /**
-   * the docker build context directory (must contain the `Dockerfile`),
-   * relative to the repository root
+   * the docker build context, relative to the repository root.
+   *
+   * Defaults to `dir` for a directory-based image, and to the
+   * repository root (`.`) for an inline `dockerfile`.
+   *
+   * NOTE: the context itself is not hashed — only the Dockerfile (or
+   * `dir`), `buildArgs` and `hashExtraPaths` are. List files that are
+   * `COPY`ed from a wider context in `hashExtraPaths` if changing them
+   * should rebuild the image.
    */
-  dir: string;
+  context?: string;
   /**
-   * extra files outside `dir` that influence the image content — they
-   * become part of the content hash and the change detection
+   * extra files that influence the image content — they become part of
+   * the content hash and the change detection
    */
   hashExtraPaths?: string[];
   /**
@@ -22,6 +29,32 @@ export type ProjectImageConfig = {
    */
   buildArgs?: Record<string, string>;
 };
+
+/**
+ * where the image definition comes from: a directory in the repository
+ * containing a `Dockerfile`, or an inline Dockerfile written straight
+ * into the config (materialized into the generated files)
+ */
+export type ProjectImageConfig = ProjectImageCommon &
+  (
+    | {
+        /**
+         * directory containing the `Dockerfile`, relative to the
+         * repository root. Also the default build context.
+         */
+        dir: string;
+        dockerfile?: never;
+      }
+    | {
+        /**
+         * the Dockerfile content, as one string or as lines. Written to
+         * `.catladder-generated/images/project/<name>/Dockerfile`; the
+         * build context defaults to the repository root.
+         */
+        dockerfile: string | string[];
+        dir?: never;
+      }
+  );
 
 /**
  * a reference to a project-declared job image (`config.images`), usable
