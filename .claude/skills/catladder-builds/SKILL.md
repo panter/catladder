@@ -107,6 +107,9 @@ the image content-hashed into the project registry
 (`…/job-images/<name>:<hash>`) and skips when it already exists — works
 on GitLab and GitHub.
 
+Generation (`yarn catenv`) fails fast on an undeclared image name, a
+missing `dir`, or a `dir` without a `Dockerfile`.
+
 ## Workspace builds (monorepos)
 
 For a shared build across several components, declare it once at the top

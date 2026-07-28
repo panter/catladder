@@ -68,6 +68,27 @@ describe("JobImagesPlan project images", () => {
     );
   });
 
+  it("throws when the image dir does not exist", () => {
+    const plan = new JobImagesPlan("gitlab", {
+      "java-build": { dir: "docker/does-not-exist" },
+    });
+
+    expect(() => plan.resolve({ image: "java-build" })).toThrowError(
+      /job image "java-build": the directory "docker\/does-not-exist" does not exist/,
+    );
+  });
+
+  it("throws when the image dir has no Dockerfile", () => {
+    const dir = setupFixture("no-dockerfile", {
+      "README.md": "not an image\n",
+    });
+    const plan = new JobImagesPlan("gitlab", { "java-build": { dir } });
+
+    expect(() => plan.resolve({ image: "java-build" })).toThrowError(
+      /job image "java-build": no Dockerfile in/,
+    );
+  });
+
   it("emits one build job per used image, watching the dir and catladder.ts", () => {
     const dir = setupFixture("ensure", { Dockerfile: "FROM node:22\n" });
     const plan = new JobImagesPlan("gitlab", {

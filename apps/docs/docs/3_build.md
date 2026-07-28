@@ -135,6 +135,14 @@ Images are pushed to your project's own container registry:
 
 The `job-images/` prefix keeps them apart from your deployable component images and build caches. Catladder's own built-in job images live under `catladder/` in the same registry. Old images remain in the registry and can be cleaned up via registry retention policies.
 
+### Errors at generation time
+
+`yarn catenv` fails fast (no pipeline files are written) when:
+
+- a `jobImage` references a name that isn't declared in `images` — the error lists the declared names
+- the declared `dir` doesn't exist
+- the declared `dir` has no `Dockerfile`
+
 ### Edge cases
 
 - **First pipeline run**: the image doesn't exist yet, the build job runs and builds it, consumer jobs wait

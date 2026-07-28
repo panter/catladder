@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "fs";
 import { join } from "path";
 import { getCiVariable } from "../bash/ciVariables";
 import { getDockerJobBaseProps } from "../build/docker";
@@ -143,6 +143,19 @@ export class JobImagesPlan {
             ? `images declared in config.images: ${declared.join(", ")}`
             : "no images are declared in config.images"
         }`,
+      );
+    }
+    // fail at generation time with the offending image named: an
+    // unreadable dir would otherwise surface as a bare fs ENOENT, and a
+    // missing Dockerfile only as a docker build failure in CI
+    if (!existsSync(imageConfig.dir)) {
+      throw new Error(
+        `job image "${name}": the directory "${imageConfig.dir}" does not exist (config.images.${name}.dir, relative to the repository root)`,
+      );
+    }
+    if (!existsSync(join(imageConfig.dir, "Dockerfile"))) {
+      throw new Error(
+        `job image "${name}": no Dockerfile in "${imageConfig.dir}" (config.images.${name}.dir)`,
       );
     }
     const { hash, watchedPaths } = computeCustomImageHash({
