@@ -4,6 +4,10 @@ const CLOUD_SQL: DeployConfigCloudRunCloudSql = {
   type: "unmanaged",
   instanceConnectionName: "projectId:region:instancename",
   dbUser: "my-user",
+  // embed the final values into DATABASE_URL. This also picks up the
+  // DB_PASSWORD override below, so the connection string contains the
+  // password of the component that owns the database
+  dbConnectionStringVariablesMode: "embedded",
 };
 const config = {
   appName: "test-app",

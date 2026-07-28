@@ -43,6 +43,17 @@ export class VariableValueContainingReferences {
     );
   }
 
+  /**
+   * concats values to this one and returns a new VariableValueContainingReferences.
+   * mirrors String.prototype.concat / BashExpression.concat so a VariableValue
+   * can be extended regardless of its concrete type
+   */
+  public concat(
+    ...values: Array<VariableValuePart | VariableValueContainingReferences>
+  ): VariableValueContainingReferences {
+    return new VariableValueContainingReferences([...this.parts, ...values]);
+  }
+
   public toString(
     options: EscapeOptions = {
       quotes: false,

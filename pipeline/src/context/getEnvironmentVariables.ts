@@ -85,8 +85,10 @@ export const getEnvironmentVariables = async (
         )
       : {};
 
-    const HOSTNAME_INTERNAL =
-      additionalEnvVars.HOSTNAME_INTERNAL ?? "unknown-host.example.com";
+    // deploy types provide HOSTNAME_INTERNAL as a plain string or bash
+    // expression (never containing references)
+    const HOSTNAME_INTERNAL = (additionalEnvVars.HOSTNAME_INTERNAL ??
+      "unknown-host.example.com") as StringOrBashExpression;
 
     host = envConfigRaw?.host ?? HOSTNAME_INTERNAL;
     url = joinBashExpressions(["https://", host]);
@@ -129,10 +131,21 @@ export const getEnvironmentVariables = async (
     ]),
   );
 
-  const publicEnvVars =
+  // predefined variables may contain references too (e.g. the embedded
+  // database connection string references the component's own DB_* vars), so
+  // we resolve references over the merged map. This way public var overrides
+  // (like DB_PASSWORD: "${otherComponent:DB_PASSWORD}") are picked up by the
+  // predefined variables that reference them
+  const mergedEnvVars = {
+    ...predefinedVariables,
+    ...secretEnvVars,
+    ...publicEnvVarsUnresolved,
+  };
+
+  const resolvedEnvVars =
     (options.shouldResolveReferences ?? true)
       ? await resolveAllReferences(
-          publicEnvVarsUnresolved,
+          mergedEnvVars,
           async (otherComponentName) => {
             const { envVars: otherEnvVars } = await getEnvironmentVariables(
               {
@@ -146,13 +159,9 @@ export const getEnvironmentVariables = async (
             return otherEnvVars;
           },
         )
-      : publicEnvVarsUnresolved;
+      : mergedEnvVars;
 
-  const envVars = addIndexVar({
-    ...predefinedVariables,
-    ...secretEnvVars,
-    ...publicEnvVars,
-  });
+  const envVars = addIndexVar(resolvedEnvVars);
 
   return {
     envVars,
