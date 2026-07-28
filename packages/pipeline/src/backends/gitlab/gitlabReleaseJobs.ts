@@ -30,6 +30,10 @@ const baseReleaseRules = [
   RULE_NEVER_ON_SCHEDULE,
 ];
 
+// NOTE: with `rules:`, when: manual defaults to allow_failure: false,
+// which turns every unclicked pipeline into status "blocked" — the
+// manual release jobs therefore carry allow_failure: true so pipelines
+// end "passed" when nobody releases
 const manualReleaseRules = [
   ...baseReleaseRules,
   {
@@ -72,6 +76,7 @@ export const getGitlabReleaseJobs = (
     ["⚠️ force create release"]: {
       ...releaseJobBase,
       needs: [],
+      allow_failure: true,
       // force semantics of the method's script (e.g. changesets:
       // release a patch bump even without pending changesets)
       ...(method.forceReleaseVariables
@@ -119,6 +124,9 @@ export const getGitlabReleaseJobs = (
           {
             if: RULE_CONDITION_HOTFIX_BRANCH,
             when: "manual",
+            // per-rule: only the unclicked hotfix button must not
+            // block — a failed automatic release stays loud
+            allow_failure: true,
           },
         ] satisfies GitlabRule[],
       } satisfies GitlabJobDef,
@@ -143,6 +151,7 @@ export const getGitlabReleaseJobs = (
     return {
       [RELEASE_BUTTON_JOB_NAME]: {
         ...releaseJobBase,
+        allow_failure: true,
         rules: manualReleaseRules,
       } satisfies GitlabJobDef,
       ...forceReleaseJob,

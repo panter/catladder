@@ -2008,6 +2008,7 @@ create release:
       when: on_success
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
+      allow_failure: true
 ⚠️ force create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:a9d7c7ca552f
@@ -2022,6 +2023,7 @@ create release:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
   needs: []
+  allow_failure: true
 'lib 🛡 audit | dev ':
   stage: test
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8

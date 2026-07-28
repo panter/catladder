@@ -34,6 +34,17 @@ const GITHUB_MAIN_WORKFLOW = "catladder-main.yml";
  */
 const QUEUE_MARKER_REF = "refs/catladder/release-queued";
 
+/**
+ * github container jobs: the workspace volume is owned by the host
+ * runner user while catci runs as the container user — git refuses the
+ * repo ("dubious ownership") without a safe.directory entry. The
+ * release entrypoint scripts do the same, but the queue commands run
+ * before them.
+ */
+const ensureGitSafeDirectory = async () => {
+  await git("config", "--global", "--add", "safe.directory", process.cwd());
+};
+
 const requireEnv = (name: string): string => {
   const value = process.env[name];
   if (!value) {
@@ -93,6 +104,7 @@ const getMainWorkflowRun = async (
  * (queued=true).
  */
 export const githubQueueCheckJob = async () => {
+  await ensureGitSafeDirectory();
   const sha = await git("rev-parse", "HEAD");
   const run = await getMainWorkflowRun(sha);
   if (!run) {
@@ -132,6 +144,7 @@ export const githubQueuedGuardJob = async (
   headSha: string,
   conclusion: string,
 ) => {
+  await ensureGitSafeDirectory();
   const markerLine = await git("ls-remote", "origin", QUEUE_MARKER_REF);
   const marker = markerLine.split(/\s+/)[0] ?? "";
   if (!marker) {
