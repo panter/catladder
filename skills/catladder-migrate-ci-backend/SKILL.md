@@ -212,12 +212,21 @@ Where the **app image** goes depends on the deploy type:
   it in as `imagePullSecrets`. Note the secret keeps its historical name
   on both backends.
 
-One caveat worth raising with the user, and it is **not** specific to
-migrating: the registry credentials catladder puts in that secret are
-job-scoped and expire with the pipeline. The initial pull works, but a
-pod rescheduled later can no longer re-pull. Projects that need durable
-pulls declare long-lived registry credentials as secrets named
-`CI_DEPLOY_USER` / `CI_DEPLOY_PASSWORD`, which take precedence.
+The credential behind that secret differs per backend, and this is the
+one thing to raise before a kubernetes component moves to GitHub:
+
+- **GitLab** provisions a durable one automatically —
+  `catladder project setup` creates a `gitlab-deploy-token` (scope
+  `read_registry`), GitLab exposes it to jobs as `CI_DEPLOY_USER` /
+  `CI_DEPLOY_PASSWORD`, and `project doctor` fails when it is missing.
+- **GitHub has no equivalent.** The deploy falls back to the workflow
+  token, which expires with the run: the initial pull succeeds and the
+  job goes green, but a pod rescheduled later cannot re-pull —
+  `ImagePullBackOff` weeks after a deploy that looked fine. Until that
+  is solved (catladder issue #75), a project moving kubernetes to GitHub
+  must supply a long-lived registry credential itself, declared as
+  secrets named `CI_DEPLOY_USER` / `CI_DEPLOY_PASSWORD` (a PAT with
+  `read:packages`), which take precedence in the deploy.
 
 ## Step 8 — run both, compare, then cut over
 
