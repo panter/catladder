@@ -14,6 +14,9 @@ export const GITHUB_CI_VARIABLES: Record<CiVariableName, string> = {
   registry: "CL_REGISTRY",
   registryImage: "CL_REGISTRY_IMAGE",
   registryUser: "CL_REGISTRY_USER",
+  // github has no separate registry password: ghcr authenticates with
+  // the workflow token, the same one CL_JOB_TOKEN carries
+  registryPassword: "CL_JOB_TOKEN",
 };
 
 /**

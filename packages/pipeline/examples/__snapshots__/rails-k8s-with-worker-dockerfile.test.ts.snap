@@ -214,16 +214,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -421,7 +421,7 @@ create release:
   interruptible: true
 'app 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -454,6 +454,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -578,7 +580,7 @@ create release:
   allow_failure: false
 'app 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -607,6 +609,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -633,7 +637,7 @@ create release:
   allow_failure: true
 'app ↩️ Rollback ⚠️ | dev ':
   stage: rollback dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -662,6 +666,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -806,7 +812,7 @@ create release:
   interruptible: true
 'app 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -839,6 +845,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -969,7 +977,7 @@ create release:
   allow_failure: false
 'app 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -998,6 +1006,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1024,7 +1034,7 @@ create release:
   allow_failure: true
 'app ↩️ Rollback ⚠️ | review ':
   stage: rollback review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1053,6 +1063,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1126,7 +1138,7 @@ create release:
   interruptible: true
 'app 🚀 Deploy | stage ':
   stage: deploy stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1159,6 +1171,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1276,7 +1290,7 @@ create release:
   allow_failure: false
 'app 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1305,6 +1319,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1331,7 +1347,7 @@ create release:
   allow_failure: true
 'app ↩️ Rollback ⚠️ | stage ':
   stage: rollback stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1360,6 +1376,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1433,7 +1451,7 @@ create release:
   interruptible: true
 'app 🚀 Deploy | prod ':
   stage: deploy prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1466,6 +1484,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1583,7 +1603,7 @@ create release:
   allow_failure: true
 'app 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1612,6 +1632,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"
@@ -1638,7 +1660,7 @@ create release:
   allow_failure: true
 'app ↩️ Rollback ⚠️ | prod ':
   stage: rollback prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -1667,6 +1689,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-app"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-app"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="app"

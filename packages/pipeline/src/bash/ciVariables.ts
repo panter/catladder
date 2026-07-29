@@ -15,7 +15,8 @@ export type CiVariableName =
   | "jobImage"
   | "registry"
   | "registryImage"
-  | "registryUser";
+  | "registryUser"
+  | "registryPassword";
 
 const CI_VARIABLES_PER_PIPELINE_TYPE: {
   [T in PipelineType]: Record<CiVariableName, string>;

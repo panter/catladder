@@ -11,4 +11,5 @@ export const GITLAB_CI_VARIABLES: Record<CiVariableName, string> = {
   registry: "CI_REGISTRY",
   registryImage: "CI_REGISTRY_IMAGE",
   registryUser: "CI_REGISTRY_USER",
+  registryPassword: "CI_REGISTRY_PASSWORD",
 };

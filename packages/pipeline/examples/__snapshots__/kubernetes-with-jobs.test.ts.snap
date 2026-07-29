@@ -344,16 +344,16 @@ catladder-main.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -582,7 +582,7 @@ catladder-main.yml:
         - api-test-dev
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -593,7 +593,7 @@ catladder-main.yml:
         CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
         CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
         CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -777,7 +777,7 @@ catladder-main.yml:
         - www-lint-dev
         - www-test-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -788,7 +788,7 @@ catladder-main.yml:
         CL_dev_www_KUBE_URL: \${{ secrets.CL_dev_www_KUBE_URL }}
         CL_dev_www_KUBE_CA_PEM: \${{ secrets.CL_dev_www_KUBE_CA_PEM }}
         CL_dev_www_KUBE_TOKEN: \${{ secrets.CL_dev_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1000,16 +1000,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -1238,7 +1238,7 @@ catladder-review.yml:
         - api-test-review
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1249,7 +1249,7 @@ catladder-review.yml:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
         CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1433,7 +1433,7 @@ catladder-review.yml:
         - www-lint-review
         - www-test-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1444,7 +1444,7 @@ catladder-review.yml:
         CL_review_www_KUBE_URL: \${{ secrets.CL_review_www_KUBE_URL }}
         CL_review_www_KUBE_CA_PEM: \${{ secrets.CL_review_www_KUBE_CA_PEM }}
         CL_review_www_KUBE_TOKEN: \${{ secrets.CL_review_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1652,16 +1652,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -1798,7 +1798,7 @@ catladder-release.yml:
         - api-docker-stage
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1809,7 +1809,7 @@ catladder-release.yml:
         CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
         CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
         CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1901,7 +1901,7 @@ catladder-release.yml:
         - www-app-stage
         - www-docker-stage
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1912,7 +1912,7 @@ catladder-release.yml:
         CL_stage_www_KUBE_URL: \${{ secrets.CL_stage_www_KUBE_URL }}
         CL_stage_www_KUBE_CA_PEM: \${{ secrets.CL_stage_www_KUBE_CA_PEM }}
         CL_stage_www_KUBE_TOKEN: \${{ secrets.CL_stage_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2130,16 +2130,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -2198,7 +2198,7 @@ catladder-review-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2208,7 +2208,7 @@ catladder-review-stop.yml:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
         CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2256,6 +2256,8 @@ catladder-review-stop.yml:
             export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -2272,7 +2274,7 @@ catladder-review-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2282,7 +2284,7 @@ catladder-review-stop.yml:
         CL_review_www_KUBE_URL: \${{ secrets.CL_review_www_KUBE_URL }}
         CL_review_www_KUBE_CA_PEM: \${{ secrets.CL_review_www_KUBE_CA_PEM }}
         CL_review_www_KUBE_TOKEN: \${{ secrets.CL_review_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2330,6 +2332,8 @@ catladder-review-stop.yml:
             export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -2545,16 +2549,16 @@ catladder-deploy.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -2693,7 +2697,7 @@ catladder-deploy.yml:
         - api-docker-prod
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2704,7 +2708,7 @@ catladder-deploy.yml:
         CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
         CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
         CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2799,7 +2803,7 @@ catladder-deploy.yml:
         - www-app-prod
         - www-docker-prod
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2810,7 +2814,7 @@ catladder-deploy.yml:
         CL_prod_www_KUBE_URL: \${{ secrets.CL_prod_www_KUBE_URL }}
         CL_prod_www_KUBE_CA_PEM: \${{ secrets.CL_prod_www_KUBE_CA_PEM }}
         CL_prod_www_KUBE_TOKEN: \${{ secrets.CL_prod_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -3028,16 +3032,16 @@ catladder-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -3096,7 +3100,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3106,7 +3110,7 @@ catladder-stop.yml:
         CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
         CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
         CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3154,6 +3158,8 @@ catladder-stop.yml:
             export RELEASE_NAME="pan-test-app-dev-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -3171,7 +3177,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3181,7 +3187,7 @@ catladder-stop.yml:
         CL_dev_www_KUBE_URL: \${{ secrets.CL_dev_www_KUBE_URL }}
         CL_dev_www_KUBE_CA_PEM: \${{ secrets.CL_dev_www_KUBE_CA_PEM }}
         CL_dev_www_KUBE_TOKEN: \${{ secrets.CL_dev_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3229,6 +3235,8 @@ catladder-stop.yml:
             export RELEASE_NAME="pan-test-app-dev-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -3246,7 +3254,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3256,7 +3264,7 @@ catladder-stop.yml:
         CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
         CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
         CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3304,6 +3312,8 @@ catladder-stop.yml:
             export RELEASE_NAME="pan-test-app-stage-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -3321,7 +3331,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3331,7 +3341,7 @@ catladder-stop.yml:
         CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
         CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
         CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3379,6 +3389,8 @@ catladder-stop.yml:
             export RELEASE_NAME="pan-test-app-prod-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -3396,7 +3408,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3406,7 +3418,7 @@ catladder-stop.yml:
         CL_stage_www_KUBE_URL: \${{ secrets.CL_stage_www_KUBE_URL }}
         CL_stage_www_KUBE_CA_PEM: \${{ secrets.CL_stage_www_KUBE_CA_PEM }}
         CL_stage_www_KUBE_TOKEN: \${{ secrets.CL_stage_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3454,6 +3466,8 @@ catladder-stop.yml:
             export RELEASE_NAME="pan-test-app-stage-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -3471,7 +3485,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3481,7 +3495,7 @@ catladder-stop.yml:
         CL_prod_www_KUBE_URL: \${{ secrets.CL_prod_www_KUBE_URL }}
         CL_prod_www_KUBE_CA_PEM: \${{ secrets.CL_prod_www_KUBE_CA_PEM }}
         CL_prod_www_KUBE_TOKEN: \${{ secrets.CL_prod_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -3529,6 +3543,8 @@ catladder-stop.yml:
             export RELEASE_NAME="pan-test-app-prod-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -3751,16 +3767,16 @@ catladder-rollback.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -3819,7 +3835,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3829,7 +3845,7 @@ catladder-rollback.yml:
         CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
         CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
         CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3877,6 +3893,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-dev-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -3894,7 +3912,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3904,7 +3922,7 @@ catladder-rollback.yml:
         CL_dev_www_KUBE_URL: \${{ secrets.CL_dev_www_KUBE_URL }}
         CL_dev_www_KUBE_CA_PEM: \${{ secrets.CL_dev_www_KUBE_CA_PEM }}
         CL_dev_www_KUBE_TOKEN: \${{ secrets.CL_dev_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3952,6 +3970,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-dev-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -3969,7 +3989,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3979,7 +3999,7 @@ catladder-rollback.yml:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
         CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4027,6 +4047,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -4044,7 +4066,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -4054,7 +4076,7 @@ catladder-rollback.yml:
         CL_review_www_KUBE_URL: \${{ secrets.CL_review_www_KUBE_URL }}
         CL_review_www_KUBE_CA_PEM: \${{ secrets.CL_review_www_KUBE_CA_PEM }}
         CL_review_www_KUBE_TOKEN: \${{ secrets.CL_review_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4102,6 +4124,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -4119,7 +4143,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -4129,7 +4153,7 @@ catladder-rollback.yml:
         CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
         CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
         CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4177,6 +4201,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-stage-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -4194,7 +4220,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -4204,7 +4230,7 @@ catladder-rollback.yml:
         CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
         CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
         CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4252,6 +4278,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-prod-api"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="api"
@@ -4269,7 +4297,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -4279,7 +4307,7 @@ catladder-rollback.yml:
         CL_stage_www_KUBE_URL: \${{ secrets.CL_stage_www_KUBE_URL }}
         CL_stage_www_KUBE_CA_PEM: \${{ secrets.CL_stage_www_KUBE_CA_PEM }}
         CL_stage_www_KUBE_TOKEN: \${{ secrets.CL_stage_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4327,6 +4355,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-stage-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -4344,7 +4374,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -4354,7 +4384,7 @@ catladder-rollback.yml:
         CL_prod_www_KUBE_URL: \${{ secrets.CL_prod_www_KUBE_URL }}
         CL_prod_www_KUBE_CA_PEM: \${{ secrets.CL_prod_www_KUBE_CA_PEM }}
         CL_prod_www_KUBE_TOKEN: \${{ secrets.CL_prod_www_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:a442f2fe0109
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:09d6680a69fa
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4402,6 +4432,8 @@ catladder-rollback.yml:
             export RELEASE_NAME="pan-test-app-prod-www"
             export HELM_EXPERIMENTAL_OCI="1"
             export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+            export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+            export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
             export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
             export HELM_ARGS=""
             export COMPONENT_NAME="www"
@@ -4713,6 +4745,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-dev-api"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="api"
@@ -5103,6 +5137,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-dev-www"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="www"
@@ -5468,6 +5504,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="api"
@@ -5854,6 +5892,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="www"
@@ -6093,6 +6133,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-stage-api"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="api"
@@ -6341,6 +6383,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-prod-api"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="api"
@@ -6604,6 +6648,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-stage-www"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="www"
@@ -6857,6 +6903,8 @@ export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export RELEASE_NAME="pan-test-app-prod-www"
 export HELM_EXPERIMENTAL_OCI="1"
 export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+export DOCKER_REGISTRY_USER="$CL_REGISTRY_USER"
+export DOCKER_REGISTRY_PASSWORD="$CL_JOB_TOKEN"
 export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
 export HELM_ARGS=""
 export COMPONENT_NAME="www"
@@ -7232,16 +7280,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -7582,7 +7630,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -7611,6 +7659,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -7718,7 +7768,7 @@ create release:
   allow_failure: false
 'api 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -7743,6 +7793,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -7769,7 +7821,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | dev ':
   stage: rollback dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -7794,6 +7846,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8077,7 +8131,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8106,6 +8160,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8209,7 +8265,7 @@ create release:
   allow_failure: false
 'api 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8234,6 +8290,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8260,7 +8318,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | review ':
   stage: rollback review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8285,6 +8343,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8444,7 +8504,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | stage ':
   stage: deploy stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8473,6 +8533,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8573,7 +8635,7 @@ create release:
   allow_failure: false
 'api 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8598,6 +8660,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8624,7 +8688,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | stage ':
   stage: rollback stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8649,6 +8713,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8808,7 +8874,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | prod ':
   stage: deploy prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8837,6 +8903,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8937,7 +9005,7 @@ create release:
   allow_failure: true
 'api 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -8962,6 +9030,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -8988,7 +9058,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | prod ':
   stage: rollback prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -9013,6 +9083,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-api"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-api"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="api"
@@ -9299,7 +9371,7 @@ create release:
   interruptible: true
 'www 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -9328,6 +9400,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -9425,7 +9499,7 @@ create release:
   allow_failure: false
 'www 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -9450,6 +9524,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -9476,7 +9552,7 @@ create release:
   allow_failure: true
 'www ↩️ Rollback ⚠️ | dev ':
   stage: rollback dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -9501,6 +9577,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-dev-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -9801,7 +9879,7 @@ create release:
   interruptible: true
 'www 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -9830,6 +9908,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -9928,7 +10008,7 @@ create release:
   allow_failure: false
 'www 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -9953,6 +10033,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -9979,7 +10061,7 @@ create release:
   allow_failure: true
 'www ↩️ Rollback ⚠️ | review ':
   stage: rollback review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10004,6 +10086,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -10180,7 +10264,7 @@ create release:
   interruptible: true
 'www 🚀 Deploy | stage ':
   stage: deploy stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10209,6 +10293,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -10299,7 +10385,7 @@ create release:
   allow_failure: false
 'www 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10324,6 +10410,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -10350,7 +10438,7 @@ create release:
   allow_failure: true
 'www ↩️ Rollback ⚠️ | stage ':
   stage: rollback stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10375,6 +10463,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-stage-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -10551,7 +10641,7 @@ create release:
   interruptible: true
 'www 🚀 Deploy | prod ':
   stage: deploy prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10580,6 +10670,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -10670,7 +10762,7 @@ create release:
   allow_failure: true
 'www 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10695,6 +10787,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"
@@ -10721,7 +10815,7 @@ create release:
   allow_failure: true
 'www ↩️ Rollback ⚠️ | prod ':
   stage: rollback prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:a442f2fe0109
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:09d6680a69fa
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -10746,6 +10840,8 @@ create release:
     - export RELEASE_NAME="pan-test-app-prod-www"
     - export HELM_EXPERIMENTAL_OCI="1"
     - export KUBE_DOCKER_IMAGE_PULL_SECRET="gitlab-registry-www"
+    - export DOCKER_REGISTRY_USER="$CI_REGISTRY_USER"
+    - export DOCKER_REGISTRY_PASSWORD="$CI_REGISTRY_PASSWORD"
     - export HELM_GITLAB_CHART_NAME="/helm-charts/the-panter-chart"
     - export HELM_ARGS=""
     - export COMPONENT_NAME="www"

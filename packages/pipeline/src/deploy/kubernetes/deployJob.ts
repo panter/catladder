@@ -1,3 +1,4 @@
+import { getCiVariable } from "../../bash/ciVariables";
 import { getSecretVarNameForContext } from "../../context/getEnvironmentVariables";
 import { getRunnerImage } from "../../runner";
 import type { ComponentContext } from "../../types/context";
@@ -37,6 +38,12 @@ export const createKubernetesDeployJobs = (
       RELEASE_NAME: context.environment.fullName,
       HELM_EXPERIMENTAL_OCI: "1",
       KUBE_DOCKER_IMAGE_PULL_SECRET: `gitlab-registry-${context.name}`,
+      // credentials for the image pull secret kubernetesCreateSecret
+      // writes into the namespace. Resolved per backend (gitlab: the
+      // registry user + password, github: the actor + workflow token)
+      // so the script itself stays backend-agnostic.
+      DOCKER_REGISTRY_USER: getCiVariable(context, "registryUser"),
+      DOCKER_REGISTRY_PASSWORD: getCiVariable(context, "registryPassword"),
       HELM_GITLAB_CHART_NAME:
         deployConfig.chartName ?? "/helm-charts/the-panter-chart",
       HELM_ARGS: [
