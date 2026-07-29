@@ -195,16 +195,31 @@ See the `catladder-releases` skill for how the release jobs differ
 
 ## Step 7 — registry and the first run
 
-The container registry changes with the backend: `$CI_REGISTRY_IMAGE` on
-GitLab, `ghcr.io/<owner>/<repo>` on GitHub. Consequences to state
-explicitly:
+The **job images** (the catladder runner images) always live in the CI
+system's own registry, so they change host with the backend:
+`$CI_REGISTRY_IMAGE` on GitLab, `ghcr.io/<owner>/<repo>` on GitHub. The
+first pipeline on the new backend therefore **rebuilds every job image**
+— it will be slow, and that is expected, not a bug.
 
-- The first pipeline on the new backend **rebuilds every job image and
-  every app image** — it will be slow, and that is expected, not a bug.
-- The deploy target must be able to **pull from the new registry**.
-  catladder does not manage image-pull credentials on the cluster or on
-  Cloud Run, so check GHCR package visibility / the pull secret with
-  whoever owns the target *before* pointing a real environment at it.
+Where the **app image** goes depends on the deploy type:
+
+- **`google-cloudrun`** — the image goes to Google Artifact Registry
+  (`<region>-docker.pkg.dev/<projectId>/catladder-deploy/…`) on both
+  backends. Cloud Run can only pull from AR/GCR, so a backend migration
+  does not move the app image at all. Nothing to do here.
+- **`kubernetes`** — the app image lives in the CI registry and does
+  move. catladder handles the pull itself: every deploy runs
+  `kubernetesCreateSecret`, which writes a `docker-registry` secret
+  (`gitlab-registry-<component>`) into the namespace, and the chart wires
+  it in as `imagePullSecrets`. Note the secret keeps its historical name
+  on both backends.
+
+One caveat worth raising with the user, and it is **not** specific to
+migrating: the registry credentials catladder puts in that secret are
+job-scoped and expire with the pipeline. The initial pull works, but a
+pod rescheduled later can no longer re-pull. Projects that need durable
+pulls declare long-lived registry credentials as secrets named
+`CI_DEPLOY_USER` / `CI_DEPLOY_PASSWORD`, which take precedence.
 
 ## Step 8 — run both, compare, then cut over
 
