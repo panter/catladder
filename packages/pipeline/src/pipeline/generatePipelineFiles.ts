@@ -3,7 +3,11 @@ import { dirname } from "path";
 import type { Config, PipelineType } from "../types";
 
 import type { PipelineBackend } from "../backends";
-import { getEnabledPipelineTypes, getPipelineBackend } from "../backends";
+import {
+  getAllPipelineTypes,
+  getEnabledPipelineTypes,
+  getPipelineBackend,
+} from "../backends";
 import { GitlabBackend } from "../backends/gitlab";
 import type { CatenvContext } from "../catenv";
 import { GENERATED_IMAGES_FOLDER } from "../customImages/jobImagesPlan";
@@ -31,6 +35,18 @@ export async function generatePipelineFiles(
     await rm(GENERATED_IMAGES_FOLDER, { recursive: true, force: true });
     // same for the materialized catci bundle (union across backends)
     await rm(GENERATED_CATCI_FOLDER, { recursive: true, force: true });
+    // clean up the backends that are NOT enabled (any more): each
+    // backend only ever removed its own files while it was enabled, so
+    // disabling one in `pipelines` used to leave its pipeline files
+    // behind forever — and a stale `.gitlab-ci.yml` keeps running a
+    // stale pipeline. Only safe on a full generation, where the enabled
+    // set is authoritative.
+    const disabledTypes = getAllPipelineTypes().filter(
+      (type) => !pipelineTypes.includes(type),
+    );
+    for (const type of disabledTypes) {
+      await getPipelineBackend(type).cleanup();
+    }
     // agent skills are backend-independent, materialized once per full
     // generation
     await generateAgentSkills(context);

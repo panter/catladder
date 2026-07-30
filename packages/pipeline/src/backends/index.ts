@@ -17,6 +17,14 @@ const BACKENDS: { [T in PipelineType]: () => PipelineBackend } = {
   github: () => new GithubBackend(),
 };
 
+/**
+ * every pipeline type catladder knows how to generate — regardless of
+ * what the config enables. Cleanup uses this to also reach backends that
+ * were switched off (their files would otherwise linger).
+ */
+export const getAllPipelineTypes = (): PipelineType[] =>
+  Object.keys(BACKENDS) as PipelineType[];
+
 export const getPipelineBackend = (type: PipelineType): PipelineBackend => {
   const createBackend = BACKENDS[type];
   if (!createBackend) {
@@ -64,7 +72,7 @@ export const getVaultConfig = (
  */
 export const getEnabledPipelineTypes = (config: Config): PipelineType[] => {
   if (config.pipelines) {
-    const enabled = (Object.keys(BACKENDS) as PipelineType[]).filter(
+    const enabled = getAllPipelineTypes().filter(
       (type) => config.pipelines?.[type],
     );
     if (enabled.length === 0) {

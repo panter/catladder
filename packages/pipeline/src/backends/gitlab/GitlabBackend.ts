@@ -1,4 +1,4 @@
-import { rm } from "fs/promises";
+import { readFile, rm } from "fs/promises";
 import {
   RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
@@ -27,10 +27,13 @@ import { createGitlabPipelineWithDefaults } from "./createGitlabPipeline";
 import { getGitlabReleaseJobs } from "./gitlabReleaseJobs";
 import { getPipelineStages } from "./getPipelineStages";
 import { sortGitLabJobDefProps } from "./sortGitLabJobDefProps";
+import { GENERATED_FILE_MARKER } from "../../utils/writeFiles";
 
 const CATLADDER_GENERATED_FOLDER = ".catladder-generated";
 
 const GITLAB_GENERATED_FOLDER = CATLADDER_GENERATED_FOLDER + "/gitlab";
+
+const GITLAB_MAIN_FILE = ".gitlab-ci.yml";
 
 export class GitlabBackend implements PipelineBackend {
   readonly type = "gitlab" as const;
@@ -39,6 +42,16 @@ export class GitlabBackend implements PipelineBackend {
 
   async cleanup() {
     await rm(this.generatedFolder, { force: true, recursive: true });
+    // `.gitlab-ci.yml` lives outside the generated folder, so it used to
+    // survive disabling the gitlab backend and kept a stale pipeline
+    // running. Only remove it when it is ours: a project that generates
+    // github only may well hand-maintain a gitlab file of its own.
+    const mainFile = await readFile(GITLAB_MAIN_FILE, "utf-8").catch(
+      () => null,
+    );
+    if (mainFile?.includes(GENERATED_FILE_MARKER)) {
+      await rm(GITLAB_MAIN_FILE, { force: true });
+    }
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
@@ -46,7 +59,7 @@ export class GitlabBackend implements PipelineBackend {
     const includes = await this.createIncludes(config, images);
 
     const mainFile: PipelineFile = {
-      path: ".gitlab-ci.yml",
+      path: GITLAB_MAIN_FILE,
       content: {
         include: includes.map((i) => i.path),
       },
