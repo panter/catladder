@@ -14,10 +14,15 @@ export const createPagesDeployJobs = async (
     // should not happen
     throw new Error("deploy config is not pages");
   }
-  if (context.pipelineType === "github") {
-    // don't fail the whole github generation of a multi-backend project
+  const onGithub = context.pipelineType === "github";
+  if (onGithub && context.environment.envType === "review") {
+    // github pages serves ONE site per repository and deploy-pages
+    // replaces all of it — there is no path_prefix equivalent, so per-PR
+    // previews cannot exist (deploy-pages has a `preview` input, but it
+    // is alpha and not publicly available). Warn instead of throwing, so
+    // the github generation of a multi-backend project still succeeds.
     console.warn(
-      `component "${context.name}": the pages deploy type is not yet supported on the github backend — no deploy jobs generated`,
+      `component "${context.name}": github pages cannot host per-merge-request previews (one site per repository) — no review deploy job generated`,
     );
     return [];
   }
@@ -45,8 +50,14 @@ export const createPagesDeployJobs = async (
           : []),
         ...deployConfig.script,
         // the gitlab environment url should point at the published site
-        // (the base deploy job reports $ROOT_URL as environment url)
-        `export ROOT_URL="$CI_PAGES_URL${pathPrefix ? `/${pathPrefix}` : ""}"`,
+        // (the base deploy job reports $ROOT_URL as environment url).
+        // On github the url is only known after deploy-pages ran, so the
+        // backend takes it from that step's output instead.
+        ...(onGithub
+          ? []
+          : [
+              `export ROOT_URL="$CI_PAGES_URL${pathPrefix ? `/${pathPrefix}` : ""}"`,
+            ]),
       ],
       variables: {},
       runnerVariables: {

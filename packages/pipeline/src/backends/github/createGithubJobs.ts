@@ -357,6 +357,12 @@ export const makeGithubJob = (
 
   const artifactPaths = job.artifacts?.paths ?? [];
 
+  // github pages: the built site is handed to the official actions
+  // instead of being uploaded as a plain artifact. `deploy-pages`
+  // replaces the whole site, so there is no path_prefix equivalent —
+  // review previews are rejected upstream (see the pages deploy type).
+  const pagesPublishDir = job.pages ? artifactPaths[0] : undefined;
+
   const declaredServices = (job.services ?? []).map((service) =>
     typeof service === "string" ? { name: service } : service,
   );
@@ -418,8 +424,16 @@ export const makeGithubJob = (
       typeof value === "string" &&
       (value.includes("${{ secrets.") || value.includes("${{ vars.")),
   );
-  const githubEnvironment =
-    job.environment && isComponent
+  const githubEnvironment = pagesPublishDir
+    ? // github requires pages deployments to target the `github-pages`
+      // environment, and only the deploy step knows the final url.
+      // `secrets-sync-github` derives its targets from the generated
+      // workflows, so any secret this job references is synced there.
+      {
+        name: "github-pages",
+        url: "${{ steps.deployment.outputs.page_url }}",
+      }
+    : job.environment && isComponent
       ? {
           name: `${context.env}-${context.name}`,
           ...(createsJobEnv ? { url: "${{ steps.main.outputs.url }}" } : {}),
@@ -450,6 +464,20 @@ export const makeGithubJob = (
       : {}),
     ...(Object.keys(services).length > 0 ? { services } : {}),
     ...(githubEnvironment ? { environment: githubEnvironment } : {}),
+    ...(pagesPublishDir
+      ? {
+          // declaring permissions drops ALL default token grants, so
+          // everything this job needs beyond deploy-pages must be
+          // re-granted: `contents: read` for the checkout and
+          // `packages: read` to pull the job image from the repo registry
+          permissions: {
+            contents: "read",
+            ...(resolved.fromRepoRegistry ? { packages: "read" } : {}),
+            pages: "write",
+            "id-token": "write",
+          },
+        }
+      : {}),
     env,
     steps: [
       ...(skipCheckout
@@ -469,25 +497,41 @@ export const makeGithubJob = (
         run,
         shell: "bash",
       },
-      ...(uploadProviderIds.has(id) || artifactPaths.length > 0
-        ? artifactPaths.length > 0
-          ? [
-              {
-                name: "Upload artifacts",
-                uses: "actions/upload-artifact@v4",
-                with: {
-                  name: id,
-                  path: artifactPaths.join("\n"),
-                  "if-no-files-found": "warn",
-                  // gitlab artifacts include everything; upload-artifact
-                  // silently drops hidden files by default — which is
-                  // exactly where next.js builds live (.next)
-                  "include-hidden-files": true,
-                },
-              },
-            ]
-          : []
+      ...(pagesPublishDir
+        ? [
+            {
+              name: "Upload pages artifact",
+              uses: "actions/upload-pages-artifact@v3",
+              with: { path: pagesPublishDir },
+            },
+            {
+              name: "Deploy to github pages",
+              id: "deployment",
+              uses: "actions/deploy-pages@v4",
+            },
+          ]
         : []),
+      ...(pagesPublishDir
+        ? []
+        : uploadProviderIds.has(id) || artifactPaths.length > 0
+          ? artifactPaths.length > 0
+            ? [
+                {
+                  name: "Upload artifacts",
+                  uses: "actions/upload-artifact@v4",
+                  with: {
+                    name: id,
+                    path: artifactPaths.join("\n"),
+                    "if-no-files-found": "warn",
+                    // gitlab artifacts include everything; upload-artifact
+                    // silently drops hidden files by default — which is
+                    // exactly where next.js builds live (.next)
+                    "include-hidden-files": true,
+                  },
+                },
+              ]
+            : []
+          : []),
     ],
   };
 
