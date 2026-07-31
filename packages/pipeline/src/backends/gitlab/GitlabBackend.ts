@@ -174,15 +174,28 @@ export class GitlabBackend implements PipelineBackend {
     // runs automatically in a main-branch pipeline. Manual jobs (stop,
     // rollback, gates) are excluded — gitlab skips a job whose needs
     // include an unplayed manual job.
-    const mainBranchJobNames = [
-      ...new Set(
-        jobsPerTrigger
-          .filter(({ trigger }) => trigger === "mainBranch")
-          .flatMap(({ jobs }) => jobs)
-          .filter(({ gitlabJob }) => !isManualGitlabJob(gitlabJob))
-          .map(({ name }) => name),
+    const mainBranchAutoJobs = jobsPerTrigger
+      .filter(({ trigger }) => trigger === "mainBranch")
+      .flatMap(({ jobs }) => jobs)
+      .filter(({ gitlabJob }) => !isManualGitlabJob(gitlabJob));
+
+    // `needs:` is transitive: a job that another auto job needs is
+    // already awaited through that job, and a failed ancestor skips its
+    // descendants either way. The executor therefore only needs the
+    // SINKS of the auto-job graph (test/lint/audit and the deploy or
+    // verify tips) — everything upstream is implied. This keeps the
+    // executor's needs list far below gitlab's 50-entry cap even on
+    // pipelines with many components.
+    const neededByAnAutoJob = new Set(
+      mainBranchAutoJobs.flatMap(({ gitlabJob }) =>
+        (gitlabJob.needs ?? []).map((need) =>
+          typeof need === "string" ? need : need.job,
+        ),
       ),
-    ];
+    );
+    const mainBranchJobNames = [
+      ...new Set(mainBranchAutoJobs.map(({ name }) => name)),
+    ].filter((name) => !neededByAnAutoJob.has(name));
 
     const releaseJobs = getGitlabReleaseJobs(
       config,
