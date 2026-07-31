@@ -11,7 +11,6 @@ export const RUNNER_IMAGE_DEPENDENCIES: Partial<
   Record<RunnerImageName, RunnerImageName[]>
 > = {
   "jobs-meteor": ["jobs-default"],
-  "jobs-testing-chrome": ["jobs-default"],
 };
 
 /**
@@ -26,7 +25,6 @@ export const RUNNER_IMAGE_BUILD_CONTEXT: Record<
 > = {
   "jobs-default": "root",
   "jobs-meteor": "root",
-  "jobs-testing-chrome": "root",
   kubernetes: "self",
   "docker-build": "self",
   "semantic-release": "self",

@@ -1,7 +1,6 @@
 export type RunnerImageName =
   | "jobs-default"
   | "jobs-meteor"
-  | "jobs-testing-chrome"
   | "kubernetes"
   | "docker-build"
   | "semantic-release"
