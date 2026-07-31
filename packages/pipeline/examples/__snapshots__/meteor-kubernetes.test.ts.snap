@@ -468,6 +468,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_web_MONGODB_ROOT_PASSWORD }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
@@ -999,6 +1000,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_web_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_web_MONGODB_ROOT_PASSWORD }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8

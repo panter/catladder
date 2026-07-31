@@ -266,6 +266,7 @@ catladder-main.yml:
           image: job-service-1
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: audit-image
@@ -523,6 +524,7 @@ catladder-review.yml:
           image: job-service-1
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_www_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_www_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: audit-image

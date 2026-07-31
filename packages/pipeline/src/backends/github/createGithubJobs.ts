@@ -481,6 +481,12 @@ export const makeGithubJob = (
     ...(Object.keys(services).length > 0 ? { services } : {}),
     ...(githubEnvironment ? { environment: githubEnvironment } : {}),
     ...(permissions ? { permissions } : {}),
+    // gitlab's allow_failure has a direct github counterpart. Without
+    // this the flag was silently dropped: a `pages` deploy (allowFailure
+    // by default, so a broken site publish cannot block the pipeline)
+    // failed the whole workflow — and took every job that needs it,
+    // including the release, down with it.
+    ...(job.allow_failure ? { "continue-on-error": true } : {}),
     env,
     steps: [
       ...(skipCheckout

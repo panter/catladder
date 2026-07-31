@@ -418,6 +418,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_api_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_dev_api_MONGODB_ROOT_PASSWORD }}
         CL_dev_api_MONGODB_REPLICASET_KEY: \${{ secrets.CL_dev_api_MONGODB_REPLICASET_KEY }}
@@ -901,6 +902,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_api_MONGODB_ROOT_PASSWORD: \${{ secrets.CL_review_api_MONGODB_ROOT_PASSWORD }}
         CL_review_api_MONGODB_REPLICASET_KEY: \${{ secrets.CL_review_api_MONGODB_REPLICASET_KEY }}
