@@ -126,6 +126,10 @@ export const makeGitlabJob = (
     cache: jobCache,
     caches,
     image: jobImage,
+    // github lowers this to `permissions: id-token: write`; gitlab has
+    // no counterpart, and anything left in `rest` lands in the job yaml
+    // verbatim ("config contains unknown keys: idtoken")
+    idToken: _idToken,
     ...rest
   } = job;
 

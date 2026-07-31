@@ -84,7 +84,11 @@ const hasOidcCredentials = () =>
   !!process.env.ACTIONS_ID_TOKEN_REQUEST_URL &&
   !!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
 
-const npmPublish = (dir: string, npmrcPath: string | undefined, args: string[]) =>
+const npmPublish = (
+  dir: string,
+  npmrcPath: string | undefined,
+  args: string[],
+) =>
   new Promise<void>((resolvePromise, reject) => {
     const child = spawn("npm", ["publish", ...args], {
       cwd: dir,
