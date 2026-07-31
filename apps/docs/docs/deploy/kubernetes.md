@@ -15,7 +15,7 @@ If possible, use serverless deployment types like `google-cloud-run`
 
 ### Requirements
 
-1. Basic setup and understanding for Kubernetes Administration (https://git.panter.ch/panter/wiki/-/wikis/administration/kubernetes)
+1. Basic setup and understanding of Kubernetes administration
 2. Access rights to cluster `skynet-swiss` (ask #technik if this is missing)
 3. Switch to project `skynet-swiss` in Google Cloud Console (https://console.cloud.google.com/)
 4. Copy command for connecting to cluster ch-staging (e.g. `gcloud container clusters get-credentials...`)

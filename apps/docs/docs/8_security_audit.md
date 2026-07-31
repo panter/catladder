@@ -51,7 +51,7 @@ doing security audit check
 could not evaluate security audit document
 creating new merge request with security audit template...
 security audit merge request created successfully
-please finish the MR by updating SECURITY.md document: https://git.panter.ch/.../-/merge_requests/14
+please finish the MR by updating SECURITY.md document: https://<your-gitlab-host>/<project>/-/merge_requests/14
 ```
 
 `No audit yet`

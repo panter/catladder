@@ -4,7 +4,7 @@
 
 Catladder is a TypeScript-based framework designed to streamline GitLab CI/CD pipeline automation and DevOps workflows. Built by Panter, it provides developers and DevOps teams with powerful tools to manage complex deployment pipelines, cloud infrastructure, and automated workflows.
 
-📚 **[Documentation](https://catladder.git.panter.biz/catladder/docs/getting_started)** - Get started with catladder in your projects
+📚 **[Documentation](https://panter.github.io/catladder/docs/getting_started)** - Get started with catladder in your projects
 
 ## 🚀 What Catladder Does
 
@@ -51,7 +51,7 @@ Comprehensive documentation and guides for using catladder in your projects.
 
 ## 🤝 Contributing
 
-This project is maintained by the Panter team. For issues and feature requests, please use our [issue tracker](https://git.panter.ch/catladder/catladder/issues).
+This project is maintained by the Panter team. For issues and feature requests, please use our [issue tracker](https://github.com/panter/catladder/issues).
 
 ## 📄 License
 

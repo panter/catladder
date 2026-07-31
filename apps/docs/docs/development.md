@@ -20,7 +20,7 @@ TODO: explain differences between normal version and dev version, maybe also add
 
 ## Development Workflow
 
-After adding your changes you can run the the `-dev` version locally in a test Project. If you don't have one yourself you can test it in the [Test Projects](https://git.panter.ch/catladder/test-projects).
+After adding your changes you can run the the `-dev` version locally in a test Project. If you don't have one yourself, create a small throwaway project to test against (Panter devs: use the internal test-projects group).
 
 To do so you should first create a symlink to the catladder command you need. For exampple if you use `catladder-dev` add the command like this:
 

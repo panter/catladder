@@ -31,7 +31,7 @@ type MaybePromise<T> = T | Promise<T>;
  * them silently. Prefer a first-class config option whenever one exists.
  *
  * If you need a hook, please raise an issue on
- * https://git.panter.ch/catladder/catladder/-/issues describing the use
+ * https://github.com/panter/catladder/issues describing the use
  * case. This feedback helps us generalize it into a supported feature.
  */
 export type Hooks = {

@@ -2,4 +2,4 @@
 
 [See contribution guide][docs-contribute].
 
-[docs-contribute]: https://catladder.git.panter.biz/catladder/docs/contribute "Contribution guide"
+[docs-contribute]: https://panter.github.io/catladder/docs/contribute "Contribution guide"

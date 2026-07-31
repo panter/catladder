@@ -197,7 +197,7 @@ deploy: {
 
 ### Execute a job from within your app
 
-Check out this example https://git.panter.ch/catladder/test-projects/cloudrun-prisma.
+Check out the `cloudrun-prisma` test project (Panter-internal) for a working example.
 
 ## Custom domains
 
@@ -227,8 +227,8 @@ Preparation work:
 3. Firebase will create a certificate for it, once you've set up the DNS correctly. This can take up to 24h.
 4. in the meantime, install firebase tools: `npm i -g firebase-tools`
 5. Login to firebase: `firebase login`
-6. You need to create a .firebaserc file. [See this example](https://git.panter.ch/klassenlager2021/fonsi-2-0). You can also use `firebase init` to create it with a wizard. This example has multiple hosting targets, so its still worth to check it out
-7. Create a `firebase.json` where the hosting is set up, again look at this [example](https://git.panter.ch/klassenlager2021/fonsi-2-0)
+6. You need to create a `.firebaserc` file. You can use `firebase init` to create it with a wizard. If your app serves several sites, set up one hosting target per site.
+7. Create a `firebase.json` where the hosting is set up
 8. Make sure your cloud run app is deployed to production and works correctly there
 9. Run `firebase deploy --only hosting` to deploy the hosting
 10. if your certificate from step 2 is ready, you can change the A-record of your domain to point to the firebase hosting IP. You can find it in the firebase console under hosting.
@@ -385,7 +385,6 @@ export default class LoggerFactory {
 
 You can then use the `makeExpressMiddleware` so that each req has a `log` object which is an instance of a winston logger. All those logs will have the same trace as the initial request, so you can group them in google cloud logs
 
-see also https://git.panter.ch/manul/wea/food-2050/-/blob/main/libs/logger/src/index.ts?ref_type=heads
 
 ### Tracing
 

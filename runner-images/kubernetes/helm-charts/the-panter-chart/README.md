@@ -1,6 +1,6 @@
 # The panter chart
 
-**Main chart used in https://git.panter.ch/catladder/gitlab-ci/ **
+**The default chart catladder deploys kubernetes components with.**
 
 Developing helm charts can be complex and they tend to be very verbose.
 Our goal is therefore to provide a common chart that provides all functionalities that you might need
@@ -21,4 +21,4 @@ This way we avoid having complexity in the projects and make it easier to share 
 - support for namespace secrets and custom env-vars (using catladder-shell and gitlab-ci)
 - optional prisam1 (_deprecated, prisma2 does not need a separate instance anymore_)
 
-See https://git.panter.ch/catladder/catladder/ for usage information
+See https://github.com/panter/catladder for usage information

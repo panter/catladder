@@ -192,7 +192,7 @@ export type ComponentConfig<C extends ConfigProps = never> = {
    * config option whenever one exists.
    *
    * Please raise an issue on
-   * https://git.panter.ch/catladder/catladder/-/issues
+   * https://github.com/panter/catladder/issues
    * to let us know about why you need to use custom jobs.
    * This feedback will help us to generalize use cases
    */

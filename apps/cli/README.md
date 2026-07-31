@@ -6,7 +6,7 @@
 
 [See the documentation][docs-getting-started].
 
-[docs-getting-started]: https://catladder.git.panter.biz/catladder/docs/getting_started "Getting started"
+[docs-getting-started]: https://panter.github.io/catladder/docs/getting_started "Getting started"
 
 ## Usage
 
@@ -33,4 +33,4 @@ catladder -y project delete dev:web
 
 [See contribution guide][docs-contribute].
 
-[docs-contribute]: https://catladder.git.panter.biz/catladder/docs/contribute "Contribution guide"
+[docs-contribute]: https://panter.github.io/catladder/docs/contribute "Contribution guide"

@@ -60,7 +60,7 @@ async function main() {
       [
         `<!-- Auto generated with 'yarn workspace docs gen-examples-md'. Do not edit manually -->\n`,
         `# ${title}\n`,
-        `[${file}](https://git.panter.ch/catladder/catladder/-/blob/main/${path})\n`,
+        `[${file}](https://github.com/panter/catladder/blob/main/${path})\n`,
         `\`\`\`ts`,
         cleanedContent,
         `\`\`\``,

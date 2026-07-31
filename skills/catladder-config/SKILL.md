@@ -103,7 +103,7 @@ first.
 a dev needs `customJobs` or a transform hook, it almost always means
 catladder is missing a capability that other projects will need too.
 **Open an issue at
-https://git.panter.ch/catladder/catladder/-/issues** describing the use
+https://github.com/panter/catladder/issues** describing the use
 case (what you're trying to achieve and why the existing config can't
 express it) so it can be generalized into a supported feature — and,
 where possible, offer to help the dev write that issue. The goal is for

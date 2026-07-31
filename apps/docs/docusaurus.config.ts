@@ -11,14 +11,14 @@ const config: Config = {
   tagline: "Documentation",
   favicon: "img/favicon.ico",
   // Set the production url of your site here
-  url: "https://catladder.git.panter.biz",
+  url: "https://panter.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/catladder",
+  baseUrl: "/catladder/",
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "catladder", // Usually your GitHub org/user name.
-  projectName: "catladder", // Usually your repo name.
+  organizationName: "panter", // GitHub org
+  projectName: "catladder", // GitHub repo
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
@@ -72,7 +72,7 @@ const config: Config = {
         },
         // {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: "https://git.panter.ch/catladder/catladder",
+          href: "https://github.com/panter/catladder",
           label: "GitLab",
           position: "right",
         },
@@ -90,7 +90,7 @@ const config: Config = {
           items: [
             {
               label: "GitLab",
-              href: "https://git.panter.ch/catladder/catladder",
+              href: "https://github.com/panter/catladder",
             },
           ],
         },

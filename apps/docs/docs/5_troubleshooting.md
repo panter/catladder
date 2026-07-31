@@ -40,7 +40,7 @@ But if you suspect the build fails due to the content of `node_modules` try to [
 
 ## Expired GitLab token
 
-1) create new personal access token with `api` scope https://git.panter.ch/-/user_settings/personal_access_tokens
+1) create new personal access token with `api` scope `https://<your-gitlab-host>/-/user_settings/personal_access_tokens`
 2) change it in  `~/.config/catladder/preferences.yml`
 
 ---

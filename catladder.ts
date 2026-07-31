@@ -60,7 +60,7 @@ const config: Config = {
       env: {
         stage: false,
         prod: false,
-        dev: { host: "catladder.git.panter.biz" },
+        dev: {},
         // MR docs previews stay manual (previous pages behavior)
         review: { deploy: { when: "manual" } },
       },
