@@ -98,7 +98,9 @@ blocking** (`allow_failure`) when the MR adds no changeset:
   `GL_TOKEN` available to MR pipelines it also maintains a sticky MR
   comment (opt-in — an api-scope token in MR pipelines is a security
   trade-off).
-- **GitHub**: maintains a sticky PR comment via the workflow token.
+- **GitHub**: maintains a sticky PR comment via the workflow token; the
+  job stays green and reports a warning annotation (github has no
+  yellow job state, and a red job would read like a real failure).
 
 A yellow changeset-check job on an MR is a prompt to ask: is this
 change user-facing? If yes, add a changeset; if not, ignore it.

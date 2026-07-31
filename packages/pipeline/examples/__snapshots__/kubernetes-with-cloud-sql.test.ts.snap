@@ -344,16 +344,16 @@ catladder-main.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -602,7 +602,7 @@ catladder-main.yml:
         - api-test-dev
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -615,7 +615,7 @@ catladder-main.yml:
         CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
         CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
         CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -827,16 +827,16 @@ catladder-review.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -1085,7 +1085,7 @@ catladder-review.yml:
         - api-test-review
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1098,7 +1098,7 @@ catladder-review.yml:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
         CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1306,16 +1306,16 @@ catladder-release.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -1460,7 +1460,7 @@ catladder-release.yml:
         - api-docker-stage
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1473,7 +1473,7 @@ catladder-release.yml:
         CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
         CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
         CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1691,16 +1691,16 @@ catladder-review-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -1759,7 +1759,7 @@ catladder-review-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -1771,7 +1771,7 @@ catladder-review-stop.yml:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
         CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2030,16 +2030,16 @@ catladder-deploy.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -2184,7 +2184,7 @@ catladder-deploy.yml:
         - api-docker-prod
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2197,7 +2197,7 @@ catladder-deploy.yml:
         CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
         CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
         CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -2411,16 +2411,16 @@ catladder-stop.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -2479,7 +2479,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2491,7 +2491,7 @@ catladder-stop.yml:
         CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
         CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
         CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2560,7 +2560,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2572,7 +2572,7 @@ catladder-stop.yml:
         CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
         CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
         CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2641,7 +2641,7 @@ catladder-stop.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -2653,7 +2653,7 @@ catladder-stop.yml:
         CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
         CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
         CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: 🛑 Stop ⚠️
           id: main
@@ -2923,16 +2923,16 @@ catladder-rollback.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+            docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -2991,7 +2991,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3003,7 +3003,7 @@ catladder-rollback.yml:
         CL_dev_api_KUBE_URL: \${{ secrets.CL_dev_api_KUBE_URL }}
         CL_dev_api_KUBE_CA_PEM: \${{ secrets.CL_dev_api_KUBE_CA_PEM }}
         CL_dev_api_KUBE_TOKEN: \${{ secrets.CL_dev_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3072,7 +3072,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3084,7 +3084,7 @@ catladder-rollback.yml:
         CL_review_api_KUBE_URL: \${{ secrets.CL_review_api_KUBE_URL }}
         CL_review_api_KUBE_CA_PEM: \${{ secrets.CL_review_api_KUBE_CA_PEM }}
         CL_review_api_KUBE_TOKEN: \${{ secrets.CL_review_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3153,7 +3153,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3165,7 +3165,7 @@ catladder-rollback.yml:
         CL_stage_api_KUBE_URL: \${{ secrets.CL_stage_api_KUBE_URL }}
         CL_stage_api_KUBE_CA_PEM: \${{ secrets.CL_stage_api_KUBE_CA_PEM }}
         CL_stage_api_KUBE_TOKEN: \${{ secrets.CL_stage_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -3234,7 +3234,7 @@ catladder-rollback.yml:
       needs:
         - catladder-image-kubernetes
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -3246,7 +3246,7 @@ catladder-rollback.yml:
         CL_prod_api_KUBE_URL: \${{ secrets.CL_prod_api_KUBE_URL }}
         CL_prod_api_KUBE_CA_PEM: \${{ secrets.CL_prod_api_KUBE_CA_PEM }}
         CL_prod_api_KUBE_TOKEN: \${{ secrets.CL_prod_api_KUBE_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:9e89ecebdc58
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/kubernetes:e5e779a652a4
       steps:
         - name: ↩️ Rollback ⚠️
           id: main
@@ -4914,16 +4914,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4 > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4 already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4 -f .catladder-generated/images/kubernetes/Dockerfile .catladder-generated/images/kubernetes
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+    - docker push $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -5254,7 +5254,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5400,7 +5400,7 @@ create release:
   allow_failure: false
 'api 🛑 Stop ⚠️ | dev ':
   stage: stop dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5455,7 +5455,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | dev ':
   stage: rollback dev
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5769,7 +5769,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5916,7 +5916,7 @@ create release:
   allow_failure: false
 'api 🛑 Stop ⚠️ | review ':
   stage: stop review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -5971,7 +5971,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | review ':
   stage: rollback review
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6161,7 +6161,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | stage ':
   stage: deploy stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6300,7 +6300,7 @@ create release:
   allow_failure: false
 'api 🛑 Stop ⚠️ | stage ':
   stage: stop stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6355,7 +6355,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | stage ':
   stage: rollback stage
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6545,7 +6545,7 @@ create release:
   interruptible: true
 'api 🚀 Deploy | prod ':
   stage: deploy prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6684,7 +6684,7 @@ create release:
   allow_failure: true
 'api 🛑 Stop ⚠️ | prod ':
   stage: stop prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -6739,7 +6739,7 @@ create release:
   allow_failure: true
 'api ↩️ Rollback ⚠️ | prod ':
   stage: rollback prod
-  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:9e89ecebdc58
+  image: $CI_REGISTRY_IMAGE/catladder/kubernetes:e5e779a652a4
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
