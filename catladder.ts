@@ -5,11 +5,9 @@ import type { Config } from "./packages/pipeline/src";
 const config: Config = {
   appName: "catladder",
   customerName: "pan",
-  // migrating to github.com/panter/catladder: both backends generate
-  // while the github pipeline is proven, then gitlab is switched off
+  // catladder lives on github.com/panter/catladder
   pipelines: {
-    gitlab: true,
-    github: { gitRemote: "github" },
+    github: true,
   },
   releases: {
     when: "auto",
