@@ -6,6 +6,7 @@ export type RunnerImageName =
   | "docker-build"
   | "semantic-release"
   | "changesets"
+  | "npm-publish"
   | "agent-claude";
 
 /**

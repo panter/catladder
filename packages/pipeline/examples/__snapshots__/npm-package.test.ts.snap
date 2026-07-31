@@ -205,6 +205,56 @@ catladder-main.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
+    catladder-image-npm-publish:
+      name: 🐳 catladder image npm-publish
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image npm-publish
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
+            collapseable_section_end "docker-push"
+          shell: bash
     catladder-image-semantic-release:
       name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
@@ -405,22 +455,26 @@ catladder-main.yml:
       name: lib 🚀 Deploy | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-image-npm-publish
         - lib-app-dev
         - lib-audit-dev
         - lib-lint-dev
         - lib-test-dev
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        image: ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
         name: dev-lib
         url: \${{ steps.main.outputs.url }}
+      permissions:
+        contents: read
+        packages: read
+        id-token: write
       env:
         CL_dev_lib_NPM_TOKEN: \${{ secrets.CL_dev_lib_NPM_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -575,6 +629,56 @@ catladder-review.yml:
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-npm-publish:
+      name: 🐳 catladder image npm-publish
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image npm-publish
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -777,22 +881,26 @@ catladder-review.yml:
       name: lib 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-image-npm-publish
         - lib-app-review
         - lib-audit-review
         - lib-lint-review
         - lib-test-review
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        image: ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
         name: review-lib
         url: \${{ steps.main.outputs.url }}
+      permissions:
+        contents: read
+        packages: read
+        id-token: write
       env:
         CL_review_lib_NPM_TOKEN: \${{ secrets.CL_review_lib_NPM_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -916,6 +1024,56 @@ catladder-release.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
             collapseable_section_end "docker-push"
           shell: bash
+    catladder-image-npm-publish:
+      name: 🐳 catladder image npm-publish
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image npm-publish
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
+            collapseable_section_end "docker-push"
+          shell: bash
     catladder-image-semantic-release:
       name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
@@ -1018,19 +1176,23 @@ catladder-release.yml:
       name: lib 🚀 Deploy | prod
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-image-npm-publish
         - lib-app-prod
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        image: ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
       environment:
         name: prod-lib
         url: \${{ steps.main.outputs.url }}
+      permissions:
+        contents: read
+        packages: read
+        id-token: write
       env:
         CL_prod_lib_NPM_TOKEN: \${{ secrets.CL_prod_lib_NPM_TOKEN }}
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -1886,6 +2048,51 @@ before_script:
   needs: []
   retry: *a2
   interruptible: true
+🐳 catladder image npm-publish:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/npm-publish/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/npm-publish/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/npm-publish/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
 create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e
@@ -2114,7 +2321,7 @@ create release:
   interruptible: true
 'lib 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -2148,7 +2355,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 catladder image jobs-default
+    - job: 🐳 catladder image npm-publish
       artifacts: false
       optional: true
     - job: 'lib 👮 lint | dev '
@@ -2162,6 +2369,7 @@ create release:
   retry: *a2
   interruptible: true
   allow_failure: false
+  idToken: true
 'lib 🛡 audit | review ':
   stage: test
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
@@ -2367,7 +2575,7 @@ create release:
   interruptible: true
 'lib 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -2401,7 +2609,7 @@ create release:
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 catladder image jobs-default
+    - job: 🐳 catladder image npm-publish
       artifacts: false
       optional: true
     - job: 'lib 👮 lint | review '
@@ -2415,6 +2623,7 @@ create release:
   retry: *a2
   interruptible: true
   allow_failure: false
+  idToken: true
 'lib 🔨 app | prod ':
   stage: build
   image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
@@ -2498,7 +2707,7 @@ create release:
   interruptible: true
 'lib 🚀 Deploy | prod ':
   stage: deploy prod
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -2532,7 +2741,7 @@ create release:
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 catladder image jobs-default
+    - job: 🐳 catladder image npm-publish
       artifacts: false
       optional: true
     - job: 'lib 🔨 app | prod '
@@ -2540,5 +2749,6 @@ create release:
   retry: *a2
   interruptible: true
   allow_failure: false
+  idToken: true
 "
 `;

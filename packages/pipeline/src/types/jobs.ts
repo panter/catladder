@@ -180,6 +180,16 @@ export type CatladderJobCore<S = BaseStage> = {
   environment?: CatladderJobEnvironmentConfig;
 
   /**
+   * the job needs a workload-identity token from the CI system, to
+   * authenticate against a third party without a stored secret (e.g.
+   * npm trusted publishing).
+   *
+   * Lowered by the github backend to `permissions: id-token: write`.
+   * Ignored on gitlab, whose ID tokens are configured per job instead.
+   */
+  idToken?: boolean;
+
+  /**
    * variables to pass
    */
   variables: UnspecifiedEnvVars | undefined;

@@ -24,7 +24,12 @@ export const createNpmPackageDeployJobs = (
 
   return createDeployementJobs(context, {
     deploy: {
-      image: getRunnerImage("jobs-default"),
+      // dedicated image: publishing needs npm >= 11.5.1 for trusted
+      // publishing (OIDC), which jobs-default's node does not carry
+      image: getRunnerImage("npm-publish"),
+      // github: lowered to `id-token: write` so npm can exchange the
+      // workflow's OIDC token for short-lived publish credentials
+      idToken: true,
       script: [
         // catci derives version + dist-tag from the pipeline trigger,
         // sets the version in package.json and runs npm publish

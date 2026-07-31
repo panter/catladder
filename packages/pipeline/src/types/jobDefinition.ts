@@ -21,6 +21,7 @@ export type DeployJobDefinition = Pick<
   | "runnerVariables"
   | "allow_failure"
   | "pages"
+  | "idToken"
 > & {
   cache?: CacheConfig[];
 };

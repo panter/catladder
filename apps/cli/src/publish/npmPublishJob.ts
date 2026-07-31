@@ -74,12 +74,25 @@ const writeNpmrc = async (dir: string, registry: string) => {
   return npmrcPath;
 };
 
-const npmPublish = (dir: string, npmrcPath: string, args: string[]) =>
+/**
+ * whether the CI job can mint an OIDC token for npm trusted publishing.
+ * github actions exposes these two only when the job declares
+ * `permissions: id-token: write` (catladder sets it via the job's
+ * `idToken` flag).
+ */
+const hasOidcCredentials = () =>
+  !!process.env.ACTIONS_ID_TOKEN_REQUEST_URL &&
+  !!process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN;
+
+const npmPublish = (dir: string, npmrcPath: string | undefined, args: string[]) =>
   new Promise<void>((resolvePromise, reject) => {
     const child = spawn("npm", ["publish", ...args], {
       cwd: dir,
       stdio: "inherit",
-      env: { ...process.env, NPM_CONFIG_USERCONFIG: npmrcPath },
+      env: {
+        ...process.env,
+        ...(npmrcPath ? { NPM_CONFIG_USERCONFIG: npmrcPath } : {}),
+      },
     });
     child.on("error", reject);
     child.on("exit", (code) =>
@@ -90,9 +103,10 @@ const npmPublish = (dir: string, npmrcPath: string, args: string[]) =>
   });
 
 export const npmPublishJob = async (options: NpmPublishJobOptions) => {
-  if (!process.env.NPM_TOKEN) {
+  const oidc = hasOidcCredentials();
+  if (!oidc && !process.env.NPM_TOKEN) {
     throw new Error(
-      "NPM_TOKEN is not set — configure it as a catladder secret for this component",
+      "NPM_TOKEN is not set — configure it as a catladder secret for this component, or publish from a workflow registered as a trusted publisher on npm",
     );
   }
   const registry = options.registry ?? DEFAULT_NPM_REGISTRY;
@@ -103,10 +117,18 @@ export const npmPublishJob = async (options: NpmPublishJobOptions) => {
   });
 
   const name = await setPackageVersion(options.dir, plan.version);
-  const npmrcPath = await writeNpmrc(options.dir, registry);
+  // with OIDC available npm mints its own short-lived credentials, and
+  // an .npmrc referencing an unset ${NPM_TOKEN} would only get in the
+  // way. A token, when present, still wins as the fallback.
+  const npmrcPath =
+    oidc && !process.env.NPM_TOKEN
+      ? undefined
+      : await writeNpmrc(options.dir, registry);
 
   console.log(
-    `publishing ${name}@${plan.version} (dist-tag ${plan.distTag}) to ${registry}`,
+    `publishing ${name}@${plan.version} (dist-tag ${plan.distTag}) to ${registry}${
+      npmrcPath ? "" : " via trusted publishing (OIDC)"
+    }`,
   );
   await npmPublish(options.dir, npmrcPath, [
     "--tag",

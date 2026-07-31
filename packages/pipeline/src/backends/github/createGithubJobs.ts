@@ -442,6 +442,22 @@ export const makeGithubJob = (
         ? { name: context.env }
         : undefined;
 
+  // declaring `permissions` drops ALL default token grants, so a job
+  // that needs any special grant must also re-declare the ordinary ones:
+  // `contents: read` for the checkout and `packages: read` to pull its
+  // job image from the repo registry.
+  const specialPermissions = {
+    ...(pagesPublishDir ? { pages: "write", "id-token": "write" } : {}),
+    ...(job.idToken ? { "id-token": "write" } : {}),
+  };
+  const permissions = Object.keys(specialPermissions).length
+    ? {
+        contents: "read",
+        ...(resolved.fromRepoRegistry ? { packages: "read" } : {}),
+        ...specialPermissions,
+      }
+    : undefined;
+
   const githubJob: GithubJob = {
     name: githubJobName(context, job.name),
     "runs-on": "ubuntu-latest",
@@ -464,20 +480,7 @@ export const makeGithubJob = (
       : {}),
     ...(Object.keys(services).length > 0 ? { services } : {}),
     ...(githubEnvironment ? { environment: githubEnvironment } : {}),
-    ...(pagesPublishDir
-      ? {
-          // declaring permissions drops ALL default token grants, so
-          // everything this job needs beyond deploy-pages must be
-          // re-granted: `contents: read` for the checkout and
-          // `packages: read` to pull the job image from the repo registry
-          permissions: {
-            contents: "read",
-            ...(resolved.fromRepoRegistry ? { packages: "read" } : {}),
-            pages: "write",
-            "id-token": "write",
-          },
-        }
-      : {}),
+    ...(permissions ? { permissions } : {}),
     env,
     steps: [
       ...(skipCheckout
