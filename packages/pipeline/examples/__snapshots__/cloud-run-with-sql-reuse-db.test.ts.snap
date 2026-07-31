@@ -318,6 +318,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_api_DB_PASSWORD: \${{ secrets.CL_dev_api_DB_PASSWORD }}
@@ -528,6 +529,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_worker_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_worker_GCLOUD_DEPLOY_credentialsKey }}
         CL_dev_worker_DB_PASSWORD: \${{ secrets.CL_dev_worker_DB_PASSWORD }}
@@ -906,6 +908,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_api_DB_PASSWORD: \${{ secrets.CL_review_api_DB_PASSWORD }}
@@ -1116,6 +1119,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_worker_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_worker_GCLOUD_DEPLOY_credentialsKey }}
         CL_review_worker_DB_PASSWORD: \${{ secrets.CL_review_worker_DB_PASSWORD }}

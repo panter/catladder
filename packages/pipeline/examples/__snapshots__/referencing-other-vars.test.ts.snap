@@ -368,6 +368,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_app1_SECRET1: \${{ secrets.CL_dev_app1_SECRET1 }}
         CL_dev_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app1_GCLOUD_DEPLOY_credentialsKey }}
@@ -578,6 +579,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_app2_SECRET2: \${{ secrets.CL_dev_app2_SECRET2 }}
         CL_dev_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_app2_GCLOUD_DEPLOY_credentialsKey }}
@@ -788,6 +790,7 @@ catladder-main.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      continue-on-error: true
       env:
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
       steps:
@@ -1207,6 +1210,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_app1_SECRET1: \${{ secrets.CL_review_app1_SECRET1 }}
         CL_review_app1_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app1_GCLOUD_DEPLOY_credentialsKey }}
@@ -1417,6 +1421,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_app2_SECRET2: \${{ secrets.CL_review_app2_SECRET2 }}
         CL_review_app2_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app2_GCLOUD_DEPLOY_credentialsKey }}
@@ -1627,6 +1632,7 @@ catladder-review.yml:
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
+      continue-on-error: true
       env:
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
       steps:

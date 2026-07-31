@@ -368,6 +368,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_api_POSTGRESQL_PASSWORD }}
         CL_dev_api_cloudsqlProxyCredentials: \${{ secrets.CL_dev_api_cloudsqlProxyCredentials }}
@@ -801,6 +802,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_api_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_api_POSTGRESQL_PASSWORD }}
         CL_review_api_cloudsqlProxyCredentials: \${{ secrets.CL_review_api_cloudsqlProxyCredentials }}

@@ -318,6 +318,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT: \${{ secrets.CL_dev_app_APP_STORE_CONNECT_API_KEY_CONTENT }}
         CL_dev_app_APP_STORE_CONNECT_ISSUER_ID: \${{ secrets.CL_dev_app_APP_STORE_CONNECT_ISSUER_ID }}
@@ -517,6 +518,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_dev_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
@@ -887,6 +889,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT: \${{ secrets.CL_review_app_APP_STORE_CONNECT_API_KEY_CONTENT }}
         CL_review_app_APP_STORE_CONNECT_ISSUER_ID: \${{ secrets.CL_review_app_APP_STORE_CONNECT_ISSUER_ID }}
@@ -1086,6 +1089,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_api_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_api_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df

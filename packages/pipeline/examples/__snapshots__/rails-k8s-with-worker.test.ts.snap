@@ -313,6 +313,7 @@ catladder-main.yml:
         image: ruby:3.2.1
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_app_SECRET_KEY_BASE: \${{ secrets.CL_dev_app_SECRET_KEY_BASE }}
         CL_dev_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_dev_app_POSTGRESQL_PASSWORD }}
@@ -600,6 +601,7 @@ catladder-review.yml:
         image: ruby:3.2.1
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_app_SECRET_KEY_BASE: \${{ secrets.CL_review_app_SECRET_KEY_BASE }}
         CL_review_app_POSTGRESQL_PASSWORD: \${{ secrets.CL_review_app_POSTGRESQL_PASSWORD }}

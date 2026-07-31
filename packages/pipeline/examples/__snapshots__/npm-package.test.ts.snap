@@ -267,6 +267,7 @@ catladder-main.yml:
           password: \${{ github.token }}
       environment:
         name: dev
+      continue-on-error: true
       env:
         CL_dev_lib_NPM_TOKEN: \${{ secrets.CL_dev_lib_NPM_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
@@ -643,6 +644,7 @@ catladder-review.yml:
           password: \${{ github.token }}
       environment:
         name: review
+      continue-on-error: true
       env:
         CL_review_lib_NPM_TOKEN: \${{ secrets.CL_review_lib_NPM_TOKEN }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
