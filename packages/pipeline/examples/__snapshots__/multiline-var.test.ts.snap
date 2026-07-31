@@ -1784,6 +1784,42 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/kube-deploy-review.sh
           shell: bash
+    catladder-ok:
+      name: catladder ✅
+      runs-on: ubuntu-latest
+      needs:
+        - app1-app-review
+        - app1-audit-review
+        - app1-deploy-review
+        - app1-docker-review
+        - app1-lint-review
+        - app1-test-review
+        - app2-app-review
+        - app2-audit-review
+        - app2-deploy-review
+        - app2-docker-review
+        - app2-lint-review
+        - app2-test-review
+        - catladder-image-docker-build
+        - catladder-image-jobs-default
+        - catladder-image-kubernetes
+        - catladder-image-semantic-release
+        - kube-app-review
+        - kube-audit-review
+        - kube-deploy-review
+        - kube-docker-review
+        - kube-lint-review
+        - kube-test-review
+      if: always()
+      steps:
+        - name: catladder ✅
+          run: |-
+            results='\${{ toJSON(needs) }}'
+            echo "$results"
+            if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then
+              echo "a required job did not succeed"; exit 1
+            fi
+          shell: bash
 catladder-release.yml:
   name: 🛠️ catladder release
   on:
