@@ -5,7 +5,7 @@
 
 '🔹 cli 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -39,7 +39,7 @@
     - when: on_success
       if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ || $CI_PIPELINE_SOURCE != "push")
   needs:
-    - job: 🐳 catladder image jobs-default
+    - job: 🐳 catladder image npm-publish
       artifacts: false
       optional: true
     - job: '🔸 base 👮 lint | dev '
@@ -54,9 +54,10 @@
     max: 2
   interruptible: true
   allow_failure: false
+  idToken: true
 '🔹 cli 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -90,7 +91,7 @@
     - when: on_success
       if: $CI_MERGE_REQUEST_ID
   needs:
-    - job: 🐳 catladder image jobs-default
+    - job: 🐳 catladder image npm-publish
       artifacts: false
       optional: true
     - job: '🔸 base 👮 lint | review '
@@ -104,9 +105,10 @@
   retry: *a1
   interruptible: true
   allow_failure: false
+  idToken: true
 '🔹 cli 🚀 Deploy | prod ':
   stage: deploy prod
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 200Mi
@@ -140,7 +142,7 @@
     - when: on_success
       if: $CI_COMMIT_TAG
   needs:
-    - job: 🐳 catladder image jobs-default
+    - job: 🐳 catladder image npm-publish
       artifacts: false
       optional: true
     - job: '🔸 base 🔨 app | prod '
@@ -148,3 +150,4 @@
   retry: *a1
   interruptible: true
   allow_failure: false
+  idToken: true

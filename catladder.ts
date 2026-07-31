@@ -5,10 +5,11 @@ import type { Config } from "./packages/pipeline/src";
 const config: Config = {
   appName: "catladder",
   customerName: "pan",
-  agents: {
-    claude: {
-      type: "claude",
-    },
+  // migrating to github.com/panter/catladder: both backends generate
+  // while the github pipeline is proven, then gitlab is switched off
+  pipelines: {
+    gitlab: true,
+    github: { gitRemote: "github" },
   },
   releases: {
     when: "auto",
@@ -61,8 +62,9 @@ const config: Config = {
         stage: false,
         prod: false,
         dev: {},
-        // MR docs previews stay manual (previous pages behavior)
-        review: { deploy: { when: "manual" } },
+        // MR docs previews are gitlab-only (github pages serves one
+        // site per repository), so they go away with the migration
+        review: false,
       },
       build: false,
       deploy: {

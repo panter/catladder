@@ -56,11 +56,12 @@ resources with `yarn catladder project setup`; detect drift with
 - `registry?: string` — registry url, default `https://registry.npmjs.org/`.
 - `distTag?: string` — overrides the derived dist-tag.
 - Version/dist-tag derivation: tagged release (`prod`) → tag version under `latest`; branch/MR → `0.0.0-<branch-slug>-<sha>` under `canary` (branches `next`/`beta` publish under their own dist-tag).
-- Requires the `NPM_TOKEN` secret (managed like any catladder secret). Disable staging on the component (`env: { stage: false }`) so tagged releases publish directly.
+- Auth: the `NPM_TOKEN` secret (managed like any catladder secret), or — on github — **trusted publishing** with no stored token: register the package's trusted publisher on npmjs.com with the repo and the publishing **workflow filename** (`catladder-release.yml` for tagged releases). npm allows one trusted publisher per package, so canary publishes from the main/review workflows still need `NPM_TOKEN`. A set token always wins over OIDC.
+- Disable staging on the component (`env: { stage: false }`) so tagged releases publish directly.
 
 ## `pages`
 
-- `type: "pages"` — **required**. Publishes a static site on gitlab pages (not yet supported on the github backend).
+- `type: "pages"` — **required**. Publishes a static site on gitlab pages or github pages. On github the repo's Pages source must be set to "GitHub Actions" once; per-merge-request previews are gitlab-only (github serves one site per repository).
 - `script: string[]` — **required**; produces the site.
 - `publishDir?: string` — output directory relative to the repo root, default `"public"`.
 - `requiresInstall?: boolean` — run the package-manager install (yarn/pnpm) first (`requiresYarnInstall` is a deprecated alias).

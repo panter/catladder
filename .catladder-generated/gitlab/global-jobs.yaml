@@ -144,7 +144,7 @@
   needs: []
   retry: *a2
   interruptible: true
-🐳 catladder image agent-claude:
+🐳 catladder image npm-publish:
   stage: setup
   image: docker.io/docker:29.5.1
   services:
@@ -162,30 +162,30 @@
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03 -f .catladder-generated/images/agent-claude/Dockerfile .catladder-generated/images/agent-claude
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/agent-claude:008e617b8d03
+    - docker push $CI_REGISTRY_IMAGE/catladder/npm-publish:c1ae26bf58cc
     - collapseable_section_end "docker-push"
   rules:
     - *a1
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\(release\).*/ || $CI_PIPELINE_SOURCE != "push")
       changes:
-        - .catladder-generated/images/agent-claude/**/*
+        - .catladder-generated/images/npm-publish/**/*
     - *a1
     - if: $CI_MERGE_REQUEST_ID
       changes:
-        - .catladder-generated/images/agent-claude/**/*
+        - .catladder-generated/images/npm-publish/**/*
     - *a1
     - if: $CI_COMMIT_TAG
       changes:
-        - .catladder-generated/images/agent-claude/**/*
+        - .catladder-generated/images/npm-publish/**/*
   needs: []
   retry: *a2
   interruptible: true
