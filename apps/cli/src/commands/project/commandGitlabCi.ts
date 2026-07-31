@@ -2,6 +2,7 @@ import { exec } from "child-process-promise";
 import { last } from "lodash-es";
 import open from "open";
 import { defineCommand } from "../../core/defineCommand";
+import { getGitlabHostUrl } from "../../utils/gitlabHost";
 import {
   doGitlabRequest,
   getGitlabToken,
@@ -99,7 +100,7 @@ export const commandCiJobLog = defineCommand({
       const trace = await exec(
         `curl -s --header "PRIVATE-TOKEN: ${await getGitlabToken(
           ctx,
-        )}" "https://git.panter.ch/api/v4/projects/${projectId}/jobs/${id}/trace"`,
+        )}" "${await getGitlabHostUrl()}/api/v4/projects/${projectId}/jobs/${id}/trace"`,
       );
 
       const job = await doGitlabRequest(

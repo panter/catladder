@@ -29,8 +29,7 @@ import {
   githubQueuedGuardJob,
 } from "./release/githubQueuedRelease";
 import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
-
-const GITLAB_HOST = "https://git.panter.ch";
+import { getGitlabHostUrl } from "./utils/gitlabHost";
 
 const USAGE = `catci — catladder CI companion
 
@@ -129,7 +128,7 @@ const securityAuditCiJob = async (
   console.log("could not evaluate security audit document");
   console.log("creating new merge request with security audit template...");
 
-  const api = new Gitlab({ host: GITLAB_HOST, token });
+  const api = new Gitlab({ host: await getGitlabHostUrl(), token });
   const mr = await createSecurityAuditMergeRequest({
     api,
     mainBranch,

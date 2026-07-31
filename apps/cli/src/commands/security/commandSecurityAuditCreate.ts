@@ -1,8 +1,7 @@
 import { defineCommand } from "../../core/defineCommand";
 import { Gitlab } from "@gitbeaker/rest";
 import { createSecurityAuditMergeRequest } from "../../security/createSecurityAuditMergeRequest";
-
-const GITLAB_HOST = "https://git.panter.ch";
+import { getGitlabHostUrl } from "../../utils/gitlabHost";
 
 export const commandSecurityAuditCreate = defineCommand({
   name: "security audit create",
@@ -36,7 +35,7 @@ export const commandSecurityAuditCreate = defineCommand({
     const projectId = await ctx.get("projectId");
     const userId = await ctx.get("userId");
 
-    const api = new Gitlab({ host: GITLAB_HOST, token });
+    const api = new Gitlab({ host: await getGitlabHostUrl(), token });
 
     const result = await createSecurityAuditMergeRequest({
       api,

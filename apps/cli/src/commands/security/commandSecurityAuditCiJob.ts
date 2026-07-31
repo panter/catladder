@@ -8,8 +8,7 @@ import {
   createSecurityAuditMergeRequest,
   SECURITY_AUDIT_FILE_NAME,
 } from "../../security/createSecurityAuditMergeRequest";
-
-const GITLAB_HOST = "https://git.panter.ch";
+import { getGitlabHostUrl } from "../../utils/gitlabHost";
 
 export const commandSecurityAuditCiJob = defineCommand({
   name: "security audit ci-job",
@@ -52,7 +51,7 @@ export const commandSecurityAuditCiJob = defineCommand({
       const projectId = await ctx.get("projectId");
       const userId = await ctx.get("userId");
 
-      const api = new Gitlab({ host: GITLAB_HOST, token });
+      const api = new Gitlab({ host: await getGitlabHostUrl(), token });
 
       const mr = await createSecurityAuditMergeRequest({
         api,

@@ -45,10 +45,11 @@ if [ "$GITHUB_ACTIONS" = "true" ]; then
   # is gitlab-specific)
   PUBLISH_PLUGIN=""
 else
+  # no gitlabUrl: the plugin derives it from the CI-provided variables
+  # of the running instance. It used to be hardcoded to panter's gitlab,
+  # which broke the release on every other instance.
   PUBLISH_PLUGIN=',
-    ["@semantic-release/gitlab", {
-      "gitlabUrl": "https://git.panter.ch"
-    }]'
+    "@semantic-release/gitlab"'
 fi
 
 if [ ! -e .releaserc ]; then
