@@ -372,3 +372,26 @@ jobs:
       - name: changeset check
         run: changesetCheck
         shell: bash
+  catladder-ok:
+    name: catladder ✅
+    runs-on: ubuntu-latest
+    needs:
+      - catladder-image-changesets
+      - catladder-image-jobs-default
+      - catladder-image-npm-publish
+      - changeset-check
+      - cli-deploy-review
+      - ws-base-app-review
+      - ws-base-audit-review
+      - ws-base-lint-review
+      - ws-base-test-review
+    if: always()
+    steps:
+      - name: catladder ✅
+        run: |-
+          results='${{ toJSON(needs) }}'
+          echo "$results"
+          if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then
+            echo "a required job did not succeed"; exit 1
+          fi
+        shell: bash

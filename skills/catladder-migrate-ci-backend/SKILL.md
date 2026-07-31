@@ -255,6 +255,21 @@ now-wrong `gitRemote`, regenerate once more, and finish with
 
 ## After the cut-over
 
+- **Set up merge gating — GitHub has none by default.** On GitLab,
+  "merge when pipeline succeeds" is built in; on a fresh GitHub repo a
+  PR is mergeable the moment it opens, checks still running, and the
+  auto-merge button does not even appear. Two one-time settings fix it:
+  1. Settings → General → Pull Requests → enable **"Allow auto-merge"**
+     (and "Automatically delete head branches" while there)
+  2. a branch protection rule on the default branch requiring the
+     **`catladder ✅`** status check — the aggregate job catladder
+     generates into the review workflow precisely for this. Require
+     only this one context, never individual job names: those change
+     with every component add/rename, and a stale required name blocks
+     the renaming PR forever ("Expected — waiting for status").
+  Consider leaving "enforce for administrators" off: this repo's CI is
+  generated, so if generation itself ever breaks, the admin bypass is
+  what lets the fix merge.
 - Tell the team where the pipeline lives now and how manual actions
   work there (on GitHub, manual jobs are dispatch workflows in the
   Actions sidebar — `🚀 catladder create release`, `▶️ catladder deploy`,

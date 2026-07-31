@@ -15,6 +15,7 @@ import {
 } from "./createGithubJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import { makeAggregateCheckJob } from "./aggregateCheckJob";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import {
   getGithubCreateReleaseWorkflow,
@@ -285,11 +286,22 @@ export class GithubBackend implements PipelineBackend {
       }
 
       if (Object.keys(jobs).length > 0) {
+        const workflowJobs = { ...makeEnsureImageGithubJobs(images), ...jobs };
         workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] = {
           ...TRIGGER_WORKFLOWS[trigger],
           ...workflowPermissions(images),
           env: workflowEnv,
-          jobs: { ...makeEnsureImageGithubJobs(images), ...jobs },
+          // the review workflow additionally gets the aggregate job —
+          // the one stable required-status context for branch
+          // protection. Requiring real job names instead goes stale on
+          // every component change: a renamed required job blocks its
+          // own PR forever, a new component's jobs are silently not
+          // required. Added at finalization so its needs cover the
+          // image-build jobs too.
+          jobs:
+            trigger === "mr"
+              ? { ...workflowJobs, ...makeAggregateCheckJob(workflowJobs) }
+              : workflowJobs,
         };
       }
     }
