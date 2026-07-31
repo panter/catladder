@@ -167,3 +167,33 @@ export const ensureGithubEnvironment = async (
           ),
     );
   });
+
+/** runs `gh api` with an optional JSON body and returns the parsed response */
+export const ghApiJson = async <T = any>(
+  method: "GET" | "PATCH" | "PUT",
+  path: string,
+  body?: unknown,
+): Promise<T> => {
+  const args = ["api", "-X", method, path];
+  const child = spawn("gh", [...args, ...(body ? ["--input", "-"] : [])], {
+    stdio: [body ? "pipe" : "ignore", "pipe", "pipe"],
+  });
+  let stdout = "";
+  let stderr = "";
+  child.stdout?.on("data", (data) => (stdout += data));
+  child.stderr?.on("data", (data) => (stderr += data));
+  if (body) {
+    child.stdin?.write(JSON.stringify(body));
+    child.stdin?.end();
+  }
+  return new Promise<T>((resolve, reject) => {
+    child.on("error", reject);
+    child.on("close", (code) =>
+      code === 0
+        ? resolve(stdout ? JSON.parse(stdout) : (undefined as T))
+        : reject(
+            new Error(`gh api ${method} ${path} failed: ${stderr.trim()}`),
+          ),
+    );
+  });
+};
