@@ -26,6 +26,7 @@ import { createGitlabJobs } from "./createGitlabJobs";
 import { createGitlabPipelineWithDefaults } from "./createGitlabPipeline";
 import { getGitlabReleaseJobs } from "./gitlabReleaseJobs";
 import { getPipelineStages } from "./getPipelineStages";
+import { getReleaseGateJobNames } from "./releaseGateJobs";
 import { sortGitLabJobDefProps } from "./sortGitLabJobDefProps";
 import { GENERATED_FILE_MARKER } from "../../utils/writeFiles";
 
@@ -179,23 +180,9 @@ export class GitlabBackend implements PipelineBackend {
       .flatMap(({ jobs }) => jobs)
       .filter(({ gitlabJob }) => !isManualGitlabJob(gitlabJob));
 
-    // `needs:` is transitive: a job that another auto job needs is
-    // already awaited through that job, and a failed ancestor skips its
-    // descendants either way. The executor therefore only needs the
-    // SINKS of the auto-job graph (test/lint/audit and the deploy or
-    // verify tips) — everything upstream is implied. This keeps the
-    // executor's needs list far below gitlab's 50-entry cap even on
-    // pipelines with many components.
-    const neededByAnAutoJob = new Set(
-      mainBranchAutoJobs.flatMap(({ gitlabJob }) =>
-        (gitlabJob.needs ?? []).map((need) =>
-          typeof need === "string" ? need : need.job,
-        ),
-      ),
-    );
-    const mainBranchJobNames = [
-      ...new Set(mainBranchAutoJobs.map(({ name }) => name)),
-    ].filter((name) => !neededByAnAutoJob.has(name));
+    // only the sinks of the auto-job graph — every other auto job is
+    // awaited transitively through them (see releaseGateJobs.ts)
+    const mainBranchJobNames = getReleaseGateJobNames(mainBranchAutoJobs);
 
     const releaseJobs = getGitlabReleaseJobs(
       config,
