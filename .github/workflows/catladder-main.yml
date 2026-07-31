@@ -56,66 +56,16 @@ jobs:
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
           collapseable_section_end "docker-login"
           collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
+          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df already exists, skipping build"
             exit 0
           fi
           collapseable_section_end "check-image"
           collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
           collapseable_section_end "docker-build"
           collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
-          collapseable_section_end "docker-push"
-        shell: bash
-  catladder-image-jobs-testing-chrome:
-    name: 🐳 catladder image jobs-testing-chrome
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: 🐳 catladder image jobs-testing-chrome
-        id: main
-        run: |-
-          function escapeForDotEnv () {
-          input="${1:-$(cat)}"
-           input="${input//$'\n'/\\n}"
-            if [[ "$input" == *\\n* ]]; then
-              if [[ "$input" == *\"* && "$input" == *\'* && "$input" == *\`* ]]; then
-                printf "\"%s\"\n" "$input" 
-              elif [[ "$input" == *\"* && "$input" == *\'* ]]; then
-                printf "`%s`\n" "$input"
-              elif [[ "$input" == *\"* ]]; then
-                printf "'%s'\n" "$input"
-              else
-                printf "\"%s\"\n" "$input"
-              fi
-            else
-              printf "%s\n" "$input"
-            fi
-          }
-          function collapseable_section_start () {
-          local section_title="${1}"
-            local section_description="${2:-$section_title}"
-            echo "::group::${section_description}"
-          }
-          function collapseable_section_end () {
-          echo "::endgroup::"
-          }
-          collapseable_section_start "docker-login" "Docker Login"
-          docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-          collapseable_section_end "docker-login"
-          collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 already exists, skipping build"
-            exit 0
-          fi
-          collapseable_section_end "check-image"
-          collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445 -f .catladder-generated/images/jobs-testing-chrome/Dockerfile .catladder-generated/images
-          collapseable_section_end "docker-build"
-          collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+          docker push ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
           collapseable_section_end "docker-push"
         shell: bash
   catladder-image-npm-publish:
@@ -224,12 +174,12 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -243,12 +193,12 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -276,14 +226,14 @@ jobs:
     name: base 🧪 test | dev
     runs-on: ubuntu-latest
     needs:
-      - catladder-image-jobs-testing-chrome
+      - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-testing-chrome:6c33db75f445
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -313,13 +263,13 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
       SHOULD_MINIFY: '1'
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -397,7 +347,7 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
@@ -411,7 +361,7 @@ jobs:
       id-token: write
     env:
       PAGES_PREFIX: ''
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
     steps:
       - name: Checkout
         uses: actions/checkout@v4

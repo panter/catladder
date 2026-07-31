@@ -56,7 +56,9 @@ export const createVerifyJobs = async (
           strict: true,
         })),
       ],
-      image: verifyConfig.jobImage ?? getRunnerImage("jobs-testing-chrome"),
+      // browser tests need a jobImage carrying the browser, e.g. the
+      // official playwright image (version-matched to the project)
+      image: verifyConfig.jobImage ?? getRunnerImage("jobs-default"),
       // neutral cache declarations — each backend lowers them itself
       // (gitlab strips the github-only hint keys, github builds cache
       // restore steps). Pre-lowering via createJobCacheFromCacheConfigs

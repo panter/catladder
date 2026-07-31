@@ -194,16 +194,16 @@ catladder-main.yml:
             docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
             collapseable_section_end "docker-login"
             collapseable_section_start "check-image" "Checking if image exists"
-            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
-              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 already exists, skipping build"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df already exists, skipping build"
               exit 0
             fi
             collapseable_section_end "check-image"
             collapseable_section_start "docker-build" "Building image"
-            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
             collapseable_section_end "docker-build"
             collapseable_section_start "docker-push" "Pushing image"
-            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
             collapseable_section_end "docker-push"
           shell: bash
     catladder-image-semantic-release:
@@ -262,7 +262,7 @@ catladder-main.yml:
       needs:
         - catladder-image-jobs-default
       container:
-        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
@@ -276,7 +276,7 @@ catladder-main.yml:
         id-token: write
       env:
         PAGES_PREFIX: ''
-        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:64e36cb505a8
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -500,16 +500,16 @@ before_script:
     - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
     - collapseable_section_end "docker-login"
     - collapseable_section_start "check-image" "Checking if image exists"
-    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8 > /dev/null 2>&1; then
-    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8 already exists, skipping build"'
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df already exists, skipping build"'
     - '  exit 0'
     - fi
     - collapseable_section_end "check-image"
     - collapseable_section_start "docker-build" "Building image"
-    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
     - collapseable_section_end "docker-build"
     - collapseable_section_start "docker-push" "Pushing image"
-    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
     - collapseable_section_end "docker-push"
   rules:
     - *a1
@@ -575,7 +575,7 @@ create release:
   allow_failure: true
 'docs 🚀 Deploy | dev ':
   stage: deploy dev
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 1Gi
@@ -630,7 +630,7 @@ create release:
     path_prefix: ''
 'docs 🚀 Deploy | review ':
   stage: deploy review
-  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:64e36cb505a8
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
   variables:
     KUBERNETES_CPU_REQUEST: '0.22'
     KUBERNETES_MEMORY_REQUEST: 1Gi
