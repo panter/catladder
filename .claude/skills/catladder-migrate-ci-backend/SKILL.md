@@ -257,6 +257,18 @@ now-wrong `gitRemote`, regenerate once more, and finish with
 
 ## After the cut-over
 
+- **Set up merge gating — GitHub has none by default.** On GitLab,
+  "merge when pipeline succeeds" is built in; on a fresh GitHub repo a
+  PR is mergeable the moment it opens, checks still running, and the
+  auto-merge button does not even appear. `yarn catladder project setup`
+  configures it: auto-merge + delete-merged-branches on the repo, and a
+  branch protection rule on the default branch requiring the generated
+  **`catladder ✅`** aggregate check (the one stable context — never
+  require individual job names, they change with every component
+  add/rename and a stale required name blocks its own PR forever).
+  `project doctor` verifies it. Two things stay human choices: "Do not
+  allow bypassing" (leave it off — generated CI means a generation bug
+  can only be fixed via the admin bypass) and required reviews.
 - Tell the team where the pipeline lives now and how manual actions
   work there (on GitHub, manual jobs are dispatch workflows in the
   Actions sidebar — `🚀 catladder create release`, `▶️ catladder deploy`,

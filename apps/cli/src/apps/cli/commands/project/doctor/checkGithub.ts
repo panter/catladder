@@ -1,5 +1,6 @@
 import type { Config } from "@catladder/pipeline";
 import {
+  AGGREGATE_CHECK_JOB_NAME,
   getEnabledPipelineTypes,
   getPipelineGitRemote,
 } from "@catladder/pipeline";
@@ -9,6 +10,7 @@ import {
 } from "../../../../../commands/project/commandSecretsSyncGithub";
 import { mapWithConcurrency } from "../../../../../utils/concurrency";
 import {
+  ghApiJson,
   isGhAuthenticated,
   listGithubEnvironments,
   listGithubSecretNames,
@@ -152,5 +154,58 @@ export const checkGithub = async (report: DoctorReport, config: Config) => {
         `repo level: all ${repoLevelReferenced.length} referenced secrets/variables present`,
       );
     }
+  }
+
+  await checkGithubMergeGating(report, repo);
+};
+
+/**
+ * verifies the merge gating `project setup` configures: auto-merge
+ * enabled and the generated `catladder ✅` aggregate check required on
+ * the default branch. Without it a PR is mergeable while its checks
+ * are still running — gitlab ships this behavior built-in, github
+ * silently does not.
+ */
+const checkGithubMergeGating = async (report: DoctorReport, repo: string) => {
+  let repoInfo: { default_branch: string; allow_auto_merge: boolean };
+  try {
+    repoInfo = await ghApiJson("GET", `repos/${repo}`);
+  } catch (e) {
+    report.warn(`could not read repo settings of ${repo} (${e.message})`);
+    return;
+  }
+  if (repoInfo.allow_auto_merge) {
+    report.ok("auto-merge enabled");
+  } else {
+    report.fail(
+      "auto-merge disabled — the merge-when-pipeline-succeeds button cannot appear",
+      "run: catladder project setup",
+    );
+  }
+
+  const branch = repoInfo.default_branch;
+  const protection = await ghApiJson<any>(
+    "GET",
+    `repos/${repo}/branches/${branch}/protection`,
+  ).catch(() => null);
+  const checks: Array<{ context: string }> =
+    protection?.required_status_checks?.checks ?? [];
+  if (checks.some((c) => c.context === AGGREGATE_CHECK_JOB_NAME)) {
+    report.ok(`'${AGGREGATE_CHECK_JOB_NAME}' required on ${branch}`);
+  } else {
+    report.fail(
+      `'${AGGREGATE_CHECK_JOB_NAME}' is not a required check on ${branch} — PRs can merge while the pipeline is red or still running`,
+      "run: catladder project setup",
+    );
+  }
+  const stale = checks.filter((c) => c.context !== AGGREGATE_CHECK_JOB_NAME);
+  if (stale.length > 0) {
+    report.warn(
+      `${branch} requires ${stale.length} additional named check(s) (${stale
+        .map((c) => c.context)
+        .join(
+          ", ",
+        )}) — job names change with components; prefer only '${AGGREGATE_CHECK_JOB_NAME}'`,
+    );
   }
 };

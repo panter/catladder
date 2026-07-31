@@ -1,4 +1,8 @@
-import { createCatenvContext, generateAgentSkills } from "@catladder/pipeline";
+import {
+  createCatenvContext,
+  generateAgentSkills,
+  getEnabledPipelineTypes,
+} from "@catladder/pipeline";
 import type { IO } from "../../../../../core/types";
 import {
   getAllPipelineContexts,
@@ -8,6 +12,7 @@ import { setupAccessTokens } from "./setupAccessTokens";
 import { setupContext } from "./setupContext";
 import { setupTopic } from "./setupTopic";
 import { setupAgents } from "./setupAgents";
+import { setupGithub } from "./setupGithub";
 import { logSection } from "./logSection";
 import { ensureGcloudProjectNumbers } from "./ensureGcloudProjectNumbers";
 
@@ -33,17 +38,25 @@ export const setupProject = async (
     instance.log(` - ${context.name}:${context.env}`);
   });
 
+  const enabledPipelines = config ? getEnabledPipelineTypes(config) : [];
   await logSection(instance, "base setup", async () => {
-    await setupAccessTokens(instance);
+    // gitlab-specific provisioning (access token, agent webhooks) —
+    // meaningless (and failing) on a github-only project
+    if (enabledPipelines.includes("gitlab")) {
+      await setupAccessTokens(instance);
+      await setupAgents(instance);
+    }
     await setupTopic(instance);
-    await setupAgents(instance);
+    if (config) {
+      await setupGithub(instance, config);
+    }
   });
   for (const context of allContext) {
     await setupContext(instance, context);
   }
 
   instance.log("");
-  instance.log("gitlab is ready! 🥂");
+  instance.log(`${enabledPipelines.join(" + ") || "gitlab"} is ready! 🥂`);
   instance.log("\n");
   instance.log("do not forget to make sure that:");
   [
