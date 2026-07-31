@@ -37,3 +37,5 @@ Then you can run the command in the wanted project and test your changes.
 There are some [examples](/docs/examples) that double for snapshot-testing.
 
 Please add more examples there. If you need to update the snapshots, run `yarn test:update` in the root directory.
+
+<!-- github actions pipeline smoke test -->
