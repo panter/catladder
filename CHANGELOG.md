@@ -1,3 +1,10 @@
+## [4.7.1](https://git.panter.ch/catladder/catladder/compare/v4.7.0...v4.7.1) (2026-07-28)
+
+
+### Bug Fixes
+
+* **cloudrun:** respect DB var overrides in embedded connection strings ([8dbb6c7](https://git.panter.ch/catladder/catladder/commit/8dbb6c761039ed1338220b01aee98d9cf0e0062f))
+
 # [4.7.0](https://git.panter.ch/catladder/catladder/compare/v4.6.4...v4.7.0) (2026-07-21)
 
 
