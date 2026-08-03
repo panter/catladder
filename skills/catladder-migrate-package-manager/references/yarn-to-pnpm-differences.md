@@ -86,6 +86,12 @@ node_modules tree from a *different* lockfile does not prune orphaned
 cache by the lockfile instead of reusing a mutable slot — and why you
 should never reuse a yarn branch's cache for a pnpm branch.
 
+**pnpm 11 needs node ≥ 22.13** (pnpm 10: ≥ 18.12), and it does not fail
+politely: it prints a `warn:` line and then crashes on
+`No such built-in module: node:sqlite`. In CI this bites even when the
+job image ships node 22 — the jobs run `nvm install` from `.nvmrc`, so
+an `.nvmrc` of `20` downgrades the image right before the install.
+
 **`minimumReleaseAge`** defaults to 1440 minutes on pnpm 11: freshly
 published versions are refused. Set it to `0` while migrating (it is a
 supply-chain feature worth enabling deliberately later, not something to
