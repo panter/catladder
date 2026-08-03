@@ -203,22 +203,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache .-node-modules
+      - name: Cache pnpm-.-node-modules
         id: cache-node-modules
         uses: actions/cache/restore@v4
         with:
           path: |-
             node_modules
-            .yarn/install-state.gz
-          key: .-node-modules-${{ hashFiles('yarn.lock') }}
-          restore-keys: .-node-modules-
-      - name: Cache .-yarn
+            apps/cli/node_modules
+            apps/docs/node_modules
+            packages/bash/node_modules
+            packages/pipeline/node_modules
+          key: pnpm-.-node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-.-node-modules-
+      - name: Cache .-pnpm-v11
         if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
         uses: actions/cache/restore@v4
         with:
-          path: .yarn
-          key: .-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: .-yarn-
+          path: .pnpm-store
+          key: .-pnpm-v11-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: .-pnpm-v11-
       - name: 👮 lint
         id: main
         run: bash .catladder-generated/github/scripts/ws-base-lint-dev.sh
@@ -238,22 +241,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache .-node-modules
+      - name: Cache pnpm-.-node-modules
         id: cache-node-modules
         uses: actions/cache/restore@v4
         with:
           path: |-
             node_modules
-            .yarn/install-state.gz
-          key: .-node-modules-${{ hashFiles('yarn.lock') }}
-          restore-keys: .-node-modules-
-      - name: Cache .-yarn
+            apps/cli/node_modules
+            apps/docs/node_modules
+            packages/bash/node_modules
+            packages/pipeline/node_modules
+          key: pnpm-.-node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-.-node-modules-
+      - name: Cache .-pnpm-v11
         if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
         uses: actions/cache/restore@v4
         with:
-          path: .yarn
-          key: .-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: .-yarn-
+          path: .pnpm-store
+          key: .-pnpm-v11-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: .-pnpm-v11-
       - name: 🧪 test
         id: main
         run: bash .catladder-generated/github/scripts/ws-base-test-dev.sh
@@ -274,22 +280,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Cache .-node-modules
+      - name: Cache pnpm-.-node-modules
         id: cache-node-modules
         uses: actions/cache@v4
         with:
           path: |-
             node_modules
-            .yarn/install-state.gz
-          key: .-node-modules-${{ hashFiles('yarn.lock') }}
-          restore-keys: .-node-modules-
-      - name: Cache .-yarn
+            apps/cli/node_modules
+            apps/docs/node_modules
+            packages/bash/node_modules
+            packages/pipeline/node_modules
+          key: pnpm-.-node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: pnpm-.-node-modules-
+      - name: Cache .-pnpm-v11
         if: ${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
         uses: actions/cache@v4
         with:
-          path: .yarn
-          key: .-yarn-${{ hashFiles('yarn.lock') }}
-          restore-keys: .-yarn-
+          path: .pnpm-store
+          key: .-pnpm-v11-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: .-pnpm-v11-
       - name: 🔨 app
         id: main
         run: bash .catladder-generated/github/scripts/ws-base-app-dev.sh

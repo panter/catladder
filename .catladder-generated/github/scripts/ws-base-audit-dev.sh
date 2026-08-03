@@ -30,4 +30,4 @@ collapseable_section_start "injectvars" "Injecting variables"
 export APP_PATH="."
 collapseable_section_end "injectvars"
 cd .
-yarn npm audit --environment production --severity critical
+pnpm audit --prod --audit-level critical

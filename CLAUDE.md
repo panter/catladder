@@ -8,54 +8,65 @@ Catladder is a TypeScript framework by Panter that generates GitLab CI/CD pipeli
 
 ## Repository Structure
 
-**Yarn 4.x monorepo** orchestrated with **Turborepo** (`turbo run`), workspaces under `packages/*` and `apps/*`:
+**pnpm monorepo** orchestrated with **Turborepo** (`turbo run`), workspaces under `packages/*` and `apps/*`:
 
 - **`packages/pipeline`** (`@catladder/pipeline`, private) — Core framework: pipeline generation, build/deploy types, environment management, agent integration. Not published; compiled from source into the cli.
 - **`packages/bash`** (`@catladder/bash`, private) — Type-safe bash script generation primitives (`BashExpression`, escaping, `VariableValue`). Internal just-in-time package: `main` points at `src/index.ts`.
 - **`apps/cli`** (`@catladder/cli`) — the only published npm package: `catladder` (environment/secret management), `catenv` (pipeline/env file generation via direnv). Its tsc compiles the pipeline+bash sources via tsconfig `paths` + `tsc-alias`, then ncc bundles.
 - **`apps/docs`** — Docusaurus documentation site
 
+**pnpm does not hoist**, so every import must be declared in the
+package that imports it. Two consequences worth knowing:
+
+- `apps/cli` compiles the `packages/*` **sources** into its own `dist`,
+  which then resolves from `apps/cli` — so anything the pipeline
+  requires at runtime (`jiti`, `path-equal`, `slugify`, `zod`, …) has to
+  be declared in `apps/cli` as well, or `bin/catenv-dev` fails with
+  MODULE_NOT_FOUND (the ncc bundle used by the published cli inlines
+  everything and hides this).
+- a dependency with an install script needs an entry in `allowBuilds`
+  in `pnpm-workspace.yaml`, otherwise pnpm silently skips it.
+
 ## Common Commands
 
 ```bash
 # Build all workspaces (turbo graph, cached, excludes docs)
-yarn build
+pnpm build
 
 # Watch mode for all workspaces in parallel
-yarn dev
+pnpm dev
 
 # Run tests (generates example tests first, then runs vitest)
-yarn test
-yarn test:watch
-yarn test:update          # update snapshots
+pnpm test
+pnpm test:watch
+pnpm test:update               # update snapshots
 
 # Lint
-yarn lint                 # all workspaces (turbo run lint)
-yarn turbo run lint:fix   # note: yarn workspace <ws> lint needs the root
-                          # node_modules/.bin on PATH; prefer turbo
+pnpm lint                      # all workspaces (turbo run lint)
+pnpm exec turbo run lint:fix   # prefer turbo over `pnpm --filter <ws> lint`
 
 # Format
-yarn pretty
+pnpm pretty
 
 # Run CLIs locally
-yarn catenv
-yarn catladder
+pnpm catenv
+pnpm catladder
 ```
 
 ### Workspace-specific builds
 
 ```bash
-yarn turbo run build --filter=@catladder/pipeline   # tsc + copy runner images
-yarn turbo run build --filter=@catladder/cli        # tsc + tsc-alias + ncc bundle (+ deps)
+pnpm exec turbo run build --filter=@catladder/pipeline   # tsc + copy runner images
+pnpm exec turbo run build --filter=@catladder/cli        # tsc + tsc-alias + ncc bundle (+ deps)
 ```
 
 ## Testing
 
 - **Framework**: Vitest (globals enabled, node environment)
 - **Test locations**: `**/__tests__/**/*.[jt]s?(x)` and `packages/pipeline/examples/*.test.ts`
-- **Example tests**: Auto-generated from `packages/pipeline/examples/` via `turbo run generate:examples-test` — this runs automatically before `yarn test`
-- **Snapshots**: Example tests use snapshot testing for generated YAML output; update with `yarn test:update`
-- **Editing `runner-images/` changes snapshots**: job images are tagged by a content hash of their definition (see `customImages/`), and that tag is embedded throughout the generated YAML. So **any** edit under `runner-images/` (even a comment) changes the hash and requires `yarn test:update` + committing the regenerated snapshots — otherwise CI's snapshot test fails on the changed image tag even though nothing behavioural changed.
+- **Example tests**: Auto-generated from `packages/pipeline/examples/` via `turbo run generate:examples-test` — this runs automatically before `pnpm test`
+- **Snapshots**: Example tests use snapshot testing for generated YAML output; update with `pnpm test:update`
+- **Editing `runner-images/` changes snapshots**: job images are tagged by a content hash of their definition (see `customImages/`), and that tag is embedded throughout the generated YAML. So **any** edit under `runner-images/` (even a comment) changes the hash and requires `pnpm test:update` + committing the regenerated snapshots — otherwise CI's snapshot test fails on the changed image tag even though nothing behavioural changed.
 - **Timeout**: 10 seconds per test
 
 ## Architecture

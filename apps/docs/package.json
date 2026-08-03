@@ -3,23 +3,27 @@
   "scripts": {
     "gen-examples-md": "tsx scripts/generate-recipies-examples.ts",
     "gen-skills-md": "tsx scripts/generate-skills-docs.ts",
-    "gen-md": "yarn gen-examples-md && yarn gen-skills-md",
+    "gen-md": "pnpm run gen-examples-md && pnpm run gen-skills-md",
     "docusaurus": "docusaurus",
-    "start": "yarn gen-md && docusaurus start",
+    "start": "pnpm run gen-md && docusaurus start",
     "build": "docusaurus build --out-dir=../../public/",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy --out-dir=../../public/",
     "clear": "docusaurus clear",
-    "serve": "yarn gen-md && docusaurus serve --dir ../../public/",
+    "serve": "pnpm run gen-md && docusaurus serve --dir ../../public/",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
     "typecheck": "tsc",
     "lint": "eslint '**/*.ts'"
   },
-  "dependencies": {
+  "devDependencies": {
+    "@akebifiky/remark-simple-plantuml": "^1.0.2",
     "@docusaurus/core": "3.5.2",
+    "@docusaurus/module-type-aliases": "3.5.2",
     "@docusaurus/preset-classic": "3.5.2",
     "@docusaurus/theme-mermaid": "^3.5.2",
+    "@docusaurus/tsconfig": "3.5.2",
+    "@docusaurus/types": "3.5.2",
     "@mdx-js/react": "^3.0.1",
     "clsx": "^2.1.1",
     "docusaurus-lunr-search": "^3.5.0",
@@ -28,13 +32,7 @@
     "prism-react-renderer": "^2.3.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tsx": "^4.21.0"
-  },
-  "devDependencies": {
-    "@akebifiky/remark-simple-plantuml": "^1.0.2",
-    "@docusaurus/module-type-aliases": "3.5.2",
-    "@docusaurus/tsconfig": "3.5.2",
-    "@docusaurus/types": "3.5.2",
+    "tsx": "^4.21.0",
     "typescript": "~5.2.2"
   },
   "browserslist": {

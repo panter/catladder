@@ -1,4 +1,3 @@
-import { existsSync } from "fs";
 import { join } from "path";
 import { pathEqual } from "path-equal";
 import type {
@@ -8,6 +7,7 @@ import type {
 } from "../types";
 import { detectPackageManager } from "./detectPackageManager";
 import { getPnpmPatchFiles, getPnpmWorkspaces } from "./pnpm/pnpmUtils";
+import { projectFileExists } from "./projectFiles";
 import { getWorkspaces, getWorkspaceDependencies } from "./yarn/yarnUtils";
 import memoizee from "memoizee";
 
@@ -50,7 +50,7 @@ export const getPackageManagerInfoForComponent = async (
   const configFilePaths = [
     ...configFiles,
     ...configFiles.map((f) => join(component.dir, f)),
-  ].filter((f) => existsSync(f));
+  ].filter((f) => projectFileExists(f));
 
   // get all folders that this workspace depend on
   // we will later copy them into the docker build
@@ -65,7 +65,7 @@ export const getPackageManagerInfoForComponent = async (
     baseInfo.type === "pnpm" && componentIsInWorkspace
       ? workspaces
           .map((w) => join(w.location, "package.json"))
-          .filter((f) => existsSync(f))
+          .filter((f) => projectFileExists(f))
       : [];
 
   // patch files referenced by patchedDependencies must exist in the

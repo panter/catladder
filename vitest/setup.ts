@@ -16,6 +16,14 @@ vi.mock("../packages/pipeline/src/pipeline/detectPackageManager", () => ({
       : { type: "yarn", version: "3" },
 }));
 
+vi.mock("../packages/pipeline/src/pipeline/projectFiles", () => ({
+  // examples are generated as if they lived in a plain yarn berry
+  // project. Without this, the docker COPY lines would mirror whichever
+  // package-manager config files *this* repository happens to have, so
+  // the snapshots would change with catladder's own tooling.
+  projectFileExists: (path: string) => [".yarnrc.yml", ".yarn"].includes(path),
+}));
+
 vi.mock(
   "../packages/pipeline/src/pipeline/yarn/yarnUtils",
   async (importOriginal) => ({

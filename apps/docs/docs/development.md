@@ -6,8 +6,8 @@ sidebar_position: 99
 
 ## Local Development
 
-After cloning the repo, run `yarn install` in the root directory to install the dependencies.
-You can run the project with `yarn start` which creates a local build of the project and watches for changes.
+After cloning the repo, run `pnpm install` in the root directory to install the dependencies.
+You can run the project with `pnpm start` which creates a local build of the project and watches for changes.
 
 The execuatble are in the `cli/bin` folder. They are:
 
@@ -36,4 +36,4 @@ Then you can run the command in the wanted project and test your changes.
 
 There are some [examples](/docs/examples) that double for snapshot-testing.
 
-Please add more examples there. If you need to update the snapshots, run `yarn test:update` in the root directory.
+Please add more examples there. If you need to update the snapshots, run `pnpm test:update` in the root directory.
