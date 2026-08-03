@@ -2063,7 +2063,7 @@ collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
 pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
 collapseable_section_end "pnpminstall"
-yarn lint
+pnpm lint
 
 # ===== .catladder-generated/github/scripts/www-test-dev.sh =====
 #!/usr/bin/env bash
@@ -2110,7 +2110,7 @@ collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
 pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
 collapseable_section_end "pnpminstall"
-yarn test
+pnpm test
 
 # ===== .catladder-generated/github/scripts/www-app-dev.sh =====
 #!/usr/bin/env bash
@@ -2428,7 +2428,7 @@ collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
 pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
 collapseable_section_end "pnpminstall"
-yarn lint
+pnpm lint
 
 # ===== .catladder-generated/github/scripts/www-test-review.sh =====
 #!/usr/bin/env bash
@@ -2475,7 +2475,7 @@ collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
 pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
 collapseable_section_end "pnpminstall"
-yarn test
+pnpm test
 
 # ===== .catladder-generated/github/scripts/www-app-review.sh =====
 #!/usr/bin/env bash
@@ -3527,7 +3527,7 @@ create release:
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
     - pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
     - collapseable_section_end "pnpminstall"
-    - yarn lint
+    - pnpm lint
   cache:
     - key: www-pnpm-v10
       policy: pull
@@ -3574,7 +3574,7 @@ create release:
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
     - pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
     - collapseable_section_end "pnpminstall"
-    - yarn test
+    - pnpm test
   cache:
     - key: www-pnpm-v10
       policy: pull
@@ -3933,7 +3933,7 @@ create release:
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
     - pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
     - collapseable_section_end "pnpminstall"
-    - yarn lint
+    - pnpm lint
   cache:
     - key: www-pnpm-v10-mr$CI_MERGE_REQUEST_IID
       policy: pull
@@ -3982,7 +3982,7 @@ create release:
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
     - pnpm install --frozen-lockfile --store-dir "$PWD/.pnpm-store"
     - collapseable_section_end "pnpminstall"
-    - yarn test
+    - pnpm test
   cache:
     - key: www-pnpm-v10-mr$CI_MERGE_REQUEST_IID
       policy: pull

@@ -93,15 +93,11 @@ discover mid-migration).
 
 ## catladder-specific notes
 
-- The `packageManager` field must be plain (`pnpm@11.6.0`) — catladder
-  interpolates the version into `npm install -g pnpm@<version>` in the
-  docker build, so corepack's `+sha512…` suffix breaks it.
+- The `packageManager` field feeds the pnpm version installed in the
+  docker build; corepack's `+sha512…` integrity suffix is stripped.
 - `build: { type: "meteor" }` is yarn-only in catladder and fails
   generation under pnpm.
 - `docker: { yarnRebuildEnabled }` applies to yarn berry only.
-- Standalone (non-workspace) components default their lint/test jobs to
-  `yarn lint` / `yarn test`; set `lint: { command: "pnpm lint" }` and
-  `test: { command: "pnpm test" }` explicitly in a pnpm project.
 - The job image ships pnpm; custom `jobImage`s and custom
   `dockerfileContent` images get a `npm install -g pnpm@<version>`
   fallback injected, so they work too — but they pay for it on every job.

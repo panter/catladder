@@ -32,9 +32,8 @@ packageManager: "pnpm",
 Prefer the `packageManager` field in the root `package.json`
 (`"packageManager": "pnpm@11.6.0"`) — it drives local dev, corepack and
 catladder at once, and catladder installs *that* version in the docker
-build. **Write it without corepack's `+sha512…` integrity suffix**:
-catladder passes the version through to `npm install -g pnpm@<version>`
-in the docker build, and the hash suffix is not a valid npm spec.
+build. Corepack's `+sha512…` integrity suffix is fine; catladder strips
+it before using the version as an npm spec.
 
 Once detected, catladder switches all of this automatically — no config
 change needed:
@@ -182,22 +181,10 @@ pnpm catenv
 Commit the regenerated `.catladder-generated/`, `.gitlab-ci.yml` and
 `.github/workflows/catladder-*` with the rest — see `catladder-config`.
 
-Review the diff: install commands, cache keys/paths and the docker
-install lines should have flipped to pnpm everywhere. **Check the
-lint/test jobs specifically** — for standalone (non-workspace)
-components catladder currently defaults them to `yarn lint` / `yarn
-test`; set them explicitly:
-
-```ts
-build: {
-  type: "node",
-  lint: { command: "pnpm lint" },
-  test: { command: "pnpm test" },
-}
-```
-
-(Components built `from` a shared workspace build already default to the
-detected package manager.)
+Review the diff: install commands, cache keys/paths, the default
+build/lint/test commands and the docker install lines should have
+flipped to pnpm everywhere. Anything still saying `yarn` is a command
+you spelled out yourself in `catladder.ts` (step 1), not a default.
 
 ## Step 6 — verify in CI
 
