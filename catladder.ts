@@ -68,10 +68,7 @@ const config: Config = {
       deploy: {
         type: "pages",
         requiresYarnInstall: true,
-        script: [
-          "yarn workspace docs gen-examples-md",
-          "yarn workspace docs build",
-        ],
+        script: ["yarn workspace docs gen-md", "yarn workspace docs build"],
       },
     },
   },

@@ -47,6 +47,6 @@ collapseable_section_end "nodeinstall"
 collapseable_section_start "yarninstall" "Yarn install"
 yarn install --immutable --inline-builds
 collapseable_section_end "yarninstall"
-yarn workspace docs gen-examples-md
+yarn workspace docs gen-md
 yarn workspace docs build
 echo "url=$ROOT_URL" >> "$GITHUB_OUTPUT"

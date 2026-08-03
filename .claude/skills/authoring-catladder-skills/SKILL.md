@@ -22,7 +22,14 @@ agent-facing docs. They are:
   `.agents/skills/` location is opt-in
   (`agentSkills: { targets: ["claude-code", "agents"] }`);
 - therefore **version-synced for free** — the agent in a project always
-  sees skills matching that project's installed catladder version.
+  sees skills matching that project's installed catladder version;
+- **rendered into the docs site** — `yarn workspace docs gen-skills-md`
+  (part of `gen-md`, run on docs start/serve/deploy) generates
+  `apps/docs/docs/4_agents/skills/` (gitignored) from `skills/`, one
+  page per skill plus references and a TOC index. Keep SKILL.md plain
+  CommonMark (the pages are rendered with `format: md`), and note that
+  the first part of the `description` (before "Use when") doubles as
+  the skill's blurb in the docs TOC.
 
 Current skills: `catladder-config`, `catladder-secrets`,
 `catladder-pipelines`, `catladder-cli`, `catladder-builds`,
