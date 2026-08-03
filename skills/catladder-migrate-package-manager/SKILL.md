@@ -53,6 +53,13 @@ second run, not the first.
 
 ## Step 0 — check the blockers
 
+- **node version** — pnpm 11 requires **node ≥ 22.13**, pnpm 10 only
+  ≥ 18.12. Check `.nvmrc` (and any explicit node version in job images):
+  the jobs switch with nvm, so an `.nvmrc` of `20` downgrades a node-22
+  image and pnpm 11 dies mid-install with
+  `ERR_UNKNOWN_BUILTIN_MODULE: No such built-in module: node:sqlite`.
+  Either bump `.nvmrc` to 22 in the same change, or pin
+  `"packageManager": "pnpm@10.x"`.
 - **`build: { type: "meteor" }`** — yarn-only in catladder; generation
   fails outright. That component blocks the migration.
 - **Yarn PnP** (`nodeLinker: pnp`, `.pnp.cjs`) — the migration is bigger

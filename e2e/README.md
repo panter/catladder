@@ -17,9 +17,9 @@ their purpose):
 ## Usage
 
 ```bash
-yarn e2e <fixture> --backend github        # or gitlab, or github,gitlab
-yarn e2e <fixture> --backend github --tgz /path/to/catladder-cli.tgz
-yarn e2e <fixture> --static-only           # generation assertions only, no push
+pnpm e2e <fixture> --backend github       # or gitlab, or github,gitlab
+pnpm e2e <fixture> --backend github --tgz /path/to/catladder-cli.tgz
+pnpm e2e <fixture> --static-only           # generation assertions only, no push
 ```
 
 Without `--tgz` the cli is built and packed from **this checkout** — use

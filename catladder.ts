@@ -21,14 +21,14 @@ const config: Config = {
     base: {
       type: "node",
       dir: ".",
-      buildCommand: "yarn build",
+      // build/test commands are the package-manager-aware defaults
+      // (`pnpm build` / `pnpm test`) — nothing to spell out here
       runnerVariables: {
         // always ncc-minify: canaries then ship the same artifact shape
         // as tagged releases (previously only tags were minified)
         SHOULD_MINIFY: "1",
       },
       test: {
-        command: "yarn test",
         runnerVariables: {
           KUBERNETES_MEMORY_LIMIT: "8Gi",
           KUBERNETES_MEMORY_REQUEST: "6Gi",
@@ -67,8 +67,8 @@ const config: Config = {
       build: false,
       deploy: {
         type: "pages",
-        requiresYarnInstall: true,
-        script: ["yarn workspace docs gen-md", "yarn workspace docs build"],
+        requiresInstall: true,
+        script: ["pnpm --filter docs gen-md", "pnpm --filter docs build"],
       },
     },
   },

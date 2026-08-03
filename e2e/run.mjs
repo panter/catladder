@@ -7,7 +7,7 @@
  * tests cannot see (published-package assets, runner permissions, token
  * flows, trigger wiring).
  *
- *   yarn e2e <fixture> --backend github|gitlab [--tgz <cli.tgz>]
+ *   pnpm e2e <fixture> --backend github|gitlab [--tgz <cli.tgz>]
  *            [--sandbox <dir>] [--static-only]
  *
  * The loop per backend:
@@ -94,7 +94,7 @@ const packCli = async () => {
   const given = flag("tgz");
   if (given) return resolve(String(given));
   log("packing @catladder/cli from this checkout (pass --tgz to skip)");
-  sh("yarn turbo run build --filter=@catladder/cli", { cwd: repoRoot, stdio: "inherit" });
+  sh("pnpm exec turbo run build --filter=@catladder/cli", { cwd: repoRoot, stdio: "inherit" });
   const out = sh(`npm pack --pack-destination /tmp`, { cwd: join(repoRoot, "apps/cli") })
     .split("\n")
     .pop();
@@ -253,7 +253,7 @@ const glAwaitTagPipeline = async (since) => {
 // ---------------------------------------------------------------- main
 
 const main = async () => {
-  if (!fixtureName) fail("usage: yarn e2e <fixture> --backend github|gitlab [--tgz <path>]");
+  if (!fixtureName) fail("usage: pnpm e2e <fixture> --backend github|gitlab [--tgz <path>]");
   const fixtureDir = join(e2eDir, "fixtures", fixtureName);
   if (!existsSync(fixtureDir)) fail(`unknown fixture: ${fixtureName}`);
   const expectation = (await import(join(fixtureDir, "expect.mjs"))).default;
