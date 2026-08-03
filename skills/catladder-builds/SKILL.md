@@ -150,3 +150,5 @@ build type's options, the `docker` sub-config, and the exact defaults.
 - `catladder-deploys` — the matching `deploy` config
 - `catladder-pipelines` — how build jobs, caching and job images work
 - `catladder-secrets` — env vars available at build time
+- `catladder-migrate-package-manager` — migrating a project from yarn
+  to pnpm (or back)

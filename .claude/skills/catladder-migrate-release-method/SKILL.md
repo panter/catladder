@@ -233,3 +233,4 @@ Same shape, mirrored, with one loss to flag up front:
 - `catladder-config` — catladder.ts structure and regeneration
 - `catladder-migrate-ci-backend` — migrating between GitLab CI and
   GitHub Actions
+- `catladder-migrate-package-manager` — migrating between yarn and pnpm
