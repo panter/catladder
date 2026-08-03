@@ -9,6 +9,7 @@ import type { CatladderJob } from "../types/jobs";
 import { createCustomJobs } from "./custom";
 import { createMeteorJobs, createNodeJobs, createStorybookJobs } from "./node";
 import { createRailsJobs } from "./rails";
+import { runScript } from "./runScript";
 
 import type {
   BuildConfig,
@@ -17,13 +18,6 @@ import type {
 } from "./types";
 export * from "./node";
 export * from "./types";
-
-/**
- * run a package.json script with the project's package manager
- * (`yarn build` / `pnpm build`)
- */
-const runScript = (packageManager: PackageManagerType, script: string) =>
-  `${packageManager} ${script}`;
 
 export type BuildTypes = {
   [type in BuildConfigStandaloneType]: {

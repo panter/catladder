@@ -8,6 +8,7 @@ import type { CatladderJobSpec } from "../../types/jobs";
 import { CatladderJob } from "../../types/jobs";
 import { ensureArrayOrNull, notNil } from "../../utils";
 import { createArtifactsConfig } from "../base/createArtifactsConfig";
+import { runScript } from "../runScript";
 import { getNodeCache } from "./cache";
 import { NODE_RUNNER_BUILD_VARIABLES } from "./constants";
 import {
@@ -96,7 +97,9 @@ export const createNodeTestJobs = async (
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
             ...packageManagerInstall,
-            ...(ensureArrayOrNull(buildConfig.lint?.command) ?? ["yarn lint"]),
+            ...(ensureArrayOrNull(buildConfig.lint?.command) ?? [
+              runScript(packageManagerInfo.type, "lint"),
+            ]),
           ],
           allow_failure: buildConfig.lint?.allowFailure,
           ...createArtifactsConfig(
@@ -124,7 +127,9 @@ export const createNodeTestJobs = async (
             ...ensureNodeVersion(context),
             `cd ${context.build.dir}`,
             ...packageManagerInstall,
-            ...(ensureArrayOrNull(buildConfig.test?.command) ?? ["yarn test"]),
+            ...(ensureArrayOrNull(buildConfig.test?.command) ?? [
+              runScript(packageManagerInfo.type, "test"),
+            ]),
           ],
           allow_failure: buildConfig.test?.allowFailure,
           ...createArtifactsConfig(

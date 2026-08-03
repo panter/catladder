@@ -285,3 +285,4 @@ now-wrong `gitRemote`, regenerate once more, and finish with
 - `catladder-releases` — release jobs and how they differ per backend
 - `catladder-pipelines` — triggers, generated file layout, debugging CI
 - `catladder-cli` — `project doctor`, `project setup`, non-interactive usage
+- `catladder-migrate-package-manager` — migrating between yarn and pnpm

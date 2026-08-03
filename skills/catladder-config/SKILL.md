@@ -121,3 +121,5 @@ escape hatches to shrink over time, not accumulate.
   and GitHub Actions
 - `catladder-migrate-release-method` — switching between
   semantic-release and changesets
+- `catladder-migrate-package-manager` — switching a project between
+  yarn and pnpm

@@ -10,14 +10,33 @@ export type DetectedPackageManager = {
   version: string;
 };
 
+/**
+ * parse a `packageManager` field value (`pnpm@11.6.0`).
+ *
+ * `corepack use` appends an integrity hash (`pnpm@11.6.0+sha512.abc…`).
+ * That suffix is semver build metadata, and generated pipelines
+ * interpolate the version into `npm install -g <pm>@<version>` (docker
+ * builds, job images without the package manager) where it is not a
+ * valid spec — so it is dropped here, at the single place the field is
+ * read.
+ */
+export const parsePackageManagerField = (
+  value: unknown,
+): DetectedPackageManager | null => {
+  if (typeof value !== "string") return null;
+  const match = /^(yarn|pnpm)@(.+)$/.exec(value);
+  if (!match) return null;
+  const version = match[2].split("+")[0];
+  if (!version) return null;
+  return { type: match[1] as PackageManagerType, version };
+};
+
 const readPackageManagerField = async (
   dir: string,
 ): Promise<DetectedPackageManager | null> => {
   try {
     const pkg = JSON.parse(await readFile(join(dir, "package.json"), "utf-8"));
-    const match = /^(yarn|pnpm)@(.+)$/.exec(pkg.packageManager);
-    if (!match) return null;
-    return { type: match[1] as PackageManagerType, version: match[2] };
+    return parsePackageManagerField(pkg.packageManager);
   } catch {
     return null;
   }
