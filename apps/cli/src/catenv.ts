@@ -27,6 +27,10 @@ program
       .choices(["auto", "no-prompt", "offline", "refresh"])
       .default("auto"),
   )
+  .option(
+    "--non-interactive",
+    "never prompt (token setup, vault unlock) — assumed automatically when not attached to a terminal (direnv, turbo, CI)",
+  )
   .action(
     (
       envComponent: string | undefined,
@@ -34,12 +38,20 @@ program
         verbose?: boolean;
         printVariables?: boolean;
         vaultMode: SecretsMode;
+        nonInteractive?: boolean;
       },
     ) => {
+      // interactive iff a human is attached: direnv captures stdout,
+      // turbo/CI pipe it — all of those auto-degrade to non-interactive
+      const interactive =
+        !opts.nonInteractive &&
+        process.stdin.isTTY === true &&
+        process.stdout.isTTY === true;
       catenv(envComponent ? parseChoice(envComponent) : null, {
         verbose: opts.verbose ?? false,
         printVariables: opts.printVariables ?? false,
         vaultMode: opts.vaultMode,
+        interactive,
       }).then(() => {
         // we have to exit manually, because we have some file watches
         process.exit();

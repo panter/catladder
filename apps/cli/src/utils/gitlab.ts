@@ -45,6 +45,13 @@ export const getGitlabToken = async (io: IO | null) => {
       );
       process.exit(1);
     }
+    if (!io.interactive) {
+      // don't start the setup wizard in a context that cannot prompt
+      // (direnv, turbo, CI) — fail with the remedy instead
+      throw new Error(
+        "gitlab token missing — run `catenv` (or any `catladder` command) once in a terminal to set it up",
+      );
+    }
     await setupGitlabToken(io);
   }
   return getPreference(TOKEN_KEY);
