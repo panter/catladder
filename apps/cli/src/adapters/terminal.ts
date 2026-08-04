@@ -7,6 +7,7 @@ import type {
   PromptChoice,
 } from "../core/types";
 import { MissingInputError } from "../core/types";
+import type { SecretsMode } from "../vault";
 import { BaseContext } from "./baseContext";
 import { createVaultManagerGetter } from "./vaultManagerAccess";
 
@@ -82,6 +83,13 @@ export interface TerminalOptions {
   interactive?: boolean;
   /** If true, all confirm() calls return true without prompting (--yes flag) */
   yes?: boolean;
+  /**
+   * log to stderr instead of stdout (catenv: stdout may be evaluated
+   * by direnv or piped, so only data belongs there)
+   */
+  logToStderr?: boolean;
+  /** how to interact with the secrets vault (--vault-mode) */
+  vaultMode?: SecretsMode;
 }
 
 class TerminalContext<
@@ -187,9 +195,15 @@ export function createTerminalContext<TInputs extends InputsSchema>(
 export function createTerminalIO(options: TerminalOptions = {}): IO {
   const io: IO = {
     interactive: options.interactive ?? process.stdin.isTTY === true,
-    getVaultManager: createVaultManagerGetter(() => io),
+    getVaultManager: createVaultManagerGetter(() => io, {
+      mode: options.vaultMode,
+    }),
     log(message: string): void {
-      console.log(message);
+      if (options.logToStderr) {
+        console.error(message);
+      } else {
+        console.log(message);
+      }
     },
     async confirm(message: string): Promise<boolean> {
       if (options.yes) return true;

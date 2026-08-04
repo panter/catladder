@@ -63,7 +63,10 @@ export class VaultManager {
         return new BitwardenVault(
           this.config,
           vaultConfig,
-          this.mode === "auto" || this.mode === "refresh",
+          // unlock prompts need a mode that allows them AND an IO that
+          // can actually prompt (catenv under direnv/turbo/CI cannot)
+          (this.mode === "auto" || this.mode === "refresh") &&
+            (this.io?.interactive ?? true),
         );
     }
   }
