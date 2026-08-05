@@ -73,8 +73,15 @@ export const getDefaultAuditCommand = (
       return "pnpm audit --prod --audit-level critical";
     case "yarn":
       return packageManagerInfo.isClassic
-        ? "yarn audit --level critical"
-        : "yarn npm audit --environment production --severity critical"; // yarn 2+
+        ? // classic walks the whole tree; --groups limits it to production
+          "yarn audit --level critical --groups dependencies"
+        : // yarn 2+ audits only the CURRENT workspace's DIRECT dependencies
+          // by default — in a monorepo that is the root manifest, which
+          // usually has no production dependencies at all, so the job passed
+          // without checking anything. --all covers every workspace,
+          // --recursive the transitive dependencies (what `pnpm audit` and
+          // `yarn audit` classic do on their own).
+          "yarn npm audit --environment production --severity critical --all --recursive";
     default:
       throw new Error(
         `no audit command implemented for package manager "${(packageManagerInfo as { type: string }).type}"`,
