@@ -4,6 +4,7 @@ import type {
   PackageManagerInfoBase,
   PackageManagerInfoComponent,
 } from "../../types";
+import type { AuditLevel } from "../types";
 import { type Context } from "../../types";
 import { ensureArray } from "../../utils";
 import { collapseableSection } from "../../utils/gitlab";
@@ -60,28 +61,32 @@ const getPnpmInstallCommands = (
   `pnpm install --frozen-lockfile --store-dir ${getPnpmStoreDirExpression(isInWorkspace(context, packageManagerInfo))}`,
 ];
 
+export const DEFAULT_AUDIT_LEVEL: AuditLevel = "critical";
+
 /**
- * default `audit` job command per package manager. Exhaustive on the
- * package-manager type and throws for anything unsupported, so adding a
- * new package manager surfaces every place that needs a command here.
+ * default `audit` job command per package manager, failing on advisories
+ * of `level` and above. Exhaustive on the package-manager type and throws
+ * for anything unsupported, so adding a new package manager surfaces every
+ * place that needs a command here.
  */
 export const getDefaultAuditCommand = (
   packageManagerInfo: PackageManagerInfoBase,
+  level: AuditLevel = DEFAULT_AUDIT_LEVEL,
 ): string => {
   switch (packageManagerInfo.type) {
     case "pnpm":
-      return "pnpm audit --prod --audit-level critical";
+      return `pnpm audit --prod --audit-level ${level}`;
     case "yarn":
       return packageManagerInfo.isClassic
         ? // classic walks the whole tree; --groups limits it to production
-          "yarn audit --level critical --groups dependencies"
+          `yarn audit --level ${level} --groups dependencies`
         : // yarn 2+ audits only the CURRENT workspace's DIRECT dependencies
           // by default — in a monorepo that is the root manifest, which
           // usually has no production dependencies at all, so the job passed
           // without checking anything. --all covers every workspace,
           // --recursive the transitive dependencies (what `pnpm audit` and
           // `yarn audit` classic do on their own).
-          "yarn npm audit --environment production --severity critical --all --recursive";
+          `yarn npm audit --environment production --severity ${level} --all --recursive`;
     default:
       throw new Error(
         `no audit command implemented for package manager "${(packageManagerInfo as { type: string }).type}"`,
