@@ -21,7 +21,7 @@ here has bitten a real catladder project during a migration.
 | `yarn run -T x` / `yarn -T x` (berry top-level) | `x` (root `node_modules/.bin` is on the script PATH) |
 | `yarn dlx x` | `pnpm dlx x` |
 | `yarn node x` / `yarn exec x` | `pnpm exec x` |
-| `yarn npm audit --environment production` | `pnpm audit --prod` |
+| `yarn npm audit --environment production --all --recursive` | `pnpm audit --prod` |
 | `yarn bin x` | `pnpm bin x` |
 
 ## Configuration mapping
@@ -93,6 +93,15 @@ politely: it prints a `warn:` line and then crashes on
 `No such built-in module: node:sqlite`. In CI this bites even when the
 job image ships node 22 — the jobs run `nvm install` from `.nvmrc`, so
 an `.nvmrc` of `20` downgrades the image right before the install.
+
+**`pnpm audit` needs no scope flags.** It audits every workspace and the
+whole transitive tree by default, which is what `yarn npm audit` only does
+with `--all --recursive` (without them it checks the current workspace's
+*direct* dependencies — in a monorepo root that is usually nothing at all).
+Expect the pnpm audit job to surface vulnerabilities the yarn one never
+reported. In return `--prod` is stricter than yarn's
+`--environment production`: yarn still reports a devDependency of a
+workspace, pnpm does not.
 
 **`minimumReleaseAge`** defaults to 1440 minutes on pnpm 11: freshly
 published versions are refused. Set it to `0` while migrating (it is a

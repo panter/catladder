@@ -71,7 +71,10 @@ export const createNodeTestJobs = async (
           script: [
             `cd ${context.build.dir}`,
             ...(ensureArrayOrNull(buildConfig.audit?.command) ?? [
-              getDefaultAuditCommand(packageManagerInfo),
+              getDefaultAuditCommand(
+                packageManagerInfo,
+                buildConfig.audit?.level,
+              ),
             ]),
           ],
           allow_failure: buildConfig.audit?.allowFailure ?? true,

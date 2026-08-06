@@ -28,6 +28,16 @@ generated pipeline files.
 `artifactsReports`, `artifacts`, `runnerVariables`, `allowFailure`
 (`allowFailure` defaults to `true` for `audit`).
 
+`audit` additionally takes `level`: `"info" | "low" | "moderate" | "high" |
+"critical"` (default `"critical"`) — the lowest severity that fails the job,
+translated to the package manager's own flag (`pnpm audit --audit-level`,
+`yarn npm audit --severity`, classic `yarn audit --level`). Ignored when
+`command` spells out its own command:
+
+```ts
+audit: { level: "high" },   // fail on high and critical advisories
+```
+
 ## Per-type options & defaults
 
 ### `node`

@@ -123,6 +123,22 @@ export type TestJobCustom = {
   allowFailure?: boolean;
 };
 
+/**
+ * severity threshold of the 🛡 audit job: an advisory at this level or
+ * above fails the job. Maps to the package manager's own flag
+ * (`pnpm audit --audit-level`, `yarn npm audit --severity`,
+ * classic `yarn audit --level`).
+ */
+export type AuditLevel = "info" | "low" | "moderate" | "high" | "critical";
+
+export type AuditJobCustom = TestJobCustom & {
+  /**
+   * lowest severity that fails the job, defaults to `"critical"`.
+   * Ignored when {@link TestJobCustom.command} spells out its own command.
+   */
+  level?: AuditLevel;
+};
+
 export type BuildConfigBase = {
   /**
    * command to run on the image to start the app (e.g. yarn start)
@@ -159,7 +175,7 @@ export type BuildConfigBase = {
   /**
    * customize audit, set false to disable
    */
-  audit?: false | TestJobCustom;
+  audit?: false | AuditJobCustom;
 
   /**
    * additional paths for artifacts,
@@ -326,7 +342,7 @@ export type BuildConfigCustom = Omit<
   /**
    * custom audit, disabled when not set
    */
-  audit?: TestJobCustom;
+  audit?: AuditJobCustom;
 };
 
 export type BuildConfigRails = BuildConfigBase & {
@@ -443,7 +459,7 @@ export type WorkspaceBuildConfigBase = {
   /**
    * customize audit, set false to disable
    */
-  audit?: false | TestJobCustom;
+  audit?: false | AuditJobCustom;
   /**
    * additional vars only for the build job.
    * Also if you use services: that require env vars, you need to set them here.

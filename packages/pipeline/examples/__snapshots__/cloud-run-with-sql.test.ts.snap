@@ -2078,7 +2078,7 @@ collapseable_section_start "injectvars" "Injecting variables"
 export APP_PATH="api"
 collapseable_section_end "injectvars"
 cd api
-yarn npm audit --environment production --severity critical
+yarn npm audit --environment production --severity critical --all --recursive
 
 # ===== .catladder-generated/github/scripts/api-lint-dev.sh =====
 #!/usr/bin/env bash
@@ -2537,7 +2537,7 @@ collapseable_section_start "injectvars" "Injecting variables"
 export APP_PATH="api"
 collapseable_section_end "injectvars"
 cd api
-yarn npm audit --environment production --severity critical
+yarn npm audit --environment production --severity critical --all --recursive
 
 # ===== .catladder-generated/github/scripts/api-lint-review.sh =====
 #!/usr/bin/env bash
@@ -3916,7 +3916,7 @@ create release:
     - export APP_PATH="api"
     - collapseable_section_end "injectvars"
     - cd api
-    - yarn npm audit --environment production --severity critical
+    - yarn npm audit --environment production --severity critical --all --recursive
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4423,7 +4423,7 @@ create release:
     - export APP_PATH="api"
     - collapseable_section_end "injectvars"
     - cd api
-    - yarn npm audit --environment production --severity critical
+    - yarn npm audit --environment production --severity critical --all --recursive
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"

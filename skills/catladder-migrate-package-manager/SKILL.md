@@ -44,8 +44,14 @@ change needed:
 | download cache | `.yarn` zip cache | project-local `.pnpm-store`, cache slot scoped by pnpm major |
 | node_modules cache | mutable slot per build dir | **lockfile-keyed** slot (a pnpm install over a foreign tree leaves orphaned `.pnpm` dirs) |
 | docker prod install | `yarn workspaces focus --production` | `pnpm install --prod --frozen-lockfile --filter <pkg>...` |
-| audit job | `yarn npm audit …` | `pnpm audit --prod --audit-level critical` |
+| audit job | `yarn npm audit … --all --recursive` | `pnpm audit --prod --audit-level critical` |
 | build/start defaults | `yarn build` / `yarn start` | `pnpm build` / `pnpm start` |
+
+The audit job is the one place where the two are not equivalent in
+practice: it is easy to have a yarn pipeline whose audit checked nothing
+(before catladder 5 the generated command lacked `--all --recursive`), so
+the pnpm job can turn up long-standing vulnerabilities. Read them as
+pre-existing, not as caused by the migration.
 
 Because the cache keys differ per package manager, the first pnpm
 pipeline runs **cold** (and rebuilds job images). Judge speed on the

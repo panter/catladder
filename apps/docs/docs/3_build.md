@@ -33,9 +33,11 @@ It will create a docker-image (if the deployment requires a container) based on 
 
 #### predefined jobs
 
-- lint: will run `yarn lint` in your component
-- audit: will run `yarn audit`
-- test: will run `yarn test`
+- lint: will run `<package manager> lint` in your component
+- audit: audits the production dependencies of every workspace and fails on
+  critical advisories. Lower the threshold with `audit: { level: "high" }`
+  (`info` | `low` | `moderate` | `high` | `critical`)
+- test: will run `<package manager> test`
 
 ### node-static
 
@@ -212,7 +214,9 @@ const config = {
         command: "yarn lint"
       },
       audit: {
-        command: "yarn audit"
+        // the default command audits production dependencies and fails on
+        // critical advisories; `level` moves that threshold
+        level: "critical"
       },
     }
   },
