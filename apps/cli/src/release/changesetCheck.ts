@@ -28,6 +28,11 @@ export type ChangesetCheckInput = {
   lastTag: string | null;
   /** platform wording: "merge request" (gitlab) or "pull request" (github) */
   requestLabel: string;
+  /**
+   * the project's package manager, so the "how to add one" hint names a
+   * command that actually exists there
+   */
+  packageManager: "yarn" | "pnpm";
 };
 
 export type ChangesetCheckResult = {
@@ -42,6 +47,7 @@ export const runChangesetCheck = ({
   pending,
   lastTag,
   requestLabel,
+  packageManager,
 }: ChangesetCheckInput): ChangesetCheckResult => {
   const addsChangeset = addedFiles.length > 0;
 
@@ -53,7 +59,7 @@ export const runChangesetCheck = ({
     );
   } else {
     lines.push(
-      `⚠️ **This ${requestLabel} adds no changeset.** If the change is user-facing it will be missing from the next release's changelog — add \`.changeset/<name>.md\` (or run \`yarn changeset\`). For docs/chore changes this warning can be ignored.`,
+      `⚠️ **This ${requestLabel} adds no changeset.** If the change is user-facing it will be missing from the next release's changelog — add \`.changeset/<name>.md\` (or run \`${packageManager} changeset\`). For docs/chore changes this warning can be ignored.`,
     );
   }
   lines.push("");
