@@ -341,20 +341,6 @@ catladder-main.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache/restore@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache/restore@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-dev.sh
@@ -374,20 +360,6 @@ catladder-main.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache/restore@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache/restore@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-dev.sh
@@ -411,26 +383,12 @@ catladder-main.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh
@@ -466,12 +424,6 @@ catladder-main.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.pnpm-store
-            key: api-pnpm-v10-\${{ hashFiles('api/pnpm-lock.yaml') }}
-            restore-keys: api-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-dev
           uses: actions/download-artifact@v4
           with:
@@ -523,12 +475,6 @@ catladder-main.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.pnpm-store
-            key: www-pnpm-v10-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-dev
           uses: actions/download-artifact@v4
           with:
@@ -761,20 +707,6 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache/restore@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache/restore@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 👮 lint
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-lint-review.sh
@@ -794,20 +726,6 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache/restore@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache/restore@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 🧪 test
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-test-review.sh
@@ -831,26 +749,12 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-review.sh
@@ -886,12 +790,6 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.pnpm-store
-            key: api-pnpm-v10-\${{ hashFiles('api/pnpm-lock.yaml') }}
-            restore-keys: api-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-review
           uses: actions/download-artifact@v4
           with:
@@ -943,12 +841,6 @@ catladder-review.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.pnpm-store
-            key: www-pnpm-v10-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-review
           uses: actions/download-artifact@v4
           with:
@@ -1186,26 +1078,12 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-stage.sh
@@ -1241,12 +1119,6 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.pnpm-store
-            key: api-pnpm-v10-\${{ hashFiles('api/pnpm-lock.yaml') }}
-            restore-keys: api-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-stage
           uses: actions/download-artifact@v4
           with:
@@ -1295,12 +1167,6 @@ catladder-release.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.pnpm-store
-            key: www-pnpm-v10-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-stage
           uses: actions/download-artifact@v4
           with:
@@ -1791,26 +1657,12 @@ catladder-deploy.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache pnpm-.-node-modules
-          id: cache-node-modules
-          uses: actions/cache@v4
-          with:
-            path: node_modules
-            key: pnpm-.-node-modules-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: pnpm-.-node-modules-
         - name: Cache myWorkspace-default
           uses: actions/cache@v4
           with:
             path: www/.next/cache
             key: myWorkspace-default-\${{ github.run_id }}
             restore-keys: myWorkspace-default-
-        - name: Cache .-pnpm-v10
-          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
-          uses: actions/cache@v4
-          with:
-            path: .pnpm-store
-            key: .-pnpm-v10-\${{ hashFiles('pnpm-lock.yaml') }}
-            restore-keys: .-pnpm-v10-
         - name: 🔨 app
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh
@@ -1847,12 +1699,6 @@ catladder-deploy.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache api-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: api/.pnpm-store
-            key: api-pnpm-v10-\${{ hashFiles('api/pnpm-lock.yaml') }}
-            restore-keys: api-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-prod
           uses: actions/download-artifact@v4
           with:
@@ -1903,12 +1749,6 @@ catladder-deploy.yml:
       steps:
         - name: Checkout
           uses: actions/checkout@v4
-        - name: Cache www-pnpm-v10
-          uses: actions/cache/restore@v4
-          with:
-            path: www/.pnpm-store
-            key: www-pnpm-v10-\${{ hashFiles('www/pnpm-lock.yaml') }}
-            restore-keys: www-pnpm-v10-
         - name: Download artifacts from ws-myworkspace-app-prod
           uses: actions/download-artifact@v4
           with:
@@ -2489,7 +2329,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm lint
 
@@ -2536,7 +2376,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm test
 
@@ -2615,7 +2455,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -2657,7 +2497,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -2815,7 +2655,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3016,7 +2856,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm lint
 
@@ -3063,7 +2903,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm test
 
@@ -3142,7 +2982,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -3184,7 +3024,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3345,7 +3185,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3546,7 +3386,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -3625,7 +3465,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm build
 
@@ -3667,7 +3507,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3825,7 +3665,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -3983,7 +3823,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -4144,7 +3984,7 @@ export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladd
 export DOCKER_IMAGE_TAG="$GITHUB_SHA"
 export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
 export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
 RUN chown -R node:node /app || true"
 export DOCKER_SETUP_PACKAGE_MANAGER="RUN npm install -g pnpm@10.14.0"
@@ -4606,21 +4446,9 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm lint
-  cache:
-    - key: .-pnpm-v10
-      policy: pull
-      paths:
-        - .pnpm-store
-    - key: &a8
-        prefix: pnpm-.-node-modules
-        files:
-          - pnpm-lock.yaml
-      policy: pull
-      paths: &a9
-        - node_modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4653,17 +4481,9 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm test
-  cache:
-    - key: .-pnpm-v10
-      policy: pull
-      paths:
-        - .pnpm-store
-    - key: *a8
-      policy: pull
-      paths: *a9
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4730,21 +4550,10 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: .-pnpm-v10
-      policy: pull-push
-      paths:
-        - .pnpm-store
-    - key:
-        prefix: pnpm-.-node-modules
-        files:
-          - pnpm-lock.yaml
-      policy: pull-push
-      paths:
-        - node_modules
     - key: myWorkspace-default
       policy: pull-push
       paths:
@@ -4819,23 +4628,9 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm lint
-  cache:
-    - key: .-pnpm-v10-mr$CI_MERGE_REQUEST_IID
-      policy: pull
-      paths:
-        - .pnpm-store
-      fallback_keys:
-        - .-pnpm-v10
-    - key: &a10
-        prefix: pnpm-.-node-modules
-        files:
-          - pnpm-lock.yaml
-      policy: pull
-      paths: &a11
-        - node_modules
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4868,19 +4663,9 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm test
-  cache:
-    - key: .-pnpm-v10-mr$CI_MERGE_REQUEST_IID
-      policy: pull
-      paths:
-        - .pnpm-store
-      fallback_keys:
-        - .-pnpm-v10
-    - key: *a10
-      policy: pull
-      paths: *a11
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -4947,23 +4732,10 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: .-pnpm-v10-mr$CI_MERGE_REQUEST_IID
-      policy: pull-push
-      paths:
-        - .pnpm-store
-      fallback_keys:
-        - .-pnpm-v10
-    - key:
-        prefix: pnpm-.-node-modules
-        files:
-          - pnpm-lock.yaml
-      policy: pull-push
-      paths:
-        - node_modules
     - key: myWorkspace-default-mr$CI_MERGE_REQUEST_IID
       policy: pull-push
       paths:
@@ -5050,21 +4822,10 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: .-pnpm-v10
-      policy: pull-push
-      paths:
-        - .pnpm-store
-    - key:
-        prefix: pnpm-.-node-modules
-        files:
-          - pnpm-lock.yaml
-      policy: pull-push
-      paths:
-        - node_modules
     - key: myWorkspace-default
       policy: pull-push
       paths:
@@ -5149,21 +4910,10 @@ create release:
     - collapseable_section_end "nodeinstall"
     - collapseable_section_start "pnpminstall" "pnpm install"
     - if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@10.14.0; fi
-    - pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+    - pnpm install --frozen-lockfile
     - collapseable_section_end "pnpminstall"
     - pnpm build
   cache:
-    - key: .-pnpm-v10
-      policy: pull-push
-      paths:
-        - .pnpm-store
-    - key:
-        prefix: pnpm-.-node-modules
-        files:
-          - pnpm-lock.yaml
-      policy: pull-push
-      paths:
-        - node_modules
     - key: myWorkspace-default
       policy: pull-push
       paths:
@@ -5219,7 +4969,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5239,11 +4989,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: api-pnpm-v10
-      policy: pull
-      paths:
-        - api/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5416,7 +5161,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5436,13 +5181,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: api-pnpm-v10-mr$CI_MERGE_REQUEST_IID
-      policy: pull
-      paths:
-        - api/.pnpm-store
-      fallback_keys:
-        - api-pnpm-v10
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5621,7 +5359,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5641,11 +5379,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: api-pnpm-v10
-      policy: pull
-      paths:
-        - api/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -5811,7 +5544,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -5831,11 +5564,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: api-pnpm-v10
-      policy: pull
-      paths:
-        - api/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6001,7 +5729,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6021,11 +5749,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: www-pnpm-v10
-      policy: pull
-      paths:
-        - www/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6201,7 +5924,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6221,13 +5944,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: www-pnpm-v10-mr$CI_MERGE_REQUEST_IID
-      policy: pull
-      paths:
-        - www/.pnpm-store
-      fallback_keys:
-        - www-pnpm-v10
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6409,7 +6125,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6429,11 +6145,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: www-pnpm-v10
-      policy: pull
-      paths:
-        - www/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"
@@ -6602,7 +6313,7 @@ create release:
     - |-
       export DOCKER_COPY_AND_INSTALL_APP="COPY --chown=node:node $APP_DIR .
       RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@10.14.0
-      RUN pnpm install --prod --frozen-lockfile --store-dir /app/$APP_DIR/.pnpm-store"
+      RUN pnpm install --prod --frozen-lockfile --store-dir /tmp/pnpm-store && rm -rf /tmp/pnpm-store"
     - |-
       export DOCKER_COPY_WORKSPACE_FILES="ADD .catladder-workspace-files.tar /app/
       RUN chown -R node:node /app || true"
@@ -6622,11 +6333,6 @@ create release:
     - docker tag $DOCKER_IMAGE:$DOCKER_IMAGE_TAG $DOCKER_CACHE_IMAGE
     - docker push $DOCKER_CACHE_IMAGE
     - collapseable_section_end "docker-push"
-  cache:
-    - key: www-pnpm-v10
-      policy: pull
-      paths:
-        - www/.pnpm-store
   rules:
     - when: never
       if: $CI_PIPELINE_SOURCE  == "trigger"

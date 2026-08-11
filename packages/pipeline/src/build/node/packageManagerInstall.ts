@@ -41,24 +41,17 @@ const getEnsurePnpmCommand = (version: string) =>
   `if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@${version}; fi`;
 
 /**
- * pnpm's store is global by default; point it at a project-local
- * directory so CI can cache it (the pnpm equivalent of the `.yarn`
- * zip cache). Passed as the --store-dir flag: pnpm 11 stopped reading
- * the npm_config_store_dir env var (settings only come from
- * pnpm-workspace.yaml / global config / CLI flags), the flag works on
- * v10 and v11
+ * pnpm jobs use pnpm's own (global, per-runner) store location. There
+ * used to be a `--store-dir` pointing at a project-local
+ * `.pnpm-store`, so CI could cache it — that cache is gone (see
+ * getYarnCache), and keeping the store inside the repo only meant it
+ * landed in docker build contexts.
  */
-const getPnpmStoreDirExpression = (inWorkspace: boolean) =>
-  inWorkspace
-    ? `"$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"`
-    : `"$PWD/.pnpm-store"`;
-
 const getPnpmInstallCommands = (
-  context: Context,
   packageManagerInfo: PackageManagerInfoBase & { type: "pnpm" },
 ) => [
   getEnsurePnpmCommand(packageManagerInfo.version),
-  `pnpm install --frozen-lockfile --store-dir ${getPnpmStoreDirExpression(isInWorkspace(context, packageManagerInfo))}`,
+  `pnpm install --frozen-lockfile`,
 ];
 
 export const DEFAULT_AUDIT_LEVEL: AuditLevel = "critical";
@@ -123,7 +116,7 @@ export const getPackageManagerInstall = async (
       ? collapseableSection(
           "pnpminstall",
           "pnpm install",
-        )(getPnpmInstallCommands(context, packageManagerInfo))
+        )(getPnpmInstallCommands(packageManagerInfo))
       : collapseableSection(
           "yarninstall",
           "Yarn install",
@@ -145,11 +138,12 @@ const DOCKER_COPY_FILES = `COPY --chown=node:node $APP_DIR .`;
 const getPnpmDockerAppCopyAndBuildScript = (
   packageManagerInfo: PackageManagerInfoComponent & { type: "pnpm" },
 ) => {
-  // the store was copied into the image (like the yarn zip cache), so
-  // the prod install links from it instead of hitting the registry
-  const storeDir = packageManagerInfo.componentIsInWorkspace
-    ? "/app/.pnpm-store"
-    : "/app/$APP_DIR/.pnpm-store";
+  // the prod install downloads from the registry: nothing is copied
+  // into the image to link from (see createNodeDockerJobDefinition).
+  // The store it fills is scratch space outside /app, dropped in the
+  // same layer so the packages ship once — node_modules holds
+  // hardlinks, so removing the store keeps the files alive
+  const storeDir = "/tmp/pnpm-store";
   // in a workspace, only install the component (and its workspace
   // dependencies) — the pnpm equivalent of `yarn workspaces focus`.
   // npm package names are shell-safe unquoted (the whole script is
@@ -163,7 +157,7 @@ const getPnpmDockerAppCopyAndBuildScript = (
     `
 ${DOCKER_COPY_FILES}
 RUN command -v pnpm >/dev/null 2>&1 || npm install -g pnpm@${packageManagerInfo.version}
-RUN pnpm install --prod --frozen-lockfile --store-dir ${storeDir}${filter}
+RUN pnpm install --prod --frozen-lockfile --store-dir ${storeDir}${filter} && rm -rf ${storeDir}
     `.trim(),
   );
 };
