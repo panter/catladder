@@ -5,6 +5,7 @@
  * from the last `v*` tag, writes the changelog, commits, tags and
  * pushes — the pushed tag triggers the taggedRelease pipeline.
  */
+import { existsSync } from "fs";
 import { readFile, readdir, rm, writeFile } from "fs/promises";
 import { join } from "path";
 import type { Changeset } from "./changesets";
@@ -145,7 +146,7 @@ export const changesetsReleaseJob = async () => {
       `no changesets found in ${CHANGESET_DIR}/ — nothing to release`,
     );
     console.log(
-      "add one with `yarn changeset` (or write .changeset/<name>.md by hand) and merge it to release",
+      `add one with \`${existsSync("pnpm-lock.yaml") ? "pnpm" : "yarn"} changeset\` (or write .changeset/<name>.md by hand) and merge it to release`,
     );
     console.log(
       "to release anyway (patch bump), run the force release job instead",

@@ -15,6 +15,7 @@ describe("runChangesetCheck", () => {
       pending: [changeset("minor", "Add the fancy dashboard")],
       lastTag: "v4.7.0",
       requestLabel: "merge request",
+      packageManager: "yarn",
     });
     expect(result.addsChangeset).toBe(true);
     expect(result.markdown).toContain(CHANGESET_CHECK_MARKER);
@@ -31,6 +32,7 @@ describe("runChangesetCheck", () => {
       pending: [],
       lastTag: "v4.7.0",
       requestLabel: "merge request",
+      packageManager: "yarn",
     });
     expect(result.addsChangeset).toBe(false);
     expect(result.markdown).toContain(
@@ -48,11 +50,26 @@ describe("runChangesetCheck", () => {
       ],
       lastTag: "v4.7.0",
       requestLabel: "merge request",
+      packageManager: "yarn",
     });
     expect(result.addsChangeset).toBe(false);
     expect(result.markdown).toContain("2 changesets are pending");
     expect(result.markdown).toContain("**v5.0.0**");
     expect(result.markdown).toContain("Remove the legacy mode");
+  });
+
+  it("names the project's own package manager in the how-to hint", () => {
+    const forPm = (packageManager: "yarn" | "pnpm") =>
+      runChangesetCheck({
+        addedFiles: [],
+        pending: [],
+        lastTag: "v4.7.0",
+        requestLabel: "merge request",
+        packageManager,
+      }).markdown;
+    expect(forPm("pnpm")).toContain("`pnpm changeset`");
+    expect(forPm("pnpm")).not.toContain("yarn");
+    expect(forPm("yarn")).toContain("`yarn changeset`");
   });
 
   it("handles the first release (no previous tag)", () => {
@@ -61,6 +78,7 @@ describe("runChangesetCheck", () => {
       pending: [changeset("minor", "Initial feature")],
       lastTag: null,
       requestLabel: "pull request",
+      packageManager: "yarn",
     });
     expect(result.markdown).toContain("✅ This pull request adds 1 changeset");
     expect(result.markdown).toContain("**v1.0.0**");

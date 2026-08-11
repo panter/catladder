@@ -7,6 +7,7 @@
  * sticky MR/PR comment where a token allows it. Exits 1 (the job runs
  * with allow_failure) when the merge request adds no changeset.
  */
+import { existsSync } from "fs";
 import { writeFile } from "fs/promises";
 import { CHANGESET_CHECK_MARKER, runChangesetCheck } from "./changesetCheck";
 import { readPendingChangesets } from "./changesetsReleaseJob";
@@ -16,6 +17,13 @@ import { appendStepSummary } from "./stepSummary";
 export const CHANGESET_REPORT_FILE = "changeset-report.md";
 
 const onGithub = () => process.env.GITHUB_ACTIONS === "true";
+
+/**
+ * the repo's package manager, from the lockfile in the checkout — the
+ * hint for adding a changeset should name a command the project has
+ */
+const detectPackageManager = (): "yarn" | "pnpm" =>
+  existsSync("pnpm-lock.yaml") ? "pnpm" : "yarn";
 
 /**
  * the changeset files added by this merge request: diffed against the
@@ -172,6 +180,7 @@ export const changesetCheckJob = async () => {
     pending,
     lastTag,
     requestLabel: onGithub() ? "pull request" : "merge request",
+    packageManager: detectPackageManager(),
   });
 
   console.log(result.markdown.replace(`${CHANGESET_CHECK_MARKER}\n`, ""));
