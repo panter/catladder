@@ -46,7 +46,7 @@ if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
 collapseable_section_end "nodeinstall"
 collapseable_section_start "pnpminstall" "pnpm install"
 if ! command -v pnpm &> /dev/null; then corepack enable pnpm 2>/dev/null || npm install -g pnpm@11.20.0; fi
-pnpm install --frozen-lockfile --store-dir "$(git rev-parse --show-toplevel 2>/dev/null || pwd)/.pnpm-store"
+pnpm install --frozen-lockfile
 collapseable_section_end "pnpminstall"
 pnpm --filter docs gen-md
 pnpm --filter docs build

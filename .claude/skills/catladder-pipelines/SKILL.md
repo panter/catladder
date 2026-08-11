@@ -60,12 +60,13 @@ the registry.
 
 ## Caching
 
-Cache configuration is generated per build type; node builds cache
-`node_modules` and the package manager's download cache (the `.yarn`
-zip cache, or for pnpm projects a project-local `.pnpm-store`). GitLab
-uses mutable caches with
-fallback keys (review branches fall back to the dev cache); GitHub uses
-immutable lockfile-keyed caches where only the build job writes.
+Cache configuration is generated per build type. **yarn** node builds
+cache `node_modules` and the `.yarn` zip cache; GitLab uses mutable
+caches with fallback keys (review branches fall back to the dev cache),
+GitHub immutable lockfile-keyed caches where only the build job writes.
+**pnpm** builds cache nothing: measured on a 3800-package monorepo,
+moving the store or node_modules through a CI cache costs more than
+pnpm's from-registry install.
 Caching behavior is changed via the build config in `catladder.ts`,
 not in the YAML.
 
