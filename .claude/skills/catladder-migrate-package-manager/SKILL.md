@@ -42,9 +42,9 @@ change needed:
 
 | | yarn | pnpm |
 |---|---|---|
-| CI install | `yarn install --immutable` | `pnpm install --frozen-lockfile --store-dir …` |
-| download cache | `.yarn` zip cache | project-local `.pnpm-store`, cache slot scoped by pnpm major |
-| node_modules cache | mutable slot per build dir | **lockfile-keyed** slot (a pnpm install over a foreign tree leaves orphaned `.pnpm` dirs) |
+| CI install | `yarn install --immutable` | `pnpm install --frozen-lockfile` |
+| download cache | `.yarn` zip cache | **none** — installing from the registry is cheaper than moving the store |
+| node_modules cache | mutable slot per build dir | **none** (measured: the archive costs more than the install it saves) |
 | docker prod install | `yarn workspaces focus --production` | `pnpm install --prod --frozen-lockfile --filter <pkg>...` |
 | audit job | `yarn npm audit … --all --recursive` | `pnpm audit --prod --audit-level critical` |
 | build/start defaults | `yarn build` / `yarn start` | `pnpm build` / `pnpm start` |
@@ -148,9 +148,9 @@ skip it and run a bare `pnpm install` — that silently upgrades hundreds
 of transitive dependencies at the same time as the package manager
 changes, and you will not know which change broke what.
 
-Then set the `packageManager` field, and update `.gitignore`:
-`.pnpm-store/` in, `.yarn/*` entries out (keep `.yarn/patches` only if
-you left the patches there).
+Then set the `packageManager` field, and update `.gitignore`: `.yarn/*`
+entries out (keep `.yarn/patches` only if you left the patches there).
+Nothing pnpm-specific needs ignoring — the store lives outside the repo.
 
 ## Step 4 — fix the fallout locally
 
@@ -233,8 +233,8 @@ Mirrored, with one loss to state up front: **there is no importer back**.
 every range — the migration necessarily bumps transitive versions.
 Do it deliberately:
 
-1. Delete `pnpm-lock.yaml`, `pnpm-workspace.yaml`, `.pnpm-store`, and the
-   `node_modules` trees.
+1. Delete `pnpm-lock.yaml`, `pnpm-workspace.yaml`, and the `node_modules`
+   trees.
 2. Move `packages:` back into package.json `workspaces`, `overrides` →
    `resolutions`, `patchedDependencies` → yarn's patch protocol,
    `allowBuilds` → (yarn runs build scripts by default; nothing needed).
