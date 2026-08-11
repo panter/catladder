@@ -73,12 +73,14 @@ export const createNodeDockerJobDefinition = async (
       context.packageManagerInfo,
     ]);
 
-  // the pnpm store (pulled via the cache above) is copied into the
-  // image so the prod install works offline — like the yarn zip cache,
-  // which travels inside the copied `.yarn` config folder
-  const copyPnpmStore =
-    packageManagerInfo.type === "pnpm" &&
-    packageManagerInfo.componentIsInWorkspace;
+  // The pnpm store is deliberately NOT copied into the image. It used
+  // to be, so the prod install could link instead of hitting the
+  // registry — but the store lands in an earlier layer than
+  // node_modules, so pnpm cannot hardlink across the overlay boundary
+  // and copies every package instead. Measured on one component: the
+  // in-image install was *slower* that way (28s vs 10s from the
+  // registry), the store added 3GB to the build context and the final
+  // image, and the build took 339s instead of 27s.
 
   // pnpm copies every workspace manifest into the image — as individual
   // COPY instructions that many layers exceed docker's depth limit, so
@@ -88,8 +90,6 @@ export const createNodeDockerJobDefinition = async (
 
   return {
     script: [
-      // the COPY source must exist even when the cache was cold
-      ...(copyPnpmStore ? ["mkdir -p .pnpm-store"] : []),
       ...(isPnpm
         ? [
             `tar -cf ${WORKSPACE_FILES_TAR} ${packageManagerInfo.pathsToCopyInDocker.join(" ")}`,
@@ -109,14 +109,10 @@ export const createNodeDockerJobDefinition = async (
             `ADD ${WORKSPACE_FILES_TAR} /app/`,
             // ADD does not apply --chown to extracted tars, and parent
             // dirs of the entries come out root-owned — fix ownership
-            // while the stage still runs as root (store not copied yet,
-            // so this only touches the small manifest tree). Custom
-            // base images without a node user run as root and don't
-            // need it, hence the fallback
+            // while the stage still runs as root (this only touches the
+            // small manifest tree). Custom base images without a node
+            // user run as root and don't need it, hence the fallback
             `RUN chown -R node:node /app || true`,
-            ...(copyPnpmStore
-              ? [`COPY --chown=node:node .pnpm-store /app/.pnpm-store`]
-              : []),
           ].join("\n")
         : packageManagerInfo.pathsToCopyInDocker
             .map((dir) => `COPY --chown=node:node ${dir} /app/${dir}`)

@@ -82,9 +82,26 @@ the docker build context.
 
 **Version drift in `--prod` installs.** `pnpm install --prod` on a
 node_modules tree from a *different* lockfile does not prune orphaned
-`.pnpm` directories. That is why catladder keys the pnpm node_modules
-cache by the lockfile instead of reusing a mutable slot — and why you
-should never reuse a yarn branch's cache for a pnpm branch.
+`.pnpm` directories — never reuse one branch's node_modules for another
+lockfile, and never a yarn tree for a pnpm branch.
+
+**Nothing is cached.** A yarn pipeline caches its zip cache and
+node_modules; a pnpm pipeline caches neither, and does not copy a store
+into docker images either. pnpm installs a 3800-package monorepo from
+the registry in 30-40s, which is less than it costs to move a 1 GB
+store or a 1.3 GB node_modules tree through a CI cache — measured
+side-by-side, caching made jobs about twice as slow on gitlab. Two
+consequences when migrating: CI pulls more from the registry than the
+yarn setup did (worth a registry proxy if that matters to you), and
+`.pnpm-store` should not appear anywhere in the repo or a build
+context.
+
+**Docker images must not carry the store.** If a store is copied into
+an image, it lands in a layer below `node_modules`, pnpm cannot hardlink
+across the overlay boundary, and every package is copied instead — the
+install gets *slower* (28s vs 10s from the registry) and the image
+carries the packages twice. Let the `--prod` install download, into a
+store outside the app directory that the same `RUN` layer deletes.
 
 **pnpm 11 needs node ≥ 22.13** (pnpm 10: ≥ 18.12), and it does not fail
 politely: it prints a `warn:` line and then crashes on
