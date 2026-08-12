@@ -65,6 +65,17 @@ export const readCatladderStore = (
 };
 
 /**
+ * gcloud project number from the store, or null when it has not been
+ * fetched yet. Use this where a missing number is not itself the problem —
+ * `getGcloudProjectNumber` is the one that reports it.
+ */
+export const readGcloudProjectNumber = (
+  config: { store?: CatladderStore },
+  projectId: string,
+): string | null =>
+  config.store?.gcloudProjects?.[projectId]?.projectNumber ?? null;
+
+/**
  * gcloud project number from the store — needed to compute deterministic
  * cloud run urls (`<service>-<projectNumber>.<region>.run.app`) at
  * generation time.
@@ -76,8 +87,7 @@ export const getGcloudProjectNumber = (
   config: { store?: CatladderStore },
   projectId: string,
 ): string => {
-  const projectNumber =
-    config.store?.gcloudProjects?.[projectId]?.projectNumber;
+  const projectNumber = readGcloudProjectNumber(config, projectId);
   if (!projectNumber) {
     throw new Error(
       `Missing gcloud project number for project "${projectId}" in ${CATLADDER_STORE_FILE}.\n` +

@@ -16,7 +16,10 @@ import {
   getDatabaseConnectionString,
   getDatabaseJdbcUrl,
 } from "./utils/database";
-import { getServiceNameForEnvContext } from "./utils/getServiceName";
+import {
+  getRawServiceNameForEnvContext,
+  getServiceNameForEnvContext,
+} from "./utils/getServiceName";
 
 export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
 
@@ -100,11 +103,16 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
       // generation time. For review envs the service name part still
       // contains a runtime expression (the review slug), so the host stays
       // a bash expression there; the suffix is always a literal.
+      //
+      // The service name has to come from getRawServiceNameForEnvContext,
+      // not from fullName: it is shortened when the label would otherwise
+      // exceed what cloud run serves deterministically, and the url must
+      // name the service that is actually deployed.
       const HOSTNAME_INTERNAL =
         deployConfigRaw && envType !== "local"
           ? joinBashExpressions(
               [
-                fullName,
+                getRawServiceNameForEnvContext(ctx),
                 `${getGcloudProjectNumber(
                   fullConfig,
                   deployConfigRaw.projectId,
