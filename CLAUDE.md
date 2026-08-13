@@ -68,6 +68,14 @@ pnpm exec turbo run build --filter=@catladder/cli        # tsc + tsc-alias + ncc
 - **Snapshots**: Example tests use snapshot testing for generated YAML output; update with `pnpm test:update`
 - **Editing `runner-images/` changes snapshots**: job images are tagged by a content hash of their definition (see `customImages/`), and that tag is embedded throughout the generated YAML. So **any** edit under `runner-images/` (even a comment) changes the hash and requires `pnpm test:update` + committing the regenerated snapshots — otherwise CI's snapshot test fails on the changed image tag even though nothing behavioural changed.
 - **Timeout**: 10 seconds per test
+- **Editing `apps/cli/src` needs a regeneration**: this repo generates
+  its own pipeline, and `.catladder-generated/catci/index.js` (plus
+  `.claude/skills/`) is a **committed build artifact** — CI jobs run
+  that bundle, not the sources. Nothing verifies it is in sync: the
+  test suite never touches it and there is no drift check in CI, so a
+  stale bundle silently keeps the old behaviour (it once swallowed a
+  release fix for a whole release). After changing cli sources run
+  `pnpm build && pnpm catenv` and commit the regenerated files.
 
 ## Architecture
 
