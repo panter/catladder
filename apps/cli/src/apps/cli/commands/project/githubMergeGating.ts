@@ -7,19 +7,34 @@ import { AGGREGATE_CHECK_JOB_NAME } from "@catladder/pipeline";
  * The gating lives in a repository RULESET, not classic branch
  * protection: only rulesets can carry bypass actors, and the release
  * job needs one. It pushes the release commit and tag straight to the
- * default branch with the workflow token — under classic protection
- * the required `catladder ✅` check rejects that push (GH006), because
- * the fresh release commit cannot have a passing check yet. The bypass
- * covers the GitHub Actions app, i.e. pushes made by workflows, while
- * PRs and humans stay gated. (Gitlab's counterpart is the
- * maintainer-role project access token, which may push to protected
- * branches by default — the same trade-off, made by the platform.)
+ * default branch — under classic protection the required `catladder ✅`
+ * check rejects that push (GH006), because the fresh release commit
+ * cannot have a passing check yet.
+ *
+ * The bypass actor is a DEPLOY KEY: github deliberately refuses the
+ * built-in GitHub Actions app on bypass lists (any collaborator could
+ * push anywhere by authoring a workflow), so the workflow token can
+ * never bypass. Instead `project setup` provisions a write deploy key
+ * (public half on the repo, private half as an actions secret) and the
+ * release job pushes over ssh with it. Deploy keys are repo-scoped,
+ * only admins can add them, and they never expire — gitlab's
+ * counterpart is the maintainer-role `GL_TOKEN`, which has to be
+ * renewed yearly.
  */
 
-/** the app id of GitHub Actions — the actor workflow tokens act as */
+/** the app id of GitHub Actions — the integration reporting the check */
 export const GITHUB_ACTIONS_APP_ID = 15368;
 
 export const MERGE_GATING_RULESET_NAME = "catladder merge gating";
+
+/** title of the deploy key `project setup` registers on the repo */
+export const RELEASE_DEPLOY_KEY_TITLE = "catladder release";
+
+/**
+ * actions secret holding the deploy key's private half; the generated
+ * release jobs pass it to catci, which pushes over ssh when it is set
+ */
+export const RELEASE_DEPLOY_KEY_SECRET = "CATLADDER_RELEASE_KEY";
 
 export type GithubRuleset = {
   id: number;
@@ -60,18 +75,16 @@ export const desiredMergeGatingRuleset = () => ({
     },
   ],
   bypass_actors: [
-    {
-      actor_id: GITHUB_ACTIONS_APP_ID,
-      actor_type: "Integration",
-      bypass_mode: "always",
-    },
+    // deploy keys carry no id — the bypass covers every deploy key of
+    // the repository (adding one requires admin anyway)
+    { actor_id: null, actor_type: "DeployKey", bypass_mode: "always" },
   ],
 });
 
 /**
  * whether a ruleset provides working merge gating: active, requires
- * the aggregate check, and lets the release job (GitHub Actions app)
- * bypass it. Extra rules or bypass actors someone added are fine.
+ * the aggregate check, and lets the release deploy key bypass it.
+ * Extra rules or bypass actors someone added are fine.
  */
 export const rulesetProvidesMergeGating = (ruleset: GithubRuleset): boolean =>
   ruleset.enforcement === "active" &&
@@ -84,7 +97,5 @@ export const rulesetProvidesMergeGating = (ruleset: GithubRuleset): boolean =>
   ) &&
   (ruleset.bypass_actors ?? []).some(
     (actor) =>
-      actor.actor_type === "Integration" &&
-      actor.actor_id === GITHUB_ACTIONS_APP_ID &&
-      actor.bypass_mode === "always",
+      actor.actor_type === "DeployKey" && actor.bypass_mode === "always",
   );

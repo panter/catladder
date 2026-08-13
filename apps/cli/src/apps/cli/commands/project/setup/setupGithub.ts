@@ -4,15 +4,29 @@ import {
   getEnabledPipelineTypes,
   getPipelineGitRemote,
 } from "@catladder/pipeline";
+import { execFile as execFileCb } from "child_process";
+import { mkdtemp, readFile, rm } from "fs/promises";
+import { tmpdir } from "os";
+import { join } from "path";
+import { promisify } from "util";
 import { getConfiguredGithubRepo } from "../../../../../commands/project/commandSecretsSyncGithub";
 import type { IO } from "../../../../../core/types";
-import { ghApiJson, isGhAuthenticated } from "../../../../../utils/github";
+import {
+  ghApiJson,
+  isGhAuthenticated,
+  listGithubSecretNames,
+  setGithubSecret,
+} from "../../../../../utils/github";
 import type { GithubRuleset } from "../githubMergeGating";
 import {
   desiredMergeGatingRuleset,
   MERGE_GATING_RULESET_NAME,
+  RELEASE_DEPLOY_KEY_SECRET,
+  RELEASE_DEPLOY_KEY_TITLE,
   rulesetProvidesMergeGating,
 } from "../githubMergeGating";
+
+const execFile = promisify(execFileCb);
 
 /**
  * configures github merge gating — the sane default gitlab ships
@@ -21,11 +35,14 @@ import {
  * auto-merge button never appears.
  *
  * - repo settings: allow auto-merge, delete merged head branches
+ * - the release deploy key: a write deploy key on the repo, its
+ *   private half stored as the CATLADDER_RELEASE_KEY actions secret —
+ *   the release job pushes the release commit and tag with it
  * - a repository ruleset on the default branch requiring the generated
  *   `catladder ✅` aggregate check (the one stable context — individual
- *   job names change with every component add/rename), with a bypass
- *   for the GitHub Actions app so the release job can push the release
- *   commit and tag (see githubMergeGating.ts for the full rationale)
+ *   job names change with every component add/rename), with a deploy
+ *   key bypass so the release push goes through (see
+ *   githubMergeGating.ts for the full rationale)
  *
  * Earlier versions required the check via classic branch protection,
  * which has no bypass list — the release job's direct push to the
@@ -67,6 +84,8 @@ export const setupGithub = async (instance: IO, config: Config) => {
     instance.log("✅ auto-merge already enabled");
   }
 
+  await ensureReleaseDeployKey(instance, repo);
+
   const branch = repoInfo.default_branch;
   const rulesets = await ghApiJson<Array<{ id: number; name: string }>>(
     "GET",
@@ -104,6 +123,71 @@ export const setupGithub = async (instance: IO, config: Config) => {
   }
 
   await migrateAwayFromClassicProtection(instance, repo, branch);
+};
+
+/**
+ * provisions the release deploy key: an ed25519 keypair whose public
+ * half becomes a write deploy key on the repo and whose private half
+ * becomes the CATLADDER_RELEASE_KEY actions secret. The key and the
+ * secret only work as a pair, so when either half is missing the pair
+ * is rotated (github secrets are write-only — the private half can
+ * never be read back to check it matches).
+ */
+const ensureReleaseDeployKey = async (instance: IO, repo: string) => {
+  const [keys, secretNames] = await Promise.all([
+    ghApiJson<Array<{ id: number; title: string; read_only: boolean }>>(
+      "GET",
+      `repos/${repo}/keys?per_page=100`,
+    ),
+    listGithubSecretNames(repo),
+  ]);
+  const existingKey = keys.find((k) => k.title === RELEASE_DEPLOY_KEY_TITLE);
+  const hasSecret = secretNames.some(
+    (name) => name.toUpperCase() === RELEASE_DEPLOY_KEY_SECRET,
+  );
+  if (existingKey && !existingKey.read_only && hasSecret) {
+    instance.log(
+      `✅ release deploy key '${RELEASE_DEPLOY_KEY_TITLE}' + secret ${RELEASE_DEPLOY_KEY_SECRET} in place`,
+    );
+    return;
+  }
+  if (existingKey) {
+    await ghApiJson("DELETE", `repos/${repo}/keys/${existingKey.id}`);
+    instance.log(
+      `♻️ release deploy key '${RELEASE_DEPLOY_KEY_TITLE}' rotated (${
+        existingKey.read_only
+          ? "was read-only"
+          : `secret ${RELEASE_DEPLOY_KEY_SECRET} missing`
+      })`,
+    );
+  }
+
+  const dir = await mkdtemp(join(tmpdir(), "catladder-release-key-"));
+  try {
+    const keyFile = join(dir, "id_ed25519");
+    await execFile("ssh-keygen", [
+      ...["-t", "ed25519"],
+      ...["-C", `${RELEASE_DEPLOY_KEY_TITLE} (${repo})`],
+      ...["-N", ""],
+      ...["-f", keyFile],
+      "-q",
+    ]);
+    const [privateKey, publicKey] = await Promise.all([
+      readFile(keyFile, "utf-8"),
+      readFile(`${keyFile}.pub`, "utf-8"),
+    ]);
+    await ghApiJson("POST", `repos/${repo}/keys`, {
+      title: RELEASE_DEPLOY_KEY_TITLE,
+      key: publicKey.trim(),
+      read_only: false,
+    });
+    await setGithubSecret(repo, RELEASE_DEPLOY_KEY_SECRET, privateKey);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+  instance.log(
+    `✅ release deploy key '${RELEASE_DEPLOY_KEY_TITLE}' registered, private half stored as secret ${RELEASE_DEPLOY_KEY_SECRET} — the release job pushes with it`,
+  );
 };
 
 /**

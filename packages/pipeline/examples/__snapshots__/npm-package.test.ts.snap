@@ -81,6 +81,7 @@ exports[`matches snapshot for npm-package github workflows YAML 1`] = `
         - catladder-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
+        CATLADDER_RELEASE_KEY: \${{ secrets.CATLADDER_RELEASE_KEY }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -458,6 +459,7 @@ catladder-main.yml:
         - lib-deploy-dev
       env:
         GITHUB_TOKEN: \${{ github.token }}
+        CATLADDER_RELEASE_KEY: \${{ secrets.CATLADDER_RELEASE_KEY }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4

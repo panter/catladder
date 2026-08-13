@@ -161,16 +161,16 @@ jobs:
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
           collapseable_section_end "docker-login"
           collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/changesets:d9899ef59230 > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/changesets:d9899ef59230 already exists, skipping build"
+          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a > /dev/null 2>&1; then
+            echo "Image ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a already exists, skipping build"
             exit 0
           fi
           collapseable_section_end "check-image"
           collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/changesets:d9899ef59230 -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
           collapseable_section_end "docker-build"
           collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/changesets:d9899ef59230
+          docker push ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a
           collapseable_section_end "docker-push"
         shell: bash
   ws-base-audit-review:
@@ -303,7 +303,7 @@ jobs:
     name: changeset check
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/changesets:d9899ef59230
+      image: ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}

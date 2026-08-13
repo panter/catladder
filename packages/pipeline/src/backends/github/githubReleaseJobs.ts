@@ -88,6 +88,11 @@ const createReleaseJob = (
     ...(allNeeds.length > 0 ? { needs: allNeeds } : {}),
     env: {
       GITHUB_TOKEN: "${{ github.token }}",
+      // the release deploy key (provisioned by `project setup`): the
+      // release push must bypass the merge-gating ruleset, which only
+      // a deploy key can — empty when not provisioned, then the job
+      // pushes with the workflow token (fine without gating)
+      CATLADDER_RELEASE_KEY: "${{ secrets.CATLADDER_RELEASE_KEY }}",
       ...options.extraEnv,
     },
     steps: [

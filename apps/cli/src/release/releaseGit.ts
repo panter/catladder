@@ -12,6 +12,17 @@ export const git = async (...args: string[]): Promise<string> => {
   return stdout.trim();
 };
 
+/** like `git`, but with extra environment variables (e.g. GIT_SSH_COMMAND) */
+export const gitWithEnv = async (
+  env: Record<string, string>,
+  ...args: string[]
+): Promise<string> => {
+  const { stdout } = await execFile("git", args, {
+    env: { ...process.env, ...env },
+  });
+  return stdout.trim();
+};
+
 /**
  * CI checkouts are usually shallow and tagless (gitlab clones with
  * depth 1; github's checkout needs fetch-depth: 0) — the local history
