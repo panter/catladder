@@ -1,3 +1,172 @@
+# Changelog
+
+## 5.0.0 (2026-08-13)
+
+### Major Changes
+
+- `customJobs` job model: `needsStages` is removed in favour of semantic requirements — declare `requires: [{ capability: "deployment" }]` instead of `needsStages: [{ stage: "deploy" }]` (capabilities: `build`, `qualityGate`, `deployment`, with `artifacts`, `from` and `strict`). Job `environment` keys are now platform-neutral: `on_stop` → `onStop`, `auto_stop_in` → `autoStopIn`, and `action` is narrowed to `start` | `stop` | `access`. Requirements that consume artifacts (`artifacts: true`) now fail pipeline generation when no job provides them, instead of silently deploying without them.
+- Cloud Run `DATABASE_URL` / `DATABASE_JDBC_URL` now default to `dbConnectionStringVariablesMode: "embedded"`: connection strings contain the component's final values instead of `$DB_USER`/`$DB_PASSWORD` placeholders, making them referenceable from other components (`${otherComponent:DATABASE_URL}`). Embedded mode also respects `vars.public` overrides of the `DB_*` vars — a component reusing another component's database via `dbBaseName` plus `DB_PASSWORD: "${owner:DB_PASSWORD}"` now gets the owner's password in its connection string (previously the component's own, usually unset, secret was embedded, producing a password-less URL). The deployed runtime values are unchanged for the common cases, since legacy placeholders were expanded at deploy time anyway — but the generated pipeline YAML changes for every project with `cloudSql`. Set `dbConnectionStringVariablesMode: "legacy"` to restore the old behaviour; that escape hatch will be removed in a future major.
+- `@catladder/pipeline` is no longer published to npm. It was always an implementation detail compiled into the CLI; `@catladder/cli` is the only published package. Projects importing `@catladder/pipeline` directly must switch to the `@catladder/cli` exports.
+- Job images are now always built from your repository (`jobImages: "repo"` behavior); the central image registry mode has been removed. Image definitions are materialized into `.catladder-generated/images/`, tagged by content hash and built by the pipeline only when missing. Projects still configured with the central mode must drop that setting and commit the materialized image definitions on the next regeneration.
+- Job images slim down. The `jobs-testing-chrome` image is removed and test/verify jobs now default to `jobs-default`: if your tests need a browser, point `test.jobImage` (or `verify.jobImage`) at an image that carries one — best the official playwright image matched to your dependency, e.g. `jobImage: "mcr.microsoft.com/playwright:v1.49.0-jammy"` — or declare a project image via `images`. The failure mode without this is a loud "browser not found" in the test job.
+  
+  `jobs-default` itself is trimmed: base `node:22` (was the EOL `node:18`) with node 20/22/24 pre-installed (was 12–24). Pre-installed node versions are a cache, not a contract — a job with an `.nvmrc` always gets its version (pre-warmed or `nvm install`ed at runtime), a job without one runs the shipped LTS base, which may bump in future minors. Pin with an `.nvmrc` if your project depends on a specific node version.
+
+### Minor Changes
+
+- Agent skills: catladder ships agent-facing documentation as skills (`catladder-config`, `catladder-builds`, `catladder-deploys`, `catladder-secrets`, `catladder-releases`, `catladder-pipelines`, `catladder-cli` with a generated command reference). They are materialized into `.claude/skills/` on every generation (cross-agent `.agents/skills/` opt-in), so AI coding agents always see documentation matching the installed catladder version.
+- `catci`, catladder's CI companion: a tree-shaken bundle materialized into `.catladder-generated/catci/` on generation, running the release, security-audit and npm-publish logic in CI with plain `node`. Job images no longer need catladder installed, and CI always runs exactly the version that generated the pipeline.
+- catenv is interactive when a human runs it: attached to a terminal it can now run the gitlab token setup and vault unlock prompts, instead of aborting with a `NonInteractiveError` mid-wizard. Under direnv, turbo or CI (stdout not a TTY) it stays non-interactive automatically, and `--non-interactive` forces that on a terminal too. In non-interactive runs a missing gitlab token now fails fast with the remedy ("run `catenv` once in a terminal") rather than starting a prompt it cannot answer, and the bitwarden unlock prompt is suppressed as well.
+- The catladder store: `.catladder-store/store.yml` is a committed, non-secret record of machine-fetched facts (currently gcloud project numbers), populated by `catladder project setup`. It makes Cloud Run URLs deterministic at generation time, so generating a pipeline no longer requires cloud access or authentication.
+- Changesets guardrails: merge-request pipelines get a `🦋 changeset check` job reporting what merging would release (changesets added by the MR, everything pending, the resulting version with a changelog preview) — as a warning-only job with an exposed artifact on GitLab (sticky MR comment when `GL_TOKEN` is available to MR pipelines) and a sticky PR comment on GitHub. The `⚠️ force create release` job now releases a patch bump even without pending changesets, as the recovery path for changes merged without one.
+- The github review workflow gains a generated **`catladder ✅`** job that succeeds exactly when every other review job succeeded (`needs:` all of them, `if: always()`, skipped counts as failed; `continue-on-error` jobs like the audit stay non-blocking). It exists to be the **one required status check** in branch protection: requiring real job names goes stale on every component change — a renamed required job blocks its own PR forever, a new component's jobs are silently not required — while this context never changes. Combined with the repo's "Allow auto-merge" setting this restores gitlab's built-in "merge when pipeline succeeds" on github.
+- GitHub Actions backend: `pipelines: { gitlab: true, github: true }` generates workflows for both CI systems in parallel from one config, including build, deploy, review-environment and release jobs. Job scripts are externalized into committed files instead of being inlined into the workflow yaml.
+- GitHub environment secrets: secrets are scoped per environment instead of per repository, so `stage` and `prod` can hold different values for the same variable. `secrets-sync-github` takes an `--env` filter to sync a single environment.
+- Manual gates on GitHub: manually gated jobs (e.g. a prod deploy) and their build closure are routed into a `workflow_dispatch` "manual tasks" workflow, where each gated job becomes a dropdown choice — GitLab's manual jobs without needing GitHub Environments (Enterprise-only approvals).
+- The `pages` deploy type now works on the github backend. The deploy job hands the built site to `actions/upload-pages-artifact` + `actions/deploy-pages`, targets the `github-pages` environment and reports the published url from the deploy step, with `pages: write` / `id-token: write` granted on the job. The repository's Pages source must be set to "GitHub Actions" once. Per-merge-request previews stay gitlab-only: github serves one site per repository and `deploy-pages` replaces all of it, so review environments log why they were skipped instead of generating a deploy job.
+- Two new agent skills guide migrations that used to be tribal knowledge: `catladder-migrate-release-method` walks a project from semantic-release to changesets (or back), including backfilling changesets for everything merged since the last release tag so the changelog and version bump stay correct — asking how to group the changes when the history is large or ambiguous. `catladder-migrate-ci-backend` guides a move between GitLab CI and GitHub Actions: the blockers to check up front, running both backends in parallel via `pipelines`, mirroring secrets, the vault and registry consequences, and the manual cleanup a cut-over needs.
+- New `npmPackage` deploy type: publishes a component to npm, deriving version and dist-tag from the pipeline trigger — tagged releases publish the tag version as `latest`, branches and merge requests publish `0.0.0-<slug>-<sha>` canaries (with `next`/`beta` branches getting their own dist-tag). Works in workspace monorepos and authenticates via the `NPM_TOKEN` secret.
+- `npmPackage` components can publish to npm without a stored token, using npm trusted publishing (OIDC). On github the publish job now declares `id-token: write`, and when the workflow can mint an OIDC token catladder skips the `.npmrc` entirely and lets npm exchange the token for short-lived credentials — provenance is attested automatically. `NPM_TOKEN` stays supported and still wins when it is set, so gitlab and untrusted workflows are unaffected.
+  
+  Publishing moved to its own `npm-publish` job image, because trusted publishing needs npm >= 11.5.1, which the `jobs-default` node does not carry.
+  
+  To use it, register the package's trusted publisher on npmjs.com with the repository and the **workflow filename** that publishes it (`catladder-release.yml` for tagged releases). npm allows one trusted publisher per package, so canary publishes from the main-branch and review workflows still need `NPM_TOKEN`.
+- New agent skill `catladder-migrate-package-manager` guides a project from yarn to pnpm (or back). It covers what catladder switches on its own once it detects the package manager — install commands, caches, docker prod install, audit and build/start defaults — and, more importantly, the repository work it does not do: the blockers to check first (meteor is yarn-only, Yarn PnP, yarn plugins), writing `pnpm-workspace.yaml` before `pnpm import` so the resolved versions survive the migration, and the fallout to fix locally rather than in a pipeline round-trip. A reference page maps every yarn command and config key to its pnpm equivalent and catalogs the behavioral traps that broke real migrations: phantom dependencies, opt-in install scripts, the root `prepare` running in `--prod` installs, the `pnpm run` banner, `sh` not expanding `**`, the missing root-script fallback, and pnpm 11 reading settings only from `pnpm-workspace.yaml`.
+- New `pages` deploy type: publishes a static site (docs, storybook, coverage reports) to GitLab Pages, with per-environment previews. Custom deploys additionally gained `artifactsPaths` and `allowFailure`.
+- pnpm support for node builds: the package manager is autodetected (the `packageManager` field in package.json, then the lockfile, falling back to yarn) and can be pinned with the new top-level `packageManager: "pnpm" | "yarn"`. Install commands, the default build/lint/test/audit commands, the docker production install (`pnpm install --prod --frozen-lockfile --filter <component>...`, the equivalent of `yarn workspaces focus`) and the CI caches all follow the detected manager. pnpm projects cache a project-local `.pnpm-store` (keyed per pnpm major, since store formats change on majors) alongside a lockfile-keyed `node_modules` cache; workspace manifests, `pnpm-workspace.yaml` and patch files travel into the docker build context as a single layer, and job images ship pnpm. Yarn projects generate byte-identical pipelines. The `meteor` build type remains yarn-only.
+- `catladder project doctor` detects drift between `catladder.ts` and the actual infrastructure — missing or misconfigured access tokens, service accounts, IAM bindings, registries, namespaces and store entries — and reports what to run to fix each finding.
+- Project-declared job images: declare Docker images under `images` in catladder.ts and reference them in any `jobImage` field via `{ image: "<name>" }` — build, test, custom/pages deploy, and verify jobs alike. An image is declared either with a directory (`{ dir }`, used in place — nothing is copied into `.catladder-generated`) or with an inline Dockerfile (`{ dockerfile: string | string[] }`, materialized into `.catladder-generated/images/project/<name>/Dockerfile`); both support `context`, `buildArgs` and `hashExtraPaths`. Catladder generates a `🐳 image <name>` job that builds the image content-hashed into the project registry under `job-images/` and skips when the tag already exists, on both the GitLab and GitHub backends. Catladder's own built-in image build jobs are renamed from `🐳 job image <name>` to `🐳 catladder image <name>` to tell the two apart.
+- Configurable release method: `releases.method` chooses between `"semantic-release"` (default, commit-message driven) and `"changesets"` (intentional releases declared in `.changeset/*.md`, version derived from git tags — no root package.json required). Both methods share the same release job, changelog maintenance and mandatory security-audit gate.
+- `requiresInstall` replaces `requiresYarnInstall` on the `custom` and `pages` deploy configs, since the install now runs with whichever package manager the project uses. `requiresYarnInstall` keeps working as a deprecated alias with identical behavior.
+- Per-pipeline-type `runnerVariables`: `pipelines: { gitlab: { runnerVariables: {…} } }` sets CI variables for one backend only, for tuning that differs between GitLab runners and GitHub runners (memory requests, concurrency limits) without leaking into the other.
+- Scoped, non-interactive secrets commands: `catladder secrets pull`, `push`, `set` and `list` manage individual secrets or whole environments from the command line without prompts — scriptable in CI and usable by AI coding agents, unlike the interactive `project config-secrets` flow.
+- Secrets vault: the source of truth for secrets is configurable (`gitlab` for the legacy behavior, `bitwarden`), with a local cache and mirroring into CI. Vault values are classified as secret or variable, so non-sensitive configuration is no longer masked and hidden like a password.
+- `project setup` now configures github merge gating, and `project doctor` verifies it. A fresh github repository lets PRs merge while checks are still running and never shows the auto-merge button — gitlab ships this behavior built-in. Setup enables auto-merge (+ delete-merged-branches) and adds a branch protection rule on the default branch requiring the generated `catladder ✅` check, merging non-destructively into any existing protection. Admins can still bypass per PR. On github-only projects, setup now also skips the gitlab-specific provisioning (access token, agent webhooks) instead of failing.
+- The generated yarn audit job actually audits the project. `yarn npm audit` checks only the **current** workspace's **direct** dependencies, so in a monorepo it checked the root manifest — which usually has no production dependencies — and the 🛡 audit job passed without looking at a single app. It now runs with `--all --recursive` (every workspace, transitive dependencies), which is what `pnpm audit --prod` and classic `yarn audit` do on their own; classic additionally gets `--groups dependencies` so `--environment production` and its behaviour match. Expect a previously green audit job on a yarn monorepo to start reporting long-standing vulnerabilities — they were always there, nothing was checking.
+  
+  The severity threshold is configurable now: `audit: { level: "high" }` on a build config (`info` | `low` | `moderate` | `high` | `critical`, default `critical`), translated to each package manager's own flag — `pnpm audit --audit-level`, `yarn npm audit --severity`, classic `yarn audit --level`. A custom `audit: { command }` still wins over both.
+- pnpm projects now run CI without any dependency cache, and the pnpm
+  store no longer travels into docker images.
+  
+  Measured on a 3800-package monorepo, with every configuration run as
+  jobs in the same pipeline so they shared fleet conditions:
+  
+  - **node_modules cache**: restoring it (1.29 GB, 348k files) cost ~125s
+    to save 6s of install; writing it cost ~190s more.
+  - **store cache**: on gitlab a job with the store took 74s against 35s
+    with no cache at all — the restore alone (53s) exceeded a full
+    from-registry install (30-42s), because the runner zips the store file
+    by file. On github (single zstd stream) it was a wash: ~60s vs ~64s.
+  - **store in the docker image**: the worst of the three. The store is
+    copied into a layer *below* node_modules, so pnpm cannot hardlink
+    across the overlay boundary and copies every package instead. The
+    in-image install was *slower* that way (28.4s vs 9.6s from the
+    registry), while adding 3 GB to the build context and to the shipped
+    image: build 339s → 27s, image 3.35 GB → 0.73 GB.
+  
+  So pnpm builds now: install with no cache, use pnpm's own store location
+  instead of a project-local `.pnpm-store` (nothing to cache, nothing to
+  leak into a build context), and let the docker `--prod` install download
+  from the registry — into scratch space that is dropped in the same layer,
+  so packages ship once.
+  
+  Generated pipelines lose all pnpm `cache:` blocks and the
+  `COPY .pnpm-store` line. Yarn caching is unchanged.
+- Manual releases can now be queued while the pipeline is still running: the `create release` button is clickable from the first second of a main-branch pipeline and the release then runs automatically as soon as every other job succeeded (clicking after a green pipeline releases right away; a failed pipeline skips the queued release). On GitLab this is a no-op button job plus an automatic `🚀 release once pipeline succeeds` executor; on GitHub releasing is the new `🚀 catladder create release` dispatch workflow (with forcing as a checkbox), which queues a marker that the new `🛠️ catladder release on green` workflow picks up when the main workflow completes — step summaries explain each run. The GitHub `catladder manual tasks` workflow is replaced by per-kind dispatch workflows (`🚀 create release`, `▶️ deploy`, `🛑 stop`, `↩️ rollback`), each a first-class Actions entry with a short same-kind dropdown; the pipeline workflows get a `🛠️` name prefix so the triggerable workflows sort to the top of the Actions sidebar. Review apps still stop automatically when their pull request closes, but that workflow (`🛑 catladder stop review app`) can now also be dispatched with a PR number to tear a review app down while its pull request is still open (gitlab parity). Side effect on GitLab: main-branch pipelines now end as *passed* (with a skipped executor) instead of *blocked* when nobody clicks the release button (the manual release jobs carry `allow_failure: true` now).
+
+### Patch Changes
+
+- The changeset check's "how to add one" hint now names the project's own
+  package manager, instead of always saying `yarn changeset` — which does
+  not exist in a pnpm project. Same for the release job's "nothing to
+  release" message.
+- Cloud Run: keep the generated url resolvable by shortening long service names.
+  
+  `ROOT_URL`/`ROOT_URL_INTERNAL` for a cloud run service are its deterministic url
+  `https://<service>-<projectNumber>.<region>.run.app`. Cloud run only serves that
+  url while the hostname's first dns label — service name plus project number —
+  stays within the 63 characters dns allows; past that it falls back to a legacy
+  url built from a random identifier that cannot be computed in advance.
+  
+  Until now catladder generated the deterministic url regardless, so a component
+  whose name pushed the label over 63 characters got a hostname that can never
+  resolve, with no warning at generation time. Anything consuming it failed with
+  an opaque dns error — a cloud tasks queue targeting such a service retried
+  forever with `HTTP status code 0`.
+  
+  The component part of the service name is now shortened just enough to fit. The
+  env and review slug parts stay intact, and names that already fit are never
+  touched, so existing deployments keep their names and generated output is
+  unchanged for them. Because review environments resolve their slug at runtime
+  (`mr<iid>`/`pr<number>`), 8 characters are reserved for it — a name can
+  therefore fit `dev`/`prod` and still be shortened for `review`.
+  
+  Two cases fail generation with a clear error instead of being shortened: when
+  two components would end up with the same service name, and when the fixed
+  parts (customerName, appName, env, project number) already leave no usable room
+  for the component name.
+- The changeset check no longer marks its GitHub job as failed when a pull request adds no changeset. GitHub has no yellow "allow_failure" state like GitLab, so the non-blocking nudge showed up as a red ❌ with "Process completed with exit code 1", which reads like something broke. On GitHub the job now stays green and reports a warning annotation plus the report in the run summary (the sticky PR comment is unchanged); on GitLab the job still turns yellow.
+- GitHub: merge gating no longer blocks the release job's push.
+  
+  `project setup` used to require the `catladder ✅` aggregate check via
+  classic branch protection. The release job pushes the release commit and
+  tag straight to the default branch with the workflow token — and that
+  fresh commit can never have a passing check yet, so catladder's own
+  gating rejected its own release (`GH006: Protected branch update
+  failed`).
+  
+  Setup now configures the gating as a repository ruleset
+  (`catladder merge gating`) instead: same required check for PRs and
+  humans, plus a bypass for the GitHub Actions app so the release job can
+  push. Classic-protection gating from earlier versions is migrated away
+  automatically (only the aggregate check is touched; other protection
+  settings are preserved). `project doctor` verifies the ruleset and flags
+  the legacy setup, and the release job now explains the fix when its push
+  is rejected by branch protection.
+- GitHub: the release job pushes with a provisioned deploy key, making it
+  compatible with merge gating.
+  
+  The previous fix put the required `catladder ✅` check into a ruleset
+  with a bypass for the GitHub Actions app — but github refuses the
+  built-in actions app on bypass lists by design (any collaborator could
+  push anywhere by authoring a workflow), so the release push was still
+  blocked.
+  
+  `project setup` now provisions a **release deploy key**: an ed25519
+  write deploy key on the repository, its private half stored as the
+  `CATLADDER_RELEASE_KEY` actions secret, and a deploy-key bypass on the
+  merge-gating ruleset. The generated release jobs hand the secret to
+  catci, which pushes the release commit and tag over ssh with it — the
+  only actor that can pass the gating. Deploy keys are repo-scoped, only
+  admins can add them, and they never expire (no yearly renewal like
+  gitlab's `GL_TOKEN`). Without the secret the job falls back to pushing
+  with the workflow token, which keeps working for repositories without
+  merge gating.
+  
+  Because deploy-key pushes trigger workflows (unlike workflow-token
+  pushes), the release commit now carries `[skip ci]` on github — the
+  explicitly dispatched taggedRelease workflow stays the only release
+  run, and the release commit no longer triggers a redundant main
+  pipeline. On gitlab the commit message is unchanged (the tag pipeline
+  must fire natively there).
+  
+  `project doctor` verifies the key, the secret and the ruleset bypass,
+  and the changesets job image now ships an ssh client. `project setup`
+  also no longer tries to set the gitlab project topic on github-only
+  projects (it crashed with "not found" before reaching the github
+  steps).
+- Faster pipelines through better caching: node caches are keyed by lockfile content on GitHub, the yarn cache download is skipped entirely when `node_modules` hits exactly, and lint/test jobs pull the node caches without pushing them back.
+- Disabling a pipeline backend now cleans up after itself. `catenv` only ever removed the files of the backends that were still enabled, so switching `pipelines` from gitlab to github left `.gitlab-ci.yml` and `.catladder-generated/gitlab/` behind — and a stale `.gitlab-ci.yml` keeps running a stale pipeline. A full generation now also runs the cleanup of every backend that is *not* enabled. A `.gitlab-ci.yml` is only deleted when it carries catladder's generated-file marker, so a hand-maintained one is left untouched.
+- Fixes across both backends: fully-literal dotenv values are no longer bash-escaped, in-workspace component jobs use the workspace's cache slots, hidden files are included in GitHub artifacts, npm publish authentication works in workspace monorepos, cross-component secret references are injected into GitHub job env, stale materialized image definitions are cleaned on every generation, an invalid store file is treated as missing instead of crashing, and Cloud Run database-delete retries are capped instead of looping forever.
+- `allowFailure` now works on the github backend. The flag was lowered for gitlab only and silently dropped for github, so a job marked as non-blocking failed the whole workflow — and with it every job depending on it. The `pages` deploy type is the worst case: it is `allowFailure` by default precisely so a broken site publish cannot block the pipeline, but on github a failed publish also skipped the release job. It now lowers to `continue-on-error`.
+- catladder no longer assumes it runs against one specific GitLab instance. The host was hardcoded as `https://git.panter.ch` in the security-audit commands, in catci, in the `project ci` job-trace call and in the `gitlabUrl` of the generated semantic-release config — so on any other GitLab those calls silently talked to the wrong server. They now resolve the instance from `CI_SERVER_URL` in CI and from the git remote locally, and the semantic-release GitLab plugin derives its url from the CI environment like it is meant to.
+  
+  Also removes the GitLab Visual Review toolbar from the kubernetes helm chart: it was off by default, hardcoded the same host, and the GitLab feature behind it was removed upstream in 17.0.
+- Kubernetes deploys now create a working image-pull secret on the github backend. The `kubernetesCreateSecret` script read `CI_REGISTRY_USER` / `CI_REGISTRY_PASSWORD` directly, which do not exist on GitHub Actions — the secret was created with empty credentials and pulls from a private ghcr package failed. The deploy job now passes the credentials as `DOCKER_REGISTRY_USER` / `DOCKER_REGISTRY_PASSWORD`, resolved per backend through the CI-variable abstraction (new `registryPassword`), so gitlab keeps the exact same values it used before.
+- Two pnpm detection fixes. Standalone (non-workspace) node components generated `yarn lint` / `yarn test` for their lint and test jobs regardless of the detected package manager — they now follow it, like the build and start commands and like workspace builds already did. And a `packageManager` field written by `corepack use` (`pnpm@11.6.0+sha512.…`) had its integrity suffix carried into `npm install -g pnpm@<version>` in the generated docker build, where it is not a valid npm spec; the suffix is now stripped where the field is parsed.
+- The queued-release executor (`🚀 release once pipeline succeeds`) now only `needs:` the sink jobs of the main-branch pipeline — the deploy/verify tips and terminal quality jobs — instead of every automatic job. `needs:` is transitive, so the coverage is identical (a failed ancestor still skips its descendants and with them the executor), but the needs list stays far below GitLab's 50-entry cap: large multi-component pipelines that previously fell back to the legacy after-the-pipeline release button get the click-any-time queueing back.
+- The semantic-release release method runs semantic-release v25 in a self-contained, exactly-pinned job image, dropping the previously required `@semantic-release/git` fork.
+
 ## [4.7.1](https://git.panter.ch/catladder/catladder/compare/v4.7.0...v4.7.1) (2026-07-28)
 
 
