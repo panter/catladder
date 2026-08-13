@@ -40,10 +40,20 @@ fi
 echo "doing semantic release"
 
 if [ "$GITHUB_ACTIONS" = "true" ]; then
-  # the gitlab publish plugin would fail on github; skip it (the tag
-  # and changelog commit still happen, only the gitlab release entry
-  # is gitlab-specific)
-  PUBLISH_PLUGIN=""
+  # the github counterpart of the gitlab plugin below: it creates the
+  # entry on the releases page with the generated notes. Everything
+  # beyond that is switched off on purpose — commenting on the
+  # pull requests/issues of a release and labelling them would need
+  # `issues: write` / `pull-requests: write` on the release job, which
+  # only exists to release.
+  PUBLISH_PLUGIN=',
+    ["@semantic-release/github", {
+      "successComment": false,
+      "failComment": false,
+      "failTitle": false,
+      "labels": false,
+      "releasedLabels": false
+    }]'
 else
   # no gitlabUrl: the plugin derives it from the CI-provided variables
   # of the running instance. It used to be hardcoded to panter's gitlab,

@@ -52,6 +52,11 @@ workflows the same way (`▶️ catladder deploy`, `⏹️ catladder stop`,
 
 ## `method` — how the version is decided
 
+Whichever method runs, the release ends the same way: a `vX.Y.Z` tag, a
+`CHANGELOG.md` entry, a `chore(release): <version>` commit, and an
+entry on the releases page of the git host (gitlab `/-/releases`,
+github `/releases`) carrying the release notes.
+
 ### `semantic-release` (default)
 The version is derived automatically from **conventional commit
 messages** since the last release (`fix:` → patch, `feat:` → minor,
@@ -63,8 +68,10 @@ Developers declare changes intentionally as **`.changeset/*.md` files**
 (the official changesets format: a bump type + a human-written summary).
 The release job consumes all pending changesets, takes the highest bump,
 computes the next version from the last `v*` git tag, writes the
-changelog, commits `chore(release): <version>`, and pushes the tag. An
-empty `.changeset/` folder means there is nothing to release.
+changelog, commits `chore(release): <version>`, pushes the tag and
+creates the release entry on the git host (gitlab `/-/releases`,
+github `/releases`) with the changelog as its description. An empty
+`.changeset/` folder means there is nothing to release.
 
 Add a changeset by creating `.changeset/<name>.md`:
 
@@ -121,6 +128,13 @@ the `security` commands in the `catladder-cli` reference.
   MR adding a changeset describing the accumulated work.
 - Wrong version bump → check commit types (semantic-release) or the bump
   levels in the changeset files (changesets).
+- Tag pushed but nothing on the releases page → with `changesets` the
+  entry is created via the host api after the push and never fails the
+  job (the release itself is done); look for the `could not create the
+  release entry` warning at the end of the release job log. On gitlab
+  it needs `GL_TOKEN` (`catladder project renew-token`). Releases
+  tagged before catladder created entries have none — that is not fixed
+  retroactively, create them by hand from the tag.
 - Inspect the job with `yarn catladder project ci job-log` (see the
   `catladder-cli` skill).
 

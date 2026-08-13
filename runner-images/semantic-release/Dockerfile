@@ -21,6 +21,7 @@ RUN yarn global add \
     @semantic-release/git@11.0.0 \
     @semantic-release/changelog@7.0.0 \
     @semantic-release/gitlab@13.3.3 \
+    @semantic-release/github@12.0.9 \
     @semantic-release/exec@7.1.0
 
 RUN mkdir -p /scripts
