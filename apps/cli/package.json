@@ -1,0 +1,126 @@
+{
+  "name": "@catladder/cli",
+  "description": "Panter cli tool for cloud CI/CD and DevOps",
+  "author": "Marco Wettstein <maw@panter.ch>",
+  "homepage": "https://panter.github.io/catladder/docs",
+  "bugs": "https://github.com/panter/catladder/issues",
+  "readme": "https://github.com/panter/catladder/blob/main/apps/cli/README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/panter/catladder.git",
+    "directory": "apps/cli"
+  },
+  "keywords": [
+    "GitLab",
+    "cloud",
+    "cli",
+    "gitlab-ci",
+    "ci/cd",
+    "pipeline",
+    "deployment",
+    "devops",
+    "automation",
+    "typescript"
+  ],
+  "contributors": [
+    {
+      "name": "Marco Wettstein",
+      "email": "maw@panter.ch"
+    },
+    {
+      "name": "Michael Leu",
+      "email": "leu@panter.ch"
+    },
+    {
+      "name": "Luboš Matejčík",
+      "email": "lma@panter.ch"
+    },
+    {
+      "name": "Kaspar Vollenweider",
+      "email": "vok@panter.ch"
+    },
+    {
+      "name": "Silvan Adrian",
+      "email": "sia@panter.ch"
+    },
+    {
+      "name": "Stefan Bakocs",
+      "email": "stb@panter.ch"
+    },
+    {
+      "name": "Lukas Brezina",
+      "email": "brl@panter.ch"
+    }
+  ],
+  "license": "MIT",
+  "version": "0.0.0",
+  "scripts": {
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
+    "test": "pnpm run lint",
+    "build": "pnpm run build:compile && pnpm run build:bundle && pnpm run build:copy-images && pnpm run build:skill-cli-reference && pnpm run build:copy-skills",
+    "build:bundle": "./scripts/bundle",
+    "build:copy-images": "rm -rf dist/runner-images dist/bundles/runner-images && cp -R ../../runner-images dist/runner-images && cp -R ../../runner-images dist/bundles/runner-images",
+    "build:copy-skills": "rm -rf dist/skills dist/bundles/skills && cp -R ../../skills dist/skills && cp -R ../../skills dist/bundles/skills",
+    "build:skill-cli-reference": "tsx src/scripts/generateCliSkillReference.ts",
+    "build:compile": "tsc && tsc-alias",
+    "dev:own-catenv": "cd ../../ && node apps/cli/bin/catenv-dev",
+    "build:watch": "tsc-watch --onSuccess \"pnpm run dev:own-catenv\""
+  },
+  "bin": {
+    "catenv": "./bin/catenv",
+    "catladder": "./bin/catladder"
+  },
+  "types": "dist/apps/cli/src/index.d.ts",
+  "main": "dist/apps/cli/src/index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@catladder/bash": "workspace:*",
+    "@catladder/pipeline": "workspace:*",
+    "@changesets/parse": "^0.4.3",
+    "@gitbeaker/core": "^39.28.0",
+    "@gitbeaker/rest": "^39.28.0",
+    "@inquirer/prompts": "^8.4.3",
+    "@kubernetes/client-node": "^0.16.2",
+    "@tsconfig/node14": "^1.0.1",
+    "@types/child-process-promise": "^2.2.6",
+    "@types/common-tags": "^1.8.4",
+    "@types/fs-extra": "^5.0.4",
+    "@types/lodash-es": "^4.17.12",
+    "@types/memoizee": "^0.4.2",
+    "@types/node-fetch": "^2.6.11",
+    "@types/request": "^2.48.12",
+    "@types/tmp": "^0.2.3",
+    "@types/update-notifier": "^2.5.0",
+    "@types/websocket": "^0.0.40",
+    "@types/yargs": "^17.0.33",
+    "child-process-promise": "^2.2.1",
+    "clipboardy": "^2.0.0",
+    "command-exists-promise": "^2.0.2",
+    "commander": "^14.0.3",
+    "common-tags": "^1.8.2",
+    "connection-string-parser": "^1.0.4",
+    "date-fns": "^3.6.0",
+    "fs-extra": "^7.0.1",
+    "jiti": "^2.7.0",
+    "lodash-es": "^4.18.1",
+    "memoizee": "^0.4.17",
+    "node-fetch": "^2.3.0",
+    "open": "^8.4.0",
+    "path-equal": "1.2.5",
+    "prettier": "^3.3.3",
+    "slugify": "^1.6.6",
+    "tmp-promise": "^2.0.2",
+    "ts-results-es": "^4.2.0",
+    "tsc-alias": "^1.8.16",
+    "tsc-watch": "^7.2.0",
+    "typescript": "^5.4.5",
+    "yaml": "^2.5.0",
+    "zod": "^4.4.3"
+  },
+  "dependencies": {
+    "tsx": "^4.21.0"
+  }
+}

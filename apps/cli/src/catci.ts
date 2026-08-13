@@ -1,0 +1,203 @@
+/**
+ * catci — catladder's CI companion.
+ *
+ * A minimal, treeshaken bundle of the CLI commands that CI jobs need.
+ * It is materialized into `.catladder-generated/catci/` by pipeline
+ * generation, so jobs can run it with plain `node` — always the exact
+ * version that generated the pipeline, with no install step and no
+ * catladder baked into job images.
+ *
+ * Deliberately no CLI framework: the surface is tiny and the callers
+ * are generated scripts, not humans.
+ */
+import { Gitlab } from "@gitbeaker/rest";
+import {
+  evaluateSecurityAudit,
+  makeSecurityAuditOverview,
+} from "./security/evaluateSecurityAudit";
+import {
+  createSecurityAuditMergeRequest,
+  SECURITY_AUDIT_FILE_NAME,
+} from "./security/createSecurityAuditMergeRequest";
+import {
+  changesetsReleaseJob,
+  dispatchTaggedReleaseWorkflow,
+} from "./release/changesetsReleaseJob";
+import { changesetCheckJob } from "./release/changesetCheckJob";
+import {
+  githubQueueCheckJob,
+  githubQueuedGuardJob,
+} from "./release/githubQueuedRelease";
+import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
+import { getGitlabHostUrl } from "./utils/gitlabHost";
+
+const USAGE = `catci — catladder CI companion
+
+usage:
+  catci security-audit ci-job <path> <gitlab-token> <main-branch> <project-id> <user-id>
+      evaluates ${SECURITY_AUDIT_FILE_NAME}; creates a gitlab MR with the
+      audit template when the document is missing (and exits 1)
+
+  catci security-audit check <path>
+      evaluates ${SECURITY_AUDIT_FILE_NAME}; exits 1 with instructions when
+      the document is missing or unanswered (no remediation — works on
+      any CI, including github)
+
+  catci release changesets
+      consumes pending .changeset/*.md files: computes the next version
+      from the last v* tag, writes the changelog, commits, tags and
+      pushes (no-op when no changesets are pending)
+
+  catci release changeset-check
+      MR/PR pipelines: reports which changesets the merge request adds,
+      what is pending and what version merging would release (job log,
+      changeset-report.md, sticky MR/PR comment where a token allows);
+      exits 1 when the merge request adds no changeset
+
+  catci release dispatch-tagged-workflow <tag>
+      github only: dispatches the generated taggedRelease workflow for
+      the tag (tags pushed with the job token don't trigger it)
+
+  catci release github-queue-check
+      github only, first step of the manual create-release task:
+      releases right away when the main workflow run for HEAD is green
+      (queued=false step output), queues the release when it is still
+      running (queued=true, marker ref for the release-on-green
+      workflow), fails when it concluded red
+
+  catci release github-queued-guard <head-sha> <conclusion>
+      github only, guard of the release-on-green workflow: consumes the
+      queue marker when it matches the completed main run and decides
+      whether the release step runs (release=true step output)
+
+  catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]
+      npmPackage deploy job: derives version + dist-tag from the
+      pipeline trigger (tagged release -> tag version @latest; branch/MR
+      -> 0.0.0-<slug>-<sha> canary, with next/beta branches publishing
+      under their own dist-tag), stamps package.json and runs npm
+      publish (authenticated via the NPM_TOKEN secret)
+`;
+
+const fail = (message: string): never => {
+  console.error(message);
+  process.exit(1);
+};
+
+/**
+ * shared gate: evaluates the audit document and prints the overview.
+ * Returns null when the document could not be evaluated (missing or
+ * unparseable) so the caller can decide on remediation.
+ */
+const evaluateGate = async (path: string) => {
+  const evaluation = await evaluateSecurityAudit({ path });
+  if (evaluation.isErr()) {
+    return null;
+  }
+  if (evaluation.value.score.answeredTopics === 0) {
+    fail(
+      `audit document has no answered topics\n` +
+        `please answer security topics in ${SECURITY_AUDIT_FILE_NAME} by adding responsible people and check/cross in the table`,
+    );
+  }
+  console.log(makeSecurityAuditOverview(evaluation.value));
+  return evaluation.value;
+};
+
+const securityAuditCheck = async (path: string) => {
+  const evaluation = await evaluateGate(path);
+  if (!evaluation) {
+    fail(
+      `could not evaluate ${SECURITY_AUDIT_FILE_NAME}\n` +
+        `please add a ${SECURITY_AUDIT_FILE_NAME} security audit document to the repository ` +
+        `(run \`catladder security audit create\` locally to generate the template)`,
+    );
+  }
+};
+
+const securityAuditCiJob = async (
+  path: string,
+  token: string,
+  mainBranch: string,
+  projectId: string,
+  userId: string,
+) => {
+  const evaluation = await evaluateGate(path);
+  if (evaluation) {
+    return;
+  }
+  console.log("could not evaluate security audit document");
+  console.log("creating new merge request with security audit template...");
+
+  const api = new Gitlab({ host: await getGitlabHostUrl(), token });
+  const mr = await createSecurityAuditMergeRequest({
+    api,
+    mainBranch,
+    projectId,
+    userId: parseInt(userId),
+  });
+
+  if (mr.isErr()) {
+    fail(
+      `could not create merge request with security audit template: ${mr.error}`,
+    );
+    return;
+  }
+  console.log("security audit merge request created successfully");
+  console.log(
+    `please finish the MR by updating ${SECURITY_AUDIT_FILE_NAME}: ${mr.value.web_url}`,
+  );
+  process.exit(1);
+};
+
+const main = async () => {
+  const [group, command, ...args] = process.argv.slice(2);
+  if (group === "security-audit" && command === "ci-job" && args.length === 5) {
+    const [path, token, mainBranch, projectId, userId] = args;
+    return securityAuditCiJob(path, token, mainBranch, projectId, userId);
+  }
+  if (group === "security-audit" && command === "check" && args.length === 1) {
+    return securityAuditCheck(args[0]);
+  }
+  if (group === "release" && command === "changesets" && args.length === 0) {
+    return changesetsReleaseJob();
+  }
+  if (
+    group === "release" &&
+    command === "changeset-check" &&
+    args.length === 0
+  ) {
+    return changesetCheckJob();
+  }
+  if (
+    group === "release" &&
+    command === "dispatch-tagged-workflow" &&
+    args.length === 1
+  ) {
+    return dispatchTaggedReleaseWorkflow(args[0]);
+  }
+  if (
+    group === "release" &&
+    command === "github-queue-check" &&
+    args.length === 0
+  ) {
+    return githubQueueCheckJob();
+  }
+  if (
+    group === "release" &&
+    command === "github-queued-guard" &&
+    args.length === 2
+  ) {
+    return githubQueuedGuardJob(args[0], args[1]);
+  }
+  if (group === "publish" && command === "npm") {
+    const options = parseNpmPublishArgs(args);
+    if (options) {
+      return npmPublishJob(options);
+    }
+  }
+  fail(USAGE);
+};
+
+main().catch((error) => {
+  fail(`catci failed: ${error instanceof Error ? error.message : error}`);
+});

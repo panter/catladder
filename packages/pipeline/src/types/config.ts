@@ -1,0 +1,401 @@
+import type { BuildConfig } from "../build/types";
+import type { DeployConfig } from "../deploy/types";
+
+import type { CatladderJobSpec } from "./jobs";
+import type { ComponentContext, PackageManagerType } from "./context";
+import type { PartialDeep } from "./utils";
+import type { PipelineType, WorkspaceBuildConfig } from "..";
+import type { AgentConfig } from "./agent";
+import type { Hooks } from "./hooks";
+import type { ReleaseConfig } from "./release";
+import type { CatladderStore } from "../store";
+import type { AgentSkillsConfig } from "../agentSkills/types";
+import type { ProjectImageConfig } from "../customImages/projectImages";
+import type { VerifyConfig } from "../verify/types";
+
+export const ALL_PIPELINE_TRIGGERS = [
+  "mainBranch",
+  "mr",
+  "taggedRelease",
+] as const;
+export type PipelineTrigger = (typeof ALL_PIPELINE_TRIGGERS)[number];
+
+/**
+ * all env types with their trigger.
+ * Each env type has a default env with the same name which is always included
+ */
+export const ENV_TYPES = {
+  dev: {
+    triggers: ["mainBranch"],
+  },
+  review: {
+    triggers: ["mr"],
+  },
+  stage: {
+    triggers: ["taggedRelease"],
+  },
+  prod: {
+    triggers: ["taggedRelease"],
+  },
+  local: {
+    triggers: [],
+  },
+} as const;
+
+/**
+ *
+ * @param trigger a trigger
+ * @returns array of env types for that trigger. this is also the list of default envs
+ */
+export const getEnvTypesByTrigger = (trigger: PipelineTrigger) =>
+  Object.entries(ENV_TYPES)
+    .filter(([, e]) =>
+      (e.triggers as readonly PipelineTrigger[]).includes(trigger),
+    )
+    .map(([e]) => e as EnvType);
+
+export const DEFAULT_ENVS = Object.keys(ENV_TYPES);
+export const DEFAULT_ENV_TYPES = DEFAULT_ENVS as EnvType[];
+export type EnvType = keyof typeof ENV_TYPES;
+
+export const isKnowEnvType = (env: string): env is EnvType => {
+  return env in ENV_TYPES;
+};
+
+export type EnvVars = {
+  /**
+   * public env vars (means: they are checked in the repo).
+   *
+   * You can reuse env vars in other vars using ${OTHER_VAR}.
+   * You an reuse other public env vars, or secret env vars
+   *
+   * EXAMPLE: A_VAR: "the other var is ${OTHER_VAR}"
+   *
+   * You can reuse vars from other components in the same project using ${componentName:variableName}
+   * EXAMPLE: A_VAR: "the other var is ${api:OTHER_VAR}"
+   */
+
+  public?: Record<string, any>;
+  /**
+   * env vars whose values live in the vault (managed with catladder/cli).
+   *
+   * Preferred form is a record with the kind per key:
+   * - "secret": sensitive — masked where the platform supports it
+   * - "variable": vault-stored but not sensitive (ids, host suffixes) —
+   *   never masked, so log links stay clickable and environment urls work
+   * - an object for additional per-key config
+   *
+   * EXAMPLE: secret: { API_KEY: "secret", PROJECT_ID: "variable" }
+   *
+   * The plain string[] form (all keys secret) is deprecated.
+   */
+  secret?: string[] | Record<string, SecretVarKind | SecretVarConfig>;
+};
+
+export type SecretVarKind = "secret" | "variable";
+
+export type SecretVarConfig = {
+  kind?: SecretVarKind;
+  /** hidden env vars are not shown in config-secrets */
+  hidden?: boolean;
+};
+
+export type DefaultEnvConfig = {
+  /**
+   * how the app is deployed
+   */
+  deploy: DeployConfig | false;
+  /**
+   * how the app is built and its runtime
+   */
+  build: BuildConfig | false;
+  /**
+   * environment variables
+   */
+  vars?: EnvVars;
+
+  /**
+   * post-deploy verification: runs a job in the `verify` stage after the deploy,
+   * e.g. an e2e test suite against the freshly deployed environment.
+   *
+   * Runs in all deployed envs by default, disable per env with `verify: false`
+   */
+  verify?: VerifyConfig | false;
+};
+
+export type DevLocalEnvConfig = {
+  vars?: EnvVars;
+  /**
+   * port that is used. If not set, 3000 is used.
+   * set false to not set a port at all
+   */
+  port?: number | false;
+};
+type AddOverrideFunction<T> = {
+  [K in keyof T]:
+    | T[K] // either accept the value
+    | ((defaultValue: T[K]) => T[K]) // or function that returns the value
+    | (T[K] extends Record<string, unknown> | undefined // unknown is important, see https://stackoverflow.com/questions/71422178/typescript-record-accepts-array-why
+        ? AddOverrideFunction<T[K]>
+        : never); // or a nested object
+};
+
+type EnvConfigWithOverride<E extends EnvType = EnvType> = AddOverrideFunction<
+  EnvConfig<E>
+>;
+export type EnvConfig<E extends EnvType = EnvType> = {
+  /**
+   * type of the env (stage, prod, review, dev)
+   */
+  type?: E;
+  /**
+   * host that is used. If not set, a "canonical" url is created
+   */
+  host?: string;
+} & PartialDeep<DefaultEnvConfig>;
+
+export type EnvConfigWithComponent = EnvConfig<EnvType> & ComponentConfig;
+
+export type CustomEnv = EnvConfigWithOverride & {
+  type: EnvType;
+};
+export type Env<C extends ConfigProps = never> = {
+  /**
+   * local is a special env that is only used in local development
+   */
+  local?: AddOverrideFunction<DevLocalEnvConfig>;
+
+  dev?: EnvConfigWithOverride<"dev"> | false;
+  stage?: EnvConfigWithOverride<"stage"> | false;
+  review?: EnvConfigWithOverride<"review"> | false;
+  prod?: EnvConfigWithOverride<"prod"> | false;
+  // unfortunatly, typescript does not properly support objects with a mix of known and unknown properties.
+  // for backwards compatiblity we allow unknown props, but we cannot type it (typescript problem)
+  // however, we now support providing custom envs through a generic parameter of `Config`
+} & Record<C["CustomEnvs"], CustomEnv> &
+  Record<string, any>;
+export type ComponentConfig<C extends ConfigProps = never> = {
+  /**
+   * specify environment configurations
+   */
+  env?: Env<C>;
+  /**
+   * the directory of the component (e.g. where the package.json or similar is located). You can set "." if you only have one app.
+   */
+  dir: string;
+
+  /**
+   * add custom jobs. Can be an array or a function that receives the context and returns an array of jobs.
+   * For convenience, all env vars are injectd as variables
+   *
+   * customJobs are a last-resort escape hatch. Prefer a first-class
+   * config option whenever one exists.
+   *
+   * Please raise an issue on
+   * https://github.com/panter/catladder/issues
+   * to let us know about why you need to use custom jobs.
+   * This feedback will help us to generalize use cases
+   */
+  customJobs?:
+    | CatladderJobSpec[]
+    | ((context: Omit<ComponentContext, "customJobs">) => CatladderJobSpec[]);
+
+  /**
+   * whether to create a .env
+   *
+   * Be careful, this will overwrite any existing .env file!
+   *
+   * if set to true it will create .env locally and during build.
+   * Be careful: the .env file usually ends up in the build artifacts.
+   * Use this for apps and clients where env does not contain any secrets
+   *
+   *
+   * if set to "local" it will only create .env file locally.
+   * Use this in combination with @dotenvx/dotenvx or node 20 to start apps locally with .env files
+   * During build and runtime, it relies on the env vars set in the environment
+   *
+   * @defaultValue true
+   *
+   */
+  dotEnv?: boolean | "local";
+  /**
+   * whether to create a env.d.ts localy and during build jobs
+   *
+   * @defaultValue true
+   */
+  envDTs?: boolean;
+} & DefaultEnvConfig;
+
+export type ConfigProps = {
+  CustomEnvs: string;
+};
+
+/**
+ * per-pipeline-type options
+ */
+export type PipelineOutputOptions = {
+  /**
+   * the git remote that points to this CI system's repository.
+   * Relevant during migrations, where e.g. gitlab is `origin` and
+   * github is a second remote.
+   *
+   * defaults to "origin"
+   */
+  gitRemote?: string;
+
+  /**
+   * variables applied to every job of THIS pipeline type only —
+   * lowered to gitlab's pipeline-level `variables:` / github's
+   * workflow-level `env:`, so job-level `runnerVariables` take
+   * precedence.
+   *
+   * Useful when the CI systems need different values, e.g. a lower
+   * `TURBO_CONCURRENCY` for github's small hosted runners.
+   */
+  runnerVariables?: Record<string, string>;
+};
+
+/**
+ * where secret values are stored and edited (the readable source of
+ * truth). CI backends only receive mirrored copies.
+ *
+ * - "gitlab" (default): the gitlab project variables double as the
+ *   secret store (legacy behavior; requires a gitlab project)
+ * - bitwarden: secrets live in bitwarden as one yaml note per
+ *   env/component (`<customer>/<app>/<env>/<component>/secrets.yml`)
+ */
+export type SecretsVaultConfig =
+  | "gitlab"
+  | { type: "gitlab" }
+  | {
+      type: "bitwarden";
+      /**
+       * the bitwarden collection holding the secret notes
+       * @default "catladder"
+       */
+      collection?: string;
+    };
+
+export type SecretsConfig = {
+  vault?: SecretsVaultConfig;
+};
+
+export type Config<C extends ConfigProps = never> = {
+  /**
+   * the pipeline type to generate, defaults to gitlab
+   *
+   * @deprecated use `pipelines` instead
+   */
+  pipelineType?: PipelineType;
+
+  /**
+   * which pipelines to generate. Multiple pipeline types can be enabled
+   * at the same time (e.g. during a step-by-step migration from one CI
+   * system to another); each generates its own set of files.
+   *
+   * Defaults to `{ gitlab: true }` (or the deprecated `pipelineType`).
+   *
+   * @example
+   * pipelines: {
+   *   gitlab: true,
+   * }
+   */
+  pipelines?: {
+    [T in PipelineType]?: boolean | PipelineOutputOptions;
+  };
+
+  /**
+   * how secrets are stored and shared (see {@link SecretsConfig})
+   */
+  secrets?: SecretsConfig;
+
+  /**
+   * which package manager the project uses. Usually not needed:
+   * catladder autodetects it from the `packageManager` field in
+   * package.json or the lockfile present (pnpm-lock.yaml / yarn.lock),
+   * falling back to yarn. Set it to override the detection.
+   */
+  packageManager?: PackageManagerType;
+
+  /**
+   * materialize the agent skills shipped with catladder (usage guides
+   * for AI coding agents like Claude Code) into the repository, so
+   * agents working in the project use knowledge matching the installed
+   * catladder version. The skills are written on every generation into
+   * `catladder-*` directories under the agent skill folders (e.g.
+   * `.claude/skills/`) — that namespace is owned by catladder and must
+   * not be edited manually.
+   *
+   * - `true` / omitted (default): write to `.claude/skills/` only
+   *   (Claude Code is the only agent that consumes these today)
+   * - `false`: opt out (previously generated skills are removed)
+   * - `{ targets: [...] }`: write to the given targets, e.g.
+   *   `["claude-code", "agents"]` to also populate the cross-agent
+   *   `.agents/skills/` directory
+   */
+  agentSkills?: AgentSkillsConfig;
+
+  /**
+   * name of the customer or group
+   */
+  customerName: string;
+  /**
+   * name of the app / project
+   */
+  appName: string;
+  /**
+   * if a env does not define a host, it will generate a canonical one (e.g. for review, dev and stage).
+   * This prop specifies the domain that is used for these urls.
+   *
+   */
+  domainCanonical?: string;
+
+  agents?: Record<string, AgentConfig>;
+
+  /**
+   * docker images declared by the project, built automatically in the
+   * pipeline: content-hashed into the project's own registry and only
+   * rebuilt when their inputs change. Reference them in any `jobImage`
+   * field via `{ image: "<key>" }`.
+   */
+  images?: Record<string, ProjectImageConfig>;
+
+  // shared workspace Builds
+  builds?: Record<string, WorkspaceBuildConfig>;
+  /**
+   * components (sub apps)
+   */
+  components: Record<string, ComponentConfig<C>>;
+
+  /**
+   * additional meta data (only for organisational purposes)
+   */
+  meta?: {
+    labels?: Record<string, string>;
+  };
+
+  /**
+   * additional vars only for the runner in all jobs.
+   */
+  runnerVariables?: Record<string, string>;
+
+  /**
+   * hook into catladder generation
+   */
+  hooks?: Hooks;
+
+  /**
+   * configure tagged releases
+   */
+  releases?: ReleaseConfig;
+
+  /**
+   * contents of `.catladder-store/store.yml` — non-secret, machine-fetched
+   * values written by `catladder project setup` (e.g. gcloud project
+   * numbers).
+   *
+   * Attached automatically when the config is read from disk; do not set
+   * this manually in catladder.ts.
+   */
+  store?: CatladderStore;
+};

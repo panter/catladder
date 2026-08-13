@@ -35,9 +35,16 @@ FROM node:$NODE_VERSION-alpine
 $DOCKERFILE_ADDITIONS
 
 RUN apk add --no-cache git curl
-USER node
+# package-manager setup (e.g. installing pnpm globally) and the
+# workspace-file copy run as root: pnpm ADDs a tar whose extracted
+# parent dirs come out root-owned (ADD --chown only covers the files),
+# so it needs a root chown before the node user can write node_modules.
+# The actual install below still runs as the unprivileged node user.
+$DOCKER_SETUP_PACKAGE_MANAGER
 
 $DOCKER_COPY_WORKSPACE_FILES
+
+USER node
 
 WORKDIR /app/$APP_DIR
 

@@ -190,13 +190,3 @@ env:
 
 
 
-{{- define "visualReviewSnippet" -}}
-  <script
-    data-project-id='{{.Values.gitlab.projectId}}'
-    data-merge-request-id='{{.Values.gitlab.mergeRequestId}}'
-    data-mr-url='https://git.panter.ch'
-    data-project-path='{{.Values.gitlab.projectPath}}'
-    id='review-app-toolbar-script'
-    src='https://git.panter.ch/assets/webpack/visual_review_toolbar.js'>
-  </script>
-{{- end -}}

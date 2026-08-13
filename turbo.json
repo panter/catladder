@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/runner-images/**",
+        "$TURBO_ROOT$/skills/**",
+        "!$TURBO_ROOT$/skills/catladder-cli/references/commands.md"
+      ],
+      "outputs": ["dist/**"]
+    },
+    "lint": {},
+    "generate:examples-test": {
+      "inputs": [
+        "examples/**",
+        "!examples/*.test.ts",
+        "scripts/generate-examples-test.ts"
+      ],
+      "outputs": ["examples/*.test.ts"]
+    },
+    "build:watch": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

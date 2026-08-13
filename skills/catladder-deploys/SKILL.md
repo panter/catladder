@@ -1,0 +1,146 @@
+---
+name: catladder-deploys
+description: Configuring how a component is deployed in a catladder project — the `deploy` config in catladder.ts (deploy types kubernetes / google-cloudrun / npmPackage / pages / dockerTag / custom, manual vs auto deploy, resources, autoscaling, health checks, CloudSQL/MongoDB, Cloud Run services/jobs/worker pools, cron jobs). Use when adding or changing a component's deploy, choosing a deploy target, setting resources/replicas/autoscaling, wiring a database, adding cron/scheduled jobs, publishing a component as an npm package, publishing a site on gitlab pages, or making a deploy manual. Triggers on "deploy config", "deploy type", "kubernetes", "cloud run", "cloudrun", "autoscale", "resources", "replicas", "cloudsql", "mongodb", "cronjob", "manual deploy", "npm package", "npm publish", "publish to npm", "gitlab pages", "static site", "docs site", "site preview".
+---
+
+# Component deploys with catladder
+
+Each component in `catladder.ts` has a `deploy` config that catladder
+turns into the deploy (and stop) CI jobs and the cloud resources. Change
+the deploy in `catladder.ts` and regenerate (`yarn catenv`) — never
+hand-edit generated files (see the `catladder-config` skill). Cloud
+resources themselves are provisioned separately with
+`yarn catladder project setup` (see the `catladder-cli` skill).
+
+```ts
+components: {
+  api: {
+    dir: "backend",
+    build: { /* see catladder-builds */ },
+    deploy: {
+      type: "kubernetes",         // kubernetes | google-cloudrun | npmPackage | pages | dockerTag | custom
+      cluster: { type: "gcloud", name: "…", projectId: "…", region: "…" },
+      values: { application: { replicas: 2 } },
+    },
+  },
+}
+```
+
+## Deploy types
+
+| Type | Deploys to | Requires |
+|---|---|---|
+| `kubernetes` | a GKE cluster via Helm | `cluster` |
+| `google-cloudrun` | Google Cloud Run | `projectId`, `region` |
+| `npmPackage` | publishes the component to an npm registry | nothing — see below |
+| `pages` | publishes a static site on gitlab pages | `script` — see below |
+| `dockerTag` | tags an image (no runtime) | `tag` — rarely used, not generally recommended |
+| `custom` | your own script | `requiresDocker`, `script` |
+
+## Manual vs automatic deploys
+
+`when: "manual" | "auto"` controls whether the deploy job runs
+automatically. **Default: `prod` is `manual`, every other environment
+is `auto`.** Set per component or per environment (`env.<name>.deploy`).
+
+`waitFor: ["otherComponent"]` (experimental) makes a deploy wait for
+another component to deploy first.
+
+## Kubernetes essentials
+
+`cluster` is required: `{ type: "gcloud", name, projectId, region, domainCanonical? }`.
+Everything app-level lives under `values`:
+
+- `application` — `replicas`, `autoscale` (`minReplicas`/`maxReplicas`/`metrics`),
+  `resources` (cpu/memory limits & requests), `healthRoute`,
+  `startupProbe`/`readinessProbe`/`livenessProbe`, `command`,
+  `redirects`, `worker` (a separate background deployment). Set
+  `application: false` for a component with no long-running deployment.
+- `cloudsql` — attach an (unmanaged) CloudSQL Postgres instance.
+- `mongodb` — a Bitnami MongoDB (`standalone` or `replicaset`).
+- `jobs` — Helm post-install/upgrade jobs; `cronjobs` — scheduled jobs.
+
+## Cloud Run essentials
+
+`projectId` and `region` are required. Then:
+
+- `service` — the main service (`minInstances`, `maxInstances`, `cpu`,
+  `memory`, `timeout`, `allowUnauthenticated`, `ingress`, `healthCheck`,
+  …). `service: false` disables it (job-only deployments).
+- `additionalServices`, `jobs`, `workerPools` — extra services, run-to-
+  completion jobs, and always-on background worker pools.
+- `cloudSql` — attach an (unmanaged) CloudSQL instance; choose the
+  connection-string format (`prisma` default, `rails`, `jdbc`).
+- `execute` — run a script/job/HTTP call at a deploy lifecycle point
+  (`preDeploy`/`postDeploy`/`preStop`/`postStop`) or on a `schedule`.
+  Prefer this over the deprecated `when`/`schedule` fields on `jobs`.
+
+## npm packages
+
+`type: "npmPackage"` publishes the component to an npm registry instead
+of deploying a service — "deploy" means `npm publish`. Version and
+dist-tag derive from the pipeline trigger:
+
+- tagged release (`prod` env): the tag's version (`v5.1.2` → `5.1.2`)
+  under dist-tag `latest`
+- main branch (`dev`) and merge requests (`review`): an installable
+  canary `0.0.0-<branch-slug>-<sha>`; branches named `next`/`beta` get
+  their own dist-tag, everything else publishes under `canary`
+
+Options (all optional): `access` (`"public"` default), `registry`
+(npmjs.org default), `distTag` (overrides the derivation).
+
+```ts
+lib: {
+  dir: "lib",
+  env: { stage: false },   // npm has no staging — publish latest directly
+  build: { type: "node" },
+  deploy: { type: "npmPackage" },
+},
+```
+
+Authentication uses the `NPM_TOKEN` secret (set it like any other
+catladder secret, see `catladder-secrets`). Disable the stage
+environment as shown — a tagged release then publishes `latest`
+directly from the auto-deploying prod env.
+
+## GitLab pages sites
+
+`type: "pages"` publishes a static site (docs, storybook, coverage
+report) on gitlab pages: the deploy job runs your build `script` and
+publishes `publishDir` (default `"public"`). Review environments
+automatically publish under an `mr-<iid>` path prefix — every merge
+request gets its own site preview (the prefix is exposed to the build
+as `$PAGES_PREFIX`). The gitlab environment url points at the
+published site. GitLab-only for now.
+
+```ts
+docs: {
+  dir: "docs",
+  env: { stage: false, prod: false },  // pages exist on main + MRs
+  build: false,
+  deploy: {
+    type: "pages",
+    requiresInstall: true,
+    script: ["yarn workspace docs build"],
+  },
+},
+```
+
+Pages deploys default to `allowFailure: true` (a broken site publish
+should not block the pipeline). `allowFailure` is also available on
+every other deploy type, and custom deploys can now declare
+`artifactsPaths` for output they produce.
+
+## Full option reference
+
+See [references/deploy-types.md](references/deploy-types.md) for every
+deploy type's options, required fields, and defaults.
+
+## Related skills
+
+- `catladder-config` — catladder.ts structure and regeneration
+- `catladder-builds` — the matching `build` config
+- `catladder-pipelines` — how deploy jobs, environments and review apps work
+- `catladder-cli` — `project setup` (provision cloud resources) and `project doctor`
+- `catladder-secrets` — env vars available at runtime

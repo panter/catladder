@@ -1,0 +1,84 @@
+# catladder build config reference
+
+Full options for `components.<name>.build` (and top-level `builds`).
+Fix build problems in `catladder.ts` and regenerate — never edit the
+generated pipeline files.
+
+## Shared base options (all standalone build types)
+
+| Option | Type | Purpose / default |
+|---|---|---|
+| `buildCommand` | `string \| string[] \| null \| false` | build step; `false`/`null` skips it |
+| `startCommand` | `string` | runtime start command |
+| `postInstall` | `string \| string[]` | runs after the package-manager install (node family) |
+| `lint` / `test` / `audit` | `false \| TestJobCustom` | customize or disable the job |
+| `artifactsPaths` | `string[]` | extra artifacts (`dist`, `.next` always included) |
+| `artifactsExcludePaths` | `string[]` | artifact excludes |
+| `artifactsReports` | `{ junit?: string[] }` | CI test report paths |
+| `cache` | `CacheConfig \| CacheConfig[]` | build caching (`jobCache` is deprecated) |
+| `jobVars` | `EnvVars` | env vars only in build jobs |
+| `runnerVariables` | `Record<string,string>` | extra runner vars (also for `services:`) |
+| `jobTags` | `string[]` | runner tags |
+| `jobImage` | `JobImageConfig` | CI image for the build: a concrete image or `{ image: "<name>" }` referencing a project image |
+| `docker` | see below | the deployable image strategy |
+
+`TestJobCustom` (for `lint`/`test`/`audit`): `command`, `jobImage`,
+`artifactsReports`, `artifacts`, `runnerVariables`, `allowFailure`
+(`allowFailure` defaults to `true` for `audit`).
+
+`audit` additionally takes `level`: `"info" | "low" | "moderate" | "high" |
+"critical"` (default `"critical"`) — the lowest severity that fails the job,
+translated to the package manager's own flag (`pnpm audit --audit-level`,
+`yarn npm audit --severity`, classic `yarn audit --level`). Ignored when
+`command` spells out its own command:
+
+```ts
+audit: { level: "high" },   // fail on high and critical advisories
+```
+
+## Per-type options & defaults
+
+### `node`
+- Works with yarn **and pnpm** — the package manager is autodetected (`packageManager` field / lockfile), overridable via top-level `packageManager: "pnpm" | "yarn"` in `catladder.ts`.
+- `docker?` — built-in node image `{ type: "node", yarnRebuildEnabled?: boolean (default true, yarn berry only), additionsBegin?: string[], additionsEnd?: string[] }`, or a custom docker config.
+- Defaults: `buildCommand: "<pm> build"`, `startCommand: "<pm> start"` (`yarn`/`pnpm` per detection), artifacts `["dist", ".next"]`, excludes `[".next/cache/**/*"]`.
+
+### `rails`
+- `test?.databaseImage?` — test DB container image (Postgres only; default `docker.io/postgres:latest`).
+- `cnbBuilder?` — Cloud Native Buildpacks config, used only when there is **no `Dockerfile`**:
+  - `image?` — builder image. **Actual runtime default `heroku/builder:24`** (the type's JSDoc saying `heroku/buildpacks:20` is stale).
+  - `packVersion?` — pack CLI version. **Actual runtime default `0.36.4`** (JSDoc `0.28.0` is stale).
+  - `packExtraArgs?: string[]` — extra args passed to `pack`.
+  - `buildVars?: Record<string, string | undefined>` — Bundler / Rails asset-precompile vars (`undefined` inherits from the component's env vars).
+
+### `meteor`
+- Yarn-only (meteor's bundler is yarn-based) — a pnpm project cannot use this build type.
+- `installScripts?: boolean` — run `yarn install` inside the source folder in the image (only needed with custom image scripts).
+- `docker?` — meteor built-in or custom. Default `startCommand: "node main.js"`.
+
+### `custom`
+- `type: "custom"` — **required**.
+- `jobImage: JobImageConfig` — **required** CI image (concrete image or `{ image: "<name>" }` project-image ref).
+- `docker: BuildConfigDocker` — **required** image build config.
+- `jobServices?: Services` — services for lint/test/audit/build jobs.
+- `lint?` / `test?` / `audit?: TestJobCustom` — disabled unless set.
+
+### `node-static` / `storybook` — deprecated
+Use `type: "node"` with `docker: { type: "nginx" }` (and
+`startCommand: ""` for a purely static app). `storybook` previously
+defaulted `buildCommand: "yarn build-storybook --quiet -o ./dist"`.
+
+## `docker` sub-config
+
+`BuildConfigDocker` is either:
+
+- **built-in**: `{ type: "nginx" | "node" | "meteor", additionsBegin?: string[], additionsEnd?: string[] }` — `additionsBegin`/`additionsEnd` inject Dockerfile lines before/after the standard steps.
+- **custom**: `{ type: "custom", buildContextLocation?: "root" | "component" (default "root"), dockerfileContent?: string[] }` — expects a `Dockerfile`. `dockerfileContent` is experimental and supports the `$DOCKER_COPY_WORKSPACE_FILES` / `$DOCKER_COPY_AND_INSTALL_APP` placeholders.
+
+## Workspace builds (`builds`)
+
+Top-level `builds: Record<string, WorkspaceBuildConfig>`. Only
+`type: "node"` is supported.
+
+- Node workspace build: `dir?`, `buildCommand?` (default `<pm> build`), `dockerDefaults?: { yarnRebuildEnabled }`, plus shared `lint?` (default `{ command: "<pm> lint" }`), `test?` (default `{ command: "<pm> test" }`), `audit?`, `runnerVariables?`, `artifactsReports?`, `jobImage?`, `jobTags?`, `cache?` (`<pm>` = `yarn`/`pnpm` per detection).
+- A component references it via `build: { from: "<name>", docker?, startCommand?, artifactsPaths?, artifactsExcludePaths?, cache? }` — the per-component overrides layer on top of the shared build.

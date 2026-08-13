@@ -1,6 +1,16 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      // mirror cli/tsconfig.json: cli tests import @catladder/pipeline
+      // from source, so they don't depend on a built pipeline/dist
+      "@catladder/pipeline": fileURLToPath(
+        new URL("./packages/pipeline/src/index.ts", import.meta.url),
+      ),
+    },
+  },
   test: {
     globals: true,
     environment: "node",
@@ -14,7 +24,7 @@ export default defineConfig({
       "**/node_modules/**",
       "**/.claude/**",
     ],
-    include: ["**/__tests__/**/*.[jt]s?(x)", "**/pipeline/examples/*.test.ts"],
+    include: ["**/__tests__/**/*.[jt]s?(x)", "packages/pipeline/examples/*.test.ts"],
     testTimeout: 10000,
   },
 });

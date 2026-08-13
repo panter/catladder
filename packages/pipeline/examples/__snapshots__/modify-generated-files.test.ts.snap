@@ -1,0 +1,2199 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`matches snapshot for modify-generated-files github workflows YAML 1`] = `
+"catladder-create-release.yml:
+  name: 🚀 catladder create release
+  on:
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: &a1
+    CL_JOB_TOKEN: \${{ github.token }}
+    CL_REGISTRY: ghcr.io
+    CL_REGISTRY_IMAGE: ghcr.io/\${{ github.repository }}
+    CL_REGISTRY_USER: \${{ github.actor }}
+    CL_PR_NUMBER: \${{ github.event.number }}
+  jobs:
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e
+            collapseable_section_end "docker-push"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - catladder-image-semantic-release
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: check main workflow
+          id: queue
+          run: node .catladder-generated/catci/index.js release github-queue-check
+          shell: bash
+        - name: create release
+          if: steps.queue.outputs.queued != 'true'
+          run: semanticRelease
+          shell: bash
+catladder-release-on-green.yml:
+  name: 🛠️ catladder release on green
+  on:
+    workflow_run:
+      workflows:
+        - 🛠️ catladder main
+      types:
+        - completed
+  env: *a1
+  jobs:
+    guard:
+      name: check queued release
+      runs-on: ubuntu-latest
+      permissions:
+        contents: write
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        release: \${{ steps.guard.outputs.release }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: check queued release
+          id: guard
+          run: node .catladder-generated/catci/index.js release github-queued-guard "\${{ github.event.workflow_run.head_sha }}" "\${{ github.event.workflow_run.conclusion }}"
+          shell: bash
+    create-release:
+      name: create release
+      runs-on: ubuntu-latest
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      permissions:
+        contents: write
+        actions: write
+        packages: read
+      needs:
+        - guard
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+        - name: create release
+          run: semanticRelease
+          shell: bash
+      if: \${{ needs.guard.outputs.release == 'true' }}
+catladder-main.yml:
+  name: 🛠️ catladder main
+  on:
+    push:
+      branches:
+        - main
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e
+            collapseable_section_end "docker-push"
+          shell: bash
+    api-audit-dev:
+      name: api 🛡 audit | dev
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      continue-on-error: true
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🛡 audit
+          id: main
+          run: bash .catladder-generated/github/scripts/api-audit-dev.sh
+          shell: bash
+    api-lint-dev:
+      name: api 👮 lint | dev
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 👮 lint
+          id: main
+          run: bash .catladder-generated/github/scripts/api-lint-dev.sh
+          shell: bash
+    api-test-dev:
+      name: api 🧪 test | dev
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🧪 test
+          id: main
+          run: bash .catladder-generated/github/scripts/api-test-dev.sh
+          shell: bash
+    api-app-dev:
+      name: api 🔨 app | dev
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-dev.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-dev
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+catladder-review.yml:
+  name: 🛠️ catladder review
+  on:
+    pull_request:
+      types:
+        - opened
+        - synchronize
+        - reopened
+  concurrency:
+    group: catladder-review-\${{ github.event.number }}
+    cancel-in-progress: true
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e
+            collapseable_section_end "docker-push"
+          shell: bash
+    api-audit-review:
+      name: api 🛡 audit | review
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      continue-on-error: true
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🛡 audit
+          id: main
+          run: bash .catladder-generated/github/scripts/api-audit-review.sh
+          shell: bash
+    api-lint-review:
+      name: api 👮 lint | review
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 👮 lint
+          id: main
+          run: bash .catladder-generated/github/scripts/api-lint-review.sh
+          shell: bash
+    api-test-review:
+      name: api 🧪 test | review
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache/restore@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache/restore@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🧪 test
+          id: main
+          run: bash .catladder-generated/github/scripts/api-test-review.sh
+          shell: bash
+    api-app-review:
+      name: api 🔨 app | review
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-review.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-review
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+    catladder-ok:
+      name: catladder ✅
+      runs-on: ubuntu-latest
+      needs:
+        - api-app-review
+        - api-audit-review
+        - api-lint-review
+        - api-test-review
+        - catladder-image-jobs-default
+        - catladder-image-semantic-release
+      if: always()
+      steps:
+        - name: catladder ✅
+          run: |-
+            results='\${{ toJSON(needs) }}'
+            echo "$results"
+            if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then
+              echo "a required job did not succeed"; exit 1
+            fi
+          shell: bash
+catladder-release.yml:
+  name: 🛠️ catladder release
+  on:
+    push:
+      tags:
+        - v*
+    workflow_dispatch: {}
+  permissions:
+    contents: read
+    packages: write
+  env: *a1
+  jobs:
+    catladder-image-jobs-default:
+      name: 🐳 catladder image jobs-default
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image jobs-default
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+            collapseable_section_end "docker-push"
+          shell: bash
+    catladder-image-semantic-release:
+      name: 🐳 catladder image semantic-release
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: 🐳 catladder image semantic-release
+          id: main
+          run: |-
+            function escapeForDotEnv () {
+            input="\${1:-$(cat)}"
+             input="\${input//$'\\n'/\\\\n}"
+              if [[ "$input" == *\\\\n* ]]; then
+                if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+                  printf "\\"%s\\"\\n" "$input" 
+                elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+                  printf "\`%s\`\\n" "$input"
+                elif [[ "$input" == *\\"* ]]; then
+                  printf "'%s'\\n" "$input"
+                else
+                  printf "\\"%s\\"\\n" "$input"
+                fi
+              else
+                printf "%s\\n" "$input"
+              fi
+            }
+            function collapseable_section_start () {
+            local section_title="\${1}"
+              local section_description="\${2:-$section_title}"
+              echo "::group::\${section_description}"
+            }
+            function collapseable_section_end () {
+            echo "::endgroup::"
+            }
+            collapseable_section_start "docker-login" "Docker Login"
+            docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
+            collapseable_section_end "docker-login"
+            collapseable_section_start "check-image" "Checking if image exists"
+            if docker manifest inspect ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e > /dev/null 2>&1; then
+              echo "Image ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e already exists, skipping build"
+              exit 0
+            fi
+            collapseable_section_end "check-image"
+            collapseable_section_start "docker-build" "Building image"
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+            collapseable_section_end "docker-build"
+            collapseable_section_start "docker-push" "Pushing image"
+            docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:b0b80a328f2e
+            collapseable_section_end "docker-push"
+          shell: bash
+    api-app-stage:
+      name: api 🔨 app | stage
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-stage.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-stage
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+    api-app-prod:
+      name: api 🔨 app | prod
+      runs-on: ubuntu-latest
+      needs:
+        - catladder-image-jobs-default
+      container:
+        image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+        credentials:
+          username: \${{ github.actor }}
+          password: \${{ github.token }}
+      env:
+        CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8c93778931df
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - name: Cache api-node-modules
+          id: cache-node-modules
+          uses: actions/cache@v4
+          with:
+            path: |-
+              api/node_modules
+              api/.yarn/install-state.gz
+            key: api-node-modules-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-node-modules-
+        - name: Cache api-yarn
+          if: \${{ steps.cache-node-modules.outputs.cache-hit != 'true' }}
+          uses: actions/cache@v4
+          with:
+            path: api/.yarn
+            key: api-yarn-\${{ hashFiles('api/yarn.lock') }}
+            restore-keys: api-yarn-
+        - name: 🔨 app
+          id: main
+          run: bash .catladder-generated/github/scripts/api-app-prod.sh
+          shell: bash
+        - name: Upload artifacts
+          uses: actions/upload-artifact@v4
+          with:
+            name: api-app-prod
+            path: |-
+              api/__build_info.json
+              api/.next
+              api/dist
+            if-no-files-found: warn
+            include-hidden-files: true
+
+# ===== .catladder-generated/github/scripts/api-audit-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+cd api
+yarn npm audit --environment production --severity critical --all --recursive
+
+# ===== .catladder-generated/github/scripts/api-lint-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn lint
+
+# ===== .catladder-generated/github/scripts/api-test-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn test
+
+# ===== .catladder-generated/github/scripts/api-app-dev.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="dev"
+export APP_DIR="api"
+export ENV_TYPE="dev"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="unknown-host.example.com"
+export ROOT_URL="https://unknown-host.example.com"
+export HOSTNAME_INTERNAL="unknown-host.example.com"
+export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+collapseable_section_end "injectvars"
+collapseable_section_start "write-dotenv-api" "write dot env for api"
+cat <<EOF > api/.env
+ENV_SHORT=dev
+APP_DIR=api
+ENV_TYPE=dev
+HOSTNAME=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+HOSTNAME_INTERNAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+EOF
+collapseable_section_end "write-dotenv-api"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-audit-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+cd api
+yarn npm audit --environment production --severity critical --all --recursive
+
+# ===== .catladder-generated/github/scripts/api-lint-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn lint
+
+# ===== .catladder-generated/github/scripts/api-test-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export APP_PATH="api"
+collapseable_section_end "injectvars"
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn test
+
+# ===== .catladder-generated/github/scripts/api-app-review.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="review"
+export APP_DIR="api"
+export ENV_TYPE="review"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="unknown-host.example.com"
+export ROOT_URL="https://unknown-host.example.com"
+export HOSTNAME_INTERNAL="unknown-host.example.com"
+export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+collapseable_section_end "injectvars"
+collapseable_section_start "write-dotenv-api" "write dot env for api"
+cat <<EOF > api/.env
+ENV_SHORT=review
+APP_DIR=api
+ENV_TYPE=review
+HOSTNAME=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+HOSTNAME_INTERNAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+EOF
+collapseable_section_end "write-dotenv-api"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-app-stage.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="stage"
+export APP_DIR="api"
+export ENV_TYPE="stage"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="unknown-host.example.com"
+export ROOT_URL="https://unknown-host.example.com"
+export HOSTNAME_INTERNAL="unknown-host.example.com"
+export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+collapseable_section_end "injectvars"
+collapseable_section_start "write-dotenv-api" "write dot env for api"
+cat <<EOF > api/.env
+ENV_SHORT=stage
+APP_DIR=api
+ENV_TYPE=stage
+HOSTNAME=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+HOSTNAME_INTERNAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+EOF
+collapseable_section_end "write-dotenv-api"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+
+# ===== .catladder-generated/github/scripts/api-app-prod.sh =====
+#!/usr/bin/env bash
+set -eo pipefail
+
+function escapeForDotEnv () {
+input="\${1:-$(cat)}"
+ input="\${input//$'\\n'/\\\\n}"
+  if [[ "$input" == *\\\\n* ]]; then
+    if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+      printf "\\"%s\\"\\n" "$input" 
+    elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+      printf "\`%s\`\\n" "$input"
+    elif [[ "$input" == *\\"* ]]; then
+      printf "'%s'\\n" "$input"
+    else
+      printf "\\"%s\\"\\n" "$input"
+    fi
+  else
+    printf "%s\\n" "$input"
+  fi
+}
+function collapseable_section_start () {
+local section_title="\${1}"
+  local section_description="\${2:-$section_title}"
+  echo "::group::\${section_description}"
+}
+function collapseable_section_end () {
+echo "::endgroup::"
+}
+collapseable_section_start "injectvars" "Injecting variables"
+export ENV_SHORT="prod"
+export APP_DIR="api"
+export ENV_TYPE="prod"
+export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+export BUILD_INFO_BUILD_TIME="unknown-build-time"
+export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+export HOSTNAME="unknown-host.example.com"
+export ROOT_URL="https://unknown-host.example.com"
+export HOSTNAME_INTERNAL="unknown-host.example.com"
+export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+collapseable_section_end "injectvars"
+collapseable_section_start "write-dotenv-api" "write dot env for api"
+cat <<EOF > api/.env
+ENV_SHORT=prod
+APP_DIR=api
+ENV_TYPE=prod
+HOSTNAME=unknown-host.example.com
+ROOT_URL=https://unknown-host.example.com
+HOSTNAME_INTERNAL=unknown-host.example.com
+ROOT_URL_INTERNAL=https://unknown-host.example.com
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+EOF
+collapseable_section_end "write-dotenv-api"
+echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > api/__build_info.json
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+cd api
+collapseable_section_start "nodeinstall" "Ensure node version"
+if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+collapseable_section_end "nodeinstall"
+collapseable_section_start "yarninstall" "Yarn install"
+yarn install --immutable --inline-builds
+collapseable_section_end "yarninstall"
+yarn build
+"
+`;
+
+exports[`matches snapshot for modify-generated-files local pipeline YAML 1`] = `
+"image: node:22
+stages:
+  - setup
+  - setup dev
+  - setup review
+  - setup stage
+  - setup prod
+  - test
+  - test dev
+  - test review
+  - test stage
+  - test prod
+  - build
+  - build dev
+  - build review
+  - build stage
+  - build prod
+  - deploy
+  - deploy dev
+  - deploy review
+  - deploy stage
+  - deploy prod
+  - verify
+  - verify dev
+  - verify review
+  - verify stage
+  - verify prod
+  - agents
+  - agents dev
+  - agents review
+  - agents stage
+  - agents prod
+  - rollback
+  - rollback dev
+  - rollback review
+  - rollback stage
+  - rollback prod
+  - stop
+  - stop dev
+  - stop review
+  - stop stage
+  - stop prod
+  - release
+variables:
+  FF_USE_FASTZIP: 'true'
+  ARTIFACT_COMPRESSION_LEVEL: fast
+  CACHE_COMPRESSION_LEVEL: fast
+  TRANSFER_METER_FREQUENCY: 5s
+  GIT_DEPTH: '1'
+workflow:
+  name: $PIPELINE_ICON $PIPELINE_NAME
+  rules:
+    - if: $CI_PIPELINE_SOURCE  == "trigger"
+      variables:
+        PIPELINE_ICON: 🤖
+        PIPELINE_NAME: Thinking...
+    - if: $CI_MERGE_REQUEST_ID
+      variables:
+        PIPELINE_ICON: 🐱🔨
+        PIPELINE_NAME: mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE
+    - if: $CI_COMMIT_TAG
+      variables:
+        PIPELINE_ICON: 🐱📦
+        PIPELINE_NAME: Release $CI_COMMIT_TAG
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      variables:
+        PIPELINE_ICON: 🐱🔨
+        PIPELINE_NAME: Main - $CI_COMMIT_TITLE
+    - when: always
+      variables:
+        PIPELINE_ICON: 🐱❓
+        PIPELINE_NAME: Default
+before_script:
+  - |-
+    function escapeForDotEnv () {
+    input="\${1:-$(cat)}"
+     input="\${input//$'\\n'/\\\\n}"
+      if [[ "$input" == *\\\\n* ]]; then
+        if [[ "$input" == *\\"* && "$input" == *\\'* && "$input" == *\\\`* ]]; then
+          printf "\\"%s\\"\\n" "$input" 
+        elif [[ "$input" == *\\"* && "$input" == *\\'* ]]; then
+          printf "\`%s\`\\n" "$input"
+        elif [[ "$input" == *\\"* ]]; then
+          printf "'%s'\\n" "$input"
+        else
+          printf "\\"%s\\"\\n" "$input"
+        fi
+      else
+        printf "%s\\n" "$input"
+      fi
+    }
+  - |-
+    function collapseable_section_start () {
+    local section_title="\${1}"
+      local section_description="\${2:-$section_title}"
+      echo -e "section_start:\`date +%s\`:\${section_title}[collapsed=true]\\r\\e[0K\${section_description}"
+    }
+  - |-
+    function collapseable_section_end () {
+    local section_title="\${1}"
+      echo -e "section_end:\`date +%s\`:\${section_title}\\r\\e[0K"
+    }
+🐳 catladder image semantic-release:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e
+    - collapseable_section_end "docker-push"
+  rules:
+    - &a1
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/semantic-release/**/*
+  needs: []
+  retry: &a2
+    max: 2
+  interruptible: true
+🐳 catladder image jobs-default:
+  stage: setup
+  image: docker.io/docker:29.5.1
+  services:
+    - name: docker:29.5.1-dind
+      command:
+        - --tls=false
+        - --registry-mirror=https://mirror.gcr.io
+  variables:
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ''
+    DOCKER_DRIVER: overlay2
+    DOCKER_BUILDKIT: '1'
+  script:
+    - collapseable_section_start "docker-login" "Docker Login"
+    - docker login --username $CI_REGISTRY_USER --password $CI_JOB_TOKEN $CI_REGISTRY
+    - collapseable_section_end "docker-login"
+    - collapseable_section_start "check-image" "Checking if image exists"
+    - if docker manifest inspect $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
+    - '  echo "Image $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df already exists, skipping build"'
+    - '  exit 0'
+    - fi
+    - collapseable_section_end "check-image"
+    - collapseable_section_start "docker-build" "Building image"
+    - DOCKER_BUILDKIT=1 docker build -t $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+    - collapseable_section_end "docker-build"
+    - collapseable_section_start "docker-push" "Pushing image"
+    - docker push $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+    - collapseable_section_end "docker-push"
+  rules:
+    - *a1
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+      changes:
+        - .catladder-generated/images/jobs-default/**/*
+    - *a1
+    - if: $CI_MERGE_REQUEST_ID
+      changes:
+        - .catladder-generated/images/jobs-default/**/*
+    - *a1
+    - if: $CI_COMMIT_TAG
+      changes:
+        - .catladder-generated/images/jobs-default/**/*
+  needs: []
+  retry: *a2
+  interruptible: true
+create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e
+  script:
+    - echo "release queued — '🚀 release once pipeline succeeds' runs it as soon as every other job in this pipeline succeeded"
+  rules: &a7
+    - &a3
+      if: $CI_COMMIT_MESSAGE =~ /^chore\\(release\\).*/
+      when: never
+    - *a1
+    - &a4
+      if: $CI_PIPELINE_SOURCE  == "schedule"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: manual
+  needs: []
+  allow_failure: true
+🚀 release once pipeline succeeds:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e
+  script: &a5
+    - semanticRelease
+  after_script: &a6
+    - echo '👉 If this job failed with access denied, the project access token might be invald - run \`project-renew-token\` in catladder CLI to fix.'
+  rules:
+    - *a3
+    - *a1
+    - *a4
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: on_success
+    - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
+      when: on_success
+  needs:
+    - job: create release
+    - job: 🐳 catladder image semantic-release
+      optional: true
+    - job: 'api 🛡 audit | dev '
+      optional: true
+    - job: 'api 👮 lint | dev '
+      optional: true
+    - job: 'api 🧪 test | dev '
+      optional: true
+    - job: 'api 🔨 app | dev '
+      optional: true
+⚠️ force create release:
+  stage: release
+  image: $CI_REGISTRY_IMAGE/catladder/semantic-release:b0b80a328f2e
+  script: *a5
+  after_script: *a6
+  rules: *a7
+  needs: []
+  allow_failure: true
+'api 🛡 audit | dev ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - cd api
+    - yarn npm audit --environment production --severity critical --all --recursive
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+  allow_failure: true
+'api 👮 lint | dev ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: api-yarn
+      policy: pull
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull
+      paths: &a8
+        - api/node_modules
+        - api/.yarn/install-state.gz
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🧪 test | dev ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: api-yarn
+      policy: pull
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull
+      paths: *a8
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🔨 app | dev ':
+  stage: build
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export ENV_SHORT="dev"
+    - export APP_DIR="api"
+    - export ENV_TYPE="dev"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=dev
+      APP_DIR=api
+      ENV_TYPE=dev
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - collapseable_section_end "write-dotenv-api"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn build
+  cache:
+    - key: api-yarn
+      policy: pull-push
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull-push
+      paths:
+        - api/node_modules
+        - api/.yarn/install-state.gz
+  artifacts:
+    paths:
+      - api/__build_info.json
+      - api/.next
+      - api/dist
+    exclude:
+      - api/.env
+      - api/.next/cache/**/*
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && ($CI_COMMIT_MESSAGE !~ /^chore\\(release\\).*/ || $CI_PIPELINE_SOURCE != "push")
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🛡 audit | review ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - cd api
+    - yarn npm audit --environment production --severity critical --all --recursive
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+  allow_failure: true
+'api 👮 lint | review ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn lint
+  cache:
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
+      policy: pull
+      paths:
+        - api/.yarn
+      fallback_keys:
+        - api-yarn
+    - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
+      policy: pull
+      paths: &a9
+        - api/node_modules
+        - api/.yarn/install-state.gz
+      fallback_keys:
+        - api-node-modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🧪 test | review ':
+  stage: test
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export APP_PATH="api"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn test
+  cache:
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
+      policy: pull
+      paths:
+        - api/.yarn
+      fallback_keys:
+        - api-yarn
+    - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
+      policy: pull
+      paths: *a9
+      fallback_keys:
+        - api-node-modules
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🔨 app | review ':
+  stage: build
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export ENV_SHORT="review"
+    - export APP_DIR="api"
+    - export ENV_TYPE="review"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=review
+      APP_DIR=api
+      ENV_TYPE=review
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - collapseable_section_end "write-dotenv-api"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn build
+  cache:
+    - key: api-yarn-mr$CI_MERGE_REQUEST_IID
+      policy: pull-push
+      paths:
+        - api/.yarn
+      fallback_keys:
+        - api-yarn
+    - key: api-node-modules-mr$CI_MERGE_REQUEST_IID
+      policy: pull-push
+      paths:
+        - api/node_modules
+        - api/.yarn/install-state.gz
+      fallback_keys:
+        - api-node-modules
+  artifacts:
+    paths:
+      - api/__build_info.json
+      - api/.next
+      - api/dist
+    exclude:
+      - api/.env
+      - api/.next/cache/**/*
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_MERGE_REQUEST_ID
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🔨 app | stage ':
+  stage: build
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export ENV_SHORT="stage"
+    - export APP_DIR="api"
+    - export ENV_TYPE="stage"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=stage
+      APP_DIR=api
+      ENV_TYPE=stage
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - collapseable_section_end "write-dotenv-api"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn build
+  cache:
+    - key: api-yarn
+      policy: pull-push
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull-push
+      paths:
+        - api/node_modules
+        - api/.yarn/install-state.gz
+  artifacts:
+    paths:
+      - api/__build_info.json
+      - api/.next
+      - api/dist
+    exclude:
+      - api/.env
+      - api/.next/cache/**/*
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_TAG
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+'api 🔨 app | prod ':
+  stage: build
+  image: $CI_REGISTRY_IMAGE/catladder/jobs-default:8c93778931df
+  variables:
+    KUBERNETES_CPU_REQUEST: '0.45'
+    KUBERNETES_MEMORY_REQUEST: 1Gi
+    KUBERNETES_MEMORY_LIMIT: 4Gi
+  script:
+    - collapseable_section_start "injectvars" "Injecting variables"
+    - export ENV_SHORT="prod"
+    - export APP_DIR="api"
+    - export ENV_TYPE="prod"
+    - export BUILD_INFO_BUILD_ID="$(git describe --tags 2>/dev/null || git rev-parse HEAD)"
+    - export BUILD_INFO_BUILD_TIME="$CI_JOB_STARTED_AT"
+    - export BUILD_INFO_CURRENT_VERSION="$(tag=$(git ls-remote origin "refs/tags/v*[0-9]" 2>/dev/null | cut -f 2- | sort -V | tail -1 | sed 's/refs\\/tags\\/v//'); [ -z "$tag" ] && echo "0.0.0" || echo "$tag")"
+    - export HOSTNAME="unknown-host.example.com"
+    - export ROOT_URL="https://unknown-host.example.com"
+    - export HOSTNAME_INTERNAL="unknown-host.example.com"
+    - export ROOT_URL_INTERNAL="https://unknown-host.example.com"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\"]"
+    - collapseable_section_end "injectvars"
+    - collapseable_section_start "write-dotenv-api" "write dot env for api"
+    - |-
+      cat <<EOF > api/.env
+      ENV_SHORT=prod
+      APP_DIR=api
+      ENV_TYPE=prod
+      HOSTNAME=unknown-host.example.com
+      ROOT_URL=https://unknown-host.example.com
+      HOSTNAME_INTERNAL=unknown-host.example.com
+      ROOT_URL_INTERNAL=https://unknown-host.example.com
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL"]
+      EOF
+    - collapseable_section_end "write-dotenv-api"
+    - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > api/__build_info.json
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - cd api
+    - collapseable_section_start "nodeinstall" "Ensure node version"
+    - if [ -f "$HOME/.nvm/nvm.sh" ]; then source "$HOME/.nvm/nvm.sh"; elif [ -f /root/.nvm/nvm.sh ]; then export NVM_DIR=/root/.nvm; source /root/.nvm/nvm.sh; fi
+    - if command -v nvm &> /dev/null && [ -f ./.nvmrc ]; then nvm install; fi
+    - collapseable_section_end "nodeinstall"
+    - collapseable_section_start "yarninstall" "Yarn install"
+    - yarn install --immutable --inline-builds
+    - collapseable_section_end "yarninstall"
+    - yarn build
+  cache:
+    - key: api-yarn
+      policy: pull-push
+      paths:
+        - api/.yarn
+    - key: api-node-modules
+      policy: pull-push
+      paths:
+        - api/node_modules
+        - api/.yarn/install-state.gz
+  artifacts:
+    paths:
+      - api/__build_info.json
+      - api/.next
+      - api/dist
+    exclude:
+      - api/.env
+      - api/.next/cache/**/*
+    expire_in: 1 day
+    when: always
+    reports: {}
+  rules:
+    - when: never
+      if: $CI_PIPELINE_SOURCE  == "trigger"
+    - if: $CI_COMMIT_TAG
+  needs:
+    - job: 🐳 catladder image jobs-default
+      artifacts: false
+      optional: true
+  retry: *a2
+  interruptible: true
+"
+`;

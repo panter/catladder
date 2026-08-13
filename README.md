@@ -1,58 +1,111 @@
-# Catladder
+# Catladder 🐱🪜
 
-**A comprehensive CI/CD and DevOps workflow toolkit for modern cloud deployments**
+**Your whole CI/CD pipeline, generated from one TypeScript file.**
 
-Catladder is a TypeScript-based framework designed to streamline GitLab CI/CD pipeline automation and DevOps workflows. Built by Panter, it provides developers and DevOps teams with powerful tools to manage complex deployment pipelines, cloud infrastructure, and automated workflows.
+Catladder turns a single typed config — `catladder.ts` — into complete, committed
+pipelines for **GitLab CI and GitHub Actions**: build, test, review apps per
+merge/pull request, cloud deployments, post-deploy verification, and releases.
+Change the config, regenerate, commit. Never hand-edit CI YAML again.
 
-📚 **[Documentation](https://catladder.git.panter.biz/catladder/docs/getting_started)** - Get started with catladder in your projects
+Built and battle-tested by [Panter](https://www.panter.ch) across its projects;
+open source since v5.
 
-## 🚀 What Catladder Does
+📚 **[Documentation](https://panter.github.io/catladder/docs/getting_started)**
 
-Catladder simplifies and automates your CI/CD workflows by providing:
+```ts
+// catladder.ts
+import type { Config } from "@catladder/cli";
 
-- **Pipeline Generation**: Automatically generate and manage GitLab CI/CD pipelines from configuration
-- **Cloud Deployment**: Streamlined deployment workflows for various cloud platforms
-- **DevOps Automation**: Tools to automate common DevOps tasks and workflows
-- **Agent Integration**: AI-powered assistance through integrations like Claude for automated reviews and support
-- **Kubernetes Support**: Built-in support for Kubernetes deployments and orchestration
+const config: Config = {
+  appName: "my-app",
+  customerName: "acme",
+  pipelines: { github: true }, // and/or gitlab — both at once during a migration
+  releases: { when: "auto", method: "changesets" },
+  components: {
+    www: {
+      dir: "apps/www",
+      build: { type: "node" },
+      deploy: { type: "google-cloudrun", /* … */ },
+      env: { review: {}, dev: {}, prod: {} },
+    },
+  },
+};
+export default config;
+```
 
-## 📦 Project Structure
+`yarn catenv` generates everything from it — the generated files are checked in,
+so every pipeline change is a reviewable diff.
 
-This monorepo contains several key components:
+## What you get
 
-### CLI (`@catladder/cli`)
+- **Two CI backends, one config** — GitLab CI and GitHub Actions from the same
+  `catladder.ts`; run both in parallel to migrate between them step by step
+  (there is a guided migration skill for exactly that)
+- **Environments built in** — `review` (one app per MR/PR, auto-stopped),
+  `dev` (main branch), `stage`/`prod` (tagged releases), `local` (direnv:
+  `.env` files and pipelines regenerate as you `cd` into the project)
+- **Deploy types** — Google Cloud Run (services, jobs, worker pools, Cloud SQL,
+  scheduled executions), Kubernetes (Helm), npm packages (with trusted
+  publishing/OIDC on GitHub — no stored token), GitLab/GitHub Pages, docker
+  tags, or fully custom
+- **Build types** — node (yarn/pnpm autodetected, monorepo workspace builds,
+  turbo-aware caching), rails, meteor, custom Dockerfiles
+- **Releases as a feature, not a bash script** — `semantic-release`
+  (conventional commits) or `changesets` (intentional, reviewed release notes),
+  both gated on a dependency **security audit**; release queueing ("click any
+  time, releases when green"), force-release escape hatch, MR/PR changeset
+  check with sticky comments
+- **Job images, content-addressed** — CI jobs run in images built in your own
+  registry, rebuilt only when their definition changes; declare project-specific
+  images (e.g. a pinned Playwright) right in the config
+- **Secrets with a source of truth** — a vault (GitLab variables or Bitwarden)
+  holds the values; CI backends only ever get mirrored copies
+  (`secrets-sync-github`), and `.env` files for local development come from the
+  same declarations
+- **Merge gating on GitHub** — a generated `catladder ✅` aggregate check plus
+  `project setup` gives GitHub what GitLab ships built in: merges that wait for
+  the pipeline
+- **A doctor** — `catladder project doctor` compares the config against the
+  actually provisioned infrastructure (IAM, secrets, environments, merge
+  gating) and prints the command that heals each finding
+- **AI-agent ready** — generation materializes agent skills into
+  `.claude/skills/`, so coding agents in consumer repos know how to work with
+  catladder; every CLI command is non-interactively scriptable
 
-Command-line tools for interacting with catladder workflows:
+## Getting started
 
-- **`catladder`** - CLI to interact with environments, updating secrets and many more
-- **`catenv`** - Generates pipelines and environment variables. Can be invoked by direnv to:
-  - Always have pipeline files (.catladder-generated, need to be checked in)
-  - Have .env files locally with shared secrets
+```bash
+yarn add -D @catladder/cli
+# write catladder.ts (see the getting-started guide), then:
+yarn catenv                   # generate pipelines, commit the result
+yarn catladder project setup  # provision tokens, cloud resources, merge gating
+```
 
-### Pipeline (`@catladder/pipeline`)
+See the [getting started guide](https://panter.github.io/catladder/docs/getting_started)
+for the full walkthrough, and the docs for build/deploy references, releases,
+secrets, and troubleshooting.
 
-Core TypeScript framework for:
+## Repository layout
 
-- GitLab CI/CD pipeline configuration and generation
-- Workflow definitions and automation
-- Integration with cloud platforms and services
+| | |
+|---|---|
+| [`apps/cli`](apps/cli) | **`@catladder/cli`** on npm — the `catladder` and `catenv` commands |
+| [`packages/pipeline`](packages/pipeline) | the generation framework (compiled into the cli, not published) |
+| [`apps/docs`](apps/docs) | the documentation site |
+| [`runner-images/`](runner-images) | definitions of the job images |
+| [`skills/`](skills) | agent skills shipped with the cli |
 
-### Documentation (`docs/`)
+Catladder generates its own pipeline from [`catladder.ts`](catladder.ts) —
+releases here are cut with the `changesets` method, npm publishing runs on
+trusted publishing, and the docs deploy to GitHub Pages. Dogfood or it didn't
+happen.
 
-Comprehensive documentation and guides for using catladder in your projects.
+## Contributing
 
-## 🛠 Key Features
+Issues and feature requests: [github.com/panter/catladder/issues](https://github.com/panter/catladder/issues).
+User-facing changes merge together with a changeset (`.changeset/*.md`) — the
+`🦋 changeset check` on your PR will tell you.
 
-- **GitLab Integration**: Native support for GitLab CI/CD with automated pipeline generation
-- **Cloud Native**: Built for modern cloud deployments with Kubernetes support
-- **TypeScript First**: Type-safe configuration and development experience
-- **Agent Powered**: AI integration for automated assistance and reviews
-- **Extensible**: Modular architecture allows for custom workflows and integrations
+## License
 
-## 🤝 Contributing
-
-This project is maintained by the Panter team. For issues and feature requests, please use our [issue tracker](https://git.panter.ch/catladder/catladder/issues).
-
-## 📄 License
-
-MIT License - see the individual package.json files for detailed license information.
+MIT

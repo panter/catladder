@@ -1,0 +1,24 @@
+packages:
+  - "packages/*"
+  - "apps/*"
+
+overrides:
+  # @kubernetes/client-node pulls @types/node@10 as a real dependency.
+  # yarn's hoisting hid it; pnpm makes it resolvable, and tsc then sees
+  # two `node` type libraries (TS4090). Types only — one version for the
+  # whole tree is what we effectively had before.
+  "@types/node": "^22.5.1"
+
+# pnpm does not run dependency install scripts unless they are approved
+# here. esbuild needs its (it downloads the platform binary); the rest
+# only print funding banners.
+allowBuilds:
+  esbuild: true
+  core-js: false
+  core-js-pure: false
+  es5-ext: false
+
+# pnpm 11 refuses versions published less than a day ago by default,
+# which turns a fresh `pnpm add` into a confusing resolution error.
+# Keep yarn's behaviour; enable this deliberately if we ever want it.
+minimumReleaseAge: 0

@@ -1,40 +1,75 @@
-import { readFile } from "fs/promises";
-import type { Config } from "./pipeline/src";
+import type { Config } from "./packages/pipeline/src";
 
-// this project did not use catladder itself to create its pipeline
-// however we now start to use some of its features
-// the original gitlab ci file is injected here as well (see below)
+// catladder ships itself with catladder: the whole pipeline (build,
+// test, npm publish, docs pages, releases) is generated from this file.
 const config: Config = {
   appName: "catladder",
   customerName: "pan",
-  agents: {
-    claude: {
-      type: "claude",
-    },
+  // catladder lives on github.com/panter/catladder
+  pipelines: {
+    github: true,
   },
   releases: {
     when: "auto",
+    // dogfood the changesets release method: merging a changeset to the
+    // main branch releases; no pending changesets → no-op
+    method: "changesets",
   },
-  components: {}, // currently we use custom gitlab
-  hooks: {
-    transformYamlBeforeWrite: async ({ filename, data }) => {
-      if (filename === ".gitlab-ci.yml") {
-        // inject the original gitlab ci file
-        return {
-          ...data,
-          include: [
-            {
-              local: ".gitlab-ci-yaml-custom.yaml",
-              rules: [
-                // do not include when its a agent trigger
-                { if: `$CI_PIPELINE_SOURCE == "trigger"`, when: "never" },
-                { when: "always" },
-              ],
-            },
-            ...data.include,
-          ],
-        };
-      }
+  builds: {
+    // one shared turbo build for the whole monorepo (docs builds in its
+    // own pages deploy job, matching the previous hand-written setup)
+    base: {
+      type: "node",
+      dir: ".",
+      // build/test commands are the package-manager-aware defaults
+      // (`pnpm build` / `pnpm test`) — nothing to spell out here
+      runnerVariables: {
+        // always ncc-minify: canaries then ship the same artifact shape
+        // as tagged releases (previously only tags were minified)
+        SHOULD_MINIFY: "1",
+      },
+      test: {
+        runnerVariables: {
+          KUBERNETES_MEMORY_LIMIT: "8Gi",
+          KUBERNETES_MEMORY_REQUEST: "6Gi",
+        },
+      },
+    },
+  },
+  components: {
+    cli: {
+      dir: "apps/cli",
+      // this repo does not use catladder-generated .env files
+      dotEnv: false,
+      envDTs: false,
+      // npm has no staging — tagged releases publish latest directly
+      env: { stage: false },
+      build: {
+        from: "base",
+      },
+      deploy: {
+        type: "npmPackage",
+      },
+    },
+    docs: {
+      dir: "apps/docs",
+      dotEnv: false,
+      envDTs: false,
+      // docs only exist as pages on the main branch (+ MR previews)
+      env: {
+        stage: false,
+        prod: false,
+        dev: {},
+        // MR docs previews are gitlab-only (github pages serves one
+        // site per repository), so they go away with the migration
+        review: false,
+      },
+      build: false,
+      deploy: {
+        type: "pages",
+        requiresInstall: true,
+        script: ["pnpm --filter docs gen-md", "pnpm --filter docs build"],
+      },
     },
   },
 };
