@@ -16,6 +16,11 @@ import {
   listGithubSecretNames,
   listGithubVariableNames,
 } from "../../../../../utils/github";
+import type { GithubRuleset } from "../githubMergeGating";
+import {
+  MERGE_GATING_RULESET_NAME,
+  rulesetProvidesMergeGating,
+} from "../githubMergeGating";
 import type { DoctorReport } from "./DoctorReport";
 
 /** marker for repo-level (environment-less) targets, see collectSecretTargets */
@@ -161,10 +166,13 @@ export const checkGithub = async (report: DoctorReport, config: Config) => {
 
 /**
  * verifies the merge gating `project setup` configures: auto-merge
- * enabled and the generated `catladder ✅` aggregate check required on
- * the default branch. Without it a PR is mergeable while its checks
- * are still running — gitlab ships this behavior built-in, github
- * silently does not.
+ * enabled and the `catladder merge gating` ruleset requiring the
+ * generated `catladder ✅` aggregate check on the default branch (with
+ * the bypass that lets the release job push). Without the check a PR
+ * is mergeable while its checks are still running — gitlab ships this
+ * behavior built-in, github silently does not. The check required via
+ * classic branch protection instead is flagged: that setup rejects the
+ * release job's own push (GH006).
  */
 const checkGithubMergeGating = async (report: DoctorReport, repo: string) => {
   let repoInfo: { default_branch: string; allow_auto_merge: boolean };
@@ -184,6 +192,36 @@ const checkGithubMergeGating = async (report: DoctorReport, repo: string) => {
   }
 
   const branch = repoInfo.default_branch;
+  let rulesets: Array<{ id: number; name: string }>;
+  try {
+    rulesets = await ghApiJson("GET", `repos/${repo}/rulesets?per_page=100`);
+  } catch (e) {
+    report.warn(`could not list rulesets of ${repo} (${e.message})`);
+    return;
+  }
+  const named = rulesets.find((r) => r.name === MERGE_GATING_RULESET_NAME);
+  const ruleset = named
+    ? await ghApiJson<GithubRuleset>(
+        "GET",
+        `repos/${repo}/rulesets/${named.id}`,
+      ).catch(() => null)
+    : null;
+  if (ruleset && rulesetProvidesMergeGating(ruleset)) {
+    report.ok(
+      `ruleset '${MERGE_GATING_RULESET_NAME}': '${AGGREGATE_CHECK_JOB_NAME}' required on ${branch}, release job can push`,
+    );
+  } else if (ruleset) {
+    report.fail(
+      `ruleset '${MERGE_GATING_RULESET_NAME}' exists but is incomplete (inactive, check not required, or release-job bypass missing)`,
+      "run: catladder project setup",
+    );
+  } else {
+    report.fail(
+      `no '${MERGE_GATING_RULESET_NAME}' ruleset on ${repo} — PRs can merge while the pipeline is red or still running`,
+      "run: catladder project setup",
+    );
+  }
+
   const protection = await ghApiJson<any>(
     "GET",
     `repos/${repo}/branches/${branch}/protection`,
@@ -191,17 +229,15 @@ const checkGithubMergeGating = async (report: DoctorReport, repo: string) => {
   const checks: Array<{ context: string }> =
     protection?.required_status_checks?.checks ?? [];
   if (checks.some((c) => c.context === AGGREGATE_CHECK_JOB_NAME)) {
-    report.ok(`'${AGGREGATE_CHECK_JOB_NAME}' required on ${branch}`);
-  } else {
     report.fail(
-      `'${AGGREGATE_CHECK_JOB_NAME}' is not a required check on ${branch} — PRs can merge while the pipeline is red or still running`,
+      `'${AGGREGATE_CHECK_JOB_NAME}' is still required via classic branch protection on ${branch} — that rejects the release job's push (GH006)`,
       "run: catladder project setup",
     );
   }
   const stale = checks.filter((c) => c.context !== AGGREGATE_CHECK_JOB_NAME);
   if (stale.length > 0) {
     report.warn(
-      `${branch} requires ${stale.length} additional named check(s) (${stale
+      `${branch} requires ${stale.length} additional named check(s) via classic branch protection (${stale
         .map((c) => c.context)
         .join(
           ", ",

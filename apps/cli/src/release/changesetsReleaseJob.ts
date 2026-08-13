@@ -84,7 +84,25 @@ const pushCommitAndTag = async (tag: string) => {
   // rederived an existing version)
   if (process.env.GITHUB_ACTIONS === "true") {
     const branch = requireEnv("GITHUB_REF_NAME");
-    await git("push", "--atomic", "origin", `HEAD:refs/heads/${branch}`, tag);
+    try {
+      await git("push", "--atomic", "origin", `HEAD:refs/heads/${branch}`, tag);
+    } catch (e) {
+      // GH006: classic branch protection with a required status check
+      // rejects the fresh release commit (it cannot have a passing
+      // check yet) — merge gating must live in a ruleset with a bypass
+      // for the actions app, which `project setup` configures
+      if (/GH006|protected branch/i.test(`${e?.message ?? e}`)) {
+        throw new Error(
+          `pushing the release to '${branch}' was rejected by its branch protection:\n` +
+            `${e.message}\n` +
+            `The release job pushes the release commit and tag with the workflow token. ` +
+            `Required status checks on '${branch}' must live in a repository ruleset with a ` +
+            `bypass for GitHub Actions — classic branch protection cannot allow that push. ` +
+            `Run \`catladder project setup\` to migrate the merge gating, then rerun this job.`,
+        );
+      }
+      throw e;
+    }
     return;
   }
   const token = requireEnv("GL_TOKEN");

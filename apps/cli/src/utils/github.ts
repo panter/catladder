@@ -170,7 +170,7 @@ export const ensureGithubEnvironment = async (
 
 /** runs `gh api` with an optional JSON body and returns the parsed response */
 export const ghApiJson = async <T = any>(
-  method: "GET" | "PATCH" | "PUT",
+  method: "GET" | "POST" | "PATCH" | "PUT" | "DELETE",
   path: string,
   body?: unknown,
 ): Promise<T> => {
