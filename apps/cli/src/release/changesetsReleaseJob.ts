@@ -23,6 +23,7 @@ import {
   git,
   gitWithEnv,
 } from "./releaseGit";
+import { createReleaseEntry } from "./releaseEntry";
 import { appendStepSummary } from "./stepSummary";
 
 const CHANGESET_DIR = ".changeset";
@@ -276,6 +277,8 @@ export const changesetsReleaseJob = async () => {
   await pushCommitAndTag(tag);
   console.log(`released ${tag}`);
   appendStepSummary(`🚀 **Released ${tag}**\n\n${entries}`);
+  // the tag alone creates no entry on the releases page of the git host
+  await createReleaseEntry(tag, entries);
 
   if (process.env.GITHUB_ACTIONS === "true") {
     await dispatchTaggedReleaseWorkflow(tag);
