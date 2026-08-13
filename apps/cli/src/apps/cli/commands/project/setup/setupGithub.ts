@@ -7,6 +7,12 @@ import {
 import { getConfiguredGithubRepo } from "../../../../../commands/project/commandSecretsSyncGithub";
 import type { IO } from "../../../../../core/types";
 import { ghApiJson, isGhAuthenticated } from "../../../../../utils/github";
+import type { GithubRuleset } from "../githubMergeGating";
+import {
+  desiredMergeGatingRuleset,
+  MERGE_GATING_RULESET_NAME,
+  rulesetProvidesMergeGating,
+} from "../githubMergeGating";
 
 /**
  * configures github merge gating — the sane default gitlab ships
@@ -15,15 +21,17 @@ import { ghApiJson, isGhAuthenticated } from "../../../../../utils/github";
  * auto-merge button never appears.
  *
  * - repo settings: allow auto-merge, delete merged head branches
- * - branch protection on the default branch: require the generated
+ * - a repository ruleset on the default branch requiring the generated
  *   `catladder ✅` aggregate check (the one stable context — individual
- *   job names change with every component add/rename)
+ *   job names change with every component add/rename), with a bypass
+ *   for the GitHub Actions app so the release job can push the release
+ *   commit and tag (see githubMergeGating.ts for the full rationale)
  *
- * Deliberately non-destructive: existing protection settings
- * (enforce-admins, required reviews, restrictions, strictness) are
- * preserved; the aggregate context is merged into the required checks
- * rather than replacing them. Admins can still bypass per PR — this is
- * a default, not a cage.
+ * Earlier versions required the check via classic branch protection,
+ * which has no bypass list — the release job's direct push to the
+ * default branch bounced off catladder's own gating (GH006). Setup
+ * migrates that away: the aggregate context is removed from an
+ * existing classic rule, everything else in it is preserved.
  */
 export const setupGithub = async (instance: IO, config: Config) => {
   if (!getEnabledPipelineTypes(config).includes("github")) {
@@ -60,33 +68,99 @@ export const setupGithub = async (instance: IO, config: Config) => {
   }
 
   const branch = repoInfo.default_branch;
+  const rulesets = await ghApiJson<Array<{ id: number; name: string }>>(
+    "GET",
+    `repos/${repo}/rulesets?per_page=100`,
+  );
+  const existing = rulesets.find((r) => r.name === MERGE_GATING_RULESET_NAME);
+  if (!existing) {
+    await ghApiJson(
+      "POST",
+      `repos/${repo}/rulesets`,
+      desiredMergeGatingRuleset(),
+    );
+    instance.log(
+      `✅ ruleset '${MERGE_GATING_RULESET_NAME}': '${AGGREGATE_CHECK_JOB_NAME}' required on ${branch} — merges wait for the pipeline, the release job can push`,
+    );
+  } else {
+    const detail = await ghApiJson<GithubRuleset>(
+      "GET",
+      `repos/${repo}/rulesets/${existing.id}`,
+    );
+    if (rulesetProvidesMergeGating(detail)) {
+      instance.log(
+        `✅ ruleset '${MERGE_GATING_RULESET_NAME}' already in place on ${branch}`,
+      );
+    } else {
+      await ghApiJson(
+        "PUT",
+        `repos/${repo}/rulesets/${existing.id}`,
+        desiredMergeGatingRuleset(),
+      );
+      instance.log(
+        `✅ ruleset '${MERGE_GATING_RULESET_NAME}' restored — '${AGGREGATE_CHECK_JOB_NAME}' required, release-job bypass in place`,
+      );
+    }
+  }
+
+  await migrateAwayFromClassicProtection(instance, repo, branch);
+};
+
+/**
+ * removes the aggregate check from a classic branch protection rule
+ * set up by earlier catladder versions — with the check now required
+ * via the ruleset, the classic one would still reject the release
+ * job's push. Everything else in the rule is preserved; the whole rule
+ * is deleted when the check was all it carried.
+ */
+const migrateAwayFromClassicProtection = async (
+  instance: IO,
+  repo: string,
+  branch: string,
+) => {
   const protection = await ghApiJson<any>(
     "GET",
     `repos/${repo}/branches/${branch}/protection`,
-  ).catch(() => null); // 404: branch not protected yet
-
-  const existingChecks: Array<{ context: string; app_id?: number }> =
+  ).catch(() => null); // 404: branch not protected
+  const checks: Array<{ context: string; app_id?: number }> =
     protection?.required_status_checks?.checks ?? [];
-  if (existingChecks.some((c) => c.context === AGGREGATE_CHECK_JOB_NAME)) {
+  if (!checks.some((c) => c.context === AGGREGATE_CHECK_JOB_NAME)) {
+    return;
+  }
+  const remaining = checks.filter(
+    (c) => c.context !== AGGREGATE_CHECK_JOB_NAME,
+  );
+  const carriesAnythingElse =
+    remaining.length > 0 ||
+    protection?.enforce_admins?.enabled ||
+    protection?.required_pull_request_reviews ||
+    protection?.restrictions ||
+    protection?.required_linear_history?.enabled ||
+    protection?.required_conversation_resolution?.enabled ||
+    protection?.required_signatures?.enabled ||
+    protection?.lock_branch?.enabled ||
+    protection?.allow_force_pushes?.enabled ||
+    protection?.allow_deletions?.enabled;
+  if (!carriesAnythingElse) {
+    await ghApiJson("DELETE", `repos/${repo}/branches/${branch}/protection`);
     instance.log(
-      `✅ '${AGGREGATE_CHECK_JOB_NAME}' already required on ${branch}`,
+      `✅ classic branch protection on ${branch} removed — '${AGGREGATE_CHECK_JOB_NAME}' was all it carried, and it is now required via the ruleset`,
     );
     return;
   }
-
-  // merge into whatever protection exists; PUT replaces the whole rule,
-  // so every preserved setting must be carried over explicitly
+  // PUT replaces the whole rule, so every preserved setting must be
+  // carried over explicitly
   await ghApiJson("PUT", `repos/${repo}/branches/${branch}/protection`, {
-    required_status_checks: {
-      strict: protection?.required_status_checks?.strict ?? false,
-      checks: [
-        ...existingChecks.map(({ context, app_id }) => ({
-          context,
-          ...(app_id !== undefined ? { app_id } : {}),
-        })),
-        { context: AGGREGATE_CHECK_JOB_NAME },
-      ],
-    },
+    required_status_checks:
+      remaining.length > 0
+        ? {
+            strict: protection?.required_status_checks?.strict ?? false,
+            checks: remaining.map(({ context, app_id }) => ({
+              context,
+              ...(app_id !== undefined ? { app_id } : {}),
+            })),
+          }
+        : null,
     enforce_admins: protection?.enforce_admins?.enabled ?? false,
     required_pull_request_reviews: protection?.required_pull_request_reviews
       ? {
@@ -108,10 +182,15 @@ export const setupGithub = async (instance: IO, config: Config) => {
           apps: protection.restrictions.apps.map((a: any) => a.slug),
         }
       : null,
+    required_linear_history:
+      protection?.required_linear_history?.enabled ?? false,
+    required_conversation_resolution:
+      protection?.required_conversation_resolution?.enabled ?? false,
+    lock_branch: protection?.lock_branch?.enabled ?? false,
     allow_force_pushes: protection?.allow_force_pushes?.enabled ?? false,
     allow_deletions: protection?.allow_deletions?.enabled ?? false,
   });
   instance.log(
-    `✅ branch protection on ${branch}: '${AGGREGATE_CHECK_JOB_NAME}' required (merges now wait for the pipeline)`,
+    `✅ '${AGGREGATE_CHECK_JOB_NAME}' removed from classic branch protection on ${branch} — now required via the ruleset; the rest of the rule is preserved`,
   );
 };

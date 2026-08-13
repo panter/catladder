@@ -262,13 +262,17 @@ now-wrong `gitRemote`, regenerate once more, and finish with
   PR is mergeable the moment it opens, checks still running, and the
   auto-merge button does not even appear. `yarn catladder project setup`
   configures it: auto-merge + delete-merged-branches on the repo, and a
-  branch protection rule on the default branch requiring the generated
-  **`catladder ✅`** aggregate check (the one stable context — never
-  require individual job names, they change with every component
-  add/rename and a stale required name blocks its own PR forever).
-  `project doctor` verifies it. Two things stay human choices: "Do not
-  allow bypassing" (leave it off — generated CI means a generation bug
-  can only be fixed via the admin bypass) and required reviews.
+  repository **ruleset** (`catladder merge gating`) on the default
+  branch requiring the generated **`catladder ✅`** aggregate check
+  (the one stable context — never require individual job names, they
+  change with every component add/rename and a stale required name
+  blocks its own PR forever). The ruleset carries a bypass for the
+  GitHub Actions app: the release job pushes the release commit and
+  tag straight to the default branch with the workflow token, which a
+  required check would otherwise reject (GH006 — classic branch
+  protection has no bypass list, which is why setup uses a ruleset and
+  migrates old classic-protection gating away). `project doctor`
+  verifies all of it. Required reviews stay a human choice.
 - Tell the team where the pipeline lives now and how manual actions
   work there (on GitHub, manual jobs are dispatch workflows in the
   Actions sidebar — `🚀 catladder create release`, `▶️ catladder deploy`,
