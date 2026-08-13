@@ -1,5 +1,6 @@
 import clsx from "clsx";
 import Link from "@docusaurus/Link";
+import useBaseUrl from "@docusaurus/useBaseUrl";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import CodeBlock from "@theme/CodeBlock";
@@ -33,6 +34,13 @@ function HomepageHeader() {
   return (
     <header className={clsx("hero hero--primary", styles.heroBanner)}>
       <div className="container">
+        <img
+          className={styles.heroLogo}
+          src={useBaseUrl("img/cat_ladder_logo.svg")}
+          alt=""
+          width={277}
+          height={221}
+        />
         <Heading as="h1" className="hero__title">
           {siteConfig.title}
         </Heading>
