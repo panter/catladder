@@ -5,11 +5,11 @@ sidebar_position: 3
 # Build
 
 Builds define how components are tested and built for deployment.
-If the deployement demands a container, the build will also create a docker image.
+If the deployment demands a container, the build will also create a docker image.
 
-there are two modes of building: workspaces builds and standalone builds.
+There are two modes of building: workspace builds and standalone builds.
 
-standalone builds run for each components, whereas workspace builds can be used by multiple components.
+Standalone builds run for each component, whereas workspace builds can be shared by multiple components.
 
 ## Standalone Builds
 
@@ -63,11 +63,12 @@ For (legacy) meteor apps. Yarn-only — a pnpm project cannot use this build typ
 
 ### Custom (experimental)
 
-Use the custom build type for anything that is not yet built-in to catladder.
+Use the custom build type for anything that is not yet built-in to catladder:
+you provide the Dockerfile and the commands, catladder wires up the jobs,
+caching and variables around them.
 
-```
-
-```
+See the [build reference](./4_agents/skills/catladder-builds/references/build-types.md)
+for the full set of options.
 
 ## Project Images
 
@@ -119,7 +120,9 @@ const config = {
         jobImage: { image: "java-build" },
         docker: { type: "custom" },
       },
-      deploy: { /* ... */ },
+      deploy: {
+        /* ... */
+      },
     },
   },
 } satisfies Config;
@@ -133,9 +136,9 @@ With `dockerfile`, the content is written to `.catladder-generated/images/projec
 
 `context` sets the docker build context, relative to the repository root:
 
-| declaration | default context |
-|---|---|
-| `dir` | the `dir` itself |
+| declaration  | default context           |
+| ------------ | ------------------------- |
+| `dir`        | the `dir` itself          |
 | `dockerfile` | the repository root (`.`) |
 
 Set it explicitly when the image needs to `COPY` files from elsewhere, e.g. `{ dir: "docker/java-build", context: "." }` to build a Dockerfile that copies from the repository root.

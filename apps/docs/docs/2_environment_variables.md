@@ -60,41 +60,48 @@ It is also possible to generate `.env` files automatically on local development 
 
 Depending on the deploy type[^deploy-type], more variables are available.
 
-[^deploy-type]: **DeployConfigType** is one of "kubernetes", "google-cloudrun", "dockerTag", or "custom".
+[^deploy-type]: **DeployConfigType** is one of "kubernetes", "google-cloudrun", "npmPackage", "pages", "dockerTag", or "custom".
 
 ## Managing secrets
 
 Secrets are environment variables that should not be checked into the source code.
 
-:::warning
+### The vault
 
-Secrets are currently stored in GitLab. This may not be suitable for super-high-security cases.
+Secret values live in a **vault** — the readable source of truth that
+the catladder CLI edits. CI backends only ever receive mirrored copies
+of it.
 
-:::
-
-If you added a new key to `secrets` or want to change secrets, open a terminal and invoke `yarn catladder` (or just `catladder` if installed globally):
-
-```sh title="catladder shell"
-$ yarn catladder
-
-╔══════════════════════════╗
-║                          ║
-║ catladder 😻 v1.xxx.x ✨ ║
-║                          ║
-╚══════════════════════════╝
-
-project: project-name
-customer: dem
-
-catladder $ project-config-secrets
-
+```ts title="catladder.ts"
+const config = {
+  secrets: {
+    // "gitlab" (default): the gitlab project variables double as the store
+    // { type: "bitwarden", collection: "catladder" }: one yaml note per
+    // env/component, for projects that need a real secret manager or that
+    // have no gitlab project at all
+    vault: { type: "bitwarden" },
+  },
+} satisfies Config;
 ```
 
-:::tip
+Which vault is configured makes no difference to the commands below.
 
-The catladder shell supports tab completion, and you can call `help` at any time.
+:::note
+
+With the GitHub backend, secrets cannot be read from the vault at
+runtime — they are mirrored into GitHub _environment_ secrets (one
+GitHub environment per catladder env). After changing secrets, run
+`yarn catladder project secrets-sync-github`.
 
 :::
+
+### The interactive editor
+
+If you added a new key to `secret` or want to change secret values, run:
+
+```sh
+yarn catladder project config-secrets
+```
 
 This will open up your editor with all environment variables in the YAML format.  
 Save this file, close it, and catladder will update the secrets.
@@ -119,8 +126,6 @@ skip   : GOOGLE_TAG_MANAGER_ID
 --------------------------------
 
 done! 😻
-
-catladder $
 ```
 
 The editor is selected from your shell's environment variables `$VISUAL` or `$EDITOR`, or falls back to `code` or `vim`. Be careful with `EDITOR=code` - **this will not work correctly**.  
@@ -150,7 +155,7 @@ catladder project secrets-push dev: --file secrets.yml
 
 :::note
 
-catladder makes a copy of old values as a backup; you can restore those manually in GitLab if needed.
+catladder makes a copy of old values as a backup; you can restore those manually from the vault if needed.
 
 :::
 
@@ -163,7 +168,7 @@ The `catenv` command can do the following when executed:
 - [Create .env files automatically][env-files-section] (recommended)
 - [Inject env-vars into the shell][inject-env-vars-section] (legacy)
 - [Generate TypeScript `process.env` types][envDTs-section]
-- [Generate and update a local GitLab-CI pipeline][local-gitlab-ci-section]
+- [Generate and update the pipeline files][pipeline-generation-section]
 
 ### Setup
 
@@ -175,30 +180,7 @@ Install [@catladder/cli][catladder-cli-npm] in your project, if you don't have t
 $ yarn add -D @catladder/cli
 ```
 
-It's recommended to use [direnv][direnv] to automatically update the catladder environment in your shell with catenv when changes occur in your configuration.
-For this, you need to [install direnv first][direnv-install].
-
-[direnv][direnv] requires a project configuration file `.envrc` in your project root:
-
-```sh title=".envrc"
-# Add “node_modules/.bin” to $PATH. You to use catladder without yarn.
-layout node
-# If catenv is available, invoke it.
-if command -v 'catenv' >/dev/null; then
-  echo "using catenv"
-  watch_file catladder*
-  # This will also interpret the output of catenv,
-  # which is used to inject env-vars into the current shell.
-  eval "$(catenv)"
-  # Loads .env file if it exists in your shell
-  dotenv_if_exists .env
-fi
-```
-
-[direnv][direnv] requires you to allow its config changes by calling `direnv allow` in the project root.
-
-[direnv]: https://direnv.net/ "unclutter your .profile"
-[direnv-install]: https://direnv.net/docs/installation.html "direnv installation instructions"
+It's recommended to use [direnv](https://direnv.net/) to automatically update the catladder environment in your shell with catenv when changes occur in your configuration — see the [`.envrc` in the getting started guide](./1_getting_started.md#direnv).
 
 ### Usage
 
@@ -219,7 +201,7 @@ You can customize the behaviour of the component in your `catladder.ts` file:
   components: {
     api: {
       dotEnv: true, // <-- default
-      envDTs: true, // will genertae env.d.ts file (also default)
+      envDTs: true, // will generate env.d.ts file (also default)
       dir: "api",
 ```
 
@@ -235,7 +217,7 @@ There are these options for `dotEnv`:
 
 When `dotEnv` is set to `true` or `"local"`, `catenv` will create `.env` files in the component's directory.
 
-- Starting with Node 20, `.env` files can be loaded without third-party tools: `node -env-file=.env my-app.js`
+- Starting with Node 20, `.env` files can be loaded without third-party tools: `node --env-file=.env my-app.js`
 - For earlier Node versions or if you need more control, use [dotenvx][dotenvx]: `yarn run -T dotenvx run my-app.js`
   - Or in combination with [tsx][tsx]: `yarn run -T dotenvx run tsx my-app.ts`
 - The older [dotenv][dotenv] is also a viable option, but less convenient.
@@ -270,9 +252,9 @@ example:
 
 [envDTs-section]: #typescript-and-processenv
 
-To get autocompletion in your IDE for `process.env`, an `env.d.ts` file is generated.
+To get autocompletion in your IDE for `process.env`, `catenv` generates an `env.d.ts` file with type definitions for `process.env`.
 
-Yu can disable this like this:
+You can disable this like this:
 
 ```ts
 // ...
@@ -285,43 +267,18 @@ Yu can disable this like this:
 
 This will make `catenv` generate an `env.d.ts` file with type definitions for `process.env`.
 
-#### Local GitLab-CI pipeline generation
+#### Pipeline generation
 
-[local-gitlab-ci-section]: #local-gitlab-ci-pipeline-generation
+[pipeline-generation-section]: #pipeline-generation
 
-Since catladder 1.145.0, you can generate a `.gitlab-ci.yml` config file locally and commit it with git.
+Besides the local environment, `catenv` generates the pipeline files
+themselves — `.gitlab-ci.yml` plus `.catladder-generated/gitlab/` for
+GitLab, `.github/workflows/` for GitHub, depending on what `pipelines`
+declares. They are checked into git, so every pipeline change is a
+reviewable diff.
 
-Since version 2 this is the only behavior
-
-##### Migrate project to local GitLab pipeline
-
-First, you need to install the [@catladder/cli][catladder-cli-npm] package and remove the [@catladder/pipeline][catladder-pipeline-npm] package:
-
-[catladder-pipeline-npm]: https://www.npmjs.com/package/@catladder/pipeline "catladder-pipeline on npm"
-
-```sh
-$ yarn remove @catladder/pipeline
-$ yarn add -D @catladder/cli
-```
-
-You need to fix the imports of [@catladder/pipeline][catladder-pipeline-npm] to [@catladder/cli][catladder-cli-npm] in your `catladder.ts` file (and elsewhere).  
-Additionally, you need to set the `pipelineType`.
-
-```ts title="catladder.ts"
-import type { Config } from "@catladder/cli";
-
-const config = {
-  appName: "my-app",
-  appName: "dem",
-  pipelineType: "gitlab",
-  components: {
-    // Your components config ...
-  },
-} satisfies Config;
-
-export default config;
-```
-
-Now you can run `direnv reload` (or run `catenv` manually) to generate the `.gitlab-ci.yml` file.
-
-Catenv will now update your `.gitlab-ci.yml` file whenever your catladder configuration changes, or a newer version of [@catladder/cli][catladder-cli-npm] results in a different pipeline output.
+Catenv rewrites them whenever your catladder configuration changes, or
+when a newer version of [@catladder/cli][catladder-cli-npm] results in a
+different pipeline output. With direnv this happens as you enter the
+project directory; otherwise run `yarn catenv` (or `direnv reload`)
+yourself and commit the result.

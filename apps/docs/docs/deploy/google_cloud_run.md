@@ -37,12 +37,10 @@ const config = {
 } satisfies Config;
 ```
 
-**Whenever you make a change to this config, run this command in catladder-cli:**
+**Whenever you make a change to this config, run:**
 
 ```sh
-🐱 $ project-setup
-
-
+yarn catladder project setup
 ```
 
 This will set up the required service-accounts, APIs, etc.
@@ -50,7 +48,7 @@ _Make Sure that you are logged in with `gcloud` and have access to `your-google-
 
 ### The `.catladder-store` folder
 
-`project-setup` also fetches the gcloud **project number** and writes it to
+`project setup` also fetches the gcloud **project number** and writes it to
 `.catladder-store/store.yml`. Catladder needs it to compute the deterministic
 cloud run urls (`https://<service>-<projectNumber>.<region>.run.app`) at
 generation time.
@@ -58,7 +56,29 @@ generation time.
 **Check this folder in.** It contains no secrets — only machine-fetched values
 that pipeline generation depends on. If it is missing (e.g. on a freshly
 cloned project that predates it, or after deleting it), `catenv` fails with an
-error asking you to rerun `project-setup`.
+error asking you to rerun `project setup`.
+
+### Service name and url
+
+The service is deployed as
+`<customerName>-<appName>-<env>[-<reviewSlug>]-<componentName>`, and
+`ROOT_URL` / `ROOT_URL_INTERNAL` point at cloud run's deterministic url
+`https://<service>-<projectNumber>.<region>.run.app`.
+
+That url only exists while its first dns label — service name plus
+project number — stays within the **63 characters** dns allows. Beyond
+that, cloud run silently serves a legacy url built from a random
+identifier that cannot be computed in advance, so catladder **shortens
+the component part** of the service name just enough to fit rather than
+generating a hostname that could never resolve.
+
+Review environments carry a runtime slug (`mr<iid>` / `pr<number>`) on
+top, for which 8 characters are reserved — a component name can
+therefore fit in `dev`/`prod` and still be shortened in `review`.
+Generation fails with an explicit error instead of shortening when two
+components would end up with the same service name, or when
+customerName/appName/env plus the project number already leave no room
+for it.
 
 ## Cloud SQL support
 
@@ -78,7 +98,7 @@ deploy: {
 }
 ```
 
-3. run `project-setup` and `project-config-secrets`
+3. run `catladder project setup` and `catladder project config-secrets`
 
 Catladder will automatically create the databases on this instance. You can reuse the same instance for multiple apps, as the database-names contain the full app name and should not clash.
 
@@ -135,7 +155,7 @@ deploy: {
     }
   },
   execute: {
-    myjobexecution: { // <-- you can chose any name here. If you want to overwride an execution, you can use the same name
+    myjobexecution: { // <-- you can choose any name here. To override an execution, use the same name again
       type: "job",
       job: "myjob",
       when: "preDeploy", // can also be "postDeploy", "preStop", "postStop"
@@ -145,7 +165,7 @@ deploy: {
 }
 ```
 
-### Execut jobs on a schedule
+### Execute jobs on a schedule
 
 You can run a cloud run job on a schedule:
 
@@ -317,8 +337,8 @@ updateTime: '2025-08-11T10:09:49.169018244Z'
 
 ### Traces and logs
 
-_Complexity of these topics is thoroughly described in the documentation [logging](https://www.notion.so/panterch/Logging-c13f3e36d3794ce79cc02258bc6ba07f) and [tracing](https://www.notion.so/panterch/Tracing-a7a7a774f32e4044bb65e73fffd13fa9) with more
-information and examples. See subpages in Notion._
+_Panter devs: the internal Notion pages on logging and tracing cover
+these topics in much more depth, with further examples._
 
 Logs are taken automatically by cloud run, so simply log to stdout and stderr is the simplest approach. However, you may want to group logs by request, or add additional context to logs. This can be achieved with structured logging and using @google-cloud/logging-winston.
 
@@ -384,7 +404,6 @@ export default class LoggerFactory {
 ```
 
 You can then use the `makeExpressMiddleware` so that each req has a `log` object which is an instance of a winston logger. All those logs will have the same trace as the initial request, so you can group them in google cloud logs
-
 
 ### Tracing
 
@@ -454,7 +473,7 @@ Preparations:
 Steps:
 
 1. Change the catladder.ts config to use `google-cloud-run` as deploy type. Don't forget to alter all jobs as well.
-2. run `project-setup` in catladder-cli
+2. run `catladder project setup`
 3. migrate the `POSTGRESQL_PASSWORD` secret to the `DB_PASSWORD` secret.
 4. Push and make sure it works on your review-branch. Test it thoroughly
 5. Merge and create a release. Wait before you deploy to production.

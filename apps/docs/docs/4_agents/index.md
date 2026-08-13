@@ -4,6 +4,18 @@
 
 Catladder supports AI agents that can automatically perform tasks like code review, issue analysis, and other development workflows. Currently, Claude AI agents are supported.
 
+:::note
+
+Agent jobs are generated for the **GitLab backend only** — they are
+skipped on GitHub, which has its own Claude Code app for the same
+workflows.
+
+This is separate from the [agent skills](./skills) catladder
+materializes into `.claude/skills/` on every generation, which work
+regardless of backend and need no configuration.
+
+:::
+
 ## Installation
 
 ### 1. Configure catladder.ts
@@ -11,7 +23,7 @@ Catladder supports AI agents that can automatically perform tasks like code revi
 Add agent configuration to your `catladder.ts` file:
 
 ```typescript
-import type { Config } from "@catladder/core";
+import type { Config } from "@catladder/cli";
 
 const config = {
   appName: "your-app",
@@ -30,25 +42,15 @@ const config = {
 export default config;
 ```
 
-### 2. Run Catladder CLI
+### 2. Run project setup
 
-Execute the catladder command line interface:
-
-```bash
-npx catladder
-```
-
-### 3. Run project-setup
-
-IN CATLADDER CLI: Run the project setup to configure global infrastructure:
+Provision the infrastructure the agent needs:
 
 ```bash
-project-setup
+yarn catladder project setup
 ```
 
-**Tip:** Use `catladder project-setup -` to only update global stuff.
-
-### 4. Manual Environment Variables Setup
+### 3. Manual Environment Variables Setup
 
 Currently, these environment variables need to be set up manually in your GitLab project's CI/CD settings:
 
@@ -72,7 +74,7 @@ Set a GitLab personal access token for the agent.claude user:
 
 This token should be created for the `agent.claude` user account and have appropriate permissions for the repositories the agent will interact with.
 
-### 5. Commit and Push
+### 4. Commit and Push
 
 After configuring the environment variables, commit your changes and push to the repository to complete the setup.
 

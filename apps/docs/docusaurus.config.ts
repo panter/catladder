@@ -8,7 +8,7 @@ import simplePlantUML from "@akebifiky/remark-simple-plantuml";
 
 const config: Config = {
   title: "CatLadder",
-  tagline: "Documentation",
+  tagline: "Your whole CI/CD pipeline, generated from one TypeScript file",
   favicon: "img/favicon.ico",
   // Set the production url of your site here
   url: "https://panter.github.io",
@@ -38,18 +38,17 @@ const config: Config = {
         docs: {
           sidebarPath: "./sidebars.ts",
           remarkPlugins: [simplePlantUML],
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
-          // editUrl:
-          //   'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+          // generated pages (examples, agent skills) have no editable
+          // source here — they are rendered from packages/pipeline/examples
+          // and skills/ on every build
+          editUrl: ({ docPath }) =>
+            docPath.startsWith("examples/") ||
+            docPath.startsWith("4_agents/skills/")
+              ? undefined
+              : `https://github.com/panter/catladder/tree/main/apps/docs/docs/${docPath}`,
         },
-        // blog: {
-        //   showReadingTime: true,
-        //   // Please change this to your repo.
-        //   // Remove this to remove the "edit this page" links.
-        //   // editUrl:
-        //   // 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
-        // },
+        // no blog: the docs are the site
+        blog: false,
         theme: {
           customCss: "./src/css/custom.css",
         },
@@ -58,8 +57,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
-    image: "img/docusaurus-social-card.jpg",
+    image: "img/cat_ladder_logo.svg",
     navbar: {
       title: "CatLadder",
       logo: { alt: "CatLadder Logo", src: "img/logo.svg" },
@@ -70,10 +68,19 @@ const config: Config = {
           position: "left",
           label: "Documentation",
         },
-        // {to: '/blog', label: 'Blog', position: 'left'},
+        {
+          to: "/docs/getting_started",
+          label: "Getting started",
+          position: "left",
+        },
+        {
+          href: "https://www.npmjs.com/package/@catladder/cli",
+          label: "npm",
+          position: "right",
+        },
         {
           href: "https://github.com/panter/catladder",
-          label: "GitLab",
+          label: "GitHub",
           position: "right",
         },
       ],
@@ -83,14 +90,27 @@ const config: Config = {
       links: [
         {
           title: "Docs",
-          items: [{ label: "Getting Started", to: "/docs/getting_started" }],
+          items: [
+            { label: "Getting started", to: "/docs/getting_started" },
+            { label: "Deploy types", to: "/docs/deploy/" },
+            { label: "Releases", to: "/docs/releases" },
+            { label: "Config examples", to: "/docs/examples/" },
+          ],
         },
         {
           title: "More",
           items: [
             {
-              label: "GitLab",
+              label: "GitHub",
               href: "https://github.com/panter/catladder",
+            },
+            {
+              label: "Issues",
+              href: "https://github.com/panter/catladder/issues",
+            },
+            {
+              label: "@catladder/cli on npm",
+              href: "https://www.npmjs.com/package/@catladder/cli",
             },
           ],
         },
