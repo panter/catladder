@@ -32,13 +32,9 @@ describe("desiredMergeGatingRuleset", () => {
     ]);
   });
 
-  it("lets the release job (actions app) bypass the gating", () => {
+  it("lets deploy keys (the release push) bypass the gating — never the workflow token", () => {
     expect(desiredMergeGatingRuleset().bypass_actors).toEqual([
-      {
-        actor_id: GITHUB_ACTIONS_APP_ID,
-        actor_type: "Integration",
-        bypass_mode: "always",
-      },
+      { actor_id: null, actor_type: "DeployKey", bypass_mode: "always" },
     ]);
   });
 
@@ -72,7 +68,7 @@ describe("rulesetProvidesMergeGating", () => {
     ).toBe(false);
   });
 
-  it("rejects a ruleset whose release-job bypass is missing or weakened", () => {
+  it("rejects a ruleset whose deploy-key bypass is missing or weakened", () => {
     expect(rulesetProvidesMergeGating(asRuleset({ bypass_actors: [] }))).toBe(
       false,
     );
@@ -81,9 +77,24 @@ describe("rulesetProvidesMergeGating", () => {
         asRuleset({
           bypass_actors: [
             {
+              actor_id: null,
+              actor_type: "DeployKey",
+              bypass_mode: "pull_request",
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
+    // the broken pre-deploy-key encoding: github refuses the built-in
+    // actions app as a bypass actor, so it must not count as gating
+    expect(
+      rulesetProvidesMergeGating(
+        asRuleset({
+          bypass_actors: [
+            {
               actor_id: GITHUB_ACTIONS_APP_ID,
               actor_type: "Integration",
-              bypass_mode: "pull_request",
+              bypass_mode: "always",
             },
           ],
         }),

@@ -40,13 +40,14 @@ export const setupProject = async (
 
   const enabledPipelines = config ? getEnabledPipelineTypes(config) : [];
   await logSection(instance, "base setup", async () => {
-    // gitlab-specific provisioning (access token, agent webhooks) —
-    // meaningless (and failing) on a github-only project
+    // gitlab-specific provisioning (access token, agent webhooks, the
+    // `catladder` project topic) — meaningless (and failing) on a
+    // github-only project
     if (enabledPipelines.includes("gitlab")) {
       await setupAccessTokens(instance);
       await setupAgents(instance);
+      await setupTopic(instance);
     }
-    await setupTopic(instance);
     if (config) {
       await setupGithub(instance, config);
     }

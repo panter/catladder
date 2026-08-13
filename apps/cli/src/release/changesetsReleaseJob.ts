@@ -6,7 +6,8 @@
  * pushes — the pushed tag triggers the taggedRelease pipeline.
  */
 import { existsSync } from "fs";
-import { readFile, readdir, rm, writeFile } from "fs/promises";
+import { mkdtemp, readFile, readdir, rm, writeFile } from "fs/promises";
+import { tmpdir } from "os";
 import { join } from "path";
 import type { Changeset } from "./changesets";
 import {
@@ -16,7 +17,12 @@ import {
   prependToChangelog,
   renderChangelogEntries,
 } from "./changesets";
-import { ensureReleaseHistory, getLastReleaseTag, git } from "./releaseGit";
+import {
+  ensureReleaseHistory,
+  getLastReleaseTag,
+  git,
+  gitWithEnv,
+} from "./releaseGit";
 import { appendStepSummary } from "./stepSummary";
 
 const CHANGESET_DIR = ".changeset";
@@ -75,8 +81,12 @@ const requireEnv = (name: string): string => {
  * - gitlab: CI checkouts have a read-only origin, so push via an
  *   authenticated url with GL_TOKEN (the same project access token
  *   semantic-release uses)
- * - github: actions/checkout persists the job token credentials, so a
- *   plain push to origin works (`permissions: contents: write`)
+ * - github: over ssh with the release deploy key
+ *   (CATLADDER_RELEASE_KEY, provisioned by `project setup`) — merge
+ *   gating requires the `catladder ✅` check on the default branch,
+ *   and only a deploy key can bypass that (github deliberately never
+ *   lets the workflow token bypass rulesets). Without the secret the
+ *   push falls back to origin, which works on repos without gating.
  */
 const pushCommitAndTag = async (tag: string) => {
   // --atomic: all refs or none — a rejected tag must not leave the
@@ -84,21 +94,25 @@ const pushCommitAndTag = async (tag: string) => {
   // rederived an existing version)
   if (process.env.GITHUB_ACTIONS === "true") {
     const branch = requireEnv("GITHUB_REF_NAME");
+    const refs = [`HEAD:refs/heads/${branch}`, tag];
+    const deployKey = process.env.CATLADDER_RELEASE_KEY;
+    if (deployKey) {
+      await pushWithDeployKey(deployKey, refs);
+      return;
+    }
     try {
-      await git("push", "--atomic", "origin", `HEAD:refs/heads/${branch}`, tag);
+      await git("push", "--atomic", "origin", ...refs);
     } catch (e) {
-      // GH006: classic branch protection with a required status check
-      // rejects the fresh release commit (it cannot have a passing
-      // check yet) — merge gating must live in a ruleset with a bypass
-      // for the actions app, which `project setup` configures
+      // GH006: a required status check rejects the fresh release
+      // commit (it cannot have a passing check yet) — the push needs
+      // the release deploy key, which `project setup` provisions
       if (/GH006|protected branch/i.test(`${e?.message ?? e}`)) {
         throw new Error(
           `pushing the release to '${branch}' was rejected by its branch protection:\n` +
             `${e.message}\n` +
-            `The release job pushes the release commit and tag with the workflow token. ` +
-            `Required status checks on '${branch}' must live in a repository ruleset with a ` +
-            `bypass for GitHub Actions — classic branch protection cannot allow that push. ` +
-            `Run \`catladder project setup\` to migrate the merge gating, then rerun this job.`,
+            `The workflow token cannot bypass a required status check on '${branch}'. ` +
+            `Run \`catladder project setup\` to provision the release deploy key ` +
+            `(${RELEASE_KEY_ENV} secret + ruleset bypass), then rerun this job.`,
         );
       }
       throw e;
@@ -111,6 +125,41 @@ const pushCommitAndTag = async (tag: string) => {
   const branch = requireEnv("CI_COMMIT_BRANCH");
   const remote = `https://oauth2:${token}@${host}/${projectPath}.git`;
   await git("push", "--atomic", remote, `HEAD:refs/heads/${branch}`, tag);
+};
+
+const RELEASE_KEY_ENV = "CATLADDER_RELEASE_KEY";
+
+/**
+ * pushes over ssh with the release deploy key — the only actor that
+ * can bypass the merge-gating ruleset on the default branch
+ */
+const pushWithDeployKey = async (privateKey: string, refs: string[]) => {
+  const serverUrl = process.env.GITHUB_SERVER_URL ?? "https://github.com";
+  const host = new URL(serverUrl).host;
+  const repository = requireEnv("GITHUB_REPOSITORY");
+  const dir = await mkdtemp(join(tmpdir(), "release-key-"));
+  try {
+    const keyFile = join(dir, "id_ed25519");
+    // a key file without a trailing newline is rejected by openssh
+    await writeFile(
+      keyFile,
+      privateKey.endsWith("\n") ? privateKey : `${privateKey}\n`,
+      {
+        mode: 0o600,
+      },
+    );
+    await gitWithEnv(
+      {
+        GIT_SSH_COMMAND: `ssh -i ${keyFile} -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new`,
+      },
+      "push",
+      "--atomic",
+      `git@${host}:${repository}.git`,
+      ...refs,
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
 };
 
 /**
@@ -214,7 +263,15 @@ export const changesetsReleaseJob = async () => {
   } else {
     await git("add", CHANGELOG_FILE, CHANGESET_DIR);
   }
-  await git("commit", "-m", `chore(release): ${version}\n\n${entries}`);
+  // [skip ci] on github only: deploy-key pushes trigger workflows
+  // (unlike GITHUB_TOKEN pushes), and neither the release commit nor
+  // the tag needs a push-triggered run — the taggedRelease workflow is
+  // dispatched explicitly below, [skip ci] keeps it the only run. On
+  // gitlab the tag pipeline MUST fire natively, so no marker there
+  // (release-commit branch pipelines are already filtered by rules).
+  const onGithub = process.env.GITHUB_ACTIONS === "true";
+  const subject = `chore(release): ${version}${onGithub ? " [skip ci]" : ""}`;
+  await git("commit", "-m", `${subject}\n\n${entries}`);
   await git("tag", tag);
   await pushCommitAndTag(tag);
   console.log(`released ${tag}`);

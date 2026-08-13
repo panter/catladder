@@ -264,13 +264,17 @@ now-wrong `gitRemote`, regenerate once more, and finish with
   branch requiring the generated **`catladder ✅`** aggregate check
   (the one stable context — never require individual job names, they
   change with every component add/rename and a stale required name
-  blocks its own PR forever). The ruleset carries a bypass for the
-  GitHub Actions app: the release job pushes the release commit and
-  tag straight to the default branch with the workflow token, which a
-  required check would otherwise reject (GH006 — classic branch
-  protection has no bypass list, which is why setup uses a ruleset and
-  migrates old classic-protection gating away). `project doctor`
-  verifies all of it. Required reviews stay a human choice.
+  blocks its own PR forever). The ruleset carries a **deploy-key
+  bypass**: the release job pushes the release commit and tag straight
+  to the default branch, which the required check would otherwise
+  reject (GH006) — and github deliberately never lets the workflow
+  token bypass rulesets, so setup provisions a write deploy key
+  ("catladder release", private half in the `CATLADDER_RELEASE_KEY`
+  actions secret; deploy keys never expire) that the release job
+  pushes with over ssh. Classic branch protection has no bypass list
+  at all, which is why setup uses a ruleset and migrates old
+  classic-protection gating away. `project doctor` verifies all of it.
+  Required reviews stay a human choice.
 - Tell the team where the pipeline lives now and how manual actions
   work there (on GitHub, manual jobs are dispatch workflows in the
   Actions sidebar — `🚀 catladder create release`, `▶️ catladder deploy`,

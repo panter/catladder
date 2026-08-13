@@ -82,6 +82,7 @@ exports[`matches snapshot for pipelines-config github workflows YAML 1`] = `
         - catladder-image-semantic-release
       env:
         GITHUB_TOKEN: \${{ github.token }}
+        CATLADDER_RELEASE_KEY: \${{ secrets.CATLADDER_RELEASE_KEY }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4
@@ -137,6 +138,7 @@ catladder-release-on-green.yml:
         - guard
       env:
         GITHUB_TOKEN: \${{ github.token }}
+        CATLADDER_RELEASE_KEY: \${{ secrets.CATLADDER_RELEASE_KEY }}
       steps:
         - name: Checkout
           uses: actions/checkout@v4

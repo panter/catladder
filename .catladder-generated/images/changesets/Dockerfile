@@ -1,6 +1,7 @@
 FROM node:lts-alpine
 
-RUN apk add --no-cache bash git git-lfs
+# openssh: the release job pushes with the release deploy key over ssh
+RUN apk add --no-cache bash git git-lfs openssh-client
 
 # no release tooling baked in: the changesets release logic lives in
 # catci, which is materialized into the repository checkout

@@ -19,6 +19,8 @@ import {
 import type { GithubRuleset } from "../githubMergeGating";
 import {
   MERGE_GATING_RULESET_NAME,
+  RELEASE_DEPLOY_KEY_SECRET,
+  RELEASE_DEPLOY_KEY_TITLE,
   rulesetProvidesMergeGating,
 } from "../githubMergeGating";
 import type { DoctorReport } from "./DoctorReport";
@@ -208,11 +210,11 @@ const checkGithubMergeGating = async (report: DoctorReport, repo: string) => {
     : null;
   if (ruleset && rulesetProvidesMergeGating(ruleset)) {
     report.ok(
-      `ruleset '${MERGE_GATING_RULESET_NAME}': '${AGGREGATE_CHECK_JOB_NAME}' required on ${branch}, release job can push`,
+      `ruleset '${MERGE_GATING_RULESET_NAME}': '${AGGREGATE_CHECK_JOB_NAME}' required on ${branch}, deploy-key bypass for the release push`,
     );
   } else if (ruleset) {
     report.fail(
-      `ruleset '${MERGE_GATING_RULESET_NAME}' exists but is incomplete (inactive, check not required, or release-job bypass missing)`,
+      `ruleset '${MERGE_GATING_RULESET_NAME}' exists but is incomplete (inactive, check not required, or deploy-key bypass missing)`,
       "run: catladder project setup",
     );
   } else {
@@ -220,6 +222,34 @@ const checkGithubMergeGating = async (report: DoctorReport, repo: string) => {
       `no '${MERGE_GATING_RULESET_NAME}' ruleset on ${repo} — PRs can merge while the pipeline is red or still running`,
       "run: catladder project setup",
     );
+  }
+
+  try {
+    const [keys, secretNames] = await Promise.all([
+      ghApiJson<Array<{ title: string; read_only: boolean }>>(
+        "GET",
+        `repos/${repo}/keys?per_page=100`,
+      ),
+      listGithubSecretNames(repo),
+    ]);
+    const key = keys.find((k) => k.title === RELEASE_DEPLOY_KEY_TITLE);
+    const hasSecret = secretNames.some(
+      (name) => name.toUpperCase() === RELEASE_DEPLOY_KEY_SECRET,
+    );
+    if (key && !key.read_only && hasSecret) {
+      report.ok(
+        `release deploy key '${RELEASE_DEPLOY_KEY_TITLE}' + secret ${RELEASE_DEPLOY_KEY_SECRET} in place`,
+      );
+    } else {
+      report.fail(
+        `release deploy key incomplete (key: ${
+          key ? (key.read_only ? "read-only" : "ok") : "missing"
+        }, secret ${RELEASE_DEPLOY_KEY_SECRET}: ${hasSecret ? "set" : "missing"}) — the release job cannot push past the merge gating`,
+        "run: catladder project setup",
+      );
+    }
+  } catch (e) {
+    report.warn(`could not check the release deploy key (${e.message})`);
   }
 
   const protection = await ghApiJson<any>(
