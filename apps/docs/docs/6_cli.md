@@ -14,11 +14,11 @@ catladder <command> [options]
 
 ### Global options
 
-| Option | Description |
-|--------|-------------|
-| `-y, --yes` | Skip all confirmation prompts |
-| `-V, --version` | Show version |
-| `-h, --help` | Show help |
+| Option          | Description                   |
+| --------------- | ----------------------------- |
+| `-y, --yes`     | Skip all confirmation prompts |
+| `-V, --version` | Show version                  |
+| `-h, --help`    | Show help                     |
 
 ### Non-interactive mode
 
@@ -62,6 +62,15 @@ eval "$(catladder completion zsh)"
 
 Completions work for command names, flags, and dynamic values (like environment:component pairs).
 
+## Command reference
+
+The complete list of commands, their inputs and flags is generated from
+the command definitions:
+[catladder command reference](./4_agents/skills/catladder-cli/references/commands.md).
+
+`catladder --help` and `catladder <group> --help` print the same
+information for the installed version.
+
 ## Programmatic usage
 
 Commands can be called from code:
@@ -71,11 +80,23 @@ import { commandPortForward } from "@catladder/cli/commands";
 import { runCommand } from "@catladder/cli/core";
 
 await runCommand(commandPortForward, {
-  inputs: { envComponent: "dev:web", podName: "web-abc", localPort: 3000, remotePort: 3000 },
+  inputs: {
+    envComponent: "dev:web",
+    podName: "web-abc",
+    localPort: 3000,
+    remotePort: 3000,
+  },
 });
 ```
 
 ## Defining commands
+
+:::note
+
+This section is for people working on catladder itself — see
+[development](./development.md).
+
+:::
 
 Commands are defined with `defineCommand`:
 
@@ -120,27 +141,27 @@ export const myCommand = defineCommand({
 
 ### Input types
 
-| Type | Description | Interactive UI |
-|------|-------------|---------------|
-| `"string"` | Text value | Text input, or list selection if `choices` is provided |
+| Type         | Description      | Interactive UI                                                |
+| ------------ | ---------------- | ------------------------------------------------------------- |
+| `"string"`   | Text value       | Text input, or list selection if `choices` is provided        |
 | `"string[]"` | Array of strings | Comma-separated input, or checkboxes if `choices` is provided |
-| `"number"` | Numeric value | Number input |
-| `"boolean"` | True/false | Confirm (yes/no) |
+| `"number"`   | Numeric value    | Number input                                                  |
+| `"boolean"`  | True/false       | Confirm (yes/no)                                              |
 
 ### Input options
 
-| Option | Description |
-|--------|-------------|
-| `type` | Value type (`"string"`, `"number"`, `"boolean"`, `"string[]"`) |
-| `message` | Prompt message shown in interactive mode |
-| `positional` | If true, can be passed as a positional argument |
-| `default` | Default value when not provided |
-| `choices` | Async function returning available choices. Receives `ctx` so it can depend on other inputs. |
+| Option       | Description                                                                                  |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| `type`       | Value type (`"string"`, `"number"`, `"boolean"`, `"string[]"`)                               |
+| `message`    | Prompt message shown in interactive mode                                                     |
+| `positional` | If true, can be passed as a positional argument                                              |
+| `default`    | Default value when not provided                                                              |
+| `choices`    | Async function returning available choices. Receives `ctx` so it can depend on other inputs. |
 
 ### Context methods
 
-| Method | Description |
-|--------|-------------|
-| `ctx.get(name)` | Get an input value. Prompts interactively if not provided. |
-| `ctx.log(message)` | Output a message |
-| `ctx.confirm(message)` | Ask for confirmation. Skipped with `--yes`. |
+| Method                 | Description                                                |
+| ---------------------- | ---------------------------------------------------------- |
+| `ctx.get(name)`        | Get an input value. Prompts interactively if not provided. |
+| `ctx.log(message)`     | Output a message                                           |
+| `ctx.confirm(message)` | Ask for confirmation. Skipped with `--yes`.                |

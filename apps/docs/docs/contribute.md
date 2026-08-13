@@ -4,6 +4,20 @@ sidebar_position: 98
 
 # Contribute
 
+Issues and feature requests belong on
+[github.com/panter/catladder/issues](https://github.com/panter/catladder/issues);
+see [development](./development.md) for how to build and test catladder
+locally.
+
+Catladder itself releases with the `changesets` method, so **user-facing
+changes merge together with a `.changeset/*.md` file** — the
+`🦋 changeset check` job on your pull request tells you what is missing
+and what the next release would look like.
+
+The commit message conventions below still apply to catladder's history,
+and they are what drives the version bump in every project that uses the
+`semantic-release` [release method](./7_releases.md).
+
 ## Commit message guidelines
 
 ### Atomic commits
@@ -68,7 +82,7 @@ The body should include the motivation for the change and contrast this with pre
 
 ### Footer
 
-The footer should contain any information about **Breaking Changes** and is also the place to reference GitLab issues that this commit **Closes**.
+The footer should contain any information about **Breaking Changes** and is also the place to reference issues that this commit **Closes**.
 
 **Breaking Changes** should start with the word `BREAKING CHANGE:` with a space or two newlines.  
 The rest of the commit message is then used for this.

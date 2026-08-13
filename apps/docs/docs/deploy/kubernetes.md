@@ -4,12 +4,19 @@ sidebar_position: 4
 
 # Kubernetes (deprecated)
 
-TODO
-
 The `kubernetes` deploy-type uses helm to deploy the app to a Kubernetes cluster.
 
 It was the first catladder deploy type, highly opinionated and has many features, but is only recommended for certain types of apps.
-If possible, use serverless deployment types like `google-cloud-run`
+If possible, use serverless deployment types like [`google-cloudrun`](./google_cloud_run).
+
+:::note
+
+This page only covers the setup. The full option reference — `values`
+(application, autoscaling, probes, resources), `cloudsql`, `mongodb`,
+`jobs`, `cronjobs`, `mapServiceUrlToEnv` — lives in the
+[deploy types reference](../4_agents/skills/catladder-deploys/references/deploy-types.md).
+
+:::
 
 ## Swiss Cluster Deployments (Panter specific)
 
@@ -27,10 +34,7 @@ The `catladder.ts` file defines the whole deployment for Kubernetes.
 Here's a short example file:
 
 ```ts title="catladder.ts"
-import type {
-  Config,
-  DeployConfigKubernetesCluster,
-} from "@catladder/pipeline";
+import type { Config, DeployConfigKubernetesCluster } from "@catladder/cli";
 
 const PROD_CLUSTER: DeployConfigKubernetesCluster = {
   type: "gcloud",
@@ -48,8 +52,10 @@ const DEV_CLUSTER: DeployConfigKubernetesCluster = {
   domainCanonical: "panter.dev",
 };
 const config = {
-  customerName: "EXAMPLE CUSTOMER NAME (always 3 letters, lowercase. e.g.: ihz, pvl, vps etc.)",
-  appName: "EXAMPLE APP NAME (always separated by dashes, lowercase, e.g.: ihz-member-app, pvl-cyclomania-web etc.)",
+  customerName:
+    "EXAMPLE CUSTOMER NAME (always 3 letters, lowercase. e.g.: ihz, pvl, vps etc.)",
+  appName:
+    "EXAMPLE APP NAME (always separated by dashes, lowercase, e.g.: ihz-member-app, pvl-cyclomania-web etc.)",
   components: {
     // 👉 here you define all the needed, components
     web: {
@@ -73,20 +79,20 @@ const config = {
       vars: {
         // 👉 define public vars
         public: {},
-        // 👉 define the secrets, which will be afterwards set via catladder command project-config-secrets
+        // 👉 define the secrets, whose values are set afterwards with
+        //    `catladder project config-secrets`
         secret: ["HUB_API_URL"],
       },
     },
     api: {
-      dir: "./api/
+      dir: "./api",
       build: {
-        ...
+        // ...
       },
-      ...
-    }
+      // ...
+    },
   },
 } satisfies Config;
 
 export default config;
-
 ```

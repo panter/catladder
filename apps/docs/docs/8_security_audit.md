@@ -8,7 +8,14 @@ Catladder pipeline's job `create release` contains a step which requires project
 
 The document contains basic information about security posture of a project that brings transparency, allows us to quickly react in case of security emergency and create awareness towards security of apps we build.
 
-The document is created from a template automatically when detected a missing file.
+:::note
+
+The gate itself runs on **both CI backends** — no release passes without
+a valid `SECURITY.md`. The automatic remediation below (opening a merge
+request with the template) is **GitLab-only**; on GitHub the release job
+fails and you add the document yourself.
+
+:::
 
 Release flow is following:
 
@@ -46,6 +53,7 @@ These commands can also be used non-interactively in CI/CD pipelines.
 ### Why can't I create release?
 
 Pipeline job shows errors:
+
 ```
 doing security audit check
 could not evaluate security audit document
@@ -58,8 +66,8 @@ please finish the MR by updating SECURITY.md document: https://<your-gitlab-host
 
 **New MR was created containing security audit template which needs to be filled in by a developer and merged. Otherwise creating a release is not allowed.**
 
-
 Pipeline job shows errors:
+
 ```
 $ semanticRelease
 doing security audit check
@@ -72,6 +80,7 @@ please answer security topics in SECURITY.md by adding responsible people and ch
 **Security audit document (`SECURITY.md`) contains a table that needs to have at least one answer - either ✅ or ❌ (but not ✅/❌) and responsible person. Otherwise creating a release is not allowed.**
 
 After filling in the audit document you should see something like this in create release job:
+
 ```
 $ semanticRelease
 doing security audit check
@@ -95,11 +104,9 @@ doing semantic release
 
 ### How SECURITY.md should look?
 
-Example of filled security audit document (SECURITY.md) is below. The most important are information from the table with security topics. Guide links of the document template are available in: https://git.panter.ch/panter/security-guide
+Example of filled security audit document (SECURITY.md) is below. The most important are information from the table with security topics. The template's guide links point at Panter's internal security guide.
 
-
-SECURTY.md
----
+## SECURTY.md
 
 # Security Audit Report
 
@@ -122,4 +129,5 @@ It serves as a structured guide for security team to evaluate different security
 | @dev1       | ✅    | No API keys or secrets are stored in repository |                  | [guide](https://rickroll.it/) |
 | @dev2       | ❌    | The app does not provide password login         | Work in progress |                               |
 | @dev3       | ❌    | Passwords are not stored                        |                  | [guide](https://rickroll.it/) |
+
 ... more rows ...

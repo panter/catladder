@@ -30,9 +30,9 @@ With `when: "manual"` the `create release` button can be clicked **at any point 
 - clicked while the pipeline is still running, the release is **queued** and runs automatically as soon as every other job succeeded (nothing happens if the pipeline fails — queue again after fixing it);
 - clicked after a green pipeline, the release runs right away.
 
-On GitLab the button is a quick no-op job that records the intent; the actual release runs in the automatic `🚀 release once pipeline succeeds` job (shown as *skipped* in pipelines where nobody clicked — it is never triggered by hand). On GitHub, releasing is the **`🚀 catladder create release`** workflow (Actions sidebar → *Run workflow*): it performs the same check itself and, when the main workflow is still running, hands over to the generated `🛠️ catladder release on green` workflow — each run's summary tells you what happened and where the release will appear.
+On GitLab the button is a quick no-op job that records the intent; the actual release runs in the automatic `🚀 release once pipeline succeeds` job (shown as _skipped_ in pipelines where nobody clicked — it is never triggered by hand). On GitHub, releasing is the **`🚀 catladder create release`** workflow (Actions sidebar → _Run workflow_): it performs the same check itself and, when the main workflow is still running, hands over to the generated `🛠️ catladder release on green` workflow — each run's summary tells you what happened and where the release will appear.
 
-Forcing a release skips all of this and releases **immediately**, whatever the pipeline state: on GitLab via the `⚠️ force create release` job, on GitHub via the *force* checkbox of the create-release workflow.
+Forcing a release skips all of this and releases **immediately**, whatever the pipeline state: on GitLab via the `⚠️ force create release` job, on GitHub via the _force_ checkbox of the create-release workflow.
 
 ## Release methods
 
