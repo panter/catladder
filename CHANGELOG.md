@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.0.1 (2026-08-13)
+
+### Patch Changes
+
+- Changesets releases now create the release entry on the git host (gitlab `/-/releases`, github `/releases`) with the changelog as its description — previously only the tag was pushed, so the releases page stayed empty (on the semantic-release path `@semantic-release/gitlab` did this). The api call never fails the job: the commit and tag are already pushed when it runs, so a missing token only warns.
+- `semantic-release` on the github backend now creates the entry on the releases page too, via `@semantic-release/github` (the counterpart of the gitlab publish plugin, which is gitlab-only — on github the release used to end at the tag). Only the release is created: commenting on released pull requests/issues and labelling them stays off, so the release job keeps its `contents: write`-only permissions. Projects with their own `.releaserc` are unaffected, as before.
+
 ## 5.0.0 (2026-08-13)
 
 ### Major Changes
