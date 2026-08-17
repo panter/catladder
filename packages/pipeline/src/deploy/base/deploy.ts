@@ -10,6 +10,7 @@ import {
 import type { Requirement } from "../../types/jobs";
 import { CatladderJob } from "../../types/jobs";
 import { contextIsStoppable } from "../utils";
+import { getAutoStopConfig, REVIEW_AUTO_STOP_VARIABLE } from "../../autoStop";
 import { STOP_JOB_NAME } from "./stop";
 
 import { DEPLOY_RUNNER_VARIABLES } from "./variables";
@@ -21,11 +22,16 @@ export class DeployJob extends CatladderJob {
     const hasDocker = requiresDockerBuild(context);
     const isStoppable = contextIsStoppable(context);
 
+    const autoStopConfig = getAutoStopConfig(context.fullConfig);
     const autoStop =
       context.environment.envType === "review"
-        ? "1 week"
+        ? // review envs read the lifetime from a pipeline variable, so
+          // the pin label's workflow rule can override it to "never"
+          autoStopConfig.pinLabel === false
+          ? autoStopConfig.review
+          : `$${REVIEW_AUTO_STOP_VARIABLE}`
         : context.environment.envType === "dev"
-          ? "4 weeks"
+          ? autoStopConfig.dev
           : undefined;
 
     const deployConfig = context.deploy?.config;

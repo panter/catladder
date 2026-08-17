@@ -1,6 +1,11 @@
 import type { Pipeline } from "../../types";
 import { globalScriptFunctions } from "@catladder/bash";
 import {
+  getPinLabelRegexSource,
+  REVIEW_AUTO_STOP_VARIABLE,
+  type ResolvedAutoStopConfig,
+} from "../../autoStop";
+import {
   RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
@@ -19,11 +24,12 @@ export const createGitlabPipelineWithDefaults = ({
   image,
   variables,
   before_script,
+  autoStop,
   ...config
-}: PickRequired<
-  Partial<Pipeline<"gitlab">>,
-  "stages" | "jobs"
->): Pipeline<"gitlab"> => {
+}: PickRequired<Partial<Pipeline<"gitlab">>, "stages" | "jobs"> & {
+  autoStop?: ResolvedAutoStopConfig;
+}): Pipeline<"gitlab"> => {
+  const pinLabel = autoStop && autoStop.pinLabel;
   return {
     image: image ?? DEFAULT_PIPELINE_IMAGE,
     variables: {
@@ -33,6 +39,10 @@ export const createGitlabPipelineWithDefaults = ({
       TRANSFER_METER_FREQUENCY: "5s", // how often we should update the transfer meter for cache upload/download
 
       GIT_DEPTH: "1", // no need the full depth
+      // review env lifetime — the pin-label workflow rule below
+      // overrides this to "never" (workflow rule variables take
+      // precedence over pipeline-level variables)
+      ...(pinLabel ? { [REVIEW_AUTO_STOP_VARIABLE]: autoStop.review } : {}),
       ...(variables ?? {}),
     },
     before_script: [
@@ -51,6 +61,21 @@ export const createGitlabPipelineWithDefaults = ({
             PIPELINE_NAME: "Thinking...",
           },
         },
+        // pinned MRs (rules stop at the first match, so this must come
+        // before the plain merge-request rule)
+        ...(pinLabel
+          ? [
+              {
+                if: `${RULE_IS_MERGE_REQUEST.if} && $CI_MERGE_REQUEST_LABELS =~ /${getPinLabelRegexSource(pinLabel)}/`,
+                variables: {
+                  PIPELINE_ICON: "🐱📌",
+                  PIPELINE_NAME:
+                    "mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE",
+                  [REVIEW_AUTO_STOP_VARIABLE]: "never",
+                },
+              },
+            ]
+          : []),
         {
           if: RULE_IS_MERGE_REQUEST.if,
           variables: {

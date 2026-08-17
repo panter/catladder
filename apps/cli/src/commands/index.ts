@@ -29,6 +29,7 @@ export { commandDoctor } from "./project/commandDoctor";
 export { commandCiJobOpen, commandCiJobLog } from "./project/commandGitlabCi";
 export { commandProjectRestoreDb } from "./project/commandProjectRestoreDb";
 export { commandSecurityEvaluate } from "./project/commandSecurityEvaluate";
+export { commandMrPin, commandMrUnpin } from "./project/commandMrPin";
 
 // Project k8s commands
 export { commandNamespace } from "./project/k8s/commandNamespace";
