@@ -3234,6 +3234,7 @@ variables:
   CACHE_COMPRESSION_LEVEL: fast
   TRANSFER_METER_FREQUENCY: 5s
   GIT_DEPTH: '1'
+  CL_REVIEW_AUTO_STOP: 1 week
 workflow:
   name: $PIPELINE_ICON $PIPELINE_NAME
   rules:
@@ -3241,6 +3242,11 @@ workflow:
       variables:
         PIPELINE_ICON: 🤖
         PIPELINE_NAME: Thinking...
+    - if: $CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_LABELS =~ /(^|,)catladder::pin-review(,|$)/
+      variables:
+        PIPELINE_ICON: 🐱📌
+        PIPELINE_NAME: mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE
+        CL_REVIEW_AUTO_STOP: never
     - if: $CI_MERGE_REQUEST_ID
       variables:
         PIPELINE_ICON: 🐱🔨
@@ -4231,7 +4237,7 @@ create release:
     name: review/$CI_COMMIT_REF_NAME/api
     url: $CL_GITLAB_ENVIRONMENT_URL
     on_stop: 'api 🛑 Stop ⚠️ | review '
-    auto_stop_in: 1 week
+    auto_stop_in: $CL_REVIEW_AUTO_STOP
   artifacts:
     reports:
       dotenv: gitlab_environment.env

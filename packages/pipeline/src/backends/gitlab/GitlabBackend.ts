@@ -15,6 +15,7 @@ import type {
   WorkspaceContext,
 } from "../../types";
 import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
+import { getAutoStopConfig } from "../../autoStop";
 import { createAllJobs } from "../../pipeline/createAllJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
@@ -271,6 +272,7 @@ export class GitlabBackend implements PipelineBackend {
         // per-pipeline-type variables (pipelines.gitlab.runnerVariables)
         ...getPipelineOptions(config, this.type).runnerVariables,
       },
+      autoStop: getAutoStopConfig(config),
     });
   }
 }
