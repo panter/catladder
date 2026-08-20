@@ -148,8 +148,17 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
         DEPLOY_CLOUD_RUN_REGION: deployConfigRaw
           ? deployConfigRaw.region
           : undefined,
+        // google-auth-library & friends resolve the project id from this
+        // without a metadata-server round trip
+        GOOGLE_CLOUD_PROJECT: deployConfigRaw
+          ? deployConfigRaw.projectId
+          : undefined,
       };
     },
+    getLocalEnvVars: ({ deployConfigRaw }) =>
+      deployConfigRaw
+        ? { GOOGLE_CLOUD_PROJECT: deployConfigRaw.projectId }
+        : {},
     verifyJobSetupScript: (context) => {
       const deployConfig = context.deploy?.config as
         | DeployConfigCloudRun
