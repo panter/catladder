@@ -32,6 +32,14 @@ export type DeployTypeDefinition<D extends DeployConfig> = {
     envContext: EnvironmentContext<BuildConfig, D>,
   ) => Record<string, VariableValue | undefined | null>;
   /**
+   * env vars the deploy type contributes to the component's *local* env
+   * (the deployed envs get getAdditionalEnvVars instead). User-defined
+   * vars.public always win over these.
+   */
+  getLocalEnvVars?: (
+    envContext: EnvironmentContext<BuildConfig, D>,
+  ) => Record<string, VariableValue | undefined | null>;
+  /**
    * script lines the deploy type contributes to the start of the verify job,
    * e.g. to authenticate against a non-public service
    */
