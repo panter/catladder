@@ -59,7 +59,7 @@ export const commandPortForward = defineCommand({
 
       const { fullName } = context.environment;
       let serviceName: string = fullName.toString();
-      if (context.environment.envType === "review") {
+      if (context.environment.instance.type === "review") {
         const mr = await ctx.get("mr");
         serviceName = serviceName
           .toString()

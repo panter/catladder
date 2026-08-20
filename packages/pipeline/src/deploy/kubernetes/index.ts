@@ -15,11 +15,10 @@ export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigKubernetes
       fullConfig,
       deployConfigRaw,
       env,
-      reviewSlug,
-      envType,
+      instance,
     }) => {
       const KUBE_APP_NAME_PREFIX =
-        envType === "review" && reviewSlug ? reviewSlug.concat("-") : "";
+        instance.type === "review" ? instance.reviewSlug.concat("-") : "";
       const KUBE_APP_NAME = KUBE_APP_NAME_PREFIX.concat(componentName);
       const KUBE_NAMESPACE = getKubernetesNamespace(fullConfig, env);
       const componentSlug = slugify(componentName);
@@ -32,7 +31,7 @@ export const KUBERNETES_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigKubernetes
       const HOSTNAME_INTERNAL = joinBashExpressions(
         [
           componentSlug,
-          ...(envType === "review" && reviewSlug ? [reviewSlug] : []),
+          ...(instance.type === "review" ? [instance.reviewSlug] : []),
           env,
           fullConfig.appName,
           fullConfig.customerName,

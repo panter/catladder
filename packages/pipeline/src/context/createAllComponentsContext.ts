@@ -1,11 +1,11 @@
 import { getAllEnvsByTrigger } from "../config/configruedEnvs";
 import type { ComponentContext, PipelineType } from "../types";
-import type { Config, PipelineTrigger } from "../types/config";
+import type { Config, EnvPipelineTrigger } from "../types/config";
 import { createComponentContext } from "./createComponentContext";
 
 export type CreateAllComponentsContextProps = {
   config: Config;
-  trigger: PipelineTrigger;
+  trigger: EnvPipelineTrigger;
   pipelineType: PipelineType;
 };
 

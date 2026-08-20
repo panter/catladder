@@ -36,7 +36,8 @@ export const getArtifactsRegistryImageName = (
   context: ComponentContext,
   lecacyReviewImageName = false,
 ) => {
-  if (lecacyReviewImageName && context.environment.envType !== "review") {
+  const { instance } = context.environment;
+  if (lecacyReviewImageName && instance.type !== "review") {
     throw new Error("lecacyReviewImageName is only allowed for review app");
   }
 
@@ -45,8 +46,8 @@ export const getArtifactsRegistryImageName = (
     dockerUrl,
     context.env,
     context.name,
-    ...(context.environment.reviewSlug && !lecacyReviewImageName
-      ? [context.environment.reviewSlug]
+    ...(instance.type === "review" && !lecacyReviewImageName
+      ? [instance.reviewSlug]
       : []),
   ];
   return joinBashExpressions(gcloudImagePath, "/");
@@ -114,7 +115,7 @@ export const getDeleteUnusedImagesCommands = (
     // because a recent version of catladder had no review-slug in the image name, we have to delete those as well
     // we can later remove this line in some months
 
-    ...(context.environment.envType === "review"
+    ...(context.environment.instance.type === "review"
       ? allowFailureInScripts(
           getDeleteImageCommands(
             getArtifactsRegistryImageName(context, true),

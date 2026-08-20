@@ -21,6 +21,37 @@ export const ALL_PIPELINE_TRIGGERS = [
 export type PipelineTrigger = (typeof ALL_PIPELINE_TRIGGERS)[number];
 
 /**
+ * a pipeline that runs on pushes to one specific branch (in addition to
+ * the built-in triggers). Declared by an env via its `on` config.
+ */
+export type BranchPipelineTrigger = { branch: string };
+
+/**
+ * everything a pipeline (and therefore an env's jobs) can run on
+ */
+export type EnvPipelineTrigger = PipelineTrigger | BranchPipelineTrigger;
+
+/**
+ * the `on` config of an env: a trigger, or `false` for an env that is
+ * not part of any pipeline (like `local`)
+ */
+export type EnvOnConfig = EnvPipelineTrigger | false;
+
+export const isBranchTrigger = (
+  trigger: EnvPipelineTrigger,
+): trigger is BranchPipelineTrigger =>
+  typeof trigger === "object" && trigger !== null && "branch" in trigger;
+
+export const envTriggerEquals = (
+  a: EnvOnConfig | undefined,
+  b: EnvPipelineTrigger,
+): boolean => {
+  if (a === undefined || a === false) return false;
+  if (isBranchTrigger(b)) return isBranchTrigger(a) && a.branch === b.branch;
+  return a === b;
+};
+
+/**
  * all env types with their trigger.
  * Each env type has a default env with the same name which is always included
  */
@@ -41,18 +72,6 @@ export const ENV_TYPES = {
     triggers: [],
   },
 } as const;
-
-/**
- *
- * @param trigger a trigger
- * @returns array of env types for that trigger. this is also the list of default envs
- */
-export const getEnvTypesByTrigger = (trigger: PipelineTrigger) =>
-  Object.entries(ENV_TYPES)
-    .filter(([, e]) =>
-      (e.triggers as readonly PipelineTrigger[]).includes(trigger),
-    )
-    .map(([e]) => e as EnvType);
 
 export const DEFAULT_ENVS = Object.keys(ENV_TYPES);
 export const DEFAULT_ENV_TYPES = DEFAULT_ENVS as EnvType[];
@@ -152,7 +171,58 @@ export type EnvConfig<E extends EnvType = EnvType> = {
    * host that is used. If not set, a "canonical" url is created
    */
   host?: string;
+  /**
+   * per-component override of the environment's autoStop (see
+   * {@link EnvironmentConfig.autoStop} — each component has its own
+   * gitlab environment, so the duration may differ per component)
+   */
+  autoStop?: string | false;
 } & PartialDeep<DefaultEnvConfig>;
+
+/**
+ * project-wide declaration and tuning of an environment (the top-level
+ * `environments` config). Environments are a project-wide concept —
+ * every component deploys to a declared env unless it opts out with
+ * `env.<name>: false`. Anything that must be consistent across
+ * components (which envs exist, when they deploy) lives here; the
+ * per-component `env.<name>` entries only override component-local
+ * things (vars, deploy settings, host, autoStop).
+ */
+export type EnvironmentConfig = {
+  /**
+   * type of the env (stage, prod, review, dev) — supplies the defaults
+   * (trigger, autoStop, deploy policy). Required for envs whose name is
+   * not itself an env type.
+   */
+  type?: EnvType;
+
+  /**
+   * when this env deploys. Defaults from the env type:
+   * - dev: "mainBranch" (pushes to the default branch)
+   * - review: "mr" (merge requests / pull requests; the env is created
+   *   per MR and torn down when it closes)
+   * - stage / prod: "taggedRelease" (release tags)
+   * - local: false (not part of any pipeline)
+   *
+   * `{ branch: "next" }` deploys the env on pushes to that branch —
+   * one stable environment tracking a long-lived branch.
+   *
+   * `false` removes the env from all pipelines.
+   */
+  on?: EnvOnConfig;
+
+  /**
+   * how long the environment stays up after its last deployment before
+   * gitlab stops it automatically (gitlab `auto_stop_in`, e.g. "3 days").
+   * `false` disables auto-stopping. Defaults from the env type:
+   * review "1 week", dev "4 weeks", everything else never.
+   *
+   * Only applies to stoppable deployments, and only on gitlab (github
+   * review apps stop when their pull request closes). Components can
+   * override it per env (`env.<name>.autoStop`).
+   */
+  autoStop?: string | false;
+};
 
 export type EnvConfigWithComponent = EnvConfig<EnvType> & ComponentConfig;
 
@@ -172,7 +242,7 @@ export type Env<C extends ConfigProps = never> = {
   // unfortunatly, typescript does not properly support objects with a mix of known and unknown properties.
   // for backwards compatiblity we allow unknown props, but we cannot type it (typescript problem)
   // however, we now support providing custom envs through a generic parameter of `Config`
-} & Record<C["CustomEnvs"], CustomEnv> &
+} & Partial<Record<C["CustomEnvs"], EnvConfigWithOverride | false>> &
   Record<string, any>;
 export type ComponentConfig<C extends ConfigProps = never> = {
   /**
@@ -362,6 +432,20 @@ export type Config<C extends ConfigProps = never> = {
 
   // shared workspace Builds
   builds?: Record<string, WorkspaceBuildConfig>;
+
+  /**
+   * project-wide environment declarations and tuning. Environments are
+   * shared across all components, so everything that must be consistent
+   * between them (which envs exist, their type, when they deploy) is
+   * declared here — components only carry per-component overrides.
+   *
+   * - tune a default env: `environments: { review: { autoStop: "3 days" } }`
+   * - declare an extra env (every component deploys to it unless it
+   *   opts out with `env.<name>: false`):
+   *   `environments: { next: { type: "dev", on: { branch: "next" } } }`
+   */
+  environments?: Record<string, EnvironmentConfig>;
+
   /**
    * components (sub apps)
    */

@@ -1,8 +1,14 @@
 import { readdir, rm, unlink } from "fs/promises";
 import { join } from "path";
 import { createAllJobs } from "../../pipeline/createAllJobs";
-import type { Config, Context, PipelineTrigger } from "../../types";
-import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
+import type {
+  Config,
+  Context,
+  EnvPipelineTrigger,
+  PipelineTrigger,
+} from "../../types";
+import { ALL_PIPELINE_TRIGGERS, isBranchTrigger } from "../../types/config";
+import { getConfiguredBranchTriggers } from "../../config/configruedEnvs";
 import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 import type { CatladderJob } from "../../types/jobs";
 import type { PipelineBackend, PipelineFile } from "../types";
@@ -63,6 +69,16 @@ const TRIGGER_WORKFLOWS: Record<
     on: { push: { tags: ["v*"] }, workflow_dispatch: {} },
   },
 };
+
+const getTriggerWorkflow = (
+  trigger: EnvPipelineTrigger,
+): Pick<GithubWorkflow, "name" | "on" | "concurrency"> =>
+  isBranchTrigger(trigger)
+    ? {
+        name: `🛠️ catladder ${trigger.branch}`,
+        on: { push: { branches: [trigger.branch] } },
+      }
+    : TRIGGER_WORKFLOWS[trigger];
 
 export class GithubBackend implements PipelineBackend {
   readonly type = "github" as const;
@@ -130,7 +146,13 @@ export class GithubBackend implements PipelineBackend {
       rollback: { jobs: {}, conditions: {}, options: [], envTypes: [] },
     };
 
-    for (const trigger of ALL_PIPELINE_TRIGGERS) {
+    // branch triggers (envs with `on: { branch: ... }`) each get their
+    // own push-triggered workflow next to the built-in ones
+    const allTriggers: EnvPipelineTrigger[] = [
+      ...ALL_PIPELINE_TRIGGERS,
+      ...getConfiguredBranchTriggers(config),
+    ];
+    for (const trigger of allTriggers) {
       const allJobs = await createAllJobs({
         config,
         trigger,
@@ -288,7 +310,7 @@ export class GithubBackend implements PipelineBackend {
       if (Object.keys(jobs).length > 0) {
         const workflowJobs = { ...makeEnsureImageGithubJobs(images), ...jobs };
         workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] = {
-          ...TRIGGER_WORKFLOWS[trigger],
+          ...getTriggerWorkflow(trigger),
           ...workflowPermissions(images),
           env: workflowEnv,
           // the review workflow additionally gets the aggregate job —
@@ -398,7 +420,12 @@ const workflowPermissions = (_images: JobImagesPlan) => ({
   permissions: { contents: "read", packages: "write" },
 });
 
-const workflowFileName = (trigger: PipelineTrigger): string => {
+const workflowFileName = (trigger: EnvPipelineTrigger): string => {
+  if (isBranchTrigger(trigger)) {
+    // branch names may contain characters that don't belong in a file
+    // name (e.g. "release/next")
+    return `branch-${trigger.branch.replace(/[^a-zA-Z0-9]+/g, "-")}.yml`;
+  }
   switch (trigger) {
     case "mr":
       return "review.yml";
@@ -417,7 +444,9 @@ const workflowFileName = (trigger: PipelineTrigger): string => {
 const isReviewStopJob = (context: Context, job: CatladderJob) =>
   job.environment?.action === "stop" &&
   context.type === "component" &&
-  context.environment.envType === "review";
+  // a review app (one instance per pull request) is torn down when its
+  // pull request closes; stable envs get dispatch-triggered stop jobs
+  context.environment.instance.type === "review";
 
 /**
  * stop/rollback jobs of non-review environments have no automatic

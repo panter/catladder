@@ -11,11 +11,20 @@ generated YAML.
 
 ## Triggers and environments
 
-| Trigger | Runs on | Deploys to |
+| Trigger | Runs on | Deploys to (default) |
 |---|---|---|
 | `mainBranch` | push to the main branch | `dev` |
 | `mr` | merge/pull requests | `review` (one app per MR/PR) |
 | `taggedRelease` | git tags | `stage`, `prod` |
+| `{ branch: "<name>" }` | push to that branch | envs declaring it via `on` |
+
+The trigger of each env is its `on` in the top-level `environments`
+config (project-wide — components cannot diverge), defaulting from the
+env type as in the table. An env with `on: { branch: "next" }` gets its
+own pipeline (gitlab: rules on `$CI_COMMIT_BRANCH`; github: a
+`catladder-branch-<name>.yml` workflow) and deploys as one stable,
+branch-tracking environment — unlike review apps, it is not
+per-instance and is stopped via the manual stop job/workflow.
 
 Generated layout:
 

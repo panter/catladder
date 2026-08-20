@@ -21,12 +21,20 @@ export class DeployJob extends CatladderJob {
     const hasDocker = requiresDockerBuild(context);
     const isStoppable = contextIsStoppable(context);
 
-    const autoStop =
+    // env-level autoStop config wins; the env type only supplies the default
+    const autoStopConfigured = context.environment.autoStop;
+    const autoStopDefault =
       context.environment.envType === "review"
         ? "1 week"
         : context.environment.envType === "dev"
           ? "4 weeks"
           : undefined;
+    const autoStop =
+      autoStopConfigured === undefined
+        ? autoStopDefault
+        : autoStopConfigured === false
+          ? undefined
+          : autoStopConfigured;
 
     const deployConfig = context.deploy?.config;
 
