@@ -11,9 +11,10 @@ import type { AgentConfig } from "./agent";
 import type {
   ComponentConfig,
   Config,
+  EnvPipelineTrigger,
   EnvType,
-  PipelineTrigger,
 } from "./config";
+import type { EnvironmentInstance } from "./environmentContext";
 import type { BaseStage, CatladderJob, CatladderJobSpec } from "./jobs";
 import type { PipelineType } from "./pipeline";
 
@@ -49,7 +50,13 @@ export type Environment = {
    */
   slugPrefix: StringOrBashExpression;
   /**
+   * how the env is instantiated — `instance.type === "review"` is the
+   * way to find out whether this is a review app
+   */
+  instance: EnvironmentInstance;
+  /**
    * the review slug, if it is a review app, null otherwise
+   * @deprecated use `instance` — the review variant carries the slug
    */
   reviewSlug: StringOrBashExpression | null;
   /**
@@ -58,6 +65,13 @@ export type Environment = {
   slug: StringOrBashExpression;
 
   envType: EnvType;
+
+  /**
+   * the resolved `autoStop` config (component override, then the
+   * project-wide environment config — see {@link EnvironmentConfig.autoStop});
+   * undefined means the env type's default applies
+   */
+  autoStop?: string | false;
 } & EnvironmentEnvVarPart;
 
 export type YarnWorkspace = {
@@ -191,7 +205,7 @@ export type ComponentContext<
   fullConfig: Config;
   environment: Environment;
 
-  trigger?: PipelineTrigger;
+  trigger?: EnvPipelineTrigger;
   pipelineType?: PipelineType;
 
   packageManagerInfo: Promise<PackageManagerInfoComponent>;
@@ -230,7 +244,7 @@ export type WorkspaceContext = {
   packageManagerInfo: Promise<PackageManagerInfoBase>;
   components: Array<ComponentContext>;
   build: BuildContextWorkspace;
-  trigger: PipelineTrigger;
+  trigger: EnvPipelineTrigger;
   pipelineType: PipelineType;
   env: string;
 };

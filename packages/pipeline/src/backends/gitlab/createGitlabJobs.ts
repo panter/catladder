@@ -295,7 +295,7 @@ const addGitlabEnvironment = (
     return job;
   }
   const { env, name, environment } = context;
-  const { envVars, envType } = environment;
+  const { envVars, instance } = environment;
   const { onStop, autoStopIn, action } = catladderJobEnvironment;
   // those can be dynamic, so we therefore have to do this: https://docs.gitlab.com/ee/ci/environments/#set-a-dynamic-environment-url
 
@@ -321,7 +321,7 @@ const addGitlabEnvironment = (
 
   // this is NOT a bashVariable since it NEEDS to be used as a string in gitlab
   const gitlabEnvironmentName =
-    envType === "review"
+    instance.type === "review"
       ? `${env}/$CI_COMMIT_REF_NAME/${name}` // FIXME: should be replaced with mr name as well
       : `${env}/${name}`;
 

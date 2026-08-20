@@ -1,7 +1,7 @@
 import {
   WORKSPACE_BUILD_TYPES,
   type Config,
-  type PipelineTrigger,
+  type EnvPipelineTrigger,
   type PipelineType,
   type WorkspaceContext,
 } from "..";
@@ -22,7 +22,7 @@ export async function createWorkspaceContext({
   workspaceName: string;
   config: Config;
   pipelineType: PipelineType;
-  trigger: PipelineTrigger;
+  trigger: EnvPipelineTrigger;
 }): Promise<WorkspaceContext> {
   const workspaceConfigRaw = config.builds?.[workspaceName];
   if (!workspaceConfigRaw) {

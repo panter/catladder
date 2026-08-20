@@ -5,7 +5,7 @@ import { DEPLOY_TYPES } from "../deploy";
 import type { DeployConfig, DeployConfigType } from "../deploy/types";
 import { getPackageManagerInfoForComponent } from "../pipeline/packageManager";
 import type { PipelineType } from "../types";
-import type { Config, PipelineTrigger } from "../types/config";
+import type { Config, EnvPipelineTrigger } from "../types/config";
 import type {
   BuildContext,
   BuildContextComponent,
@@ -21,7 +21,7 @@ export type CreateComponentContextContext = {
   componentName: string;
   env: string;
   pipelineType?: PipelineType;
-  trigger?: PipelineTrigger;
+  trigger?: EnvPipelineTrigger;
 };
 
 export const createComponentContext = async (

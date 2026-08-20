@@ -8,13 +8,14 @@ import {
 import type {
   ComponentContext,
   Config,
+  EnvPipelineTrigger,
   GitlabJobDef,
   GitlabRule,
   Pipeline,
-  PipelineTrigger,
   WorkspaceContext,
 } from "../../types";
-import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
+import { ALL_PIPELINE_TRIGGERS, isBranchTrigger } from "../../types/config";
+import { getConfiguredBranchTriggers } from "../../config/configruedEnvs";
 import { createAllJobs } from "../../pipeline/createAllJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
@@ -158,9 +159,16 @@ export class GitlabBackend implements PipelineBackend {
     // main-branch job list for the queued-release executor's needs.
     images.resolveRef({ catladderImage: getReleaseMethod(config).image });
 
-    // for all triggers create jobs and add base rules
+    // for all triggers create jobs and add base rules. Branch triggers
+    // (envs with `on: { branch: ... }`) each get their own pipeline next
+    // to the built-in ones.
+    const branchTriggers = getConfiguredBranchTriggers(config);
+    const allTriggers: EnvPipelineTrigger[] = [
+      ...ALL_PIPELINE_TRIGGERS,
+      ...branchTriggers,
+    ];
     const jobsPerTrigger = await Promise.all(
-      ALL_PIPELINE_TRIGGERS.map(async (trigger) => ({
+      allTriggers.map(async (trigger) => ({
         trigger,
         jobs: await createGitlabJobs(
           await createAllJobs({ config, trigger, pipelineType: this.type }),
@@ -271,6 +279,7 @@ export class GitlabBackend implements PipelineBackend {
         // per-pipeline-type variables (pipelines.gitlab.runnerVariables)
         ...getPipelineOptions(config, this.type).runnerVariables,
       },
+      branchPipelines: branchTriggers.map(({ branch }) => branch),
     });
   }
 }
@@ -283,10 +292,17 @@ function isManualGitlabJob(job: GitlabJobDef): boolean {
   return (job.rules ?? []).some((rule) => rule.when === "manual");
 }
 
-function getGitlabRulesForTrigger(trigger: PipelineTrigger): GitlabRule[] {
+function getGitlabRulesForTrigger(trigger: EnvPipelineTrigger): GitlabRule[] {
   // mainBranch: on push to main branch except it's a release commit
   // mr: on merge request
   // taggedRelease: on tag
+  // { branch }: on push to that specific branch
+  if (isBranchTrigger(trigger)) {
+    return [
+      RULE_NEVER_ON_AGENT_TRIGGER,
+      { if: `$CI_COMMIT_BRANCH == "${trigger.branch}"` },
+    ];
+  }
   switch (trigger) {
     case "mainBranch":
       return [

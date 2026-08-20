@@ -15,7 +15,8 @@ export const createPagesDeployJobs = async (
     throw new Error("deploy config is not pages");
   }
   const onGithub = context.pipelineType === "github";
-  if (onGithub && context.environment.envType === "review") {
+  const isReviewApp = context.environment.instance.type === "review";
+  if (onGithub && isReviewApp) {
     // github pages serves ONE site per repository and deploy-pages
     // replaces all of it — there is no path_prefix equivalent, so per-PR
     // previews cannot exist (deploy-pages has a `preview` input, but it
@@ -29,8 +30,7 @@ export const createPagesDeployJobs = async (
 
   // review environments publish under their own path prefix (gitlab
   // parallel deployments) — every merge request gets a site preview
-  const pathPrefix =
-    context.environment.envType === "review" ? "mr-$CI_MERGE_REQUEST_IID" : "";
+  const pathPrefix = isReviewApp ? "mr-$CI_MERGE_REQUEST_IID" : "";
   const publishDir = deployConfig.publishDir ?? "public";
 
   const packageManagerInstall = await getPackageManagerInstall(context, {

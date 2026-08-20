@@ -2,17 +2,20 @@ import type { CreateComponentContextContext } from "..";
 import type { StringOrBashExpression } from "@catladder/bash";
 import { joinBashExpressions } from "@catladder/bash";
 
-import type { EnvironmentContext } from "../types/environmentContext";
+import type {
+  EnvironmentContext,
+  EnvironmentInstance,
+} from "../types/environmentContext";
 import { getEnvConfig } from "./getEnvConfig";
+import { getEnvInstance } from "./getEnvInstance";
 import { getEnvType } from "./getEnvType";
-import { getReviewSlug } from "./getReviewSlug";
 
 const getEnvironmentSlugPrefix = (
   env: string,
-  reviewSlug: StringOrBashExpression | null,
+  instance: EnvironmentInstance,
 ): StringOrBashExpression => {
-  if (reviewSlug) {
-    return joinBashExpressions([env, reviewSlug], "-");
+  if (instance.type === "review") {
+    return joinBashExpressions([env, instance.reviewSlug], "-");
   }
   return env;
 };
@@ -24,10 +27,22 @@ export const getEnvironmentContext = ({
   pipelineType,
 }: CreateComponentContextContext): EnvironmentContext => {
   const envConfigRaw = getEnvConfig(config, componentName, env);
-  const envType = getEnvType(env, envConfigRaw);
-  const reviewSlug = getReviewSlug(envConfigRaw, env, pipelineType);
+  const envType = getEnvType(env, envConfigRaw, config.environments);
+  const instance = getEnvInstance(
+    envConfigRaw,
+    env,
+    pipelineType,
+    config.environments,
+  );
 
-  const environmentSlugPrefix = getEnvironmentSlugPrefix(env, reviewSlug);
+  // component-level autoStop overrides the project-wide environment
+  // config; undefined means the env type's default applies
+  const autoStop =
+    envConfigRaw.autoStop !== undefined
+      ? envConfigRaw.autoStop
+      : config.environments?.[env]?.autoStop;
+
+  const environmentSlugPrefix = getEnvironmentSlugPrefix(env, instance);
 
   const environmentSlug = environmentSlugPrefix.concat(`-${componentName}`);
 
@@ -42,10 +57,12 @@ export const getEnvironmentContext = ({
     buildConfigRaw: envConfigRaw.build,
     environmentSlugPrefix,
     environmentSlug,
-    reviewSlug,
+    instance,
+    reviewSlug: instance.type === "review" ? instance.reviewSlug : null,
     pipelineType,
     fullName,
     envType,
+    autoStop,
     componentName,
     env,
     fullConfig: config,

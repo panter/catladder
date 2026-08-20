@@ -1,9 +1,13 @@
-import { BashExpression, type StringOrBashExpression } from "@catladder/bash";
+import { BashExpression } from "@catladder/bash";
 import type { BashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import { getBashExpressionPerPipelineType } from "../bash/bashExpressionPerPipelineType";
 import type { PipelineType } from "../types";
-import type { EnvConfigWithComponent } from "../types/config";
-import { getEnvType } from "./getEnvType";
+import type {
+  EnvConfigWithComponent,
+  EnvironmentConfig,
+} from "../types/config";
+import type { EnvironmentInstance } from "../types/environmentContext";
+import { getEnvOn } from "./getEnvOn";
 const REVIEW_SLUG: BashExpressionPerPipelineType = {
   default: "unknown-review-slug",
   gitlab: new BashExpression(
@@ -15,14 +19,19 @@ const REVIEW_SLUG: BashExpressionPerPipelineType = {
   ),
 };
 
-export const getReviewSlug = (
+export const getEnvInstance = (
   envConfig: EnvConfigWithComponent,
   env: string,
   pipelineType?: PipelineType,
-): StringOrBashExpression | null => {
-  const envType = getEnvType(env, envConfig);
-  if (envType === "review") {
-    return getBashExpressionPerPipelineType(REVIEW_SLUG, pipelineType);
+  environments?: Record<string, EnvironmentConfig>,
+): EnvironmentInstance => {
+  // an env deploying per merge request is a review app — one dynamic
+  // instance per MR, identified by the review slug
+  if (getEnvOn(env, envConfig, environments) === "mr") {
+    return {
+      type: "review",
+      reviewSlug: getBashExpressionPerPipelineType(REVIEW_SLUG, pipelineType),
+    };
   }
-  return null; // not a review app;
+  return { type: "stable" };
 };

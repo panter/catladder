@@ -33,6 +33,10 @@ const config = {
   appName: "my-app",
   customerName: "pan",
   pipelines: { gitlab: true, github: true }, // which CI systems to generate
+  environments: {              // optional: project-wide env declarations/tuning
+    review: { autoStop: "3 days" },
+    next: { type: "dev", on: { branch: "next" } }, // extra branch-tracking env
+  },
   components: {
     www: {
       dir: "frontend",          // working directory of this component
@@ -59,8 +63,27 @@ Key concepts:
 - **Environments**: `dev` (deployed on push to the main branch),
   `review` (per merge/pull request), `stage` and `prod` (deployed on
   tagged releases), `local` (only for local development via catenv).
-  Per-env overrides live under `env.<name>` and can override vars,
-  deploy settings, and more.
+  Environments are project-wide: the top-level `environments` config
+  declares and tunes them consistently for all components, while
+  per-component `env.<name>` entries only carry component-local
+  overrides (vars, deploy settings, host, autoStop) or `false` to opt
+  the component out. In `environments`:
+  - `on` — when the env deploys: `"mainBranch"`, `"mr"`,
+    `"taggedRelease"`, `{ branch: "next" }` (a stable env deploying on
+    pushes to that branch), or `false` (in no pipeline). `on: "mr"`
+    makes an env a review app (one instance per MR/PR, torn down on
+    close). Defaults from the env type.
+  - `autoStop` — how long a stoppable environment stays up after its
+    last deploy before gitlab stops it (e.g. `"3 days"`; `false`
+    disables). Defaults: review `"1 week"`, dev `"4 weeks"`, others
+    never. GitLab only — github review apps stop when their PR closes.
+    Components can override it per env (`env.<name>.autoStop`).
+  - Extra envs are declared with any name plus a `type` — the env type
+    acts as a preset: it supplies all defaults (trigger, autoStop,
+    deploy policy) and the env's identity for tooling (`ENV_TYPE`),
+    everything overridable. Every component deploys to a declared env
+    unless it opts out:
+    `environments: { next: { type: "dev", on: { branch: "next" } } }`.
 - **Pipelines**: `pipelines: { gitlab: true, github: true }` selects
   which CI systems get generated files. Options objects instead of
   `true` allow per-pipeline settings (e.g. `runnerVariables`).

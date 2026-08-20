@@ -71,6 +71,11 @@ Everything app-level lives under `values`:
   completion jobs, and always-on background worker pools.
 - `cloudSql` — attach an (unmanaged) CloudSQL instance; choose the
   connection-string format (`prisma` default, `rails`, `jdbc`).
+  `deleteDatabaseOnStop` controls whether the database is dropped when
+  the environment stops (default: true for review envs, false else).
+- `revisionsToKeep` — how many inactive revisions (the rollback
+  history) the post-deploy cleanup keeps; older revisions and their
+  images are deleted. Default: 5 on prod envs, 0 everywhere else.
 - `execute` — run a script/job/HTTP call at a deploy lifecycle point
   (`preDeploy`/`postDeploy`/`preStop`/`postStop`) or on a `schedule`.
   Prefer this over the deprecated `when`/`schedule` fields on `jobs`.

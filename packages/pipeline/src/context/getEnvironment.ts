@@ -18,8 +18,10 @@ export const getEnvironment = async (
     envType,
     fullName: envContext.fullName,
     slugPrefix: envContext.environmentSlugPrefix,
+    instance: envContext.instance,
     reviewSlug: envContext.reviewSlug,
     slug: envContext.environmentSlug,
+    autoStop: envContext.autoStop,
 
     ...variables,
   };

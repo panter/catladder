@@ -19,11 +19,15 @@ export const createGitlabPipelineWithDefaults = ({
   image,
   variables,
   before_script,
+  branchPipelines = [],
   ...config
-}: PickRequired<
-  Partial<Pipeline<"gitlab">>,
-  "stages" | "jobs"
->): Pipeline<"gitlab"> => {
+}: PickRequired<Partial<Pipeline<"gitlab">>, "stages" | "jobs"> & {
+  /**
+   * branches with their own pipeline (envs with `on: { branch: ... }`) —
+   * they get a named entry in the workflow name rules
+   */
+  branchPipelines?: string[];
+}): Pipeline<"gitlab"> => {
   return {
     image: image ?? DEFAULT_PIPELINE_IMAGE,
     variables: {
@@ -72,6 +76,13 @@ export const createGitlabPipelineWithDefaults = ({
             PIPELINE_NAME: "Main - $CI_COMMIT_TITLE",
           },
         },
+        ...branchPipelines.map((branch) => ({
+          if: `$CI_COMMIT_BRANCH == "${branch}"`,
+          variables: {
+            PIPELINE_ICON: "🐱🔨",
+            PIPELINE_NAME: `${branch} - $CI_COMMIT_TITLE`,
+          },
+        })),
 
         {
           when: "always", // fallback
