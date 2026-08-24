@@ -259,7 +259,7 @@ export const collectSecretKinds = (allJobs: AllCatladderJobs): SecretKinds => {
     ];
     entries.forEach(({ key, kind }) =>
       kinds.set(
-        getSecretVarName(context.env, context.name, key),
+        getSecretVarName(context.environment.secretsEnv, context.name, key),
         kind ?? "secret",
       ),
     );
@@ -278,7 +278,11 @@ const getSecretsEnv = (
   ];
   return Object.fromEntries(
     keys.map(({ key }) => {
-      const name = getSecretVarName(context.env, context.name, key);
+      const name = getSecretVarName(
+        context.environment.secretsEnv,
+        context.name,
+        key,
+      );
       return [name, vaultValueExpression(name, kinds)];
     }),
   );

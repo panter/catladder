@@ -8,6 +8,7 @@ import type {
 } from "../types/environmentContext";
 import { getEnvConfig } from "./getEnvConfig";
 import { getEnvInstance } from "./getEnvInstance";
+import { getSecretsEnv } from "./getEnvInherit";
 import { getEnvType } from "./getEnvType";
 
 const getEnvironmentSlugPrefix = (
@@ -63,6 +64,7 @@ export const getEnvironmentContext = ({
     fullName,
     envType,
     autoStop,
+    secretsEnv: getSecretsEnv(config.environments, env),
     componentName,
     env,
     fullConfig: config,

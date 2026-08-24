@@ -33,17 +33,20 @@ export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
       if (envFilter && !envFilter.includes(env)) {
         continue;
       }
-      const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment(
-        env,
-        componentName,
-      );
+      const { secretEnvVarKeys, jobOnlyVars, secretsEnv } =
+        await getEnvironment(env, componentName);
       const keys = [
         ...secretEnvVarKeys,
         ...jobOnlyVars.build.secretEnvVarKeys,
         ...jobOnlyVars.deploy.secretEnvVarKeys,
       ];
+      // secretsEnv: an env sharing another env's secrets (inherit)
+      // references that env's variable names
       keys.forEach(({ key, kind }) =>
-        kinds.set(getSecretVarName(env, componentName, key), kind ?? "secret"),
+        kinds.set(
+          getSecretVarName(secretsEnv ?? env, componentName, key),
+          kind ?? "secret",
+        ),
       );
     }
   }
