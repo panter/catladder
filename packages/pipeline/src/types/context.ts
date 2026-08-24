@@ -72,6 +72,13 @@ export type Environment = {
    * undefined means the env type's default applies
    */
   autoStop?: string | false;
+
+  /**
+   * the env whose secret values this env uses — the env itself unless
+   * it shares another env's secrets via `inherit`. All secret variable
+   * names are built with this env.
+   */
+  secretsEnv: string;
 } & EnvironmentEnvVarPart;
 
 export type YarnWorkspace = {

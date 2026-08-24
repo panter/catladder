@@ -1,11 +1,33 @@
+import { getSecretsEnv } from "@catladder/pipeline";
 import {
   getAllComponentsWithAllEnvsHierarchical,
   getEnvironment,
+  getProjectConfig,
 } from "../../../config/getProjectConfig";
 
 /** which envs of which components a secrets command operates on */
 export type SecretsScope = {
   [componentName: string]: string[];
+};
+
+/**
+ * envs that share another env's secrets (`environments.<name>.inherit`)
+ * have no secret store of their own — the secrets commands operate on
+ * the source env instead
+ */
+const withoutSharedSecretEnvs = async (
+  all: SecretsScope,
+): Promise<SecretsScope> => {
+  const config = await getProjectConfig();
+  const environments = config?.environments;
+  return Object.fromEntries(
+    Object.entries(all)
+      .map(([componentName, envs]): [string, string[]] => [
+        componentName,
+        envs.filter((env) => getSecretsEnv(environments, env) === env),
+      ])
+      .filter(([, envs]) => envs.length > 0),
+  );
 };
 
 /**
@@ -18,7 +40,9 @@ export type SecretsScope = {
 export const resolveSecretsScope = async (
   scope?: string,
 ): Promise<SecretsScope> => {
-  const all = await getAllComponentsWithAllEnvsHierarchical();
+  const all = await withoutSharedSecretEnvs(
+    await getAllComponentsWithAllEnvsHierarchical(),
+  );
   if (Object.keys(all).length === 0) {
     throw new Error("no catladder config found");
   }
@@ -27,6 +51,16 @@ export const resolveSecretsScope = async (
   }
 
   const [env, componentName] = scope.split(":").map((x) => x || null);
+
+  if (env) {
+    const config = await getProjectConfig();
+    const secretsEnv = getSecretsEnv(config?.environments, env);
+    if (secretsEnv !== env) {
+      throw new Error(
+        `environment "${env}" shares its secrets with "${secretsEnv}" (environments.${env}.inherit) — manage them via "${secretsEnv}"`,
+      );
+    }
+  }
 
   if (componentName && !(componentName in all)) {
     throw new Error(
@@ -59,7 +93,9 @@ export const resolveSecretsScope = async (
  * (one component, all envs) forms
  */
 export const secretsScopeChoices = async (): Promise<string[]> => {
-  const all = await getAllComponentsWithAllEnvsHierarchical();
+  const all = await withoutSharedSecretEnvs(
+    await getAllComponentsWithAllEnvsHierarchical(),
+  );
   const pairs = Object.entries(all).flatMap(([componentName, envs]) =>
     envs.map((env) => `${env}:${componentName}`),
   );

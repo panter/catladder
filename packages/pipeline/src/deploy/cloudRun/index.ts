@@ -26,7 +26,7 @@ export const GCLOUD_DEPLOY_CREDENTIALS_KEY = "GCLOUD_DEPLOY_credentialsKey";
 const getCloudSqlVariables = ({
   deployConfigRaw,
   environmentSlugPrefix,
-  env,
+  secretsEnv,
   componentName,
   fullConfig,
 }: EnvironmentContext<BuildConfig, DeployConfigCloudRun>) => {
@@ -49,7 +49,8 @@ const getCloudSqlVariables = ({
         deployConfigRaw.cloudSql.instanceConnectionName,
       DB_NAME: DB_NAME,
       DB_USER: deployConfigRaw.cloudSql.dbUser ?? "postgres",
-      DB_PASSWORD: "$" + getSecretVarName(env, componentName, "DB_PASSWORD"),
+      DB_PASSWORD:
+        "$" + getSecretVarName(secretsEnv, componentName, "DB_PASSWORD"),
     };
     return {
       ...dbVars,

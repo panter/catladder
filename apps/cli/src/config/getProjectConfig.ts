@@ -8,6 +8,7 @@ import {
   getAllEnvs,
   getEnvironment as _getEnvironment,
   createComponentContext,
+  getSecretsEnv,
   getSecretVarName,
 } from "@catladder/pipeline";
 
@@ -125,7 +126,14 @@ export const getGitlabVar = async (
   componentName: string,
   variableName: string,
 ) => {
-  const rawVariableName = getSecretVarName(env, componentName, variableName);
+  const config = await getProjectConfig();
+  // an env sharing another env's secrets (inherit) reads that env's variables
+  const secretsEnv = getSecretsEnv(config?.environments, env);
+  const rawVariableName = getSecretVarName(
+    secretsEnv,
+    componentName,
+    variableName,
+  );
   return await getVariableValueByRawName(io, rawVariableName);
 };
 

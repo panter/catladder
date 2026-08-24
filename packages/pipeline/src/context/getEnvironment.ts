@@ -22,6 +22,7 @@ export const getEnvironment = async (
     reviewSlug: envContext.reviewSlug,
     slug: envContext.environmentSlug,
     autoStop: envContext.autoStop,
+    secretsEnv: envContext.secretsEnv,
 
     ...variables,
   };

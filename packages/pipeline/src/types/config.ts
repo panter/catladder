@@ -226,7 +226,47 @@ export type EnvironmentConfig = {
    * override it per env (`env.<name>.autoStop`).
    */
   autoStop?: string | false;
+
+  /**
+   * inherit from another environment (see {@link EnvironmentInheritConfig}):
+   *
+   * `inherit: "dev"` makes this env use dev's per-component config
+   * overrides AND dev's secret values. The object form controls the two
+   * axes separately.
+   */
+  inherit?: EnvironmentInheritConfig;
 };
+
+/**
+ * what an environment inherits from another environment.
+ *
+ * The string shorthand `inherit: "dev"` means
+ * `{ config: "dev", secrets: "dev" }`.
+ *
+ * - `config`: the named env's per-component overrides (`env.<name>` in
+ *   each component — vars, deploy/build settings, autoStop) are merged
+ *   in below this env's own overrides: component base → inherited env's
+ *   overrides → own overrides. `host` and `type` are never inherited
+ *   (a host must stay unique per env). The env's `type` defaults to the
+ *   inherited env's type.
+ * - `secrets`: this env uses the named env's secret VALUES — all or
+ *   nothing: its jobs reference the other env's secret variables
+ *   (`CL_<OTHERENV>_...`) and it has no secret store of its own, so the
+ *   secrets CLI manages them via the other env and rotating them
+ *   affects both envs. Set to `false` (or omit in the object form) for
+ *   own secrets.
+ *
+ * Inheriting from `local` is not possible, chains are followed, cycles
+ * are an error.
+ */
+export type EnvironmentInheritConfig =
+  | string
+  | {
+      /** env whose per-component config overrides are inherited */
+      config?: string;
+      /** env whose secret values are used (all-or-nothing); false = own secrets */
+      secrets?: string | false;
+    };
 
 export type EnvConfigWithComponent = EnvConfig<EnvType> & ComponentConfig;
 

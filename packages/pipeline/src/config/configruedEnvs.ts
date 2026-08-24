@@ -11,6 +11,7 @@ import {
   isKnowEnvType,
 } from "../types";
 import { getEnvOn } from "../context/getEnvOn";
+import { getDeclaredEnvType } from "../context/getEnvType";
 
 const getConfiguredAndDefaultEnvs = (
   config: Config,
@@ -27,15 +28,16 @@ const getConfiguredAndDefaultEnvs = (
 
   // envs declared project-wide (top-level `environments`): every
   // component deploys to them unless it opts out with `env.<name>: false`
-  const declaredEnvs = Object.entries(config.environments ?? {})
-    .filter(([envName]) => !isKnowEnvType(envName)) // default envs are already handled above
-    .map(([envName, envConfig]) => {
-      if (!envConfig.type) {
+  const declaredEnvs = Object.keys(config.environments ?? {})
+    .filter((envName) => !isKnowEnvType(envName)) // default envs are already handled above
+    .map((envName) => {
+      const envType = getDeclaredEnvType(config.environments, envName);
+      if (!envType) {
         throw new Error(
-          `environment "${envName}" needs a type (dev, review, stage, prod)`,
+          `environment "${envName}" needs a type (dev, review, stage, prod) or an inherit`,
         );
       }
-      return [envName, envConfig.type] as const;
+      return [envName, envType] as const;
     })
     .filter(
       ([envName, envType]) =>
