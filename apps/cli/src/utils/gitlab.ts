@@ -57,6 +57,21 @@ export const getGitlabToken = async (io: IO | null) => {
   return getPreference(TOKEN_KEY);
 };
 
+/**
+ * a gitlab api call that came back 404. Carries the path so a caller
+ * that wants to treat "does not exist yet" as normal can say so
+ * (`instanceof`) instead of matching on a message.
+ */
+export class GitlabNotFoundError extends Error {
+  constructor(
+    readonly path: string,
+    readonly host: string,
+  ) {
+    super(`gitlab api: ${path} not found on ${host}`);
+    this.name = "GitlabNotFoundError";
+  }
+}
+
 type Method = "GET" | "PUT" | "POST" | "DELETE";
 export const doGitlabRequest = async <T = any>(
   io: IO | null,
@@ -87,7 +102,7 @@ export const doGitlabRequest = async <T = any>(
     return null;
   }
   if (result.status === 404) {
-    throw new Error("not found");
+    throw new GitlabNotFoundError(path, gitRemoteHost);
   }
 
   throw new Error(
@@ -124,12 +139,24 @@ export const doGitlabRequestAllPages = async <T = any>(
 export const getProjectInfo = async (
   io: IO | null,
 ): Promise<{ id: string; web_url: string }> => {
-  const { gitRemotePath } = await getGitRemoteHostAndPath();
-  const project = await doGitlabRequest(
-    io,
-    `projects/${encodeURIComponent(gitRemotePath)}`,
-  );
-  return project;
+  const { gitRemoteHost, gitRemotePath } = await getGitRemoteHostAndPath();
+  try {
+    return await doGitlabRequest(
+      io,
+      `projects/${encodeURIComponent(gitRemotePath)}`,
+    );
+  } catch (e) {
+    if (e instanceof GitlabNotFoundError) {
+      // the classic: the remote is not a gitlab at all (a github one,
+      // say), so the request goes to a host without /api/v4 and every
+      // path answers 404
+      throw new Error(
+        `no gitlab project '${gitRemotePath}' on '${gitRemoteHost}'. ` +
+          "Check the git remote and `pipelines` in catladder.ts — this command talks to the gitlab api.",
+      );
+    }
+    throw e;
+  }
 };
 
 type GitlabVariable = {

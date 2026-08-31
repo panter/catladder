@@ -2,11 +2,11 @@ import { stripIndents } from "common-tags";
 import { defineCommand } from "../../core/defineCommand";
 import { editAsFile } from "../../utils/editAsFile";
 import { delay } from "../../utils/promise";
+import { writeSecretsAndMirror } from "../../secrets";
 import {
   buildSecretsDocument,
   checkSecretsDocument,
   collectSecretsWrites,
-  writeSecretsAndMirror,
 } from "./secrets/document";
 import {
   formatScope,

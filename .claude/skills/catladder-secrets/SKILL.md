@@ -82,6 +82,22 @@ All of these write to the secrets vault (the source of truth) and
 automatically mirror to the enabled CI backends — which vault is
 configured makes no difference to the commands.
 
+## Provisioned secrets
+
+A few secrets are not typed in by a human but created by
+`yarn catladder project setup`: the gcloud deploy service account key
+(`GCLOUD_DEPLOY_credentialsKey`) and the kubernetes deploy credentials
+(`KUBE_TOKEN`, `KUBE_CA_PEM`, `KUBE_URL`). They travel the same route as
+every other secret — vault first, then the enabled CI backends — but
+they are *hidden*: they never show up in `secrets-list`, in the editor
+or in a pulled document, and they must never be set by hand.
+
+Re-running `project setup` **rotates** them (a fresh credential is
+created and the old one revoked). That is also the answer whenever they
+are missing somewhere — after switching `secrets.vault`, for instance:
+a `secrets-pull`/`secrets-push` round trip does not carry hidden keys
+over, so re-run `project setup` to provision them into the new vault.
+
 ## GitHub pipelines
 
 GitHub Actions cannot read the vault at runtime; secrets are mirrored
