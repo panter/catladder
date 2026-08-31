@@ -4,6 +4,7 @@ import {
   doGitlabRequest,
   doGitlabRequestAllPages,
   getProjectInfo,
+  GitlabNotFoundError,
 } from "../../../../../utils/gitlab";
 
 const TOKEN_NAME = "semantic-release";
@@ -55,10 +56,10 @@ export const setupAccessTokens = async (instance: IO) => {
       "PUT",
     );
   } catch (e) {
-    if (e.message !== "not found") {
+    if (!(e instanceof GitlabNotFoundError)) {
       throw e;
     }
-    // not found
+    // the variable does not exist yet: create it
     await doGitlabRequest(
       instance,
       `projects/${projectId}/variables`,

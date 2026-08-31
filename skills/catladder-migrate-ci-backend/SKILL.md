@@ -167,8 +167,13 @@ A safe order:
    against the old vault (unset values show as `🚨 FILL ME`)
 2. switch `secrets.vault` in `catladder.ts`, `yarn catenv`
 3. `yarn catladder project secrets-push <env>: --file /tmp/secrets.yml`
-4. `yarn catladder project doctor`, then delete the temp file
-5. only now decommission the GitLab project
+4. `yarn catladder project setup` — the *provisioned* credentials (the
+   gcloud deploy service account key, the kubernetes deploy
+   credentials) are hidden keys and therefore not part of the document
+   the pull/push round trip moves; setup re-provisions them into the
+   new vault
+5. `yarn catladder project doctor`, then delete the temp file
+6. only now decommission the GitLab project
 
 Never commit the intermediate file, and see the `catladder-secrets`
 skill for the exact command surface.

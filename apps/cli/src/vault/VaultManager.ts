@@ -13,7 +13,7 @@ import {
   writeSecretsCache,
 } from "./cache";
 import { GitlabVault } from "./GitlabVault";
-import type { SecretsMode, SecretsVault } from "./types";
+import type { SecretsMode, SecretsVault, WriteSecretsOptions } from "./types";
 
 /**
  * only secrets of this env are cached locally — the other envs'
@@ -119,11 +119,12 @@ export class VaultManager {
     componentName: string,
     secrets: Record<string, unknown>,
     io: IO | null = this.io,
+    options: WriteSecretsOptions = {},
   ): Promise<void> {
     if (!io) {
       throw new Error("writing to the vault requires an interactive context");
     }
-    await this.vault.writeSecrets(io, env, componentName, secrets);
+    await this.vault.writeSecrets(io, env, componentName, secrets, options);
     if (env === CACHED_ENV) {
       await updateSecretsCache(
         this.vault.id,

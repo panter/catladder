@@ -9,7 +9,7 @@ import { mkdtemp, readFile, rm } from "fs/promises";
 import { tmpdir } from "os";
 import { join } from "path";
 import { promisify } from "util";
-import { getConfiguredGithubRepo } from "../../../../../commands/project/commandSecretsSyncGithub";
+import { getConfiguredGithubRepo } from "../../../../../secrets";
 import type { IO } from "../../../../../core/types";
 import {
   ghApiJson,
