@@ -244,6 +244,19 @@ export type PipelineOutputOptions = {
   gitRemote?: string;
 
   /**
+   * github only: the `owner/name` of the github repository.
+   *
+   * Only needed when catladder cannot resolve it from the git remote at
+   * generation time (a checkout without the remote, a tarball, …) and
+   * the name contains an uppercase character: ghcr image paths must be
+   * lowercase, so a mixed-case repository can't use github's
+   * `${{ github.repository }}` context and needs a literal instead.
+   *
+   * @example "AcmeCorp/nautilus"
+   */
+  repository?: string;
+
+  /**
    * variables applied to every job of THIS pipeline type only —
    * lowered to gitlab's pipeline-level `variables:` / github's
    * workflow-level `env:`, so job-level `runnerVariables` take
