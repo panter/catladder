@@ -84,6 +84,30 @@ materialized into `.catladder-generated/images/project/<name>/`. Either
 way the build job is skipped when the content hash already exists in
 the registry.
 
+### GHCR image paths are lowercased (GitHub)
+
+Image repository names may not contain uppercase characters, but
+GitHub's `${{ github.repository }}` context interpolates the display
+casing of the owner and repo. For a mixed-case repository
+(`AcmeCorp/Nautilus`) catladder therefore resolves the repository from
+the git remote at generation time and writes the lowercased literal
+(`ghcr.io/acmecorp/nautilus/...`) into the workflows — GHCR serves that
+org under the lowercased namespace, so it is the correct address.
+An all-lowercase repository keeps the `${{ github.repository }}`
+expression, which stays correct in forks.
+
+If a docker job fails with `invalid tag ...: repository name must be
+lowercase`, the committed workflows were generated before this was
+fixed (or hand-edited): regenerate with `yarn catenv` and commit. When
+generation cannot see the git remote, pin it explicitly:
+
+```ts
+pipelines: { github: { repository: "AcmeCorp/Nautilus" } },
+```
+
+`yarn catladder project doctor` reports a mixed-case repository whose
+generated workflows still carry the expression.
+
 ## Caching
 
 Cache configuration is generated per build type. **yarn** node builds

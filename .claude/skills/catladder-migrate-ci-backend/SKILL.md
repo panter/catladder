@@ -206,6 +206,17 @@ system's own registry, so they change host with the backend:
 first pipeline on the new backend therefore **rebuilds every job image**
 — it will be slow, and that is expected, not a bug.
 
+GHCR paths must be lowercase (the OCI spec allows no uppercase in a
+repository name). If the GitHub owner or repo name is mixed-case
+(`AcmeCorp/Nautilus`), catladder resolves the repository from the git
+remote at generation time and writes the lowercased path
+(`ghcr.io/acmecorp/nautilus`) into the workflows; an all-lowercase
+repository keeps the portable `${{ github.repository }}` expression.
+Set `pipelines.github.repository: "AcmeCorp/Nautilus"` when generation
+cannot see the remote — without it, every docker job fails with
+`repository name must be lowercase`. `catladder project doctor` reports
+this.
+
 Where the **app image** goes depends on the deploy type:
 
 - **`google-cloudrun`** — the image goes to Google Artifact Registry

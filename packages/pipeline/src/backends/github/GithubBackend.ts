@@ -6,7 +6,8 @@ import { ALL_PIPELINE_TRIGGERS } from "../../types/config";
 import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 import type { CatladderJob } from "../../types/jobs";
 import type { PipelineBackend, PipelineFile } from "../types";
-import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
+import { getGithubInjectedWorkflowEnv } from "./ciVariables";
+import { resolveGithubRegistryImage } from "./registryImage";
 import { getPipelineOptions } from "../index";
 import {
   collectSecretKinds,
@@ -78,7 +79,13 @@ export class GithubBackend implements PipelineBackend {
   }
 
   async createFiles(config: Config): Promise<PipelineFile[]> {
-    const images = this.createImagesPlan(config);
+    // ghcr rejects uppercase image paths, and `${{ github.repository }}`
+    // interpolates github's display casing — a mixed-case owner or repo
+    // needs a lowercased literal instead (see ./ghcr)
+    const images = this.createImagesPlan(
+      config,
+      await resolveGithubRegistryImage(config),
+    );
     const scripts = new GithubScriptFiles();
     const workflows = await this.createWorkflows(config, images, scripts);
 
@@ -95,8 +102,8 @@ export class GithubBackend implements PipelineBackend {
     ];
   }
 
-  private createImagesPlan(config: Config): JobImagesPlan {
-    return new JobImagesPlan(this.type, config.images);
+  private createImagesPlan(config: Config, registryImage?: string) {
+    return new JobImagesPlan(this.type, config.images, registryImage);
   }
 
   /**
@@ -110,9 +117,11 @@ export class GithubBackend implements PipelineBackend {
     const workflows: Record<string, GithubWorkflow> = {};
 
     // per-pipeline-type variables (pipelines.github.runnerVariables);
-    // workflow-level env, so job-level runnerVariables take precedence
+    // workflow-level env, so job-level runnerVariables take precedence.
+    // The images plan is the single source of the ghcr namespace, so the
+    // workflow env and the container images can never disagree.
     const workflowEnv = {
-      ...GITHUB_INJECTED_WORKFLOW_ENV,
+      ...getGithubInjectedWorkflowEnv(images.registryImageRef()),
       ...getPipelineOptions(config, this.type).runnerVariables,
     };
 

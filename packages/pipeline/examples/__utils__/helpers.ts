@@ -3,6 +3,7 @@ import { stringify } from "yaml";
 import type { Config } from "../../src";
 import {
   getGitlabCompletePipeline,
+  githubRegistryImageFromConfig,
   GithubBackend,
   GithubScriptFiles,
   JobImagesPlan,
@@ -63,7 +64,14 @@ export const createYamlGithubWorkflows = async (
 ): Promise<string> => {
   const backend = new GithubBackend();
   const scripts = new GithubScriptFiles();
-  const images = new JobImagesPlan("github", config.images);
+  // config-only (never shells out to git): example generation must stay
+  // hermetic, so a fixture opts into a ghcr namespace via
+  // `pipelines.github.repository` instead of the local git remote
+  const images = new JobImagesPlan(
+    "github",
+    config.images,
+    githubRegistryImageFromConfig(config),
+  );
   const workflows = await backend.createWorkflows(
     withFakeStore(config),
     images,

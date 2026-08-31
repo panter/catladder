@@ -15,7 +15,7 @@ import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { GithubScriptFiles } from "./scriptFiles";
-import { GITHUB_INJECTED_WORKFLOW_ENV } from "./ciVariables";
+import { GITHUB_INJECTED_WORKFLOW_ENV_NAMES } from "./ciVariables";
 
 /**
  * runner variables that only make sense on gitlab runners and must not
@@ -298,7 +298,7 @@ const getReferencedSecretsEnv = (
   Object.fromEntries(
     [...script.matchAll(/\$\{?(CL_[A-Za-z0-9_]+)\}?/g)]
       .map((match) => match[1])
-      .filter((name) => !(name in GITHUB_INJECTED_WORKFLOW_ENV))
+      .filter((name) => !GITHUB_INJECTED_WORKFLOW_ENV_NAMES.has(name))
       .map((name) => [name, vaultValueExpression(name, kinds)]),
   );
 

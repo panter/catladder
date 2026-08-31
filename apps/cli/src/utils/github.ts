@@ -1,5 +1,6 @@
 import { execFile as execFileCb, spawn } from "child_process";
 import { promisify } from "util";
+import { parseGithubRepoFromRemoteUrl } from "@catladder/pipeline";
 
 const execFile = promisify(execFileCb);
 
@@ -25,10 +26,7 @@ export const getGithubRepoFromRemote = async (
 ): Promise<string | undefined> => {
   try {
     const { stdout } = await execFile("git", ["remote", "get-url", remoteName]);
-    const match = stdout.match(
-      /github\.com[:/]([\w.-]+\/[\w.-]+?)(\.git)?\s*$/,
-    );
-    return match?.[1];
+    return parseGithubRepoFromRemoteUrl(stdout);
   } catch {
     return undefined;
   }
