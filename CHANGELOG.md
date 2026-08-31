@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.1.0 (2026-08-31)
+
+### Minor Changes
+
+- Review apps of a merge request can now be pinned so they outlive the auto-stop timer (gitlab). Review deploy jobs read their `auto_stop_in` from the pipeline variable `CL_REVIEW_AUTO_STOP`; a workflow rule sets it to `never` while the MR carries the pin label (default `catladder::pin-review`), so the pin lives on the MR and survives redeploys — unlike gitlab's per-environment pin button, which the next deploy resets. Merging or closing the MR still stops the apps. `catladder mr pin` / `mr unpin` manage the label (creating it in the project when missing) and `pin` triggers a pipeline so the pin takes effect immediately. The previously hardcoded lifetimes are now configurable via top-level `autoStop` in catladder.ts (`review` default "1 week", `dev` default "4 weeks", `pinLabel` — `false` disables the mechanism). GitHub is unaffected: it has no auto-stop, review apps live until the pull request closes.
+
+### Patch Changes
+
+- Fixed the bitwarden vault dropping secrets on a partial write: it rewrote an env/component's whole yaml note from the keys of that one write, so `project secrets-set dev:web API_KEY` deleted every other secret of `dev:web` from the vault. Writes are now merged into the existing note, matching the gitlab vault's upsert semantics.
+- `project setup` now stores the credentials it provisions — the gcloud deploy service account key, the kubernetes deploy credentials — through the secrets vault and from there to every enabled CI backend, exactly like any other secret. Until now it wrote them straight into GitLab project variables: on a project without a GitLab pipeline the setup of a cloud run or kubernetes component died with `Error: not found` (a 404 from the GitLab API against a host that is not a GitLab), and on a project with a bitwarden vault the credentials silently never reached the vault. The GitLab registry deploy token that kubernetes setup creates is now skipped when no GitLab pipeline is enabled, and a 404 from the GitLab API finally says which call failed against which host.
+
 ## 5.0.1 (2026-08-13)
 
 ### Patch Changes
