@@ -72,8 +72,9 @@ jobs). Their definitions are materialized into
 `.catladder-generated/images/` and built in the project's own registry
 under `catladder/` (content-hashed, rebuilt only on change).
 `.catladder-generated/catci/` holds a small bundled CI companion used by
-generated jobs (e.g. the release security audit) — all generated, never
-edit.
+generated jobs (e.g. the release security audit) plus a `package.json`
+pinning the folder to CommonJS (needed when the project's root
+`package.json` has `"type": "module"`) — all generated, never edit.
 
 Projects can declare their own job images under `images` in
 `catladder.ts` (`🐳 image <name>` build jobs, pushed to `job-images/` in
