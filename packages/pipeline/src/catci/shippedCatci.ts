@@ -42,15 +42,15 @@ const getShippedCatciBundle = (): string => {
 };
 
 /**
- * the catci files to materialize into the generated folder
+ * the files that make up the materialized catci folder for a given
+ * bundle content
  */
-export const getCatciGeneratedFiles = (): Array<{
-  path: string;
-  content: string;
-}> => [
+export const makeCatciGeneratedFiles = (
+  bundle: string,
+): Array<{ path: string; content: string }> => [
   {
     path: join(GENERATED_CATCI_FOLDER, "index.js"),
-    content: readFileSync(getShippedCatciBundle(), "utf-8"),
+    content: bundle,
   },
   {
     // the bundle is commonjs (ncc output using `__dirname`), but node
@@ -62,3 +62,11 @@ export const getCatciGeneratedFiles = (): Array<{
     content: `${JSON.stringify({ type: "commonjs" }, null, 2)}\n`,
   },
 ];
+
+/**
+ * the catci files to materialize into the generated folder
+ */
+export const getCatciGeneratedFiles = (): Array<{
+  path: string;
+  content: string;
+}> => makeCatciGeneratedFiles(readFileSync(getShippedCatciBundle(), "utf-8"));
