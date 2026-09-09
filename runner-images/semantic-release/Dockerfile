@@ -4,7 +4,9 @@
 # (@semantic-release/git and @semantic-release/changelog need node >=24.15).
 FROM node:24-alpine
 
-RUN apk add --no-cache bash git git-lfs
+# openssh: on github the release job pushes with the release deploy key
+# over ssh (see scripts/semanticRelease)
+RUN apk add --no-cache bash git git-lfs openssh-client
 
 # add semantic release
 # NOTE: pin every dependency exactly. These are the semantic-release@25 line

@@ -39,7 +39,34 @@ fi
 
 echo "doing semantic release"
 
+SEMANTIC_RELEASE_ARGS=()
+# the commit message suffix, see the @semantic-release/git config below
+RELEASE_COMMIT_SUFFIX=""
 if [ "$GITHUB_ACTIONS" = "true" ]; then
+  # [skip ci] on github only: a push with the deploy key triggers
+  # workflows (unlike a push with GITHUB_TOKEN), and neither the release
+  # commit nor the tag needs a push-triggered run — the taggedRelease
+  # workflow is dispatched explicitly at the end, the marker keeps it
+  # the only run (same as the changesets path). On gitlab the tag
+  # pipeline MUST fire natively, so no marker there.
+  RELEASE_COMMIT_SUFFIX=" [skip ci]"
+
+  if [ -n "$CATLADDER_RELEASE_KEY" ]; then
+    # merge gating (a ruleset requiring the `catladder ✅` check on the
+    # default branch) rejects the release push unless it comes from the
+    # release deploy key — the workflow token can never bypass a
+    # ruleset. catci writes the key, points git's ssh at it and checks
+    # that the key reaches the repository (a clear failure here instead
+    # of a GH013 inside @semantic-release/git). The ssh url has to be
+    # passed explicitly: semantic-release takes package.json's
+    # `repository` over origin, and origin is the token-authenticated
+    # https url actions/checkout left behind.
+    RELEASE_REPOSITORY_URL=$(node "$CATCI" release github-deploy-key-remote)
+    SEMANTIC_RELEASE_ARGS+=(--repository-url "$RELEASE_REPOSITORY_URL")
+  else
+    echo "CATLADDER_RELEASE_KEY not set — pushing with the workflow token (fails on a repository with merge gating: run 'catladder project setup')"
+  fi
+
   # the github counterpart of the gitlab plugin below: it creates the
   # entry on the releases page with the generated notes. Everything
   # beyond that is switched off on purpose — commenting on the
@@ -62,6 +89,10 @@ else
     "@semantic-release/gitlab"'
 fi
 
+# NOTE: a project bringing its own .releaserc has to keep "[skip ci]" in
+# the git plugin's commit message on github (see RELEASE_COMMIT_SUFFIX),
+# otherwise a deploy-key push starts the main workflow for the release
+# commit and a second taggedRelease run for the tag.
 if [ ! -e .releaserc ]; then
   cat >.releaserc <<EOF
 {
@@ -98,7 +129,7 @@ if [ ! -e .releaserc ]; then
     # loop-prevention rule keys on the literal "chore(release)" prefix, so keep
     # this literal. Don't "fix" it back to \${branch.type}.
     ["@semantic-release/git", {
-      "message": "chore(release): \${nextRelease.version}\n\n\${nextRelease.notes}"
+      "message": "chore(release): \${nextRelease.version}${RELEASE_COMMIT_SUFFIX}\n\n\${nextRelease.notes}"
     }]${PUBLISH_PLUGIN}
     ],
   "branches": [
@@ -124,11 +155,13 @@ if [ "$GITHUB_ACTIONS" = "true" ]; then
   TAGS_BEFORE=$(git tag --list 'v[0-9]*')
 fi
 
-semantic-release
+semantic-release "${SEMANTIC_RELEASE_ARGS[@]}"
 
 # tags pushed with the default GITHUB_TOKEN don't trigger `on: push:
-# tags` workflows (github's recursion guard) — dispatch the
-# taggedRelease workflow explicitly for a tag semantic-release created
+# tags` workflows (github's recursion guard), and a deploy-key push
+# carries [skip ci] (see above) — dispatch the taggedRelease workflow
+# explicitly for a tag semantic-release created, whichever way it was
+# pushed
 if [ "$GITHUB_ACTIONS" = "true" ] && [ -f "$CATCI" ]; then
   if [ -z "$TAGS_BEFORE" ]; then
     NEW_TAG=$(git tag --list 'v[0-9]*' | tail -n1)

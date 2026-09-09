@@ -185,10 +185,15 @@ skill for the exact command surface.
 - **GitLab** needs a `GL_TOKEN` project access token (named
   `semantic-release`) to push the release commit and tag. It is created
   and rotated by `yarn catladder project setup`.
-- **GitHub** needs nothing extra — the release jobs use the built-in
-  `github.token`. Tags pushed by that token do not retrigger workflows,
-  so the release job dispatches the tagged-release workflow explicitly;
-  that is built in and needs no configuration.
+- **GitHub** needs the release deploy key that `yarn catladder project
+  setup` provisions together with the merge gating (Step 9): the release
+  job pushes the release commit and tag over ssh with it, because the
+  built-in `github.token` can never bypass the required `catladder ✅`
+  check on the default branch (the push fails with GH013 otherwise).
+  Without merge gating the job falls back to the token. The release
+  commit carries `[skip ci]` and the release job dispatches the
+  tagged-release workflow explicitly (one run per tag); that is built
+  in and needs no configuration.
 - **Only one backend should own releases at a time.** Both backends
   generate release jobs, and with `releases: { when: "auto" }` both would
   try to tag the same commit. During the parallel phase, agree with the
@@ -289,9 +294,13 @@ now-wrong `gitRemote`, regenerate once more, and finish with
   token bypass rulesets, so setup provisions a write deploy key
   ("catladder release", private half in the `CATLADDER_RELEASE_KEY`
   actions secret; deploy keys never expire) that the release job
-  pushes with over ssh. Classic branch protection has no bypass list
+  pushes with over ssh — with both release methods, semantic-release
+  and changesets. Classic branch protection has no bypass list
   at all, which is why setup uses a ruleset and migrates old
-  classic-protection gating away. `project doctor` verifies all of it.
+  classic-protection gating away. `project doctor` verifies all of it,
+  including that the committed release workflow runs the release image
+  of the installed catladder (an older semantic-release image pushed
+  with the token and ignored the key — regenerate with `catenv`).
   Required reviews stay a human choice.
 - Tell the team where the pipeline lives now and how manual actions
   work there (on GitHub, manual jobs are dispatch workflows in the
