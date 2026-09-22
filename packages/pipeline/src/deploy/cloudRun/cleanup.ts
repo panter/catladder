@@ -12,8 +12,17 @@ export const getRemoveOldRevisionsAndImagesCommand = (
     return getDeleteUnusedImagesCommands(context);
   }
 
-  // this number only targets inactive revisions
-  const revisionsToKeep = context.environment.envType === "prod" ? 5 : 0;
+  const deployConfig = context.deploy?.config;
+  const configuredRevisionsToKeep =
+    deployConfig && deployConfig.type === "google-cloudrun"
+      ? deployConfig.revisionsToKeep
+      : undefined;
+
+  // this number only targets inactive revisions; the env type only
+  // supplies the default (prod keeps a rollback history)
+  const revisionsToKeep =
+    configuredRevisionsToKeep ??
+    (context.environment.envType === "prod" ? 5 : 0);
 
   // this number needs to be higher than inactive after deploy, so we add one
   const imagesToKeep = revisionsToKeep + 1;

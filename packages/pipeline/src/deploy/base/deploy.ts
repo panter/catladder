@@ -22,8 +22,11 @@ export class DeployJob extends CatladderJob {
     const hasDocker = requiresDockerBuild(context);
     const isStoppable = contextIsStoppable(context);
 
+    // env-level autoStop config wins; the env type only supplies the
+    // default (via the project-wide `autoStop` durations)
+    const autoStopConfigured = context.environment.autoStop;
     const autoStopConfig = getAutoStopConfig(context.fullConfig);
-    const autoStop =
+    const autoStopDefault =
       context.environment.envType === "review"
         ? // review envs read the lifetime from a pipeline variable, so
           // the pin label's workflow rule can override it to "never"
@@ -33,6 +36,14 @@ export class DeployJob extends CatladderJob {
         : context.environment.envType === "dev"
           ? autoStopConfig.dev
           : undefined;
+    // NOTE: an explicit env-level autoStop is a literal — a review env
+    // overriding it opts out of the pin-label variable indirection
+    const autoStop =
+      autoStopConfigured === undefined
+        ? autoStopDefault
+        : autoStopConfigured === false
+          ? undefined
+          : autoStopConfigured;
 
     const deployConfig = context.deploy?.config;
 

@@ -1,5 +1,17 @@
-import type { Config, EnvType, PipelineTrigger } from "../types";
-import { DEFAULT_ENV_TYPES, getEnvTypesByTrigger } from "../types";
+import type {
+  BranchPipelineTrigger,
+  Config,
+  EnvPipelineTrigger,
+  EnvType,
+} from "../types";
+import {
+  DEFAULT_ENV_TYPES,
+  envTriggerEquals,
+  isBranchTrigger,
+  isKnowEnvType,
+} from "../types";
+import { getEnvOn } from "../context/getEnvOn";
+import { getDeclaredEnvType } from "../context/getEnvType";
 
 const getConfiguredAndDefaultEnvs = (
   config: Config,
@@ -14,9 +26,27 @@ const getConfiguredAndDefaultEnvs = (
     (e) => configuredEnvs[e] !== false,
   );
 
-  const configuredCustomEnvs = Object.entries(
-    config.components[componentName].env ?? {},
-  )
+  // envs declared project-wide (top-level `environments`): every
+  // component deploys to them unless it opts out with `env.<name>: false`
+  const declaredEnvs = Object.keys(config.environments ?? {})
+    .filter((envName) => !isKnowEnvType(envName)) // default envs are already handled above
+    .map((envName) => {
+      const envType = getDeclaredEnvType(config.environments, envName);
+      if (!envType) {
+        throw new Error(
+          `environment "${envName}" needs a type (dev, review, stage, prod) or an inherit`,
+        );
+      }
+      return [envName, envType] as const;
+    })
+    .filter(
+      ([envName, envType]) =>
+        envTypes.includes(envType) && configuredEnvs[envName] !== false,
+    )
+    .map(([envName]) => envName);
+
+  // legacy: custom envs declared per component via their `type`
+  const configuredCustomEnvs = Object.entries(configuredEnvs)
     .filter(
       ([, config]) =>
         config &&
@@ -26,7 +56,13 @@ const getConfiguredAndDefaultEnvs = (
     )
     .map(([envName]) => envName);
 
-  return [...new Set([...enabledDefaultEnvs, ...configuredCustomEnvs])];
+  return [
+    ...new Set([
+      ...enabledDefaultEnvs,
+      ...declaredEnvs,
+      ...configuredCustomEnvs,
+    ]),
+  ];
 };
 
 export const getAllEnvs = (config: Config, componentName: string) => {
@@ -41,11 +77,53 @@ export const getAllEnvsInAllComponents = (config: Config) => {
   ];
 };
 
+/**
+ * the resolved `on` of one env of a component (the project-wide `on`
+ * of the env, falling back to the env type's default trigger)
+ */
+const getEnvOnForComponentEnv = (
+  config: Config,
+  componentName: string,
+  env: string,
+) => {
+  const entry = config.components[componentName].env?.[env];
+  return getEnvOn(
+    env,
+    entry && entry !== false ? entry : {},
+    config.environments,
+  );
+};
+
 export const getAllEnvsByTrigger = (
   config: Config,
   componentName: string,
-  trigger: PipelineTrigger,
+  trigger: EnvPipelineTrigger,
 ) => {
-  const envTypesByTrigger = getEnvTypesByTrigger(trigger);
-  return getConfiguredAndDefaultEnvs(config, componentName, envTypesByTrigger);
+  return getAllEnvs(config, componentName).filter((env) =>
+    envTriggerEquals(
+      getEnvOnForComponentEnv(config, componentName, env),
+      trigger,
+    ),
+  );
+};
+
+/**
+ * all branch triggers declared by any env of any component (via
+ * `on: { branch: "..." }`), deduplicated and sorted for deterministic
+ * pipeline generation. Each gets its own pipeline next to the built-in
+ * triggers.
+ */
+export const getConfiguredBranchTriggers = (
+  config: Config,
+): BranchPipelineTrigger[] => {
+  const branches = new Set<string>();
+  for (const componentName of Object.keys(config.components)) {
+    for (const env of getAllEnvs(config, componentName)) {
+      const on = getEnvOnForComponentEnv(config, componentName, env);
+      if (on && isBranchTrigger(on)) {
+        branches.add(on.branch);
+      }
+    }
+  }
+  return [...branches].sort().map((branch) => ({ branch }));
 };

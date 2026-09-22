@@ -526,6 +526,16 @@ export type DeployConfigCloudRun = Omit<DeployConfigBase, "execute"> & {
   };
 
   /**
+   * how many inactive cloud run revisions to keep after a deploy — the
+   * rollback history. Older revisions and their images are deleted by
+   * the post-deploy cleanup (images keep one more than revisions, for
+   * the currently serving one).
+   *
+   * defaults to 5 for prod envs, 0 for every other environment
+   */
+  revisionsToKeep?: number;
+
+  /**
    * add cloudSql
    */
   cloudSql?: DeployConfigCloudRunCloudSql | false;

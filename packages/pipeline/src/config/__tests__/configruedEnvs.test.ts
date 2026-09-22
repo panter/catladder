@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getAllEnvsByTrigger } from "..";
+import { getAllEnvsByTrigger, getConfiguredBranchTriggers } from "..";
 import type { DeployConfigKubernetesCluster } from "../..";
 import type { Config } from "../../types";
 
@@ -100,6 +100,94 @@ describe("getAllEnvsByTrigger", () => {
     it("does not include disabled envs", () => {
       const envs = getAllEnvsByTrigger(SIMPLE_CONFIG, "app3", "taggedRelease");
       expect(envs).toEqual([]);
+    });
+  });
+
+  describe("project-wide `environments` config", () => {
+    const CONFIG_WITH_ENVIRONMENTS: Config = {
+      appName: "my-app",
+      customerName: "pan",
+      environments: {
+        // dev moved to a branch pipeline
+        dev: { on: { branch: "develop" } },
+        // an extra stable env deploying on pushes to `next`
+        next: { type: "dev", on: { branch: "next" } },
+        // a stage that deploys with the main branch instead of tags
+        stage: { on: "mainBranch" },
+        // an env that is in no pipeline at all
+        prod: { on: false },
+      },
+      components: {
+        app1: {
+          dir: "dir1",
+          build: { type: "node" },
+          deploy: { type: "kubernetes", cluster },
+        },
+        app2: {
+          dir: "dir2",
+          build: { type: "node" },
+          deploy: { type: "kubernetes", cluster },
+          env: {
+            next: false, // opts out of the declared env
+          },
+        },
+      },
+    };
+
+    it("`on` overrides the env type's default trigger", () => {
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app1", "mainBranch"),
+      ).toEqual(["stage"]);
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app1", "taggedRelease"),
+      ).toEqual([]);
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app1", "mr"),
+      ).toEqual(["review"]);
+    });
+
+    it("selects envs for branch triggers", () => {
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app1", {
+          branch: "develop",
+        }),
+      ).toEqual(["dev"]);
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app1", {
+          branch: "next",
+        }),
+      ).toEqual(["next"]);
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app1", {
+          branch: "other",
+        }),
+      ).toEqual([]);
+    });
+
+    it("declared envs apply to all components unless opted out", () => {
+      expect(
+        getAllEnvsByTrigger(CONFIG_WITH_ENVIRONMENTS, "app2", {
+          branch: "next",
+        }),
+      ).toEqual([]);
+    });
+
+    it("collects the configured branch triggers, deduplicated and sorted", () => {
+      expect(getConfiguredBranchTriggers(CONFIG_WITH_ENVIRONMENTS)).toEqual([
+        { branch: "develop" },
+        { branch: "next" },
+      ]);
+      expect(getConfiguredBranchTriggers(SIMPLE_CONFIG)).toEqual([]);
+    });
+
+    it("throws for a declared custom env without a type", () => {
+      const config: Config = {
+        ...CONFIG_WITH_ENVIRONMENTS,
+        environments: { sandbox: {} },
+      };
+      expect(() => getAllEnvsByTrigger(config, "app1", "mainBranch")).toThrow(
+        'environment "sandbox" needs a type',
+      );
     });
   });
 });

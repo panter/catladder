@@ -240,7 +240,7 @@ const fromComponentContext = (context: ComponentContext): ServiceNameInput => {
     environmentSlugPrefix: context.environment.slugPrefix,
     componentName: context.name,
     env: context.env,
-    isReviewEnv: context.environment.envType === "review",
+    isReviewEnv: context.environment.instance.type === "review",
     deployConfig:
       deployConfig && deployConfig.type === "google-cloudrun"
         ? deployConfig
@@ -256,7 +256,7 @@ const fromEnvironmentContext = (
   environmentSlugPrefix: context.environmentSlugPrefix,
   componentName: context.componentName,
   env: context.env,
-  isReviewEnv: context.envType === "review",
+  isReviewEnv: context.instance.type === "review",
   deployConfig: context.deployConfigRaw || null,
   config: context.fullConfig,
 });

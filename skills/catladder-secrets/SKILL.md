@@ -38,6 +38,12 @@ files in the repo. All secrets commands accept a **scope**:
 `dev:web` (one env of one component), `dev:` (one env, all
 components), `:web` (all envs of one component), or nothing (everything).
 
+An env that shares another env's secrets (top-level
+`environments.<name>.inherit`, e.g. a `next` branch env inheriting from
+dev) has **no secret store of its own** — its jobs reference the source
+env's variables directly, so it never appears in secrets scopes: manage
+(and rotate) the values via the source env, which affects both.
+
 Check what is declared and what is still unset (never prints values
 unless `--reveal` is passed):
 
