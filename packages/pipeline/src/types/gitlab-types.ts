@@ -15,6 +15,35 @@ export type GitlabRule = Exclude<
   Exclude<Rules, null>[number],
   string | string[] // we only use the object version
 >;
+/**
+ * gitlab's auto-cancel policy for redundant pipelines. Tunes the
+ * project setting "Auto-cancel redundant pipelines" (Settings > CI/CD >
+ * General pipelines) — it does NOT enable it: with the setting off,
+ * nothing is ever cancelled regardless of this.
+ *
+ * needs gitlab >= 16.8 (top-level) / >= 16.10 (per workflow rule).
+ */
+export interface GitlabAutoCancel {
+  /**
+   * - `conservative` (gitlab's default): cancel the whole pipeline, but
+   *   only while no `interruptible: false` job has *started* — a single
+   *   such job then shields every other job from cancellation
+   * - `interruptible`: cancel every `interruptible: true` job, with no
+   *   such veto
+   * - `none`: never auto-cancel
+   */
+  on_new_commit?: "conservative" | "interruptible" | "none";
+  on_job_failure?: "all" | "none";
+}
+
+/**
+ * a workflow rule may override {@link GitlabAutoCancel} per pipeline
+ * kind — job rules may not.
+ */
+export type GitlabWorkflowRule = GitlabRule & {
+  auto_cancel?: GitlabAutoCancel;
+};
+
 export type GitlabEnvironment = Omit<
   Exclude<JobTemplate["environment"], undefined | string>,
   "deployment_tier"
@@ -65,8 +94,9 @@ export interface GitlabJobDef
 export interface GitlabPipeline extends Pick<JobTemplate, "variables"> {
   image: string;
   workflow?: {
-    rules: GitlabRule[];
     name?: string;
+    auto_cancel?: GitlabAutoCancel;
+    rules: GitlabWorkflowRule[];
     variables?: Record<string, string>;
   };
   stages: string[];

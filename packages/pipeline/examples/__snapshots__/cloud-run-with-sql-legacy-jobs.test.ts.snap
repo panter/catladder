@@ -3577,8 +3577,12 @@ variables:
   CL_REVIEW_AUTO_STOP: 1 week
 workflow:
   name: $PIPELINE_ICON $PIPELINE_NAME
+  auto_cancel:
+    on_new_commit: interruptible
   rules:
     - if: $CI_PIPELINE_SOURCE  == "trigger"
+      auto_cancel:
+        on_new_commit: none
       variables:
         PIPELINE_ICON: 🤖
         PIPELINE_NAME: Thinking...
@@ -3592,6 +3596,8 @@ workflow:
         PIPELINE_ICON: 🐱🔨
         PIPELINE_NAME: mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE
     - if: $CI_COMMIT_TAG
+      auto_cancel:
+        on_new_commit: none
       variables:
         PIPELINE_ICON: 🐱📦
         PIPELINE_NAME: Release $CI_COMMIT_TAG
@@ -3789,6 +3795,7 @@ create release:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
   needs: []
+  interruptible: false
   allow_failure: true
 🚀 release once pipeline succeeds:
   stage: release
@@ -3811,6 +3818,7 @@ create release:
       optional: true
     - job: 'api 🚀 Deploy | dev '
       optional: true
+  interruptible: false
 ⚠️ force create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/semantic-release:3d936f86c937
@@ -3818,6 +3826,7 @@ create release:
   after_script: *a6
   rules: *a7
   needs: []
+  interruptible: false
   allow_failure: true
 'api 🛡 audit | dev ':
   stage: test
