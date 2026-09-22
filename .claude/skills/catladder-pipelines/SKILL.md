@@ -39,6 +39,38 @@ Generated layout:
 Stages: setup → test → build → deploy → verify (post-deploy checks),
 plus stop jobs for review-app teardown.
 
+## Superseded pipelines are cancelled
+
+Pushing a new commit cancels the pipeline of the previous one, so the
+runners are not busy with results nobody will read.
+
+| Pipeline | On a new commit |
+|---|---|
+| `mr` | cancelled |
+| `mainBranch` (dev) | cancelled, except a release already running |
+| `taggedRelease` | **runs through** — never cancelled |
+| agent runs (`trigger`) | **runs through** — never cancelled |
+
+- **GitHub**: the generated MR workflow sets `concurrency` with
+  `cancel-in-progress: true`.
+- **GitLab**: generated `workflow:auto_cancel:on_new_commit:
+  interruptible`, with per-rule `none` for tags and agent runs. Every
+  job carries an explicit `interruptible`, jobs that must finish
+  (release jobs, agent jobs) carry `interruptible: false`.
+
+**GitLab requires the project setting too.** The generated YAML only
+tunes *how* redundant pipelines are cancelled — it does not switch the
+feature on. If old pipelines keep running, check **Settings > CI/CD >
+General pipelines > Auto-cancel redundant pipelines**; with that
+checkbox off nothing is ever cancelled. (`catladder project-doctor`
+does not check this.)
+
+**Adding a hand-written GitLab job?** Set `interruptible` explicitly.
+GitLab defaults it to `false`, and a non-interruptible job that has
+started keeps *itself* alive — under gitlab's own default
+(`conservative`, which catladder overrides) it would shield the whole
+pipeline from cancellation.
+
 ## Review-app auto-stop and pinning (GitLab)
 
 GitLab review environments stop automatically after 1 week, dev

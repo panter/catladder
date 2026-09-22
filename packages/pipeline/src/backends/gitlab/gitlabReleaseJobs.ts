@@ -70,6 +70,12 @@ export const getGitlabReleaseJobs = (
     image: releaseImage,
     script: [method.script],
     after_script: [EXPIRED_TOKEN_HELP],
+    // a release in flight must never be killed by a new commit — a
+    // half-published version (tag pushed, npm publish missing) is not
+    // recoverable by re-running. Under gitlab's default "conservative"
+    // auto-cancel this also shields the rest of the pipeline, but only
+    // once the release actually started, which is late by construction.
+    interruptible: false,
   } satisfies GitlabJobDef;
 
   const forceReleaseJob = {
@@ -95,6 +101,10 @@ export const getGitlabReleaseJobs = (
           stage: "test",
           image: releaseImage,
           script: [method.checkScript],
+          // a redundant report is worthless: without this the job
+          // defaults to interruptible: false and, once started, stops
+          // gitlab from auto-cancelling the superseded MR pipeline
+          interruptible: true,
           allow_failure: true,
           artifacts: {
             paths: ["changeset-report.md"],
@@ -170,6 +180,9 @@ export const getGitlabReleaseJobs = (
       script: [
         `echo "release queued — '${RELEASE_EXECUTOR_JOB_NAME}' runs it as soon as every other job in this pipeline succeeded"`,
       ],
+      // the recorded intent must survive a new commit: cancelling it
+      // would silently drop the queued release
+      interruptible: false,
       needs: [],
       // allow_failure keeps the unclicked button from blocking the
       // pipeline AND makes the executor's needs treat it as optional

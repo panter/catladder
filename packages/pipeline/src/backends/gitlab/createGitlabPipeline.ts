@@ -53,9 +53,20 @@ export const createGitlabPipelineWithDefaults = ({
     ],
     workflow: {
       name: "$PIPELINE_ICON $PIPELINE_NAME",
+      // superseded pipelines must actually die: "interruptible" cancels
+      // every interruptible job, while gitlab's default "conservative"
+      // lets one started `interruptible: false` job shield the whole
+      // pipeline from cancellation. The rules below opt the pipelines
+      // that must run to completion back out.
+      // NOTE: this only tunes the project setting "Auto-cancel
+      // redundant pipelines" — with that setting off nothing cancels.
+      auto_cancel: { on_new_commit: "interruptible" },
       rules: [
         {
           if: '$CI_PIPELINE_SOURCE  == "trigger"',
+          // an agent run is not redundant work: a commit landing while
+          // it thinks must not kill it
+          auto_cancel: { on_new_commit: "none" },
           variables: {
             PIPELINE_ICON: "🤖",
             PIPELINE_NAME: "Thinking...",
@@ -85,6 +96,11 @@ export const createGitlabPipelineWithDefaults = ({
         },
         {
           if: RULE_IS_TAGGED_RELEASE.if,
+          // a release pipeline always runs through: tags are immutable,
+          // so this only bites when someone force-moves one — and a
+          // release cancelled halfway leaves the version published in
+          // some places and missing in others
+          auto_cancel: { on_new_commit: "none" },
           variables: {
             PIPELINE_ICON: "🐱📦",
             PIPELINE_NAME: "Release $CI_COMMIT_TAG",
