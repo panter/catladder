@@ -84,6 +84,15 @@ Key concepts:
     everything overridable. Every component deploys to a declared env
     unless it opts out:
     `environments: { next: { type: "dev", on: { branch: "next" } } }`.
+  - `inherit` — make an env inherit from another env:
+    `inherit: "dev"` gives it dev's per-component config overrides
+    (merged below its own; `host` and `type` never inherit, the env
+    type is implied from the inherited env) AND dev's secret values —
+    all-or-nothing: its jobs reference dev's `CL_DEV_*` variables and
+    it has no secret store of its own (manage secrets via dev; rotating
+    affects both). The object form separates the axes:
+    `inherit: { config: "dev" }` inherits config only,
+    `inherit: { config: "dev", secrets: "dev" }` both.
 - **Pipelines**: `pipelines: { gitlab: true, github: true }` selects
   which CI systems get generated files. Options objects instead of
   `true` allow per-pipeline settings (e.g. `runnerVariables`).

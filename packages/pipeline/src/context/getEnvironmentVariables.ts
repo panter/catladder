@@ -123,7 +123,7 @@ export const getEnvironmentVariables = async (
     ...additionalSecretKeys,
   ];
   const secretEnvVars = makeSecretEnvVarMapping(
-    env,
+    environmentContext.secretsEnv,
     componentName,
     secretEnvVarKeys,
   );
@@ -176,7 +176,7 @@ export const getEnvironmentVariables = async (
     secretEnvVarKeys,
     jobOnlyVars: {
       build: await transformJobOnlyVars(
-        env,
+        environmentContext.secretsEnv,
         componentName,
         (buildConfigRaw &&
           isStandaloneBuildConfig(buildConfigRaw) &&
@@ -184,7 +184,7 @@ export const getEnvironmentVariables = async (
           null,
       ),
       deploy: await transformJobOnlyVars(
-        env,
+        environmentContext.secretsEnv,
         componentName,
         (deployConfigRaw && deployConfigRaw.jobVars) || null,
       ),
@@ -210,4 +210,4 @@ const addIndexVar = <V extends Record<string, unknown>>(
 export const getSecretVarNameForContext = (
   context: ComponentContext,
   key: string,
-) => getSecretVarName(context.env, context.name, key);
+) => getSecretVarName(context.environment.secretsEnv, context.name, key);
