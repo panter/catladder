@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.3.0 (2026-09-22)
+
+### Minor Changes
+
+- Environments can inherit from another environment via `environments.<name>.inherit`. `inherit: "dev"` gives an env dev's per-component config overrides (merged below its own; `host` and `type` are never inherited, and the env type is implied from the inherited env) and dev's secret values — all-or-nothing: its jobs reference dev's `CL_DEV_*` variables and the env has no secret store of its own, so secrets are managed (and rotated) via the source env. The object form `inherit: { config: "dev", secrets: "dev" }` controls the two axes separately (omit `secrets` or set it to `false` for own secrets). Typical use: a stable branch-tracking env that behaves like dev — `environments: { next: { on: { branch: "next" }, inherit: "dev" } }`.
+- Environments are now explicitly configurable instead of implied by their type, via the new project-wide top-level `environments` config: `on` controls when an env deploys (`"mainBranch"`, `"mr"`, `"taggedRelease"`, `{ branch: "next" }` for a stable branch-tracking environment with its own pipeline, or `false`) and `autoStop` the gitlab auto-stop duration (`false` to disable, per-component overridable via `env.<name>.autoStop`). Extra envs declared in `environments` apply to every component (opt out with `env.<name>: false`). Cloud run deploys additionally accept `revisionsToKeep` (the rollback history the post-deploy cleanup preserves). The env type keeps supplying the defaults — dev on mainBranch with 4 weeks autoStop, review per-MR with 1 week, stage/prod on tagged releases, prod keeping 5 revisions — so existing configs generate identical pipelines.
+
 ## 5.2.0 (2026-09-22)
 
 ### Minor Changes
