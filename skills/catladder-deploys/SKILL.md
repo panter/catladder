@@ -46,6 +46,13 @@ is `auto`.** Set per component or per environment (`env.<name>.deploy`).
 `waitFor: ["otherComponent"]` (experimental) makes a deploy wait for
 another component to deploy first.
 
+## Environment lifetimes
+
+Review apps auto-stop after 1 week, dev environments after 4 weeks
+(GitLab only — configure with top-level `autoStop` in `catladder.ts`).
+Pin an MR's review apps with `yarn catladder mr pin` — see the
+`catladder-pipelines` skill.
+
 ## Kubernetes essentials
 
 `cluster` is required: `{ type: "gcloud", name, projectId, region, domainCanonical? }`.

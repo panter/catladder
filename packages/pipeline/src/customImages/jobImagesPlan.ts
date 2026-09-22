@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "fs";
 import { join } from "path";
 import { getCiVariable } from "../bash/ciVariables";
+import { GHCR_REPOSITORY_EXPRESSION } from "../backends/github/ghcr";
 import { getDockerJobBaseProps } from "../build/docker";
 import type { CatladderImageRef, RunnerImageName } from "../runner";
 import { isCatladderImageRef } from "../runner";
@@ -129,6 +130,12 @@ export class JobImagesPlan {
   constructor(
     private readonly pipelineType: PipelineType,
     private readonly projectImages: Record<string, ProjectImageConfig> = {},
+    /**
+     * the registry image prefix to generate with, overriding the
+     * pipeline type's default. On github this carries the lowercased
+     * ghcr namespace (see `resolveGithubRegistryImage`).
+     */
+    private readonly registryImage?: string,
   ) {}
 
   /**
@@ -159,11 +166,14 @@ export class JobImagesPlan {
 
   /**
    * the registry image prefix. On github, container images can't use
-   * runtime env vars — the expression form is required.
+   * runtime env vars — a literal or an actions expression is required.
    */
-  private registryImageRef(): string {
+  registryImageRef(): string {
+    if (this.registryImage) {
+      return this.registryImage;
+    }
     return this.pipelineType === "github"
-      ? "ghcr.io/${{ github.repository }}"
+      ? GHCR_REPOSITORY_EXPRESSION
       : `${getCiVariable({ pipelineType: this.pipelineType }, "registryImage")}`;
   }
 

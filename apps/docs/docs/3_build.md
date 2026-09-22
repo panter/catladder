@@ -165,6 +165,13 @@ Images are pushed to your project's own container registry:
 - GitLab: `$CI_REGISTRY_IMAGE/job-images/<name>:<content-hash>`
 - GitHub: `ghcr.io/<owner>/<repo>/job-images/<name>:<content-hash>`
 
+GHCR image paths must be lowercase, so for a mixed-case GitHub owner or
+repository name catladder writes the lowercased path
+(`ghcr.io/acmecorp/nautilus/...`) into the generated workflows instead of
+GitHub's `${{ github.repository }}` context, which interpolates the
+display casing. It resolves the repository from the git remote; set
+`pipelines.github.repository` if generation cannot see the remote.
+
 The `job-images/` prefix keeps them apart from your deployable component images and build caches. Catladder's own built-in job images live under `catladder/` in the same registry. Old images remain in the registry and can be cleaned up via registry retention policies.
 
 ### Errors at generation time

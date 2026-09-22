@@ -24,6 +24,7 @@ import {
   dispatchTaggedReleaseWorkflow,
 } from "./release/changesetsReleaseJob";
 import { changesetCheckJob } from "./release/changesetCheckJob";
+import { githubDeployKeyRemoteJob } from "./release/githubDeployKey";
 import {
   githubQueueCheckJob,
   githubQueuedGuardJob,
@@ -57,6 +58,13 @@ usage:
   catci release dispatch-tagged-workflow <tag>
       github only: dispatches the generated taggedRelease workflow for
       the tag (tags pushed with the job token don't trigger it)
+
+  catci release github-deploy-key-remote
+      github only, semantic-release path: configures the checkout to
+      push over ssh with the release deploy key (CATLADDER_RELEASE_KEY,
+      the only actor that bypasses the merge-gating ruleset), verifies
+      the key reaches the repository and prints the ssh url for
+      semantic-release's --repository-url
 
   catci release github-queue-check
       github only, first step of the manual create-release task:
@@ -174,6 +182,13 @@ const main = async () => {
     args.length === 1
   ) {
     return dispatchTaggedReleaseWorkflow(args[0]);
+  }
+  if (
+    group === "release" &&
+    command === "github-deploy-key-remote" &&
+    args.length === 0
+  ) {
+    return githubDeployKeyRemoteJob();
   }
   if (
     group === "release" &&

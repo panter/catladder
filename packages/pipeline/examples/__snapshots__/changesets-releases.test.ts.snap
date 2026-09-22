@@ -948,6 +948,9 @@ catladder-release.yml:
       tags:
         - v*
     workflow_dispatch: {}
+  concurrency:
+    group: catladder-release-\${{ github.ref_name }}
+    cancel-in-progress: false
   permissions:
     contents: read
     packages: write
@@ -3268,18 +3271,30 @@ variables:
   CACHE_COMPRESSION_LEVEL: fast
   TRANSFER_METER_FREQUENCY: 5s
   GIT_DEPTH: '1'
+  CL_REVIEW_AUTO_STOP: 1 week
 workflow:
   name: $PIPELINE_ICON $PIPELINE_NAME
+  auto_cancel:
+    on_new_commit: interruptible
   rules:
     - if: $CI_PIPELINE_SOURCE  == "trigger"
+      auto_cancel:
+        on_new_commit: none
       variables:
         PIPELINE_ICON: 🤖
         PIPELINE_NAME: Thinking...
+    - if: $CI_MERGE_REQUEST_ID && $CI_MERGE_REQUEST_LABELS =~ /(^|,)catladder::pin-review(,|$)/
+      variables:
+        PIPELINE_ICON: 🐱📌
+        PIPELINE_NAME: mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE
+        CL_REVIEW_AUTO_STOP: never
     - if: $CI_MERGE_REQUEST_ID
       variables:
         PIPELINE_ICON: 🐱🔨
         PIPELINE_NAME: mr$CI_MERGE_REQUEST_IID - $CI_MERGE_REQUEST_TITLE
     - if: $CI_COMMIT_TAG
+      auto_cancel:
+        on_new_commit: none
       variables:
         PIPELINE_ICON: 🐱📦
         PIPELINE_NAME: Release $CI_COMMIT_TAG
@@ -3477,6 +3492,7 @@ create release:
     - if: $CI_COMMIT_BRANCH =~ /^[0-9]+.([0-9]+|x).x$/
       when: manual
   needs: []
+  interruptible: false
   allow_failure: true
 🚀 release once pipeline succeeds:
   stage: release
@@ -3499,6 +3515,7 @@ create release:
       optional: true
     - job: 'www 🚀 Deploy | dev '
       optional: true
+  interruptible: false
 ⚠️ force create release:
   stage: release
   image: $CI_REGISTRY_IMAGE/catladder/changesets:fdec6403fc0a
@@ -3508,6 +3525,7 @@ create release:
   after_script: *a6
   rules: *a7
   needs: []
+  interruptible: false
   allow_failure: true
 🦋 changeset check:
   stage: test
@@ -3523,6 +3541,7 @@ create release:
     - *a1
     - *a4
     - if: $CI_MERGE_REQUEST_ID
+  interruptible: true
   allow_failure: true
 'www 🛡 audit | dev ':
   stage: test
@@ -4282,7 +4301,7 @@ create release:
     name: review/$CI_COMMIT_REF_NAME/www
     url: $CL_GITLAB_ENVIRONMENT_URL
     on_stop: 'www 🛑 Stop ⚠️ | review '
-    auto_stop_in: 1 week
+    auto_stop_in: $CL_REVIEW_AUTO_STOP
   artifacts:
     reports:
       dotenv: gitlab_environment.env

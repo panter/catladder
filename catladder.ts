@@ -43,7 +43,16 @@ const config: Config = {
       dotEnv: false,
       envDTs: false,
       // npm has no staging — tagged releases publish latest directly
-      env: { stage: false },
+      env: {
+        stage: false,
+        // canary publishes authenticate with an npm token (npm allows
+        // only one trusted publisher, the release workflow owns it —
+        // see #33). The token can expire, and a canary is a
+        // nice-to-have: don't let a failed publish block the release
+        // (dev) or MR merges (review). Tagged releases stay strict.
+        dev: { deploy: { allowFailure: true } },
+        review: { deploy: { allowFailure: true } },
+      },
       build: {
         from: "base",
       },

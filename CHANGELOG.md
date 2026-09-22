@@ -1,5 +1,101 @@
 # Changelog
 
+## 5.2.0 (2026-09-22)
+
+### Minor Changes
+
+- gitlab: reliably cancel superseded pipelines
+  
+  Pushing a new commit to a merge request did not always cancel the
+  previous pipeline. The release jobs and the `🦋 changeset check` job
+  were written directly as gitlab job definitions and so bypassed the
+  `interruptible: true` default every other job gets — gitlab defaults a
+  job without the keyword to `interruptible: false`, and under its
+  default `conservative` auto-cancel mode a single such job that has
+  *started* shields the entire pipeline from cancellation. Whether
+  `🦋 changeset check` had started when you pushed decided whether the
+  old MR pipeline died, which is why it looked intermittent.
+  
+  Every generated gitlab job now carries an explicit `interruptible`, and
+  the generated `workflow:` states the policy directly:
+  
+  | pipeline | on a new commit |
+  |---|---|
+  | merge request | cancelled |
+  | main branch (dev) | cancelled, except a release already running |
+  | tagged release | runs through |
+  | agent run (`trigger`) | runs through |
+  
+  Note that this only tunes gitlab's behaviour — **Settings > CI/CD >
+  General pipelines > Auto-cancel redundant pipelines** must be enabled
+  on the project, otherwise nothing is ever cancelled.
+
+## 5.1.3 (2026-09-09)
+
+### Patch Changes
+
+- GitHub: the semantic-release release job now pushes the release commit and tag over ssh with the release deploy key (`CATLADDER_RELEASE_KEY`), so the push passes the merge-gating ruleset instead of failing with `GH013 … Required status check "catladder ✅" is expected` — the changesets path already did. The release commit carries `[skip ci]` on GitHub so the explicitly dispatched tagged-release run stays the only one, the generated tagged-release workflow gets a per-tag concurrency group, and `project doctor` reports a committed release workflow that still runs an older release image (regenerate with `catenv`).
+
+## 5.1.2 (2026-09-07)
+
+### Patch Changes
+
+- Fix `catci` crashing with `ReferenceError: __dirname is not defined in ES module scope` in projects whose root `package.json` declares `"type": "module"`. The generated `.catladder-generated/catci/` folder now carries a sibling `package.json` pinning it to CommonJS, so the release guard, security audit and npm publish jobs run again on both backends.
+
+## 5.1.1 (2026-08-31)
+
+### Patch Changes
+
+- fix(github): lowercase the GHCR image paths of mixed-case repositories
+  
+  GHCR image repository names may not contain uppercase characters, but
+  `${{ github.repository }}` interpolates GitHub's display casing. Any
+  project whose GitHub owner or repo name has an uppercase letter (common
+  for org logins like `AcmeCorp`) therefore failed **every** docker job
+  client-side, before any network call:
+  
+  ```
+  invalid tag "ghcr.io/AcmeCorp/nautilus/catladder/docker-build:b343b099980e":
+  repository name must be lowercase
+  ```
+  
+  catladder now resolves the repository from the git remote at generation
+  time and writes the lowercased path (`ghcr.io/acmecorp/nautilus`) into
+  both the workflow-level `CL_REGISTRY_IMAGE` and the `jobs.<id>.container.image`
+  of every containerized job — the latter is resolved before any step
+  runs, so it could not have been fixed from a shell step. GHCR serves the
+  org under that lowercased namespace, so it is the correct address, not a
+  workaround.
+  
+  All-lowercase repositories are unaffected: they keep the
+  `${{ github.repository }}` expression, which stays correct in forks, so
+  generated output is byte-identical to before.
+  
+  Set `pipelines.github.repository` when generation cannot see the git
+  remote:
+  
+  ```ts
+  pipelines: { github: { repository: "AcmeCorp/Nautilus" } },
+  ```
+  
+  `catladder project doctor` now reports a mixed-case repository whose
+  generated workflows still carry the expression.
+  
+  **If you worked around this by hand-editing the generated workflows,
+  revert those edits after upgrading** — `.envrc` runs `eval "$(catenv)"`
+  on every `cd` into the repo, so regeneration overwrites them anyway.
+
+## 5.1.0 (2026-08-31)
+
+### Minor Changes
+
+- Review apps of a merge request can now be pinned so they outlive the auto-stop timer (gitlab). Review deploy jobs read their `auto_stop_in` from the pipeline variable `CL_REVIEW_AUTO_STOP`; a workflow rule sets it to `never` while the MR carries the pin label (default `catladder::pin-review`), so the pin lives on the MR and survives redeploys — unlike gitlab's per-environment pin button, which the next deploy resets. Merging or closing the MR still stops the apps. `catladder mr pin` / `mr unpin` manage the label (creating it in the project when missing) and `pin` triggers a pipeline so the pin takes effect immediately. The previously hardcoded lifetimes are now configurable via top-level `autoStop` in catladder.ts (`review` default "1 week", `dev` default "4 weeks", `pinLabel` — `false` disables the mechanism). GitHub is unaffected: it has no auto-stop, review apps live until the pull request closes.
+
+### Patch Changes
+
+- Fixed the bitwarden vault dropping secrets on a partial write: it rewrote an env/component's whole yaml note from the keys of that one write, so `project secrets-set dev:web API_KEY` deleted every other secret of `dev:web` from the vault. Writes are now merged into the existing note, matching the gitlab vault's upsert semantics.
+- `project setup` now stores the credentials it provisions — the gcloud deploy service account key, the kubernetes deploy credentials — through the secrets vault and from there to every enabled CI backend, exactly like any other secret. Until now it wrote them straight into GitLab project variables: on a project without a GitLab pipeline the setup of a cloud run or kubernetes component died with `Error: not found` (a 404 from the GitLab API against a host that is not a GitLab), and on a project with a bitwarden vault the credentials silently never reached the vault. The GitLab registry deploy token that kubernetes setup creates is now skipped when no GitLab pipeline is enabled, and a 404 from the GitLab API finally says which call failed against which host.
+
 ## 5.0.1 (2026-08-13)
 
 ### Patch Changes

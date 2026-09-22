@@ -16,6 +16,7 @@ import type {
 } from "../../types";
 import { ALL_PIPELINE_TRIGGERS, isBranchTrigger } from "../../types/config";
 import { getConfiguredBranchTriggers } from "../../config/configruedEnvs";
+import { getAutoStopConfig } from "../../autoStop";
 import { createAllJobs } from "../../pipeline/createAllJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
@@ -280,6 +281,7 @@ export class GitlabBackend implements PipelineBackend {
         ...getPipelineOptions(config, this.type).runnerVariables,
       },
       branchPipelines: branchTriggers.map(({ branch }) => branch),
+      autoStop: getAutoStopConfig(config),
     });
   }
 }

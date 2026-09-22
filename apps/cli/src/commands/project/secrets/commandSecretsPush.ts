@@ -2,12 +2,9 @@ import { readFile } from "fs-extra";
 import { parse } from "yaml";
 import { defineCommand } from "../../../core/defineCommand";
 import { readStdin } from "../../../utils/readStdin";
+import { writeSecretsAndMirror } from "../../../secrets";
 import type { SecretsDocument } from "./document";
-import {
-  checkSecretsDocument,
-  collectSecretsWrites,
-  writeSecretsAndMirror,
-} from "./document";
+import { checkSecretsDocument, collectSecretsWrites } from "./document";
 import {
   getScopedSecretKeys,
   resolveSecretsScope,

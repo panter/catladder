@@ -7,6 +7,8 @@ import {
 import type { IO } from "../../../../../core/types";
 import { checkCloudRun } from "./checkCloudRun";
 import { checkGithub } from "./checkGithub";
+import { checkGithubImageCasing } from "./checkGithubImageCasing";
+import { checkGithubReleaseWorkflow } from "./checkGithubReleaseWorkflow";
 import { checkGitlab } from "./checkGitlab";
 import { checkStore } from "./checkStore";
 import { DoctorReport } from "./DoctorReport";
@@ -53,6 +55,8 @@ export const doctorProject = async (
     await checkGitlab(instance, report, contexts);
   }
   await checkCloudRun(report, contexts);
+  await checkGithubImageCasing(report, config);
+  await checkGithubReleaseWorkflow(report, config);
   await checkGithub(report, config);
 
   report.summarize();

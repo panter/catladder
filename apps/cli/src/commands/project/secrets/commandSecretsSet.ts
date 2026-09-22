@@ -2,8 +2,8 @@ import { readFile } from "fs-extra";
 import { defineCommand } from "../../../core/defineCommand";
 import type { IO } from "../../../core/types";
 import { readStdin } from "../../../utils/readStdin";
-import type { SecretsWrite } from "./document";
-import { writeSecretsAndMirror } from "./document";
+import type { SecretsWrite } from "../../../secrets";
+import { writeSecretsAndMirror } from "../../../secrets";
 import {
   getScopedSecretKeys,
   resolveSecretsScope,

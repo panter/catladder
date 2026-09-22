@@ -7,7 +7,7 @@ import {
 import {
   collectSecretTargets,
   getConfiguredGithubRepo,
-} from "../../../../../commands/project/commandSecretsSyncGithub";
+} from "../../../../../secrets";
 import { mapWithConcurrency } from "../../../../../utils/concurrency";
 import {
   ghApiJson,

@@ -32,7 +32,10 @@ export const RELEASE_DEPLOY_KEY_TITLE = "catladder release";
 
 /**
  * actions secret holding the deploy key's private half; the generated
- * release jobs pass it to catci, which pushes over ssh when it is set
+ * release jobs pass it into the job env and both release methods push
+ * over ssh with it when it is set — changesets from catci itself,
+ * semantic-release via the ssh repository url catci prepares for it
+ * (see src/release/githubDeployKey.ts)
  */
 export const RELEASE_DEPLOY_KEY_SECRET = "CATLADDER_RELEASE_KEY";
 

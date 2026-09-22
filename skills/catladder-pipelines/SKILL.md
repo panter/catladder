@@ -1,6 +1,6 @@
 ---
 name: catladder-pipelines
-description: Understanding and debugging the CI/CD pipelines catladder generates (GitLab CI and GitHub Actions) — pipeline triggers, stages, environments, caching, job images, releases, and infrastructure drift. Use when investigating failing CI jobs, when asked why/when a job runs, when changing caching or job behavior, or when deployments misbehave. Triggers on "pipeline", "CI job", "gitlab-ci", "workflow", "deploy failed", "cache", "release".
+description: Understanding and debugging the CI/CD pipelines catladder generates (GitLab CI and GitHub Actions) — pipeline triggers, stages, environments, caching, job images, releases, and infrastructure drift. Use when investigating failing CI jobs, when asked why/when a job runs, when changing caching or job behavior, when deployments misbehave, or when a review app stopped/expired or should be kept alive (pinning). Triggers on "pipeline", "CI job", "gitlab-ci", "workflow", "deploy failed", "cache", "release", "auto-stop", "review app stopped", "pin review app", "keep review app".
 ---
 
 # How catladder pipelines work
@@ -46,6 +46,64 @@ Generated layout:
 Stages: setup → test → build → deploy → verify (post-deploy checks),
 plus stop jobs for review-app teardown.
 
+## Superseded pipelines are cancelled
+
+Pushing a new commit cancels the pipeline of the previous one, so the
+runners are not busy with results nobody will read.
+
+| Pipeline | On a new commit |
+|---|---|
+| `mr` | cancelled |
+| `mainBranch` (dev) | cancelled, except a release already running |
+| `taggedRelease` | **runs through** — never cancelled |
+| agent runs (`trigger`) | **runs through** — never cancelled |
+
+- **GitHub**: the generated MR workflow sets `concurrency` with
+  `cancel-in-progress: true`.
+- **GitLab**: generated `workflow:auto_cancel:on_new_commit:
+  interruptible`, with per-rule `none` for tags and agent runs. Every
+  job carries an explicit `interruptible`, jobs that must finish
+  (release jobs, agent jobs) carry `interruptible: false`.
+
+**GitLab requires the project setting too.** The generated YAML only
+tunes *how* redundant pipelines are cancelled — it does not switch the
+feature on. If old pipelines keep running, check **Settings > CI/CD >
+General pipelines > Auto-cancel redundant pipelines**; with that
+checkbox off nothing is ever cancelled. (`catladder project-doctor`
+does not check this.)
+
+**Adding a hand-written GitLab job?** Set `interruptible` explicitly.
+GitLab defaults it to `false`, and a non-interruptible job that has
+started keeps *itself* alive — under gitlab's own default
+(`conservative`, which catladder overrides) it would shield the whole
+pipeline from cancellation.
+
+## Review-app auto-stop and pinning (GitLab)
+
+GitLab review environments stop automatically after 1 week, dev
+environments after 4 weeks. Configure with top-level `autoStop` in
+`catladder.ts` (`{ review, dev }`, gitlab natural language like
+`"3 days"` or `"never"`). Merging or closing the MR always stops its
+review apps, independent of the timer.
+
+To keep an MR's review apps alive longer, pin the MR:
+
+- `yarn catladder mr pin` — adds the pin label (default
+  `catladder::pin-review`, configurable via `autoStop.pinLabel`) to the
+  current branch's open MR and triggers a pipeline so the pin takes
+  effect immediately. While the label is set, ALL components' review
+  apps deploy with `auto_stop_in: never`.
+- `yarn catladder mr unpin` — removes the label; the auto-stop timer
+  re-arms with the next deploy.
+
+The pin lives on the MR (a label), not on the environment, so it
+survives redeploys — unlike gitlab's per-environment pin button, which
+the next successful deploy resets. Adding/removing the label by hand
+works too; a label change takes effect from the MR's next pipeline.
+
+GitHub has no auto-stop: review apps run until the pull request is
+closed (pinning does not apply there).
+
 ## Job images and catci
 
 Jobs run in catladder-provided images (`🐳 catladder image <name>` build
@@ -53,8 +111,9 @@ jobs). Their definitions are materialized into
 `.catladder-generated/images/` and built in the project's own registry
 under `catladder/` (content-hashed, rebuilt only on change).
 `.catladder-generated/catci/` holds a small bundled CI companion used by
-generated jobs (e.g. the release security audit) — all generated, never
-edit.
+generated jobs (e.g. the release security audit) plus a `package.json`
+pinning the folder to CommonJS (needed when the project's root
+`package.json` has `"type": "module"`) — all generated, never edit.
 
 Projects can declare their own job images under `images` in
 `catladder.ts` (`🐳 image <name>` build jobs, pushed to `job-images/` in
@@ -64,6 +123,30 @@ Dockerfile directory is used in place; an inline `dockerfile` is
 materialized into `.catladder-generated/images/project/<name>/`. Either
 way the build job is skipped when the content hash already exists in
 the registry.
+
+### GHCR image paths are lowercased (GitHub)
+
+Image repository names may not contain uppercase characters, but
+GitHub's `${{ github.repository }}` context interpolates the display
+casing of the owner and repo. For a mixed-case repository
+(`AcmeCorp/Nautilus`) catladder therefore resolves the repository from
+the git remote at generation time and writes the lowercased literal
+(`ghcr.io/acmecorp/nautilus/...`) into the workflows — GHCR serves that
+org under the lowercased namespace, so it is the correct address.
+An all-lowercase repository keeps the `${{ github.repository }}`
+expression, which stays correct in forks.
+
+If a docker job fails with `invalid tag ...: repository name must be
+lowercase`, the committed workflows were generated before this was
+fixed (or hand-edited): regenerate with `yarn catenv` and commit. When
+generation cannot see the git remote, pin it explicitly:
+
+```ts
+pipelines: { github: { repository: "AcmeCorp/Nautilus" } },
+```
+
+`yarn catladder project doctor` reports a mixed-case repository whose
+generated workflows still carry the expression.
 
 ## Caching
 

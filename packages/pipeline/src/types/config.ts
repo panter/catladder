@@ -218,12 +218,17 @@ export type EnvironmentConfig = {
   /**
    * how long the environment stays up after its last deployment before
    * gitlab stops it automatically (gitlab `auto_stop_in`, e.g. "3 days").
-   * `false` disables auto-stopping. Defaults from the env type:
-   * review "1 week", dev "4 weeks", everything else never.
+   * `false` disables auto-stopping. Defaults from the env type, tunable
+   * project-wide via the top-level `autoStop` durations: review
+   * "1 week", dev "4 weeks", everything else never.
    *
    * Only applies to stoppable deployments, and only on gitlab (github
    * review apps stop when their pull request closes). Components can
    * override it per env (`env.<name>.autoStop`).
+   *
+   * NOTE: an explicit value here is a literal — setting it on a review
+   * env opts that env out of the pin-label mechanism (the top-level
+   * `autoStop.pinLabel`), which only steers the default review lifetime.
    */
   autoStop?: string | false;
 
@@ -356,6 +361,19 @@ export type PipelineOutputOptions = {
    * defaults to "origin"
    */
   gitRemote?: string;
+
+  /**
+   * github only: the `owner/name` of the github repository.
+   *
+   * Only needed when catladder cannot resolve it from the git remote at
+   * generation time (a checkout without the remote, a tarball, …) and
+   * the name contains an uppercase character: ghcr image paths must be
+   * lowercase, so a mixed-case repository can't use github's
+   * `${{ github.repository }}` context and needs a literal instead.
+   *
+   * @example "AcmeCorp/nautilus"
+   */
+  repository?: string;
 
   /**
    * variables applied to every job of THIS pipeline type only —
@@ -500,6 +518,39 @@ export type Config<C extends ConfigProps = never> = {
    */
   meta?: {
     labels?: Record<string, string>;
+  };
+
+  /**
+   * auto-stop of non-production environments (gitlab only): review
+   * environments stop automatically after `review` (default "1 week"),
+   * dev environments after `dev` (default "4 weeks"). Merging or
+   * closing the MR always stops its review environments, independent of
+   * these timers.
+   *
+   * `pinLabel` names the merge-request label that pins an MR's review
+   * apps: while the label is set, review deploys use
+   * `auto_stop_in: never`, so the apps outlive the timer until the MR
+   * is merged or closed. Apply it with `catladder mr pin` (or add the
+   * label manually) — it takes effect from the next pipeline of the MR.
+   */
+  autoStop?: {
+    /**
+     * lifetime of review environments, in gitlab natural language
+     * (e.g. "3 days") or "never"
+     * @defaultValue "1 week"
+     */
+    review?: string;
+    /**
+     * lifetime of dev environments
+     * @defaultValue "4 weeks"
+     */
+    dev?: string;
+    /**
+     * the merge-request label that pins review apps, or `false` to
+     * disable the pin mechanism
+     * @defaultValue "catladder::pin-review"
+     */
+    pinLabel?: string | false;
   };
 
   /**

@@ -128,6 +128,20 @@ the `security` commands in the `catladder-cli` reference.
   MR adding a changeset describing the accumulated work.
 - Wrong version bump → check commit types (semantic-release) or the bump
   levels in the changeset files (changesets).
+- GitHub: the push is rejected with `GH013 … Required status check
+  "catladder ✅" is expected` (or GH006) → the release push has to use
+  the release deploy key, the only actor that bypasses the merge-gating
+  ruleset. `yarn catladder project setup` provisions it (deploy key
+  `catladder release` + secret `CATLADDER_RELEASE_KEY`), `yarn catladder
+  project doctor` verifies it — including that the committed release
+  workflow runs the current release image; an older semantic-release
+  image pushed with the workflow token and ignored the key (regenerate
+  with `yarn catenv` and commit).
+- GitHub, semantic-release with a project-provided `.releaserc`: keep
+  `[skip ci]` in the `@semantic-release/git` commit message. The
+  deploy-key push triggers workflows, and without the marker the release
+  commit starts a main run and the tag a second tagged run next to the
+  one the release job dispatches.
 - Tag pushed but nothing on the releases page → with `changesets` the
   entry is created via the host api after the push and never fails the
   job (the release itself is done); look for the `could not create the

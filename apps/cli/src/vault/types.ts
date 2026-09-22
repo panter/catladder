@@ -20,14 +20,30 @@ export type SecretsVault = {
 
   /**
    * upserts the secrets of one env and component
-   * (keys as declared in the config, not the raw variable names)
+   * (keys as declared in the config, not the raw variable names).
+   * Upsert, not replace: values that are not part of `secrets` stay
+   * untouched.
    */
   writeSecrets(
     io: IO,
     env: string,
     componentName: string,
     secrets: Record<string, unknown>,
+    options?: WriteSecretsOptions,
   ): Promise<void>;
+};
+
+export type WriteSecretsOptions = {
+  /**
+   * keep the previous value around where the store supports it (the
+   * gitlab store writes `<KEY>_backup_<timestamp>` variables) —
+   * a hand-written secret's only undo.
+   *
+   * Machine-provisioned credentials (service account keys, kubernetes
+   * tokens) are regenerated on demand and their old value is worthless,
+   * so `project setup` writes them with `backup: false`.
+   */
+  backup?: boolean;
 };
 
 /**

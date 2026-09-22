@@ -1,27 +1,26 @@
-import type { ComponentContext } from "@catladder/pipeline";
+import type { ComponentContext, Config } from "@catladder/pipeline";
 import {
+  getEnabledPipelineTypes,
   getFullKubernetesClusterName,
   isOfDeployType,
 } from "@catladder/pipeline";
+import { getProjectConfig } from "../../../../../config/getProjectConfig";
 import type { IO } from "../../../../../core/types";
 import { exec } from "child-process-promise";
+import { writeSecretsAndMirror } from "../../../../../secrets";
 import { connectToCluster } from "../../../../../utils/cluster";
-import {
-  doGitlabRequest,
-  getProjectInfo,
-  upsertAllVariables,
-} from "../../../../../utils/gitlab";
+import { doGitlabRequest, getProjectInfo } from "../../../../../utils/gitlab";
 import ensureNamespace from "../utils/ensureNamespace";
 
-export const setupKubernetes = async (
-  instance: IO,
-  context: ComponentContext,
-) => {
-  const deployConfig = context.deploy?.config;
-  if (!isOfDeployType(deployConfig, "kubernetes")) {
-    throw new Error("cannot run setupKubernetes on non-kubernetes deployments");
+/**
+ * the cluster pulls the images from the gitlab container registry, and
+ * a deploy token is how it authenticates there. Nothing to do when the
+ * project has no gitlab pipeline (the images live elsewhere then).
+ */
+const ensureGitlabDeployToken = async (instance: IO, config: Config | null) => {
+  if (!config || !getEnabledPipelineTypes(config).includes("gitlab")) {
+    return;
   }
-
   const { id: projectId } = await getProjectInfo(instance);
   const deploy_tokens = await doGitlabRequest(
     instance,
@@ -48,6 +47,18 @@ export const setupKubernetes = async (
       "POST",
     );
   }
+};
+
+export const setupKubernetes = async (
+  instance: IO,
+  context: ComponentContext,
+) => {
+  const deployConfig = context.deploy?.config;
+  if (!isOfDeployType(deployConfig, "kubernetes")) {
+    throw new Error("cannot run setupKubernetes on non-kubernetes deployments");
+  }
+
+  await ensureGitlabDeployToken(instance, await getProjectConfig());
 
   const fullName = getFullKubernetesClusterName(deployConfig.cluster);
   instance.log(`cluster: ${fullName}`);
@@ -158,14 +169,14 @@ EOF
   instance.log("service accounts created / updated!");
 
   instance.log("");
-  instance.log("pusing secrets to gitlab...");
+  instance.log("storing the cluster credentials...");
 
-  await upsertAllVariables(
+  await writeSecretsAndMirror(
     instance,
-    vars,
-    context.env,
-    context.name,
-    false, // no backup
+    [{ env: context.env, componentName: context.name, secrets: vars }],
+    // the service account token is recreated on every run — the
+    // previous one is worth nothing
+    { backup: false },
   );
   instance.log("done!");
 };

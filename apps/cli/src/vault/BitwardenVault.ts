@@ -108,6 +108,12 @@ export class BitwardenVault implements SecretsVault {
     return secrets;
   }
 
+  /**
+   * upserts into the item's yaml note. The note is rewritten as a
+   * whole, so the values that are not part of this write have to be
+   * carried over — a single-key write (`secrets-set`, a credential
+   * provisioned by `project setup`) must not drop the rest.
+   */
   async writeSecrets(
     io: IO,
     env: string,
@@ -130,7 +136,10 @@ export class BitwardenVault implements SecretsVault {
       ])
     ).find((item) => item.name === name);
 
-    const notes = stringify(secrets);
+    const previous = existing?.notes
+      ? ((parse(existing.notes) as Record<string, unknown> | null) ?? {})
+      : {};
+    const notes = stringify({ ...previous, ...secrets });
 
     if (existing) {
       await runBw(bwSession, [

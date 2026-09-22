@@ -1,6 +1,6 @@
 import type { IO } from "../core/types";
 import { getAllVariables, upsertAllVariables } from "../utils/gitlab";
-import type { SecretsVault } from "./types";
+import type { SecretsVault, WriteSecretsOptions } from "./types";
 
 /**
  * the legacy (and default) vault: the gitlab project variables double
@@ -19,7 +19,14 @@ export class GitlabVault implements SecretsVault {
     env: string,
     componentName: string,
     secrets: Record<string, unknown>,
+    options: WriteSecretsOptions = {},
   ): Promise<void> {
-    await upsertAllVariables(io, secrets, env, componentName);
+    await upsertAllVariables(
+      io,
+      secrets,
+      env,
+      componentName,
+      options.backup ?? true,
+    );
   }
 }

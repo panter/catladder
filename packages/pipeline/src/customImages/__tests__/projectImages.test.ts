@@ -155,6 +155,48 @@ describe("JobImagesPlan project images", () => {
     );
   });
 
+  it("uses the lowercased ghcr literal of a mixed-case repository", () => {
+    // ghcr rejects uppercase image paths, so a mixed-case owner/repo
+    // can't go through `${{ github.repository }}` (github's display
+    // casing) and gets a literal instead
+    const dir = setupFixture("github-mixed-case", {
+      Dockerfile: "FROM node:22\n",
+    });
+    const plan = new JobImagesPlan(
+      "github",
+      { "my-image": { dir } },
+      "ghcr.io/fiulag/nautilus",
+    );
+
+    const projectImage = plan.resolve({ image: "my-image" }).image;
+    const catladderImage = plan.resolve({
+      catladderImage: "jobs-default",
+    }).image;
+
+    expect(projectImage).toMatch(
+      /^ghcr\.io\/fiulag\/nautilus\/job-images\/my-image:/,
+    );
+    expect(catladderImage).toMatch(
+      /^ghcr\.io\/fiulag\/nautilus\/catladder\/jobs-default:/,
+    );
+    // covers `docker build -t` / `docker push` / `docker manifest
+    // inspect` too — they all embed the same imageRef
+    for (const job of plan.getEnsureJobs()) {
+      for (const line of job.script ?? []) {
+        expect(line ?? "").not.toMatch(/ghcr\.io\/\S*[A-Z]/);
+      }
+    }
+  });
+
+  it("leaves the gitlab prefix alone", () => {
+    const dir = setupFixture("gitlab-prefix", { Dockerfile: "FROM node:22\n" });
+    const plan = new JobImagesPlan("gitlab", { "my-image": { dir } });
+
+    expect(plan.resolve({ image: "my-image" }).image).toMatch(
+      /^\$CI_REGISTRY_IMAGE\/job-images\/my-image:/,
+    );
+  });
+
   it("materializes an inline dockerfile and builds it from the repo root", () => {
     const plan = new JobImagesPlan("gitlab", {
       "db-tools": { dockerfile: ["FROM alpine:3.21", "RUN apk add curl"] },

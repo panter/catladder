@@ -167,8 +167,13 @@ A safe order:
    against the old vault (unset values show as `🚨 FILL ME`)
 2. switch `secrets.vault` in `catladder.ts`, `yarn catenv`
 3. `yarn catladder project secrets-push <env>: --file /tmp/secrets.yml`
-4. `yarn catladder project doctor`, then delete the temp file
-5. only now decommission the GitLab project
+4. `yarn catladder project setup` — the *provisioned* credentials (the
+   gcloud deploy service account key, the kubernetes deploy
+   credentials) are hidden keys and therefore not part of the document
+   the pull/push round trip moves; setup re-provisions them into the
+   new vault
+5. `yarn catladder project doctor`, then delete the temp file
+6. only now decommission the GitLab project
 
 Never commit the intermediate file, and see the `catladder-secrets`
 skill for the exact command surface.
@@ -178,10 +183,15 @@ skill for the exact command surface.
 - **GitLab** needs a `GL_TOKEN` project access token (named
   `semantic-release`) to push the release commit and tag. It is created
   and rotated by `yarn catladder project setup`.
-- **GitHub** needs nothing extra — the release jobs use the built-in
-  `github.token`. Tags pushed by that token do not retrigger workflows,
-  so the release job dispatches the tagged-release workflow explicitly;
-  that is built in and needs no configuration.
+- **GitHub** needs the release deploy key that `yarn catladder project
+  setup` provisions together with the merge gating (Step 9): the release
+  job pushes the release commit and tag over ssh with it, because the
+  built-in `github.token` can never bypass the required `catladder ✅`
+  check on the default branch (the push fails with GH013 otherwise).
+  Without merge gating the job falls back to the token. The release
+  commit carries `[skip ci]` and the release job dispatches the
+  tagged-release workflow explicitly (one run per tag); that is built
+  in and needs no configuration.
 - **Only one backend should own releases at a time.** Both backends
   generate release jobs, and with `releases: { when: "auto" }` both would
   try to tag the same commit. During the parallel phase, agree with the
@@ -198,6 +208,17 @@ system's own registry, so they change host with the backend:
 `$CI_REGISTRY_IMAGE` on GitLab, `ghcr.io/<owner>/<repo>` on GitHub. The
 first pipeline on the new backend therefore **rebuilds every job image**
 — it will be slow, and that is expected, not a bug.
+
+GHCR paths must be lowercase (the OCI spec allows no uppercase in a
+repository name). If the GitHub owner or repo name is mixed-case
+(`AcmeCorp/Nautilus`), catladder resolves the repository from the git
+remote at generation time and writes the lowercased path
+(`ghcr.io/acmecorp/nautilus`) into the workflows; an all-lowercase
+repository keeps the portable `${{ github.repository }}` expression.
+Set `pipelines.github.repository: "AcmeCorp/Nautilus"` when generation
+cannot see the remote — without it, every docker job fails with
+`repository name must be lowercase`. `catladder project doctor` reports
+this.
 
 Where the **app image** goes depends on the deploy type:
 
@@ -271,9 +292,13 @@ now-wrong `gitRemote`, regenerate once more, and finish with
   token bypass rulesets, so setup provisions a write deploy key
   ("catladder release", private half in the `CATLADDER_RELEASE_KEY`
   actions secret; deploy keys never expire) that the release job
-  pushes with over ssh. Classic branch protection has no bypass list
+  pushes with over ssh — with both release methods, semantic-release
+  and changesets. Classic branch protection has no bypass list
   at all, which is why setup uses a ruleset and migrates old
-  classic-protection gating away. `project doctor` verifies all of it.
+  classic-protection gating away. `project doctor` verifies all of it,
+  including that the committed release workflow runs the release image
+  of the installed catladder (an older semantic-release image pushed
+  with the token and ignored the key — regenerate with `catenv`).
   Required reviews stay a human choice.
 - Tell the team where the pipeline lives now and how manual actions
   work there (on GitHub, manual jobs are dispatch workflows in the

@@ -1,4 +1,5 @@
 import type { CiVariableName } from "../../bash/ciVariables";
+import { GHCR_REPOSITORY_EXPRESSION } from "./ghcr";
 
 /**
  * how the github backend names the predefined CI variables.
@@ -21,13 +22,29 @@ export const GITHUB_CI_VARIABLES: Record<CiVariableName, string> = {
 
 /**
  * the workflow-level env the backend injects to provide the CL_*
- * variables referenced by {@link GITHUB_CI_VARIABLES}
+ * variables referenced by {@link GITHUB_CI_VARIABLES}.
+ *
+ * `registryImage` is the ghcr namespace to push to — the actions
+ * expression for an all-lowercase repository, a lowercased literal for
+ * a mixed-case one (see `./ghcr`).
  */
-export const GITHUB_INJECTED_WORKFLOW_ENV: Record<string, string> = {
+export const getGithubInjectedWorkflowEnv = (
+  registryImage: string = GHCR_REPOSITORY_EXPRESSION,
+): Record<string, string> => ({
   CL_JOB_TOKEN: "${{ github.token }}",
   CL_REGISTRY: "ghcr.io",
-  CL_REGISTRY_IMAGE: "ghcr.io/${{ github.repository }}",
+  CL_REGISTRY_IMAGE: registryImage,
   CL_REGISTRY_USER: "${{ github.actor }}",
   // empty outside of pull request events
   CL_PR_NUMBER: "${{ github.event.number }}",
-};
+});
+
+/**
+ * the names of the injected workflow-level env — the values differ per
+ * repository (see {@link getGithubInjectedWorkflowEnv}), the names never
+ * do, so lookups that only ask "does the workflow already provide this?"
+ * use this instead.
+ */
+export const GITHUB_INJECTED_WORKFLOW_ENV_NAMES = new Set(
+  Object.keys(getGithubInjectedWorkflowEnv()),
+);

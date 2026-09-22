@@ -2,7 +2,7 @@ import type { ComponentContext } from "@catladder/pipeline";
 
 import { exec } from "child-process-promise";
 import type { IO } from "../core/types";
-import { upsertAllVariables } from "../utils/gitlab";
+import { writeSecretsAndMirror } from "../secrets";
 import { getGcloudServiceAccountNames } from "./serviceAccountNames";
 
 export const accountExists = async (fullIdentifier: string) => {
@@ -76,13 +76,22 @@ export const upsertGcloudServiceAccountAndSaveSecret = async (
   instance.log("upserting service account " + account.name + "...");
   const key = await upsertGcloudServiceAccount(context, account);
 
-  await upsertAllVariables(
+  // through the vault (and from there to every enabled ci backend) —
+  // the key is a secret like any other, the deploy jobs read it under
+  // its declared name. Writing it to gitlab directly would break every
+  // project that has no gitlab.
+  await writeSecretsAndMirror(
     instance,
-    {
-      [secretName]: key,
-    },
-    context.env,
-    context.name,
+    [
+      {
+        env: context.env,
+        componentName: context.name,
+        secrets: { [secretName]: key },
+      },
+    ],
+    // a fresh key is created on every run, the previous one is deleted
+    // at google — a backup copy of it would only be a dead secret
+    { backup: false },
   );
   instance.log("done!");
 };

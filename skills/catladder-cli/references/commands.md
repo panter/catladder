@@ -79,6 +79,19 @@ trigger cronjob
 - `namespace` (positional): kubernetes namespace
 - `--job-name <value>`: Which cronjob?
 
+## `catladder mr pin [mr]`
+
+pin the review apps of a merge request (disable their auto-stop) by adding the pin label; merging or closing the MR still stops them
+
+- `mr` (positional): merge request IID (defaults to the open MR of the current branch)
+- `--pipeline`: trigger a merge-request pipeline so the pin takes effect immediately
+
+## `catladder mr unpin [mr]`
+
+unpin the review apps of a merge request — the auto-stop timer re-arms with the next deploy
+
+- `mr` (positional): merge request IID (defaults to the open MR of the current branch)
+
 ## `catladder project ci job-log`
 
 Show a job's log
