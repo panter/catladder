@@ -4,8 +4,9 @@
  * reports which changesets the merge request adds, what is pending and
  * what version merging would release. The report goes to the job log,
  * to `changeset-report.md` (exposed as an artifact on gitlab) and to a
- * sticky MR/PR comment where a token allows it. Exits 1 (the job runs
- * with allow_failure) when the merge request adds no changeset.
+ * sticky MR/PR comment where a token allows it. Always exits 0: a
+ * missing changeset is a warning carried by the report, not a job
+ * failure (see the end of {@link changesetCheckJob}).
  */
 import { existsSync } from "fs";
 import { writeFile } from "fs/promises";
@@ -203,11 +204,17 @@ export const changesetCheckJob = async () => {
     return;
   }
   if (!result.addsChangeset) {
+    // the job stays green on both platforms — the report, the log and
+    // the sticky comment carry the "no changeset" warning instead:
+    // - github has no "warning" job state: exiting non-zero would show
+    //   the job as failed (a red ❌ and "exit code 1"), which reads
+    //   like something broke.
+    // - gitlab only resolves the exposed artifact (the MR widget's
+    //   "changeset report" link) of a SUCCESSFUL job: for a failed
+    //   allow_failure job `exposed_artifacts.json` answers 204 forever
+    //   and the widget spins on "Loading artifacts" — exactly on the
+    //   MRs that need the report.
     if (onGithub()) {
-      // github has no "warning" job state: exiting non-zero would show
-      // the job as failed (a red ❌ and "exit code 1"), which reads like
-      // something broke. A warning annotation plus the step summary and
-      // the sticky PR comment carry the signal instead.
       console.log(
         "::warning title=No changeset::this pull request adds no changeset — " +
           "if the change is user-facing, add one so it appears in the next release's changelog",
@@ -215,10 +222,11 @@ export const changesetCheckJob = async () => {
       appendStepSummary(
         result.markdown.replace(`${CHANGESET_CHECK_MARKER}\n`, ""),
       );
-      return;
+    } else {
+      console.log(
+        "⚠️  this merge request adds no changeset — if the change is user-facing, " +
+          "add one so it appears in the next release's changelog (see the changeset report)",
+      );
     }
-    // gitlab: exit 1 turns the (allow_failure) job yellow so reviewers
-    // notice
-    process.exitCode = 1;
   }
 };

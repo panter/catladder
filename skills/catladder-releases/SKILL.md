@@ -96,18 +96,23 @@ Changesets projects get a **`🦋 changeset check`** job in every
 merge-request pipeline. It reports what merging would do — the
 changesets this MR adds, everything pending, and the version the next
 release would get (with a changelog preview) — and **warns without
-blocking** (`allow_failure`) when the MR adds no changeset:
+blocking** when the MR adds no changeset. The job itself stays green on
+both platforms: the warning lives in the report, the job log and the
+sticky comment.
 
 - **GitLab**: report in the job log and as an exposed artifact
   (`changeset-report.md`) in the MR widget. If the project makes
   `GL_TOKEN` available to MR pipelines it also maintains a sticky MR
   comment (opt-in — an api-scope token in MR pipelines is a security
-  trade-off).
-- **GitHub**: maintains a sticky PR comment via the workflow token; the
-  job stays green and reports a warning annotation (github has no
-  yellow job state, and a red job would read like a real failure).
+  trade-off). The job deliberately does not turn yellow: gitlab only
+  resolves exposed artifacts of successful jobs, so a failed
+  `allow_failure` job leaves the MR widget spinning on "Loading
+  artifacts".
+- **GitHub**: maintains a sticky PR comment via the workflow token and
+  reports a warning annotation (github has no yellow job state, and a
+  red job would read like a real failure).
 
-A yellow changeset-check job on an MR is a prompt to ask: is this
+A "⚠️ adds no changeset" report on an MR is a prompt to ask: is this
 change user-facing? If yes, add a changeset; if not, ignore it.
 
 ## The security-audit gate

@@ -60,7 +60,7 @@ The release job consumes all pending changeset files: it takes the highest decla
 
 #### The changeset check
 
-Every merge-request pipeline gets a **`🦋 changeset check`** job that shows what merging would do: which changesets the MR adds, everything already pending, and the version (plus changelog preview) the next release would carry. When the MR adds no changeset it nudges without ever blocking the merge, since docs and chore changes legitimately ship without a changeset: on GitLab the job turns yellow (`allow_failure`), on GitHub — which has no such warning state — the job stays green and reports a warning annotation plus the run summary.
+Every merge-request pipeline gets a **`🦋 changeset check`** job that shows what merging would do: which changesets the MR adds, everything already pending, and the version (plus changelog preview) the next release would carry. When the MR adds no changeset it nudges without ever blocking the merge, since docs and chore changes legitimately ship without a changeset: the job stays green and the warning is carried by the report (plus a warning annotation and the run summary on GitHub). On GitLab the job deliberately does not turn yellow — GitLab only shows exposed artifacts of successful jobs, so a failed `allow_failure` job would leave the MR widget stuck on "Loading artifacts".
 
 Where the report appears:
 
