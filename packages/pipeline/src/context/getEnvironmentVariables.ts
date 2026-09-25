@@ -77,6 +77,11 @@ export const getEnvironmentVariables = async (
       devLocalConfig.port !== false ? (devLocalConfig.port ?? 3000) : null;
     host = port ? "localhost:" + port.toString() : null;
     url = host ? "http://" + host : null;
+    const localDeployEnvVars = deployConfigRaw
+      ? (DEPLOY_TYPES[deployConfigRaw.type].getLocalEnvVars?.(
+          environmentContext as never,
+        ) ?? {})
+      : {};
     predefinedVariables = {
       ...basePredefinedVariables,
       ENV_SHORT: "local",
@@ -85,6 +90,7 @@ export const getEnvironmentVariables = async (
       ...(host ? { HOSTNAME_INTERNAL: host } : {}),
       ...(host ? { ROOT_URL_INTERNAL: "http://" + host } : {}),
       ...(port ? { PORT: port.toString() } : {}),
+      ...localDeployEnvVars,
     };
   } else {
     const additionalEnvVars = deployConfigRaw
