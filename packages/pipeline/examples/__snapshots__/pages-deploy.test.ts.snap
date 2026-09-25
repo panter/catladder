@@ -621,7 +621,7 @@ create release:
     - collapseable_section_end "yarninstall"
     - yarn workspace docs build
     - export ROOT_URL="$CI_PAGES_URL"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/docs
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -676,7 +676,7 @@ create release:
     - collapseable_section_end "yarninstall"
     - yarn workspace docs build
     - export ROOT_URL="$CI_PAGES_URL/mr-$CI_MERGE_REQUEST_IID"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/docs
     url: $CL_GITLAB_ENVIRONMENT_URL

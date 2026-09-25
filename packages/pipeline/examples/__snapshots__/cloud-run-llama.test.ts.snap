@@ -1548,7 +1548,7 @@ create release:
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/llm
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1679,7 +1679,7 @@ create release:
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/llm
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1810,7 +1810,7 @@ create release:
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/llm
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -1937,7 +1937,7 @@ create release:
     - gcloud artifacts docker images list europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-my-ai-app/caches/llm@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/llm
     url: $CL_GITLAB_ENVIRONMENT_URL

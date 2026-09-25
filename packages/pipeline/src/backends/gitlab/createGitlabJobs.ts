@@ -299,7 +299,12 @@ const addGitlabEnvironment = (
   const { onStop, autoStopIn, action } = catladderJobEnvironment;
   // those can be dynamic, so we therefore have to do this: https://docs.gitlab.com/ee/ci/environments/#set-a-dynamic-environment-url
 
-  const dotEnvFile = "gitlab_environment.env";
+  // absolute: deploy scripts may `cd` into the component dir (pages,
+  // custom), while gitlab resolves `reports.dotenv` relative to the
+  // project dir — a relative file would land in <dir>/ and never be
+  // picked up ("no matching files"), leaving the environment without url
+  const dotEnvFileName = "gitlab_environment.env";
+  const dotEnvFile = `"$CI_PROJECT_DIR/${dotEnvFileName}"`;
   const createsJobEnv =
     !catladderJobEnvironment.action ||
     catladderJobEnvironment.action === "start";
@@ -309,7 +314,7 @@ const addGitlabEnvironment = (
     createsJobEnv
       ? {
           reports: {
-            dotenv: dotEnvFile,
+            dotenv: dotEnvFileName,
           },
         }
       : {},

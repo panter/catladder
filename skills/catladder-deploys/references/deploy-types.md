@@ -65,7 +65,7 @@ resources with `yarn catladder project setup`; detect drift with
 - `publishDir?: string` — output directory relative to the repo root, default `"public"`.
 - `requiresInstall?: boolean` — run the package-manager install (yarn/pnpm) first (`requiresYarnInstall` is a deprecated alias).
 - `jobImage?: GitlabJobImage`; also accepts `cache`.
-- Review envs publish under an `mr-<iid>` path prefix (parallel deployments → MR previews; exposed as `$PAGES_PREFIX`); other envs publish at the root. The environment url is the published pages url.
+- Review envs publish under an `mr-<iid>` path prefix (parallel deployments → MR previews; exposed as `$PAGES_PREFIX`); other envs publish at the root. Parallel deployments are GitLab Premium/Ultimate — on CE/Free the prefix is ignored and a review deploy overwrites the main site, so set `env: { review: false }` there. The environment url is the published pages url.
 - Defaults to `allowFailure: true`.
 
 ## `dockerTag`

@@ -3830,7 +3830,7 @@ create release:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/recipe-processing-service --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/recipe-processing-service@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/recipe-processing-service
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -4244,7 +4244,7 @@ create release:
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/recipe-processing-service
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -4534,7 +4534,7 @@ create release:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/recipe-processing-service --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/recipe-processing-service@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/recipe-processing-service
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -4814,7 +4814,7 @@ create release:
     - gcloud artifacts docker images list europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/recipe-processing-service --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/recipe-processing-service@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/recipe-processing-service
     url: $CL_GITLAB_ENVIRONMENT_URL

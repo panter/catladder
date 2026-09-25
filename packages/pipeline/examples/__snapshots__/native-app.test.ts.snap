@@ -5164,7 +5164,7 @@ create release:
     - gem install bundler
     - bundle install
     - bundle exec fastlane deploy_test
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   cache:
     - key:
         files:
@@ -5461,7 +5461,7 @@ create release:
     - gem install bundler
     - bundle install
     - bundle exec fastlane deploy_test
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   cache:
     - key:
         files:
@@ -5630,7 +5630,7 @@ create release:
     - gem install bundler
     - bundle install
     - bundle exec fastlane deploy_test
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   cache:
     - key:
         files:
@@ -5793,7 +5793,7 @@ create release:
     - gem install bundler
     - bundle install
     - bundle exec fastlane deploy_test
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   cache:
     - key:
         files:
@@ -6160,7 +6160,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -6574,7 +6574,7 @@ create release:
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -6864,7 +6864,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -7144,7 +7144,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/api@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/api
     url: $CL_GITLAB_ENVIRONMENT_URL

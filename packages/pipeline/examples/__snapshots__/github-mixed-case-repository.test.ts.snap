@@ -5281,7 +5281,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -5790,7 +5790,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -6174,7 +6174,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/api
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -6551,7 +6551,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/api
     url: $CL_GITLAB_ENVIRONMENT_URL
