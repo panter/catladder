@@ -5179,7 +5179,7 @@ export DB_USER="my-user"
 export DB_PASSWORD="$CL_review_db1_DB_PASSWORD"
 export DATABASE_URL="postgresql://my-user:$CL_review_db1_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1?host=/cloudsql/projectId:region:instancename"
 export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db1_DB_PASSWORD"
-export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CL_PR_NUMBER\\" ] && echo \\"pr$CL_PR_NUMBER\\" || echo \\"unknown\\")-db1\\" | awk '{print tolower($0)}')-migrate:run"
+export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')-migrate:run"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -5201,7 +5201,7 @@ DB_USER=my-user
 DB_PASSWORD=$(printf %s "$CL_review_db1_DB_PASSWORD" | escapeForDotEnv)
 DATABASE_URL=$(printf %s "postgresql://my-user:$CL_review_db1_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1?host=/cloudsql/projectId:region:instancename" | escapeForDotEnv)
 DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db1_DB_PASSWORD" | escapeForDotEnv)
-CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')-migrate:run
+CLOUD_RUN_JOB_TRIGGER_URL_migrate=$(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')-migrate:run" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
@@ -5330,7 +5330,7 @@ export DB_USER="my-user"
 export DB_PASSWORD="$CL_review_db1_DB_PASSWORD"
 export DATABASE_URL="postgresql://my-user:$CL_review_db1_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1?host=/cloudsql/projectId:region:instancename"
 export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db1_DB_PASSWORD"
-export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CL_PR_NUMBER\\" ] && echo \\"pr$CL_PR_NUMBER\\" || echo \\"unknown\\")-db1\\" | awk '{print tolower($0)}')-migrate:run"
+export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')-migrate:run"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -5380,7 +5380,7 @@ DATABASE_URL: |-
 DATABASE_JDBC_URL: |-
   jdbc:postgresql:///$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | sed '1!s/^/  /')?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$(printf %s "$CL_review_db1_DB_PASSWORD" | sed '1!s/^/  /')
 CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
-  https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')-migrate:run
+  $(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')-migrate:run" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db1" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -5594,7 +5594,7 @@ export DB_USER="my-user"
 export DB_PASSWORD="$CL_review_db2_DB_PASSWORD"
 export DATABASE_URL="postgresql://my-user:$CL_review_db2_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2?host=/cloudsql/projectId:region:instancename"
 export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db2_DB_PASSWORD"
-export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CL_PR_NUMBER\\" ] && echo \\"pr$CL_PR_NUMBER\\" || echo \\"unknown\\")-db2\\" | awk '{print tolower($0)}')-migrate:run"
+export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')-migrate:run"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -5616,7 +5616,7 @@ DB_USER=my-user
 DB_PASSWORD=$(printf %s "$CL_review_db2_DB_PASSWORD" | escapeForDotEnv)
 DATABASE_URL=$(printf %s "postgresql://my-user:$CL_review_db2_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2?host=/cloudsql/projectId:region:instancename" | escapeForDotEnv)
 DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db2_DB_PASSWORD" | escapeForDotEnv)
-CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')-migrate:run
+CLOUD_RUN_JOB_TRIGGER_URL_migrate=$(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')-migrate:run" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
@@ -5745,7 +5745,7 @@ export DB_USER="my-user"
 export DB_PASSWORD="$CL_review_db2_DB_PASSWORD"
 export DATABASE_URL="postgresql://my-user:$CL_review_db2_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2?host=/cloudsql/projectId:region:instancename"
 export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db2_DB_PASSWORD"
-export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CL_PR_NUMBER\\" ] && echo \\"pr$CL_PR_NUMBER\\" || echo \\"unknown\\")-db2\\" | awk '{print tolower($0)}')-migrate:run"
+export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')-migrate:run"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -5795,7 +5795,7 @@ DATABASE_URL: |-
 DATABASE_JDBC_URL: |-
   jdbc:postgresql:///$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | sed '1!s/^/  /')?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$(printf %s "$CL_review_db2_DB_PASSWORD" | sed '1!s/^/  /')
 CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
-  https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')-migrate:run
+  $(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')-migrate:run" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-db2" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -8834,7 +8834,7 @@ create release:
     - export DB_PASSWORD="$CL_review_db1_DB_PASSWORD"
     - export DATABASE_URL="postgresql://my-user:$CL_review_db1_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1?host=/cloudsql/projectId:region:instancename"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db1_DB_PASSWORD"
-    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-db1\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate:run"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -8857,7 +8857,7 @@ create release:
       DB_PASSWORD=$(printf %s "$CL_review_db1_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=$(printf %s "postgresql://my-user:$CL_review_db1_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1?host=/cloudsql/projectId:region:instancename" | escapeForDotEnv)
       DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db1_DB_PASSWORD" | escapeForDotEnv)
-      CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_migrate=$(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate:run" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
@@ -9006,7 +9006,7 @@ create release:
     - export DB_PASSWORD="$CL_review_db1_DB_PASSWORD"
     - export DATABASE_URL="postgresql://my-user:$CL_review_db1_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1?host=/cloudsql/projectId:region:instancename"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db1_DB_PASSWORD"
-    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-db1\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate:run"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -9057,7 +9057,7 @@ create release:
       DATABASE_JDBC_URL: |-
         jdbc:postgresql:///$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | sed '1!s/^/  /')?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$(printf %s "$CL_review_db1_DB_PASSWORD" | sed '1!s/^/  /')
       CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
-        https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate:run
+        $(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')-migrate:run" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db1" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -10411,7 +10411,7 @@ create release:
     - export DB_PASSWORD="$CL_review_db2_DB_PASSWORD"
     - export DATABASE_URL="postgresql://my-user:$CL_review_db2_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2?host=/cloudsql/projectId:region:instancename"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db2_DB_PASSWORD"
-    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-db2\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate:run"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -10434,7 +10434,7 @@ create release:
       DB_PASSWORD=$(printf %s "$CL_review_db2_DB_PASSWORD" | escapeForDotEnv)
       DATABASE_URL=$(printf %s "postgresql://my-user:$CL_review_db2_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2?host=/cloudsql/projectId:region:instancename" | escapeForDotEnv)
       DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db2_DB_PASSWORD" | escapeForDotEnv)
-      CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_migrate=$(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate:run" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
@@ -10583,7 +10583,7 @@ create release:
     - export DB_PASSWORD="$CL_review_db2_DB_PASSWORD"
     - export DATABASE_URL="postgresql://my-user:$CL_review_db2_DB_PASSWORD@localhost/pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2?host=/cloudsql/projectId:region:instancename"
     - export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$CL_review_db2_DB_PASSWORD"
-    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-db2\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate:run"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -10634,7 +10634,7 @@ create release:
       DATABASE_JDBC_URL: |-
         jdbc:postgresql:///$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | sed '1!s/^/  /')?cloudSqlInstance=projectId:region:instancename&socketFactory=com.google.cloud.sql.postgres.SocketFactory&user=my-user&password=$(printf %s "$CL_review_db2_DB_PASSWORD" | sed '1!s/^/  /')
       CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
-        https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate:run
+        $(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')-migrate:run" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-db2" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
