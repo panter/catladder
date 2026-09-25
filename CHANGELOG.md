@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.3.1 (2026-09-25)
+
+### Patch Changes
+
+- GitLab: the changeset check job stays green when a merge request adds no changeset — the warning is carried by the report, the job log and the sticky MR comment. A failed (`allow_failure`) job left the MR widget's exposed "changeset report" spinning on "Loading artifacts" forever, because GitLab only resolves exposed artifacts of successful jobs.
+- GitLab: deploys of components with a nested `dir` (e.g. `pages`, `custom`) now get their environment url — the dotenv report is written under `$CI_PROJECT_DIR` instead of the component dir, where GitLab never found it. The pages docs now note that per-MR previews (parallel deployments) need GitLab Premium/Ultimate; on CE/Free disable the review env, or a review deploy overwrites the main site.
+
 ## 5.3.0 (2026-09-22)
 
 ### Minor Changes
