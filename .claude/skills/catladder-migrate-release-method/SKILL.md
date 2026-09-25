@@ -186,9 +186,10 @@ changesets — see the `catladder-config` skill.
   pending bump = next release `vA.B.C`*. If that is not what the user
   expects, the bump levels are wrong.
 - The merge request now runs the **`🦋 changeset check`** job. It should
-  report the pending changesets and that same version. A yellow check
-  only means "this MR adds no changeset" — for the migration MR itself
-  that is not the case, so expect it green.
+  report the pending changesets and that same version. A "⚠️ adds no
+  changeset" warning in the report only means "this MR adds no
+  changeset" — for the migration MR itself that is not the case, so
+  expect it to list the backfilled changesets.
 - Do **not** hand-write `CHANGELOG.md`. The release job prepends the new
   section; anything you write by hand there gets duplicated.
 - Leave any `.releaserc` / `release.config.js` alone if the project has

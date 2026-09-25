@@ -38,6 +38,23 @@ deployments). The prefix is exposed to your build as `$PAGES_PREFIX` in
 case the site needs to adjust its base url. The GitLab environment url
 points at the published site.
 
+:::warning Parallel deployments need GitLab Premium/Ultimate
+
+`pages.path_prefix` (parallel deployments) is a Premium/Ultimate
+feature. On GitLab CE/Free the prefix is ignored: the review job runs
+green but publishes to the site **root**, silently overwriting the main
+site with the MR's version. On those instances disable the review
+environment for pages components:
+
+```ts
+docs: {
+  env: { review: false, stage: false, prod: false },
+  deploy: { type: "pages", /* … */ },
+},
+```
+
+:::
+
 ## GitHub: one site per repository
 
 On GitHub the site is published with `actions/deploy-pages`. Two

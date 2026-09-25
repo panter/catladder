@@ -93,8 +93,10 @@ export const getGitlabReleaseJobs = (
   };
 
   // informational MR check of the release method (e.g. the changeset
-  // check): warns via allow_failure, the report lands in the MR
-  // widget as an exposed artifact
+  // check): the report lands in the MR widget as an exposed artifact.
+  // The check script exits 0 even when it warns — gitlab only resolves
+  // exposed artifacts of successful jobs, a failed (allow_failure) job
+  // leaves the widget spinning on "Loading artifacts" forever
   const checkJob = method.checkScript
     ? {
         ["🦋 changeset check"]: {
@@ -109,7 +111,7 @@ export const getGitlabReleaseJobs = (
           artifacts: {
             paths: ["changeset-report.md"],
             expose_as: "changeset report",
-            // the report must survive the warning exit
+            // keep the report should the check itself crash
             when: "always" as const,
           },
           rules: [

@@ -124,7 +124,14 @@ publishes `publishDir` (default `"public"`). Review environments
 automatically publish under an `mr-<iid>` path prefix — every merge
 request gets its own site preview (the prefix is exposed to the build
 as `$PAGES_PREFIX`). The gitlab environment url points at the
-published site. GitLab-only for now.
+published site.
+
+**MR previews need GitLab Premium/Ultimate** (parallel deployments /
+`pages.path_prefix`). On GitLab CE/Free the prefix is ignored and the
+review job publishes to the site root, silently overwriting the main
+site — on such instances set `env: { review: false }` on the pages
+component. Ask which tier the instance runs when unsure (a self-hosted
+`git.<company>` instance is often CE).
 
 ```ts
 docs: {

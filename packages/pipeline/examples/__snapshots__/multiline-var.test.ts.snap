@@ -10092,7 +10092,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -10554,7 +10554,7 @@ create release:
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -10883,7 +10883,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -11202,7 +11202,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/app1
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -11646,7 +11646,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -12128,7 +12128,7 @@ create release:
     - set -e
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -12472,7 +12472,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -12806,7 +12806,7 @@ create release:
     - gcloud artifacts docker images list asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2 --sort-by=~CREATE_TIME --format="value(version)" | tail -n +2 | while read -r version; do gcloud artifacts docker images delete asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2@$version --quiet --delete-tags; done
     - set -e
     - collapseable_section_end "cleanup"
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/app2
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -13324,7 +13324,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: dev/kube
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -14047,7 +14047,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: review/$CI_COMMIT_REF_NAME/kube
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -14613,7 +14613,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: stage/kube
     url: $CL_GITLAB_ENVIRONMENT_URL
@@ -15172,7 +15172,7 @@ create release:
     - kubernetesCreateSecret
     - kubernetesDeploy
     - echo deployment successful 😻
-    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> gitlab_environment.env
+    - echo "CL_GITLAB_ENVIRONMENT_URL=$ROOT_URL" >> "$CI_PROJECT_DIR/gitlab_environment.env"
   environment:
     name: prod/kube
     url: $CL_GITLAB_ENVIRONMENT_URL
