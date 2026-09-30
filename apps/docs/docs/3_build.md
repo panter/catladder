@@ -70,6 +70,34 @@ caching and variables around them.
 See the [build reference](./4_agents/skills/catladder-builds/references/build-types.md)
 for the full set of options.
 
+## Reusing the main branch image in releases
+
+By default every env builds its own docker image, so a release builds the image of `stage` and `prod` again, although the main branch pipeline already built one for the same code.
+
+If your image does not depend on the env (no env-specific build vars or build args baked in — e.g. a Rails app built with Cloud Native Buildpacks), set `build.reuseMainBranchImage`:
+
+```ts
+build: {
+  type: "rails",
+  reuseMainBranchImage: true,
+},
+```
+
+In tagged-release pipelines, the `🔨 docker` job of every release env (`stage`, `prod`) then copies the image of the main branch env (`dev/<component>:<sha>`) to its own image name instead of building it. The copy happens in the registry (`docker buildx imagetools create --prefer-index=false`), takes seconds and keeps the digest, so stage and prod run exactly the image that ran on dev. It reuses the image of
+
+- the tagged commit itself, or
+- its parent, when the tagged commit only changes `releaseFiles` — the typical `chore(release)` commit of semantic-release that only updates `CHANGELOG.md`.
+
+When there is no such image (e.g. the main branch pipeline was canceled before the image was pushed, or the release commit also bumps a file that ends up in the image), the job builds the image as before.
+
+`true` is short for `{ releaseFiles: ["CHANGELOG.md"] }`. List additional files (relative to the repository root) if your release commit changes more files that do not affect the image:
+
+```ts
+reuseMainBranchImage: { releaseFiles: ["CHANGELOG.md", "docs/CHANGELOG.md"] },
+```
+
+This is not supported for `google-cloudrun` deploys and requires an env that builds on the main branch (`dev`).
+
 ## Project Images
 
 When your build or test jobs need a specific Docker image (e.g. Java + Maven, Playwright, a custom toolchain), you can declare it under `images` and catladder builds it automatically in your pipeline — on GitLab and GitHub alike.

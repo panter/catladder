@@ -74,6 +74,10 @@ type: `build: { from: "web" }` (see workspace builds below).
   runner tags, build-only env vars, and extra runner variables. A
   `jobImage` is a concrete image url or `{ image: "<name>" }`
   referencing a project image (see below).
+- `reuseMainBranchImage` — in release pipelines, stage/prod copy the
+  image the main branch (`dev`) built for the released commit instead of
+  rebuilding it (falls back to a build). Only for images that don't
+  depend on the env, e.g. Rails via Cloud Native Buildpacks.
 - `docker` — the image build strategy: a built-in
   (`{ type: "nginx" | "node" | "meteor" }`) or
   `{ type: "custom" }` (expects a `Dockerfile`).
