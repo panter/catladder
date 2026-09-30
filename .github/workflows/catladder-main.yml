@@ -56,16 +56,16 @@ jobs:
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
           collapseable_section_end "docker-login"
           collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df already exists, skipping build"
+          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59 > /dev/null 2>&1; then
+            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59 already exists, skipping build"
             exit 0
           fi
           collapseable_section_end "check-image"
           collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
           collapseable_section_end "docker-build"
           collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+          docker push ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
           collapseable_section_end "docker-push"
         shell: bash
   catladder-image-npm-publish:
@@ -106,16 +106,16 @@ jobs:
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
           collapseable_section_end "docker-login"
           collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc already exists, skipping build"
+          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/npm-publish:37200b1dda2b > /dev/null 2>&1; then
+            echo "Image ghcr.io/${{ github.repository }}/catladder/npm-publish:37200b1dda2b already exists, skipping build"
             exit 0
           fi
           collapseable_section_end "check-image"
           collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
+          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/npm-publish:37200b1dda2b -f .catladder-generated/images/npm-publish/Dockerfile .catladder-generated/images/npm-publish
           collapseable_section_end "docker-build"
           collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
+          docker push ghcr.io/${{ github.repository }}/catladder/npm-publish:37200b1dda2b
           collapseable_section_end "docker-push"
         shell: bash
   catladder-image-changesets:
@@ -156,16 +156,16 @@ jobs:
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
           collapseable_section_end "docker-login"
           collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a already exists, skipping build"
+          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a > /dev/null 2>&1; then
+            echo "Image ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a already exists, skipping build"
             exit 0
           fi
           collapseable_section_end "check-image"
           collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
           collapseable_section_end "docker-build"
           collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a
+          docker push ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a
           collapseable_section_end "docker-push"
         shell: bash
   ws-base-audit-dev:
@@ -174,13 +174,13 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     continue-on-error: true
     env:
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -194,12 +194,12 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -213,12 +213,12 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -232,13 +232,13 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
       SHOULD_MINIFY: '1'
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -269,7 +269,7 @@ jobs:
       - ws-base-lint-dev
       - ws-base-test-dev
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
+      image: ghcr.io/${{ github.repository }}/catladder/npm-publish:37200b1dda2b
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
@@ -283,7 +283,7 @@ jobs:
     continue-on-error: true
     env:
       CL_dev_cli_NPM_TOKEN: ${{ secrets.CL_dev_cli_NPM_TOKEN }}
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/npm-publish:c1ae26bf58cc
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/npm-publish:37200b1dda2b
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -301,7 +301,7 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
@@ -316,7 +316,7 @@ jobs:
     continue-on-error: true
     env:
       PAGES_PREFIX: ''
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8c93778931df
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -335,7 +335,7 @@ jobs:
     name: create release
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/changesets:fdec6403fc0a
+      image: ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
