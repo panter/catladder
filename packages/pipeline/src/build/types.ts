@@ -210,6 +210,38 @@ export type BuildConfigBase = {
    * custom image to use
    */
   jobImage?: JobImageConfig;
+
+  /**
+   * reuse the docker image that the main branch pipeline already built,
+   * instead of building it again in tagged-release pipelines (stage / prod).
+   *
+   * The 🔨 docker job of a release env copies the image of the main branch
+   * env (e.g. `dev/<component>:<sha>`) to its own image name — a registry-side
+   * copy that keeps the digest, no rebuild. It reuses the image of
+   *
+   * - the tagged commit itself, or
+   * - its parent, when the tagged commit is a release commit that only
+   *   touches `releaseFiles` (e.g. the `CHANGELOG.md` commit of semantic-release)
+   *
+   * and falls back to a regular build when there is no such image.
+   *
+   * Only enable this when the image does not depend on the env (no
+   * env-specific build vars or build args baked in): stage and prod then run
+   * exactly the image that was built and deployed on the main branch.
+   *
+   * `true` is short for `{ releaseFiles: ["CHANGELOG.md"] }`.
+   * Not supported for `google-cloudrun` deploys.
+   */
+  reuseMainBranchImage?:
+    | boolean
+    | {
+        /**
+         * files (relative to the repository root) a release commit may
+         * change without invalidating the image of its parent.
+         * Defaults to `["CHANGELOG.md"]`.
+         */
+        releaseFiles?: string[];
+      };
 } & WithCacheConfig;
 
 export type BuildConfigNodeBase = BuildConfigBase & {

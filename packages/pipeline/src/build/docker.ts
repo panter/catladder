@@ -10,6 +10,7 @@ import {
 } from "../deploy/cloudRun/artifactsRegistry";
 import { gcloudServiceAccountLoginCommands } from "../deploy/cloudRun/utils/gcloudServiceAccountLoginCommands";
 import { getCiVariable } from "../bash/ciVariables";
+import { getAllEnvsByTrigger } from "../config/configruedEnvs";
 import { getRunnerImage } from "../runner";
 import type {
   ComponentContext,
@@ -47,6 +48,61 @@ export const getDockerImageVariables = (context: ComponentContext) => {
 
     DOCKER_IMAGE_TAG: getCiVariable(context, "commitSha"),
   };
+};
+
+const shellQuote = (value: string) => `'${value.replace(/'/g, `'\\''`)}'`;
+
+/**
+ * script that copies the main branch image instead of building it, see
+ * `build.reuseMainBranchImage`. Exits the job when it
+ * reused an image, so the build script after it only runs as fallback.
+ */
+export const getReuseMainBranchImageScript = (
+  context: ComponentContextWithBuild,
+): string[] => {
+  const buildConfig = context.build.config;
+  // only standalone builds have the option, workspace builds don't
+  const option =
+    "reuseMainBranchImage" in buildConfig
+      ? buildConfig.reuseMainBranchImage
+      : undefined;
+  const { fullConfig, name, env } = context;
+  if (
+    !option ||
+    !getAllEnvsByTrigger(fullConfig, name, "taggedRelease").includes(env)
+  ) {
+    return [];
+  }
+  if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
+    throw new Error(
+      `${name}: build.reuseMainBranchImage is not supported for google-cloudrun deploys`,
+    );
+  }
+  const [mainBranchEnv] = getAllEnvsByTrigger(fullConfig, name, "mainBranch");
+  if (!mainBranchEnv) {
+    throw new Error(
+      `${name}: build.reuseMainBranchImage needs an env that builds on the main branch (e.g. dev)`,
+    );
+  }
+  const releaseFiles = (option === true ? undefined : option.releaseFiles) ?? [
+    "CHANGELOG.md",
+  ];
+  const sha = getCiVariable(context, "commitSha");
+  return [
+    ...gitlabDockerLogin(context),
+    `REUSE_IMAGE="${getCiVariable(context, "registryImage")}/${mainBranchEnv}/${name}"`,
+    `reuse_sha=""
+if docker buildx imagetools inspect "$REUSE_IMAGE:${sha}" >/dev/null 2>&1; then
+  reuse_sha="${sha}"
+elif git fetch --quiet --depth=2 origin "${sha}" && [ -z "$(git diff --name-only "${sha}^" "${sha}" | grep -vxF ${releaseFiles.map((f) => `-e ${shellQuote(f)}`).join(" ")})" ]; then
+  reuse_sha="$(git rev-parse "${sha}^")"
+fi
+if [ -n "$reuse_sha" ] && docker buildx imagetools create --prefer-index=false --tag "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" "$REUSE_IMAGE:$reuse_sha"; then
+  echo "♻️ reused $REUSE_IMAGE:$reuse_sha, skipping the build"
+  exit 0
+fi
+echo "no main branch image to reuse, building the image"`,
+  ];
 };
 
 /**
@@ -142,7 +198,7 @@ export class DockerBuildJob extends CatladderJob {
       provides: ["dockerImage"],
       caches: cache,
       ...getDockerJobBaseProps(),
-      script: script || [],
+      script: [...getReuseMainBranchImageScript(context), ...(script || [])],
       variables: {
         ...removeUndefined(getDockerBuildVariables(context)),
         ...removeUndefined(variables ?? {}),

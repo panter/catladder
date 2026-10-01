@@ -22,6 +22,7 @@ generated pipeline files.
 | `runnerVariables` | `Record<string,string>` | extra runner vars (also for `services:`) |
 | `jobTags` | `string[]` | runner tags |
 | `jobImage` | `JobImageConfig` | CI image for the build: a concrete image or `{ image: "<name>" }` referencing a project image |
+| `reuseMainBranchImage` | `boolean \| { releaseFiles?: string[] }` | release envs (stage/prod) copy the main branch (`dev`) image of the released commit instead of rebuilding; falls back to a build. Only for env-independent images; not for `google-cloudrun`. `true` = `{ releaseFiles: ["CHANGELOG.md"] }` |
 | `docker` | see below | the deployable image strategy |
 
 `TestJobCustom` (for `lint`/`test`/`audit`): `command`, `jobImage`,
