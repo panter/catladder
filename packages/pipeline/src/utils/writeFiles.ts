@@ -62,7 +62,12 @@ export class FileWriter {
    * materialized dockerfiles, where a leading comment would break
    * parser directives like `# syntax = ...`
    */
-  public async writeGeneratedFileRaw(path: string, content: string) {
+  public async writeGeneratedFileRaw(path: string, content: string | Buffer) {
+    if (Buffer.isBuffer(content)) {
+      // binary content is written as is, file hooks only transform text
+      await writeFile(path, content);
+      return;
+    }
     await this.writeTheFile(path, content);
   }
 

@@ -2,8 +2,11 @@ import type { Config, PipelineType } from "../types";
 
 export type PipelineFile = {
   path: string;
-  /** yaml data, or a verbatim string (e.g. materialized dockerfiles) */
-  content: Record<string, unknown> | string;
+  /**
+   * yaml data, or verbatim content (e.g. materialized dockerfiles, or
+   * binary files of a materialized image definition as Buffer)
+   */
+  content: Record<string, unknown> | string | Buffer;
 };
 
 /**

@@ -69,7 +69,7 @@ async function generatePipelineFilesForBackend(
   await Promise.all(
     files.map(async ({ path, content }) => {
       await mkdir(dirname(path), { recursive: true });
-      if (typeof content === "string") {
+      if (typeof content === "string" || Buffer.isBuffer(content)) {
         await context.fileWriter.writeGeneratedFileRaw(path, content);
       } else {
         await context.fileWriter.writeYamlfile(path, content);

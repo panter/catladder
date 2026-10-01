@@ -34,7 +34,7 @@ export type ResolvedJobImage = {
   fromRepoRegistry?: boolean;
 };
 
-export type GeneratedImageFile = { path: string; content: string };
+export type GeneratedImageFile = { path: string; content: string | Buffer };
 
 /**
  * one planned image build, shared by catladder's own shipped images and
@@ -92,8 +92,29 @@ const materializeDir = (
 ): GeneratedImageFile[] =>
   listFilesRecursive(sourceDir).map((file) => ({
     path: join(targetDir, file),
-    content: readFileSync(join(sourceDir, file), "utf-8"),
+    content: readVerbatim(join(sourceDir, file)),
   }));
+
+/**
+ * text files stay strings, anything that is not valid utf-8 (e.g. the
+ * packaged helm chart dependencies of the kubernetes image) stays a
+ * Buffer, so it is written byte for byte instead of being mangled into
+ * replacement characters
+ */
+const readVerbatim = (path: string): string | Buffer => {
+  const bytes = readFileSync(path);
+  const text = bytes.toString("utf-8");
+  return Buffer.from(text, "utf-8").equals(bytes) ? text : bytes;
+};
+
+/**
+ * part of the tag of every shipped image. Bump it when the images built
+ * from the materialized definitions change while the shipped definitions
+ * don't, so repositories rebuild them instead of reusing the existing tag:
+ * - 2: up to 5.3.1 binary files were materialized as utf-8 text, which
+ *   corrupted the helm chart dependencies of the kubernetes image
+ */
+const SHIPPED_IMAGE_HASH_SALT = "2";
 
 // built-in (catladder-shipped) images carry the catladder marker in
 // their job name; project-declared images get the short plain name
@@ -288,6 +309,7 @@ export class JobImagesPlan {
       extraDirs: dependencies.map((dependency) =>
         getShippedImageDir(dependency),
       ),
+      salt: SHIPPED_IMAGE_HASH_SALT,
     });
 
     const targetDir = `${GENERATED_IMAGES_FOLDER}/${name}`;

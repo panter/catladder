@@ -11,6 +11,10 @@ export type ImageHashConfig = {
   extraDirs?: string[];
   hashExtraPaths?: string[];
   buildArgs?: Record<string, string>;
+  /**
+   * bumped to change the hash although no hashed file changed
+   */
+  salt?: string;
 };
 
 export type CustomImageHashResult = {
@@ -96,6 +100,9 @@ export function computeCustomImageHash(
   }
 
   watchedPaths.push(...hashExtras(hash, config));
+  if (config.salt) {
+    hash.update(config.salt);
+  }
 
   return {
     hash: hash.digest("hex").slice(0, 12),
