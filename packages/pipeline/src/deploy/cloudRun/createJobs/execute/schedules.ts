@@ -109,7 +109,9 @@ const getSchedulerArgs = (
         appFullName: context.environment.fullName,
         projectId,
         region,
-      }),
+        // lands in a script line (not an exported variable), so the
+        // raw expression is what the shell has to see
+      }).toString(),
       "message-body": body
         ? '"' + bashEscape(JSON.stringify(body)) + '"'
         : undefined,
