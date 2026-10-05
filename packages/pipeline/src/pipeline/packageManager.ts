@@ -77,15 +77,18 @@ export const getPackageManagerInfoForComponent = async (
         )
       : [];
 
+  // sort the variable parts: their order depends on package.json key order
+  // and dependency traversal, and an unstable order rewrites the generated
+  // pipeline files on every regeneration without any real change
   const pathsToCopyInDocker = [
     ...new Set([
       packageJson,
       ...(workspacePackageJson ? [workspacePackageJson] : []),
       lockFile,
       ...configFilePaths,
-      ...allWorkspaceManifests,
-      ...patchFiles,
-      ...currentWorkspaceDependencies,
+      ...[...allWorkspaceManifests].sort(),
+      ...[...patchFiles].sort(),
+      ...[...currentWorkspaceDependencies].sort(),
     ]),
   ];
   return {
