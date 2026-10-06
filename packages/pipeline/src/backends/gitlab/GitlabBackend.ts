@@ -152,8 +152,6 @@ export class GitlabBackend implements PipelineBackend {
     config: Config,
     images: JobImagesPlan,
   ): Promise<Pipeline<"gitlab">> {
-    const stages = getPipelineStages(config);
-
     // register the release image first: the per-trigger job creation
     // below emits the build jobs of all images registered so far. The
     // release jobs themselves are created afterwards — they need the
@@ -179,6 +177,14 @@ export class GitlabBackend implements PipelineBackend {
       })),
     );
     const allJobsPerTrigger = jobsPerTrigger.flatMap(({ jobs }) => jobs);
+    const stages = getPipelineStages(
+      config,
+      new Set(
+        allJobsPerTrigger
+          .map(({ gitlabJob }) => gitlabJob.stage)
+          .filter((stage): stage is string => typeof stage === "string"),
+      ),
+    );
 
     // the jobs the queued-release executor waits for: everything that
     // runs automatically in a main-branch pipeline. Manual jobs (stop,

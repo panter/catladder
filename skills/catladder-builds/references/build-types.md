@@ -12,6 +12,7 @@ generated pipeline files.
 | `startCommand` | `string` | runtime start command |
 | `postInstall` | `string \| string[]` | runs after the package-manager install (node family) |
 | `lint` / `test` / `audit` | `false \| TestJobCustom` | customize or disable the job |
+| `postBuildTests` | `Record<string, PostBuildTestConfig \| false>` | named tests against the build output in the `post-build` stage; block the deploy |
 | `artifactsPaths` | `string[]` | extra artifacts (`dist`, `.next` always included) |
 | `artifactsExcludePaths` | `string[]` | artifact excludes |
 | `artifactsReports` | `{ junit?: string[] }` | CI test report paths |
@@ -26,6 +27,13 @@ generated pipeline files.
 `TestJobCustom` (for `lint`/`test`/`audit`): `command`, `jobImage`,
 `artifactsReports`, `artifacts`, `runnerVariables`, `allowFailure`
 (`allowFailure` defaults to `true` for `audit`).
+
+`PostBuildTestConfig` (for `postBuildTests` entries): `TestJobCustom` with
+a required `command`, plus `services?: Services` (gitlab shape, reachable
+by alias) and `vars?: Record<string,string>`. The job gets the build
+artifacts, the build vars and `vars` (not the deployed env's runtime
+vars), installs dependencies for node builds, and uploads `artifacts`
+also on failure.
 
 `audit` additionally takes `level`: `"info" | "low" | "moderate" | "high" |
 "critical"` (default `"critical"`) — the lowest severity that fails the job,
@@ -81,5 +89,5 @@ defaulted `buildCommand: "yarn build-storybook --quiet -o ./dist"`.
 Top-level `builds: Record<string, WorkspaceBuildConfig>`. Only
 `type: "node"` is supported.
 
-- Node workspace build: `dir?`, `buildCommand?` (default `<pm> build`), `dockerDefaults?: { yarnRebuildEnabled }`, plus shared `lint?` (default `{ command: "<pm> lint" }`), `test?` (default `{ command: "<pm> test" }`), `audit?`, `runnerVariables?`, `artifactsReports?`, `jobImage?`, `jobTags?`, `cache?` (`<pm>` = `yarn`/`pnpm` per detection).
-- A component references it via `build: { from: "<name>", docker?, startCommand?, artifactsPaths?, artifactsExcludePaths?, cache? }` — the per-component overrides layer on top of the shared build.
+- Node workspace build: `dir?`, `buildCommand?` (default `<pm> build`), `dockerDefaults?: { yarnRebuildEnabled }`, plus shared `lint?` (default `{ command: "<pm> lint" }`), `test?` (default `{ command: "<pm> test" }`), `audit?`, `postBuildTests?` (block the deploys of all its components), `runnerVariables?`, `artifactsReports?`, `jobImage?`, `jobTags?`, `cache?` (`<pm>` = `yarn`/`pnpm` per detection).
+- A component references it via `build: { from: "<name>", docker?, startCommand?, artifactsPaths?, artifactsExcludePaths?, cache?, postBuildTests? }` — the per-component overrides layer on top of the shared build.

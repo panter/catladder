@@ -61,4 +61,18 @@ describe("getPipelineStages()", () => {
   it("should return all envs for SIMPLE_CONFIG1", () => {
     expect(getPipelineStages(SIMPLE_CONFIG1)).toMatchSnapshot();
   });
+
+  it("only includes the post-build stages when a job uses them", () => {
+    expect(getPipelineStages(SIMPLE_CONFIG1)).not.toContain("post-build");
+    const stages = getPipelineStages(
+      SIMPLE_CONFIG1,
+      new Set(["build dev", "post-build dev"]),
+    );
+    expect(stages).toContain("post-build");
+    expect(stages).toContain("post-build dev");
+    expect(stages.indexOf("post-build")).toBeGreaterThan(
+      stages.indexOf("build"),
+    );
+    expect(stages.indexOf("post-build")).toBeLessThan(stages.indexOf("deploy"));
+  });
 });

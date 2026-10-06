@@ -450,6 +450,7 @@ catladder-main.yml:
           run: bash .catladder-generated/github/scripts/api-app-dev.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-dev
@@ -662,6 +663,7 @@ catladder-main.yml:
           run: bash .catladder-generated/github/scripts/worker-app-dev.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: worker-app-dev
@@ -1040,6 +1042,7 @@ catladder-review.yml:
           run: bash .catladder-generated/github/scripts/api-app-review.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-review
@@ -1252,6 +1255,7 @@ catladder-review.yml:
           run: bash .catladder-generated/github/scripts/worker-app-review.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: worker-app-review
@@ -1556,6 +1560,7 @@ catladder-release.yml:
           run: bash .catladder-generated/github/scripts/api-app-stage.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-stage
@@ -1663,6 +1668,7 @@ catladder-release.yml:
           run: bash .catladder-generated/github/scripts/worker-app-stage.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: worker-app-stage
@@ -2245,6 +2251,7 @@ catladder-deploy.yml:
           run: bash .catladder-generated/github/scripts/api-app-prod.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-prod
@@ -2355,6 +2362,7 @@ catladder-deploy.yml:
           run: bash .catladder-generated/github/scripts/worker-app-prod.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: worker-app-prod

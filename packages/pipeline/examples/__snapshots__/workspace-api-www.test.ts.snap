@@ -444,6 +444,7 @@ catladder-main.yml:
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-dev
@@ -870,6 +871,7 @@ catladder-review.yml:
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-review.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-review
@@ -1230,6 +1232,7 @@ catladder-release.yml:
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-stage.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-stage
@@ -1837,6 +1840,7 @@ catladder-deploy.yml:
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-prod

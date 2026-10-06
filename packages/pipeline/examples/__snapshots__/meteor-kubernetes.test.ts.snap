@@ -556,6 +556,7 @@ catladder-main.yml:
           run: bash .catladder-generated/github/scripts/web-app-dev.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-dev
@@ -1038,6 +1039,7 @@ catladder-review.yml:
           run: bash .catladder-generated/github/scripts/web-app-review.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-review
@@ -1445,6 +1447,7 @@ catladder-release.yml:
           run: bash .catladder-generated/github/scripts/web-app-stage.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-stage
@@ -2169,6 +2172,7 @@ catladder-deploy.yml:
           run: bash .catladder-generated/github/scripts/web-app-prod.sh
           shell: bash
         - name: Upload artifacts
+          if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-prod

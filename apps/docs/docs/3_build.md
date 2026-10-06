@@ -70,6 +70,71 @@ caching and variables around them.
 See the [build reference](./4_agents/skills/catladder-builds/references/build-types.md)
 for the full set of options.
 
+## Post-build tests
+
+Lint and test jobs run in parallel with the build, against the sources. Some tests need the **built app** instead, for example an e2e suite against the production build (`next build` + `next start`) with a database. Declare them as `postBuildTests` in the build config:
+
+```ts
+components: {
+  web: {
+    dir: "apps/web",
+    build: {
+      type: "node",
+      postBuildTests: {
+        e2e: {
+          command: "pnpm test:e2e",
+          jobImage: "mcr.microsoft.com/playwright:v1.56.0-noble",
+          services: [
+            {
+              name: "postgres:17",
+              alias: "postgres",
+              variables: { POSTGRES_PASSWORD: "postgres" },
+            },
+          ],
+          vars: {
+            DATABASE_URL: "postgres://postgres:postgres@postgres:5432/postgres",
+            BASE_URL: "http://localhost:3000",
+          },
+          artifacts: {
+            paths: ["apps/web/playwright-report", "apps/web/test-results"],
+          },
+        },
+      },
+    },
+    deploy: { /* ... */ },
+  },
+}
+```
+
+Each entry becomes its own job (`🔬 e2e`) in the `post-build` stage between build and deploy:
+
+- it gets the **build artifacts** of the build job (e.g. `.next`, `dist` and your `artifactsPaths`) and, for node builds, installs the dependencies (from the cache) before running `command` in the build directory
+- builds without build artifacts (`rails`, or `buildCommand: false`) run the post-build tests after the build without artifacts
+- `command` starts the app itself if it needs one, e.g. with playwright's [`webServer`](https://playwright.dev/docs/test-webserver) option running `next start`
+- it is a **quality gate**: the deploy of the env waits for it, so a failing post-build test blocks the deploy. On github, it is part of the `catladder ✅` check of pull requests; on gitlab, it fails the merge request pipeline. Set `allowFailure: true` for checks that should only report
+- `services` (gitlab shape) are reachable by their alias as hostname. On github, `command` and `entrypoint` of a service are not supported
+- the job gets the build vars of the component (like the build and test jobs) plus `vars`, but **not** the runtime vars and secrets of the deployed env: post-build tests run before the deploy, also for merge requests, and should use their own services
+- `artifacts` (paths relative to the repository root) are uploaded also when the tests fail, so reports and screenshots are available for failed runs
+- post-build tests run in merge request and main branch pipelines, not in tagged releases (like lint and test). Disable a single test in an env with `env: { dev: { build: { postBuildTests: { e2e: false } } } }`
+
+All options of `test` (`jobImage`, `runnerVariables`, `artifacts`, `artifactsReports`, `allowFailure`) work for post-build tests too.
+
+Post-build tests also work for [workspace builds](#workspace-builds):
+
+- on the workspace (`builds.<name>.postBuildTests`) they test the workspace build output and block the deploys of **all** components built in the workspace
+- on a component built in a workspace (`build: { from: "<name>", postBuildTests: {...} }`) they get the workspace build artifacts and block only that component's deploy
+
+### Post-build tests vs. verify
+
+`postBuildTests` test the build output before the deploy and block it. To test the **deployed** env (e.g. a smoke test against a review app or `dev`), use `verify` on the component instead: it runs in the `verify` stage after the deploy, with the env's runtime vars, and cannot block the deploy it verifies. Both can run the same suite, e.g. with `BASE_URL` as the only switch:
+
+```ts
+web: {
+  build: { type: "node", postBuildTests: { e2e: { command: "pnpm test:e2e" } } },
+  verify: { command: "pnpm test:e2e --grep @smoke" },
+}
+```
+
 ## Reusing the main branch image in releases
 
 By default every env builds its own docker image, so a release builds the image of `stage` and `prod` again, although the main branch pipeline already built one for the same code.
@@ -175,7 +240,7 @@ Set it explicitly when the image needs to `COPY` files from elsewhere, e.g. `{ d
 The build context is **not** part of the content hash — it can be the whole repository. Only the Dockerfile (or `dir`), `buildArgs` and `hashExtraPaths` are hashed. If your image `COPY`s a file and changing that file should rebuild the image, list it in `hashExtraPaths`.
 :::
 
-`{ image: "<name>" }` works in every `jobImage` field: build jobs, test jobs (`build.test.jobImage`), custom and pages deploys, and post-deploy verify jobs:
+`{ image: "<name>" }` works in every `jobImage` field: build jobs, test jobs (`build.test.jobImage`), post-build tests, custom and pages deploys, and post-deploy verify jobs:
 
 ```ts title="catladder.ts"
 build: {

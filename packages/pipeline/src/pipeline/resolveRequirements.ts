@@ -16,6 +16,7 @@ import type { AllCatladderJobs } from "./createAllJobs";
 const DEFAULT_STAGE_CAPABILITIES: Partial<Record<BaseStage, CapabilityName>> = {
   build: "build",
   test: "qualityGate",
+  "post-build": "qualityGate",
   deploy: "deployment",
 };
 

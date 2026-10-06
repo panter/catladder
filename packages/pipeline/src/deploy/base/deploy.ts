@@ -109,14 +109,20 @@ export class DeployJob extends CatladderJob {
         ];
 
     // we don't want to deploy when there is a broken test
-    const qualityGateRequirement: Requirement = {
-      capability: "qualityGate",
-      artifacts: false,
-      // use test from workspace build
-      from: componentContextHasWorkspaceBuild(context)
-        ? { workspace: context.build.workspaceName }
-        : undefined,
-    };
+    const qualityGateRequirements: Requirement[] = [
+      // the component's own gates (e.g. post-build tests, custom test jobs)
+      { capability: "qualityGate", artifacts: false },
+      // ...and the gates of the workspace build it is built in
+      ...(componentContextHasWorkspaceBuild(context)
+        ? [
+            {
+              capability: "qualityGate" as const,
+              artifacts: false,
+              from: { workspace: context.build.workspaceName },
+            },
+          ]
+        : []),
+    ];
 
     super({
       name: DEPLOY_JOB_NAME,
@@ -136,7 +142,7 @@ export class DeployJob extends CatladderJob {
         ...waitForRequirements,
         // if the build is disabled, we don't need to wait for it
         ...(context.build.type !== "disabled"
-          ? [...buildRequirements, qualityGateRequirement]
+          ? [...buildRequirements, ...qualityGateRequirements]
           : []),
       ],
       gate: whenDeploy,

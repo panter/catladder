@@ -252,6 +252,7 @@ jobs:
         run: bash .catladder-generated/github/scripts/ws-base-app-review.sh
         shell: bash
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ws-base-app-review

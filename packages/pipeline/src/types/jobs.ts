@@ -28,6 +28,7 @@ export const BASE_STAGES = [
   "setup",
   "test",
   "build",
+  "post-build",
   "deploy",
   "verify",
   "agents",
@@ -153,7 +154,7 @@ export type CatladderJobCore<S = BaseStage> = {
   /**
    * the capabilities this job provides to other jobs.
    * If not set, it is derived from the stage:
-   * build -> "build", test -> "qualityGate", deploy -> "deployment"
+   * build -> "build", test and post-build -> "qualityGate", deploy -> "deployment"
    */
   provides?: CapabilityName[];
 

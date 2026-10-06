@@ -6,6 +6,10 @@ import type {
 } from "../types/context";
 import type { CatladderJobSpec } from "../types/jobs";
 import { CatladderJob } from "../types/jobs";
+import {
+  assertUniquePostBuildTestNames,
+  createPostBuildTestJobs,
+} from "../postBuildTest/createPostBuildTestJobs";
 import { createVerifyJobs } from "../verify/createVerifyJobs";
 
 const injectDefaultVarsInCustomJobs = (
@@ -32,19 +36,29 @@ const getCustomJobs = (context: ComponentContext) => {
 export const createJobsForComponentContext = async (
   context: ComponentContext,
 ): Promise<CatladderJob[]> => {
-  const [buildJobs, deployJobs, verifyJobs] = await Promise.all([
-    context.build.type !== "disabled"
-      ? BUILD_TYPES[context.build.buildType].jobs(
-          context as ComponentContextWithBuild,
-        )
-      : [],
-    context.componentConfig.deploy !== false
-      ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
-      : [],
-    createVerifyJobs(context),
-  ]);
+  const [buildJobs, postBuildTestJobs, deployJobs, verifyJobs] =
+    await Promise.all([
+      context.build.type !== "disabled"
+        ? BUILD_TYPES[context.build.buildType].jobs(
+            context as ComponentContextWithBuild,
+          )
+        : [],
+      createPostBuildTestJobs(context),
+      context.componentConfig.deploy !== false
+        ? DEPLOY_TYPES[context.componentConfig.deploy.type].jobs(context)
+        : [],
+      createVerifyJobs(context),
+    ]);
 
   const customJobs = getCustomJobs(context);
+  const otherJobs = [...buildJobs, ...deployJobs, ...verifyJobs, ...customJobs];
+  assertUniquePostBuildTestNames(context, postBuildTestJobs, otherJobs);
 
-  return [...buildJobs, ...deployJobs, ...verifyJobs, ...customJobs];
+  return [
+    ...buildJobs,
+    ...postBuildTestJobs,
+    ...deployJobs,
+    ...verifyJobs,
+    ...customJobs,
+  ];
 };
