@@ -2534,7 +2534,7 @@ export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && ec
 export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
 export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
 export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
-export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CL_PR_NUMBER\\" ] && echo \\"pr$CL_PR_NUMBER\\" || echo \\"unknown\\")-api\\" | awk '{print tolower($0)}')-migrate:run"
+export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-migrate:run"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -2550,7 +2550,7 @@ HOSTNAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] 
 ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | escapeForDotEnv)
 HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | escapeForDotEnv)
 ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | escapeForDotEnv)
-CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-migrate:run
+CLOUD_RUN_JOB_TRIGGER_URL_migrate=$(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-migrate:run" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
@@ -2673,7 +2673,7 @@ export HOSTNAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && ec
 export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
 export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
 export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
-export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CL_PR_NUMBER\\" ] && echo \\"pr$CL_PR_NUMBER\\" || echo \\"unknown\\")-api\\" | awk '{print tolower($0)}')-migrate:run"
+export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-migrate:run"
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -2711,7 +2711,7 @@ HOSTNAME_INTERNAL: |-
 ROOT_URL_INTERNAL: |-
   $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
 CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
-  https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-migrate:run
+  $(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-migrate:run" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
   $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
 DEPLOY_CLOUD_RUN_PROJECT_ID: |-
@@ -4111,7 +4111,7 @@ create release:
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
-    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -4128,7 +4128,7 @@ create release:
       ROOT_URL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | escapeForDotEnv)
       HOSTNAME_INTERNAL=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | escapeForDotEnv)
       ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | escapeForDotEnv)
-      CLOUD_RUN_JOB_TRIGGER_URL_migrate=https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run
+      CLOUD_RUN_JOB_TRIGGER_URL_migrate=$(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
@@ -4271,7 +4271,7 @@ create release:
     - export ROOT_URL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
     - export HOSTNAME_INTERNAL="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
     - export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')"
-    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s \\"pan-test-app-review-$([ -n \\"$CI_MERGE_REQUEST_IID\\" ] && echo \\"mr$CI_MERGE_REQUEST_IID\\" || { [ -n \\"$CI_COMMIT_REF_SLUG\\" ] && echo \\"$CI_COMMIT_REF_SLUG\\" || echo \\"unknown\\"; })-api\\" | awk '{print tolower($0)}')-migrate:run"
+    - export CLOUD_RUN_JOB_TRIGGER_URL_migrate="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run"
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
@@ -4310,7 +4310,7 @@ create release:
       ROOT_URL_INTERNAL: |-
         $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api-123456789012.europe-west6.run.app" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       CLOUD_RUN_JOB_TRIGGER_URL_migrate: |-
-        https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run
+        $(printf %s "https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-migrate:run" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_SERVICE_NAME: |-
         $(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')" | sed '1!s/^/  /')
       DEPLOY_CLOUD_RUN_PROJECT_ID: |-
