@@ -113,6 +113,8 @@ build: {
   artifacts (`.next`, `dist`, `artifactsPaths`), installs dependencies
   for node builds, then runs `command`. The command starts the app
   itself, e.g. playwright `webServer: { command: "pnpm start" }`.
+  Builds without artifacts (`rails`, `buildCommand: false`) just run
+  it after the build.
 - It is a quality gate: the env's deploy waits for it; on github it is
   part of the `catladder ✅` required check. `allowFailure: true` makes
   it report-only.
