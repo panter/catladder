@@ -106,6 +106,10 @@ Key concepts:
     affects both). The object form separates the axes:
     `inherit: { config: "dev" }` inherits config only,
     `inherit: { config: "dev", secrets: "dev" }` both.
+- **Review apps**: top-level `reviewApps: { deploy, label, skipLabel,
+  drafts }` decides whether merge/pull requests deploy their review
+  apps — every MR/PR (default), opt-in or opt-out by label, or on
+  request; and what drafts run. See the `catladder-pipelines` skill.
 - **Pipelines**: `pipelines: { gitlab: true, github: true }` selects
   which CI systems get generated files. Options objects instead of
   `true` allow per-pipeline settings (e.g. `runnerVariables`,

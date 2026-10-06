@@ -31,6 +31,15 @@ import {
   getGithubReleaseOnGreenWorkflow,
 } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
+import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
+import {
+  getGatedReviewDeliveryJobIds,
+  makeReviewDeployTriggerJob,
+  makeReviewDeployWorkflow,
+  REVIEW_DEPLOY_WORKFLOW_FILE,
+  withDraftsSkipped,
+  withReviewStopSwitch,
+} from "./reviewDeployWorkflow";
 
 const WORKFLOWS_FOLDER = ".github/workflows";
 
@@ -150,6 +159,7 @@ export class GithubBackend implements PipelineBackend {
       ...getPipelineOptions(config, this.type).runnerVariables,
     };
 
+    const reviewApps = getReviewAppsConfig(config);
     const reviewStopJobs: Record<string, GithubJob> = {};
     // jobs routed to the per-kind workflow_dispatch workflows (deploy /
     // stop / rollback). A manual job and its build closure live there
@@ -208,6 +218,26 @@ export class GithubBackend implements PipelineBackend {
         if (isReviewStopJob(context, job)) {
           reviewStopJobs[id] = githubJob;
           triggerJobs.delete(id);
+        }
+      }
+
+      // review delivery chains behind the per-PR deploy switch move to
+      // their own workflow (reviewApps config, or manual review deploys)
+      if (trigger === "mr") {
+        const deliveryIds = getGatedReviewDeliveryJobIds(
+          triggerJobs,
+          reviewApps,
+        );
+        if (deliveryIds.length > 0) {
+          workflows[REVIEW_DEPLOY_WORKFLOW_FILE] = makeReviewDeployWorkflow({
+            deliveryIds,
+            triggerJobs,
+            reviewApps,
+            images,
+            workflowEnv,
+            permissions: workflowPermissions(images).permissions,
+          });
+          deliveryIds.forEach((id) => triggerJobs.delete(id));
         }
       }
 
@@ -327,7 +357,7 @@ export class GithubBackend implements PipelineBackend {
 
       if (Object.keys(jobs).length > 0) {
         const workflowJobs = { ...makeEnsureImageGithubJobs(images), ...jobs };
-        workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] = {
+        const workflow: GithubWorkflow = {
           ...getTriggerWorkflow(trigger),
           ...workflowPermissions(images),
           env: workflowEnv,
@@ -340,14 +370,27 @@ export class GithubBackend implements PipelineBackend {
           // image-build jobs too.
           jobs:
             trigger === "mr"
-              ? { ...workflowJobs, ...makeAggregateCheckJob(workflowJobs) }
+              ? {
+                  ...workflowJobs,
+                  ...makeAggregateCheckJob(workflowJobs),
+                  // once green, hand over to the review deploy workflow
+                  // when the label/draft policy says this PR deploys
+                  ...(workflows[REVIEW_DEPLOY_WORKFLOW_FILE] &&
+                  isReviewDeployGated(reviewApps)
+                    ? makeReviewDeployTriggerJob(reviewApps)
+                    : {}),
+                }
               : workflowJobs,
         };
+        workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] =
+          trigger === "mr" && reviewApps.drafts === "none"
+            ? withDraftsSkipped(workflow)
+            : workflow;
       }
     }
 
     if (Object.keys(reviewStopJobs).length > 0) {
-      workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = {
+      const reviewStopWorkflow: GithubWorkflow = {
         name: "🛑 catladder stop review app",
         on: {
           pull_request: { types: ["closed"] },
@@ -375,6 +418,11 @@ export class GithubBackend implements PipelineBackend {
         },
         jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
       };
+      workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
+        REVIEW_DEPLOY_WORKFLOW_FILE
+      ]
+        ? withReviewStopSwitch(reviewStopWorkflow, reviewApps)
+        : reviewStopWorkflow;
     }
 
     for (const [kind, bucket] of Object.entries(manualKindBuckets) as Array<

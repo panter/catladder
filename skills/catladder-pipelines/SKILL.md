@@ -1,6 +1,6 @@
 ---
 name: catladder-pipelines
-description: Understanding and debugging the CI/CD pipelines catladder generates (GitLab CI and GitHub Actions) — pipeline triggers, stages, environments, caching, job images, releases, and infrastructure drift. Use when investigating failing CI jobs, when asked why/when a job runs, when changing caching or job behavior, when deployments misbehave, or when a review app stopped/expired or should be kept alive (pinning). Triggers on "pipeline", "CI job", "gitlab-ci", "workflow", "deploy failed", "cache", "release", "auto-stop", "review app stopped", "pin review app", "keep review app".
+description: Understanding and debugging the CI/CD pipelines catladder generates (GitLab CI and GitHub Actions) — pipeline triggers, stages, environments, caching, job images, releases, and infrastructure drift. Use when investigating failing CI jobs, when asked why/when a job runs, when changing caching or job behavior, when deployments misbehave, when a review app should (not) be deployed for a merge/pull request (opt-in/opt-out labels, drafts, deploy on request), or when a review app stopped/expired or should be kept alive (pinning). Triggers on "pipeline", "CI job", "gitlab-ci", "workflow", "deploy failed", "cache", "release", "auto-stop", "review app stopped", "pin review app", "keep review app", "deploy review app", "review app label", "skip review app", "draft PR", "reviewApps".
 ---
 
 # How catladder pipelines work
@@ -81,6 +81,68 @@ GitLab defaults it to `false`, and a non-interruptible job that has
 started keeps _itself_ alive — under gitlab's own default
 (`conservative`, which catladder overrides) it would shield the whole
 pipeline from cancellation.
+
+## When review apps deploy (`reviewApps`)
+
+By default every merge/pull request deploys its review apps. Projects
+with many MRs/PRs (e.g. opened by agents) can put the review delivery
+chains — docker image → deploy → verify, for all components — behind
+ONE switch per MR/PR with the top-level `reviewApps` config. Tests,
+lint and audit always run; only the delivery waits.
+
+```ts
+reviewApps: {
+  deploy: "optIn",   // auto (default) | manual | optIn | optOut
+  // label: "catladder:review-app",       // optIn label (default)
+  // skipLabel: "catladder:no-review-app", // optOut label (default)
+  drafts: "ci",      // full (default) | ci (no review apps) | none (no pipeline)
+},
+```
+
+- `optIn`: deploys only while the MR/PR carries `label`.
+- `optOut`: deploys unless it carries `skipLabel`.
+- `manual`: never on its own — only on request.
+- `drafts: "ci"`: drafts run CI only, the review apps deploy once the
+  MR/PR is marked ready; `"none"`: drafts run nothing.
+- Per-component `deploy.when` of the review env is ignored then.
+
+**GitHub** — the chains live in the `▶️ catladder deploy review`
+workflow (`catladder-deploy-review.yml`):
+
+- when the review workflow is green, its last job (`▶️ trigger review
+  deploy`) reads the PR's labels/draft state and dispatches the deploy
+  if the policy says so — a label set while CI ran counts;
+- switching the label on (opt-in: add `label`, opt-out: remove
+  `skipLabel`) deploys right away if the PR's `catladder ✅` is green;
+  switching it off stops the review apps (`🛑 catladder stop review
+  app`), and so does closing the PR;
+- on request, any time (agents included):
+  `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`
+  — explicit requests always deploy, but need the PR open and its CI
+  green (the run reuses the green CI instead of re-running tests);
+- `gh pr edit <number> --add-label catladder:review-app` is the
+  agent-friendly opt-in. Labels set with the workflow's own
+  `GITHUB_TOKEN` (from inside a workflow) trigger nothing — use a user
+  or app token;
+- the dispatch only works once the workflow exists on the default
+  branch (github rule) — the PR introducing `reviewApps` can't dispatch
+  yet.
+
+A single component with `env.review.deploy.when: "manual"` (and no
+`reviewApps`) uses the same workflow for just that component, without
+the automatic trigger.
+
+**GitLab** — a `🚀 deploy review` job in the MR pipeline is the
+switch: the docker and deploy jobs of all components `need` it. The
+policy decides whether it starts on its own (label set / opt-out not
+set) or waits as a manual job; playing it any time deploys (early
+clicks wait for builds and tests). It has `allow_failure: true`, so an
+unplayed switch leaves the pipeline green. Label changes don't start
+a pipeline on gitlab — use `yarn catladder mr review-app-on` (sets the
+label and triggers a pipeline) / `mr review-app-off`. Drafts are
+detected by their title prefix (`Draft:`, `[Draft]`, `(Draft)`); with
+`drafts: "none"` marking an MR ready starts no pipeline, the next push
+does.
 
 ## Review-app auto-stop and pinning (GitLab)
 
