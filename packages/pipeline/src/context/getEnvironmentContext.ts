@@ -6,6 +6,7 @@ import type {
   EnvironmentContext,
   EnvironmentInstance,
 } from "../types/environmentContext";
+import { getEnvironmentConfig } from "../types/config";
 import { getEnvConfig } from "./getEnvConfig";
 import { getEnvInstance } from "./getEnvInstance";
 import { getSecretsEnv } from "./getEnvInherit";
@@ -41,7 +42,7 @@ export const getEnvironmentContext = ({
   const autoStop =
     envConfigRaw.autoStop !== undefined
       ? envConfigRaw.autoStop
-      : config.environments?.[env]?.autoStop;
+      : getEnvironmentConfig(config.environments, env)?.autoStop;
 
   const environmentSlugPrefix = getEnvironmentSlugPrefix(env, instance);
 

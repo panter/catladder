@@ -56,6 +56,12 @@ describe("getInheritedConfigChain / getSecretsEnv", () => {
     ).toThrow("local");
   });
 
+  it("rejects inheriting from a disabled env", () => {
+    expect(() =>
+      getSecretsEnv({ stage: false, a: { inherit: "stage" } }, "a"),
+    ).toThrow("disabled");
+  });
+
   it("implies the env type from the inherited env", () => {
     expect(getDeclaredEnvType(environments, "next")).toBe("dev");
     expect(getDeclaredEnvType({ a: { inherit: "prod" } }, "a")).toBe("prod");

@@ -1,5 +1,5 @@
-import type { EnvironmentConfig, EnvType } from "../types";
-import { isKnowEnvType } from "../types";
+import type { EnvironmentsConfig, EnvType } from "../types";
+import { getEnvironmentConfig, isKnowEnvType } from "../types";
 import { normalizeEnvInherit } from "./getEnvInherit";
 
 /**
@@ -8,11 +8,11 @@ import { normalizeEnvInherit } from "./getEnvInherit";
  * the type of the env they inherit their config from
  */
 export const getDeclaredEnvType = (
-  environments: Record<string, EnvironmentConfig> | undefined,
+  environments: EnvironmentsConfig | undefined,
   env: string,
   seen: Set<string> = new Set(),
 ): EnvType | undefined => {
-  const declared = environments?.[env];
+  const declared = getEnvironmentConfig(environments, env);
   if (declared?.type) return declared.type;
   if (isKnowEnvType(env)) return env;
 
@@ -29,7 +29,7 @@ export const getEnvType = (
   envConfig: {
     type?: EnvType;
   },
-  environments?: Record<string, EnvironmentConfig>,
+  environments?: EnvironmentsConfig,
 ): EnvType => {
   // legacy: per-component custom envs declare their type themselves
   if (envConfig.type) return envConfig.type;
