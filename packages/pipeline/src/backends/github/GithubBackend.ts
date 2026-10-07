@@ -450,7 +450,12 @@ export class GithubBackend implements PipelineBackend {
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
         REVIEW_DEPLOY_WORKFLOW_FILE
       ]
-        ? withReviewStopSwitch(reviewStopWorkflow, reviewApps)
+        ? withReviewStopSwitch(
+            reviewStopWorkflow,
+            reviewApps,
+            isReviewDeployGated(reviewApps) &&
+              getInRunDeployCondition(reviewApps) !== undefined,
+          )
         : reviewStopWorkflow;
     }
 

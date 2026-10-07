@@ -119,7 +119,9 @@ through the `▶️ catladder deploy review` workflow
 - switching the label on (opt-in: add `label`, opt-out: remove
   `skipLabel`) deploys right away if the PR's `catladder ✅` is green;
   switching it off stops the review apps (`🛑 catladder stop review
-  app`), and so does closing the PR;
+  app`), and so does closing the PR — the stop first waits for a
+  review run of the PR that may still be deploying (on close it
+  cancels it), so a late deploy can't outlive the teardown;
 - on request, any time (agents included):
   `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`
   — explicit requests always deploy, but need the PR open and its CI

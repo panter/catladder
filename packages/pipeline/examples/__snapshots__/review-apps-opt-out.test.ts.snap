@@ -1575,6 +1575,34 @@ catladder-review-stop.yml:
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number || inputs.pr }}
   jobs:
+    catladder-wait-review-runs:
+      name: wait for running review deploys
+      runs-on: ubuntu-latest
+      permissions:
+        actions: write
+        pull-requests: read
+      env:
+        GH_TOKEN: \${{ github.token }}
+      steps:
+        - name: wait for running review deploys
+          run: |-
+            branch=$(gh pr view "$CL_PR_NUMBER" -R "$GITHUB_REPOSITORY" --json headRefName -q .headRefName) || exit 0
+            runs=$(gh run list -R "$GITHUB_REPOSITORY" --workflow catladder-review.yml --branch "$branch" --limit 20 --json databaseId,status -q '.[] | select(.status != "completed") | .databaseId') || exit 0
+            # a closed PR's CI is worthless: cancel it. Otherwise let the
+            # PR's CI finish (cancelling it would leave catladder ✅ red)
+            if [ "$(jq -r '.action // ""' "$GITHUB_EVENT_PATH")" = closed ]; then
+              for id in $runs; do echo "cancelling review run $id"; gh run cancel "$id" -R "$GITHUB_REPOSITORY" || true; done
+            fi
+            for id in $runs; do
+              echo "waiting for review run $id"
+              for _ in $(seq 1 360); do
+                [ "$(gh run view "$id" -R "$GITHUB_REPOSITORY" --json status -q .status)" = completed ] && break
+                sleep 5
+              done
+            done
+            exit 0
+          shell: bash
+      if: \${{ github.event_name == 'workflow_dispatch' || github.event.action == 'closed' || (github.event.action == 'labeled' && github.event.label.name == 'catladder:no-review-app') }}
     catladder-image-jobs-default:
       name: 🐳 catladder image jobs-default
       runs-on: ubuntu-latest
@@ -1780,6 +1808,8 @@ catladder-review-stop.yml:
             set -e
             set -e
           shell: bash
+      needs:
+        - catladder-wait-review-runs
       if: \${{ github.event_name == 'workflow_dispatch' || github.event.action == 'closed' || (github.event.action == 'labeled' && github.event.label.name == 'catladder:no-review-app') }}
   concurrency:
     group: catladder-review-deploy-\${{ github.event.number || inputs.pr }}\${{ !(github.event_name == 'workflow_dispatch' || github.event.action == 'closed' || (github.event.action == 'labeled' && github.event.label.name == 'catladder:no-review-app')) && format('-ignored-{0}', github.run_id) || '' }}

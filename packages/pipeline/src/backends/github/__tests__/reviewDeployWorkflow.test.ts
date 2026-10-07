@@ -166,6 +166,13 @@ describe("github review deploy workflow", () => {
     }
     // shares the deploy group: a deploy in flight is cancelled first
     expect(stop.concurrency?.group).toMatch(/^catladder-review-deploy-/);
+    // ... and waits for review runs deploying outside that group
+    expect(stop.jobs["catladder-wait-review-runs"].steps[0].run).toContain(
+      "gh run cancel",
+    );
+    expect(stop.jobs["api-stop-review"].needs).toContain(
+      "catladder-wait-review-runs",
+    );
   });
 
   it("opt-out switches on removing the skip label, off on adding it", async () => {

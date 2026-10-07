@@ -464,6 +464,8 @@ export const makeReviewDeployTriggerJob = (
 export const withReviewStopSwitch = (
   workflow: GithubWorkflow,
   reviewApps: ResolvedReviewAppsConfig,
+  /** the review workflow deploys itself (see getInRunDeployCondition) */
+  reviewRunDeploys = false,
 ): GithubWorkflow => {
   const switchLabel = getReviewAppsSwitchLabel(reviewApps);
   const relevantEvent = [
@@ -484,16 +486,72 @@ export const withReviewStopSwitch = (
       },
     },
     concurrency: reviewDeployConcurrency(relevantEvent),
-    jobs: switchLabel
-      ? Object.fromEntries(
+    jobs: Object.fromEntries(
+      Object.entries({
+        ...(reviewRunDeploys ? makeCancelReviewRunsJob() : {}),
+        ...Object.fromEntries(
           Object.entries(workflow.jobs).map(([id, job]) => [
             id,
-            { ...job, if: andIf(job.if, relevantEvent) },
+            // the teardown waits until no review run deploys anymore
+            reviewRunDeploys && !id.startsWith("catladder-image-")
+              ? {
+                  ...job,
+                  needs: [CANCEL_REVIEW_RUNS_JOB_ID, ...(job.needs ?? [])],
+                }
+              : job,
           ]),
-        )
-      : workflow.jobs,
+        ),
+      }).map(([id, job]) => [
+        id,
+        switchLabel ? { ...job, if: andIf(job.if, relevantEvent) } : job,
+      ]),
+    ),
   };
 };
+
+const CANCEL_REVIEW_RUNS_JOB_ID = "catladder-wait-review-runs";
+
+/**
+ * the review workflow deploys review apps itself, outside the deploy /
+ * stop concurrency group — a teardown would race a deploy still running
+ * there (the deploy finishing after the stop leaves the app and its
+ * database behind). So the stop first waits for the PR's unfinished
+ * review runs to end — cancelling them when the PR was closed, letting
+ * them finish when only the label was switched off (their CI still
+ * counts). Never fails: a stuck run must not keep the teardown from
+ * running (it gives up after 30 minutes).
+ */
+const makeCancelReviewRunsJob = (): Record<string, GithubJob> => ({
+  [CANCEL_REVIEW_RUNS_JOB_ID]: {
+    name: "wait for running review deploys",
+    "runs-on": "ubuntu-latest",
+    permissions: { actions: "write", "pull-requests": "read" },
+    env: { GH_TOKEN: "${{ github.token }}" },
+    steps: [
+      {
+        name: "wait for running review deploys",
+        run: [
+          `branch=$(gh pr view "$CL_PR_NUMBER" -R "$GITHUB_REPOSITORY" --json headRefName -q .headRefName) || exit 0`,
+          `runs=$(gh run list -R "$GITHUB_REPOSITORY" --workflow catladder-review.yml --branch "$branch" --limit 20 --json databaseId,status -q '.[] | select(.status != "completed") | .databaseId') || exit 0`,
+          `# a closed PR's CI is worthless: cancel it. Otherwise let the`,
+          `# PR's CI finish (cancelling it would leave catladder ✅ red)`,
+          `if [ "$(jq -r '.action // ""' "$GITHUB_EVENT_PATH")" = closed ]; then`,
+          `  for id in $runs; do echo "cancelling review run $id"; gh run cancel "$id" -R "$GITHUB_REPOSITORY" || true; done`,
+          `fi`,
+          `for id in $runs; do`,
+          `  echo "waiting for review run $id"`,
+          `  for _ in $(seq 1 360); do`,
+          `    [ "$(gh run view "$id" -R "$GITHUB_REPOSITORY" --json status -q .status)" = completed ] && break`,
+          `    sleep 5`,
+          `  done`,
+          `done`,
+          `exit 0`,
+        ].join("\n"),
+        shell: "bash",
+      },
+    ],
+  },
+});
 
 /**
  * `drafts: "skip"`: draft PRs run nothing — every job of the review
