@@ -8,13 +8,13 @@ resources with `yarn catladder project setup`; detect drift with
 
 ## Shared base (all deploy types)
 
-| Option            | Type                    | Purpose / default                             |
-| ----------------- | ----------------------- | --------------------------------------------- |
-| `when`            | `"manual" \| "auto"`    | prod → `manual`, other envs → `auto`          |
-| `waitFor`         | `string[]`              | EXPERIMENTAL; wait for other components first |
-| `jobTags`         | `string[]`              | runner tags                                   |
-| `jobVars`         | `EnvVars`               | env vars only in the deploy job               |
-| `runnerVariables` | `Record<string,string>` | extra runner vars                             |
+| Option | Type | Purpose / default |
+|---|---|---|
+| `when` | `"manual" \| "auto"` | prod → `manual`, other envs → `auto` |
+| `waitFor` | `string[]` | EXPERIMENTAL; wait for other components first |
+| `jobTags` | `string[]` | runner tags |
+| `jobVars` | `EnvVars` | env vars only in the deploy job |
+| `runnerVariables` | `Record<string,string>` | extra runner vars |
 
 (Cloud Run defines its own `execute`; otherwise the base applies to all.)
 

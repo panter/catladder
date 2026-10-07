@@ -28,14 +28,14 @@ components: {
 
 ## Deploy types
 
-| Type              | Deploys to                                 | Requires                                       |
-| ----------------- | ------------------------------------------ | ---------------------------------------------- |
-| `kubernetes`      | a GKE cluster via Helm                     | `cluster`                                      |
-| `google-cloudrun` | Google Cloud Run                           | `projectId`, `region`                          |
-| `npmPackage`      | publishes the component to an npm registry | nothing — see below                            |
-| `pages`           | publishes a static site on gitlab pages    | `script` — see below                           |
-| `dockerTag`       | tags an image (no runtime)                 | `tag` — rarely used, not generally recommended |
-| `custom`          | your own script                            | `requiresDocker`, `script`                     |
+| Type | Deploys to | Requires |
+|---|---|---|
+| `kubernetes` | a GKE cluster via Helm | `cluster` |
+| `google-cloudrun` | Google Cloud Run | `projectId`, `region` |
+| `npmPackage` | publishes the component to an npm registry | nothing — see below |
+| `pages` | publishes a static site on gitlab pages | `script` — see below |
+| `dockerTag` | tags an image (no runtime) | `tag` — rarely used, not generally recommended |
+| `custom` | your own script | `requiresDocker`, `script` |
 
 ## Manual vs automatic deploys
 
@@ -82,14 +82,15 @@ Everything app-level lives under `values`:
   the environment stops (default: true for review envs, false else).
 - `runtimeServiceAccount` — the identity services, jobs and worker
   pools run as (`--service-account`). Unset = the project's default
-  compute account (usually `roles/editor` — far too broad; `project
-doctor` warns). `"<email>"` = an existing account; `true` or
-  `{ roles?, bucketRoles? }` = a catladder-managed `cl-r-…` account that
-  `catladder project setup` creates, binding `roles/cloudsql.client`
-  (with `cloudSql`), object access on cloud-storage `volumes` buckets,
-  and the given roles. A single service/job/worker pool can override it
-  with its own `runtimeServiceAccount: "<email>"`. Rerun `project
-setup` after changing roles.
+  compute account (usually `roles/editor`, far too broad; `project
+  doctor` warns). `"<email>"` = an existing account; `true` or
+  `{ roles?, bucketRoles? }` = a catladder-managed `cl-r-…` account
+  that `catladder project setup` creates, binding
+  `roles/cloudsql.client` (with `cloudSql`), object access on
+  cloud-storage `volumes` buckets, and the given roles. A single
+  service/job/worker pool can override it with its own
+  `runtimeServiceAccount: "<email>"`. Rerun `catladder project setup`
+  after changing roles.
 - `revisionsToKeep` — how many inactive revisions (the rollback
   history) the post-deploy cleanup keeps; older revisions and their
   images are deleted. Default: 5 on prod envs, 0 everywhere else.
