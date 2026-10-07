@@ -211,7 +211,10 @@ export type EnvironmentConfig = {
    * `{ branch: "next" }` deploys the env on pushes to that branch —
    * one stable environment tracking a long-lived branch.
    *
-   * `false` removes the env from all pipelines.
+   * `false` keeps the env but never deploys it from a pipeline (like
+   * `local`): it still exists for `catladder project setup`, secrets and
+   * catenv. To remove an env from the project entirely, disable it
+   * instead: `environments: { stage: false }`.
    */
   on?: EnvOnConfig;
 
@@ -264,6 +267,27 @@ export type EnvironmentConfig = {
  * Inheriting from `local` is not possible, chains are followed, cycles
  * are an error.
  */
+/**
+ * the top-level `environments` config: per env either its project-wide
+ * declaration/tuning, or `false` to disable the env for the whole
+ * project (all components, setup, secrets, pipelines, catenv).
+ */
+export type EnvironmentsConfig = Record<string, EnvironmentConfig | false>;
+
+/**
+ * the project-wide config of `env` (undefined when not declared or
+ * disabled)
+ */
+export const getEnvironmentConfig = (
+  environments: EnvironmentsConfig | undefined,
+  env: string,
+): EnvironmentConfig | undefined => environments?.[env] || undefined;
+
+export const isEnvironmentDisabled = (
+  environments: EnvironmentsConfig | undefined,
+  env: string,
+): boolean => environments?.[env] === false;
+
 export type EnvironmentInheritConfig =
   | string
   | {
@@ -505,8 +529,11 @@ export type Config<C extends ConfigProps = never> = {
    * - declare an extra env (every component deploys to it unless it
    *   opts out with `env.<name>: false`):
    *   `environments: { next: { type: "dev", on: { branch: "next" } } }`
+   * - disable an env for the whole project (no setup, secrets, jobs or
+   *   catenv for any component): `environments: { stage: false }`.
+   *   A single component opts out with `env.<name>: false` instead.
    */
-  environments?: Record<string, EnvironmentConfig>;
+  environments?: EnvironmentsConfig;
 
   /**
    * components (sub apps)

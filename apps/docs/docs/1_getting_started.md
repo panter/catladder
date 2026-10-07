@@ -169,8 +169,32 @@ different pipeline trigger:
 | `stage`     | tagged release `vX.Y.Z`      | pre-production                                      |
 | `prod`      | tagged release `vX.Y.Z`      | production, deployed manually by default            |
 
-Disable the ones a component does not need (`env: { stage: false }`) or
-override config per environment — see the following chapters.
+Environments are project-wide, so remove one the whole project does not
+need with the top-level `environments` config — no component gets it, so
+there are no setup contexts, secrets, pipeline jobs or catenv for it:
+
+```ts
+const config: Config = {
+  // ...
+  environments: {
+    stage: false, // this project has no stage
+  },
+};
+```
+
+To drop an env for a single component only, disable it on that component
+(`env: { stage: false }`). Per-environment config overrides are covered in
+the following chapters.
+
+:::note
+
+`environments: { stage: { on: false } }` does **not** remove the env: `on`
+only controls _when_ an env deploys, and `false` means it is never deployed
+by a pipeline (like `local`). The env still exists for
+`catladder project setup`, secrets and catenv. Use `stage: false` to get
+rid of it.
+
+:::
 
 [direnv]: https://direnv.net/ "unclutter your .profile"
 [direnv-install]: https://direnv.net/docs/installation.html "direnv installation instructions"

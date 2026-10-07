@@ -1,5 +1,5 @@
-import type { EnvironmentConfig, EnvOnConfig, EnvType } from "../types";
-import { ENV_TYPES } from "../types";
+import type { EnvironmentsConfig, EnvOnConfig, EnvType } from "../types";
+import { ENV_TYPES, getEnvironmentConfig } from "../types";
 import { getEnvType } from "./getEnvType";
 
 const getDefaultOnForType = (envType: EnvType): EnvOnConfig => {
@@ -21,9 +21,9 @@ export const getEnvOn = (
   envConfig: {
     type?: EnvType;
   },
-  environments?: Record<string, EnvironmentConfig>,
+  environments?: EnvironmentsConfig,
 ): EnvOnConfig => {
-  const on = environments?.[env]?.on;
+  const on = getEnvironmentConfig(environments, env)?.on;
   if (on !== undefined) return on;
   return getDefaultOnForType(getEnvType(env, envConfig, environments));
 };

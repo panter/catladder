@@ -33,20 +33,23 @@ const config = {
   appName: "my-app",
   customerName: "pan",
   pipelines: { gitlab: true, github: true }, // which CI systems to generate
-  environments: {              // optional: project-wide env declarations/tuning
+  environments: {
+    // optional: project-wide env declarations/tuning
     review: { autoStop: "3 days" },
+    stage: false, // the project has no stage env (any component)
     next: { type: "dev", on: { branch: "next" } }, // extra branch-tracking env
   },
   components: {
     www: {
-      dir: "frontend",          // working directory of this component
-      vars: { public: {}, secret: [] },  // env vars (see catladder-secrets skill)
-      build: { type: "node" },  // node | rails | meteor | custom — see catladder-builds
+      dir: "frontend", // working directory of this component
+      vars: { public: {}, secret: [] }, // env vars (see catladder-secrets skill)
+      build: { type: "node" }, // node | rails | meteor | custom — see catladder-builds
       deploy: { type: "kubernetes" }, // kubernetes | google-cloudrun | dockerTag | custom — see catladder-deploys
-      env: {                    // enable/customize per environment
+      env: {
+        // enable/customize per environment
         review: {},
         dev: {},
-        stage: false,           // false disables the env for this component
+        stage: false, // false disables the env for this component only
         prod: {},
       },
     },
@@ -68,9 +71,17 @@ Key concepts:
   per-component `env.<name>` entries only carry component-local
   overrides (vars, deploy settings, host, autoStop) or `false` to opt
   the component out. In `environments`:
+  - `<name>: false` — disables the env for the whole project: no
+    component has it, so no setup contexts (`catladder project setup`),
+    secrets, pipeline jobs/workflows or catenv for it. This is how to
+    say "this project has no stage": `environments: { stage: false }`
+    (not `on: false`). `local` cannot be disabled; inheriting from a
+    disabled env is an error.
   - `on` — when the env deploys: `"mainBranch"`, `"mr"`,
     `"taggedRelease"`, `{ branch: "next" }` (a stable env deploying on
-    pushes to that branch), or `false` (in no pipeline). `on: "mr"`
+    pushes to that branch), or `false` (never deployed by a pipeline —
+    the env still exists for setup, secrets and catenv; use
+    `environments.<name>: false` to remove it). `on: "mr"`
     makes an env a review app (one instance per MR/PR, torn down on
     close). Defaults from the env type.
   - `autoStop` — how long a stoppable environment stays up after its

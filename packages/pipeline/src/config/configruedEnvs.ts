@@ -8,6 +8,7 @@ import {
   DEFAULT_ENV_TYPES,
   envTriggerEquals,
   isBranchTrigger,
+  isEnvironmentDisabled,
   isKnowEnvType,
 } from "../types";
 import { getEnvOn } from "../context/getEnvOn";
@@ -19,6 +20,11 @@ const getConfiguredAndDefaultEnvs = (
   envTypes: EnvType[],
 ) => {
   const configuredEnvs = config.components[componentName].env ?? {};
+  if (isEnvironmentDisabled(config.environments, "local")) {
+    throw new Error(
+      `environment "local" cannot be disabled (environments.local: false) — it is only used for local development`,
+    );
+  }
   // the default envs have the same name as the env types
   // these can be disabled with settimg them to `false`
   // this is the list of all not disabled envs. These are always returned
@@ -30,6 +36,7 @@ const getConfiguredAndDefaultEnvs = (
   // component deploys to them unless it opts out with `env.<name>: false`
   const declaredEnvs = Object.keys(config.environments ?? {})
     .filter((envName) => !isKnowEnvType(envName)) // default envs are already handled above
+    .filter((envName) => !isEnvironmentDisabled(config.environments, envName))
     .map((envName) => {
       const envType = getDeclaredEnvType(config.environments, envName);
       if (!envType) {
@@ -56,13 +63,15 @@ const getConfiguredAndDefaultEnvs = (
     )
     .map(([envName]) => envName);
 
+  // envs disabled project-wide (`environments.<name>: false`) exist for
+  // no component — this wins over any per-component config of the env
   return [
     ...new Set([
       ...enabledDefaultEnvs,
       ...declaredEnvs,
       ...configuredCustomEnvs,
     ]),
-  ];
+  ].filter((envName) => !isEnvironmentDisabled(config.environments, envName));
 };
 
 export const getAllEnvs = (config: Config, componentName: string) => {

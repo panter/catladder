@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { getAllEnvsByTrigger, getConfiguredBranchTriggers } from "..";
+import {
+  getAllEnvs,
+  getAllEnvsByTrigger,
+  getAllEnvsInAllComponents,
+  getConfiguredBranchTriggers,
+} from "..";
 import type { DeployConfigKubernetesCluster } from "../..";
 import type { Config } from "../../types";
 
@@ -187,6 +192,80 @@ describe("getAllEnvsByTrigger", () => {
       };
       expect(() => getAllEnvsByTrigger(config, "app1", "mainBranch")).toThrow(
         'environment "sandbox" needs a type',
+      );
+    });
+  });
+
+  describe("disabling an env project-wide (`environments.<name>: false`)", () => {
+    const base: Config = {
+      appName: "my-app",
+      customerName: "pan",
+      components: {
+        app1: {
+          dir: "dir1",
+          build: { type: "node" },
+          deploy: { type: "kubernetes", cluster },
+        },
+        app2: {
+          dir: "dir2",
+          build: { type: "node" },
+          deploy: { type: "kubernetes", cluster },
+          // per-component config of a disabled env is ignored
+          env: { stage: { host: "stage.example.com" } },
+        },
+      },
+    };
+
+    it("removes a default env from all components", () => {
+      const config: Config = { ...base, environments: { stage: false } };
+      expect(getAllEnvs(config, "app1")).toEqual([
+        "dev",
+        "review",
+        "prod",
+        "local",
+      ]);
+      expect(getAllEnvs(config, "app2")).toEqual([
+        "dev",
+        "review",
+        "prod",
+        "local",
+      ]);
+      expect(getAllEnvsInAllComponents(config)).not.toContain("stage");
+      expect(getAllEnvsByTrigger(config, "app2", "taggedRelease")).toEqual([
+        "prod",
+      ]);
+    });
+
+    it("removes a disabled custom env without requiring a type", () => {
+      const config: Config = {
+        ...base,
+        environments: { next: false },
+        components: {
+          app1: {
+            ...base.components.app1,
+            // legacy per-component custom env
+            env: { next: { type: "dev" } },
+          },
+        },
+      };
+      expect(getAllEnvs(config, "app1")).not.toContain("next");
+    });
+
+    it("keeps an env with `on: false` (only removes its trigger)", () => {
+      const config: Config = {
+        ...base,
+        environments: { stage: { on: false } },
+      };
+      expect(getAllEnvs(config, "app1")).toContain("stage");
+      expect(getAllEnvsByTrigger(config, "app1", "taggedRelease")).toEqual([
+        "prod",
+      ]);
+    });
+
+    it("cannot disable local", () => {
+      const config: Config = { ...base, environments: { local: false } };
+      expect(() => getAllEnvs(config, "app1")).toThrow(
+        'environment "local" cannot be disabled',
       );
     });
   });

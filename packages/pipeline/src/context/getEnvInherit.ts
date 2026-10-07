@@ -1,7 +1,11 @@
-import type { EnvironmentConfig } from "../types/config";
-import { isKnowEnvType } from "../types/config";
+import type { EnvironmentConfig, EnvironmentsConfig } from "../types/config";
+import {
+  getEnvironmentConfig,
+  isEnvironmentDisabled,
+  isKnowEnvType,
+} from "../types/config";
 
-type Environments = Record<string, EnvironmentConfig> | undefined;
+type Environments = EnvironmentsConfig | undefined;
 
 export type NormalizedEnvInherit = {
   config?: string;
@@ -31,6 +35,11 @@ const assertValidInheritTarget = (
       `environment "${env}" cannot inherit from "local" — local is not a deployment environment`,
     );
   }
+  if (isEnvironmentDisabled(environments, target)) {
+    throw new Error(
+      `environment "${env}" inherits from "${target}", which is disabled (environments.${target}: false)`,
+    );
+  }
   if (!isKnowEnvType(target) && !environments?.[target]) {
     throw new Error(
       `environment "${env}" inherits from unknown environment "${target}"`,
@@ -51,7 +60,9 @@ export const getInheritedConfigChain = (
   const seen = new Set([env]);
   let current = env;
   for (;;) {
-    const target = normalizeEnvInherit(environments?.[current]?.inherit).config;
+    const target = normalizeEnvInherit(
+      getEnvironmentConfig(environments, current)?.inherit,
+    ).config;
     if (!target) break;
     assertValidInheritTarget(environments, current, target);
     if (seen.has(target)) {
@@ -79,7 +90,7 @@ export const getSecretsEnv = (
   let current = env;
   for (;;) {
     const target = normalizeEnvInherit(
-      environments?.[current]?.inherit,
+      getEnvironmentConfig(environments, current)?.inherit,
     ).secrets;
     if (!target) return current;
     assertValidInheritTarget(environments, current, target);

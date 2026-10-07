@@ -4,7 +4,7 @@ import { getBashExpressionPerPipelineType } from "../bash/bashExpressionPerPipel
 import type { PipelineType } from "../types";
 import type {
   EnvConfigWithComponent,
-  EnvironmentConfig,
+  EnvironmentsConfig,
 } from "../types/config";
 import type { EnvironmentInstance } from "../types/environmentContext";
 import { getEnvOn } from "./getEnvOn";
@@ -23,7 +23,7 @@ export const getEnvInstance = (
   envConfig: EnvConfigWithComponent,
   env: string,
   pipelineType?: PipelineType,
-  environments?: Record<string, EnvironmentConfig>,
+  environments?: EnvironmentsConfig,
 ): EnvironmentInstance => {
   // an env deploying per merge request is a review app — one dynamic
   // instance per MR, identified by the review slug
