@@ -30,6 +30,10 @@ import {
   githubQueuedGuardJob,
 } from "./release/githubQueuedRelease";
 import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
+import {
+  githubReviewDeployGuardJob,
+  githubReviewDeployTriggerJob,
+} from "./reviewApps/github";
 import { getGitlabHostUrl } from "./utils/gitlabHost";
 
 const USAGE = `catci — catladder CI companion
@@ -77,6 +81,17 @@ usage:
       github only, guard of the release-on-green workflow: consumes the
       queue marker when it matches the completed main run and decides
       whether the release step runs (release=true step output)
+
+  catci review-app github-trigger
+      github only, last job of the review workflow: once the PR's CI is
+      green, dispatches the review deploy workflow when the reviewApps
+      policy (labels, draft) says the PR deploys
+
+  catci review-app github-guard
+      github only, first job of the review deploy workflow: decides
+      whether the run deploys (deploy=true step output) — explicit
+      dispatches always do, label events and ci dispatches follow the
+      policy; all need the PR open and its CI green
 
   catci publish npm --dir <dir> --env-type <envType> [--access <access>] [--registry <url>] [--dist-tag <tag>]
       npmPackage deploy job: derives version + dist-tag from the
@@ -203,6 +218,20 @@ const main = async () => {
     args.length === 2
   ) {
     return githubQueuedGuardJob(args[0], args[1]);
+  }
+  if (
+    group === "review-app" &&
+    command === "github-trigger" &&
+    args.length === 0
+  ) {
+    return githubReviewDeployTriggerJob();
+  }
+  if (
+    group === "review-app" &&
+    command === "github-guard" &&
+    args.length === 0
+  ) {
+    return githubReviewDeployGuardJob();
   }
   if (group === "publish" && command === "npm") {
     const options = parseNpmPublishArgs(args);
