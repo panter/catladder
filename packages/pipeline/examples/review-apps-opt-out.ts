@@ -11,7 +11,7 @@ const config = {
     // every MR/PR deploys, unless it carries the `catladder:no-review-app` label
     deploy: "optOut",
     // draft MRs/PRs run no pipeline at all
-    drafts: "none",
+    drafts: "skip",
   },
   components: {
     app: {

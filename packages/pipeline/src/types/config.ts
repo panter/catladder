@@ -597,10 +597,12 @@ export type Config<C extends ConfigProps = never> = {
    *   label policy says so). Label changes only apply to the next
    *   pipeline — `catladder mr review-app-on/off` sets the label and
    *   triggers one.
-   * - github: a `▶️ catladder deploy review` workflow, dispatched by
-   *   the review workflow once it is green (when the policy says so),
-   *   by adding/removing the label, or by hand with the PR number.
-   *   Switching the label off stops the review apps.
+   * - github: the review workflow decides at its start (labels, draft)
+   *   and deploys in the same run when the policy says so. Later
+   *   changes go through a `▶️ catladder deploy review` workflow,
+   *   dispatched by the review workflow once green (when the policy now
+   *   says deploy), by adding/removing the label, or by hand with the
+   *   PR number. Switching the label off stops the review apps.
    *
    * Per-component `deploy.when` of the review env is ignored then — the
    * switch covers all components.
@@ -627,12 +629,12 @@ export type Config<C extends ConfigProps = never> = {
     skipLabel?: string;
     /**
      * what draft MRs/PRs run:
-     * - full: the same as ready ones (default)
-     * - ci: tests, lint and audit — the review apps deploy once the
+     * - likeReady: the same as ready ones (default)
+     * - checksOnly: tests, lint and audit — the review apps deploy once the
      *   MR/PR is marked ready
-     * - none: nothing (gitlab: marking an MR ready doesn't start a
+     * - skip: nothing (gitlab: marking an MR ready doesn't start a
      *   pipeline, the next push does)
-     * @defaultValue "full"
+     * @defaultValue "likeReady"
      */
     drafts?: ReviewAppsDraftsMode;
   };

@@ -14,12 +14,12 @@ export type ReviewAppsDeployMode = "auto" | "manual" | "optIn" | "optOut";
 
 /**
  * what a draft MR/PR runs:
- * - full: the same as a ready one, review apps included (default)
- * - ci: tests, lint and audit only — the review apps deploy once it is
+ * - likeReady: the same as a ready one, review apps included (default)
+ * - checksOnly: tests, lint and audit only — the review apps deploy once it is
  *   marked ready
- * - none: no pipeline at all
+ * - skip: no pipeline at all
  */
-export type ReviewAppsDraftsMode = "full" | "ci" | "none";
+export type ReviewAppsDraftsMode = "likeReady" | "checksOnly" | "skip";
 
 export const DEFAULT_REVIEW_APP_LABEL = "catladder:review-app";
 export const DEFAULT_NO_REVIEW_APP_LABEL = "catladder:no-review-app";
@@ -49,7 +49,7 @@ export const shouldAutoDeployReviewApps = (
   config: ResolvedReviewAppsConfig,
   { labels, draft }: ReviewAppsMrState,
 ): { deploy: boolean; reason: string } => {
-  if (draft && config.drafts !== "full") {
+  if (draft && config.drafts !== "likeReady") {
     return { deploy: false, reason: "drafts don't deploy review apps" };
   }
   switch (config.deploy) {

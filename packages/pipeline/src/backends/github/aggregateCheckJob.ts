@@ -27,6 +27,11 @@ export const AGGREGATE_CHECK_JOB_NAME = "catladder ✅";
  */
 export const makeAggregateCheckJob = (
   reviewJobs: Record<string, GithubJob>,
+  /**
+   * jobs that may be skipped on purpose (review delivery chains behind
+   * the reviewApps switch) — their skip is no failure, their failure is
+   */
+  skippable: string[] = [],
 ): Record<string, GithubJob> => ({
   [AGGREGATE_CHECK_JOB_ID]: {
     name: AGGREGATE_CHECK_JOB_NAME,
@@ -38,13 +43,23 @@ export const makeAggregateCheckJob = (
         name: AGGREGATE_CHECK_JOB_NAME,
         // the needs context only interpolates inside the workflow file,
         // so this script stays inline
-        run: [
-          `results='\${{ toJSON(needs) }}'`,
-          `echo "$results"`,
-          `if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then`,
-          `  echo "a required job did not succeed"; exit 1`,
-          `fi`,
-        ].join("\n"),
+        run: (skippable.length === 0
+          ? [
+              `results='\${{ toJSON(needs) }}'`,
+              `echo "$results"`,
+              `if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then`,
+              `  echo "a required job did not succeed"; exit 1`,
+              `fi`,
+            ]
+          : [
+              `results='\${{ toJSON(needs) }}'`,
+              `echo "$results"`,
+              `failed=$(echo "$results" | jq -r --arg skippable ' ${[...skippable].sort().join(" ")} ' 'to_entries[] | select(.value.result == "failure" or .value.result == "cancelled" or (.value.result == "skipped" and ($skippable | contains(" " + .key + " ") | not))) | .key')`,
+              `if [ -n "$failed" ]; then`,
+              `  echo "required jobs did not succeed: $failed"; exit 1`,
+              `fi`,
+            ]
+        ).join("\n"),
         shell: "bash",
       },
     ],

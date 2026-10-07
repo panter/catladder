@@ -19,7 +19,7 @@ export const getReviewAppsConfig = (
   // `catladder::pin-review` pin label displace each other
   label: config.reviewApps?.label ?? DEFAULT_REVIEW_APP_LABEL,
   skipLabel: config.reviewApps?.skipLabel ?? DEFAULT_NO_REVIEW_APP_LABEL,
-  drafts: config.reviewApps?.drafts ?? "full",
+  drafts: config.reviewApps?.drafts ?? "likeReady",
 });
 
 /**
@@ -27,7 +27,7 @@ export const getReviewAppsConfig = (
  * instead of running in every pipeline
  */
 export const isReviewDeployGated = (config: ResolvedReviewAppsConfig) =>
-  config.deploy !== "auto" || config.drafts === "ci";
+  config.deploy !== "auto" || config.drafts === "checksOnly";
 
 /**
  * the label whose change switches the review apps on (`labeled` on

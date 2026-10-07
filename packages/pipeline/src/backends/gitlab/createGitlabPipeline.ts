@@ -85,9 +85,9 @@ export const createGitlabPipelineWithDefaults = ({
             PIPELINE_NAME: "Thinking...",
           },
         },
-        // reviewApps.drafts: "none" — draft MRs get no pipeline (rules
+        // reviewApps.drafts: "skip" — draft MRs get no pipeline (rules
         // stop at the first match, so this must come first)
-        ...(reviewApps?.drafts === "none"
+        ...(reviewApps?.drafts === "skip"
           ? [
               {
                 if: `${RULE_IS_MERGE_REQUEST.if} && ${GITLAB_DRAFT_MR_CONDITION}`,

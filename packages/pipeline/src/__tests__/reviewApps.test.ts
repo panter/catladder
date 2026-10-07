@@ -34,8 +34,8 @@ describe("review apps policy", () => {
     ).toBe(expected);
   });
 
-  it("drafts other than full never deploy on their own", () => {
-    for (const drafts of ["ci", "none"] as const) {
+  it("drafts other than likeReady never deploy on their own", () => {
+    for (const drafts of ["checksOnly", "skip"] as const) {
       expect(
         shouldAutoDeployReviewApps(resolved({ deploy: "optOut", drafts }), {
           labels: [],
@@ -45,9 +45,9 @@ describe("review apps policy", () => {
     }
   });
 
-  it("drafts: ci gates even the auto mode", () => {
-    expect(isReviewDeployGated(resolved({ drafts: "ci" }))).toBe(true);
-    expect(isReviewDeployGated(resolved({ drafts: "none" }))).toBe(false);
+  it("drafts: checksOnly gates even the auto mode", () => {
+    expect(isReviewDeployGated(resolved({ drafts: "checksOnly" }))).toBe(true);
+    expect(isReviewDeployGated(resolved({ drafts: "skip" }))).toBe(false);
   });
 });
 
@@ -130,8 +130,8 @@ describe("gitlab review deploy switch", () => {
     });
   });
 
-  it("drafts: none drops draft MR pipelines", async () => {
-    const pipeline = await gitlabJobs({ drafts: "none" });
+  it("drafts: skip drops draft MR pipelines", async () => {
+    const pipeline = await gitlabJobs({ drafts: "skip" });
     expect(pipeline.workflow.rules[1]).toMatchObject({ when: "never" });
     expect(pipeline.workflow.rules[1].if).toContain("$CI_MERGE_REQUEST_TITLE");
     expect(pipeline["🚀 deploy review"]).toBeUndefined();

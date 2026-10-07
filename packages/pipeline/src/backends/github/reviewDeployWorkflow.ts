@@ -49,6 +49,43 @@ const andIf = (existing: string | undefined, condition: string) => {
 };
 
 /**
+ * the condition under which the review workflow deploys the review apps
+ * ITSELF, decided from the pull request event at the start of the run
+ * (labels, draft) — the common case then needs one run and one app
+ * build, like gitlab's switch job. Whatever changes later (a label set
+ * during or after the run, a draft marked ready, an explicit request) is
+ * handled by the review deploy workflow. `deploy: "manual"` never
+ * deploys on its own: undefined.
+ */
+export const getInRunDeployCondition = (
+  reviewApps: ResolvedReviewAppsConfig,
+): string | undefined => {
+  const labels = "github.event.pull_request.labels.*.name";
+  const policy =
+    reviewApps.deploy === "optIn"
+      ? `contains(${labels}, ${literal(reviewApps.label)})`
+      : reviewApps.deploy === "optOut"
+        ? `!contains(${labels}, ${literal(reviewApps.skipLabel)})`
+        : reviewApps.deploy === "auto"
+          ? undefined
+          : null;
+  if (policy === null) {
+    return undefined;
+  }
+  const notDraft =
+    reviewApps.drafts !== "likeReady"
+      ? "!github.event.pull_request.draft"
+      : undefined;
+  return [policy, notDraft].filter(Boolean).join(" && ") || "true";
+};
+
+/** combine a job's `if` with the in-run deploy condition */
+export const withInRunCondition = (job: GithubJob, condition: string) => ({
+  ...job,
+  if: andIf(job.if, condition),
+});
+
+/**
  * the review delivery jobs (docker → deploy → verify) that move out of
  * the review workflow into the review deploy workflow:
  * - all of them when the reviewApps config gates review deploys
@@ -104,7 +141,7 @@ export const getGatedReviewDeliveryJobIds = (
  * - the review workflow, once it is green and the label/draft policy
  *   says the PR deploys (`source: ci`)
  * - switching the label on (opt-in: adding it, opt-out: removing the
- *   skip label) or marking a draft ready (`drafts: "ci"`)
+ *   skip label) or marking a draft ready (`drafts: "checksOnly"`)
  * - a human or agent dispatching it with the PR number — explicit
  *   requests always deploy, provided the PR's CI is green
  *
@@ -200,7 +237,7 @@ export const makeReviewDeployWorkflow = ({
   const switchLabel = getReviewAppsSwitchLabel(reviewApps);
   const pullRequestTypes = [
     ...(switchLabel ? [switchLabel.deployOn] : []),
-    ...(reviewApps.drafts === "ci" ? ["ready_for_review"] : []),
+    ...(reviewApps.drafts === "checksOnly" ? ["ready_for_review"] : []),
   ];
   // pull request events that concern the review apps — other label
   // changes must neither run the guard nor cancel a running deploy
@@ -211,7 +248,7 @@ export const makeReviewDeployWorkflow = ({
           `(github.event.action == ${literal(switchLabel.deployOn)} && github.event.label.name == ${literal(switchLabel.label)})`,
         ]
       : []),
-    ...(reviewApps.drafts === "ci"
+    ...(reviewApps.drafts === "checksOnly"
       ? ["github.event.action == 'ready_for_review'"]
       : []),
   ].join(" || ");
@@ -286,11 +323,10 @@ export const makeReviewDeployWorkflow = ({
       },
       ...imageJobs,
       ...chainJobs,
-      ...makeReviewAppAggregateJob([
-        GUARD_JOB_ID,
-        ...Object.keys(imageJobs),
-        ...Object.keys(chainJobs),
-      ]),
+      ...makeReviewAppAggregateJob(
+        [GUARD_JOB_ID, ...Object.keys(imageJobs), ...Object.keys(chainJobs)],
+        `needs.${GUARD_JOB_ID}.outputs.deploy == 'true'`,
+      ),
     },
   };
 };
@@ -310,18 +346,21 @@ export const REVIEW_APP_STATUS_CONTEXT = "catladder review app";
  * dispatch (the trigger job, or by hand) are attached to the commit but
  * not shown on the pull request, a commit status always is.
  *
- * Runs only when the guard decided to deploy — a run that doesn't
- * deploy says nothing about the review app (its check is skipped, the
- * commit status untouched).
+ * Runs only when the run deploys (the guard decided so, or the review
+ * workflow's start condition held) — a run that doesn't deploy says
+ * nothing about the review app (its check is skipped, the commit status
+ * untouched).
  */
-const makeReviewAppAggregateJob = (
+export const makeReviewAppAggregateJob = (
   needs: string[],
+  /** when the run deploys the review apps (a github expression) */
+  deploysWhen: string,
 ): Record<string, GithubJob> => ({
   [REVIEW_APP_AGGREGATE_JOB_ID]: {
     name: REVIEW_APP_AGGREGATE_JOB_NAME,
     "runs-on": "ubuntu-latest",
-    needs,
-    if: `\${{ always() && needs.${GUARD_JOB_ID}.outputs.deploy == 'true' }}`,
+    needs: [...needs].sort(),
+    if: `\${{ always() && (${deploysWhen}) }}`,
     permissions: { statuses: "write" },
     env: {
       GH_TOKEN: "${{ github.token }}",
@@ -380,6 +419,8 @@ const reviewDeployConcurrency = (relevantEvent: string) => ({
  */
 export const makeReviewDeployTriggerJob = (
   reviewApps: ResolvedReviewAppsConfig,
+  /** the review workflow deployed itself when this held at its start */
+  inRunCondition?: string,
 ): Record<string, GithubJob> =>
   reviewApps.deploy === "manual"
     ? {}
@@ -388,6 +429,9 @@ export const makeReviewDeployTriggerJob = (
           name: "▶️ trigger review deploy",
           "runs-on": "ubuntu-latest",
           needs: [AGGREGATE_CHECK_JOB_ID],
+          ...(inRunCondition
+            ? { if: `\${{ success() && !(${inRunCondition}) }}` }
+            : {}),
           permissions: {
             contents: "read",
             "pull-requests": "read",
@@ -452,7 +496,7 @@ export const withReviewStopSwitch = (
 };
 
 /**
- * `drafts: "none"`: draft PRs run nothing — every job of the review
+ * `drafts: "skip"`: draft PRs run nothing — every job of the review
  * workflow skips them, and marking the PR ready starts the run. A
  * skipped `catladder ✅` can't let a draft through: drafts can't be
  * merged.

@@ -96,9 +96,9 @@ export const addGitlabReviewDeployGate = (
     ],
     rules: [
       RULE_NEVER_ON_AGENT_TRIGGER,
-      // drafts never deploy on their own (drafts: "none" has no
+      // drafts never deploy on their own (drafts: "skip" has no
       // pipeline at all, see the workflow rules)
-      ...(reviewApps.drafts !== "full"
+      ...(reviewApps.drafts !== "likeReady"
         ? [{ if: `${isMr} && ${GITLAB_DRAFT_MR_CONDITION}`, ...manual }]
         : []),
       ...policyRules,

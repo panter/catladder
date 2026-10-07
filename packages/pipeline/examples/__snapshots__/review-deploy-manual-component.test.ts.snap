@@ -790,7 +790,7 @@ catladder-deploy-review.yml:
         statuses: write
       env:
         GITHUB_TOKEN: \${{ github.token }}
-        CL_REVIEW_APPS: '{"deploy":"auto","label":"catladder:review-app","skipLabel":"catladder:no-review-app","drafts":"full"}'
+        CL_REVIEW_APPS: '{"deploy":"auto","label":"catladder:review-app","skipLabel":"catladder:no-review-app","drafts":"likeReady"}'
         CL_DEPLOY_SOURCE: \${{ github.event_name == 'workflow_dispatch' && (inputs.source || 'manual') || 'label' }}
         CL_HEAD_SHA: \${{ github.event.pull_request.head.sha || github.sha }}
       outputs:
@@ -1056,13 +1056,13 @@ catladder-deploy-review.yml:
       name: catladder review app ✅
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-guard
-        - catladder-image-jobs-default
         - catladder-image-docker-build
+        - catladder-image-jobs-default
+        - catladder-review-deploy-guard
         - storybook-app-review
         - storybook-deploy-review
         - storybook-docker-review
-      if: \${{ always() && needs.catladder-review-deploy-guard.outputs.deploy == 'true' }}
+      if: \${{ always() && (needs.catladder-review-deploy-guard.outputs.deploy == 'true') }}
       permissions:
         statuses: write
       env:

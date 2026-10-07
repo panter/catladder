@@ -50,7 +50,7 @@ describe("github review deploy workflow", () => {
     );
   });
 
-  it("moves the delivery chains of all components behind the guard (optIn)", async () => {
+  it("deploys in the review run when the label is set at its start, else via the guarded deploy workflow (optIn)", async () => {
     const workflows = await workflowsOf({
       ...baseConfig,
       reviewApps: { deploy: "optIn" },
@@ -68,12 +68,26 @@ describe("github review deploy workflow", () => {
         "catladder-review-deploy-trigger",
       ]),
     );
+    // the label is known at the start of the run: the chains deploy in
+    // it (one run, one app build) behind that condition ...
     for (const id of DELIVERY) {
-      expect(Object.keys(review.jobs)).not.toContain(id);
+      expect(review.jobs[id].if).toContain(
+        "contains(github.event.pull_request.labels.*.name, 'catladder:review-app')",
+      );
     }
-    expect(review.jobs["catladder-review-deploy-trigger"].needs).toEqual([
-      "catladder-ok",
-    ]);
+    // ... a skipped chain is no CI failure, a failed one is
+    const okScript = review.jobs["catladder-ok"].steps[0].run ?? "";
+    expect(okScript).toContain(` ${[...DELIVERY].sort().join(" ")} `);
+    expect(okScript).not.toContain("api-test-review ");
+    // ... with the stable review app result in the same run
+    expect(review.jobs["catladder-review-app-ok"].if).toBe(
+      "${{ always() && (contains(github.event.pull_request.labels.*.name, 'catladder:review-app')) }}",
+    );
+    // the trigger only hands over when the run itself didn't deploy
+    expect(review.jobs["catladder-review-deploy-trigger"]).toMatchObject({
+      needs: ["catladder-ok"],
+      if: "${{ success() && !(contains(github.event.pull_request.labels.*.name, 'catladder:review-app')) }}",
+    });
 
     // the chains plus the rebuilt app builds, never the quality jobs
     const deployJobs = Object.keys(deploy.jobs);
@@ -127,7 +141,7 @@ describe("github review deploy workflow", () => {
       expect.arrayContaining(["catladder-review-deploy-guard", ...DELIVERY]),
     );
     expect(aggregate.if).toBe(
-      "${{ always() && needs.catladder-review-deploy-guard.outputs.deploy == 'true' }}",
+      "${{ always() && (needs.catladder-review-deploy-guard.outputs.deploy == 'true') }}",
     );
     expect(aggregate.permissions).toEqual({ statuses: "write" });
     expect(aggregate.steps[0].run).toContain('context="catladder review app"');
@@ -167,6 +181,23 @@ describe("github review deploy workflow", () => {
     });
   });
 
+  it.each([
+    [
+      { deploy: "optOut" },
+      "!contains(github.event.pull_request.labels.*.name, 'catladder:no-review-app')",
+    ],
+    [
+      { deploy: "optIn", drafts: "checksOnly" },
+      "contains(github.event.pull_request.labels.*.name, 'catladder:review-app') && !github.event.pull_request.draft",
+    ],
+    [{ drafts: "checksOnly" }, "!github.event.pull_request.draft"],
+  ])("in-run deploy condition for %j", async (reviewApps, condition) => {
+    const workflows = await workflowsOf({ ...baseConfig, reviewApps });
+    expect(workflows["catladder-review.yml"].jobs["api-deploy-review"].if).toBe(
+      `\${{ ${condition} }}`,
+    );
+  });
+
   it("manual: dispatch only, no trigger job", async () => {
     const workflows = await workflowsOf({
       ...baseConfig,
@@ -175,15 +206,19 @@ describe("github review deploy workflow", () => {
     expect(workflows["catladder-deploy-review.yml"].on).not.toHaveProperty(
       "pull_request",
     );
+    // never deploys on its own: the chains only live in the dispatch
+    for (const id of DELIVERY) {
+      expect(workflows["catladder-review.yml"].jobs[id]).toBeUndefined();
+    }
     expect(
       workflows["catladder-review.yml"].jobs["catladder-review-deploy-trigger"],
     ).toBeUndefined();
   });
 
-  it("drafts: ci deploys once a draft is marked ready", async () => {
+  it("drafts: checksOnly deploys once a draft is marked ready", async () => {
     const workflows = await workflowsOf({
       ...baseConfig,
-      reviewApps: { drafts: "ci" },
+      reviewApps: { drafts: "checksOnly" },
     });
     expect(workflows["catladder-deploy-review.yml"].on).toMatchObject({
       pull_request: { types: ["ready_for_review"] },
@@ -193,10 +228,10 @@ describe("github review deploy workflow", () => {
     ).toBeDefined();
   });
 
-  it("drafts: none skips every job of the review workflow for drafts", async () => {
+  it("drafts: skip skips every job of the review workflow for drafts", async () => {
     const workflows = await workflowsOf({
       ...baseConfig,
-      reviewApps: { drafts: "none" },
+      reviewApps: { drafts: "skip" },
     });
     const review = workflows["catladder-review.yml"];
     expect(review.on).toMatchObject({

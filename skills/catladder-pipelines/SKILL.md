@@ -95,23 +95,27 @@ reviewApps: {
   deploy: "optIn",   // auto (default) | manual | optIn | optOut
   // label: "catladder:review-app",       // optIn label (default)
   // skipLabel: "catladder:no-review-app", // optOut label (default)
-  drafts: "ci",      // full (default) | ci (no review apps) | none (no pipeline)
+  drafts: "checksOnly", // likeReady (default) | checksOnly (no review apps) | skip (no pipeline)
 },
 ```
 
 - `optIn`: deploys only while the MR/PR carries `label`.
 - `optOut`: deploys unless it carries `skipLabel`.
 - `manual`: never on its own — only on request.
-- `drafts: "ci"`: drafts run CI only, the review apps deploy once the
-  MR/PR is marked ready; `"none"`: drafts run nothing.
+- `drafts: "checksOnly"`: drafts run tests, lint and audit only, the review apps deploy once the
+  MR/PR is marked ready; `"skip"`: drafts run nothing.
 - Per-component `deploy.when` of the review env is ignored then.
 
-**GitHub** — the chains live in the `▶️ catladder deploy review`
-workflow (`catladder-deploy-review.yml`):
+**GitHub** — like gitlab, the review workflow decides at its start
+from the PR's labels and draft state: when the policy says deploy, the
+chains run in the same run (one app build). Whatever changes later goes
+through the `▶️ catladder deploy review` workflow
+(`catladder-deploy-review.yml`, which rebuilds the app):
 
-- when the review workflow is green, its last job (`▶️ trigger review
-  deploy`) reads the PR's labels/draft state and dispatches the deploy
-  if the policy says so — a label set while CI ran counts;
+- when the review workflow is green but didn't deploy, its last job
+  (`▶️ trigger review deploy`) reads the PR's labels/draft state again
+  and dispatches the deploy if the policy now says so — a label set
+  while CI ran counts;
 - switching the label on (opt-in: add `label`, opt-out: remove
   `skipLabel`) deploys right away if the PR's `catladder ✅` is green;
   switching it off stops the review apps (`🛑 catladder stop review
@@ -120,12 +124,14 @@ workflow (`catladder-deploy-review.yml`):
   `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`
   — explicit requests always deploy, but need the PR open and its CI
   green (the run reuses the green CI instead of re-running tests);
-- merge gates wait for **`catladder review app ✅`**, the last job of
-  the deploy workflow (stable name, independent of the components).
-  It also sets the commit status `catladder review app` on the PR head
-  (`pending` while deploying, then `success`/`failure`) — dispatched
-  runs are attached to the commit but not listed on the pull request,
-  the commit status is. A run that doesn't deploy reports nothing;
+- merge gates wait for **`catladder review app ✅`** (stable name,
+  independent of the components), the last job of whichever run
+  deploys. It also sets the commit status `catladder review app` on
+  the PR head (`success`/`failure`; the deploy workflow marks it
+  `pending` first) — dispatched runs are attached to the commit but not
+  listed on the pull request, the commit status is. A run that doesn't
+  deploy reports nothing. In the review run a skipped chain doesn't
+  fail `catladder ✅`, a failed one does;
 - `gh pr edit <number> --add-label catladder:review-app` is the
   agent-friendly opt-in. Labels set with the workflow's own
   `GITHUB_TOKEN` (from inside a workflow) trigger nothing — use a user
@@ -147,7 +153,7 @@ unplayed switch leaves the pipeline green. Label changes don't start
 a pipeline on gitlab — use `yarn catladder mr review-app-on` (sets the
 label and triggers a pipeline) / `mr review-app-off`. Drafts are
 detected by their title prefix (`Draft:`, `[Draft]`, `(Draft)`); with
-`drafts: "none"` marking an MR ready starts no pipeline, the next push
+`drafts: "skip"` marking an MR ready starts no pipeline, the next push
 does.
 
 ## Review-app auto-stop and pinning (GitLab)

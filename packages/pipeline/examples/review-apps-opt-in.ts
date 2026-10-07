@@ -11,7 +11,7 @@ const config = {
     // only MRs/PRs carrying the `catladder:review-app` label deploy
     deploy: "optIn",
     // drafts run tests, lint and audit only
-    drafts: "ci",
+    drafts: "checksOnly",
   },
   components: {
     api: {

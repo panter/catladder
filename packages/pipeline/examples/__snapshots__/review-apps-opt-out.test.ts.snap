@@ -573,7 +573,7 @@ catladder-deploy-review.yml:
         statuses: write
       env:
         GITHUB_TOKEN: \${{ github.token }}
-        CL_REVIEW_APPS: '{"deploy":"optOut","label":"catladder:review-app","skipLabel":"catladder:no-review-app","drafts":"none"}'
+        CL_REVIEW_APPS: '{"deploy":"optOut","label":"catladder:review-app","skipLabel":"catladder:no-review-app","drafts":"skip"}'
         CL_DEPLOY_SOURCE: \${{ github.event_name == 'workflow_dispatch' && (inputs.source || 'manual') || 'label' }}
         CL_HEAD_SHA: \${{ github.event.pull_request.head.sha || github.sha }}
       outputs:
@@ -774,12 +774,12 @@ catladder-deploy-review.yml:
         - catladder-review-deploy-guard
         - app-app-review
         - app-docker-review
-      container:
+      container: &a17
         image: google/cloud-sdk:525.0.0
-      environment:
+      environment: &a18
         name: review-app
         url: \${{ steps.main.outputs.url }}
-      env:
+      env: &a19
         CL_review_app_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: google/cloud-sdk:525.0.0
       steps:
@@ -787,7 +787,8 @@ catladder-deploy-review.yml:
           uses: actions/checkout@v4
           with:
             ref: \${{ github.event.pull_request.head.sha || github.sha }}
-        - name: 🚀 Deploy
+        - &a20
+          name: 🚀 Deploy
           id: main
           run: bash .catladder-generated/github/scripts/app-deploy-review.sh
           shell: bash
@@ -799,14 +800,14 @@ catladder-deploy-review.yml:
         - catladder-review-deploy-guard
         - app-app-review
         - catladder-image-docker-build
-      container:
+      container: &a10
         image: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
         credentials:
           username: \${{ github.actor }}
           password: \${{ github.token }}
-      environment:
+      environment: &a11
         name: review
-      env:
+      env: &a12
         DOCKER_BUILDKIT: '1'
         CL_review_app_GCLOUD_DEPLOY_credentialsKey: \${{ secrets.CL_review_app_GCLOUD_DEPLOY_credentialsKey }}
         CL_JOB_IMAGE: ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
@@ -815,22 +816,26 @@ catladder-deploy-review.yml:
           uses: actions/checkout@v4
           with:
             ref: \${{ github.event.pull_request.head.sha || github.sha }}
-        - name: Cache app-yarn
+        - &a13
+          name: Cache app-yarn
           uses: actions/cache/restore@v4
           with:
             path: app/.yarn
             key: app-yarn-\${{ hashFiles('app/yarn.lock') }}
             restore-keys: app-yarn-
-        - name: Download artifacts from app-app-review
+        - &a14
+          name: Download artifacts from app-app-review
           uses: actions/download-artifact@v4
           with:
             name: app-app-review
-        - name: Extract artifacts
+        - &a15
+          name: Extract artifacts
           run: |-
             tar -xf catladder-artifacts-app-app-review.tar
             rm catladder-artifacts-app-app-review.tar
           shell: bash
-        - name: 🔨 docker
+        - &a16
+          name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/app-docker-review.sh
           shell: bash
@@ -839,13 +844,13 @@ catladder-deploy-review.yml:
       name: catladder review app ✅
       runs-on: ubuntu-latest
       needs:
-        - catladder-review-deploy-guard
-        - catladder-image-jobs-default
-        - catladder-image-docker-build
         - app-app-review
         - app-deploy-review
         - app-docker-review
-      if: \${{ always() && needs.catladder-review-deploy-guard.outputs.deploy == 'true' }}
+        - catladder-image-docker-build
+        - catladder-image-jobs-default
+        - catladder-review-deploy-guard
+      if: \${{ always() && (needs.catladder-review-deploy-guard.outputs.deploy == 'true') }}
       permissions:
         statuses: write
       env:
@@ -1155,12 +1160,48 @@ catladder-review.yml:
         - *a8
         - *a9
       if: \${{ !github.event.pull_request.draft }}
+    app-docker-review:
+      name: app 🔨 docker | review
+      runs-on: ubuntu-latest
+      needs:
+        - app-app-review
+        - catladder-image-docker-build
+      container: *a10
+      environment: *a11
+      env: *a12
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - *a13
+        - *a14
+        - *a15
+        - *a16
+      if: \${{ (!contains(github.event.pull_request.labels.*.name, 'catladder:no-review-app') && !github.event.pull_request.draft) && (!github.event.pull_request.draft) }}
+    app-deploy-review:
+      name: app 🚀 Deploy | review
+      runs-on: ubuntu-latest
+      needs:
+        - app-app-review
+        - app-audit-review
+        - app-docker-review
+        - app-lint-review
+        - app-test-review
+      container: *a17
+      environment: *a18
+      env: *a19
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+        - *a20
+      if: \${{ (!contains(github.event.pull_request.labels.*.name, 'catladder:no-review-app') && !github.event.pull_request.draft) && (!github.event.pull_request.draft) }}
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
       needs:
         - app-app-review
         - app-audit-review
+        - app-deploy-review
+        - app-docker-review
         - app-lint-review
         - app-test-review
         - catladder-image-docker-build
@@ -1172,22 +1213,51 @@ catladder-review.yml:
           run: |-
             results='\${{ toJSON(needs) }}'
             echo "$results"
-            if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then
-              echo "a required job did not succeed"; exit 1
+            failed=$(echo "$results" | jq -r --arg skippable ' app-deploy-review app-docker-review ' 'to_entries[] | select(.value.result == "failure" or .value.result == "cancelled" or (.value.result == "skipped" and ($skippable | contains(" " + .key + " ") | not))) | .key')
+            if [ -n "$failed" ]; then
+              echo "required jobs did not succeed: $failed"; exit 1
             fi
+          shell: bash
+    catladder-review-app-ok:
+      name: catladder review app ✅
+      runs-on: ubuntu-latest
+      needs:
+        - app-deploy-review
+        - app-docker-review
+      if: \${{ (always() && (!contains(github.event.pull_request.labels.*.name, 'catladder:no-review-app') && !github.event.pull_request.draft)) && (!github.event.pull_request.draft) }}
+      permissions:
+        statuses: write
+      env:
+        GH_TOKEN: \${{ github.token }}
+        HEAD_SHA: \${{ github.event.pull_request.head.sha || github.sha }}
+        RUN_URL: \${{ github.server_url }}/\${{ github.repository }}/actions/runs/\${{ github.run_id }}
+      steps:
+        - name: catladder review app ✅
+          run: |-
+            results='\${{ toJSON(needs) }}'
+            echo "$results"
+            if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then
+              state=failure; description="the review apps did not deploy and verify"
+            else
+              state=success; description="review apps deployed and verified"
+            fi
+            gh api "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -f state="$state" -f context="catladder review app" -f description="$description" -f target_url="$RUN_URL" > /dev/null
+            echo "$description"
+            [ "$state" = success ]
           shell: bash
     catladder-review-deploy-trigger:
       name: ▶️ trigger review deploy
       runs-on: ubuntu-latest
       needs:
         - catladder-ok
+      if: \${{ (success() && !(!contains(github.event.pull_request.labels.*.name, 'catladder:no-review-app') && !github.event.pull_request.draft)) && (!github.event.pull_request.draft) }}
       permissions:
         contents: read
         pull-requests: read
         actions: write
       env:
         GITHUB_TOKEN: \${{ github.token }}
-        CL_REVIEW_APPS: '{"deploy":"optOut","label":"catladder:review-app","skipLabel":"catladder:no-review-app","drafts":"none"}'
+        CL_REVIEW_APPS: '{"deploy":"optOut","label":"catladder:review-app","skipLabel":"catladder:no-review-app","drafts":"skip"}'
         CL_HEAD_REF: \${{ github.head_ref }}
         CL_HEAD_SHA: \${{ github.event.pull_request.head.sha }}
       steps:
@@ -1198,7 +1268,6 @@ catladder-review.yml:
         - name: ▶️ trigger review deploy
           run: node .catladder-generated/catci/index.js review-app github-trigger
           shell: bash
-      if: \${{ !github.event.pull_request.draft }}
 catladder-release.yml:
   name: 🛠️ catladder release
   on:

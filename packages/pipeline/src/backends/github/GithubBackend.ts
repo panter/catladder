@@ -34,10 +34,13 @@ import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
 import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
 import {
   getGatedReviewDeliveryJobIds,
+  getInRunDeployCondition,
+  makeReviewAppAggregateJob,
   makeReviewDeployTriggerJob,
   makeReviewDeployWorkflow,
   REVIEW_DEPLOY_WORKFLOW_FILE,
   withDraftsSkipped,
+  withInRunCondition,
   withReviewStopSwitch,
 } from "./reviewDeployWorkflow";
 
@@ -223,6 +226,14 @@ export class GithubBackend implements PipelineBackend {
 
       // review delivery chains behind the per-PR deploy switch move to
       // their own workflow (reviewApps config, or manual review deploys)
+      // When the label/draft policy already decides at the start of the
+      // review run, the chains stay in it behind that condition (one
+      // run, one app build); the review deploy workflow handles whatever
+      // changes later. Manual review deploys only live there.
+      let inRunDeliveryIds: string[] = [];
+      const inRunCondition = isReviewDeployGated(reviewApps)
+        ? getInRunDeployCondition(reviewApps)
+        : undefined;
       if (trigger === "mr") {
         const deliveryIds = getGatedReviewDeliveryJobIds(
           triggerJobs,
@@ -237,7 +248,18 @@ export class GithubBackend implements PipelineBackend {
             workflowEnv,
             permissions: workflowPermissions(images).permissions,
           });
-          deliveryIds.forEach((id) => triggerJobs.delete(id));
+          if (inRunCondition) {
+            inRunDeliveryIds = deliveryIds;
+            for (const id of deliveryIds) {
+              const entry = triggerJobs.get(id)!;
+              entry.githubJob = withInRunCondition(
+                entry.githubJob,
+                inRunCondition,
+              );
+            }
+          } else {
+            deliveryIds.forEach((id) => triggerJobs.delete(id));
+          }
         }
       }
 
@@ -372,18 +394,25 @@ export class GithubBackend implements PipelineBackend {
             trigger === "mr"
               ? {
                   ...workflowJobs,
-                  ...makeAggregateCheckJob(workflowJobs),
+                  ...makeAggregateCheckJob(workflowJobs, inRunDeliveryIds),
+                  // the stable review app result of an in-run deploy
+                  ...(inRunCondition && inRunDeliveryIds.length > 0
+                    ? makeReviewAppAggregateJob(
+                        inRunDeliveryIds,
+                        inRunCondition,
+                      )
+                    : {}),
                   // once green, hand over to the review deploy workflow
-                  // when the label/draft policy says this PR deploys
+                  // when the PR deploys but this run didn't
                   ...(workflows[REVIEW_DEPLOY_WORKFLOW_FILE] &&
                   isReviewDeployGated(reviewApps)
-                    ? makeReviewDeployTriggerJob(reviewApps)
+                    ? makeReviewDeployTriggerJob(reviewApps, inRunCondition)
                     : {}),
                 }
               : workflowJobs,
         };
         workflows[`${GENERATED_FILE_PREFIX}${workflowFileName(trigger)}`] =
-          trigger === "mr" && reviewApps.drafts === "none"
+          trigger === "mr" && reviewApps.drafts === "skip"
             ? withDraftsSkipped(workflow)
             : workflow;
       }
