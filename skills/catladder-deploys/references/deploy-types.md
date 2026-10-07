@@ -8,13 +8,13 @@ resources with `yarn catladder project setup`; detect drift with
 
 ## Shared base (all deploy types)
 
-| Option | Type | Purpose / default |
-|---|---|---|
-| `when` | `"manual" \| "auto"` | prod → `manual`, other envs → `auto` |
-| `waitFor` | `string[]` | EXPERIMENTAL; wait for other components first |
-| `jobTags` | `string[]` | runner tags |
-| `jobVars` | `EnvVars` | env vars only in the deploy job |
-| `runnerVariables` | `Record<string,string>` | extra runner vars |
+| Option            | Type                    | Purpose / default                             |
+| ----------------- | ----------------------- | --------------------------------------------- |
+| `when`            | `"manual" \| "auto"`    | prod → `manual`, other envs → `auto`          |
+| `waitFor`         | `string[]`              | EXPERIMENTAL; wait for other components first |
+| `jobTags`         | `string[]`              | runner tags                                   |
+| `jobVars`         | `EnvVars`               | env vars only in the deploy job               |
+| `runnerVariables` | `Record<string,string>` | extra runner vars                             |
 
 (Cloud Run defines its own `execute`; otherwise the base applies to all.)
 
@@ -44,6 +44,7 @@ resources with `yarn catladder project setup`; detect drift with
 - `jobs?: Record<string, DeployConfigCloudRunJob | false | null>` — `{ command, args?, image?, cpu?, memory? (512Mi), timeout? (10min), parallelism? (1), maxRetries? (0) }`. The per-job `when`/`schedule`/`waitForCompletion` fields are **deprecated** — use `execute`.
 - `workerPools?: Record<string, DeployConfigCloudRunWorkerPool | false | null>` — always-on background work, no endpoint, no autoscaling: `{ command, instances? (1), cpu?, memory?, image?, args?, gpu?/gpuType? }`.
 - `cloudSql?: DeployConfigCloudRunCloudSql | false` — `{ type: "unmanaged", instanceConnectionName, dbUser?, dbNamePrefix?, dbBaseName?, deleteDatabaseOnStop?, dbConnectionStringFormat? ("prisma" default | "rails" | "jdbc"), dbConnectionStringVariablesMode? ("embedded" default | "legacy"), dbAdditionalQueryParams? }`. Injects `DB_*` vars plus `DATABASE_URL`/`DATABASE_JDBC_URL`; in the default `"embedded"` mode the connection strings contain the component's final values (referenceable from other components, `vars.public` overrides of `DB_*` flow in). To share another component's database: `dbBaseName: "<owner>"` + `DB_PASSWORD: "${<owner>:DB_PASSWORD}"` in `vars.public`.
+- `runtimeServiceAccount?: string | boolean | { roles?: string[], bucketRoles?: Record<bucket, string[]> }` — identity of services/jobs/worker pools (`--service-account`). Unset/`false`: default compute account. String: existing account email. `true`/object: catladder-managed `cl-r-<customer>-<app>-<env>-<component>` (hashed to fit 30 chars) created by `project setup` with `roles/cloudsql.client` (if `cloudSql`), `roles/storage.objectUser`/`objectViewer` (readonly) on cloud-storage volume buckets, plus `roles`/`bucketRoles`. Services, jobs and worker pools accept `runtimeServiceAccount?: string` (email) as override.
 - `execute?: Record<string, DeployConfigCloudRunExecute | null>` — run a script / job / HTTP call at a lifecycle point (`when`: `preDeploy` | `postDeploy` | `preStop` | `postStop`) or on a `schedule`.
 - `debug?: boolean`.
 - Service name and url: the service deploys as `<customerName>-<appName>-<env>[-<reviewSlug>]-<componentName>`, and `ROOT_URL`/`ROOT_URL_INTERNAL` are cloud run's deterministic url `https://<service>-<projectNumber>.<region>.run.app`. That url only exists while its first dns label stays within 63 characters, so catladder **shortens the component part** of the service name when it would not fit — otherwise cloud run would serve a legacy url with a random identifier and the generated hostname would never resolve. Review environments carry a runtime slug on top, for which 8 characters are reserved, so a name can fit `dev`/`prod` and still be shortened for `review`. Generation fails instead of shortening when two components would end up with the same name, or when customerName/appName/env/project number already leave no room.

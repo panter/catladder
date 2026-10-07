@@ -82,6 +82,16 @@ Everything app-level lives under `values`:
   connection-string format (`prisma` default, `rails`, `jdbc`).
   `deleteDatabaseOnStop` controls whether the database is dropped when
   the environment stops (default: true for review envs, false else).
+- `runtimeServiceAccount` — the identity services, jobs and worker
+  pools run as (`--service-account`). Unset = the project's default
+  compute account (usually `roles/editor` — far too broad; `project
+  doctor` warns). `"<email>"` = an existing account; `true` or
+  `{ roles?, bucketRoles? }` = a catladder-managed `cl-r-…` account that
+  `catladder project setup` creates, binding `roles/cloudsql.client`
+  (with `cloudSql`), object access on cloud-storage `volumes` buckets,
+  and the given roles. A single service/job/worker pool can override it
+  with its own `runtimeServiceAccount: "<email>"`. Rerun `project
+  setup` after changing roles.
 - `revisionsToKeep` — how many inactive revisions (the rollback
   history) the post-deploy cleanup keeps; older revisions and their
   images are deleted. Default: 5 on prod envs, 0 everywhere else.
