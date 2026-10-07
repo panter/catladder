@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.6.0 (2026-10-07)
+
+### Minor Changes
+
+- New `postBuildTests` in the build config: named tests (e.g. a Playwright e2e suite with a Postgres service) that run against the build output in a new `post-build` stage between build and deploy, and block the deploy when they fail. Works for standalone builds, workspace builds and components built in a workspace. On GitHub, uploads now also honour `artifacts.when`, so reports of failed jobs are uploaded.
+
+### Patch Changes
+
+- GitHub Actions: build artifacts are now passed between jobs as a tar archive, so symlinks, file modes and repo-relative paths survive, as they do on GitLab. Plain `upload-artifact` turned symlinks into copies, which broke Next.js/Turbopack apps in pnpm workspaces (`.next/node_modules/<pkg>-<hash>` symlinks into the pnpm store) with `ERR_MODULE_NOT_FOUND` at runtime. Regenerate the workflows with `catenv` to pick up the fix.
+
 ## 5.5.0 (2026-10-07)
 
 ### Minor Changes
