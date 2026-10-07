@@ -87,7 +87,7 @@ describe("github review deploy workflow", () => {
     // the trigger only hands over when the run itself didn't deploy
     expect(review.jobs["catladder-review-deploy-trigger"]).toMatchObject({
       needs: ["catladder-ok"],
-      if: "${{ success() && !(contains(github.event.pull_request.labels.*.name, 'catladder:review-app')) }}",
+      if: "${{ !cancelled() && needs.catladder-ok.result == 'success' && !(contains(github.event.pull_request.labels.*.name, 'catladder:review-app')) }}",
     });
 
     // the chains plus the rebuilt app builds, never the quality jobs

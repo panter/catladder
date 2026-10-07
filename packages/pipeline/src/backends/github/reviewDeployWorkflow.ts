@@ -436,7 +436,12 @@ export const makeReviewDeployTriggerJob = (
           "runs-on": "ubuntu-latest",
           needs: [AGGREGATE_CHECK_JOB_ID],
           ...(inRunCondition
-            ? { if: `\${{ success() && !(${inRunCondition}) }}` }
+            ? {
+                // NOT success(): it also checks the transitive needs,
+                // and the chains this run skipped on purpose would make
+                // it false — exactly when the trigger is needed
+                if: `\${{ !cancelled() && needs.${AGGREGATE_CHECK_JOB_ID}.result == 'success' && !(${inRunCondition}) }}`,
+              }
             : {}),
           permissions: {
             contents: "read",
