@@ -132,7 +132,9 @@ through the `▶️ catladder deploy review` workflow
   the PR head (`success`/`failure`; the deploy workflow marks it
   `pending` first) — dispatched runs are attached to the commit but not
   listed on the pull request, the commit status is. A run that doesn't
-  deploy reports nothing. In the review run a skipped chain doesn't
+  deploy, or is cancelled (superseded, stopped), reports nothing — a
+  gate must treat a missing or `pending` status on the current head as
+  "wait". In the review run a skipped chain doesn't
   fail `catladder ✅`, a failed one does;
 - `gh pr edit <number> --add-label catladder:review-app` is the
   agent-friendly opt-in. Labels set with the workflow's own

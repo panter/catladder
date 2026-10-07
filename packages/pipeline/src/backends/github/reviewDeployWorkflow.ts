@@ -349,7 +349,8 @@ export const REVIEW_APP_STATUS_CONTEXT = "catladder review app";
  * Runs only when the run deploys (the guard decided so, or the review
  * workflow's start condition held) — a run that doesn't deploy says
  * nothing about the review app (its check is skipped, the commit status
- * untouched).
+ * untouched). Neither does a cancelled run (superseded by a newer
+ * deploy, or stopped): a gate keeps waiting instead of seeing red.
  */
 export const makeReviewAppAggregateJob = (
   needs: string[],
@@ -376,7 +377,12 @@ export const makeReviewAppAggregateJob = (
         run: [
           `results='\${{ toJSON(needs) }}'`,
           `echo "$results"`,
-          `if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then`,
+          `if echo "$results" | grep -qE '"result": "failure"'; then`,
+          `  state=failure; description="the review apps did not deploy and verify"`,
+          `elif echo "$results" | grep -qE '"result": "cancelled"'; then`,
+          `  # superseded by a newer deploy, or stopped: no result, not red`,
+          `  echo "cancelled — no review app result reported"; exit 0`,
+          `elif echo "$results" | grep -qE '"result": "skipped"'; then`,
           `  state=failure; description="the review apps did not deploy and verify"`,
           `else`,
           `  state=success; description="review apps deployed and verified"`,

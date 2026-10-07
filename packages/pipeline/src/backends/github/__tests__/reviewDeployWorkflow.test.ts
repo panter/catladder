@@ -145,6 +145,10 @@ describe("github review deploy workflow", () => {
     );
     expect(aggregate.permissions).toEqual({ statuses: "write" });
     expect(aggregate.steps[0].run).toContain('context="catladder review app"');
+    // a cancelled (superseded/stopped) run reports nothing instead of red
+    expect(aggregate.steps[0].run).toContain(
+      "cancelled — no review app result reported",
+    );
     // the guard marks the deploy in flight on the pull request
     const guardSteps = deploy.jobs["catladder-review-deploy-guard"].steps;
     expect(guardSteps.at(-1)?.run).toContain("state=pending");

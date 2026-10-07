@@ -1074,7 +1074,12 @@ catladder-deploy-review.yml:
           run: |-
             results='\${{ toJSON(needs) }}'
             echo "$results"
-            if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then
+            if echo "$results" | grep -qE '"result": "failure"'; then
+              state=failure; description="the review apps did not deploy and verify"
+            elif echo "$results" | grep -qE '"result": "cancelled"'; then
+              # superseded by a newer deploy, or stopped: no result, not red
+              echo "cancelled — no review app result reported"; exit 0
+            elif echo "$results" | grep -qE '"result": "skipped"'; then
               state=failure; description="the review apps did not deploy and verify"
             else
               state=success; description="review apps deployed and verified"
