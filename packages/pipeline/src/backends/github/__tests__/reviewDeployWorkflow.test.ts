@@ -114,6 +114,28 @@ describe("github review deploy workflow", () => {
     );
   });
 
+  it("reports one stable aggregate for merge gates, as check and commit status", async () => {
+    const workflows = await workflowsOf({
+      ...baseConfig,
+      reviewApps: { deploy: "optIn" },
+    });
+    const deploy = workflows["catladder-deploy-review.yml"];
+    const aggregate = deploy.jobs["catladder-review-app-ok"];
+    expect(aggregate.name).toBe("catladder review app ✅");
+    // waits for everything, and only reports when the run deploys
+    expect(aggregate.needs).toEqual(
+      expect.arrayContaining(["catladder-review-deploy-guard", ...DELIVERY]),
+    );
+    expect(aggregate.if).toBe(
+      "${{ always() && needs.catladder-review-deploy-guard.outputs.deploy == 'true' }}",
+    );
+    expect(aggregate.permissions).toEqual({ statuses: "write" });
+    expect(aggregate.steps[0].run).toContain('context="catladder review app"');
+    // the guard marks the deploy in flight on the pull request
+    const guardSteps = deploy.jobs["catladder-review-deploy-guard"].steps;
+    expect(guardSteps.at(-1)?.run).toContain("state=pending");
+  });
+
   it("stops the review apps when the opt-in label is removed", async () => {
     const workflows = await workflowsOf({
       ...baseConfig,

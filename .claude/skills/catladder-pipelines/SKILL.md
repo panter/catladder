@@ -122,6 +122,12 @@ workflow (`catladder-deploy-review.yml`):
   `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`
   — explicit requests always deploy, but need the PR open and its CI
   green (the run reuses the green CI instead of re-running tests);
+- merge gates wait for **`catladder review app ✅`**, the last job of
+  the deploy workflow (stable name, independent of the components).
+  It also sets the commit status `catladder review app` on the PR head
+  (`pending` while deploying, then `success`/`failure`) — dispatched
+  runs are attached to the commit but not listed on the pull request,
+  the commit status is. A run that doesn't deploy reports nothing;
 - `gh pr edit <number> --add-label catladder:review-app` is the
   agent-friendly opt-in. Labels set with the workflow's own
   `GITHUB_TOKEN` (from inside a workflow) trigger nothing — use a user

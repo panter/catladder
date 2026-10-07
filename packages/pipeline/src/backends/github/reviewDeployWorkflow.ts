@@ -255,6 +255,7 @@ export const makeReviewDeployWorkflow = ({
           contents: "read",
           "pull-requests": "read",
           checks: "read",
+          statuses: "write",
         },
         env: {
           GITHUB_TOKEN: "${{ github.token }}",
@@ -273,13 +274,83 @@ export const makeReviewDeployWorkflow = ({
             run: `node ${CATCI} review-app github-guard`,
             shell: "bash",
           },
+          {
+            // the pull request shows the deploy in flight
+            name: "report pending review app",
+            if: "${{ steps.main.outputs.deploy == 'true' }}",
+            env: { GH_TOKEN: "${{ github.token }}" },
+            run: `gh api "repos/$GITHUB_REPOSITORY/statuses/$CL_HEAD_SHA" -f state=pending -f context="${REVIEW_APP_STATUS_CONTEXT}" -f description="deploying the review apps" -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > /dev/null`,
+            shell: "bash",
+          },
         ],
       },
       ...imageJobs,
       ...chainJobs,
+      ...makeReviewAppAggregateJob([
+        GUARD_JOB_ID,
+        ...Object.keys(imageJobs),
+        ...Object.keys(chainJobs),
+      ]),
     },
   };
 };
+
+export const REVIEW_APP_AGGREGATE_JOB_ID = "catladder-review-app-ok";
+export const REVIEW_APP_AGGREGATE_JOB_NAME = "catladder review app ✅";
+/** the commit status context the aggregate job reports */
+export const REVIEW_APP_STATUS_CONTEXT = "catladder review app";
+
+/**
+ * one job with a STABLE name that succeeds exactly when the review apps
+ * of this run deployed and verified — the result a merge gate (a bot,
+ * or a branch rule for projects that deploy every PR) waits for,
+ * regardless of the project's components.
+ *
+ * It also reports a commit status on the PR head: runs started by a
+ * dispatch (the trigger job, or by hand) are attached to the commit but
+ * not shown on the pull request, a commit status always is.
+ *
+ * Runs only when the guard decided to deploy — a run that doesn't
+ * deploy says nothing about the review app (its check is skipped, the
+ * commit status untouched).
+ */
+const makeReviewAppAggregateJob = (
+  needs: string[],
+): Record<string, GithubJob> => ({
+  [REVIEW_APP_AGGREGATE_JOB_ID]: {
+    name: REVIEW_APP_AGGREGATE_JOB_NAME,
+    "runs-on": "ubuntu-latest",
+    needs,
+    if: `\${{ always() && needs.${GUARD_JOB_ID}.outputs.deploy == 'true' }}`,
+    permissions: { statuses: "write" },
+    env: {
+      GH_TOKEN: "${{ github.token }}",
+      HEAD_SHA: "${{ github.event.pull_request.head.sha || github.sha }}",
+      RUN_URL:
+        "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+    },
+    steps: [
+      {
+        name: REVIEW_APP_AGGREGATE_JOB_NAME,
+        // the needs context only interpolates inside the workflow file,
+        // so this script stays inline
+        run: [
+          `results='\${{ toJSON(needs) }}'`,
+          `echo "$results"`,
+          `if echo "$results" | grep -qE '"result": "(failure|cancelled|skipped)"'; then`,
+          `  state=failure; description="the review apps did not deploy and verify"`,
+          `else`,
+          `  state=success; description="review apps deployed and verified"`,
+          `fi`,
+          `gh api "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -f state="$state" -f context="${REVIEW_APP_STATUS_CONTEXT}" -f description="$description" -f target_url="$RUN_URL" > /dev/null`,
+          `echo "$description"`,
+          `[ "$state" = success ]`,
+        ].join("\n"),
+        shell: "bash",
+      },
+    ],
+  },
+});
 
 /** a checkout of just the materialized catci */
 const catciCheckout = (): GithubStep => ({
