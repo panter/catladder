@@ -1,3 +1,4 @@
+import { execFileSync } from "child_process";
 import { describe, expect, it } from "vitest";
 import type { Config } from "../../../types";
 import { GithubBackend } from "../GithubBackend";
@@ -294,4 +295,72 @@ describe("github review deploy workflow", () => {
       JSON.stringify(workflows["catladder-deploy.yml"]?.on ?? {}),
     ).not.toContain("web-deploy-review");
   });
+
+  // the aggregate's verdict runs jq on the needs context — exercise the
+  // real script (snapshots alone never ran it: a jq scoping bug made
+  // catladder ✅ crash instead of judging)
+  const hasJq = (() => {
+    try {
+      execFileSync("jq", ["--version"]);
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+  it.skipIf(!hasJq)(
+    "catladder ✅ accepts skipped review chains, fails on real failures",
+    async () => {
+      const workflows = await workflowsOf({
+        ...baseConfig,
+        reviewApps: { deploy: "optIn" },
+      });
+      const script =
+        workflows["catladder-review.yml"].jobs["catladder-ok"].steps[0].run ??
+        "";
+      const verdict = (needs: Record<string, string>) => {
+        const json = JSON.stringify(
+          Object.fromEntries(
+            Object.entries(needs).map(([id, result]) => [
+              id,
+              { result, outputs: {} },
+            ]),
+          ),
+        );
+        try {
+          execFileSync(
+            "bash",
+            ["-c", script.replace("${{ toJSON(needs) }}", json)],
+            { stdio: "pipe" },
+          );
+          return "ok";
+        } catch {
+          return "failed";
+        }
+      };
+      expect(
+        verdict({
+          "api-test-review": "success",
+          "api-deploy-review": "skipped",
+        }),
+      ).toBe("ok");
+      expect(
+        verdict({
+          "api-test-review": "skipped",
+          "api-deploy-review": "skipped",
+        }),
+      ).toBe("failed");
+      expect(
+        verdict({
+          "api-test-review": "success",
+          "api-deploy-review": "failure",
+        }),
+      ).toBe("failed");
+      expect(
+        verdict({
+          "api-test-review": "cancelled",
+          "api-deploy-review": "success",
+        }),
+      ).toBe("failed");
+    },
+  );
 });

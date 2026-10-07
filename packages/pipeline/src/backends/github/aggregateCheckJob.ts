@@ -54,7 +54,7 @@ export const makeAggregateCheckJob = (
           : [
               `results='\${{ toJSON(needs) }}'`,
               `echo "$results"`,
-              `failed=$(echo "$results" | jq -r --arg skippable ' ${[...skippable].sort().join(" ")} ' 'to_entries[] | select(.value.result == "failure" or .value.result == "cancelled" or (.value.result == "skipped" and ($skippable | contains(" " + .key + " ") | not))) | .key')`,
+              `failed=$(echo "$results" | jq -r --arg skippable ' ${[...skippable].sort().join(" ")} ' 'to_entries[] | .key as $job | select(.value.result == "failure" or .value.result == "cancelled" or (.value.result == "skipped" and ($skippable | contains(" " + $job + " ") | not))) | $job')`,
               `if [ -n "$failed" ]; then`,
               `  echo "required jobs did not succeed: $failed"; exit 1`,
               `fi`,
