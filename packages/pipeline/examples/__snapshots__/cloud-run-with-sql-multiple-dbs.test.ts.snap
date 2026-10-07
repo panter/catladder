@@ -449,17 +449,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db1-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db1/__build_info.json packages/db1/.next packages/db1/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db1-app-dev.tar
+            else
+              tar -cf catladder-artifacts-db1-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db1-app-dev
-            path: |-
-              packages/db1/__build_info.json
-              packages/db1/.next
-              packages/db1/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db1-app-dev.tar
+            if-no-files-found: error
     db1-docker-dev:
       name: db1 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -491,6 +501,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: db1-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db1-app-dev.tar
+            rm catladder-artifacts-db1-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db1-docker-dev.sh
@@ -661,17 +676,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db2-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db2/__build_info.json packages/db2/.next packages/db2/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db2-app-dev.tar
+            else
+              tar -cf catladder-artifacts-db2-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db2-app-dev
-            path: |-
-              packages/db2/__build_info.json
-              packages/db2/.next
-              packages/db2/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db2-app-dev.tar
+            if-no-files-found: error
     db2-docker-dev:
       name: db2 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -703,6 +728,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: db2-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db2-app-dev.tar
+            rm catladder-artifacts-db2-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db2-docker-dev.sh
@@ -874,17 +904,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/__build_info.json api/.next api/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-api-app-dev.tar
+            else
+              tar -cf catladder-artifacts-api-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-dev
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-api-app-dev.tar
+            if-no-files-found: error
     api-docker-dev:
       name: api 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -916,6 +956,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: api-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-api-app-dev.tar
+            rm catladder-artifacts-api-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-dev.sh
@@ -1253,17 +1298,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db1-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db1/__build_info.json packages/db1/.next packages/db1/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db1-app-review.tar
+            else
+              tar -cf catladder-artifacts-db1-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db1-app-review
-            path: |-
-              packages/db1/__build_info.json
-              packages/db1/.next
-              packages/db1/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db1-app-review.tar
+            if-no-files-found: error
     db1-docker-review:
       name: db1 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1295,6 +1350,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: db1-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db1-app-review.tar
+            rm catladder-artifacts-db1-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db1-docker-review.sh
@@ -1465,17 +1525,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db2-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db2/__build_info.json packages/db2/.next packages/db2/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db2-app-review.tar
+            else
+              tar -cf catladder-artifacts-db2-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db2-app-review
-            path: |-
-              packages/db2/__build_info.json
-              packages/db2/.next
-              packages/db2/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db2-app-review.tar
+            if-no-files-found: error
     db2-docker-review:
       name: db2 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1507,6 +1577,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: db2-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db2-app-review.tar
+            rm catladder-artifacts-db2-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db2-docker-review.sh
@@ -1678,17 +1753,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/__build_info.json api/.next api/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-api-app-review.tar
+            else
+              tar -cf catladder-artifacts-api-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-review
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-api-app-review.tar
+            if-no-files-found: error
     api-docker-review:
       name: api 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1720,6 +1805,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: api-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-api-app-review.tar
+            rm catladder-artifacts-api-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-review.sh
@@ -1989,17 +2079,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db1-app-stage.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db1/__build_info.json packages/db1/.next packages/db1/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db1-app-stage.tar
+            else
+              tar -cf catladder-artifacts-db1-app-stage.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db1-app-stage
-            path: |-
-              packages/db1/__build_info.json
-              packages/db1/.next
-              packages/db1/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db1-app-stage.tar
+            if-no-files-found: error
     db1-docker-stage:
       name: db1 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -2031,6 +2131,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: db1-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db1-app-stage.tar
+            rm catladder-artifacts-db1-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db1-docker-stage.sh
@@ -2096,17 +2201,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db2-app-stage.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db2/__build_info.json packages/db2/.next packages/db2/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db2-app-stage.tar
+            else
+              tar -cf catladder-artifacts-db2-app-stage.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db2-app-stage
-            path: |-
-              packages/db2/__build_info.json
-              packages/db2/.next
-              packages/db2/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db2-app-stage.tar
+            if-no-files-found: error
     db2-docker-stage:
       name: db2 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -2138,6 +2253,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: db2-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db2-app-stage.tar
+            rm catladder-artifacts-db2-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db2-docker-stage.sh
@@ -2204,17 +2324,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-app-stage.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/__build_info.json api/.next api/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-api-app-stage.tar
+            else
+              tar -cf catladder-artifacts-api-app-stage.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-stage
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-api-app-stage.tar
+            if-no-files-found: error
     api-docker-stage:
       name: api 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -2246,6 +2376,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: api-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-api-app-stage.tar
+            rm catladder-artifacts-api-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-stage.sh
@@ -2858,17 +2993,27 @@ catladder-deploy.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db1-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db1/__build_info.json packages/db1/.next packages/db1/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db1-app-prod.tar
+            else
+              tar -cf catladder-artifacts-db1-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db1-app-prod
-            path: |-
-              packages/db1/__build_info.json
-              packages/db1/.next
-              packages/db1/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db1-app-prod.tar
+            if-no-files-found: error
       if: \${{ inputs.job == 'db1-deploy-prod' }}
     db1-docker-prod:
       name: db1 🔨 docker | prod
@@ -2901,6 +3046,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: db1-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db1-app-prod.tar
+            rm catladder-artifacts-db1-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db1-docker-prod.sh
@@ -2968,17 +3118,27 @@ catladder-deploy.yml:
           id: main
           run: bash .catladder-generated/github/scripts/db2-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in packages/db2/__build_info.json packages/db2/.next packages/db2/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-db2-app-prod.tar
+            else
+              tar -cf catladder-artifacts-db2-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: db2-app-prod
-            path: |-
-              packages/db2/__build_info.json
-              packages/db2/.next
-              packages/db2/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-db2-app-prod.tar
+            if-no-files-found: error
       if: \${{ inputs.job == 'db2-deploy-prod' }}
     db2-docker-prod:
       name: db2 🔨 docker | prod
@@ -3011,6 +3171,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: db2-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-db2-app-prod.tar
+            rm catladder-artifacts-db2-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/db2-docker-prod.sh
@@ -3079,17 +3244,27 @@ catladder-deploy.yml:
           id: main
           run: bash .catladder-generated/github/scripts/api-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/__build_info.json api/.next api/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-api-app-prod.tar
+            else
+              tar -cf catladder-artifacts-api-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: api-app-prod
-            path: |-
-              api/__build_info.json
-              api/.next
-              api/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-api-app-prod.tar
+            if-no-files-found: error
       if: \${{ inputs.job == 'api-deploy-prod' }}
     api-docker-prod:
       name: api 🔨 docker | prod
@@ -3122,6 +3297,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: api-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-api-app-prod.tar
+            rm catladder-artifacts-api-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-prod.sh

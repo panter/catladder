@@ -445,17 +445,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/web-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in apps/web/__build_info.json apps/web/.next apps/web/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-web-app-dev.tar
+            else
+              tar -cf catladder-artifacts-web-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-dev
-            path: |-
-              apps/web/__build_info.json
-              apps/web/.next
-              apps/web/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-web-app-dev.tar
+            if-no-files-found: error
     web-docker-dev:
       name: web 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -486,6 +496,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-dev.tar
+            rm catladder-artifacts-web-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/web-docker-dev.sh
@@ -530,20 +545,36 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-dev.tar
+            rm catladder-artifacts-web-app-dev.tar
+          shell: bash
         - name: 🔬 e2e
           id: main
           run: bash .catladder-generated/github/scripts/web-e2e-dev.sh
+          shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in apps/web/playwright-report apps/web/test-results; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-web-e2e-dev.tar
+            else
+              tar -cf catladder-artifacts-web-e2e-dev.tar -- "\${paths[@]}"
+            fi
           shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-e2e-dev
-            path: |-
-              apps/web/playwright-report
-              apps/web/test-results
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-web-e2e-dev.tar
+            if-no-files-found: error
     web-deploy-dev:
       name: web 🚀 Deploy | dev
       runs-on: ubuntu-latest
@@ -872,17 +903,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/web-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in apps/web/__build_info.json apps/web/.next apps/web/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-web-app-review.tar
+            else
+              tar -cf catladder-artifacts-web-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-review
-            path: |-
-              apps/web/__build_info.json
-              apps/web/.next
-              apps/web/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-web-app-review.tar
+            if-no-files-found: error
     web-docker-review:
       name: web 🔨 docker | review
       runs-on: ubuntu-latest
@@ -913,6 +954,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-review.tar
+            rm catladder-artifacts-web-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/web-docker-review.sh
@@ -957,20 +1003,36 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-review.tar
+            rm catladder-artifacts-web-app-review.tar
+          shell: bash
         - name: 🔬 e2e
           id: main
           run: bash .catladder-generated/github/scripts/web-e2e-review.sh
+          shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in apps/web/playwright-report apps/web/test-results; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-web-e2e-review.tar
+            else
+              tar -cf catladder-artifacts-web-e2e-review.tar -- "\${paths[@]}"
+            fi
           shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-e2e-review
-            path: |-
-              apps/web/playwright-report
-              apps/web/test-results
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-web-e2e-review.tar
+            if-no-files-found: error
     web-a11y-review:
       name: web 🔬 a11y | review
       runs-on: ubuntu-latest
@@ -1011,6 +1073,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-review.tar
+            rm catladder-artifacts-web-app-review.tar
+          shell: bash
         - name: 🔬 a11y
           id: main
           run: bash .catladder-generated/github/scripts/web-a11y-review.sh
@@ -1269,17 +1336,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/web-app-stage.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in apps/web/__build_info.json apps/web/.next apps/web/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-web-app-stage.tar
+            else
+              tar -cf catladder-artifacts-web-app-stage.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-stage
-            path: |-
-              apps/web/__build_info.json
-              apps/web/.next
-              apps/web/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-web-app-stage.tar
+            if-no-files-found: error
     web-docker-stage:
       name: web 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -1310,6 +1387,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-stage.tar
+            rm catladder-artifacts-web-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/web-docker-stage.sh
@@ -1756,17 +1838,27 @@ catladder-deploy.yml:
           id: main
           run: bash .catladder-generated/github/scripts/web-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in apps/web/__build_info.json apps/web/.next apps/web/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-web-app-prod.tar
+            else
+              tar -cf catladder-artifacts-web-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: web-app-prod
-            path: |-
-              apps/web/__build_info.json
-              apps/web/.next
-              apps/web/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-web-app-prod.tar
+            if-no-files-found: error
     web-docker-prod:
       name: web 🔨 docker | prod
       runs-on: ubuntu-latest
@@ -1797,6 +1889,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: web-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-web-app-prod.tar
+            rm catladder-artifacts-web-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/web-docker-prod.sh

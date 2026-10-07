@@ -446,18 +446,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/.next api/dist www/.next www/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-ws-myworkspace-app-dev.tar
+            else
+              tar -cf catladder-artifacts-ws-myworkspace-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-dev
-            path: |-
-              api/.next
-              api/dist
-              www/.next
-              www/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-ws-myworkspace-app-dev.tar
+            if-no-files-found: error
     api-docker-dev:
       name: api 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -488,6 +497,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-dev.tar
+            rm catladder-artifacts-ws-myworkspace-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-dev.sh
@@ -545,6 +559,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-dev.tar
+            rm catladder-artifacts-ws-myworkspace-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/www-docker-dev.sh
@@ -876,18 +895,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/.next api/dist www/.next www/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-ws-myworkspace-app-review.tar
+            else
+              tar -cf catladder-artifacts-ws-myworkspace-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-review
-            path: |-
-              api/.next
-              api/dist
-              www/.next
-              www/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-ws-myworkspace-app-review.tar
+            if-no-files-found: error
     api-docker-review:
       name: api 🔨 docker | review
       runs-on: ubuntu-latest
@@ -918,6 +946,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-review.tar
+            rm catladder-artifacts-ws-myworkspace-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-review.sh
@@ -975,6 +1008,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-review.tar
+            rm catladder-artifacts-ws-myworkspace-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/www-docker-review.sh
@@ -1240,18 +1278,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-stage.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/.next api/dist www/.next www/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-ws-myworkspace-app-stage.tar
+            else
+              tar -cf catladder-artifacts-ws-myworkspace-app-stage.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-stage
-            path: |-
-              api/.next
-              api/dist
-              www/.next
-              www/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-ws-myworkspace-app-stage.tar
+            if-no-files-found: error
     api-docker-stage:
       name: api 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -1282,6 +1329,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-stage.tar
+            rm catladder-artifacts-ws-myworkspace-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-stage.sh
@@ -1336,6 +1388,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-stage.tar
+            rm catladder-artifacts-ws-myworkspace-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/www-docker-stage.sh
@@ -1851,18 +1908,27 @@ catladder-deploy.yml:
           id: main
           run: bash .catladder-generated/github/scripts/ws-myworkspace-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in api/.next api/dist www/.next www/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-ws-myworkspace-app-prod.tar
+            else
+              tar -cf catladder-artifacts-ws-myworkspace-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: ws-myworkspace-app-prod
-            path: |-
-              api/.next
-              api/dist
-              www/.next
-              www/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-ws-myworkspace-app-prod.tar
+            if-no-files-found: error
       if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
     api-docker-prod:
       name: api 🔨 docker | prod
@@ -1894,6 +1960,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-prod.tar
+            rm catladder-artifacts-ws-myworkspace-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/api-docker-prod.sh
@@ -1950,6 +2021,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: ws-myworkspace-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-ws-myworkspace-app-prod.tar
+            rm catladder-artifacts-ws-myworkspace-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/www-docker-prod.sh

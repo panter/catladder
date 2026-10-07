@@ -445,17 +445,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in recipe-processing-service/__build_info.json recipe-processing-service/.next recipe-processing-service/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-recipe-processing-service-app-dev.tar
+            else
+              tar -cf catladder-artifacts-recipe-processing-service-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: recipe-processing-service-app-dev
-            path: |-
-              recipe-processing-service/__build_info.json
-              recipe-processing-service/.next
-              recipe-processing-service/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-recipe-processing-service-app-dev.tar
+            if-no-files-found: error
     recipe-processing-service-docker-dev:
       name: recipe-processing-service 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -486,6 +496,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: recipe-processing-service-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-recipe-processing-service-app-dev.tar
+            rm catladder-artifacts-recipe-processing-service-app-dev.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-docker-dev.sh
@@ -817,17 +832,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in recipe-processing-service/__build_info.json recipe-processing-service/.next recipe-processing-service/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-recipe-processing-service-app-review.tar
+            else
+              tar -cf catladder-artifacts-recipe-processing-service-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: recipe-processing-service-app-review
-            path: |-
-              recipe-processing-service/__build_info.json
-              recipe-processing-service/.next
-              recipe-processing-service/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-recipe-processing-service-app-review.tar
+            if-no-files-found: error
     recipe-processing-service-docker-review:
       name: recipe-processing-service 🔨 docker | review
       runs-on: ubuntu-latest
@@ -858,6 +883,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: recipe-processing-service-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-recipe-processing-service-app-review.tar
+            rm catladder-artifacts-recipe-processing-service-app-review.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-docker-review.sh
@@ -1112,17 +1142,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-app-stage.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in recipe-processing-service/__build_info.json recipe-processing-service/.next recipe-processing-service/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-recipe-processing-service-app-stage.tar
+            else
+              tar -cf catladder-artifacts-recipe-processing-service-app-stage.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: recipe-processing-service-app-stage
-            path: |-
-              recipe-processing-service/__build_info.json
-              recipe-processing-service/.next
-              recipe-processing-service/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-recipe-processing-service-app-stage.tar
+            if-no-files-found: error
     recipe-processing-service-docker-stage:
       name: recipe-processing-service 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -1153,6 +1193,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: recipe-processing-service-app-stage
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-recipe-processing-service-app-stage.tar
+            rm catladder-artifacts-recipe-processing-service-app-stage.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-docker-stage.sh
@@ -1599,17 +1644,27 @@ catladder-deploy.yml:
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in recipe-processing-service/__build_info.json recipe-processing-service/.next recipe-processing-service/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-recipe-processing-service-app-prod.tar
+            else
+              tar -cf catladder-artifacts-recipe-processing-service-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: recipe-processing-service-app-prod
-            path: |-
-              recipe-processing-service/__build_info.json
-              recipe-processing-service/.next
-              recipe-processing-service/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-recipe-processing-service-app-prod.tar
+            if-no-files-found: error
     recipe-processing-service-docker-prod:
       name: recipe-processing-service 🔨 docker | prod
       runs-on: ubuntu-latest
@@ -1640,6 +1695,11 @@ catladder-deploy.yml:
           uses: actions/download-artifact@v4
           with:
             name: recipe-processing-service-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-recipe-processing-service-app-prod.tar
+            rm catladder-artifacts-recipe-processing-service-app-prod.tar
+          shell: bash
         - name: 🔨 docker
           id: main
           run: bash .catladder-generated/github/scripts/recipe-processing-service-docker-prod.sh
