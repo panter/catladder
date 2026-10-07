@@ -393,17 +393,27 @@ catladder-main.yml:
           id: main
           run: bash .catladder-generated/github/scripts/lib-app-dev.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in lib/__build_info.json lib/.next lib/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-lib-app-dev.tar
+            else
+              tar -cf catladder-artifacts-lib-app-dev.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: lib-app-dev
-            path: |-
-              lib/__build_info.json
-              lib/.next
-              lib/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-lib-app-dev.tar
+            if-no-files-found: error
     lib-deploy-dev:
       name: lib 🚀 Deploy | dev
       runs-on: ubuntu-latest
@@ -435,6 +445,11 @@ catladder-main.yml:
           uses: actions/download-artifact@v4
           with:
             name: lib-app-dev
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-lib-app-dev.tar
+            rm catladder-artifacts-lib-app-dev.tar
+          shell: bash
         - name: 🚀 Deploy
           id: main
           run: bash .catladder-generated/github/scripts/lib-deploy-dev.sh
@@ -772,17 +787,27 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/lib-app-review.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in lib/__build_info.json lib/.next lib/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-lib-app-review.tar
+            else
+              tar -cf catladder-artifacts-lib-app-review.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: lib-app-review
-            path: |-
-              lib/__build_info.json
-              lib/.next
-              lib/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-lib-app-review.tar
+            if-no-files-found: error
     lib-deploy-review:
       name: lib 🚀 Deploy | review
       runs-on: ubuntu-latest
@@ -814,6 +839,11 @@ catladder-review.yml:
           uses: actions/download-artifact@v4
           with:
             name: lib-app-review
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-lib-app-review.tar
+            rm catladder-artifacts-lib-app-review.tar
+          shell: bash
         - name: 🚀 Deploy
           id: main
           run: bash .catladder-generated/github/scripts/lib-deploy-review.sh
@@ -1043,17 +1073,27 @@ catladder-release.yml:
           id: main
           run: bash .catladder-generated/github/scripts/lib-app-prod.sh
           shell: bash
+        - name: Archive artifacts
+          if: always()
+          run: |-
+            shopt -s nullglob globstar
+            paths=()
+            for path in lib/__build_info.json lib/.next lib/dist; do
+              if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+            done
+            if [ \${#paths[@]} -eq 0 ]; then
+              head -c 10240 /dev/zero > catladder-artifacts-lib-app-prod.tar
+            else
+              tar -cf catladder-artifacts-lib-app-prod.tar -- "\${paths[@]}"
+            fi
+          shell: bash
         - name: Upload artifacts
           if: always()
           uses: actions/upload-artifact@v4
           with:
             name: lib-app-prod
-            path: |-
-              lib/__build_info.json
-              lib/.next
-              lib/dist
-            if-no-files-found: warn
-            include-hidden-files: true
+            path: catladder-artifacts-lib-app-prod.tar
+            if-no-files-found: error
     lib-deploy-prod:
       name: lib 🚀 Deploy | prod
       runs-on: ubuntu-latest
@@ -1082,6 +1122,11 @@ catladder-release.yml:
           uses: actions/download-artifact@v4
           with:
             name: lib-app-prod
+        - name: Extract artifacts
+          run: |-
+            tar -xf catladder-artifacts-lib-app-prod.tar
+            rm catladder-artifacts-lib-app-prod.tar
+          shell: bash
         - name: 🚀 Deploy
           id: main
           run: bash .catladder-generated/github/scripts/lib-deploy-prod.sh

@@ -16,6 +16,10 @@ import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { GithubScriptFiles } from "./scriptFiles";
 import { GITHUB_INJECTED_WORKFLOW_ENV_NAMES } from "./ciVariables";
+import {
+  createArtifactDownloadSteps,
+  createArtifactUploadSteps,
+} from "./artifactArchive";
 
 /**
  * runner variables that only make sense on gitlab runners and must not
@@ -497,13 +501,9 @@ export const makeGithubJob = (
         ? []
         : [{ name: "Checkout", uses: "actions/checkout@v4" }]),
       ...createCacheSteps(context, job),
-      ...needs
-        .filter((n) => n.artifacts)
-        .map((n) => ({
-          name: `Download artifacts from ${n.id}`,
-          uses: "actions/download-artifact@v4",
-          with: { name: n.id },
-        })),
+      ...createArtifactDownloadSteps(
+        needs.filter((n) => n.artifacts).map((n) => n.id),
+      ),
       {
         name: job.name,
         id: "main",
@@ -524,33 +524,18 @@ export const makeGithubJob = (
             },
           ]
         : []),
-      ...(pagesPublishDir
-        ? []
-        : uploadProviderIds.has(id) || artifactPaths.length > 0
-          ? artifactPaths.length > 0
-            ? [
-                {
-                  name: "Upload artifacts",
-                  // gitlab's `artifacts.when`: steps only run on success by default
-                  ...(job.artifacts?.when === "always"
-                    ? { if: "always()" }
-                    : job.artifacts?.when === "on_failure"
-                      ? { if: "failure()" }
-                      : {}),
-                  uses: "actions/upload-artifact@v4",
-                  with: {
-                    name: id,
-                    path: artifactPaths.join("\n"),
-                    "if-no-files-found": "warn",
-                    // gitlab artifacts include everything; upload-artifact
-                    // silently drops hidden files by default — which is
-                    // exactly where next.js builds live (.next)
-                    "include-hidden-files": true,
-                  },
-                },
-              ]
-            : []
-          : []),
+      ...(!pagesPublishDir && artifactPaths.length > 0
+        ? createArtifactUploadSteps(
+            id,
+            artifactPaths,
+            // gitlab's `artifacts.when`: steps only run on success by default
+            job.artifacts?.when === "always"
+              ? "always()"
+              : job.artifacts?.when === "on_failure"
+                ? "failure()"
+                : undefined,
+          )
+        : []),
     ],
   };
 

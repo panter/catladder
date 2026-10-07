@@ -152,6 +152,21 @@ pipelines: { github: { repository: "AcmeCorp/Nautilus" } },
 `yarn catladder project doctor` reports a mixed-case repository whose
 generated workflows still carry the expression.
 
+### Artifacts between jobs (GitHub)
+
+A job's `artifacts.paths` are handed to the jobs that need them as one
+tar archive (`catladder-artifacts-<job-id>.tar`): an "Archive
+artifacts" step tars them after the job, `upload-artifact` uploads the
+archive under the job id, and the consumers get a matching "Extract
+artifacts" step after `download-artifact`. The tar keeps symlinks, file
+modes and repo-relative paths, as GitLab artifacts do. Plain
+`upload-artifact` loses them, which breaks Next.js/Turbopack builds in
+pnpm workspaces: `.next/node_modules/<pkg>-<hash>` are symlinks into
+the pnpm store, and as copied directories they fail at runtime with
+`ERR_MODULE_NOT_FOUND`. If a deployed app shows that error, check that
+the committed workflows contain the archive steps and regenerate if
+they don't.
+
 ## Caching
 
 Cache configuration is generated per build type. **yarn** node builds

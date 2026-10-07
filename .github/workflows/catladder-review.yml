@@ -251,20 +251,27 @@ jobs:
         id: main
         run: bash .catladder-generated/github/scripts/ws-base-app-review.sh
         shell: bash
+      - name: Archive artifacts
+        if: always()
+        run: |-
+          shopt -s nullglob globstar
+          paths=()
+          for path in apps/cli/.next apps/cli/dist packages/bash/.next packages/bash/dist packages/pipeline/.next packages/pipeline/dist; do
+            if [ -e "$path" ] || [ -L "$path" ]; then paths+=("$path"); else echo "::warning::artifact path not found: $path"; fi
+          done
+          if [ ${#paths[@]} -eq 0 ]; then
+            head -c 10240 /dev/zero > catladder-artifacts-ws-base-app-review.tar
+          else
+            tar -cf catladder-artifacts-ws-base-app-review.tar -- "${paths[@]}"
+          fi
+        shell: bash
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ws-base-app-review
-          path: |-
-            apps/cli/.next
-            apps/cli/dist
-            packages/bash/.next
-            packages/bash/dist
-            packages/pipeline/.next
-            packages/pipeline/dist
-          if-no-files-found: warn
-          include-hidden-files: true
+          path: catladder-artifacts-ws-base-app-review.tar
+          if-no-files-found: error
   cli-deploy-review:
     name: cli 🚀 Deploy | review
     runs-on: ubuntu-latest
@@ -297,6 +304,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ws-base-app-review
+      - name: Extract artifacts
+        run: |-
+          tar -xf catladder-artifacts-ws-base-app-review.tar
+          rm catladder-artifacts-ws-base-app-review.tar
+        shell: bash
       - name: 🚀 Deploy
         id: main
         run: bash .catladder-generated/github/scripts/cli-deploy-review.sh
