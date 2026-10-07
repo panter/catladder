@@ -46,8 +46,9 @@ review app`); the same workflow can be dispatched with a PR number to
   tear one down while the pull request is still open (gitlab runs these as manual jobs inside the pipeline
   instead).
 
-Stages: setup → test → build → deploy → verify (post-deploy checks),
-plus stop jobs for review-app teardown.
+Stages: setup → test → build → post-build (`postBuildTests` against
+the build output, block the deploy) → deploy → verify (post-deploy
+checks), plus stop jobs for review-app teardown.
 
 ## Superseded pipelines are cancelled
 

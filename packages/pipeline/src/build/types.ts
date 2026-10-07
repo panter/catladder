@@ -1,6 +1,7 @@
 import type { Artifacts, EnvVars } from "../types";
 import type { JobImageConfig } from "../customImages/projectImages";
 import type { Services } from "../types/gitlab-ci-yml";
+import type { WithPostBuildTests } from "../postBuildTest/types";
 
 import type { CatladderJob, CatladderJobCache } from "../types/jobs";
 
@@ -242,7 +243,8 @@ export type BuildConfigBase = {
          */
         releaseFiles?: string[];
       };
-} & WithCacheConfig;
+} & WithCacheConfig &
+  WithPostBuildTests;
 
 export type BuildConfigNodeBase = BuildConfigBase & {
   /**
@@ -443,7 +445,8 @@ export type BuildConfigFromWorkspace = {
    *
    */
   artifactsExcludePaths?: string[];
-} & WithCacheConfig;
+} & WithCacheConfig &
+  WithPostBuildTests;
 export type BuildConfigStandalone =
   | BuildConfigNode
   | BuildConfigNodeStatic
@@ -510,7 +513,8 @@ export type WorkspaceBuildConfigBase = {
    * tags for the underlying job runner (e.g gitlab)
    */
   jobTags?: string[];
-} & WithCacheConfig;
+} & WithCacheConfig &
+  WithPostBuildTests;
 
 export type WorkspaceBuildConfigNode = {
   type: "node";

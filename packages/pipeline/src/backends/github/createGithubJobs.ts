@@ -531,6 +531,12 @@ export const makeGithubJob = (
             ? [
                 {
                   name: "Upload artifacts",
+                  // gitlab's `artifacts.when`: steps only run on success by default
+                  ...(job.artifacts?.when === "always"
+                    ? { if: "always()" }
+                    : job.artifacts?.when === "on_failure"
+                      ? { if: "failure()" }
+                      : {}),
                   uses: "actions/upload-artifact@v4",
                   with: {
                     name: id,
