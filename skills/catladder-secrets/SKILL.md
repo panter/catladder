@@ -6,7 +6,7 @@ description: Managing environment variables and secrets in a catladder project. 
 # Env vars and secrets with catladder
 
 Environment variables are declared per component in `catladder.ts`;
-secret *values* are never checked into the repo.
+secret _values_ are never checked into the repo.
 
 ## Declaring variables
 
@@ -93,7 +93,7 @@ A few secrets are not typed in by a human but created by
 (`GCLOUD_DEPLOY_credentialsKey`) and the kubernetes deploy credentials
 (`KUBE_TOKEN`, `KUBE_CA_PEM`, `KUBE_URL`). They travel the same route as
 every other secret — vault first, then the enabled CI backends — but
-they are *hidden*: they never show up in `secrets-list`, in the editor
+they are _hidden_: they never show up in `secrets-list`, in the editor
 or in a pulled document, and they must never be set by hand.
 
 Re-running `project setup` **rotates** them (a fresh credential is
@@ -105,7 +105,7 @@ over, so re-run `project setup` to provision them into the new vault.
 ## GitHub pipelines
 
 GitHub Actions cannot read the vault at runtime; secrets are mirrored
-into GitHub *environment* secrets (one GitHub environment per catladder
+into GitHub _environment_ secrets (one GitHub environment per catladder
 env). Sync them with:
 
 ```sh
@@ -121,6 +121,23 @@ enabled.
 direnv) for the `local` environment. If a var is missing locally,
 check its declaration in `catladder.ts` and re-run `yarn catenv` before
 suspecting anything else.
+
+### Read-only cloud access for local use
+
+For google cloud run components, `localAccess` in `catladder.ts`
+(project default at the top level, per env in `environments.<env>`,
+`false` to disable) declares read-only access for local use, e.g.
+`localAccess: { gcp: { presets: ["logs"] } }`. `catladder project setup`
+creates a service account per component/env with exactly those roles and
+stores its key in the secret store under the `local` env (never mirrored
+to CI); `catladder project doctor` reports drift. `catenv` writes the key
+to `.catladder/local-access/gcp-<env>-<component>.json` (0600, gitignored)
+and exports its path as `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE` — not
+as `GOOGLE_APPLICATION_CREDENTIALS`, use it with an isolated
+`CLOUDSDK_CONFIG`, never `gcloud auth` on the personal config. The
+`logs` preset is `roles/logging.viewer` only; `roles/run.viewer` is not
+offered because cloud run revisions carry secrets as plain env vars.
+Write/admin roles are rejected.
 
 ## Related skills
 

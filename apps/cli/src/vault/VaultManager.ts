@@ -1,6 +1,8 @@
 import type { Config } from "@catladder/pipeline";
 import {
   getEnvironment,
+  getLocalAccessGcpEnvs,
+  getLocalAccessGcpSecretName,
   getSecretVarName,
   getVaultConfig,
 } from "@catladder/pipeline";
@@ -165,6 +167,19 @@ export class VaultManager {
   }
 
   private async declaredSecretKeys(componentName: string): Promise<string[]> {
+    return [
+      ...(await this.declaredEnvSecretKeys(componentName)),
+      // the local access keys `project setup` provisions are not part
+      // of any env's vars, but belong to the cached local secrets
+      ...getLocalAccessGcpEnvs(this.config, componentName).map(
+        getLocalAccessGcpSecretName,
+      ),
+    ];
+  }
+
+  private async declaredEnvSecretKeys(
+    componentName: string,
+  ): Promise<string[]> {
     try {
       const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment({
         config: this.config,
