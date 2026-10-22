@@ -13,10 +13,13 @@
  *   whether the run deploys (`deploy` step output):
  *   - source `manual` (a dispatch by a human or agent): always,
  *     provided the PR is open and its CI is green
- *   - source `ci` (dispatched by the trigger) and `label` (the switch
- *     label changed / a draft was marked ready): when the policy says
- *     so — and the CI is green. A label switched on while CI still runs
- *     is no deploy here: the trigger picks it up once CI is green.
+ *   - source `ci` (dispatched by the trigger, which runs after the
+ *     aggregate check succeeded): when the policy says so; the CI is
+ *     green by construction, the guard verifies only the head
+ *   - source `label` (the switch label changed / a draft was marked
+ *     ready): when the policy says so — and the CI is green. A label
+ *     switched on while CI still runs is no deploy here (status
+ *     `pending`): the trigger picks it up once CI is green.
  */
 import {
   type ResolvedReviewAppsConfig,
@@ -201,6 +204,21 @@ export const githubReviewDeployGuardJob = async () => {
         ? `this run is for ${short(headSha)}, but #${pr.number}'s head is ${short(pr.head.sha)} — dispatch the workflow from the pull request's branch ('${pr.head.ref}')`
         : `#${pr.number} moved on to ${short(pr.head.sha)} — its own review run decides`,
     );
+  }
+  // the trigger job dispatches with source `ci` only after the review
+  // run's aggregate check succeeded for this very head — reading the
+  // check again here raced the checks api (a deploy was lost 17 s after
+  // the check completed, zue-zuerich-tourismus#159): the head match
+  // above is the whole verification for a ci dispatch
+  if (source === "ci") {
+    console.log(
+      `deploying the review apps of #${pr.number} (${short(headSha)}): ${reason}; the review run (${AGGREGATE_CHECK_NAME}) dispatched this deploy after it was green`,
+    );
+    appendStepSummary(
+      `🚀 **Deploying** the review apps of #${pr.number} (\`${short(headSha)}\`): ${reason}.`,
+    );
+    setStepOutput("deploy", "true");
+    return;
   }
   const check = await getAggregateCheck(headSha);
   if (!check || check.status !== "completed") {
