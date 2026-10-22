@@ -98,4 +98,21 @@ describe("review deploy guard: label added while the CI runs", () => {
     expect(await deployOutput()).toContain("deploy=true");
     expect(calls.some((c) => c.url.startsWith("statuses/"))).toBe(false);
   });
+
+  it("trusts a ci dispatch: deploys although the checks api still reports the CI in progress", async () => {
+    process.env.CL_DEPLOY_SOURCE = "ci";
+    const calls = mockGithub({ status: "in_progress", conclusion: null });
+    await githubReviewDeployGuardJob();
+    expect(await deployOutput()).toContain("deploy=true");
+    expect(calls.some((c) => c.url.startsWith("commits/"))).toBe(false);
+    expect(calls.some((c) => c.url.startsWith("statuses/"))).toBe(false);
+  });
+
+  it("a ci dispatch for a head the PR moved away from does not deploy", async () => {
+    process.env.CL_DEPLOY_SOURCE = "ci";
+    process.env.CL_HEAD_SHA = "0000000000000000000000000000000000000000";
+    mockGithub({ status: "completed", conclusion: "success" });
+    await githubReviewDeployGuardJob();
+    expect(await deployOutput()).toContain("deploy=false");
+  });
 });
