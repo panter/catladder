@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "fs/promises";
+import { chmod, mkdir, readFile, writeFile } from "fs/promises";
 import { join } from "path";
 import { getProjectRootPath } from "../git/gitProjectInformation";
 
@@ -47,7 +47,7 @@ export const writeSecretsCache = async (
   secrets: CachedSecrets,
 ): Promise<void> => {
   const folder = await getCacheFolder();
-  await mkdir(folder, { recursive: true });
+  await mkdir(folder, { recursive: true, mode: 0o700 });
   // the folder ignores itself, so the cache can never be committed
   await writeFile(join(folder, ".gitignore"), "*\n");
   const cache: SecretsCache = {
@@ -55,7 +55,11 @@ export const writeSecretsCache = async (
     updatedAt: new Date().toISOString(),
     secrets,
   };
-  await writeFile(await getCachePath(), JSON.stringify(cache, null, 2));
+  const path = await getCachePath();
+  // may hold key material (local access keys): owner only
+  await writeFile(path, JSON.stringify(cache, null, 2), { mode: 0o600 });
+  // the mode is only applied when the file is created
+  await chmod(path, 0o600);
 };
 
 /**
