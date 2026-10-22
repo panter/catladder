@@ -13,10 +13,13 @@
  *   whether the run deploys (`deploy` step output):
  *   - source `manual` (a dispatch by a human or agent): always,
  *     provided the PR is open and its CI is green
- *   - source `ci` (dispatched by the trigger) and `label` (the switch
- *     label changed / a draft was marked ready): when the policy says
- *     so — and the CI is green. A label switched on while CI still runs
- *     is no deploy here: the trigger picks it up once CI is green.
+ *   - source `ci` (dispatched by the trigger, which runs after the
+ *     aggregate check succeeded): when the policy says so; the CI is
+ *     green by construction, the guard verifies only the head
+ *   - source `label` (the switch label changed / a draft was marked
+ *     ready): when the policy says so — and the CI is green. A label
+ *     switched on while CI still runs is no deploy here (status
+ *     `pending`): the trigger picks it up once CI is green.
  */
 import {
   type ResolvedReviewAppsConfig,
@@ -38,6 +41,13 @@ const GITHUB_REVIEW_DEPLOY_WORKFLOW = "catladder-deploy-review.yml";
  * packages/pipeline/src/backends/github/aggregateCheckJob.ts.
  */
 const AGGREGATE_CHECK_NAME = "catladder ✅";
+
+/**
+ * the commit status the review app result is reported on. Keep in sync
+ * with REVIEW_APP_STATUS_CONTEXT in
+ * packages/pipeline/src/backends/github/reviewDeployWorkflow.ts.
+ */
+const REVIEW_APP_STATUS_CONTEXT = "catladder review app";
 
 type PullRequest = {
   number: number;
@@ -119,6 +129,29 @@ const getAggregateCheck = async (
   return newest ?? null;
 };
 
+/**
+ * a deploy that waits for the CI must not leave the PR without a
+ * status: a merge gate would see nothing and wait without a reason
+ */
+const reportWaitingForCi = async (sha: string, message: string) => {
+  const response = await githubApi(`statuses/${sha}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      state: "pending",
+      context: REVIEW_APP_STATUS_CONTEXT,
+      description: message.slice(0, 140),
+      target_url: `${process.env.GITHUB_SERVER_URL ?? "https://github.com"}/${requireEnv("GITHUB_REPOSITORY")}/actions/runs/${process.env.GITHUB_RUN_ID ?? ""}`,
+    }),
+  });
+  if (!response.ok) {
+    // informational only — never fail the guard over it
+    console.log(
+      `::warning::reporting the pending review app status failed: ${response.status}`,
+    );
+  }
+};
+
 const short = (sha: string) => sha.slice(0, 7);
 
 const mrState = (pr: PullRequest) => ({
@@ -172,8 +205,29 @@ export const githubReviewDeployGuardJob = async () => {
         : `#${pr.number} moved on to ${short(pr.head.sha)} — its own review run decides`,
     );
   }
+  // the trigger job dispatches with source `ci` only after the review
+  // run's aggregate check succeeded for this very head — reading the
+  // check again here raced the checks api (a deploy was lost 17 s after
+  // the check completed, zue-zuerich-tourismus#159): the head match
+  // above is the whole verification for a ci dispatch
+  if (source === "ci") {
+    console.log(
+      `deploying the review apps of #${pr.number} (${short(headSha)}): ${reason}; the review run (${AGGREGATE_CHECK_NAME}) dispatched this deploy after it was green`,
+    );
+    appendStepSummary(
+      `🚀 **Deploying** the review apps of #${pr.number} (\`${short(headSha)}\`): ${reason}.`,
+    );
+    setStepOutput("deploy", "true");
+    return;
+  }
   const check = await getAggregateCheck(headSha);
   if (!check || check.status !== "completed") {
+    if (!explicit) {
+      await reportWaitingForCi(
+        headSha,
+        `waiting for the CI of ${short(headSha)} (${AGGREGATE_CHECK_NAME}) — the review apps deploy once it is green`,
+      );
+    }
     return refuse(
       `the CI of ${short(headSha)} (${AGGREGATE_CHECK_NAME}) is not finished yet` +
         (explicit

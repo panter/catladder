@@ -117,11 +117,17 @@ through the `▶️ catladder deploy review` workflow
 - when the review workflow is green but didn't deploy, its last job
   (`▶️ trigger review deploy`) reads the PR's labels/draft state again
   and dispatches the deploy if the policy now says so — a label set
-  while CI ran counts;
+  while CI ran counts. The guard trusts that dispatch (the CI is green
+  by construction; it only verifies the PR is open and still on that
+  head) instead of re-reading the check, which raced the checks api.
+  Meanwhile the deploy workflow's guard of the label event defers
+  (the CI isn't finished) and sets the commit status
+  `catladder review app` to `pending` ("waiting for the CI"), so the PR
+  never shows no status;
 - switching the label on (opt-in: add `label`, opt-out: remove
   `skipLabel`) deploys right away if the PR's `catladder ✅` is green;
   switching it off stops the review apps (`🛑 catladder stop review
-  app`), and so does closing the PR — the stop first waits for a
+app`), and so does closing the PR — the stop first waits for a
   review run of the PR that may still be deploying (on close it
   cancels it), so a late deploy can't outlive the teardown;
 - on request, any time (agents included):
