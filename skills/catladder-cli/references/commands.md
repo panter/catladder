@@ -86,6 +86,19 @@ pin the review apps of a merge request (disable their auto-stop) by adding the p
 - `mr` (positional): merge request IID (defaults to the open MR of the current branch)
 - `--pipeline`: trigger a merge-request pipeline so the pin takes effect immediately
 
+## `catladder mr review-app-off [mr]`
+
+stop deploying the review apps of a merge request: switches the reviewApps label off (opt-in: removes it, opt-out: adds the skip label). Running review apps stay until the MR closes or they auto-stop
+
+- `mr` (positional): merge request IID (defaults to the open MR of the current branch)
+
+## `catladder mr review-app-on [mr]`
+
+deploy the review apps of a merge request: switches the reviewApps label on (opt-in: adds it, opt-out: removes the skip label) and triggers a pipeline, since gitlab doesn't start one for label changes
+
+- `mr` (positional): merge request IID (defaults to the open MR of the current branch)
+- `--pipeline`: trigger a merge-request pipeline so the review apps deploy now
+
 ## `catladder mr unpin [mr]`
 
 unpin the review apps of a merge request — the auto-stop timer re-arms with the next deploy

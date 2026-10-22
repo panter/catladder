@@ -32,7 +32,10 @@ const CAPABILITY_IMPLICATIONS: Partial<
   dockerImage: ["build"],
 };
 
-const providesCapability = (job: CatladderJob, capability: CapabilityName) => {
+export const providesCapability = (
+  job: CatladderJob,
+  capability: CapabilityName,
+) => {
   const stageDefault = DEFAULT_STAGE_CAPABILITIES[job.stage];
   const declared = job.provides ?? (stageDefault ? [stageDefault] : []);
   return declared.some(

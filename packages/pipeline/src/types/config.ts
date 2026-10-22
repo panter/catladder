@@ -12,6 +12,10 @@ import type { CatladderStore } from "../store";
 import type { AgentSkillsConfig } from "../agentSkills/types";
 import type { ProjectImageConfig } from "../customImages/projectImages";
 import type { VerifyConfig } from "../verify/types";
+import type {
+  ReviewAppsDeployMode,
+  ReviewAppsDraftsMode,
+} from "../reviewAppsPolicy";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -578,6 +582,61 @@ export type Config<C extends ConfigProps = never> = {
      * @defaultValue "catladder::pin-review"
      */
     pinLabel?: string | false;
+  };
+
+  /**
+   * when merge requests / pull requests deploy their review apps —
+   * useful when many MRs/PRs are opened (e.g. by agents) and most of
+   * them don't need a running instance.
+   *
+   * With anything but the defaults, the delivery chain of every
+   * component's review app (docker image → deploy → verify) waits for
+   * ONE switch per MR/PR instead of running in every pipeline; tests,
+   * lint and audit always run:
+   * - gitlab: a `🚀 deploy review` job (manual, or automatic when the
+   *   label policy says so). Label changes only apply to the next
+   *   pipeline — `catladder mr review-app-on/off` sets the label and
+   *   triggers one.
+   * - github: the review workflow decides at its start (labels, draft)
+   *   and deploys in the same run when the policy says so. Later
+   *   changes go through a `▶️ catladder deploy review` workflow,
+   *   dispatched by the review workflow once green (when the policy now
+   *   says deploy), by adding/removing the label, or by hand with the
+   *   PR number. Switching the label off stops the review apps.
+   *
+   * Per-component `deploy.when` of the review env is ignored then — the
+   * switch covers all components.
+   */
+  reviewApps?: {
+    /**
+     * - auto: every MR/PR deploys (default)
+     * - manual: only on request (play the gate job / dispatch the
+     *   workflow)
+     * - optIn: only while the MR/PR carries `label`
+     * - optOut: unless the MR/PR carries `skipLabel`
+     * @defaultValue "auto"
+     */
+    deploy?: ReviewAppsDeployMode;
+    /**
+     * the opt-in label
+     * @defaultValue "catladder:review-app"
+     */
+    label?: string;
+    /**
+     * the opt-out label
+     * @defaultValue "catladder:no-review-app"
+     */
+    skipLabel?: string;
+    /**
+     * what draft MRs/PRs run:
+     * - likeReady: the same as ready ones (default)
+     * - checksOnly: tests, lint and audit — the review apps deploy once the
+     *   MR/PR is marked ready
+     * - skip: nothing (gitlab: marking an MR ready doesn't start a
+     *   pipeline, the next push does)
+     * @defaultValue "likeReady"
+     */
+    drafts?: ReviewAppsDraftsMode;
   };
 
   /**

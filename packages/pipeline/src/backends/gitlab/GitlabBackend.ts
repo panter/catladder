@@ -17,6 +17,11 @@ import type {
 import { ALL_PIPELINE_TRIGGERS, isBranchTrigger } from "../../types/config";
 import { getConfiguredBranchTriggers } from "../../config/configruedEnvs";
 import { getAutoStopConfig } from "../../autoStop";
+import { getReviewAppsConfig } from "../../reviewApps";
+import {
+  addGitlabReviewDeployGate,
+  REVIEW_DEPLOY_GATE_JOB_NAME,
+} from "./reviewDeployGate";
 import { createAllJobs } from "../../pipeline/createAllJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
@@ -166,15 +171,38 @@ export class GitlabBackend implements PipelineBackend {
       ...ALL_PIPELINE_TRIGGERS,
       ...branchTriggers,
     ];
+    const reviewApps = getReviewAppsConfig(config);
     const jobsPerTrigger = await Promise.all(
-      allTriggers.map(async (trigger) => ({
-        trigger,
-        jobs: await createGitlabJobs(
-          await createAllJobs({ config, trigger, pipelineType: this.type }),
+      allTriggers.map(async (trigger) => {
+        const catladderJobs = await createAllJobs({
+          config,
+          trigger,
+          pipelineType: this.type,
+        });
+        // review deploys behind one switch per MR (reviewApps config)
+        const reviewDeployGate =
+          trigger === "mr"
+            ? addGitlabReviewDeployGate(catladderJobs, reviewApps)
+            : undefined;
+        const jobs = await createGitlabJobs(
+          catladderJobs,
           images,
           getGitlabRulesForTrigger(trigger),
-        ),
-      })),
+        );
+        return {
+          trigger,
+          jobs: reviewDeployGate
+            ? [
+                {
+                  name: REVIEW_DEPLOY_GATE_JOB_NAME,
+                  gitlabJob: reviewDeployGate,
+                  context: null,
+                },
+                ...jobs,
+              ]
+            : jobs,
+        };
+      }),
     );
     const allJobsPerTrigger = jobsPerTrigger.flatMap(({ jobs }) => jobs);
     const stages = getPipelineStages(
@@ -288,6 +316,7 @@ export class GitlabBackend implements PipelineBackend {
       },
       branchPipelines: branchTriggers.map(({ branch }) => branch),
       autoStop: getAutoStopConfig(config),
+      reviewApps,
     });
   }
 }

@@ -10,7 +10,7 @@ import { doGitlabRequest, getProjectInfo } from "../../utils/gitlab";
 
 const PIN_LABEL_COLOR = "#428fdc";
 
-type GitlabMr = {
+export type GitlabMr = {
   iid: number;
   title: string;
   web_url: string;
@@ -40,7 +40,7 @@ const getPinLabel = async (): Promise<string> => {
   return pinLabel;
 };
 
-const findMr = async (
+export const findMr = async (
   io: IO,
   projectId: string,
   mrIid: number | undefined,
@@ -61,30 +61,26 @@ const findMr = async (
   return mrs[0];
 };
 
-const ensurePinLabelExists = async (
+export const ensureLabelExists = async (
   io: IO,
   projectId: string,
-  pinLabel: string,
+  name: string,
+  description: string,
 ) => {
   const existing = await doGitlabRequest<Array<{ name: string }>>(
     io,
-    `projects/${projectId}/labels?search=${encodeURIComponent(pinLabel)}`,
+    `projects/${projectId}/labels?search=${encodeURIComponent(name)}`,
   );
-  if (existing?.some((label) => label.name === pinLabel)) {
+  if (existing?.some((label) => label.name === name)) {
     return;
   }
   await doGitlabRequest(
     io,
     `projects/${projectId}/labels`,
-    {
-      name: pinLabel,
-      color: PIN_LABEL_COLOR,
-      description:
-        "review apps of this MR are pinned — deploys use auto_stop_in: never (managed by catladder)",
-    },
+    { name, color: PIN_LABEL_COLOR, description },
     "POST",
   );
-  io.log(`created the '${pinLabel}' label in the project`);
+  io.log(`created the '${name}' label in the project`);
 };
 
 export const commandMrPin = defineCommand({
@@ -112,7 +108,12 @@ export const commandMrPin = defineCommand({
     const { id: projectId } = await getProjectInfo(ctx);
     const mr = await findMr(ctx, projectId, await ctx.get("mr"));
 
-    await ensurePinLabelExists(ctx, projectId, pinLabel);
+    await ensureLabelExists(
+      ctx,
+      projectId,
+      pinLabel,
+      "review apps of this MR are pinned — deploys use auto_stop_in: never (managed by catladder)",
+    );
 
     if (mr.labels?.includes(pinLabel)) {
       ctx.log(`already pinned: mr!${mr.iid} carries the '${pinLabel}' label`);

@@ -6,6 +6,10 @@ import {
   type ResolvedAutoStopConfig,
 } from "../../autoStop";
 import {
+  GITLAB_DRAFT_MR_CONDITION,
+  type ResolvedReviewAppsConfig,
+} from "../../reviewApps";
+import {
   RULE_IS_MAIN_BRANCH_AND_NOT_RELEASE_COMMIT,
   RULE_IS_MERGE_REQUEST,
   RULE_IS_TAGGED_RELEASE,
@@ -15,10 +19,11 @@ type PickRequired<T, K extends keyof T> = Required<Pick<T, K>> & Omit<T, K>;
 /**
  * gitlab requires a top-level default image for jobs that don't set their
  * own. Every catladder-generated job sets an explicit image, so this
- * fallback is never actually pulled — it just needs to be a valid,
+ * fallback is never pulled for them — it just needs to be a valid,
  * build-free image (a catladder job image would drag in a build job).
+ * Trivial jobs (the review deploy switch) reuse it explicitly.
  */
-const DEFAULT_PIPELINE_IMAGE = "node:22";
+export const DEFAULT_PIPELINE_IMAGE = "node:22";
 
 export const createGitlabPipelineWithDefaults = ({
   image,
@@ -26,6 +31,7 @@ export const createGitlabPipelineWithDefaults = ({
   before_script,
   branchPipelines = [],
   autoStop,
+  reviewApps,
   ...config
 }: PickRequired<Partial<Pipeline<"gitlab">>, "stages" | "jobs"> & {
   /**
@@ -34,6 +40,7 @@ export const createGitlabPipelineWithDefaults = ({
    */
   branchPipelines?: string[];
   autoStop?: ResolvedAutoStopConfig;
+  reviewApps?: ResolvedReviewAppsConfig;
 }): Pipeline<"gitlab"> => {
   const pinLabel = autoStop && autoStop.pinLabel;
   return {
@@ -78,6 +85,16 @@ export const createGitlabPipelineWithDefaults = ({
             PIPELINE_NAME: "Thinking...",
           },
         },
+        // reviewApps.drafts: "skip" — draft MRs get no pipeline (rules
+        // stop at the first match, so this must come first)
+        ...(reviewApps?.drafts === "skip"
+          ? [
+              {
+                if: `${RULE_IS_MERGE_REQUEST.if} && ${GITLAB_DRAFT_MR_CONDITION}`,
+                when: "never" as const,
+              },
+            ]
+          : []),
         // pinned MRs (rules stop at the first match, so this must come
         // before the plain merge-request rule)
         ...(pinLabel
