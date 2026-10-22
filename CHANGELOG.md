@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.7.1 (2026-10-22)
+
+### Patch Changes
+
+- Fix: on GitHub, the review deploy guard no longer re-reads the `catladder ✅` check for a deploy the review run itself dispatched (`source: ci`). The trigger job runs after the aggregate check succeeded, and reading the check again raced the checks api: a deploy dispatched 17 s after the check completed was skipped as "not finished yet" and nobody retried (zue-zuerich-tourismus#159). A ci dispatch now only verifies that the PR is open and still on that head. Manual dispatches keep the full check.
+- Fix: on GitHub, a review app label added while the PR's CI is still running is no longer left without a deploy and without a status. The deploy workflow's guard defers (the CI isn't finished) and now sets the commit status `catladder review app` to `pending` ("waiting for the CI"); once `catladder ✅` is green the review workflow's trigger job reads the labels again and starts the deploy.
+
 ## 5.7.0 (2026-10-22)
 
 ### Minor Changes
