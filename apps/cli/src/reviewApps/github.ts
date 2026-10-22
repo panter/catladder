@@ -39,6 +39,13 @@ const GITHUB_REVIEW_DEPLOY_WORKFLOW = "catladder-deploy-review.yml";
  */
 const AGGREGATE_CHECK_NAME = "catladder ✅";
 
+/**
+ * the commit status the review app result is reported on. Keep in sync
+ * with REVIEW_APP_STATUS_CONTEXT in
+ * packages/pipeline/src/backends/github/reviewDeployWorkflow.ts.
+ */
+const REVIEW_APP_STATUS_CONTEXT = "catladder review app";
+
 type PullRequest = {
   number: number;
   state: string;
@@ -119,6 +126,29 @@ const getAggregateCheck = async (
   return newest ?? null;
 };
 
+/**
+ * a deploy that waits for the CI must not leave the PR without a
+ * status: a merge gate would see nothing and wait without a reason
+ */
+const reportWaitingForCi = async (sha: string, message: string) => {
+  const response = await githubApi(`statuses/${sha}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      state: "pending",
+      context: REVIEW_APP_STATUS_CONTEXT,
+      description: message.slice(0, 140),
+      target_url: `${process.env.GITHUB_SERVER_URL ?? "https://github.com"}/${requireEnv("GITHUB_REPOSITORY")}/actions/runs/${process.env.GITHUB_RUN_ID ?? ""}`,
+    }),
+  });
+  if (!response.ok) {
+    // informational only — never fail the guard over it
+    console.log(
+      `::warning::reporting the pending review app status failed: ${response.status}`,
+    );
+  }
+};
+
 const short = (sha: string) => sha.slice(0, 7);
 
 const mrState = (pr: PullRequest) => ({
@@ -174,6 +204,12 @@ export const githubReviewDeployGuardJob = async () => {
   }
   const check = await getAggregateCheck(headSha);
   if (!check || check.status !== "completed") {
+    if (!explicit) {
+      await reportWaitingForCi(
+        headSha,
+        `waiting for the CI of ${short(headSha)} (${AGGREGATE_CHECK_NAME}) — the review apps deploy once it is green`,
+      );
+    }
     return refuse(
       `the CI of ${short(headSha)} (${AGGREGATE_CHECK_NAME}) is not finished yet` +
         (explicit
