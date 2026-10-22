@@ -1,6 +1,10 @@
 import type { ComponentContext } from "@catladder/pipeline";
 import {
+  CLOUD_RUN_RUNTIME_SA_NAME,
   GCLOUD_DEPLOY_CREDENTIALS_KEY,
+  getManagedRuntimeServiceAccount,
+  getRuntimeServiceAccountBucketRoles,
+  getRuntimeServiceAccountRoles,
   isOfDeployType,
 } from "@catladder/pipeline";
 
@@ -8,7 +12,10 @@ import type { IO } from "../../../../../core/types";
 import { upsertGcloudArtifactsRegistry } from "../../../../../gcloud/artifactsRegistry";
 import { enableGCloudServices } from "../../../../../gcloud/enableServices";
 import { fetchGcloudProjectNumber } from "../../../../../gcloud/getProjectNumber";
-import { upsertGcloudServiceAccountAndSaveSecret } from "../../../../../gcloud/serviceAccounts";
+import {
+  upsertGcloudServiceAccountAndSaveSecret,
+  upsertGcloudServiceAccountWithoutKey,
+} from "../../../../../gcloud/serviceAccounts";
 import { updateCatladderStore } from "../../../../../store/updateCatladderStore";
 
 export const CLOUD_RUN_DEPLOY_SA_NAME = "cl-d";
@@ -80,6 +87,20 @@ export const setupCloudRun = async (
     },
     GCLOUD_DEPLOY_CREDENTIALS_KEY,
   );
+
+  // the identity the services and jobs run as. The deploy account may
+  // act as it through its project-wide roles/iam.serviceAccountUser.
+  if (getManagedRuntimeServiceAccount(config)) {
+    instance.log("upsert runtime service account...");
+    await upsertGcloudServiceAccountWithoutKey(instance, context, {
+      projectId: config.projectId,
+      displayName: "Catladder cloud run runtime",
+      description: "The identity the cloud run services and jobs run as",
+      name: CLOUD_RUN_RUNTIME_SA_NAME,
+      roles: getRuntimeServiceAccountRoles(config),
+      bucketRoles: getRuntimeServiceAccountBucketRoles(config),
+    });
+  }
 
   // the project number is needed at generation time to construct cloud
   // run's deterministic urls (<service>-<projectNumber>.<region>.run.app)

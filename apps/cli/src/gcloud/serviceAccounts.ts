@@ -3,6 +3,7 @@ import type { ComponentContext } from "@catladder/pipeline";
 import { exec } from "child-process-promise";
 import type { IO } from "../core/types";
 import { writeSecretsAndMirror } from "../secrets";
+import { retryWithBackoff } from "../utils/promise";
 import { getGcloudServiceAccountNames } from "./serviceAccountNames";
 
 export const accountExists = async (fullIdentifier: string) => {
@@ -19,9 +20,39 @@ type ServiceAccount = {
   name: string;
   displayName: string;
   roles: string[];
+  /** roles on cloud storage buckets, keyed by bucket name */
+  bucketRoles?: Record<string, string[]>;
   description: string;
 };
-const upsertGcloudServiceAccount = async (
+
+/**
+ * a freshly created service account is not visible to IAM right away:
+ * binding a role to it can fail with "Service account ... does not
+ * exist" for a few seconds (seen on a first `project setup`)
+ */
+const isServiceAccountNotYetVisible = (error: unknown) => {
+  const message = `${(error as { stderr?: string })?.stderr ?? ""} ${
+    (error as Error)?.message ?? ""
+  }`;
+  return /service account .*does not exist|unknown service account/i.test(
+    message,
+  );
+};
+
+const execIamBinding = (command: string) =>
+  retryWithBackoff(() => exec(command), {
+    shouldRetry: isServiceAccountNotYetVisible,
+    onRetry: (_error, attempt, delayMs) =>
+      console.log(
+        `service account not visible to IAM yet, retrying in ${delayMs / 1000}s (attempt ${attempt})...`,
+      ),
+  });
+
+/**
+ * creates the service account if missing and binds its project and
+ * bucket roles. Returns its email.
+ */
+const ensureGcloudServiceAccount = async (
   context: ComponentContext,
   account: ServiceAccount,
 ): Promise<string> => {
@@ -43,10 +74,42 @@ const upsertGcloudServiceAccount = async (
   }
   const memberName = `serviceAccount:${fullIdentifier}`;
   for (const role of roles) {
-    await exec(
+    await execIamBinding(
       `gcloud projects add-iam-policy-binding ${projectId} --member=${memberName} --role=${role} --condition=None`,
     );
   }
+  for (const [bucket, bucketRoles] of Object.entries(
+    account.bucketRoles ?? {},
+  )) {
+    for (const role of bucketRoles) {
+      await execIamBinding(
+        `gcloud storage buckets add-iam-policy-binding gs://${bucket} --member=${memberName} --role=${role}`,
+      );
+    }
+  }
+  return fullIdentifier;
+};
+
+/**
+ * upserts a service account that is only used as an identity (e.g. the
+ * cloud run runtime account) — no key is created
+ */
+export const upsertGcloudServiceAccountWithoutKey = async (
+  instance: IO,
+  context: ComponentContext,
+  account: ServiceAccount,
+): Promise<string> => {
+  instance.log("upserting service account " + account.name + "...");
+  const email = await ensureGcloudServiceAccount(context, account);
+  instance.log("done: " + email);
+  return email;
+};
+
+const upsertGcloudServiceAccount = async (
+  context: ComponentContext,
+  account: ServiceAccount,
+): Promise<string> => {
+  const fullIdentifier = await ensureGcloudServiceAccount(context, account);
 
   // create key
 

@@ -20,11 +20,14 @@ export const getServiceDeployScript = (
   service: DeployConfigCloudRunService | true | undefined,
   nameSuffix?: string,
 ) => {
-  const commonDeployArgs = getCommonDeployArgs(context);
+  const customConfig = service !== true ? service : undefined;
+
+  const commonDeployArgs = getCommonDeployArgs(
+    context,
+    customConfig?.runtimeServiceAccount,
+  );
 
   const serviceName = getServiceName(context);
-
-  const customConfig = service !== true ? service : undefined;
   const command =
     service !== true
       ? (service?.command ??
