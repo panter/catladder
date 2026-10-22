@@ -117,7 +117,10 @@ through the `▶️ catladder deploy review` workflow
 - when the review workflow is green but didn't deploy, its last job
   (`▶️ trigger review deploy`) reads the PR's labels/draft state again
   and dispatches the deploy if the policy now says so — a label set
-  while CI ran counts;
+  while CI ran counts. Meanwhile the deploy workflow's guard defers
+  (the CI isn't finished) and sets the commit status
+  `catladder review app` to `pending` ("waiting for the CI"), so the PR
+  never shows no status;
 - switching the label on (opt-in: add `label`, opt-out: remove
   `skipLabel`) deploys right away if the PR's `catladder ✅` is green;
   switching it off stops the review apps (`🛑 catladder stop review
