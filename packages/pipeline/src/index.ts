@@ -20,3 +20,4 @@ export * from "./utils/measureTime";
 export * from "@catladder/bash";
 export * from "./catenv";
 export * from "./agentSkills";
+export * from "./localAccess";

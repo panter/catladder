@@ -600,3 +600,70 @@ When you need custom health checks, you can use the `livenessProbe` and `startup
   },
 }
 ```
+
+## Read-only access for local use (`localAccess`)
+
+Agents and scripts often need to read what a deployed env did (e.g. the
+logs of a failed job) without using your personal `gcloud` login, which
+expires and cannot reauthenticate non-interactively. Declare which
+read-only access local use gets:
+
+```ts
+export const config = {
+  // project default, applies to every env except `local`
+  localAccess: { gcp: { presets: ["logs"] } },
+  environments: {
+    // per env: replaces the default entirely, `false` switches it off
+    prod: { localAccess: false },
+    review: {
+      localAccess: {
+        gcp: { presets: ["logs"], roles: ["roles/monitoring.viewer"] },
+      },
+    },
+  },
+  // ...
+};
+```
+
+- `presets: ["logs"]` grants `roles/logging.viewer` only. It deliberately
+  does **not** include `roles/run.viewer`: Cloud Run services and jobs are
+  deployed with their secrets as plain env vars, so anything that may read
+  a service or job can read every deployed secret.
+- `roles` takes additional explicit roles. By default only
+  `roles/logging.viewer`, `roles/monitoring.viewer` and
+  `roles/errorreporting.viewer` are accepted (other viewer roles can expose
+  data or secrets, custom roles can hold any permission), and never `roles/viewer` or
+  `roles/run.viewer` (both expose the secrets of Cloud Run revisions).
+  `allowAnyRole: true` lifts the allow-list; write/admin roles, service
+  account impersonation and secret accessors stay rejected, and what you
+  grant beyond the allow-list is your responsibility.
+- Only components deploying to Google Cloud Run are affected, other
+  components are ignored.
+- `logging.viewer` is granted **project-wide**. The project default
+  includes `prod`: if dev and prod share a GCP project, a dev key reads
+  prod logs. Use `environments.prod.localAccess: false` if that is not
+  wanted.
+- Requires a vault that is not a CI variable store (e.g. Bitwarden). With
+  the GitLab vault, `project setup` refuses to provision it, because the
+  key would become a CI variable visible to every job on every branch.
+
+What happens:
+
+- `catladder project setup` creates one service account per
+  component/env (`local-diag-…`), grants exactly the declared roles, removes
+  roles that are no longer declared (and the account, when the declaration
+  is removed), and stores a key in the secret store under the `local` env —
+  never in CI variables. Re-running it is a no-op while the stored key is
+  valid.
+- `catladder project doctor` reports a missing account and missing or
+  undeclared roles, and conditional bindings on the account (setup does
+  not remove those, remove them by hand).
+- Removing a declaration deletes the account, but the key stays in the
+  vault, and envs removed from the config are not cleaned up.
+- If `project setup` rotated the key on another machine, refresh yours with
+  `catenv --vault-mode refresh`.
+- `catenv` writes the key to `.catladder/local-access/gcp-<env>-<component>.json`
+  (mode 0600, the folder is gitignored) and exposes the path as
+  `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE` in the `local` env. It is
+  deliberately not `GOOGLE_APPLICATION_CREDENTIALS`, so ADC and your
+  personal gcloud config are never touched.

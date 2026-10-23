@@ -142,16 +142,15 @@ export class BitwardenVault implements SecretsVault {
     const notes = stringify({ ...previous, ...secrets });
 
     if (existing) {
-      await runBw(bwSession, [
-        "edit",
-        "item",
-        existing.id,
+      await runBw(
+        bwSession,
+        ["edit", "item", existing.id],
         encodePayload({ ...existing, notes }),
-      ]);
+      );
     } else {
-      await runBw(bwSession, [
-        "create",
-        "item",
+      await runBw(
+        bwSession,
+        ["create", "item"],
         encodePayload({
           type: SECURE_NOTE_TYPE,
           secureNote: { type: 0 },
@@ -164,7 +163,7 @@ export class BitwardenVault implements SecretsVault {
               }
             : {}),
         }),
-      ]);
+      );
     }
   }
 }
