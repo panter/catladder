@@ -1,5 +1,6 @@
-import { chmod, mkdir, readFile, writeFile } from "fs/promises";
+import { mkdir, readFile, writeFile } from "fs/promises";
 import { join } from "path";
+import { writePrivateFile } from "../utils/writePrivateFile";
 import { getProjectRootPath } from "../git/gitProjectInformation";
 
 /**
@@ -57,9 +58,7 @@ export const writeSecretsCache = async (
   };
   const path = await getCachePath();
   // may hold key material (local access keys): owner only
-  await writeFile(path, JSON.stringify(cache, null, 2), { mode: 0o600 });
-  // the mode is only applied when the file is created
-  await chmod(path, 0o600);
+  await writePrivateFile(path, JSON.stringify(cache, null, 2));
 };
 
 /**

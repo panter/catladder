@@ -91,7 +91,7 @@ const getProjectBindings = async (projectId: string): Promise<IamBinding[]> =>
       .stdout,
   ).bindings ?? [];
 
-const listUserManagedKeyIds = async (
+export const listUserManagedKeyIds = async (
   fullIdentifier: string,
 ): Promise<string[]> => {
   const keys: { name: string }[] = JSON.parse(
@@ -204,6 +204,12 @@ export const syncLocalAccessServiceAccount = async (
     await vaultManager.cacheSecrets("local", context.name, {
       [secretName]: stored,
     });
+    // at most one key per account: also drop leftovers of a failed run
+    // or keys added by hand
+    await deleteKeys(
+      fullIdentifier,
+      validKeyIds.filter((id) => id !== storedKeyId),
+    );
     return;
   }
 
@@ -221,7 +227,14 @@ export const syncLocalAccessServiceAccount = async (
     { backup: false },
   );
   // only now drop the keys that are not the new one
-  for (const keyId of validKeyIds.filter((id) => id !== privateKeyId)) {
+  await deleteKeys(
+    fullIdentifier,
+    validKeyIds.filter((id) => id !== privateKeyId),
+  );
+};
+
+const deleteKeys = async (fullIdentifier: string, keyIds: string[]) => {
+  for (const keyId of keyIds) {
     await exec(
       `gcloud iam service-accounts keys delete ${keyId} --quiet --iam-account=${fullIdentifier}`,
     );

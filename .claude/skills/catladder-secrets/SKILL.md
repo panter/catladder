@@ -138,9 +138,9 @@ and exports its path as `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE` — not
 as `GOOGLE_APPLICATION_CREDENTIALS`, use it with an isolated
 `CLOUDSDK_CONFIG`, never `gcloud auth` on the personal config. The
 `logs` preset is `roles/logging.viewer` only (project-wide); extra `roles`
-must be `*.viewer`/`*.reader` (never `roles/viewer`/`roles/run.viewer`:
+must be `roles/{logging,monitoring,errorreporting}.viewer` (never `roles/viewer`/`roles/run.viewer`:
 cloud run revisions carry secrets as plain env vars), unless
-`allowAnyRole: true`; write/admin roles are always rejected. Needs a
+`allowAnyRole: true` (also needed for custom roles); write/admin roles are always rejected. Needs a
 non-CI vault (e.g. bitwarden) — `project setup` refuses with the gitlab
 vault. After a key rotation on another machine, run
 `catenv --vault-mode refresh`.

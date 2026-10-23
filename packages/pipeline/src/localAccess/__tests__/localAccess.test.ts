@@ -81,7 +81,14 @@ describe("getLocalAccessGcpRoles", () => {
     "roles/pubsub.publisher",
     "roles/cloudsql.client",
     "roles/pubsub.subscriber",
-  ])("rejects the write/admin role %s", (role) => {
+    // read-only by name, but expose data/secrets or are unknown
+    "roles/storage.objectViewer",
+    "roles/cloudfunctions.viewer",
+    "roles/cloudbuild.builds.viewer",
+    "roles/compute.viewer",
+    "roles/logging.privateLogViewer",
+    "projects/p/roles/custom.reader",
+  ])("rejects the role %s", (role) => {
     const c = config({ localAccess: { gcp: { roles: [role] } } });
     expect(() => getLocalAccessGcpRoles(c, "dev")).toThrow(/not allowed/);
   });
@@ -89,8 +96,8 @@ describe("getLocalAccessGcpRoles", () => {
   it.each([
     "roles/logging.viewer",
     "roles/monitoring.viewer",
-    "projects/p/roles/custom.reader",
-  ])("accepts the read role %s", (role) => {
+    "roles/errorreporting.viewer",
+  ])("accepts the known-safe role %s", (role) => {
     const c = config({ localAccess: { gcp: { roles: [role] } } });
     expect(getLocalAccessGcpRoles(c, "dev")).toEqual([role]);
   });
@@ -103,6 +110,14 @@ describe("getLocalAccessGcpRoles", () => {
     });
     expect(getLocalAccessGcpRoles(ok, "dev")).toEqual([
       "roles/pubsub.subscriber",
+    ]);
+    const custom = config({
+      localAccess: {
+        gcp: { roles: ["projects/p/roles/custom.reader"], allowAnyRole: true },
+      },
+    });
+    expect(getLocalAccessGcpRoles(custom, "dev")).toEqual([
+      "projects/p/roles/custom.reader",
     ]);
     for (const role of ["roles/run.viewer", "roles/owner", "roles/run.admin"]) {
       expect(() =>
@@ -147,6 +162,23 @@ describe("getLocalAccessGcpEnvs", () => {
     });
     expect(getLocalAccessGcpEnvs(c, "web")).toEqual([]);
     expect(getLocalAccessGcpEnvs(c, "api").length).toBeGreaterThan(0);
+  });
+
+  it("respects a per-env deploy override", () => {
+    const c = config({
+      localAccess: { gcp: { presets: ["logs"] } },
+      components: {
+        web: {
+          dir: ".",
+          build: false,
+          deploy: { type: "google-cloudrun", projectId: "p", region: "r" },
+          env: { prod: { deploy: false } },
+        },
+      } as any,
+    });
+    const envs = getLocalAccessGcpEnvs(c, "web");
+    expect(envs).toContain("dev");
+    expect(envs).not.toContain("prod");
   });
 
   it("lists the declaring envs of a component", () => {

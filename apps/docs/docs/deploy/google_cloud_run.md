@@ -629,8 +629,10 @@ export const config = {
   does **not** include `roles/run.viewer`: Cloud Run services and jobs are
   deployed with their secrets as plain env vars, so anything that may read
   a service or job can read every deployed secret.
-- `roles` takes additional explicit roles. By default only `*.viewer` and
-  `*.reader` roles are accepted, and never `roles/viewer` or
+- `roles` takes additional explicit roles. By default only
+  `roles/logging.viewer`, `roles/monitoring.viewer` and
+  `roles/errorreporting.viewer` are accepted (other viewer roles can expose
+  data or secrets, custom roles can hold any permission), and never `roles/viewer` or
   `roles/run.viewer` (both expose the secrets of Cloud Run revisions).
   `allowAnyRole: true` lifts the allow-list; write/admin roles, service
   account impersonation and secret accessors stay rejected, and what you

@@ -5,7 +5,10 @@ import {
   getVaultConfig,
   isOfDeployType,
 } from "@catladder/pipeline";
-import { getLocalAccessServiceAccountNames } from "../../../../../gcloud/localAccess";
+import {
+  getLocalAccessServiceAccountNames,
+  listUserManagedKeyIds,
+} from "../../../../../gcloud/localAccess";
 import { accountExists } from "../../../../../gcloud/serviceAccounts";
 import { mapWithConcurrency } from "../../../../../utils/concurrency";
 import type { DoctorReport } from "./DoctorReport";
@@ -51,7 +54,18 @@ export const checkLocalAccess = async (
           member,
         )
       : [];
-    return { label, declared, fullIdentifier, exists, bound, conditional };
+    const keyCount = exists
+      ? (await listUserManagedKeyIds(fullIdentifier)).length
+      : 0;
+    return {
+      label,
+      declared,
+      fullIdentifier,
+      exists,
+      bound,
+      conditional,
+      keyCount,
+    };
   });
 
   const relevant = results.filter(
@@ -66,8 +80,15 @@ export const checkLocalAccess = async (
       report.fail(`${result.label}: ${result.invalid}`);
       continue;
     }
-    const { label, declared, fullIdentifier, exists, bound, conditional } =
-      result;
+    const {
+      label,
+      declared,
+      fullIdentifier,
+      exists,
+      bound,
+      conditional,
+      keyCount,
+    } = result;
     if (declared.length > 0 && getVaultConfig(config).type === "gitlab") {
       report.fail(
         `${label}: localAccess needs a vault that is not a CI variable store (the gitlab vault would expose the key to every CI job)`,
@@ -102,10 +123,17 @@ export const checkLocalAccess = async (
           "remove them by hand",
         );
       }
+      if (keyCount !== 1) {
+        report.fail(
+          `${label}: local access account has ${keyCount} user-managed keys, expected exactly 1`,
+          heal,
+        );
+      }
       if (
         missing.length === 0 &&
         extra.length === 0 &&
-        conditional.length === 0
+        conditional.length === 0 &&
+        keyCount === 1
       ) {
         report.ok(
           `${label}: local access account has exactly the declared roles`,

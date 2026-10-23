@@ -1,4 +1,5 @@
 import { getAllEnvs } from "../config/configruedEnvs";
+import { getEnvConfig } from "../context/getEnvConfig";
 import { isOfDeployType } from "../deploy/types";
 import type { Config, LocalAccessConfig, LocalAccessGcpPreset } from "../types";
 
@@ -27,6 +28,19 @@ const SECRET_EXPOSING_ROLES: Record<string, string> = {
   "roles/secretmanager.admin": "this role reads secret values",
 };
 
+/**
+ * roles granted without `allowAnyRole`. An explicit list instead of a
+ * name pattern: a role called `*.viewer` / `*.reader` says nothing about
+ * its permissions (custom roles can hold anything, and predefined ones
+ * like storage.objectViewer, cloudfunctions.viewer, compute.viewer or
+ * logging.privateLogViewer expose data or secrets).
+ */
+const SAFE_ROLES = [
+  "roles/logging.viewer",
+  "roles/monitoring.viewer",
+  "roles/errorreporting.viewer",
+];
+
 /** `roles/foo.bar.v1` -> `foo.bar` (version suffixes must not defeat the checks) */
 const getRoleName = (role: string) =>
   (role.split("/").pop() ?? role).replace(/(\.v\d+)+$/i, "");
@@ -35,8 +49,8 @@ const getRoleName = (role: string) =>
  * why a role may not be granted for local access, or undefined if it
  * is acceptable.
  *
- * By default only an allow-list passes: roles named `*.viewer` or
- * `*.reader` (minus the secret exposing ones). `allowAnyRole` lifts the
+ * By default only the roles in {@link SAFE_ROLES} pass; custom roles
+ * and everything else need `allowAnyRole`. `allowAnyRole` lifts the
  * allow-list, but the obvious write/admin/impersonation roles and the
  * secret exposing roles stay denied.
  */
@@ -71,8 +85,8 @@ export const getDeniedLocalAccessRoleReason = (
   ) {
     return "this role allows impersonating service accounts";
   }
-  if (!options.allowAnyRole && !/\.(viewer|reader)$/i.test(name)) {
-    return "only *.viewer / *.reader roles are allowed (set allowAnyRole: true to grant others at your own risk)";
+  if (!options.allowAnyRole && !SAFE_ROLES.includes(role)) {
+    return `only these roles are allowed: ${SAFE_ROLES.join(", ")} (set allowAnyRole: true to grant others at your own risk)`;
   }
   return undefined;
 };
@@ -143,12 +157,15 @@ export const getLocalAccessGcpEnvs = (
   config: Config,
   componentName: string,
 ): string[] =>
-  // only google cloud run components have a project to grant roles in
-  isOfDeployType(config.components[componentName]?.deploy, "google-cloudrun")
-    ? getAllEnvs(config, componentName).filter(
-        (env) => getLocalAccessGcpRoles(config, env).length > 0,
-      )
-    : [];
+  getAllEnvs(config, componentName).filter(
+    (env) =>
+      // only google cloud run envs have a project to grant roles in; the
+      // env's own `deploy` overrides the component's
+      isOfDeployType(
+        getEnvConfig(config, componentName, env).deploy,
+        "google-cloudrun",
+      ) && getLocalAccessGcpRoles(config, env).length > 0,
+  );
 
 /**
  * name of the secret (stored under the `local` env of the component)

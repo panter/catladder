@@ -3,10 +3,11 @@ import {
   getLocalAccessGcpSecretName,
   getSecretVarName,
 } from "@catladder/pipeline";
-import { chmod, mkdir, readdir, rm, writeFile } from "fs/promises";
+import { mkdir, readdir, rm, writeFile } from "fs/promises";
 import { existsSync } from "fs";
 import { join } from "path";
 import type { IO } from "../core/types";
+import { writePrivateFile } from "../utils/writePrivateFile";
 import { getDeclaredLocalAccessEnvs } from "./declared";
 import { getProjectRootPath } from "../git/gitProjectInformation";
 
@@ -98,9 +99,7 @@ export const writeLocalAccessKeyFiles = async (io: IO, config: Config) => {
         continue;
       }
       const path = join(folder, fileName);
-      await writeFile(path, key, { mode: 0o600 });
-      // mode is only applied on creation
-      await chmod(path, 0o600);
+      await writePrivateFile(path, key);
       written.add(fileName);
     }
 

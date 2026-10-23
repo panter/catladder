@@ -320,7 +320,8 @@ export type LocalAccessGcpConfig = {
    */
   roles?: string[];
   /**
-   * lifts the default allow-list (only `*.viewer` / `*.reader` roles).
+   * lifts the default allow-list (only a few known-safe roles:
+   * logging/monitoring/errorreporting viewers; custom roles need this).
    * Write/admin/impersonation roles and roles exposing secrets
    * (`roles/viewer`, `roles/run.viewer`, secret accessors) stay denied.
    * What you grant beyond the allow-list is your responsibility.
