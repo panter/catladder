@@ -216,4 +216,14 @@ Proposed slicing (bead titles; none approved):
 
 ## Follow-ups
 
-See the beads created from this spike (listed on the source bead's dependents; created without the label `approved`).
+Created (discovered-from cat-jqhh, not approved):
+
+- cat-jt32 — GoogleSecretManagerVault (slice A)
+- cat-z9wm — Cloud Run runtime secrets via `--set-secrets`, pinned versions (slice C)
+- cat-bjw3 — skip mirroring runtime-only secrets to CI backends (slice D)
+- cat-s9a2 — verify worker pools / flag conflicts / pricing in a real GCP project (slice E)
+- cat-zdyp — `secrets migrate` (slice B)
+
+Overlap to resolve before approving slice C: existing bead cat-92k.7 ("cloudRun: deliver secret env vars via Secret Manager
+(--set-secrets), opt-in") and spike cat-92k.3 / cat-92k.6 already cover the Cloud Run `--set-secrets` delivery; cat-z9wm
+should probably be merged into cat-92k.7 or depend on it.
