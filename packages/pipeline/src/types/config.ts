@@ -247,6 +247,14 @@ export type EnvironmentConfig = {
    * axes separately.
    */
   inherit?: EnvironmentInheritConfig;
+
+  /**
+   * read-only access to this env's cloud resources for LOCAL use
+   * (agents, scripts), see {@link LocalAccessConfig}. Overrides the
+   * project default (top-level `localAccess`) entirely; `false`
+   * switches it off for this env.
+   */
+  localAccess?: LocalAccessConfig;
 };
 
 /**
@@ -291,6 +299,52 @@ export const isEnvironmentDisabled = (
   environments: EnvironmentsConfig | undefined,
   env: string,
 ): boolean => environments?.[env] === false;
+
+/**
+ * named bundles of gcp roles for {@link LocalAccessGcpConfig}
+ *
+ * - `logs`: `roles/logging.viewer` only. Deliberately NOT
+ *   `roles/run.viewer`: cloud run services/jobs are deployed with
+ *   their secrets as plain env vars, so anything with `run.*.get`
+ *   can read every deployed secret.
+ */
+export type LocalAccessGcpPreset = "logs";
+
+export type LocalAccessGcpConfig = {
+  /** preset role bundles, see {@link LocalAccessGcpPreset} */
+  presets?: LocalAccessGcpPreset[];
+  /**
+   * additional explicit roles (e.g. `roles/monitoring.viewer`).
+   * Write/admin roles are rejected; everything else you grant here is
+   * your responsibility — the key file lives on developer machines.
+   */
+  roles?: string[];
+  /**
+   * lifts the default allow-list (only a few known-safe roles:
+   * logging/monitoring/errorreporting viewers; custom roles need this).
+   * Write/admin/impersonation roles and roles exposing secrets
+   * (`roles/viewer`, `roles/run.viewer`, secret accessors) stay denied.
+   * What you grant beyond the allow-list is your responsibility.
+   */
+  allowAnyRole?: boolean;
+};
+
+/**
+ * which read-only access LOCAL use gets for an env. `project setup`
+ * creates a dedicated service account per component/env, grants exactly
+ * these bindings (and removes bindings no longer declared) and stores
+ * its key in the secret store under the `local` env — never in CI
+ * variables. catenv writes the key to a gitignored file.
+ *
+ * `false` disables it. Without a declaration nothing is created: the
+ * env stays reachable with the personal gcloud login only.
+ */
+export type LocalAccessConfig =
+  | {
+      /** google cloud (only for components deploying to google cloud run) */
+      gcp?: LocalAccessGcpConfig;
+    }
+  | false;
 
 export type EnvironmentInheritConfig =
   | string
@@ -538,6 +592,16 @@ export type Config<C extends ConfigProps = never> = {
    *   A single component opts out with `env.<name>: false` instead.
    */
   environments?: EnvironmentsConfig;
+
+  /**
+   * project default for the read-only access LOCAL use gets per env
+   * (see {@link LocalAccessConfig}), overridable per env in
+   * `environments.<env>.localAccess`. Never applies to the `local` env.
+   *
+   * @example
+   * localAccess: { gcp: { presets: ["logs"] } }
+   */
+  localAccess?: LocalAccessConfig;
 
   /**
    * components (sub apps)
