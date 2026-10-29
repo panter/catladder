@@ -1,5 +1,6 @@
 import type { ComponentContext } from "@catladder/pipeline";
 import {
+  getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpRoles,
   getVaultConfig,
   isOfDeployType,
@@ -9,7 +10,7 @@ import type { IO } from "../../../../../core/types";
 import { syncLocalAccessServiceAccount } from "../../../../../gcloud/localAccess";
 
 /**
- * provisions the read-only local access (`localAccess` in catladder.ts)
+ * provisions the local access (`localAccess` in catladder.ts)
  * of a google cloud run component/env: a dedicated service account with
  * exactly the declared bindings and its key in the secret store. Also
  * removes what is no longer declared.
@@ -22,6 +23,8 @@ export const setupLocalAccess = async (
   if (!isOfDeployType(config, "google-cloudrun")) return;
   const projectConfig = await getProjectConfig();
   const roles = getLocalAccessGcpRoles(projectConfig, context.env);
+  // validates `credentialsEnvVar` (catenv silently skips invalid ones)
+  getLocalAccessGcpCredentialsEnvVars(projectConfig, context.name);
 
   if (roles.length > 0 && getVaultConfig(projectConfig).type === "gitlab") {
     // the gitlab vault stores secrets as CI variables available to every

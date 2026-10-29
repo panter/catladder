@@ -8,7 +8,10 @@ import { existsSync } from "fs";
 import { join } from "path";
 import type { IO } from "../core/types";
 import { writePrivateFile } from "../utils/writePrivateFile";
-import { getDeclaredLocalAccessEnvs } from "./declared";
+import {
+  getDeclaredLocalAccessCredentialsEnvVars,
+  getDeclaredLocalAccessEnvs,
+} from "./declared";
 import { getProjectRootPath } from "../git/gitProjectInformation";
 
 const sanitize = (s: string) => s.replace(/[^A-Za-z0-9]+/g, "_");
@@ -20,7 +23,8 @@ export const getLocalAccessKeyFileName = (env: string, componentName: string) =>
 /**
  * env var exposing the key file path. Deliberately NOT
  * GOOGLE_APPLICATION_CREDENTIALS: the key must only be used where a
- * command opts in (isolated gcloud config), never by ADC.
+ * command opts in (isolated gcloud config, or a declared
+ * `credentialsEnvVar`), never by ADC implicitly.
  */
 export const getLocalAccessKeyFileVarName = (env: string) =>
   `CATLADDER_LOCAL_ACCESS_GCP_${sanitize(env).toUpperCase()}_KEY_FILE`;
@@ -31,20 +35,28 @@ const getFolder = async () =>
 
 /**
  * env vars pointing at the key files that exist for the component
- * (only paths, no secrets)
+ * (only paths, no secrets): one per env, plus the declared
+ * `credentialsEnvVar` names
  */
 export const getLocalAccessKeyFileVars = async (
   config: Config,
   componentName: string,
 ): Promise<Record<string, string>> => {
   const folder = await getFolder();
+  const getPath = (env: string) =>
+    join(folder, getLocalAccessKeyFileName(env, componentName));
   return Object.fromEntries(
-    getDeclaredLocalAccessEnvs(config, componentName)
-      .map((env): [string, string] => [
-        getLocalAccessKeyFileVarName(env),
-        join(folder, getLocalAccessKeyFileName(env, componentName)),
-      ])
-      .filter(([, path]) => existsSync(path)),
+    [
+      ...getDeclaredLocalAccessEnvs(config, componentName).map(
+        (env): [string, string] => [
+          getLocalAccessKeyFileVarName(env),
+          getPath(env),
+        ],
+      ),
+      ...Object.entries(
+        getDeclaredLocalAccessCredentialsEnvVars(config, componentName),
+      ).map(([name, env]): [string, string] => [name, getPath(env)]),
+    ].filter(([, path]) => existsSync(path)),
   );
 };
 

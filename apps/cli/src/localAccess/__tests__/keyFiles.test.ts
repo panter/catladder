@@ -14,6 +14,7 @@ vi.mock("../../git/gitProjectInformation", () => ({
 import {
   getLocalAccessKeyFileName,
   getLocalAccessKeyFileVarName,
+  getLocalAccessKeyFileVars,
   writeLocalAccessKeyFiles,
 } from "../keyFiles";
 
@@ -103,5 +104,63 @@ describe("writeLocalAccessKeyFiles", () => {
     const { io, logs } = ioWith({});
     await writeLocalAccessKeyFiles(io, declared);
     expect(logs.join("\n")).toMatch(/no local access key for dev:web/);
+  });
+});
+
+describe("getLocalAccessKeyFileVars", () => {
+  const folder = () => join(root, ".catladder", "local-access");
+  const keyFile = () => join(folder(), "gcp-dev-web.json");
+  const withKey = async () => {
+    await mkdir(folder(), { recursive: true });
+    await writeFile(keyFile(), "{}");
+  };
+  const vertexDev = config({
+    environments: {
+      dev: {
+        localAccess: {
+          gcp: {
+            presets: ["vertex"],
+            credentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS",
+          },
+        },
+      },
+    },
+  });
+
+  it("exports existing key files under the catladder var", async () => {
+    await withKey();
+    const c = config({
+      environments: { dev: { localAccess: { gcp: { presets: ["logs"] } } } },
+    });
+    expect(await getLocalAccessKeyFileVars(c, "web")).toEqual({
+      CATLADDER_LOCAL_ACCESS_GCP_DEV_KEY_FILE: keyFile(),
+    });
+  });
+
+  it("also exports the declared credentialsEnvVar", async () => {
+    await withKey();
+    expect(await getLocalAccessKeyFileVars(vertexDev, "web")).toEqual({
+      CATLADDER_LOCAL_ACCESS_GCP_DEV_KEY_FILE: keyFile(),
+      GOOGLE_APPLICATION_CREDENTIALS: keyFile(),
+    });
+  });
+
+  it("exports nothing while the key file is missing", async () => {
+    expect(await getLocalAccessKeyFileVars(vertexDev, "web")).toEqual({});
+  });
+
+  it("skips a conflicting credentialsEnvVar instead of throwing", async () => {
+    await withKey();
+    const c = config({
+      localAccess: {
+        gcp: {
+          presets: ["vertex"],
+          credentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS",
+        },
+      },
+    });
+    const vars = await getLocalAccessKeyFileVars(c, "web");
+    expect(vars).not.toHaveProperty("GOOGLE_APPLICATION_CREDENTIALS");
+    expect(vars).toHaveProperty("CATLADDER_LOCAL_ACCESS_GCP_DEV_KEY_FILE");
   });
 });
