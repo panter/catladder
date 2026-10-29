@@ -2,15 +2,15 @@ import type { ComponentContext, Config } from "@catladder/pipeline";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = { exists: true, keys: ["k1"] as string[] };
-vi.mock("../../../../../gcloud/serviceAccounts", () => ({
+vi.mock("../../../../../../gcloud/serviceAccounts", () => ({
   accountExists: async () => state.exists,
 }));
-vi.mock("../../../../../gcloud/localAccess", async (orig) => ({
+vi.mock("../../../../../../gcloud/localAccess", async (orig) => ({
   ...(await orig<object>()),
   listUserManagedKeyIds: async () => state.keys,
 }));
 
-import { checkLocalAccess } from "./checkLocalAccess";
+import { checkLocalAccess } from "../checkLocalAccess";
 
 const cloudRun = { type: "google-cloudrun", projectId: "p", region: "r" };
 
@@ -27,6 +27,7 @@ const config = (extra: Partial<Config> = {}) =>
     customerName: "acme",
     components: { web: { dir: ".", build: false, deploy: cloudRun } },
     localAccess: { gcp: { presets: ["logs"] } },
+    secrets: { vault: { type: "bitwarden" } },
     ...extra,
   }) as Config;
 
@@ -99,7 +100,7 @@ describe("checkLocalAccess", () => {
   });
 
   it("refuses the gitlab vault", async () => {
-    const out = await run(config({ vault: { type: "gitlab" } } as any));
+    const out = await run(config({ secrets: { vault: "gitlab" } } as any));
     expect(out.join("\n")).toMatch(/fail:.*not a CI variable store/);
   });
 
@@ -108,5 +109,19 @@ describe("checkLocalAccess", () => {
       config({ localAccess: { gcp: { roles: ["roles/owner"] } } }),
     );
     expect(out.join("\n")).toMatch(/fail:.*not allowed/);
+  });
+
+  it("reports a credentialsEnvVar exported by several envs", async () => {
+    const out = await run(
+      config({
+        localAccess: {
+          gcp: {
+            presets: ["logs"],
+            credentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS",
+          },
+        },
+      }),
+    );
+    expect(out.join("\n")).toMatch(/fail:.*declared by both/);
   });
 });

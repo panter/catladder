@@ -1,5 +1,8 @@
 import type { Config } from "@catladder/pipeline";
-import { getLocalAccessGcpEnvs } from "@catladder/pipeline";
+import {
+  getLocalAccessGcpCredentialsEnvVars,
+  getLocalAccessGcpEnvs,
+} from "@catladder/pipeline";
 
 /**
  * the envs of a component declaring gcp local access. An invalid
@@ -15,5 +18,21 @@ export const getDeclaredLocalAccessEnvs = (
     return getLocalAccessGcpEnvs(config, componentName);
   } catch {
     return [];
+  }
+};
+
+/**
+ * the declared `credentialsEnvVar` names of a component, mapped to their
+ * env. Empty instead of throwing on an invalid declaration, see
+ * {@link getDeclaredLocalAccessEnvs}.
+ */
+export const getDeclaredLocalAccessCredentialsEnvVars = (
+  config: Config,
+  componentName: string,
+): Record<string, string> => {
+  try {
+    return getLocalAccessGcpCredentialsEnvVars(config, componentName);
+  } catch {
+    return {};
   }
 };

@@ -1,6 +1,7 @@
 import type { ComponentContext, Config } from "@catladder/pipeline";
 import {
   diffRoleBindings,
+  getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpRoles,
   getVaultConfig,
   isOfDeployType,
@@ -33,6 +34,7 @@ export const checkLocalAccess = async (
     let declared: string[];
     try {
       declared = getLocalAccessGcpRoles(config, context.env);
+      getLocalAccessGcpCredentialsEnvVars(config, context.name);
     } catch (e) {
       return { label, invalid: e.message as string };
     }

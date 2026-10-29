@@ -617,7 +617,7 @@ When you need custom health checks, you can use the `livenessProbe` and `startup
 }
 ```
 
-## Read-only access for local use (`localAccess`)
+## Access for local use (`localAccess`)
 
 Agents and scripts often need to read what a deployed env did (e.g. the
 logs of a failed job) without using your personal `gcloud` login, which
@@ -682,4 +682,52 @@ What happens:
   (mode 0600, the folder is gitignored) and exposes the path as
   `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE` in the `local` env. It is
   deliberately not `GOOGLE_APPLICATION_CREDENTIALS`, so ADC and your
-  personal gcloud config are never touched.
+  personal gcloud config are never touched — unless you opt in with
+  `credentialsEnvVar`, see below.
+
+### Vertex AI for local use (`vertex` preset)
+
+Local evals or scripts that call Vertex AI models can use the local
+access service account instead of a personal
+`gcloud auth application-default login`:
+
+```ts
+export const config = {
+  environments: {
+    dev: {
+      localAccess: {
+        gcp: {
+          presets: ["vertex"],
+          // export the key path under this name as well
+          credentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS",
+        },
+      },
+    },
+  },
+  // ...
+};
+```
+
+- `presets: ["vertex"]` grants `roles/aiplatform.user` on the env's GCP
+  project. It is **not read-only**: it may call (and bill) every Vertex AI
+  API of the project and create, change and delete Vertex AI resources
+  (datasets, endpoints, models, training and batch jobs, …). It grants
+  nothing outside Vertex AI. The key lives on developer machines, so keep
+  it to the env whose project you want billed (usually `dev`) and consider
+  a budget alert on that project. The role is only accepted through this
+  preset; `roles: ["roles/aiplatform.user"]` is rejected even with
+  `allowAnyRole`.
+- `credentialsEnvVar` makes catenv export the key file path under that
+  name too, in the `local` env of every Cloud Run component with the
+  declaration. With `GOOGLE_APPLICATION_CREDENTIALS`, google client
+  libraries (e.g. `google-auth-library`, the Vercel AI SDK's Vertex
+  provider) use the key without any ADC login. Every process that loads
+  that env acts as the service account, so declare it in one env only;
+  two envs exporting the same name are rejected (`project setup` fails,
+  `project doctor` reports it, catenv skips it). While the key file exists
+  it overrides a var of the same name declared in `vars`, so such a var
+  can stay as fallback for machines without the key.
+- catenv writes the variable into the component's own `.env` (e.g.
+  `apps/web/.env`), not a root `.env`. A script that runs from the repo
+  root must load that file, e.g.
+  `node --env-file-if-exists=apps/web/.env packages/evals/src/cli.ts`.

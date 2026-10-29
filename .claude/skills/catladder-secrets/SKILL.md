@@ -145,6 +145,17 @@ non-CI vault (e.g. bitwarden) — `project setup` refuses with the gitlab
 vault. After a key rotation on another machine, run
 `catenv --vault-mode refresh`.
 
+The `vertex` preset grants `roles/aiplatform.user` (to call Vertex AI
+models, e.g. local evals). It is **not** read-only: it can use and bill
+every Vertex AI API of the project and create/change/delete Vertex AI
+resources; it is only accepted as a preset, never in `roles`. Add
+`credentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS"` (in one env only)
+to have catenv export the key path under that name as well, so google
+client libraries use it without `gcloud auth application-default login`.
+The variable lands in the component's `.env` (e.g. `apps/web/.env`), not
+in a root `.env`: scripts run from the repo root must load that file
+(`node --env-file-if-exists=apps/web/.env …`).
+
 ## Related skills
 
 - `catladder-config` — general catladder.ts structure and regeneration

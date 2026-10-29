@@ -7,6 +7,9 @@ export const LOCAL_ACCESS_GCP_PRESETS: Record<LocalAccessGcpPreset, string[]> =
   {
     // no run.viewer on purpose, see LocalAccessGcpPreset
     logs: ["roles/logging.viewer"],
+    // not read-only, see LocalAccessGcpPreset; only reachable as a
+    // preset, getDeniedLocalAccessRoleReason rejects it in `roles`
+    vertex: ["roles/aiplatform.user"],
   };
 
 /** name prefix of the service account `project setup` creates (see getGcloudServiceAccountNames) */
@@ -186,3 +189,34 @@ export const diffRoleBindings = (
   missing: desired.filter((role) => !current.includes(role)),
   extra: current.filter((role) => !desired.includes(role)),
 });
+
+const ENV_VAR_NAME_FORMAT = /^[A-Za-z_][A-Za-z0-9_]*$/;
+
+/**
+ * the extra env var names (`credentialsEnvVar`) under which the local
+ * env of a component exports the key file path, mapped to the env whose
+ * key they point at. Throws on a malformed name or on two envs
+ * exporting the same name (e.g. a project default declaring it).
+ */
+export const getLocalAccessGcpCredentialsEnvVars = (
+  config: Config,
+  componentName: string,
+): Record<string, string> => {
+  const vars: Record<string, string> = {};
+  for (const env of getLocalAccessGcpEnvs(config, componentName)) {
+    const name = getLocalAccessConfig(config, env)?.gcp?.credentialsEnvVar;
+    if (!name) continue;
+    if (!ENV_VAR_NAME_FORMAT.test(name)) {
+      throw new Error(
+        `localAccess (${env}): credentialsEnvVar '${name}' is not a valid env var name`,
+      );
+    }
+    if (vars[name]) {
+      throw new Error(
+        `localAccess (${componentName}): credentialsEnvVar '${name}' is declared by both ${vars[name]} and ${env}; declare it in one env only (environments.<env>.localAccess)`,
+      );
+    }
+    vars[name] = env;
+  }
+  return vars;
+};

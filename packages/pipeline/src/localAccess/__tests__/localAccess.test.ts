@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { Config } from "../../types";
 import {
   diffRoleBindings,
+  getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpEnvs,
   getLocalAccessGcpRoles,
   getLocalAccessGcpSecretName,
@@ -131,6 +132,27 @@ describe("getLocalAccessGcpRoles", () => {
     }
   });
 
+  it("expands the vertex preset to aiplatform.user", () => {
+    const c = config({
+      localAccess: { gcp: { presets: ["logs", "vertex"] } },
+    });
+    expect(getLocalAccessGcpRoles(c, "dev")).toEqual([
+      "roles/aiplatform.user",
+      "roles/logging.viewer",
+    ]);
+  });
+
+  it("grants aiplatform.user only through the vertex preset", () => {
+    for (const allowAnyRole of [false, true]) {
+      const c = config({
+        localAccess: {
+          gcp: { roles: ["roles/aiplatform.user"], allowAnyRole },
+        },
+      });
+      expect(() => getLocalAccessGcpRoles(c, "dev")).toThrow(/not allowed/);
+    }
+  });
+
   it("rejects malformed roles and unknown presets", () => {
     expect(() =>
       getLocalAccessGcpRoles(
@@ -193,6 +215,67 @@ describe("getLocalAccessGcpEnvs", () => {
       environments: { dev: { localAccess: { gcp: { presets: ["logs"] } } } },
     });
     expect(getLocalAccessGcpEnvs(c, "web")).toEqual(["dev"]);
+  });
+});
+
+describe("getLocalAccessGcpCredentialsEnvVars", () => {
+  const cloudRun = {
+    web: {
+      dir: ".",
+      build: false,
+      deploy: { type: "google-cloudrun", projectId: "p", region: "r" },
+    },
+  } as any;
+  const vertex = (credentialsEnvVar?: string) => ({
+    gcp: { presets: ["vertex" as const], credentialsEnvVar },
+  });
+
+  it("maps the declared name to its env", () => {
+    const c = config({
+      components: cloudRun,
+      localAccess: { gcp: { presets: ["logs"] } },
+      environments: {
+        dev: { localAccess: vertex("GOOGLE_APPLICATION_CREDENTIALS") },
+      },
+    });
+    expect(getLocalAccessGcpCredentialsEnvVars(c, "web")).toEqual({
+      GOOGLE_APPLICATION_CREDENTIALS: "dev",
+    });
+  });
+
+  it("is empty without a declared name or for other deploy types", () => {
+    expect(
+      getLocalAccessGcpCredentialsEnvVars(
+        config({ components: cloudRun, localAccess: vertex() }),
+        "web",
+      ),
+    ).toEqual({});
+    expect(
+      getLocalAccessGcpCredentialsEnvVars(
+        config({ localAccess: vertex("GOOGLE_APPLICATION_CREDENTIALS") }),
+        "web",
+      ),
+    ).toEqual({});
+  });
+
+  it("rejects a name exported by two envs", () => {
+    const c = config({
+      components: cloudRun,
+      localAccess: vertex("GOOGLE_APPLICATION_CREDENTIALS"),
+    });
+    expect(() => getLocalAccessGcpCredentialsEnvVars(c, "web")).toThrow(
+      /declared by both/,
+    );
+  });
+
+  it("rejects an invalid name", () => {
+    const c = config({
+      components: cloudRun,
+      environments: { dev: { localAccess: vertex("NOT-VALID") } },
+    });
+    expect(() => getLocalAccessGcpCredentialsEnvVars(c, "web")).toThrow(
+      /not a valid env var name/,
+    );
   });
 });
 

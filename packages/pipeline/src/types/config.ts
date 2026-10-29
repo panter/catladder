@@ -307,8 +307,13 @@ export const isEnvironmentDisabled = (
  *   `roles/run.viewer`: cloud run services/jobs are deployed with
  *   their secrets as plain env vars, so anything with `run.*.get`
  *   can read every deployed secret.
+ * - `vertex`: `roles/aiplatform.user`, to call Vertex AI models (e.g.
+ *   for local evals). NOT read-only: it may use (and bill) every Vertex
+ *   AI API of the project and create, change and delete Vertex AI
+ *   resources (datasets, endpoints, models, jobs). It reads no other
+ *   service's data. Only available as a preset, `roles` rejects it.
  */
-export type LocalAccessGcpPreset = "logs";
+export type LocalAccessGcpPreset = "logs" | "vertex";
 
 export type LocalAccessGcpConfig = {
   /** preset role bundles, see {@link LocalAccessGcpPreset} */
@@ -327,10 +332,23 @@ export type LocalAccessGcpConfig = {
    * What you grant beyond the allow-list is your responsibility.
    */
   allowAnyRole?: boolean;
+  /**
+   * also export the key file path under this env var name in the
+   * `local` env of the component (in addition to
+   * `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE`), e.g.
+   * `GOOGLE_APPLICATION_CREDENTIALS` so google client libraries use the
+   * key instead of a personal ADC login. Every process that loads the
+   * component's env then acts as the service account, so declare it in
+   * one env only (two envs exporting the same name are rejected).
+   * Overrides a var of the same name declared in `vars` while the key
+   * file exists.
+   */
+  credentialsEnvVar?: string;
 };
 
 /**
- * which read-only access LOCAL use gets for an env. `project setup`
+ * which access LOCAL use gets for an env (read-only, unless a preset
+ * like `vertex` says otherwise). `project setup`
  * creates a dedicated service account per component/env, grants exactly
  * these bindings (and removes bindings no longer declared) and stores
  * its key in the secret store under the `local` env — never in CI
