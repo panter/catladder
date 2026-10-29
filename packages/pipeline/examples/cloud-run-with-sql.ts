@@ -49,7 +49,8 @@ const config = {
             when: "schedule",
             job: "send-reminders",
             args: ["--only-admins", "--verbose=true"],
-            schedule: "0 * * * *",
+            schedule: "0 9 * * *",
+            timeZone: "Europe/Zurich",
           },
           ["send-reminders"]: {
             type: "job",

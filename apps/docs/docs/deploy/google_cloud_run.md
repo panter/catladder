@@ -191,6 +191,22 @@ deploy: {
 }
 ```
 
+Schedules are interpreted in UTC by default, so a job scheduled at a fixed local time shifts by an hour whenever daylight saving time starts or ends. Set `timeZone` (an IANA name) to keep it at the same local time all year:
+
+```ts
+execute: {
+  "import-sales": {
+    type: "job",
+    job: "import-sales",
+    when: "schedule",
+    schedule: "0 9 * * *", // <-- 09:00 Swiss time, summer and winter
+    timeZone: "Europe/Zurich",
+  }
+}
+```
+
+`timeZone` works for both `type: "job"` and `type: "http"` schedules.
+
 You can also call an http endpoint on a schedule. This is useful if you have a background worker that can be triggerd by an http request.
 
 ```ts
