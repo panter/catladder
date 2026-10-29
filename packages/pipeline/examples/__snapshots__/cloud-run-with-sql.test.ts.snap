@@ -2522,9 +2522,9 @@ exist_scheduler_names="$(
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"
 current_scheduler_name="pan-test-app-dev-api-send-reminders-admins"
 if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 else
-  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 fi
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"
 current_scheduler_name="pan-test-app-dev-api-send-reminders"
@@ -2981,9 +2981,9 @@ exist_scheduler_names="$(
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-send-reminders:run"
 current_scheduler_name="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-send-reminders-admins"
 if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 else
-  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 fi
 current_job_uri="\${ROOT_URL}/myEndpoint"
 current_scheduler_name="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api" | awk '{print tolower($0)}')-call-http-endpoint"
@@ -3310,9 +3310,9 @@ exist_scheduler_names="$(
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"
 current_scheduler_name="pan-test-app-stage-api-send-reminders-admins"
 if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 else
-  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 fi
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"
 current_scheduler_name="pan-test-app-stage-api-send-reminders"
@@ -3637,9 +3637,9 @@ exist_scheduler_names="$(
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-send-reminders:run"
 current_scheduler_name="pan-test-app-prod-api-send-reminders-admins"
 if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 else
-  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+  gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
 fi
 current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-send-reminders:run"
 current_scheduler_name="pan-test-app-prod-api-send-reminders"
@@ -4374,9 +4374,9 @@ create release:
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"
       current_scheduler_name="pan-test-app-dev-api-send-reminders-admins"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       fi
     - |-
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-dev-api-send-reminders:run"
@@ -4895,9 +4895,9 @@ create release:
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders:run"
       current_scheduler_name="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-api" | awk '{print tolower($0)}')-send-reminders-admins"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       fi
     - |-
       current_job_uri="\${ROOT_URL}/myEndpoint"
@@ -5293,9 +5293,9 @@ create release:
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"
       current_scheduler_name="pan-test-app-stage-api-send-reminders-admins"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       fi
     - |-
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-stage-api-send-reminders:run"
@@ -5678,9 +5678,9 @@ create release:
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-send-reminders:run"
       current_scheduler_name="pan-test-app-prod-api-send-reminders-admins"
       if echo "$exist_scheduler_names" | grep -Fx "$current_scheduler_name" >/dev/null; then
-        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs update http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       else
-        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 * * * *" --max-retry-attempts=0
+        gcloud scheduler jobs create http "$current_scheduler_name" --project=google-project-id --location=europe-west6 --uri="$current_job_uri" --message-body="{\\"overrides\\":{\\"containerOverrides\\":[{\\"args\\":[\\"--only-admins\\",\\"--verbose=true\\"]}]}}" --http-method=POST --oauth-service-account-email="123456789012-compute@developer.gserviceaccount.com" --schedule="0 9 * * *" --time-zone="Europe/Zurich" --max-retry-attempts=0
       fi
     - |-
       current_job_uri="https://europe-west6-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/google-project-id/jobs/pan-test-app-prod-api-send-reminders:run"
