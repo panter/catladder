@@ -197,7 +197,11 @@ closed (pinning does not apply there).
 Jobs run in catladder-provided images (`🐳 catladder image <name>` build
 jobs). Their definitions are materialized into
 `.catladder-generated/images/` and built in the project's own registry
-under `catladder/` (content-hashed, rebuilt only on change).
+under `catladder/` (content-hashed, rebuilt only on change). Each image
+dir carries an `IMAGE_TAG` file with the current tag, so a tag change
+always shows up as a changed file. If jobs fail with an image pull
+error (`…/catladder/<name>:<tag>: not found`), check that the generated
+files are committed, and that the `🐳 catladder image <name>` job ran.
 `.catladder-generated/catci/` holds a small bundled CI companion used by
 generated jobs (e.g. the release security audit) plus a `package.json`
 pinning the folder to CommonJS (needed when the project's root
