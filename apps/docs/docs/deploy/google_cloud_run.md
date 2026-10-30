@@ -685,6 +685,50 @@ What happens:
   personal gcloud config are never touched — unless you opt in with
   `credentialsEnvVar`, see below.
 
+### Read-only database access (`db: "readonly"`)
+
+Components with `cloudSql` can additionally get a Postgres role that may
+only `SELECT`, instead of using the app user with a read-only session:
+
+```ts
+export const config = {
+  environments: {
+    dev: { localAccess: { db: "readonly" } },
+    // prod needs an explicit opt-in
+    // prod: { localAccess: { db: { mode: "readonly", allowProd: true } } },
+  },
+  // ...
+};
+```
+
+- `catladder project setup` connects through the Cloud SQL proxy as the app
+  user (needs `psql` and `cloud-sql-proxy`) and creates the role
+  `catladder_readonly`: `CONNECT`, `USAGE` on the `public` schema and
+  `SELECT` on all its tables, plus default privileges so tables the app user
+  creates later are readable too. Every session of the role is read-only
+  (`default_transaction_read_only`). Re-running keeps the stored password.
+- The credentials are stored in the secret store under the `local` env
+  (never in CI variables), like the service account key. Removing the
+  declaration drops the role; the stored credentials stay in the vault.
+- The local access service account additionally gets
+  `roles/cloudsql.client`, which the proxy needs. That role is
+  **project-wide**: the key can connect to every Cloud SQL instance of the
+  GCP project (logging in still needs a password).
+- `prod` envs are skipped by the project default; declare
+  `db: { mode: "readonly", allowProd: true }` on the env to opt in.
+- Review envs have one database per merge request that does not exist before
+  the deploy, so `project setup` cannot grant on it and skips it with a hint.
+  Use `dev` (or another env with a fixed database name).
+- `catenv` writes `.catladder/local-access/db-<env>-<component>.env`
+  (mode 0600, gitignored) with `PGHOST`/`PGPORT`/`PGUSER`/`PGPASSWORD`/
+  `PGDATABASE`, `DATABASE_URL` and `CLOUD_SQL_INSTANCE_CONNECTION_NAME`, and
+  exposes its path as `CATLADDER_LOCAL_ACCESS_DB_<ENV>_ENV_FILE`. The file
+  points at `localhost:54330`: start the proxy with the key of the local
+  access service account, e.g.
+  `cloud-sql-proxy --credentials-file "$CATLADDER_LOCAL_ACCESS_GCP_DEV_KEY_FILE" --port 54330 <instance>`.
+- `project doctor` checks the declaration (needs `cloudSql`) and the
+  `roles/cloudsql.client` binding; it does not connect to the database.
+
 ### Vertex AI for local use (`vertex` preset)
 
 Local evals or scripts that call Vertex AI models can use the local
