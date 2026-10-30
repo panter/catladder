@@ -1,7 +1,9 @@
 import type { Config } from "@catladder/pipeline";
 import {
+  getLocalAccessDbSecretName,
   getLocalAccessGcpSecretName,
   getSecretVarName,
+  LOCAL_ACCESS_DB_LOCAL_PORT,
 } from "@catladder/pipeline";
 import { mkdir, readdir, rm, writeFile } from "fs/promises";
 import { existsSync } from "fs";
@@ -10,6 +12,7 @@ import type { IO } from "../core/types";
 import { writePrivateFile } from "../utils/writePrivateFile";
 import {
   getDeclaredLocalAccessCredentialsEnvVars,
+  getDeclaredLocalAccessDbEnvs,
   getDeclaredLocalAccessEnvs,
 } from "./declared";
 import { getProjectRootPath } from "../git/gitProjectInformation";
@@ -29,6 +32,36 @@ export const getLocalAccessKeyFileName = (env: string, componentName: string) =>
 export const getLocalAccessKeyFileVarName = (env: string) =>
   `CATLADDER_LOCAL_ACCESS_GCP_${sanitize(env).toUpperCase()}_KEY_FILE`;
 
+/** file name of the read-only db connection of a component/env */
+export const getLocalAccessDbFileName = (env: string, componentName: string) =>
+  `db-${sanitize(env)}-${sanitize(componentName)}.env`;
+
+/** env var exposing the path of the read-only db connection file */
+export const getLocalAccessDbFileVarName = (env: string) =>
+  `CATLADDER_LOCAL_ACCESS_DB_${sanitize(env).toUpperCase()}_ENV_FILE`;
+
+/**
+ * content of the db connection file (dotenv / libpq variables). The
+ * cloud sql proxy is not started by catenv: run it on
+ * {@link LOCAL_ACCESS_DB_LOCAL_PORT} with the env's key file, e.g.
+ * `cloud-sql-proxy --credentials-file $CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE
+ * --port 54330 $CLOUD_SQL_INSTANCE_CONNECTION_NAME`.
+ */
+export const renderLocalAccessDbEnvFile = (raw: string): string => {
+  const { user, password, database, instanceConnectionName } = JSON.parse(raw);
+  const port = LOCAL_ACCESS_DB_LOCAL_PORT;
+  return [
+    `CLOUD_SQL_INSTANCE_CONNECTION_NAME="${instanceConnectionName}"`,
+    `PGHOST="localhost"`,
+    `PGPORT="${port}"`,
+    `PGUSER="${user}"`,
+    `PGPASSWORD="${password}"`,
+    `PGDATABASE="${database}"`,
+    `DATABASE_URL="postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@localhost:${port}/${encodeURIComponent(database)}"`,
+    "",
+  ].join("\n");
+};
+
 // inside .catladder/, which ignores itself (see vault/cache.ts)
 const getFolder = async () =>
   join(await getProjectRootPath(), ".catladder", "local-access");
@@ -47,6 +80,12 @@ export const getLocalAccessKeyFileVars = async (
     join(folder, getLocalAccessKeyFileName(env, componentName));
   return Object.fromEntries(
     [
+      ...getDeclaredLocalAccessDbEnvs(config, componentName).map(
+        (env): [string, string] => [
+          getLocalAccessDbFileVarName(env),
+          join(folder, getLocalAccessDbFileName(env, componentName)),
+        ],
+      ),
       ...getDeclaredLocalAccessEnvs(config, componentName).map(
         (env): [string, string] => [
           getLocalAccessKeyFileVarName(env),
@@ -71,7 +110,8 @@ export const getLocalAccessKeyFileVars = async (
  * machine, refresh with `catenv --vault-mode refresh`.
  */
 export const writeLocalAccessKeyFiles = async (io: IO, config: Config) => {
-  const wanted = Object.keys(config.components).flatMap((componentName) =>
+  const components = Object.keys(config.components);
+  const wanted = components.flatMap((componentName) =>
     getDeclaredLocalAccessEnvs(config, componentName).map((env) => ({
       env,
       componentName,
@@ -81,19 +121,36 @@ export const writeLocalAccessKeyFiles = async (io: IO, config: Config) => {
         getLocalAccessGcpSecretName(env),
       ),
       fileName: getLocalAccessKeyFileName(env, componentName),
+      render: (secret: string) => secret,
+      what: "key",
     })),
   );
+  const wantedDb = components.flatMap((componentName) =>
+    getDeclaredLocalAccessDbEnvs(config, componentName).map((env) => ({
+      env,
+      componentName,
+      secretName: getSecretVarName(
+        "local",
+        componentName,
+        getLocalAccessDbSecretName(env),
+      ),
+      fileName: getLocalAccessDbFileName(env, componentName),
+      render: renderLocalAccessDbEnvFile,
+      what: "db credentials",
+    })),
+  );
+  const all = [...wanted, ...wantedDb];
 
   const folder = await getFolder();
-  if (wanted.length === 0 && !existsSync(folder)) return;
+  if (all.length === 0 && !existsSync(folder)) return;
 
   try {
     const secrets =
-      wanted.length > 0
+      all.length > 0
         ? await (
             await io.getVaultManager()
           ).readSecrets(
-            wanted.map((w) => w.secretName),
+            all.map((w) => w.secretName),
             io,
           )
         : {};
@@ -102,16 +159,23 @@ export const writeLocalAccessKeyFiles = async (io: IO, config: Config) => {
     await writeFile(join(folder, "..", ".gitignore"), "*\n");
 
     const written = new Set<string>();
-    for (const { secretName, fileName, env, componentName } of wanted) {
-      const key = secrets[secretName];
-      if (!key) {
+    for (const {
+      secretName,
+      fileName,
+      env,
+      componentName,
+      render,
+      what,
+    } of all) {
+      const secret = secrets[secretName];
+      if (!secret) {
         io.log(
-          `⚠️ no local access key for ${env}:${componentName} in the secret store — run \`catladder project setup\` (or \`catenv --vault-mode refresh\` if it was set up on another machine)`,
+          `⚠️ no local access ${what} for ${env}:${componentName} in the secret store — run \`catladder project setup\` (or \`catenv --vault-mode refresh\` if it was set up on another machine)`,
         );
         continue;
       }
       const path = join(folder, fileName);
-      await writePrivateFile(path, key);
+      await writePrivateFile(path, render(secret));
       written.add(fileName);
     }
 

@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { Config } from "../../types";
 import {
   diffRoleBindings,
+  getLocalAccessDb,
+  getLocalAccessDbEnvs,
+  getLocalAccessDbSecretName,
   getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpEnvs,
   getLocalAccessGcpRoles,
@@ -297,5 +300,113 @@ describe("diffRoleBindings", () => {
       extra: ["c"],
     });
     expect(diffRoleBindings(["a"], ["a"])).toEqual({ missing: [], extra: [] });
+  });
+});
+
+describe("db access", () => {
+  const cloudRun = (cloudSql: boolean) => ({
+    dir: ".",
+    build: false as const,
+    deploy: {
+      type: "google-cloudrun" as const,
+      projectId: "p",
+      region: "europe-west6" as const,
+      service: {},
+      ...(cloudSql
+        ? {
+            cloudSql: {
+              type: "unmanaged" as const,
+              instanceConnectionName: "p:r:i",
+            },
+          }
+        : {}),
+    },
+  });
+
+  it("is off without a declaration", () => {
+    expect(getLocalAccessDb(config({}), "dev")).toBeUndefined();
+  });
+
+  it("reads the readonly shorthand and the object form", () => {
+    expect(
+      getLocalAccessDb(config({ localAccess: { db: "readonly" } }), "dev"),
+    ).toBe("readonly");
+    expect(
+      getLocalAccessDb(
+        config({ localAccess: { db: { mode: "readonly" } } }),
+        "review",
+      ),
+    ).toBe("readonly");
+  });
+
+  it("skips prod for the project default, allows it with allowProd", () => {
+    const c = config({ localAccess: { db: "readonly" } });
+    expect(getLocalAccessDb(c, "prod")).toBeUndefined();
+    const allowed = config({
+      localAccess: { db: { mode: "readonly", allowProd: true } },
+    });
+    expect(getLocalAccessDb(allowed, "prod")).toBe("readonly");
+  });
+
+  it("rejects an env's own prod declaration without allowProd", () => {
+    const c = config({
+      environments: { prod: { localAccess: { db: "readonly" } } },
+    });
+    expect(() => getLocalAccessDb(c, "prod")).toThrow(/allowProd/);
+  });
+
+  it("rejects custom envs of type prod", () => {
+    const c = config({
+      environments: {
+        live: { type: "prod", localAccess: { db: "readonly" } },
+      },
+    });
+    expect(() => getLocalAccessDb(c, "live")).toThrow(/prod/);
+  });
+
+  it("rejects an unknown mode", () => {
+    const c = config({ localAccess: { db: "readwrite" as any } });
+    expect(() => getLocalAccessDb(c, "dev")).toThrow(/unknown db mode/);
+  });
+
+  it("adds the cloudsql client role, also without gcp presets", () => {
+    const c = config({ localAccess: { db: "readonly" } });
+    expect(getLocalAccessGcpRoles(c, "dev")).toEqual(["roles/cloudsql.client"]);
+    const withLogs = config({
+      localAccess: { gcp: { presets: ["logs"] }, db: "readonly" },
+    });
+    expect(getLocalAccessGcpRoles(withLogs, "dev")).toEqual([
+      "roles/cloudsql.client",
+      "roles/logging.viewer",
+    ]);
+  });
+
+  it("still rejects the client role in explicit roles", () => {
+    const c = config({
+      localAccess: { gcp: { roles: ["roles/cloudsql.client"] } },
+    });
+    expect(() => getLocalAccessGcpRoles(c, "dev")).toThrow(/not allowed/);
+  });
+
+  it("only lists envs of cloud run components with cloudSql", () => {
+    const c = config({
+      localAccess: { db: "readonly" },
+      environments: { prod: { localAccess: false } },
+      components: {
+        withSql: cloudRun(true),
+        withoutSql: cloudRun(false),
+      },
+    });
+    const envs = getLocalAccessDbEnvs(c, "withSql");
+    expect(envs).toContain("dev");
+    expect(envs).toContain("review");
+    expect(envs).not.toContain("prod");
+    expect(getLocalAccessDbEnvs(c, "withoutSql")).toEqual([]);
+  });
+
+  it("names the secret per env", () => {
+    expect(getLocalAccessDbSecretName("review")).toBe(
+      "LOCAL_ACCESS_DB_REVIEW_CREDENTIALS",
+    );
   });
 });

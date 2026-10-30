@@ -1,5 +1,6 @@
 import type { Config } from "@catladder/pipeline";
 import {
+  getLocalAccessDbEnvs,
   getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpEnvs,
 } from "@catladder/pipeline";
@@ -34,5 +35,21 @@ export const getDeclaredLocalAccessCredentialsEnvVars = (
     return getLocalAccessGcpCredentialsEnvVars(config, componentName);
   } catch {
     return {};
+  }
+};
+
+/**
+ * the envs of a component declaring read-only db access. Empty instead
+ * of throwing on an invalid declaration, see
+ * {@link getDeclaredLocalAccessEnvs}.
+ */
+export const getDeclaredLocalAccessDbEnvs = (
+  config: Config,
+  componentName: string,
+): string[] => {
+  try {
+    return getLocalAccessDbEnvs(config, componentName);
+  } catch {
+    return [];
   }
 };
