@@ -12,6 +12,8 @@ vi.mock("../../git/gitProjectInformation", () => ({
 }));
 
 import {
+  getLocalAccessDbFileName,
+  getLocalAccessDbFileVarName,
   getLocalAccessKeyFileName,
   getLocalAccessKeyFileVarName,
   getLocalAccessKeyFileVars,
@@ -162,5 +164,62 @@ describe("getLocalAccessKeyFileVars", () => {
     const vars = await getLocalAccessKeyFileVars(c, "web");
     expect(vars).not.toHaveProperty("GOOGLE_APPLICATION_CREDENTIALS");
     expect(vars).toHaveProperty("CATLADDER_LOCAL_ACCESS_GCP_DEV_KEY_FILE");
+  });
+});
+
+describe("read-only db connection file", () => {
+  const cloudSqlRun = {
+    type: "google-cloudrun",
+    projectId: "p",
+    region: "r",
+    cloudSql: { type: "unmanaged", instanceConnectionName: "p:r:i" },
+  } as any;
+  const dbConfig = config({
+    components: { web: { dir: ".", build: false, deploy: cloudSqlRun } },
+    environments: { dev: { localAccess: { db: "readonly" } } },
+  });
+  const secretName = getSecretVarName(
+    "local",
+    "web",
+    "LOCAL_ACCESS_DB_DEV_CREDENTIALS",
+  );
+  const folder = () => join(root, ".catladder", "local-access");
+
+  it("derives names", () => {
+    expect(getLocalAccessDbFileName("dev", "web")).toBe("db-dev-web.env");
+    expect(getLocalAccessDbFileVarName("dev")).toBe(
+      "CATLADDER_LOCAL_ACCESS_DB_DEV_ENV_FILE",
+    );
+  });
+
+  it("writes a 0600 env file and exposes its path", async () => {
+    const { io } = ioWith({
+      [secretName]: JSON.stringify({
+        user: "catladder_readonly",
+        password: "p@ss",
+        database: "acme-shop-dev-web",
+        instanceConnectionName: "p:r:i",
+      }),
+    });
+    await writeLocalAccessKeyFiles(io, dbConfig);
+    const file = join(folder(), "db-dev-web.env");
+    const content = await readFile(file, "utf-8");
+    expect(content).toContain('PGUSER="catladder_readonly"');
+    expect(content).toContain('CLOUD_SQL_INSTANCE_CONNECTION_NAME="p:r:i"');
+    expect(content).toContain(
+      'DATABASE_URL="postgresql://catladder_readonly:p%40ss@localhost:54330/acme-shop-dev-web"',
+    );
+    expect((await stat(file)).mode & 0o777).toBe(0o600);
+    expect(await getLocalAccessKeyFileVars(dbConfig, "web")).toMatchObject({
+      CATLADDER_LOCAL_ACCESS_DB_DEV_ENV_FILE: file,
+    });
+  });
+
+  it("warns when the credentials are missing", async () => {
+    const { io, logs } = ioWith({});
+    await writeLocalAccessKeyFiles(io, dbConfig);
+    expect(logs.join("\n")).toMatch(
+      /no local access db credentials for dev:web/,
+    );
   });
 });
