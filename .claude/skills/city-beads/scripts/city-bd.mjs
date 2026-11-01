@@ -20,7 +20,10 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   create <title> [--type T] [--priority N] [--label L]... [--parent ID]
          [--description D | --description-file F] [--acceptance A | --acceptance-file F] [--design D | --design-file F]
   comment <id> <text>           text "-" reads stdin
-  label add <id> <label>        never approved / triage-checked: a human approves
+  label add <id> <label>        never approved / triage-checked (use approve)
+  approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
+  update|close|reopen|defer|undefer <id> [bd flags]   bead edits as with local bd, e.g. close ev-1 --reason "done"
+  label remove <id> <label> | dep add <id> --blocked-by <id> | dep remove <id> <id>
   Files: "-" means stdin.`;
 const here = dirname(fileURLToPath(import.meta.url));
 const config = (() => { const file = join(here, "..", "config.json"); try { return existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {}; } catch { return {}; } })();
@@ -127,9 +130,20 @@ if (command === "sql") print((await call("POST", `${rig}/sql`, { query: rest.joi
 else if (command === "comment") {
   if (rest.length < 2) die("comment <id> <text>");
   print((await call("POST", `${rig}/comment`, { id: rest[0], text: rest[1] === "-" && rest.length === 2 ? readText("-") : rest.slice(1).join(" ") })).result);
-} else if (command === "label") {
+} else if (command === "label" && rest[0] === "add") {
   if (rest[0] !== "add" || rest.length !== 3) die("label add <id> <label>");
   print((await call("POST", `${rig}/label`, { id: rest[1], label: rest[2] })).result);
+} else if (["update", "close", "reopen", "defer", "undefer"].includes(command) || (command === "label" && rest[0] === "remove") || command === "dep" && ["add", "remove", "rm"].includes(rest[0])) {
+  const args = [command, ...rest].map(arg => arg === "rm" ? "remove" : arg);
+  for (let i = 0; i < args.length; i++) if (/^--[\w-]+-file$|^--stdin$/.test(args[i])) {
+    // Read local files here; the server never reads files.
+    if (args[i] === "--stdin" || args[i] === "--body-file") { args.splice(i, 2, `--description=${readText(args[i] === "--stdin" ? "-" : args[i + 1])}`); continue; }
+    args.splice(i, 2, `${args[i].replace(/-file$/, "")}=${readText(args[i + 1])}`);
+  }
+  print((await call("POST", `${rig}/write`, { args })).result);
+} else if (command === "approve") {
+  if (rest.length < 2) die("approve <id> <quote: the person's exact words>");
+  print((await call("POST", `${rig}/approve`, { id: rest[0], quote: rest.slice(1).join(" ") })).result);
 } else if (command === "create") {
   const input = { labels: [] };
   const names = { "--description": "description", "-d": "description", "--acceptance": "acceptance", "--design": "design", "--type": "type", "-t": "type", "--priority": "priority", "-p": "priority", "--parent": "parent", "--label": "labels", "-l": "labels", "--labels": "labels", "--title": "title",

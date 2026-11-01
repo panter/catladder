@@ -1,19 +1,17 @@
 
 
 <!-- city-beads:begin -->
-## Beads from a normal checkout
+## City work in a normal checkout
 
-Use the committed `city-beads` skill, its MCP tools or the bundled CLI:
+The city implements work handed over through the committed `city-handoff` skill.
+Use `city-beads` (MCP tools or `node .claude/skills/city-beads/scripts/city-bd.mjs`)
+to read, create and comment on beads. Its first use guides browser login.
+Only approve when the person explicitly requests it, using `city-bd approve`
+with their exact words; never add the `approved` label as an agent.
 
-```bash
-node .claude/skills/city-beads/scripts/city-bd.mjs status
-```
-
-First use guides the person through browser login with their panter.ch Google account.
-Do not run `bd prime`, initialize a local store, or use `bin/beads-sync` in a normal checkout.
-A person approves in the dashboard; agent tokens cannot approve. Routed city workers on colab
-continue using their existing local `bd` and claim protocol. Old stores on other machines are stale.
-
-Any remaining local `bd` examples in this file apply only to routed city workers on colab.
-Normal checkouts use `city-beads`; agent tokens never approve work.
+Do not initialize or read a local `.beads/` store in a normal checkout, and do
+not use SSH or legacy `beads-sync` commands to access the city. Any local `bd`
+examples elsewhere in this file apply only to routed Gas City workers.
+Routed workers follow their existing startup claim, local store and closure
+protocols; this section does not replace those protocols.
 <!-- city-beads:end -->

@@ -26,12 +26,14 @@ beads and starts the right workflow – you never start workflows yourself.
    2–3 beads linked by blocking dependencies, not one bead:
    `bd dep add <later> --blocked-by <earlier>` (also feature `--blocked-by` its spikes). Small bugs found on the way
    get their own bug bead (`--deps discovered-from:<feature>`).
-6. **Approval.** Every work bead needs approval from a human in the dashboard, including
+6. **Approval.** Every work bead needs `approved` from a human, including
    human-created and `upstream` beads. The only exemption is a declared standing order whose provenance metadata,
    label and title all match. Approve when the bead is ready to build; open blockers are fine – the dispatcher
    waits until they are closed. Fresh agent-created beads carrying `approved` lose it and get `needs-triage` +
-   `triage-checked`; human reapproval clears `needs-triage`. Agents never approve their own follow-ups. Remote agent tokens cannot set `approved` or `triage-checked`;
-   a request in the conversation is recorded as context, not represented as dashboard approval.
+   `triage-checked`; human reapproval clears `needs-triage`. Agents never approve their own follow-ups. The
+   guard accepts an approval only when the `approved` label event's actor is a registered person (people.toml):
+   the dashboard, `city-bd approve` on the person's explicit words (below), or a person running
+   `bd --actor "<name>" label add <id> approved`.
 7. **Never sling.** Do not run `gc sling`, do not start formulas, do not claim beads. The dispatcher applies budgets,
    overload rules, attempt limits and the right formula. (Exception: the human explicitly asks for a manual start.)
 8. **Follow up** in the city dashboard (https://colab-city.angora-dojo.ts.net, page «Needs you» for beads waiting for a human) or
@@ -53,10 +55,15 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
   `node .claude/skills/city-beads/scripts/city-bd.mjs status`. First use guides the person through Google login.
   Do not initialize a local store, run `bd prime`, or use SSH as the normal path. On colab, routed workers keep
   using their claim protocol and local `bd`; the remote skill does not replace runtime instructions.
-- **Approval:** file the bead, then direct the person to the dashboard to approve it. Agent tokens cannot approve.
-- **Dependencies and PR metadata:** the remote API currently cannot alter dependencies or set arbitrary metadata.
-  Put the exact blocking IDs and `city.handoff` JSON in the description and ask a city operator to apply them with
-  local `bd` before approval. Do not dispatch an incomplete PR handoff. Never substitute SSH or a stale store.
+- **Approval:** only when the person explicitly asks in the session ("ja, freigeben", "let the city do it"),
+  approve with `node .claude/skills/city-beads/scripts/city-bd.mjs approve <id> "<their exact words>"` (MCP tool
+  `approve`). It records the approval under the person's name (accepted by the dispatcher) and keeps the quote
+  on the bead. Never set `approved` with `bd` or as a label: agent identities (`colab`, `maw-city-operator`,
+  `remote-agent/…`) are stripped by the guard. Anything you propose yourself gets no approval; give the person
+  the bead ID to approve in the dashboard.
+- **Dependencies and PR metadata:** `create` accepts the `city.handoff` metadata (handoff labels plus
+  `metadata: {"city.handoff": "<json>"}`); the remote API cannot alter dependencies yet. Put exact blocking IDs in
+  the description and ask a city operator to apply them before approval. Never substitute SSH or a stale store.
 
 ## Per city
 
@@ -87,5 +94,5 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
 
 - [ ] Each bead: one goal, context, acceptance criteria, no session-local paths.
 - [ ] Open questions → spikes; dependencies as `--blocked-by`.
-- [ ] Human directed to dashboard approval (or a comment why it waits).
+- [ ] Approved on the person's explicit words via `approve`, or the person directed to the dashboard.
 - [ ] Nothing slung, nothing written into `plans/`, no code changed.

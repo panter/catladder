@@ -28,7 +28,7 @@ the city's people.toml are required.
 
 Never print, copy, or inspect the stored token. Tokens can be revoked at
 `https://colab-city.angora-dojo.ts.net/beads/tokens`. A 401 requires login again;
-403 for an unregistered account requires a people register update. A connection
+403 names the missing permission (or an unregistered account). Run `whoami` to inspect current grants; ask an administrator or register manager to propose a People change. Do not retry through another identity or transport. A connection
 failure (exit 4) means the dashboard or tailnet is unavailable. Report it rather
 than falling back to local storage.
 
@@ -76,7 +76,38 @@ node "$CITY_BD" label add <id> question
 
 Creation requires nonempty acceptance criteria. Writes use
 `remote-agent/<email>`; created beads receive server-owned `requested_by`
-metadata. A human still approves work: `approved` and `triage-checked` are
-refused for every token. Do not represent an agent label or comment as human
-approval. If available, the `city-handoff` skill describes the city's work
-format. This API does not close, claim, dispatch, or alter dependencies.
+metadata. `approved` and `triage-checked` are refused as labels.
+
+**Edits as with local bd:** `update`, `close`, `reopen`, `defer`, `undefer`,
+`label add|remove` and `dep add|remove` work like local `bd` (MCP tool `bd_write`,
+or `city-bd close <id> --reason "..."`, `city-bd update <id> --priority 1 --append-notes "..."`).
+File flags (`--description-file` etc.) are read by the client, never by the server. Not
+available: `delete`, store commands (dolt, sql writes, init, sync) and setting
+`approved`/`triage-checked` directly. Act like a careful person at the keyboard: do not
+claim or close beads that city workers are working on unless the person asks.
+
+**Approval:** only when the person explicitly asks for it in this session (e.g.
+"ja, freigeben", "let the city do it"), run `approve <id> <their exact words>`
+(MCP tool `approve`). The server records the approval under the person's name,
+which the city's dispatcher accepts, and keeps the quote as a comment; it needs
+the `approve` permission for the target city/rig in people.toml. Never approve on your own initiative, never
+for follow-ups you proposed, and never by other means (bd over SSH, labels):
+the dispatcher strips those. If available, the `city-handoff` skill describes the city's work
+format. Bead edits require the corresponding grant; this API never dispatches workflows.
+
+
+## City permissions
+
+`whoami` lists effective permissions by city/rig and the grant mode (`legacy`,
+`explicit`, or `administrator`). `rigs` lists readable targets with permissions
+and whether any writes are allowed. REST, MCP and this CLI enforce the same grants.
+Viewer permits reads/SQL; Contributor adds create/comment; Maintainer adds
+edit/labels/dependencies/defer and close/reopen; Approver adds approve; Full adds
+po_feedback. Individual permissions can be selected instead. A rig grant replaces
+its city grant; an explicit grant list denies unlisted scopes. Missing `read`
+also prevents cached reads. `update --status` requires both edit and close.
+Existing entries without grants preserve previous access and privileged global
+rights; new people default to no grants. Administrators retain full access.
+Human replies require comment and the existing assignment/admin rule. The city
+interprets replies and must check approve/po_feedback against the same scope;
+never treat a comment permission as approval authority.
