@@ -5061,13 +5061,14 @@ export ROOT_URL_INTERNAL="https://pan-test-app-dev-app1-123456789012.asia-east1.
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app1"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_dev_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app1" "write dot env for app1"
 cat <<EOF > app1/.env
@@ -5081,13 +5082,14 @@ ROOT_URL_INTERNAL=https://pan-test-app-dev-app1-123456789012.asia-east1.run.app
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-app1
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET1=$(printf %s "$CL_dev_app1_SECRET1" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
 circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app1/__build_info.json
@@ -5208,13 +5210,14 @@ export ROOT_URL_INTERNAL="https://pan-test-app-dev-app1-123456789012.asia-east1.
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app1"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_dev_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app1"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -5252,6 +5255,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET1: |-
   $(printf %s "$CL_dev_app1_SECRET1" | sed '1!s/^/  /')
 foo: |-
@@ -5263,7 +5268,7 @@ foo3: |-
 circle: |-
   this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
 EOF
 
@@ -5450,6 +5455,7 @@ export ROOT_URL_INTERNAL="https://pan-test-app-dev-app2-123456789012.asia-east1.
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app2"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_dev_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -5458,7 +5464,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app2" "write dot env for app2"
 cat <<EOF > app2/.env
@@ -5472,6 +5478,7 @@ ROOT_URL_INTERNAL=https://pan-test-app-dev-app2-123456789012.asia-east1.run.app
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-app2
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET2=$(printf %s "$CL_dev_app2_SECRET2" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo2=foo-value-2
@@ -5480,7 +5487,7 @@ foo1=this is from app1: foo-value
 selfReference=this is from self: foo-value-2
 selfReference2=this is from self: this is from app1: foo-value
 app1Api=https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 EOF
 collapseable_section_end "write-dotenv-app2"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app2/__build_info.json
@@ -5601,6 +5608,7 @@ export ROOT_URL_INTERNAL="https://pan-test-app-dev-app2-123456789012.asia-east1.
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app2"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_dev_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -5609,7 +5617,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app2"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -5647,6 +5655,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET2: |-
   $(printf %s "$CL_dev_app2_SECRET2" | sed '1!s/^/  /')
 foo2: |-
@@ -5662,7 +5672,7 @@ selfReference2: |-
 app1Api: |-
   https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
 EOF
 
@@ -6256,13 +6266,14 @@ export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_P
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_review_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app1" "write dot env for app1"
 cat <<EOF > app1/.env
@@ -6276,13 +6287,14 @@ ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET1=$(printf %s "$CL_review_app1_SECRET1" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
 circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app1/__build_info.json
@@ -6403,13 +6415,14 @@ export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_P
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_review_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app1/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -6447,6 +6460,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET1: |-
   $(printf %s "$CL_review_app1_SECRET1" | sed '1!s/^/  /')
 foo: |-
@@ -6458,7 +6473,7 @@ foo3: |-
 circle: |-
   this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
 EOF
 
@@ -6648,6 +6663,7 @@ export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_P
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app2" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_review_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -6656,7 +6672,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app2" "write dot env for app2"
 cat <<EOF > app2/.env
@@ -6670,6 +6686,7 @@ ROOT_URL_INTERNAL=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app2" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET2=$(printf %s "$CL_review_app2_SECRET2" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo2=foo-value-2
@@ -6678,7 +6695,7 @@ foo1=this is from app1: foo-value
 selfReference=this is from self: foo-value-2
 selfReference2=this is from self: this is from app1: foo-value
 app1Api=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')/graphql" | escapeForDotEnv)
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 EOF
 collapseable_section_end "write-dotenv-app2"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app2/__build_info.json
@@ -6799,6 +6816,7 @@ export ROOT_URL_INTERNAL="https://$(printf %s "pan-test-app-review-$([ -n "$CL_P
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app2" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_review_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -6807,7 +6825,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app2/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -6845,6 +6863,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET2: |-
   $(printf %s "$CL_review_app2_SECRET2" | sed '1!s/^/  /')
 foo2: |-
@@ -6860,7 +6880,7 @@ selfReference2: |-
 app1Api: |-
   $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')" | sed '1!s/^/  /')/graphql
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
 EOF
 
@@ -7331,13 +7351,14 @@ export ROOT_URL_INTERNAL="https://pan-test-app-stage-app1-123456789012.asia-east
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app1"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_stage_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app1" "write dot env for app1"
 cat <<EOF > app1/.env
@@ -7351,13 +7372,14 @@ ROOT_URL_INTERNAL=https://pan-test-app-stage-app1-123456789012.asia-east1.run.ap
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-app1
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET1=$(printf %s "$CL_stage_app1_SECRET1" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
 circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app1/__build_info.json
@@ -7478,13 +7500,14 @@ export ROOT_URL_INTERNAL="https://pan-test-app-stage-app1-123456789012.asia-east
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app1"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_stage_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app1"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -7522,6 +7545,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET1: |-
   $(printf %s "$CL_stage_app1_SECRET1" | sed '1!s/^/  /')
 foo: |-
@@ -7533,7 +7558,7 @@ foo3: |-
 circle: |-
   this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
 EOF
 
@@ -7593,13 +7618,14 @@ export ROOT_URL_INTERNAL="https://pan-test-app-prod-app1-123456789012.asia-east1
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app1"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_prod_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app1" "write dot env for app1"
 cat <<EOF > app1/.env
@@ -7613,13 +7639,14 @@ ROOT_URL_INTERNAL=https://pan-test-app-prod-app1-123456789012.asia-east1.run.app
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-app1
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET1=$(printf %s "$CL_prod_app1_SECRET1" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo=foo-value
 bar=bar-value
 foo3=from app3: foo-value-3
 circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 EOF
 collapseable_section_end "write-dotenv-app1"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app1/__build_info.json
@@ -7740,13 +7767,14 @@ export ROOT_URL_INTERNAL="https://pan-test-app-prod-app1-123456789012.asia-east1
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app1"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET1="$CL_prod_app1_SECRET1"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey"
 export foo="foo-value"
 export bar="bar-value"
 export foo3="from app3: foo-value-3"
 export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app1"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -7784,6 +7812,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET1: |-
   $(printf %s "$CL_prod_app1_SECRET1" | sed '1!s/^/  /')
 foo: |-
@@ -7795,7 +7825,7 @@ foo3: |-
 circle: |-
   this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
 EOF
 
@@ -7855,6 +7885,7 @@ export ROOT_URL_INTERNAL="https://pan-test-app-stage-app2-123456789012.asia-east
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app2"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_stage_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -7863,7 +7894,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app2" "write dot env for app2"
 cat <<EOF > app2/.env
@@ -7877,6 +7908,7 @@ ROOT_URL_INTERNAL=https://pan-test-app-stage-app2-123456789012.asia-east1.run.ap
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-app2
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET2=$(printf %s "$CL_stage_app2_SECRET2" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo2=foo-value-2
@@ -7885,7 +7917,7 @@ foo1=this is from app1: foo-value
 selfReference=this is from self: foo-value-2
 selfReference2=this is from self: this is from app1: foo-value
 app1Api=https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 EOF
 collapseable_section_end "write-dotenv-app2"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app2/__build_info.json
@@ -8006,6 +8038,7 @@ export ROOT_URL_INTERNAL="https://pan-test-app-stage-app2-123456789012.asia-east
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app2"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_stage_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -8014,7 +8047,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app2"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -8052,6 +8085,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET2: |-
   $(printf %s "$CL_stage_app2_SECRET2" | sed '1!s/^/  /')
 foo2: |-
@@ -8067,7 +8102,7 @@ selfReference2: |-
 app1Api: |-
   https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
 EOF
 
@@ -8127,6 +8162,7 @@ export ROOT_URL_INTERNAL="https://pan-test-app-prod-app2-123456789012.asia-east1
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app2"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_prod_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -8135,7 +8171,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-app2" "write dot env for app2"
 cat <<EOF > app2/.env
@@ -8149,6 +8185,7 @@ ROOT_URL_INTERNAL=https://pan-test-app-prod-app2-123456789012.asia-east1.run.app
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-app2
 DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
 DEPLOY_CLOUD_RUN_REGION=asia-east1
+GOOGLE_CLOUD_PROJECT=asdf
 SECRET2=$(printf %s "$CL_prod_app2_SECRET2" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 foo2=foo-value-2
@@ -8157,7 +8194,7 @@ foo1=this is from app1: foo-value
 selfReference=this is from self: foo-value-2
 selfReference2=this is from self: this is from app1: foo-value
 app1Api=https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 EOF
 collapseable_section_end "write-dotenv-app2"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > app2/__build_info.json
@@ -8278,6 +8315,7 @@ export ROOT_URL_INTERNAL="https://pan-test-app-prod-app2-123456789012.asia-east1
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app2"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
 export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+export GOOGLE_CLOUD_PROJECT="asdf"
 export SECRET2="$CL_prod_app2_SECRET2"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey"
 export foo2="foo-value-2"
@@ -8286,7 +8324,7 @@ export foo1="this is from app1: foo-value"
 export selfReference="this is from self: foo-value-2"
 export selfReference2="this is from self: this is from app1: foo-value"
 export app1Api="https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
 export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
 export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app2"
 export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -8324,6 +8362,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   asdf
 DEPLOY_CLOUD_RUN_REGION: |-
   asia-east1
+GOOGLE_CLOUD_PROJECT: |-
+  asdf
 SECRET2: |-
   $(printf %s "$CL_prod_app2_SECRET2" | sed '1!s/^/  /')
 foo2: |-
@@ -8339,7 +8379,7 @@ selfReference2: |-
 app1Api: |-
   https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
 EOF
 
@@ -9403,13 +9443,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_dev_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -9424,13 +9465,14 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET1=$(printf %s "$CL_dev_app1_SECRET1" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
       circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -9565,13 +9607,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_dev_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -9610,6 +9653,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET1: |-
         $(printf %s "$CL_dev_app1_SECRET1" | sed '1!s/^/  /')
       foo: |-
@@ -9621,7 +9666,7 @@ create release:
       circle: |-
         this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -9833,13 +9878,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_review_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -9854,13 +9900,14 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET1=$(printf %s "$CL_review_app1_SECRET1" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
       circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -10001,13 +10048,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_review_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app1/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -10046,6 +10094,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET1: |-
         $(printf %s "$CL_review_app1_SECRET1" | sed '1!s/^/  /')
       foo: |-
@@ -10057,7 +10107,7 @@ create release:
       circle: |-
         this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -10157,13 +10207,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_stage_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -10178,13 +10229,14 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET1=$(printf %s "$CL_stage_app1_SECRET1" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
       circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -10319,13 +10371,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_stage_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -10364,6 +10417,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET1: |-
         $(printf %s "$CL_stage_app1_SECRET1" | sed '1!s/^/  /')
       foo: |-
@@ -10375,7 +10430,7 @@ create release:
       circle: |-
         this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -10462,13 +10517,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_prod_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app1" "write dot env for app1"
     - |-
@@ -10483,13 +10539,14 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-app1
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET1=$(printf %s "$CL_prod_app1_SECRET1" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo=foo-value
       bar=bar-value
       foo3=from app3: foo-value-3
       circle=this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
       EOF
     - collapseable_section_end "write-dotenv-app1"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app1/__build_info.json
@@ -10624,13 +10681,14 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app1"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET1="$CL_prod_app1_SECRET1"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app1_GCLOUD_DEPLOY_credentialsKey"
     - export foo="foo-value"
     - export bar="bar-value"
     - 'export foo3="from app3: foo-value-3"'
     - 'export circle="this is from app3 that has reference to app1: \\"this is from app2: this is from app1: foo-value\\""'
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET1\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo\\",\\"bar\\",\\"foo3\\",\\"circle\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app1"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app1"
@@ -10669,6 +10727,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET1: |-
         $(printf %s "$CL_prod_app1_SECRET1" | sed '1!s/^/  /')
       foo: |-
@@ -10680,7 +10740,7 @@ create release:
       circle: |-
         this is from app3 that has reference to app1: "this is from app2: this is from app1: foo-value"
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET1","GCLOUD_DEPLOY_credentialsKey","foo","bar","foo3","circle"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -10877,6 +10937,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_dev_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -10885,7 +10946,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -10900,6 +10961,7 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET2=$(printf %s "$CL_dev_app2_SECRET2" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo2=foo-value-2
@@ -10908,7 +10970,7 @@ create release:
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
       app1Api=https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -11043,6 +11105,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_dev_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -11051,7 +11114,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/dev/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -11090,6 +11153,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET2: |-
         $(printf %s "$CL_dev_app2_SECRET2" | sed '1!s/^/  /')
       foo2: |-
@@ -11105,7 +11170,7 @@ create release:
       app1Api: |-
         https://pan-test-app-dev-app1-123456789012.asia-east1.run.app/graphql
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -11317,6 +11382,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_review_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -11325,7 +11391,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -11340,6 +11406,7 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET2=$(printf %s "$CL_review_app2_SECRET2" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo2=foo-value-2
@@ -11348,7 +11415,7 @@ create release:
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
       app1Api=$(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')/graphql" | escapeForDotEnv)
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -11489,6 +11556,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app2" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_review_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -11497,7 +11565,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/review/app2/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -11536,6 +11604,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET2: |-
         $(printf %s "$CL_review_app2_SECRET2" | sed '1!s/^/  /')
       foo2: |-
@@ -11551,7 +11621,7 @@ create release:
       app1Api: |-
         $(printf %s "https://$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-app1-123456789012.asia-east1.run.app" | awk '{print tolower($0)}')" | sed '1!s/^/  /')/graphql
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -11651,6 +11721,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_stage_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -11659,7 +11730,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -11674,6 +11745,7 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET2=$(printf %s "$CL_stage_app2_SECRET2" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo2=foo-value-2
@@ -11682,7 +11754,7 @@ create release:
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
       app1Api=https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -11817,6 +11889,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_stage_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -11825,7 +11898,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/stage/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -11864,6 +11937,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET2: |-
         $(printf %s "$CL_stage_app2_SECRET2" | sed '1!s/^/  /')
       foo2: |-
@@ -11879,7 +11954,7 @@ create release:
       app1Api: |-
         https://pan-test-app-stage-app1-123456789012.asia-east1.run.app/graphql
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -11966,6 +12041,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_prod_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -11974,7 +12050,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-app2" "write dot env for app2"
     - |-
@@ -11989,6 +12065,7 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-app2
       DEPLOY_CLOUD_RUN_PROJECT_ID=asdf
       DEPLOY_CLOUD_RUN_REGION=asia-east1
+      GOOGLE_CLOUD_PROJECT=asdf
       SECRET2=$(printf %s "$CL_prod_app2_SECRET2" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       foo2=foo-value-2
@@ -11997,7 +12074,7 @@ create release:
       selfReference=this is from self: foo-value-2
       selfReference2=this is from self: this is from app1: foo-value
       app1Api=https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
       EOF
     - collapseable_section_end "write-dotenv-app2"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > app2/__build_info.json
@@ -12132,6 +12209,7 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-app2"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="asdf"
     - export DEPLOY_CLOUD_RUN_REGION="asia-east1"
+    - export GOOGLE_CLOUD_PROJECT="asdf"
     - export SECRET2="$CL_prod_app2_SECRET2"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_app2_GCLOUD_DEPLOY_credentialsKey"
     - export foo2="foo-value-2"
@@ -12140,7 +12218,7 @@ create release:
     - 'export selfReference="this is from self: foo-value-2"'
     - 'export selfReference2="this is from self: this is from app1: foo-value"'
     - export app1Api="https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"SECRET2\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"foo2\\",\\"referencingSecret\\",\\"foo1\\",\\"selfReference\\",\\"selfReference2\\",\\"app1Api\\"]"
     - export DOCKER_REGISTRY="asia-east1-docker.pkg.dev"
     - export DOCKER_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/prod/app2"
     - export DOCKER_CACHE_IMAGE="asia-east1-docker.pkg.dev/asdf/catladder-deploy/pan-test-app/caches/app2"
@@ -12179,6 +12257,8 @@ create release:
         asdf
       DEPLOY_CLOUD_RUN_REGION: |-
         asia-east1
+      GOOGLE_CLOUD_PROJECT: |-
+        asdf
       SECRET2: |-
         $(printf %s "$CL_prod_app2_SECRET2" | sed '1!s/^/  /')
       foo2: |-
@@ -12194,7 +12274,7 @@ create release:
       app1Api: |-
         https://pan-test-app-prod-app1-123456789012.asia-east1.run.app/graphql
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","SECRET2","GCLOUD_DEPLOY_credentialsKey","foo2","referencingSecret","foo1","selfReference","selfReference2","app1Api"]
 
       EOF
     - collapseable_section_end "writeenvvars"
