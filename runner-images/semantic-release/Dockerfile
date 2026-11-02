@@ -16,7 +16,7 @@ RUN apk add --no-cache bash git git-lfs openssh-client
 # with "plugins configuration is invalid" — bump them together. Upstream
 # @semantic-release/git replaces the old panter fork; see
 # scripts/semanticRelease for why the commit message is hardcoded.
-RUN yarn global add \
+RUN npm install -g \
     semantic-release@25.0.8 \
     @semantic-release/commit-analyzer@13.0.1 \
     @semantic-release/release-notes-generator@14.1.1 \
