@@ -60,16 +60,16 @@ jobs:
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
           collapseable_section_end "docker-login"
           collapseable_section_start "check-image" "Checking if image exists"
-          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59 > /dev/null 2>&1; then
-            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59 already exists, skipping build"
+          if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/jobs-default:8599d238c526 > /dev/null 2>&1; then
+            echo "Image ghcr.io/${{ github.repository }}/catladder/jobs-default:8599d238c526 already exists, skipping build"
             exit 0
           fi
           collapseable_section_end "check-image"
           collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
+          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/jobs-default:8599d238c526 -f .catladder-generated/images/jobs-default/Dockerfile .catladder-generated/images
           collapseable_section_end "docker-build"
           collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
+          docker push ghcr.io/${{ github.repository }}/catladder/jobs-default:8599d238c526
           collapseable_section_end "docker-push"
         shell: bash
   catladder-image-npm-publish:
@@ -178,13 +178,13 @@ jobs:
     needs:
       - catladder-image-jobs-default
     container:
-      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
+      image: ghcr.io/${{ github.repository }}/catladder/jobs-default:8599d238c526
       credentials:
         username: ${{ github.actor }}
         password: ${{ github.token }}
     env:
       SHOULD_MINIFY: '1'
-      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:092f41350d59
+      CL_JOB_IMAGE: ghcr.io/${{ github.repository }}/catladder/jobs-default:8599d238c526
     steps:
       - name: Checkout
         uses: actions/checkout@v4
