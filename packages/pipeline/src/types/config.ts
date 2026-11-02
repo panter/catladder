@@ -361,8 +361,33 @@ export type LocalAccessConfig =
   | {
       /** google cloud (only for components deploying to google cloud run) */
       gcp?: LocalAccessGcpConfig;
+      /**
+       * read-only access to the env's cloud sql database (only for
+       * google cloud run components with `cloudSql`)
+       */
+      db?: LocalAccessDbConfig;
     }
   | false;
+
+/**
+ * `"readonly"`: `project setup` creates a postgres role that may only
+ * SELECT (on the `public` schema, including tables created later) and
+ * stores its credentials in the local secret store. It also grants the
+ * local access service account `roles/cloudsql.client`, which is needed
+ * to reach the instance through the cloud sql proxy — note that this
+ * role is project-wide and lets the key connect to every cloud sql
+ * instance of the project (a login is still required).
+ *
+ * Not allowed for `prod` envs unless declared explicitly with
+ * `{ mode: "readonly", allowProd: true }`.
+ */
+export type LocalAccessDbConfig =
+  | "readonly"
+  | {
+      mode: "readonly";
+      /** allow the declaration on envs of type `prod` */
+      allowProd?: boolean;
+    };
 
 export type EnvironmentInheritConfig =
   | string

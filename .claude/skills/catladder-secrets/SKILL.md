@@ -156,6 +156,21 @@ The variable lands in the component's `.env` (e.g. `apps/web/.env`), not
 in a root `.env`: scripts run from the repo root must load that file
 (`node --env-file-if-exists=apps/web/.env …`).
 
+For a component with `cloudSql`, `localAccess: { db: "readonly" }`
+(`{ mode: "readonly", allowProd: true }` to include prod; the project
+default skips prod) makes `project setup` create the Postgres role
+`catladder_readonly` (SELECT on the `public` schema, read-only sessions;
+needs `psql` and `cloud-sql-proxy`) and grant the local access service
+account `roles/cloudsql.client` (project-wide, it can reach every Cloud SQL
+instance of the project). Credentials go to the `local` secret store;
+`catenv` writes `.catladder/local-access/db-<env>-<component>.env` (0600,
+`PG*` vars + `DATABASE_URL` for `localhost:54330`) and exposes its path as
+`CATLADDER_LOCAL_ACCESS_DB_<ENV>_ENV_FILE`. Start the proxy yourself with
+the env's key file:
+`cloud-sql-proxy --credentials-file "$CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE" --port 54330 <instance>`.
+Review envs are not provisioned (one database per merge request, created at
+deploy time).
+
 ## Related skills
 
 - `catladder-config` — general catladder.ts structure and regeneration
