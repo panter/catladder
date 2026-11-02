@@ -53,6 +53,8 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
   description says what the prototype shows and what the real implementation must do; the city opens its own PR.
 - **Access:** use the committed `city-beads` skill (MCP or its bundled CLI). For "what is going on?", run
   `node .claude/skills/city-beads/scripts/city-bd.mjs status`. First use guides the person through Google login.
+  If the `city-beads` MCP server is not connected or asks for authentication, use the CLI instead of asking the
+  person to run `/mcp`.
   Do not initialize a local store, run `bd prime`, or use SSH as the normal path. On colab, routed workers keep
   using their claim protocol and local `bd`; the remote skill does not replace runtime instructions.
 - **Approval:** only when the person explicitly asks in the session ("ja, freigeben", "let the city do it"),

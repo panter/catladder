@@ -7,7 +7,9 @@ description: Choose remote city-beads access in ordinary clones or local bd in r
 
 In a normal checkout, use the committed `city-beads` skill and its MCP tools or
 `node .claude/skills/city-beads/scripts/city-bd.mjs status`. Guide the person through
-first browser login when requested. Do not run `bd prime`, initialize a store,
+first browser login when requested. If the `city-beads` MCP server is not
+connected or asks for authentication, use the CLI instead of asking the person
+to run `/mcp`. Do not run `bd prime`, initialize a store,
 or synchronize an old store. A person approves work in the dashboard; a session
 approves only on the person's explicit words with `city-bd approve <id> "<their words>"`.
 

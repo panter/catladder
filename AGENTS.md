@@ -5,6 +5,8 @@
 The city implements work handed over through the committed `city-handoff` skill.
 Use `city-beads` (MCP tools or `node .claude/skills/city-beads/scripts/city-bd.mjs`)
 to read, create and comment on beads. Its first use guides browser login.
+If the `city-beads` MCP server is not connected or asks for authentication, use
+the bundled CLI (same API and login) instead of asking the person to run `/mcp`.
 Only approve when the person explicitly requests it, using `city-bd approve`
 with their exact words; never add the `approved` label as an agent.
 
