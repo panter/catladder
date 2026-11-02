@@ -96,6 +96,25 @@ the dispatcher strips those. If available, the `city-handoff` skill describes th
 format. Bead edits require the corresponding grant; this API never dispatches workflows.
 
 
+## Urgent mail to the mayor
+
+Use `mail` for urgent attention only, work goes into beads (create). It sends
+one notice to the selected city's mayor, with the rig as context. Use the same
+`--rig <city>/<rig>` selection and personal login as other commands; the target
+requires the `comment` permission. The command prints the delivery result and
+the server's notice.
+
+```bash
+node "$CITY_BD" --rig <city>/<rig> mail "Urgent subject" "Notice text"
+node "$CITY_BD" mail "Urgent subject" - < notice.txt
+```
+
+Quote the subject and text as separate arguments. Subjects are limited to 200
+characters, text to 4000; the server permits 3 mails per 10 minutes and 10 per
+day per person. Submission sends mail immediately. Never retry automatically;
+after an uncertain result, report the uncertainty before considering another
+send. Mail does not create or approve work.
+
 ## City permissions
 
 `whoami` lists effective permissions by city/rig and the grant mode (`legacy`,

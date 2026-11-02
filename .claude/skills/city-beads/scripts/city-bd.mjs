@@ -19,6 +19,7 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   sql "<SELECT ...>"            one read-only statement (tables: issues, labels, comments, dependencies, events)
   create <title> [--type T] [--priority N] [--label L]... [--parent ID]
          [--description D | --description-file F] [--acceptance A | --acceptance-file F] [--design D | --design-file F]
+  mail <subject> <text>         urgent attention only, work goes into beads (create); text "-" reads stdin
   comment <id> <text>           text "-" reads stdin
   label add <id> <label>        never approved / triage-checked (use approve)
   approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
@@ -127,7 +128,10 @@ if (command === "status") {
   process.exit(0);
 }
 if (command === "sql") print((await call("POST", `${rig}/sql`, { query: rest.join(" ") })).rows);
-else if (command === "comment") {
+else if (command === "mail") {
+  if (rest.length !== 2) die('mail <subject> <text> (text "-" reads stdin)');
+  print(await call("POST", `${rig}/mail`, { subject: rest[0], text: rest[1] === "-" ? readText("-") : rest[1] }));
+} else if (command === "comment") {
   if (rest.length < 2) die("comment <id> <text>");
   print((await call("POST", `${rig}/comment`, { id: rest[0], text: rest[1] === "-" && rest.length === 2 ? readText("-") : rest.slice(1).join(" ") })).result);
 } else if (command === "label" && rest[0] === "add") {
