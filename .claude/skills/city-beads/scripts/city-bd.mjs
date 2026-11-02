@@ -63,7 +63,7 @@ async function call(method, path, body) {
   const text = await response.text();
   let value; try { value = JSON.parse(text); } catch { die(`HTTP ${response.status}: non-JSON response (is the URL right?)`, 1); }
   if (response.status === 401 && !process.env.CITY_BD_TOKEN) notSignedIn("the login expired or was revoked");
-  if (!response.ok) die(`HTTP ${response.status}: ${value.error ?? "request failed"}${response.headers.has("retry-after") ? `; retry after ${response.headers.get("retry-after")} seconds` : ""}`, 1);
+  if (!response.ok) die(`HTTP ${response.status}: ${value.error ?? "request failed"}${value.details !== undefined ? `; details: ${JSON.stringify(value.details)}` : ""}${response.headers.has("retry-after") ? `; retry after ${response.headers.get("retry-after")} seconds` : ""}`, 1);
   return value;
 }
 // OAuth 2.1 + PKCE against the dashboard, the same flow MCP clients use; the token lands in ~/.config/city-bd/token.
