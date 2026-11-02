@@ -1,8 +1,8 @@
 # job images are addressed by a content hash of this directory — the
 # build must be reproducible, so every dependency is pinned exactly.
-# node:24 satisfies the newer plugins' engine requirements
+# node:26 satisfies the newer plugins' engine requirements
 # (@semantic-release/git and @semantic-release/changelog need node >=24.15).
-FROM node:24-alpine
+FROM node:26-alpine
 
 # openssh: on github the release job pushes with the release deploy key
 # over ssh (see scripts/semanticRelease)

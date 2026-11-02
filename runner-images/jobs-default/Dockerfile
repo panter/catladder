@@ -22,4 +22,5 @@ RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | b
     chmod +x /root/.nvm/nvm.sh && \
     /root/.nvm/nvm.sh install 20 && \
     /root/.nvm/nvm.sh install 22 && \
-    /root/.nvm/nvm.sh install 24
+    /root/.nvm/nvm.sh install 24 && \
+    /root/.nvm/nvm.sh install 26
