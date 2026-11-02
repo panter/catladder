@@ -144,6 +144,7 @@ in `.claude/skills/` (it is not shipped to consumers).
 - `no-unused-vars` and `no-explicit-any` are intentionally disabled
 
 <!-- city-beads:begin -->
+
 ## City work in a normal checkout
 
 The city implements work handed over through the committed `city-handoff` skill.
@@ -157,4 +158,5 @@ not use SSH or legacy `beads-sync` commands to access the city. Any local `bd`
 examples elsewhere in this file apply only to routed Gas City workers.
 Routed workers follow their existing startup claim, local store and closure
 protocols; this section does not replace those protocols.
+
 <!-- city-beads:end -->
