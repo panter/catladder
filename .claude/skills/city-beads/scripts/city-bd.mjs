@@ -23,6 +23,7 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   comment <id> <text>           text "-" reads stdin
   label add <id> <label>        never approved / triage-checked (use approve)
   approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
+  plan-feedback <id> <gate> <answer> <quote...>   ONLY on the person's explicit words; quote = their exact words
   update|close|reopen|defer|undefer <id> [bd flags]   bead edits as with local bd, e.g. close ev-1 --reason "done"
   label remove <id> <label> | dep add <id> --blocked-by <id> | dep remove <id> <id>
   Files: "-" means stdin.`;
@@ -133,7 +134,9 @@ else if (command === "mail") {
   print(await call("POST", `${rig}/mail`, { subject: rest[0], text: rest[1] === "-" ? readText("-") : rest[1] }));
 } else if (command === "comment") {
   if (rest.length < 2) die("comment <id> <text>");
-  print((await call("POST", `${rig}/comment`, { id: rest[0], text: rest[1] === "-" && rest.length === 2 ? readText("-") : rest.slice(1).join(" ") })).result);
+  const response = await call("POST", `${rig}/comment`, { id: rest[0], text: rest[1] === "-" && rest.length === 2 ? readText("-") : rest.slice(1).join(" ") });
+  print(response.result);
+  if (response.warning) console.error(`Warning: ${response.warning}`);
 } else if (command === "label" && rest[0] === "add") {
   if (rest[0] !== "add" || rest.length !== 3) die("label add <id> <label>");
   print((await call("POST", `${rig}/label`, { id: rest[1], label: rest[2] })).result);
@@ -145,6 +148,9 @@ else if (command === "mail") {
     args.splice(i, 2, `${args[i].replace(/-file$/, "")}=${readText(args[i + 1])}`);
   }
   print((await call("POST", `${rig}/write`, { args })).result);
+} else if (command === "plan-feedback") {
+  if (rest.length < 4) die("plan-feedback <id> <gate> <answer> <quote: the person's exact words>");
+  print(await call("POST", `${rig}/plan-feedback`, { id: rest[0], gate: rest[1], answer: rest[2], quote: rest.slice(3).join(" ") }));
 } else if (command === "approve") {
   if (rest.length < 2) die("approve <id> <quote: the person's exact words>");
   print((await call("POST", `${rig}/approve`, { id: rest[0], quote: rest.slice(1).join(" ") })).result);

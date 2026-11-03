@@ -96,6 +96,28 @@ the dispatcher strips those. If available, the `city-handoff` skill describes th
 format. Bead edits require the corresponding grant; this API never dispatches workflows.
 
 
+## Answering plan questions
+
+Only on a person's explicit words, relay a plan answer with `plan-feedback`
+(MCP tool `plan_feedback`), like `approve`:
+
+```bash
+node "$CITY_BD" plan-feedback <id> <gate> "<answer>" "<person's exact words>"
+```
+
+The quote must be the person's exact words, never an agent's inferred answer.
+This requires `po_feedback` for the target city/rig. The server posts
+`/plan-feedback <gate> <answer>` under the person's people.toml name and a
+separate agent-authored provenance comment with the quote. Never answer or
+approve a plan gate on your own initiative.
+
+A plain `comment` starting with `/plan-feedback` posts under the agent identity;
+the city ignores it and the response warns to use `plan-feedback`. Check the
+returned `posted` author and text. If `partial: true`, the answer was posted but
+its provenance comment failed: inspect the bead before any retry, and do not
+repost the answer automatically. Posting does not prove the city's gate accepted
+it; city-side author and permission checks still apply.
+
 ## Urgent mail to the mayor
 
 Use `mail` for urgent attention only, work goes into beads (create). It sends
