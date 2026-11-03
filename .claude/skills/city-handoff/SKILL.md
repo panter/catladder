@@ -30,7 +30,7 @@ beads and starts the right workflow – you never start workflows yourself.
 6. **Approval.** Every work bead needs `approved` from a human, including
    human-created and `upstream` beads. The only exemption is a declared standing order whose provenance metadata,
    label and title all match. Approve when the bead is ready to build; open blockers are fine – the dispatcher
-   waits until local blockers are closed. For cross-rig blockers, follow the limitation below before approval.
+   waits until same-rig blockers are closed. A blocker in another rig cannot be a dependency; see the rule below.
    Fresh agent-created beads carrying `approved` lose it and get `needs-triage` +
    `triage-checked`; human reapproval clears `needs-triage`. Agents never approve their own follow-ups. The
    guard accepts an approval only when the `approved` label event's actor is a registered person (people.toml):
@@ -68,17 +68,16 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
   `remote-agent/…`) are stripped by the guard. Anything you propose yourself gets no approval; give the person
   the bead ID to approve in the dashboard.
 - **Dependencies and PR metadata:** `create` accepts the `city.handoff` metadata (handoff labels plus
-  `metadata: {"city.handoff": "<json>"}`). Set dependencies **before approval** with
+  `metadata: {"city.handoff": "<json>"}`). Set same-rig dependencies **before approval** with
   `city-bd dep add <later> --blocked-by <earlier>` or
   `city-bd dep add <id> <other> --type discovered-from` (`related` is also supported);
-  remove an edge with `city-bd dep remove <id> <other>`. Use the full bundled Node invocation and put
-  `--rig <city>/<rig>` before the subcommand when targeting another rig. Never substitute SSH or a stale store.
-  **Cross-rig limitation:** the edge is stored as `depends_on_external`. The current city dispatcher relies on
-  `bd ready` and a graph snapshot that selects local issue/wisp endpoints, not `depends_on_external`;
-  it does **not** enforce these external blockers ([beads#5784](https://github.com/gastownhall/beads/issues/5784)).
-  Record the edge and both city/rig + bead IDs in the description, but withhold approval until the predecessor
-  is verified closed in its own rig. Remove this workaround when pinned beads and the dispatcher enforce
-  external blockers; verify readiness before relying on them.
+  check them with `city-bd dep list <id>` and remove an edge with `city-bd dep remove <id> <other>`. Use the full
+  bundled Node invocation and put `--rig <city>/<rig>` before the subcommand when targeting another rig. Both beads
+  must be work beads in that rig. Never substitute SSH or a stale store.
+  **Cross-rig dependencies are refused**, for every type: the dispatcher would not enforce such an edge
+  ([beads#5784](https://github.com/gastownhall/beads/issues/5784)). Name the predecessor's city/rig and bead ID in
+  the description, and approve only after verifying that it is closed in its own rig. Remove this workaround when
+  pinned beads and the dispatcher enforce external blockers, and the bead API accepts them again.
 
 ## Per city
 
@@ -101,9 +100,9 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
   formula change) go through `city-beads` (MCP tools or the bundled CLI):
   `node .claude/skills/city-beads/scripts/city-bd.mjs --rig maw-city/<rig> create "<title>" …`.
   Put `--rig` before the subcommand. Choose `city`, `zue-city`, `evermore-city`, `lumen-city`,
-  `city-dashboard` or `catladder`. Link the triggering bead with its ID and city/rig in the description and
-  add the edge with `city-bd dep add` (`--type discovered-from` for provenance, `--blocked-by` for a prerequisite),
-  observing the cross-rig limitation above. Tell the human the resulting bead ID.
+  `city-dashboard` or `catladder`. Link the triggering bead with its ID and city/rig in the description. Add an
+  edge with `city-bd dep add` only when both beads are in the same rig (`--type discovered-from` for provenance,
+  `--blocked-by` for a prerequisite); cross-rig edges are refused, see above. Tell the human the resulting bead ID.
   The local checkouts (`~/git/maw-city-src`, `~/git/zue-city-src`, etc.) are Git checkouts only, not bead stores:
   never run `bd` or `gc` there to file work. Do not message an interactive city-city session to do it for you;
   it may not be running, and the request then lives only in its transcript.

@@ -9,10 +9,10 @@ If the `city-beads` MCP server is not connected or asks for authentication, use
 the bundled CLI (same API and login) instead of asking the person to run `/mcp`.
 For city-city work, put `--rig maw-city/<rig>` before the subcommand; rigs are
 `city`, `zue-city`, `evermore-city`, `lumen-city`, `city-dashboard`, `catladder`.
-Link the triggering bead's ID and city/rig in the description and set dependencies
-with `dep add <later> --blocked-by <earlier>` (or `--type discovered-from`) before
-approval. Cross-rig blockers need verification in the predecessor's rig before
-approval; see the city-handoff skill's beads#5784 limitation.
+Link the triggering bead's ID and city/rig in the description. Set same-rig
+dependencies with `dep add <later> --blocked-by <earlier>` (or `--type discovered-from`)
+before approval. Cross-rig dependencies are refused (beads#5784): name the predecessor's
+city/rig and ID in the description and approve only after verifying it closed in its rig.
 Urgent notices use `mail "<subject>" "<text>"`; work requests need beads.
 Only approve when the person explicitly requests it, using `city-bd approve`
 with their exact words; never add the `approved` label as an agent.
