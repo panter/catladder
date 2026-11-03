@@ -15,7 +15,7 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   status                        what is going on: in progress, waiting for a human, ready, closed in the last 24 h
   whoami | rigs                 who the token belongs to | reachable cities and rigs
   help                          allowed read commands and flags
-  reads, bd syntax, JSON out:   list | search <q> | show <id>... | ready | blocked | count | dep tree <id>
+  reads, bd syntax, JSON out:   list | search <q> | show <id>... | ready | blocked | count | dep tree <id> | dep list <id>
   sql "<SELECT ...>"            one read-only statement (tables: issues, labels, comments, dependencies, events)
   create <title> [--type T] [--priority N] [--label L]... [--parent ID]
          [--description D | --description-file F] [--acceptance A | --acceptance-file F] [--design D | --design-file F]
@@ -25,7 +25,9 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
   plan-feedback <id> <gate> <answer> <quote...>   ONLY on the person's explicit words; quote = their exact words
   update|close|reopen|defer|undefer <id> [bd flags]   bead edits as with local bd, e.g. close ev-1 --reason "done"
-  label remove <id> <label> | dep add <id> --blocked-by <id> | dep remove <id> <id>
+  label remove <id> <label>
+  dep add <later> --blocked-by <earlier> [--type blocks|discovered-from|related]   same rig, work beads only
+  dep remove <later> <earlier>
   Files: "-" means stdin.`;
 const here = dirname(fileURLToPath(import.meta.url));
 const config = (() => { const file = join(here, "..", "config.json"); try { return existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {}; } catch { return {}; } })();

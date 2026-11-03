@@ -48,6 +48,7 @@ node "$CITY_BD" show <id>
 node "$CITY_BD" ready --limit 20
 node "$CITY_BD" blocked
 node "$CITY_BD" dep tree <id> --direction up
+node "$CITY_BD" dep list <id>                 # what <id> waits for; --direction up: what waits for <id>
 node "$CITY_BD" count --by-status
 node "$CITY_BD" sql "SELECT status, COUNT(*) n FROM issues GROUP BY status"
 node "$CITY_BD" help
@@ -85,6 +86,24 @@ File flags (`--description-file` etc.) are read by the client, never by the serv
 available: `delete`, store commands (dolt, sql writes, init, sync) and setting
 `approved`/`triage-checked` directly. Act like a careful person at the keyboard: do not
 claim or close beads that city workers are working on unless the person asks.
+
+**Dependencies:** set them before approval, so an approved bead does not start before
+its prerequisite is done:
+
+```bash
+node "$CITY_BD" dep add <later> --blocked-by <earlier>          # <later> waits for <earlier>
+node "$CITY_BD" dep add <bug> <feature> --type discovered-from  # provenance only, does not block
+node "$CITY_BD" dep remove <later> <earlier>
+node "$CITY_BD" dep list <later>
+```
+
+Types: `blocks` (default), `discovered-from`, `related`. Adding an existing edge or
+removing a missing one succeeds without change. Both beads must be work beads in the
+same rig (`--rig` of the waiting bead) and you need edit permission there. Refused:
+self-dependencies, cycles, workflow roots, steps, specs, convoys and cross-rig edges
+(bd would store those as external edges that the dispatcher does not enforce,
+gastownhall/beads#5784): for a blocker in another rig, name its city/rig and ID in
+the description and leave the waiting bead unapproved until the blocker is closed.
 
 **Approval:** only when the person explicitly asks for it in this session (e.g.
 "ja, freigeben", "let the city do it"), run `approve <id> <their exact words>`
