@@ -86,6 +86,19 @@ All of these write to the secrets vault (the source of truth) and
 automatically mirror to the enabled CI backends — which vault is
 configured makes no difference to the commands.
 
+Vault types (`secrets.vault`): `"gitlab"` (default), `{ type: "bitwarden",
+collection }`, `{ type: "google-secret-manager", project?, prefix? }`.
+The latter keeps one Secret Manager secret per value
+(`<prefix>-<customer>-<app>-<env>-<component>-<KEY>`, labeled
+`catladder-env/component/app`) and shells out to `gcloud` (run
+`gcloud auth login`). `project` defaults to the single Cloud Run
+`projectId`, otherwise it is required. Reading needs
+`roles/secretmanager.secretAccessor`, writing `roles/secretmanager.admin`;
+scope IAM conditions by secret name prefix, not labels. Every write adds a
+version; old versions are kept and never destroyed (`backup: false`
+changes nothing). `project setup` enables the API, `project doctor`
+checks it; `localAccess` is refused with this vault.
+
 ## Provisioned secrets
 
 A few secrets are not typed in by a human but created by
@@ -140,7 +153,7 @@ must be `roles/{logging,monitoring,errorreporting}.viewer` (never `roles/viewer`
 cloud run revisions carry secrets as plain env vars), unless
 `allowAnyRole: true` (also needed for custom roles); write/admin roles are always rejected. Needs a
 non-CI vault (e.g. bitwarden) — `project setup` refuses with the gitlab
-vault. After a key rotation on another machine, run
+and the google-secret-manager vault. After a key rotation on another machine, run
 `catenv --vault-mode refresh`.
 
 The `vertex` preset grants `roles/aiplatform.user` (to call Vertex AI
