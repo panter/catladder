@@ -495,6 +495,9 @@ export type PipelineOutputOptions = {
  *   secret store (legacy behavior; requires a gitlab project)
  * - bitwarden: secrets live in bitwarden as one yaml note per
  *   env/component (`<customer>/<app>/<env>/<component>/secrets.yml`)
+ * - google-secret-manager: one Google Secret Manager secret per value
+ *   (`<prefix>-<customer>-<app>-<env>-<component>-<KEY>`), accessed via
+ *   the `gcloud` CLI. Previous versions are retained by Secret Manager.
  */
 export type SecretsVaultConfig =
   | "gitlab"
@@ -506,6 +509,20 @@ export type SecretsVaultConfig =
        * @default "catladder"
        */
       collection?: string;
+    }
+  | {
+      type: "google-secret-manager";
+      /**
+       * the GCP project holding the secrets. Defaults to the single
+       * `projectId` shared by all google-cloudrun deploys; required if
+       * there is none or several.
+       */
+      project?: string;
+      /**
+       * prefix of all secret ids
+       * @default "catladder"
+       */
+      prefix?: string;
     };
 
 export type SecretsConfig = {
