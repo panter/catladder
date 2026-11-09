@@ -1,8 +1,10 @@
 import type { Config } from "@catladder/pipeline";
 import {
+  deliversRuntimeSecretsOutsideCi,
   getPipelineGitRemote,
   getSecretVarName,
   GithubBackend,
+  secretNeedsCiDelivery,
 } from "@catladder/pipeline";
 import {
   getAllComponentsWithAllEnvsHierarchical,
@@ -24,7 +26,10 @@ import {
 export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
   const envAndComponents = await getAllComponentsWithAllEnvsHierarchical();
 
+  const config = await getProjectConfig();
   const kinds = new Map<string, "secret" | "variable">();
+  // runtime-only secrets need no CI variable: never read nor pushed
+  const skippedCandidates = new Set<string>();
   for (const [componentName, envs] of Object.entries(envAndComponents)) {
     for (const env of envs) {
       if (envFilter && !envFilter.includes(env)) {
@@ -32,22 +37,35 @@ export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
       }
       const { secretEnvVarKeys, jobOnlyVars, secretsEnv } =
         await getEnvironment(env, componentName);
+      const runtimeSecretsOutsideCi = deliversRuntimeSecretsOutsideCi(
+        config?.components?.[componentName]?.deploy,
+      );
+      // jobOnlyVars are consumed by build/deploy jobs: always delivered
       const keys = [
-        ...secretEnvVarKeys,
-        ...jobOnlyVars.build.secretEnvVarKeys,
-        ...jobOnlyVars.deploy.secretEnvVarKeys,
+        ...secretEnvVarKeys.map((secret) => ({
+          ...secret,
+          needsCi: secretNeedsCiDelivery(secret, { runtimeSecretsOutsideCi }),
+        })),
+        ...[
+          ...jobOnlyVars.build.secretEnvVarKeys,
+          ...jobOnlyVars.deploy.secretEnvVarKeys,
+        ].map((secret) => ({ ...secret, needsCi: true })),
       ];
       // secretsEnv: an env sharing another env's secrets (inherit)
       // references that env's variable names
-      keys.forEach(({ key, kind }) =>
-        kinds.set(
-          getSecretVarName(secretsEnv ?? env, componentName, key),
-          kind ?? "secret",
-        ),
-      );
+      keys.forEach(({ key, kind, needsCi }) => {
+        const name = getSecretVarName(secretsEnv ?? env, componentName, key);
+        if (needsCi) {
+          kinds.set(name, kind ?? "secret");
+        } else {
+          skippedCandidates.add(name);
+        }
+      });
     }
   }
 
+  // a name shared by several components/envs is kept if any needs it
+  const skipped = [...skippedCandidates].filter((name) => !kinds.has(name));
   const names = [...kinds.keys()];
   const values = await (await io.getVaultManager()).readSecrets(names, io);
   const secrets = names
@@ -58,7 +76,7 @@ export const collectSecretsFromVault = async (io: IO, envFilter?: string[]) => {
       kind: kinds.get(name) ?? ("secret" as const),
     }));
   const missing = names.filter((name) => values[name] === undefined);
-  return { secrets, missing };
+  return { secrets, missing, skipped };
 };
 
 /** marker for repo-level (environment-less) targets */
