@@ -1,3 +1,4 @@
+import type { Artifacts } from "../../types/gitlab-ci-yml";
 import type { GithubStep } from "../../types/github-types";
 
 /**
@@ -21,10 +22,39 @@ import type { GithubStep } from "../../types/github-types";
 export const artifactArchiveFile = (jobId: string) =>
   `catladder-artifacts-${jobId}.tar`;
 
+/**
+ * retention of artifacts that are only handed over between jobs
+ * (gitlab: `expire_in` set), unless configured otherwise
+ */
+export const DEFAULT_HANDOFF_ARTIFACT_RETENTION_DAYS = 3;
+
+/**
+ * the `retention-days` for a job's artifact upload: the configured
+ * value, else a short default for hand-off build artifacts, else
+ * undefined (= the repository's default retention)
+ */
+export const resolveArtifactRetentionDays = (
+  artifacts: Artifacts | undefined,
+  configured?: number,
+): number | undefined => {
+  if (configured !== undefined) {
+    if (!Number.isInteger(configured) || configured < 1 || configured > 90) {
+      throw new Error(
+        `pipelines.github.artifactRetentionDays must be an integer between 1 and 90, got: ${configured}`,
+      );
+    }
+    return configured;
+  }
+  return artifacts?.expire_in
+    ? DEFAULT_HANDOFF_ARTIFACT_RETENTION_DAYS
+    : undefined;
+};
+
 export const createArtifactUploadSteps = (
   jobId: string,
   paths: string[],
   condition?: string,
+  retentionDays?: number,
 ): GithubStep[] => {
   const archive = artifactArchiveFile(jobId);
   const ifCondition = condition ? { if: condition } : {};
@@ -60,6 +90,9 @@ export const createArtifactUploadSteps = (
         name: jobId,
         path: archive,
         "if-no-files-found": "error",
+        ...(retentionDays !== undefined
+          ? { "retention-days": retentionDays }
+          : {}),
       },
     },
   ];
