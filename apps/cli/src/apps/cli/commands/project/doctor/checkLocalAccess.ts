@@ -3,7 +3,6 @@ import {
   diffRoleBindings,
   getLocalAccessGcpCredentialsEnvVars,
   getLocalAccessGcpRoles,
-  getVaultConfig,
   isOfDeployType,
 } from "@catladder/pipeline";
 import {
@@ -11,6 +10,7 @@ import {
   listUserManagedKeyIds,
 } from "../../../../../gcloud/localAccess";
 import { accountExists } from "../../../../../gcloud/serviceAccounts";
+import { getLocalAccessVaultIncompatibility } from "../../../../../vault/localAccessCompat";
 import { mapWithConcurrency } from "../../../../../utils/concurrency";
 import type { DoctorReport } from "./DoctorReport";
 import type { GcloudProjectInspector } from "./GcloudProjectInspector";
@@ -91,9 +91,11 @@ export const checkLocalAccess = async (
       conditional,
       keyCount,
     } = result;
-    if (declared.length > 0 && getVaultConfig(config).type === "gitlab") {
+    const incompatible =
+      declared.length > 0 ? getLocalAccessVaultIncompatibility(config) : null;
+    if (incompatible) {
       report.fail(
-        `${label}: localAccess needs a vault that is not a CI variable store (the gitlab vault would expose the key to every CI job)`,
+        `${label}: localAccess cannot use the configured vault: ${incompatible}`,
       );
       continue;
     }
