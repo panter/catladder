@@ -17,7 +17,7 @@
 # Output:  a sanitized log file (path printed at start and end). Secret values are random, generated here, never
 #          printed; any value, API key or key material is masked before it reaches the log.
 #
-# The script reads exactly one environment variable (VERIFY_PROJECT). Everything else is a constant below.
+# The script requires exactly one environment variable (VERIFY_PROJECT; TMPDIR is optional). Everything else is a constant below.
 # Not for production projects: it deploys public sample images and briefly runs a job.
 
 set -u
