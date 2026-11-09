@@ -108,6 +108,27 @@ describe("readAllSecrets", () => {
     expect(await vault().readAllSecrets(io)).toEqual({});
   });
 
+  it("skips (does not throw) secrets whose labels do not round-trip", async () => {
+    // a 70-char env name gets its label truncated to 63 chars
+    const longEnv = "e".repeat(70);
+    runGcloudJson.mockResolvedValue([
+      {
+        name: `projects/1/secrets/catladder-pan-app-${longEnv}-www-A`,
+        labels: {
+          "catladder-env": longEnv.slice(0, 63),
+          "catladder-component": "www",
+        },
+      },
+      {
+        name: "projects/1/secrets/catladder-pan-app-dev-www-B",
+        labels: { "catladder-env": "dev", "catladder-component": "www" },
+      },
+    ]);
+    runGcloud.mockResolvedValue("v");
+    const result = await vault().readAllSecrets(io);
+    expect(Object.keys(result)).toEqual(["CL_dev_www_B"]);
+  });
+
   it("surfaces auth failures", async () => {
     runGcloudJson.mockRejectedValue(new Error("run `gcloud auth login`"));
     await expect(vault().readAllSecrets(io)).rejects.toThrow(/auth login/);
@@ -137,6 +158,28 @@ describe("writeSecrets", () => {
     runGcloud.mockResolvedValue("");
     await vault().writeSecrets(io, "dev", "www", { A: "v" }, { backup: false });
     expect(runGcloud.mock.calls.some((c) => c[0][1] === "create")).toBe(false);
+  });
+
+  it.each([true, false])(
+    "never destroys or disables versions (backup: %s)",
+    async (backup) => {
+      runGcloud.mockResolvedValue("");
+      await vault().writeSecrets(io, "dev", "www", { A: "v" }, { backup });
+      const subcommands = runGcloud.mock.calls.map((c) => c[0].join(" "));
+      expect(subcommands.some((s) => /destroy|disable|delete/.test(s))).toBe(
+        false,
+      );
+      expect(subcommands.some((s) => s.includes("versions add"))).toBe(true);
+    },
+  );
+
+  it("JSON-stringifies non-string values", async () => {
+    runGcloud.mockResolvedValue("");
+    await vault().writeSecrets(io, "dev", "www", { A: [1, 2], B: null });
+    const payloads = runGcloud.mock.calls
+      .filter((c) => c[0][1] === "versions")
+      .map((c) => c[1]);
+    expect(payloads).toEqual(["[1,2]", "null"]);
   });
 
   it("rejects invalid ids before calling gcloud", async () => {
