@@ -257,6 +257,15 @@ the pnpm store, and as copied directories they fail at runtime with
 the committed workflows contain the archive steps and regenerate if
 they don't.
 
+Hand-off artifacts (the build job's output) are uploaded with
+`retention-days: 3`; report and project-configured artifacts keep the
+repository default. Set `pipelines.github.artifactRetentionDays`
+(integer 1-90) in catladder.ts to change it; when set it applies to
+all uploads. It affects new uploads only — existing artifacts are not
+cleaned up. Re-running a single job after its upstream artifacts
+expired fails at "Download artifacts"; re-run the whole workflow
+instead. GitLab output is unchanged.
+
 ## Caching
 
 Cache configuration is generated per build type. **yarn** node builds
