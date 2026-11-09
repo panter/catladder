@@ -25,6 +25,11 @@ vi.mock("../../../../vault/createVault", () => ({
   createVault: (_c: unknown, vc: { type: string }) => mocks.vaults[vc.type],
 }));
 
+vi.mock("../../../../secrets/writeSecrets", () => ({
+  writeSecretsAndMirror: vi.fn(),
+}));
+
+import { writeSecretsAndMirror } from "../../../../secrets/writeSecrets";
 import { commandSecretsMigrate } from "../commandSecretsMigrate";
 
 const NAME = getSecretVarName("local", "web", "API_KEY");
@@ -113,5 +118,30 @@ describe("project secrets-migrate", () => {
     const { promise } = await run({ to: "bitwarden", yes: true }, gitlab);
     await expect(promise).rejects.toThrow(/conflicts/);
     expect(bitwarden.writeSecrets).not.toHaveBeenCalled();
+  });
+
+  it("aborts when the confirmation is declined", async () => {
+    const { ctx, promise } = await run({ to: "bitwarden" }, gitlab);
+    ctx.confirm.mockResolvedValueOnce(false);
+    await expect(promise).rejects.toThrow(/abort/);
+    expect(ctx.confirm).toHaveBeenCalledOnce();
+    expect(bitwarden.writeSecrets).not.toHaveBeenCalled();
+  });
+
+  it("--yes skips the confirmation", async () => {
+    const { ctx, promise } = await run({ to: "bitwarden", yes: true }, gitlab);
+    await promise;
+    expect(ctx.confirm).not.toHaveBeenCalled();
+  });
+
+  it("never logs or throws secret values, and never mirrors to CI", async () => {
+    bitwarden = fake("bitwarden:catladder", { [NAME]: "other-s3cret" });
+    mocks.vaults = { gitlab, bitwarden };
+    const { ctx, promise } = await run({ to: "bitwarden", yes: true }, gitlab);
+    const err = await promise.catch((e: Error) => e);
+    expect(err).toBeInstanceOf(Error);
+    const output = JSON.stringify(ctx.log.mock.calls) + (err as Error).message;
+    expect(output).not.toContain("s3cret");
+    expect(writeSecretsAndMirror).not.toHaveBeenCalled();
   });
 });
