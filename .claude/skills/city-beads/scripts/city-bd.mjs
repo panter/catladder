@@ -23,6 +23,7 @@ const usage = `usage: city-bd [--rig <city>/<rig>] <command>
   comment <id> <text>           text "-" reads stdin
   label add <id> <label>        never approved / triage-checked (use approve)
   approve <id> <quote>          ONLY when the person explicitly asked; quote = their exact words
+  decision-feedback <id> (--option <key>|--text <text>) <quote...>   ONLY on the person's explicit words
   plan-feedback <id> <gate> <answer> <quote...>   ONLY on the person's explicit words; quote = their exact words
   update|close|reopen|defer|undefer <id> [bd flags]   bead edits as with local bd, e.g. close ev-1 --reason "done"
   label remove <id> <label>
@@ -150,6 +151,10 @@ else if (command === "mail") {
     args.splice(i, 2, `${args[i].replace(/-file$/, "")}=${readText(args[i + 1])}`);
   }
   print((await call("POST", `${rig}/write`, { args })).result);
+} else if (command === "decision-feedback") {
+  if (rest.length < 4 || !["--option", "--text"].includes(rest[1]) || !rest[2]?.trim() || !rest.slice(3).join(" ").trim())
+    die("decision-feedback <id> (--option <key>|--text <text>) <quote: the person's exact words>");
+  print(await call("POST", `${rig}/decision-feedback`, { id: rest[0], [rest[1].slice(2)]: rest[2], quote: rest.slice(3).join(" ") }));
 } else if (command === "plan-feedback") {
   if (rest.length < 4) die("plan-feedback <id> <gate> <answer> <quote: the person's exact words>");
   print(await call("POST", `${rig}/plan-feedback`, { id: rest[0], gate: rest[1], answer: rest[2], quote: rest.slice(3).join(" ") }));
