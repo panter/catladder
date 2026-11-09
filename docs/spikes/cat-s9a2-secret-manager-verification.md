@@ -12,7 +12,7 @@ Follow-up to [cat-jqhh](cat-jqhh-google-secret-manager-vault.md), slice A of cat
 
 **No GCP resources were created, and nothing was run against a real GCP project.** Everything that can be checked
 offline (flag names, pricing, IAM role names) is checked below. Every claim that needs a running project is marked
-`unverifiable here` and must be checked with the live-verification script (item B, separate work item) against a disposable project before
+`unverifiable here` and must be checked with the live-verification script (`docs/spikes/cat-s9a2-verify.sh`, merged together with this document) against a disposable project before
 `cat-92k.7` relies on it.
 
 ## Verdicts
@@ -21,12 +21,12 @@ offline (flag names, pricing, IAM role names) is checked below. Every claim that
 | --- | --- | --- |
 | REQ-001a | `gcloud run deploy` / `jobs deploy` have `--set-secrets`, `--update-secrets`, `--remove-secrets`, `--clear-secrets` | verified (local help) |
 | REQ-001b | Worker pools accept `--update-secrets` / `--set-secrets` | verified from official docs only (see below) |
-| REQ-001c | A worker pool actually starts with a secret / fails on an inaccessible one | unverifiable here, see item B |
+| REQ-001c | A worker pool actually starts with a secret / fails on an inaccessible one | unverifiable here, see `docs/spikes/cat-s9a2-verify.sh` |
 | REQ-002a | `--env-vars-file`, `--set-env-vars`, `--update-env-vars`, `--remove-env-vars` exist | verified (local help) |
-| REQ-002b | Same key in env vars and secrets conflicts (error) and removing the key from env on redeploy resolves it | unverifiable here, see item B |
+| REQ-002b | Same key in env vars and secrets conflicts (error) and removing the key from env on redeploy resolves it | unverifiable here, see `docs/spikes/cat-s9a2-verify.sh` |
 | REQ-004 | "about $0.06 per active version, $0.03 per 10k accesses" | verified, with corrections (see Pricing) |
 | REQ-005 | IAM role names | verified from official docs; two extra roles found |
-| REQ-006 | Pinning (`ENV=SECRET:N`), `latest` resolved at instance start, disabled/destroyed pinned version behaviour | `latest`/number syntax verified from docs; the disabled/destroyed behaviour is unverifiable here |
+| REQ-003 | Pinning (`ENV=SECRET:N`), `latest` resolved at instance start, disabled/destroyed pinned version behaviour | `latest`/number syntax verified from docs; the disabled/destroyed behaviour is unverifiable here |
 
 ## REQ-001 / REQ-002: flags
 
@@ -83,7 +83,7 @@ of a pool with a secret is unverifiable here.
 
 ### Conflict behaviour (env var and secret for the same key)
 
-Not documented explicitly in the retrieved pages and not testable offline: unverifiable here. The item B script is to run
+Not documented explicitly in the retrieved pages and not testable offline: unverifiable here. The script `docs/spikes/cat-s9a2-verify.sh` is to run
 service, job and pool with the same key in `--env-vars-file` and `--set-secrets`, then redeploys without the env
 entry. Until verified, keep the spike's design assumption (remove the plain entry in the same deploy) as an
 assumption, not a fact.
@@ -138,9 +138,9 @@ All role names used in the spike (`admin`, `secretAccessor`, `secretVersionAdder
 did not mention `editor` and `secretVersionManager`; the latter is the least-privilege choice for the rotate/disable
 flow. `gcloud iam roles describe roles/secretmanager.<role>` needs credentials and was not run.
 
-## Live checks left open (item B)
+## Live checks left open (`docs/spikes/cat-s9a2-verify.sh`)
 
-Mark: `unverifiable here - see item B` for all of these (item B, separate work item):
+Mark: `unverifiable here - see docs/spikes/cat-s9a2-verify.sh` for all of these:
 
 - a worker pool with a secret starts; a pool with an inaccessible secret fails at deploy
 - same key in env file and `--set-secrets`: error or override, for service, job and pool
