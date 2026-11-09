@@ -265,6 +265,20 @@ lists the declared secrets of a scope with their set/unset status (values only w
 - `--reveal`: also print the secret values (default: false)
 - `--check`: exit with an error when any secret is unset (for CI/agents) (default: false)
 
+## `catladder project secrets-migrate [envComponent]`
+
+copies the declared secrets from one vault to another (the source is never modified; no CI mirroring). Exits non-zero when a write/verification failed or when conflicts remain (re-run with --overwrite)
+
+- `envComponent` (positional): scope: env:component, env:, :component or empty for everything
+- `--from <value>`: source vault (default: the configured vault)
+- `--to <value>`: target vault (required)
+- `--from-collection <value>`: bitwarden collection of the source (default: the configured collection, else catladder)
+- `--to-collection <value>`: bitwarden collection of the target (default: the configured collection, else catladder)
+- `--key <value>`: only migrate these secrets (comma-separated keys)
+- `--dry-run`: only print the plan (names and counts), write nothing
+- `--overwrite`: overwrite secrets that differ in the target (backups are made)
+- `--yes`: do not ask for confirmation
+
 ## `catladder project secrets-pull [envComponent]`
 
 prints the current secrets of a scope as yaml (unset ones as a placeholder) — edit and feed to secrets-push
