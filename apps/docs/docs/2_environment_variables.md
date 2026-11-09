@@ -86,6 +86,17 @@ const config = {
 
 Which vault is configured makes no difference to the commands below.
 
+To switch vaults, copy the secrets over first with `secrets-migrate`, then change `secrets.vault`:
+
+```sh
+# preview: prints names and counts only, writes nothing
+catladder project secrets-migrate --to bitwarden --dry-run
+# copy (the source stays untouched), then verify against the target
+catladder project secrets-migrate --to bitwarden
+```
+
+Existing differing values in the target are reported as conflicts (non-zero exit) unless you pass `--overwrite`; `--yes` skips the confirmation. Provisioned keys and `localAccess` keys are not migrated — re-run `catladder project setup` afterwards. Keep the old vault around as a rollback.
+
 :::note
 
 With the GitHub backend, secrets cannot be read from the vault at

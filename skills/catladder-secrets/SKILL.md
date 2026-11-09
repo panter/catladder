@@ -102,6 +102,46 @@ are missing somewhere — after switching `secrets.vault`, for instance:
 a `secrets-pull`/`secrets-push` round trip does not carry hidden keys
 over, so re-run `project setup` to provision them into the new vault.
 
+## Switching vaults
+
+To move the declared secrets from one vault to another (e.g. gitlab →
+bitwarden), use `project secrets-migrate`. It copies values, never
+modifies the source, never mirrors to CI backends, and never prints
+values (names and counts only).
+
+1. Make sure the target vault is usable (e.g. bitwarden login). Do **not**
+   change `secrets.vault` yet: `--from` defaults to the configured vault,
+   `--to` names the target (`gitlab` or `bitwarden`; bitwarden takes
+   `--to-collection` / `--from-collection`, default the configured
+   collection, else `catladder`).
+2. Preview: `yarn catladder project secrets-migrate --to bitwarden --dry-run`
+   (scope and `--key KEY1,KEY2` work as in the other secrets commands,
+   e.g. `dev:web`). Nothing is written.
+3. Run it: `yarn catladder project secrets-migrate --to bitwarden`
+   (`--yes` skips the confirmation, needed when non-interactive). Written
+   values are read back from the target and verified.
+4. Set `secrets.vault` in `catladder.ts` to the new vault, run
+   `yarn catenv` and commit.
+5. Keep the old vault untouched for a while: it is the rollback.
+
+Details to know:
+
+- Re-running is idempotent: identical values are skipped, unset
+  (empty / "FILL ME") source values are skipped.
+- A value that already exists in the target with a different value is a
+  **conflict**: it is not overwritten, and the command exits non-zero.
+  Re-run with `--overwrite` to replace it (the target keeps a backup copy
+  of the old value). Write or verification failures also exit non-zero;
+  other components are still migrated.
+- Only declared secrets are migrated. The hidden provisioned keys
+  (gcloud deploy key, kube credentials) and `localAccess` service account
+  keys are **not**: re-run `yarn catladder project setup` afterwards to
+  provision them into the new vault.
+- Migrating changes only the vault. Values in the CI backends are
+  unchanged, so no redeploy is needed for the migration itself; redeploy
+  (or `secrets-sync-github`) only after you actually change a value.
+- Source and target must differ; the command refuses otherwise.
+
 ## GitHub pipelines
 
 GitHub Actions cannot read the vault at runtime; secrets are mirrored
