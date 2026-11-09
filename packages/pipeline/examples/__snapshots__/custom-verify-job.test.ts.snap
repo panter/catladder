@@ -466,6 +466,7 @@ catladder-main.yml:
             name: www-app-dev
             path: catladder-artifacts-www-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     www-docker-dev:
       name: www 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -569,6 +570,7 @@ catladder-main.yml:
             name: www-e2e-dev
             path: catladder-artifacts-www-e2e-dev.tar
             if-no-files-found: error
+            retention-days: 3
 catladder-review.yml:
   name: 🛠️ catladder review
   on:
@@ -893,6 +895,7 @@ catladder-review.yml:
             name: www-app-review
             path: catladder-artifacts-www-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     www-docker-review:
       name: www 🔨 docker | review
       runs-on: ubuntu-latest
@@ -996,6 +999,7 @@ catladder-review.yml:
             name: www-e2e-review
             path: catladder-artifacts-www-e2e-review.tar
             if-no-files-found: error
+            retention-days: 3
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
@@ -1244,6 +1248,7 @@ catladder-release.yml:
             name: www-app-stage
             path: catladder-artifacts-www-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     www-docker-stage:
       name: www 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -1344,6 +1349,7 @@ catladder-release.yml:
             name: www-e2e-stage
             path: catladder-artifacts-www-e2e-stage.tar
             if-no-files-found: error
+            retention-days: 3
 catladder-review-stop.yml:
   name: 🛑 catladder stop review app
   on:
@@ -1786,6 +1792,7 @@ catladder-deploy.yml:
             name: www-app-prod
             path: catladder-artifacts-www-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
     www-docker-prod:
       name: www 🔨 docker | prod
       runs-on: ubuntu-latest
@@ -1886,6 +1893,7 @@ catladder-deploy.yml:
             name: www-e2e-prod
             path: catladder-artifacts-www-e2e-prod.tar
             if-no-files-found: error
+            retention-days: 3
 catladder-stop.yml:
   name: 🛑 catladder stop
   on:
