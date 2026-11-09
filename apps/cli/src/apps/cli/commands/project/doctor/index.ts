@@ -10,6 +10,7 @@ import { checkGithub } from "./checkGithub";
 import { checkGithubImageCasing } from "./checkGithubImageCasing";
 import { checkGithubReleaseWorkflow } from "./checkGithubReleaseWorkflow";
 import { checkGitlab } from "./checkGitlab";
+import { checkSecretManager } from "./checkSecretManager";
 import { checkStore } from "./checkStore";
 import { DoctorReport } from "./DoctorReport";
 
@@ -39,6 +40,7 @@ export const doctorProject = async (
 
   const report = new DoctorReport(instance);
   await checkStore(report);
+  await checkSecretManager(report, config);
 
   let contexts: ComponentContext[] = [];
   try {
