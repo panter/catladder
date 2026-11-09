@@ -16,6 +16,7 @@ export { commandCloudSqlProxy } from "./project/commandCloudSqlProxy";
 export { commandConfigSecrets } from "./project/commandConfigSecrets";
 export { commandSecretsPull } from "./project/secrets/commandSecretsPull";
 export { commandSecretsPush } from "./project/secrets/commandSecretsPush";
+export { commandSecretsMigrate } from "./project/secrets/commandSecretsMigrate";
 export { commandSecretsSet } from "./project/secrets/commandSecretsSet";
 export { commandSecretsList } from "./project/secrets/commandSecretsList";
 export { commandSecretsClearBackups } from "./project/commandSecretsClearBackups";
