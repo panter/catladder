@@ -3,7 +3,7 @@ import type {
   ComponentContext,
   EnvironmentEnvVarPart as EnvironmentVariables,
 } from "../types";
-import type { DevLocalEnvConfig } from "../types/config";
+import type { DevLocalEnvConfig, SecretScope } from "../types/config";
 
 import type { CreateComponentContextContext, UnspecifiedEnvVars } from "..";
 import type { StringOrBashExpression } from "@catladder/bash";
@@ -33,6 +33,8 @@ export type SecretEnvVar = {
    * environment urls) and don't count against secret limits.
    */
   kind?: "secret" | "variable";
+  /** where the secret is consumed, default: all scopes */
+  scopes?: SecretScope[];
 };
 
 const getBasePredefinedVariables = (ctx: EnvironmentContext) => {
