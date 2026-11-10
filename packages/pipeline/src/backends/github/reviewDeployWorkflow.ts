@@ -570,6 +570,63 @@ export const withReviewStopSwitch = (
   };
 };
 
+export const REVIEW_STOP_GUARD_JOB_ID = "catladder-review-stop-guard";
+
+/**
+ * gates the review stop workflow: a guard job (`catci review-app
+ * github-stop-guard`) decides whether the PR ever attempted a review
+ * deploy, and the image jobs and stop jobs run only when it says stop
+ * (`workflow_dispatch` always does; any doubt does too). Apply it BEFORE
+ * `withReviewStopSwitch`: that adds the wait job to the guard's needs
+ * (like any non-image job), so the guard sees the deploy state once running review
+ * deploys were cancelled and awaited. Image jobs only serve the stop
+ * jobs, so they are gated along. Nothing requires these jobs, the stop
+ * workflow has no aggregate check.
+ */
+export const withReviewStopGuard = (
+  workflow: GithubWorkflow,
+): GithubWorkflow => {
+  const stopCondition = `needs.${REVIEW_STOP_GUARD_JOB_ID}.outputs.stop == 'true'`;
+  return {
+    ...workflow,
+    jobs: {
+      ...Object.fromEntries(
+        Object.entries(workflow.jobs).map(([id, job]) => [
+          id,
+          {
+            ...job,
+            needs: [REVIEW_STOP_GUARD_JOB_ID, ...(job.needs ?? [])],
+            if: andIf(job.if, stopCondition),
+          },
+        ]),
+      ),
+      [REVIEW_STOP_GUARD_JOB_ID]: {
+        name: "🚦 review stop guard",
+        "runs-on": "ubuntu-latest",
+        permissions: {
+          contents: "read",
+          "pull-requests": "read",
+          statuses: "read",
+          actions: "read",
+        },
+        env: {
+          GITHUB_TOKEN: "${{ github.token }}",
+        },
+        outputs: { stop: "${{ steps.main.outputs.stop }}" },
+        steps: [
+          catciCheckout(),
+          {
+            name: "🚦 review stop guard",
+            id: "main",
+            run: `node ${CATCI} review-app github-stop-guard`,
+            shell: "bash",
+          },
+        ],
+      },
+    },
+  };
+};
+
 const CANCEL_REVIEW_RUNS_JOB_ID = "catladder-wait-review-runs";
 
 /**

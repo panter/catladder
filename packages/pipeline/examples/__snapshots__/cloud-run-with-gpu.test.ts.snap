@@ -1309,6 +1309,9 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     catladder-image-docker-build:
       name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
@@ -1359,6 +1362,9 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     catladder-image-semantic-release:
       name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
@@ -1409,6 +1415,9 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     api-stop-review:
       name: api 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
@@ -1460,6 +1469,30 @@ catladder-review-stop.yml:
             gcloud artifacts docker images delete europe-west4-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/api --quiet --delete-tags
             set -e
             set -e
+          shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
+    catladder-review-stop-guard:
+      name: 🚦 review stop guard
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        pull-requests: read
+        statuses: read
+        actions: read
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        stop: \${{ steps.main.outputs.stop }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            sparse-checkout: .catladder-generated/catci
+        - name: 🚦 review stop guard
+          id: main
+          run: node .catladder-generated/catci/index.js review-app github-stop-guard
           shell: bash
 catladder-deploy.yml:
   name: ▶️ catladder deploy prod

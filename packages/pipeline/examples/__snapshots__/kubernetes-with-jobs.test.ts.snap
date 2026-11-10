@@ -1993,6 +1993,9 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     catladder-image-docker-build:
       name: 🐳 catladder image docker-build
       runs-on: ubuntu-latest
@@ -2043,6 +2046,9 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/docker-build:42cd5c5e5ab0
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     catladder-image-kubernetes:
       name: 🐳 catladder image kubernetes
       runs-on: ubuntu-latest
@@ -2093,6 +2099,9 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/kubernetes:b494d2e6e3ea
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     catladder-image-semantic-release:
       name: 🐳 catladder image semantic-release
       runs-on: ubuntu-latest
@@ -2143,10 +2152,14 @@ catladder-review-stop.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/semantic-release:bbd9b6ee1fa6
             collapseable_section_end "docker-push"
           shell: bash
+      needs:
+        - catladder-review-stop-guard
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     api-stop-review:
       name: api 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-stop-guard
         - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:b494d2e6e3ea
@@ -2219,10 +2232,12 @@ catladder-review-stop.yml:
             kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-api"
             kubernetesDelete
           shell: bash
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
     www-stop-review:
       name: www 🛑 Stop ⚠️ | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-stop-guard
         - catladder-image-kubernetes
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/kubernetes:b494d2e6e3ea
@@ -2294,6 +2309,28 @@ catladder-review-stop.yml:
             kubectl config set-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" --cluster="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" --user="kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" --namespace="pan-test-app-review"
             kubectl config use-context "kube-pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www"
             kubernetesDelete
+          shell: bash
+      if: \${{ needs.catladder-review-stop-guard.outputs.stop == 'true' }}
+    catladder-review-stop-guard:
+      name: 🚦 review stop guard
+      runs-on: ubuntu-latest
+      permissions:
+        contents: read
+        pull-requests: read
+        statuses: read
+        actions: read
+      env:
+        GITHUB_TOKEN: \${{ github.token }}
+      outputs:
+        stop: \${{ steps.main.outputs.stop }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            sparse-checkout: .catladder-generated/catci
+        - name: 🚦 review stop guard
+          id: main
+          run: node .catladder-generated/catci/index.js review-app github-stop-guard
           shell: bash
 catladder-deploy.yml:
   name: ▶️ catladder deploy prod

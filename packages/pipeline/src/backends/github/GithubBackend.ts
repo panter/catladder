@@ -47,6 +47,7 @@ import {
   REVIEW_DEPLOY_WORKFLOW_FILE,
   withDraftsSkipped,
   withInRunCondition,
+  withReviewStopGuard,
   withReviewStopSwitch,
 } from "./reviewDeployWorkflow";
 
@@ -495,16 +496,17 @@ export class GithubBackend implements PipelineBackend {
         },
         jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
       };
+      const guardedStopWorkflow = withReviewStopGuard(reviewStopWorkflow);
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
         REVIEW_DEPLOY_WORKFLOW_FILE
       ]
         ? withReviewStopSwitch(
-            reviewStopWorkflow,
+            guardedStopWorkflow,
             reviewApps,
             isReviewDeployGated(reviewApps) &&
               getInRunDeployCondition(reviewApps) !== undefined,
           )
-        : reviewStopWorkflow;
+        : guardedStopWorkflow;
     }
 
     for (const [kind, bucket] of Object.entries(manualKindBuckets) as Array<

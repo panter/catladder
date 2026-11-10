@@ -246,6 +246,75 @@ describe("github review deploy workflow", () => {
     });
   });
 
+  describe("review stop guard", () => {
+    const GUARD = "catladder-review-stop-guard";
+    const expectGated = (jobs: Record<string, any>) => {
+      const ids = Object.keys(jobs).filter(
+        (id) => id !== GUARD && id !== "catladder-wait-review-runs",
+      );
+      expect(ids.some((id) => id.startsWith("catladder-image-"))).toBe(true);
+      expect(ids).toContain("api-stop-review");
+      for (const id of ids) {
+        expect(jobs[id].needs).toContain(GUARD);
+        expect(jobs[id].if).toContain(`needs.${GUARD}.outputs.stop == 'true'`);
+      }
+    };
+    const stopOf = async (reviewApps?: object) =>
+      (
+        await workflowsOf({
+          ...baseConfig,
+          ...(reviewApps ? { reviewApps } : {}),
+        })
+      )["catladder-review-stop.yml"];
+
+    it("gates the stop and image jobs, default config", async () => {
+      const stop = await stopOf();
+      expectGated(stop.jobs);
+      expect(stop.jobs[GUARD].needs).toBeUndefined();
+      expect(stop.jobs[GUARD].steps.at(-1)?.run).toContain(
+        "review-app github-stop-guard",
+      );
+      expect(stop.jobs[GUARD].outputs).toEqual({
+        stop: "${{ steps.main.outputs.stop }}",
+      });
+      // the guard is upstream of images and stop jobs, never downstream
+      for (const need of stop.jobs[GUARD].needs ?? []) {
+        expect(need).not.toContain("stop-review");
+      }
+    });
+
+    it("waits for running review deploys first when the review run deploys", async () => {
+      for (const reviewApps of [{ deploy: "optIn" }, { deploy: "optOut" }]) {
+        const stop = await stopOf(reviewApps);
+        expectGated(stop.jobs);
+        expect(stop.jobs[GUARD].needs).toContain("catladder-wait-review-runs");
+        // the wait job itself is not gated by the guard
+        expect(stop.jobs["catladder-wait-review-runs"].needs).toBeUndefined();
+      }
+    });
+
+    it("gates the stop jobs without a wait job for auto", async () => {
+      const stop = await stopOf({ deploy: "auto" });
+      expectGated(stop.jobs);
+      expect(stop.jobs[GUARD].needs).toBeUndefined();
+    });
+
+    it("runs unconditionally on workflow_dispatch and for label-off events", async () => {
+      const stop = await stopOf({ deploy: "optIn" });
+      expect(stop.on).toHaveProperty("workflow_dispatch");
+      expect(stop.jobs[GUARD].if).toContain(
+        "github.event_name == 'workflow_dispatch'",
+      );
+      expect(stop.jobs[GUARD].if).toContain(
+        "github.event.action == 'unlabeled'",
+      );
+      // the guard decides on stop=true for dispatch, jobs hold no event logic
+      expect(stop.jobs["api-stop-review"].if).toContain(
+        "outputs.stop == 'true'",
+      );
+    });
+  });
+
   it("stops the review apps when the opt-in label is removed", async () => {
     const workflows = await workflowsOf({
       ...baseConfig,
