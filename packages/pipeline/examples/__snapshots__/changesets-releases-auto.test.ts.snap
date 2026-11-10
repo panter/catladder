@@ -844,6 +844,7 @@ catladder-review.yml:
       name: www 🔨 docker | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-deploy-marker
         - catladder-image-docker-build
         - www-app-review
       container:
@@ -883,6 +884,7 @@ catladder-review.yml:
       name: www 🚀 Deploy | review
       runs-on: ubuntu-latest
       needs:
+        - catladder-review-deploy-marker
         - www-app-review
         - www-audit-review
         - www-docker-review
@@ -928,6 +930,17 @@ catladder-review.yml:
         - name: changeset check
           run: changesetCheck
           shell: bash
+    catladder-review-deploy-marker:
+      name: 🏷️ mark review deploy
+      runs-on: ubuntu-latest
+      permissions:
+        pull-requests: write
+      env:
+        GH_TOKEN: \${{ github.token }}
+      steps:
+        - name: mark review deploy
+          run: gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=catladder:review-deployed' > /dev/null
+          shell: bash
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
@@ -935,6 +948,7 @@ catladder-review.yml:
         - catladder-image-changesets
         - catladder-image-docker-build
         - catladder-image-jobs-default
+        - catladder-review-deploy-marker
         - changeset-check
         - www-app-review
         - www-audit-review

@@ -26,6 +26,12 @@ const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
 export const REVIEW_DEPLOY_WORKFLOW_FILE = "catladder-deploy-review.yml";
 
 const GUARD_JOB_ID = "catladder-review-deploy-guard";
+export const REVIEW_DEPLOY_MARKER_JOB_ID = "catladder-review-deploy-marker";
+/**
+ * the PR label that records "a review deploy was attempted for this
+ * PR". Set before any delivery job starts, never removed by the stop.
+ */
+export const REVIEW_DEPLOYED_LABEL = "catladder:review-deployed";
 const TRIGGER_JOB_ID = "catladder-review-deploy-trigger";
 
 /** the PR of the run — from the event, or the dispatch input */
@@ -184,9 +190,13 @@ export const makeReviewDeployWorkflow = ({
   }
 
   // the guard runs first, every other job only when it says deploy
-  const gatedJob = (job: GithubJob): GithubJob => ({
+  const gatedJob = (job: GithubJob, needsMarker = false): GithubJob => ({
     ...job,
-    needs: [GUARD_JOB_ID, ...(job.needs ?? [])],
+    needs: [
+      GUARD_JOB_ID,
+      ...(needsMarker ? [REVIEW_DEPLOY_MARKER_JOB_ID] : []),
+      ...(job.needs ?? []),
+    ],
     if: andIf(job.if, `needs.${GUARD_JOB_ID}.outputs.deploy == 'true'`),
   });
 
@@ -207,19 +217,23 @@ export const makeReviewDeployWorkflow = ({
       const { githubJob } = triggerJobs.get(id)!;
       return [
         id,
-        gatedJob({
-          ...githubJob,
-          // the quality jobs stay in the review workflow — the guard
-          // checks their aggregate instead
-          ...(githubJob.needs
-            ? {
-                needs: githubJob.needs.filter(
-                  (need) => !isQualityJob(need) || delivery.has(need),
-                ),
-              }
-            : {}),
-          steps: githubJob.steps.map(checkoutPrHead),
-        }),
+        gatedJob(
+          {
+            ...githubJob,
+            // the quality jobs stay in the review workflow — the guard
+            // checks their aggregate instead
+            ...(githubJob.needs
+              ? {
+                  needs: githubJob.needs.filter(
+                    (need) => !isQualityJob(need) || delivery.has(need),
+                  ),
+                }
+              : {}),
+            steps: githubJob.steps.map(checkoutPrHead),
+          },
+          // a deploy never starts unmarked
+          true,
+        ),
       ];
     }),
   );
@@ -321,15 +335,51 @@ export const makeReviewDeployWorkflow = ({
           },
         ],
       },
+      [REVIEW_DEPLOY_MARKER_JOB_ID]: gatedJob(makeReviewDeployMarkerJob()),
       ...imageJobs,
       ...chainJobs,
       ...makeReviewAppAggregateJob(
-        [GUARD_JOB_ID, ...Object.keys(imageJobs), ...Object.keys(chainJobs)],
+        [
+          GUARD_JOB_ID,
+          REVIEW_DEPLOY_MARKER_JOB_ID,
+          ...Object.keys(imageJobs),
+          ...Object.keys(chainJobs),
+        ],
         `needs.${GUARD_JOB_ID}.outputs.deploy == 'true'`,
       ),
     },
   };
 };
+
+/**
+ * marks the PR as "a review deploy was attempted" (the
+ * `catladder:review-deployed` label, created on first use) before the
+ * first delivery job starts. The delivery chains need it, so a deploy
+ * never happens unmarked: when the label can't be written (fork PR,
+ * read-only token) the job fails, the chains are skipped and nothing
+ * deploys. The label is never removed by the stop. Labels set with
+ * GITHUB_TOKEN start no workflow runs, so it can't retrigger the review
+ * or deploy workflows.
+ */
+export const makeReviewDeployMarkerJob = (
+  /** when the run deploys (a github expression); always when omitted */
+  gateCondition?: string,
+): GithubJob => ({
+  name: "🏷️ mark review deploy",
+  "runs-on": "ubuntu-latest",
+  ...(gateCondition ? { if: `\${{ ${gateCondition} }}` } : {}),
+  // job-level permissions replace the workflow's: only what the labels
+  // API needs
+  permissions: { "pull-requests": "write" },
+  env: { GH_TOKEN: "${{ github.token }}" },
+  steps: [
+    {
+      name: "mark review deploy",
+      run: `gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=${REVIEW_DEPLOYED_LABEL}' > /dev/null`,
+      shell: "bash",
+    },
+  ],
+});
 
 export const REVIEW_APP_AGGREGATE_JOB_ID = "catladder-review-app-ok";
 export const REVIEW_APP_AGGREGATE_JOB_NAME = "catladder review app ✅";
