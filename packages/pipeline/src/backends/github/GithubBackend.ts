@@ -21,8 +21,9 @@ import {
   makeGithubJob,
 } from "./createGithubJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
-import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import { withEnsuredImages } from "./ensureImageJobs";
 import { makeAggregateCheckJob } from "./aggregateCheckJob";
+import { getReleaseMethod } from "../../release";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import {
   getGithubCreateReleaseWorkflow,
@@ -350,6 +351,8 @@ export class GithubBackend implements PipelineBackend {
         Object.assign(jobs, getGithubReleaseCheckJobs(config, images));
       }
 
+      // release-on-green skips its image needs: main must build the image
+      let releaseRunsLater = false;
       if (trigger === "mainBranch") {
         // auto release mode: the release job runs at the end of the
         // main workflow itself
@@ -372,13 +375,28 @@ export class GithubBackend implements PipelineBackend {
           workflowEnv,
         );
         if (releaseOnGreen) {
+          releaseRunsLater = true;
           workflows[`${GENERATED_FILE_PREFIX}release-on-green.yml`] =
             releaseOnGreen;
         }
       }
 
       if (Object.keys(jobs).length > 0) {
-        const workflowJobs = { ...makeEnsureImageGithubJobs(images), ...jobs };
+        // one combined image job, only when a job here needs a custom
+        // image. On main the release image is built too when the release
+        // runs in a later workflow (manual mode: release-on-green skips
+        // its image needs). Review deliberately does NOT build
+        // semantic-release just because of the gate — only real
+        // consumers (e.g. changeset-check) pull the image in.
+        const releaseImage = images.resolveRef({
+          catladderImage: getReleaseMethod(config).image,
+        }).need;
+        const workflowJobs = withEnsuredImages(images, jobs, {
+          extraImages:
+            releaseRunsLater && typeof releaseImage === "object"
+              ? [releaseImage.job]
+              : [],
+        });
         const workflow: GithubWorkflow = {
           ...getTriggerWorkflow(trigger),
           ...workflowPermissions(images),
@@ -445,7 +463,8 @@ export class GithubBackend implements PipelineBackend {
           // number from — fall back to the input
           CL_PR_NUMBER: "${{ github.event.number || inputs.pr }}",
         },
-        jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
+        // stop jobs run in google/cloud-sdk — no custom image needed
+        jobs: reviewStopJobs,
       };
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
         REVIEW_DEPLOY_WORKFLOW_FILE
@@ -495,9 +514,9 @@ export class GithubBackend implements PipelineBackend {
         },
         ...workflowPermissions(images),
         env: workflowEnv,
-        jobs: {
-          ...makeEnsureImageGithubJobs(images),
-          ...Object.fromEntries(
+        jobs: withEnsuredImages(
+          images,
+          Object.fromEntries(
             Object.entries(bucket.jobs).map(([id, job]) => [
               id,
               singleTask
@@ -505,7 +524,7 @@ export class GithubBackend implements PipelineBackend {
                 : { ...job, if: `\${{ ${bucket.conditions[id]} }}` },
             ]),
           ),
-        },
+        ),
       };
     }
 

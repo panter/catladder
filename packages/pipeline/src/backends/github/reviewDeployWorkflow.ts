@@ -15,7 +15,7 @@ import type {
 } from "../../types/github-types";
 import type { CatladderJob } from "../../types/jobs";
 import { AGGREGATE_CHECK_JOB_ID } from "./aggregateCheckJob";
-import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import { ENSURE_IMAGES_JOB_ID, withEnsuredImages } from "./ensureImageJobs";
 
 const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
 
@@ -224,14 +224,16 @@ export const makeReviewDeployWorkflow = ({
     }),
   );
 
-  // only the images the chains run in (not e.g. the release image)
-  const neededIds = new Set(
-    Object.values(chainJobs).flatMap((job) => job.needs ?? []),
-  );
+  // one combined image job for the images the chains run in (not e.g.
+  // the release image); gated by the guard like the chain jobs
+  const ensured = withEnsuredImages(images, chainJobs);
   const imageJobs = Object.fromEntries(
-    Object.entries(makeEnsureImageGithubJobs(images))
-      .filter(([id]) => neededIds.has(id))
+    Object.entries(ensured)
+      .filter(([id]) => id === ENSURE_IMAGES_JOB_ID)
       .map(([id, job]) => [id, gatedJob(job)]),
+  );
+  const chainJobsEnsured = Object.fromEntries(
+    Object.entries(ensured).filter(([id]) => id !== ENSURE_IMAGES_JOB_ID),
   );
 
   const switchLabel = getReviewAppsSwitchLabel(reviewApps);
@@ -322,9 +324,13 @@ export const makeReviewDeployWorkflow = ({
         ],
       },
       ...imageJobs,
-      ...chainJobs,
+      ...chainJobsEnsured,
       ...makeReviewAppAggregateJob(
-        [GUARD_JOB_ID, ...Object.keys(imageJobs), ...Object.keys(chainJobs)],
+        [
+          GUARD_JOB_ID,
+          ...Object.keys(imageJobs),
+          ...Object.keys(chainJobsEnsured),
+        ],
         `needs.${GUARD_JOB_ID}.outputs.deploy == 'true'`,
       ),
     },
