@@ -44,7 +44,8 @@ stop`, `↩️ catladder rollback` — when all of a kind's tasks target one
   env the name carries it (e.g. `▶️ catladder deploy prod`); otherwise
   pick the task from the workflow's dropdown. Review apps are stopped
   automatically when their pull request closes (`🛑 catladder stop
-review app`); the same workflow can be dispatched with a PR number to
+review app`) — a PR that never deployed skips the stop jobs (see the
+  review-app section below); the same workflow can be dispatched with a PR number to
   tear one down while the pull request is still open (gitlab runs these as manual jobs inside the pipeline
   instead).
 
@@ -129,7 +130,15 @@ through the `▶️ catladder deploy review` workflow
   switching it off stops the review apps (`🛑 catladder stop review
 app`), and so does closing the PR — the stop first waits for a
   review run of the PR that may still be deploying (on close it
-  cancels it), so a late deploy can't outlive the teardown;
+  cancels it), so a late deploy can't outlive the teardown. Closing a
+  PR that never attempted a review deploy skips the stop jobs (and
+  the image jobs that only serve them): a guard job decides from the
+  `catladder:review-deployed` marker label, which the deploy sets
+  before it creates any resource. Don't remove that label by hand —
+  the PR would no longer be torn down on close. If the guard can't
+  tell, it fails open and stops anyway; PRs deployed before the
+  marker existed are still stopped; a manual `workflow_dispatch` stop
+  always runs;
 - on request, any time (agents included):
   `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`
   — explicit requests always deploy, but need the PR open and its CI
