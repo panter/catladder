@@ -65,6 +65,40 @@ type PlannedImage = {
 };
 
 /**
+ * the plain commands to check for, build and push one image
+ */
+export type ImageBuildCommands = {
+  /** the build job name */
+  jobName: string;
+  imageRef: string;
+  /** succeeds when the image tag already exists in the registry */
+  exists: string;
+  alreadyExistsMessage: string;
+  build: string;
+  push: string;
+};
+
+const imageBuildCommands = ({
+  jobName,
+  imageRef,
+  dockerfilePath,
+  contextDir,
+  buildArgs,
+}: PlannedImage): ImageBuildCommands => {
+  const buildArgFlags = Object.entries(buildArgs ?? {})
+    .map(([key, value]) => ` --build-arg '${key}=${value}'`)
+    .join("");
+  return {
+    jobName,
+    imageRef,
+    exists: `docker manifest inspect ${imageRef} > /dev/null 2>&1`,
+    alreadyExistsMessage: `Image ${imageRef} already exists, skipping build`,
+    build: `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${dockerfilePath} ${contextDir}`,
+    push: `docker push ${imageRef}`,
+  };
+};
+
+/**
  * every planned image is consumed the same way: its url, plus an
  * optional dependency on its build job
  */
@@ -360,23 +394,32 @@ export class JobImagesPlan {
     );
   }
 
-  private createImageBuildJob({
-    jobName,
-    imageRef,
-    watchedPaths,
-    dockerfilePath,
-    contextDir,
-    buildArgs,
-  }: PlannedImage): CatladderJob {
-    const buildArgFlags = Object.entries(buildArgs ?? {})
-      .map(([key, value]) => ` --build-arg '${key}=${value}'`)
-      .join("");
-    const buildCommand = `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${dockerfilePath} ${contextDir}`;
-
+  /**
+   * the docker login command, shared by every image build job
+   */
+  getDockerLoginCommand(): string {
     const ctx = { pipelineType: this.pipelineType };
     const registryUser = getCiVariable(ctx, "registryUser");
     const jobToken = getCiVariable(ctx, "jobToken");
     const registry = getCiVariable(ctx, "registry");
+    return `docker login --username ${registryUser} --password ${jobToken} ${registry}`;
+  }
+
+  /**
+   * the plain check/build/push commands of every used image — the
+   * building blocks of the gitlab image build jobs, also consumed by
+   * backends that bundle all images into one job
+   */
+  getImageBuildCommands(): ImageBuildCommands[] {
+    return [...this.used.values(), ...this.usedProject.values()].map(
+      imageBuildCommands,
+    );
+  }
+
+  private createImageBuildJob(planned: PlannedImage): CatladderJob {
+    const { jobName, watchedPaths } = planned;
+    const { exists, build, push, alreadyExistsMessage } =
+      imageBuildCommands(planned);
 
     const { services, runnerVariables } = getDockerJobBaseProps();
 
@@ -401,26 +444,18 @@ export class JobImagesPlan {
         ...collapseableSection(
           "docker-login",
           "Docker Login",
-        )([
-          `docker login --username ${registryUser} --password ${jobToken} ${registry}`,
-        ]),
+        )([this.getDockerLoginCommand()]),
         ...collapseableSection(
           "check-image",
           "Checking if image exists",
         )([
-          `if docker manifest inspect ${imageRef} > /dev/null 2>&1; then`,
-          `  echo "Image ${imageRef} already exists, skipping build"`,
+          `if ${exists}; then`,
+          `  echo "${alreadyExistsMessage}"`,
           `  exit 0`,
           `fi`,
         ]),
-        ...collapseableSection(
-          "docker-build",
-          "Building image",
-        )([buildCommand]),
-        ...collapseableSection(
-          "docker-push",
-          "Pushing image",
-        )([`docker push ${imageRef}`]),
+        ...collapseableSection("docker-build", "Building image")([build]),
+        ...collapseableSection("docker-push", "Pushing image")([push]),
       ],
     };
   }
