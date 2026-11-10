@@ -78,6 +78,7 @@ export const createNodeTestJobs = async (
             ]),
           ],
           allow_failure: buildConfig.audit?.allowFailure ?? true,
+          timeout: buildConfig.audit?.timeout,
           ...createArtifactsConfig(
             context.build.dir,
             buildConfig.audit?.artifactsReports,
@@ -105,6 +106,7 @@ export const createNodeTestJobs = async (
             ]),
           ],
           allow_failure: buildConfig.lint?.allowFailure,
+          timeout: buildConfig.lint?.timeout,
           ...createArtifactsConfig(
             context.build.dir,
             buildConfig.lint?.artifactsReports,
@@ -135,6 +137,7 @@ export const createNodeTestJobs = async (
             ]),
           ],
           allow_failure: buildConfig.test?.allowFailure,
+          timeout: buildConfig.test?.timeout,
           ...createArtifactsConfig(
             context.build.dir,
             buildConfig.test?.artifactsReports,
