@@ -40,7 +40,8 @@ beads and starts the right workflow – you never start workflows yourself.
    overload rules, attempt limits and the right formula. (Exception: the human explicitly asks for a manual start.)
 8. **Follow up** in the city dashboard (https://colab-city.angora-dojo.ts.net, page «Needs you» for beads waiting for a human) or
    with `city-beads` reads (`show <id>` / `comments <id>`); routed workers use local `bd`. Answer a question on
-   a bead with a comment and remove the label `human`.
+   a bead with a comment and remove the label `human`. For plan gates, use the person-authored
+   `plan-feedback` relay below instead of a plain comment.
 
 ## From a normal checkout (ADR 0011)
 
@@ -67,6 +68,18 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
   on the bead. Never set `approved` with `bd` or as a label: agent identities (`colab`, `maw-city-operator`,
   `remote-agent/…`) are stripped by the guard. Anything you propose yourself gets no approval; give the person
   the bead ID to approve in the dashboard.
+- **Plan questions:** only on the person's explicit words, relay their answer with
+  `node .claude/skills/city-beads/scripts/city-bd.mjs plan-feedback <id> <gate> "<answer>" "<person's exact words>"`
+  (MCP tool `plan_feedback`). Put `--rig <city>/<rig>` before `plan-feedback` when selecting another rig.
+  The quote must be the person's exact words; never infer an answer or approve a plan gate yourself.
+  This requires `po_feedback` permission for the target city/rig. The server posts
+  `/plan-feedback <gate> <answer>` under the person's registered people.toml name, plus a separate
+  agent-authored provenance comment with the quote. A plain `comment` starting with `/plan-feedback`
+  uses the agent identity and is ignored by the city. Check the returned `posted` author and text.
+  If `partial: true`, the answer was posted but its provenance comment failed: inspect the bead before
+  retrying and never repost the answer automatically. Posting alone does not prove that the city accepted
+  the answer; city-side author and permission checks still apply. Plan feedback does not grant work approval;
+  use `approve` only on an explicit request to approve work.
 - **Dependencies and PR metadata:** `create` accepts the `city.handoff` metadata (handoff labels plus
   `metadata: {"city.handoff": "<json>"}`). Set same-rig dependencies **before approval** with
   `city-bd dep add <later> --blocked-by <earlier>` or
