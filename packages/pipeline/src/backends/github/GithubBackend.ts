@@ -31,11 +31,17 @@ import {
   getGithubReleaseOnGreenWorkflow,
 } from "./githubReleaseJobs";
 import { GITHUB_SCRIPTS_FOLDER, GithubScriptFiles } from "./scriptFiles";
-import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
+import {
+  getReviewAppsConfig,
+  isReviewDeliveryJob,
+  isReviewDeployGated,
+} from "../../reviewApps";
 import {
   getGatedReviewDeliveryJobIds,
   getInRunDeployCondition,
   makeReviewAppAggregateJob,
+  makeReviewDeployMarkerJob,
+  REVIEW_DEPLOY_MARKER_JOB_ID,
   makeReviewDeployTriggerJob,
   makeReviewDeployWorkflow,
   REVIEW_DEPLOY_WORKFLOW_FILE,
@@ -253,12 +259,37 @@ export class GithubBackend implements PipelineBackend {
             for (const id of deliveryIds) {
               const entry = triggerJobs.get(id)!;
               entry.githubJob = withInRunCondition(
-                entry.githubJob,
+                {
+                  ...entry.githubJob,
+                  // a deploy never starts unmarked
+                  needs: [
+                    REVIEW_DEPLOY_MARKER_JOB_ID,
+                    ...(entry.githubJob.needs ?? []),
+                  ],
+                },
                 inRunCondition,
               );
             }
           } else {
             deliveryIds.forEach((id) => triggerJobs.delete(id));
+          }
+        }
+      }
+
+      // review apps that deploy on every PR (no gate) deploy in the
+      // review run unconditionally: they set the marker as well
+      let ungatedMarked = false;
+      if (trigger === "mr" && !isReviewDeployGated(reviewApps)) {
+        for (const entry of triggerJobs.values()) {
+          if (isReviewDeliveryJob(entry.context, entry.job)) {
+            ungatedMarked = true;
+            entry.githubJob = {
+              ...entry.githubJob,
+              needs: [
+                REVIEW_DEPLOY_MARKER_JOB_ID,
+                ...(entry.githubJob.needs ?? []),
+              ],
+            };
           }
         }
       }
@@ -378,7 +409,20 @@ export class GithubBackend implements PipelineBackend {
       }
 
       if (Object.keys(jobs).length > 0) {
-        const workflowJobs = { ...makeEnsureImageGithubJobs(images), ...jobs };
+        const markerJobs: Record<string, GithubJob> =
+          trigger === "mr" &&
+          ((inRunCondition && inRunDeliveryIds.length > 0) || ungatedMarked)
+            ? {
+                [REVIEW_DEPLOY_MARKER_JOB_ID]: makeReviewDeployMarkerJob(
+                  ungatedMarked ? undefined : inRunCondition,
+                ),
+              }
+            : {};
+        const workflowJobs = {
+          ...makeEnsureImageGithubJobs(images),
+          ...jobs,
+          ...markerJobs,
+        };
         const workflow: GithubWorkflow = {
           ...getTriggerWorkflow(trigger),
           ...workflowPermissions(images),
@@ -394,11 +438,15 @@ export class GithubBackend implements PipelineBackend {
             trigger === "mr"
               ? {
                   ...workflowJobs,
-                  ...makeAggregateCheckJob(workflowJobs, inRunDeliveryIds),
+                  ...makeAggregateCheckJob(workflowJobs, [
+                    ...inRunDeliveryIds,
+                    // skipped on purpose with the chains it gates
+                    ...(ungatedMarked ? [] : Object.keys(markerJobs)),
+                  ]),
                   // the stable review app result of an in-run deploy
                   ...(inRunCondition && inRunDeliveryIds.length > 0
                     ? makeReviewAppAggregateJob(
-                        inRunDeliveryIds,
+                        [...inRunDeliveryIds, REVIEW_DEPLOY_MARKER_JOB_ID],
                         inRunCondition,
                       )
                     : {}),

@@ -78,7 +78,9 @@ describe("github review deploy workflow", () => {
     }
     // ... a skipped chain is no CI failure, a failed one is
     const okScript = review.jobs["catladder-ok"].steps[0].run ?? "";
-    expect(okScript).toContain(` ${[...DELIVERY].sort().join(" ")} `);
+    expect(okScript).toContain(
+      ` ${[...DELIVERY, "catladder-review-deploy-marker"].sort().join(" ")} `,
+    );
     expect(okScript).not.toContain("api-test-review ");
     // ... with the stable review app result in the same run
     expect(review.jobs["catladder-review-app-ok"].if).toBe(
@@ -153,6 +155,95 @@ describe("github review deploy workflow", () => {
     // the guard marks the deploy in flight on the pull request
     const guardSteps = deploy.jobs["catladder-review-deploy-guard"].steps;
     expect(guardSteps.at(-1)?.run).toContain("state=pending");
+  });
+
+  describe("review deploy marker", () => {
+    const MARKER = "catladder-review-deploy-marker";
+
+    it("is set before any delivery job of the deploy workflow starts (optIn)", async () => {
+      const workflows = await workflowsOf({
+        ...baseConfig,
+        reviewApps: { deploy: "optIn" },
+      });
+      const deploy = workflows["catladder-deploy-review.yml"];
+      const marker = deploy.jobs[MARKER];
+      expect(marker.needs).toEqual(["catladder-review-deploy-guard"]);
+      expect(marker.if).toBe(
+        "${{ needs.catladder-review-deploy-guard.outputs.deploy == 'true' }}",
+      );
+      expect(marker.permissions).toEqual({ "pull-requests": "write" });
+      expect(marker.steps[0].run).toContain(
+        "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels",
+      );
+      expect(marker.steps[0].run).toContain(
+        "labels[]=catladder:review-deployed",
+      );
+      for (const id of DELIVERY) {
+        expect(deploy.jobs[id].needs).toContain(MARKER);
+      }
+      // a marker failure must be red, not a silent skip
+      expect(deploy.jobs["catladder-review-app-ok"].needs).toContain(MARKER);
+    });
+
+    it("is set before any delivery job of the review run (in-run deploy)", async () => {
+      const workflows = await workflowsOf({
+        ...baseConfig,
+        reviewApps: { deploy: "optIn" },
+      });
+      const review = workflows["catladder-review.yml"];
+      const inRun =
+        "contains(github.event.pull_request.labels.*.name, 'catladder:review-app')";
+      expect(review.jobs[MARKER].if).toBe(`\${{ ${inRun} }}`);
+      expect(review.jobs[MARKER].permissions).toEqual({
+        "pull-requests": "write",
+      });
+      for (const id of DELIVERY) {
+        expect(review.jobs[id].needs).toContain(MARKER);
+      }
+      expect(review.jobs["catladder-review-app-ok"].needs).toContain(MARKER);
+      // a marker failure fails catladder ✅ like any delivery failure
+      expect(review.jobs["catladder-ok"].needs).toContain(MARKER);
+      expect(review.jobs["catladder-ok"].steps[0].run).toContain(` ${MARKER} `);
+    });
+
+    it("is set for projects that deploy every PR (auto)", async () => {
+      const workflows = await workflowsOf({
+        ...baseConfig,
+        reviewApps: { deploy: "auto" },
+      });
+      const review = workflows["catladder-review.yml"];
+      expect(workflows["catladder-deploy-review.yml"]).toBeUndefined();
+      // unconditional: every PR deploys
+      expect(review.jobs[MARKER].if).toBeUndefined();
+      expect(review.jobs["catladder-ok"].needs).toContain(MARKER);
+      for (const id of DELIVERY) {
+        expect(review.jobs[id].needs).toContain(MARKER);
+      }
+    });
+
+    it("is set for the default (ungated) review deploys too", async () => {
+      const workflows = await workflowsOf(baseConfig);
+      const review = workflows["catladder-review.yml"];
+      expect(review.jobs[MARKER]).toBeDefined();
+      for (const id of DELIVERY) {
+        expect(review.jobs[id].needs).toContain(MARKER);
+      }
+    });
+
+    it("cannot retrigger the review or deploy workflows", async () => {
+      const workflows = await workflowsOf({
+        ...baseConfig,
+        reviewApps: { deploy: "optIn" },
+      });
+      // the review workflow doesn't listen to label events; the deploy
+      // workflow only reacts to the switch label
+      expect(workflows["catladder-review.yml"].on).toMatchObject({
+        pull_request: { types: ["opened", "synchronize", "reopened"] },
+      });
+      expect(
+        workflows["catladder-deploy-review.yml"].concurrency?.group,
+      ).toContain("github.event.label.name == 'catladder:review-app'");
+    });
   });
 
   it("stops the review apps when the opt-in label is removed", async () => {

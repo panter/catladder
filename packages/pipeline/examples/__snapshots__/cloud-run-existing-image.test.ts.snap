@@ -310,11 +310,25 @@ catladder-review.yml:
           id: main
           run: bash .catladder-generated/github/scripts/www-deploy-review.sh
           shell: bash
+      needs:
+        - catladder-review-deploy-marker
+    catladder-review-deploy-marker:
+      name: 🏷️ mark review deploy
+      runs-on: ubuntu-latest
+      permissions:
+        pull-requests: write
+      env:
+        GH_TOKEN: \${{ github.token }}
+      steps:
+        - name: mark review deploy
+          run: gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$CL_PR_NUMBER/labels" -f 'labels[]=catladder:review-deployed' > /dev/null
+          shell: bash
     catladder-ok:
       name: catladder ✅
       runs-on: ubuntu-latest
       needs:
         - catladder-image-semantic-release
+        - catladder-review-deploy-marker
         - www-deploy-review
       if: always()
       steps:
