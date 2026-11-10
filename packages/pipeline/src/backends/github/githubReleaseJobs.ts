@@ -1,12 +1,35 @@
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import { githubGlobalJobId } from "./createGithubJobs";
-import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import {
+  ENSURE_IMAGES_JOB_ID,
+  makeEnsureImagesGithubJob,
+} from "./ensureImageJobs";
 import { getReleaseMethod } from "../../release";
 import { GENERATED_CATCI_FOLDER } from "../../catci/shippedCatci";
 import type { Config } from "../../types";
 import type { GithubJob, GithubWorkflow } from "../../types/github-types";
 
 const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
+
+/**
+ * the image job name of the release image, when it is a custom image —
+ * the main workflow ensures it whenever releases are configured, since
+ * the create-release and release-on-green workflows rely on it
+ */
+export const getGithubReleaseImageJobNames = (
+  config: Config,
+  images: JobImagesPlan,
+): string[] => {
+  if (!config.releases) {
+    return [];
+  }
+  const resolved = images.resolveRef({
+    catladderImage: getReleaseMethod(config).image,
+  });
+  return resolved.need && typeof resolved.need === "object"
+    ? [resolved.need.job]
+    : [];
+};
 
 /**
  * the build job of the release image only — the create-release
@@ -22,7 +45,9 @@ const makeReleaseImageEnsureJobs = (
   if (!resolved.need || typeof resolved.need !== "object") {
     return {};
   }
-  return makeEnsureImageGithubJobs(images, { only: [resolved.need.job] });
+  return makeEnsureImagesGithubJob(images, [
+    githubGlobalJobId(resolved.need.job),
+  ]);
 };
 
 const createReleaseJob = (
@@ -57,7 +82,7 @@ const createReleaseJob = (
     !options.skipImageNeeds &&
     resolved.need &&
     typeof resolved.need === "object"
-      ? [githubGlobalJobId(resolved.need.job)]
+      ? [ENSURE_IMAGES_JOB_ID]
       : [];
   const allNeeds = [...imageNeeds, ...(options.needs ?? [])];
   return {

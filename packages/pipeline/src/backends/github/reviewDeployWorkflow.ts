@@ -15,7 +15,7 @@ import type {
 } from "../../types/github-types";
 import type { CatladderJob } from "../../types/jobs";
 import { AGGREGATE_CHECK_JOB_ID } from "./aggregateCheckJob";
-import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import { isEnsureImagesJobId, withEnsureImages } from "./ensureImageJobs";
 
 const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
 
@@ -224,14 +224,16 @@ export const makeReviewDeployWorkflow = ({
     }),
   );
 
-  // only the images the chains run in (not e.g. the release image)
-  const neededIds = new Set(
-    Object.values(chainJobs).flatMap((job) => job.needs ?? []),
-  );
+  // only the images the chains run in (not e.g. the release image):
+  // one bundled job, computed from the chains' needs
+  const withImages = withEnsureImages(images, chainJobs);
   const imageJobs = Object.fromEntries(
-    Object.entries(makeEnsureImageGithubJobs(images))
-      .filter(([id]) => neededIds.has(id))
+    Object.entries(withImages)
+      .filter(([id]) => isEnsureImagesJobId(id))
       .map(([id, job]) => [id, gatedJob(job)]),
+  );
+  const chainJobsWithImages = Object.fromEntries(
+    Object.entries(withImages).filter(([id]) => !isEnsureImagesJobId(id)),
   );
 
   const switchLabel = getReviewAppsSwitchLabel(reviewApps);
@@ -322,9 +324,13 @@ export const makeReviewDeployWorkflow = ({
         ],
       },
       ...imageJobs,
-      ...chainJobs,
+      ...chainJobsWithImages,
       ...makeReviewAppAggregateJob(
-        [GUARD_JOB_ID, ...Object.keys(imageJobs), ...Object.keys(chainJobs)],
+        [
+          GUARD_JOB_ID,
+          ...Object.keys(imageJobs),
+          ...Object.keys(chainJobsWithImages),
+        ],
         `needs.${GUARD_JOB_ID}.outputs.deploy == 'true'`,
       ),
     },
@@ -504,7 +510,7 @@ export const withReviewStopSwitch = (
           Object.entries(workflow.jobs).map(([id, job]) => [
             id,
             // the teardown waits until no review run deploys anymore
-            reviewRunDeploys && !id.startsWith("catladder-image-")
+            reviewRunDeploys && !isEnsureImagesJobId(id)
               ? {
                   ...job,
                   needs: [CANCEL_REVIEW_RUNS_JOB_ID, ...(job.needs ?? [])],
