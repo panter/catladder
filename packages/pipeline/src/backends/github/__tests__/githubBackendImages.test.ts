@@ -52,4 +52,71 @@ describe("github combined image job", () => {
       expect(Object.keys(stop.jobs)).not.toContain("catladder-images");
     }
   });
+
+  describe("per workflow image coverage", () => {
+    const stepNames = (w: any) =>
+      (w.jobs["catladder-images"]?.steps ?? []).map((s: any) => s.name);
+    const needsOf = (w: any, id: string) => w.jobs[id]?.needs ?? [];
+
+    it("create-release needs the combined job, which builds only the release image", async () => {
+      const w: any = await workflowsOf(config({ when: "onGreen" }));
+      const cr = w["catladder-create-release.yml"];
+      expect(needsOf(cr, "create-release")).toEqual(["catladder-images"]);
+      expect(stepNames(cr).filter((n: string) => n !== "Checkout")).toEqual([
+        "🐳 catladder image semantic-release",
+      ]);
+    });
+
+    it("main ensures semantic-release for release-on-green, review does not", async () => {
+      const w: any = await workflowsOf(config({ when: "onGreen" }));
+      expect(stepNames(w["catladder-main.yml"])).toContain(
+        "🐳 catladder image semantic-release",
+      );
+      expect(stepNames(w["catladder-review.yml"])).not.toContain(
+        "🐳 catladder image semantic-release",
+      );
+    });
+
+    it("keeps the combined job in the catladder-ok gate needs", async () => {
+      const w: any = await workflowsOf(config({ when: "onGreen" }));
+      expect(needsOf(w["catladder-review.yml"], "catladder-ok")).toContain(
+        "catladder-images",
+      );
+    });
+
+    it("has no image job and no dangling needs in stop workflows", async () => {
+      const w: any = await workflowsOf(config({ when: "onGreen" }));
+      for (const name of ["catladder-review-stop.yml", "catladder-stop.yml"]) {
+        expect(Object.keys(w[name].jobs)).not.toContain("catladder-images");
+        for (const job of Object.values<any>(w[name].jobs)) {
+          expect(
+            (job.needs ?? []).filter((n: string) => n.includes("image")),
+          ).toEqual([]);
+        }
+      }
+    });
+
+    it("has no needs pointing at a missing job in any workflow", async () => {
+      const w: any = await workflowsOf(config({ when: "onGreen" }));
+      for (const wf of Object.values<any>(w)) {
+        const ids = Object.keys(wf.jobs);
+        for (const job of Object.values<any>(wf.jobs)) {
+          for (const n of job.needs ?? []) expect(ids).toContain(n);
+        }
+      }
+    });
+
+    it("uses one combined job in the deploy-review workflow", async () => {
+      const w: any = await new GithubBackend().createWorkflows({
+        ...config({ when: "onGreen" }),
+        reviewApps: { deploy: "optIn" },
+      } as unknown as Config);
+      const d = w["catladder-deploy-review.yml"];
+      expect(d).toBeDefined();
+      const imageJobs = Object.keys(d.jobs).filter((id) =>
+        id.includes("images"),
+      );
+      expect(imageJobs).toEqual(["catladder-images"]);
+    });
+  });
 });

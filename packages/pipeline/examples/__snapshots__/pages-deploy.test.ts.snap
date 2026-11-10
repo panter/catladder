@@ -15,14 +15,14 @@ exports[`matches snapshot for pages-deploy github workflows YAML 1`] = `
     CL_REGISTRY_USER: \${{ github.actor }}
     CL_PR_NUMBER: \${{ github.event.number }}
   jobs:
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
+    catladder-images:
+      name: catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
         - name: 🐳 catladder image semantic-release
-          id: main
+          id: catladder-image-semantic-release
           run: |-
             function escapeForDotEnv () {
             input="\${1:-$(cat)}"
@@ -78,7 +78,7 @@ exports[`matches snapshot for pages-deploy github workflows YAML 1`] = `
         actions: write
         packages: read
       needs:
-        - catladder-image-semantic-release
+        - catladder-images
       env:
         GITHUB_TOKEN: \${{ github.token }}
         CATLADDER_RELEASE_KEY: \${{ secrets.CATLADDER_RELEASE_KEY }}
@@ -158,14 +158,14 @@ catladder-main.yml:
     packages: write
   env: *a1
   jobs:
-    catladder-image-jobs-default:
-      name: 🐳 catladder image jobs-default
+    catladder-images:
+      name: catladder images
       runs-on: ubuntu-latest
       steps:
         - name: Checkout
           uses: actions/checkout@v4
         - name: 🐳 catladder image jobs-default
-          id: main
+          id: catladder-image-jobs-default
           run: |-
             function escapeForDotEnv () {
             input="\${1:-$(cat)}"
@@ -208,14 +208,8 @@ catladder-main.yml:
             docker push ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
             collapseable_section_end "docker-push"
           shell: bash
-    catladder-image-semantic-release:
-      name: 🐳 catladder image semantic-release
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
         - name: 🐳 catladder image semantic-release
-          id: main
+          id: catladder-image-semantic-release
           run: |-
             function escapeForDotEnv () {
             input="\${1:-$(cat)}"
@@ -262,7 +256,7 @@ catladder-main.yml:
       name: docs 🚀 Deploy | dev
       runs-on: ubuntu-latest
       needs:
-        - catladder-image-jobs-default
+        - catladder-images
       container:
         image: ghcr.io/\${{ github.repository }}/catladder/jobs-default:8599d238c526
         credentials:

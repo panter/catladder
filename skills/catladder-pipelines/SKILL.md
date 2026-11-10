@@ -202,6 +202,13 @@ dir carries an `IMAGE_TAG` file with the current tag, so a tag change
 always shows up as a changed file. If jobs fail with an image pull
 error (`…/catladder/<name>:<tag>: not found`), check that the generated
 files are committed, and that the `🐳 catladder image <name>` job ran.
+On GitHub there is no per-image job: each workflow has at most one
+`catladder-images` job (steps `🐳 catladder image <name>`) that checks
+and builds only the images the workflow's jobs use, and every job in a
+custom image `needs` it. Workflows without such jobs (e.g. the review
+stop workflow) have none; `catladder-main.yml` also covers
+`semantic-release` when the release runs in a later workflow. A failed
+image build fails the `catladder ✅` gate.
 `.catladder-generated/catci/` holds a small bundled CI companion used by
 generated jobs (e.g. the release security audit) plus a `package.json`
 pinning the folder to CommonJS (needed when the project's root
