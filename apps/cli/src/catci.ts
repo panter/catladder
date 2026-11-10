@@ -33,6 +33,7 @@ import { npmPublishJob, parseNpmPublishArgs } from "./publish/npmPublishJob";
 import {
   githubReviewDeployGuardJob,
   githubReviewDeployTriggerJob,
+  githubReviewStopGuardJob,
 } from "./reviewApps/github";
 import { getGitlabHostUrl } from "./utils/gitlabHost";
 
@@ -86,6 +87,11 @@ usage:
       github only, last job of the review workflow: once the PR's CI is
       green, dispatches the review deploy workflow when the reviewApps
       policy (labels, draft) says the PR deploys
+
+  catci review-app github-stop-guard
+      github only, first job of the review stop workflow: decides
+      whether the PR ever deployed review apps (stop=true|false step
+      output); unsure or failing lookups always mean stop=true
 
   catci review-app github-guard
       github only, first job of the review deploy workflow: decides
@@ -232,6 +238,13 @@ const main = async () => {
     args.length === 0
   ) {
     return githubReviewDeployGuardJob();
+  }
+  if (
+    group === "review-app" &&
+    command === "github-stop-guard" &&
+    args.length === 0
+  ) {
+    return githubReviewStopGuardJob();
   }
   if (group === "publish" && command === "npm") {
     const options = parseNpmPublishArgs(args);

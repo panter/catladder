@@ -26,6 +26,10 @@ import {
   shouldAutoDeployReviewApps,
 } from "../../../../packages/pipeline/src/reviewAppsPolicy";
 import { appendFileSync } from "fs";
+import {
+  decideReviewStop,
+  REVIEW_DEPLOYED_MARKER_LABEL,
+} from "./reviewStopDetection";
 import { appendStepSummary, workflowLink } from "../release/stepSummary";
 
 /**
@@ -304,4 +308,69 @@ export const githubReviewDeployTriggerJob = async () => {
   appendStepSummary(
     `▶️ **Review deploy started** for #${pr.number} (\`${short(headSha)}\`): ${decision.reason} — see ${workflowLink(GITHUB_REVIEW_DEPLOY_WORKFLOW, "catladder deploy review")}.`,
   );
+};
+
+/** the review workflow, whose runs on a branch hint at an earlier deploy */
+const GITHUB_REVIEW_WORKFLOW = "catladder-review.yml";
+
+/**
+ * legacy PRs deployed before the marker label existed: true when a
+ * `catladder review app` commit status or a review run exists for the PR
+ * head. Throws when a lookup fails.
+ */
+const hasPriorDeployEvidence = async (pr: PullRequest): Promise<boolean> => {
+  const statuses = await githubApi(`commits/${pr.head.sha}/statuses`);
+  if (!statuses.ok) {
+    throw new Error(`reading the statuses failed: ${statuses.status}`);
+  }
+  const list = (await statuses.json()) as Array<{ context: string }>;
+  if (list.some((s) => s.context === REVIEW_APP_STATUS_CONTEXT)) {
+    return true;
+  }
+  const runs = await githubApi(
+    `actions/workflows/${GITHUB_REVIEW_WORKFLOW}/runs?branch=${encodeURIComponent(pr.head.ref)}&per_page=1`,
+  );
+  if (!runs.ok) {
+    throw new Error(`reading the review runs failed: ${runs.status}`);
+  }
+  const data = (await runs.json()) as { total_count?: number };
+  return (data.total_count ?? 0) > 0;
+};
+
+/**
+ * `catci review-app github-stop-guard` — first job of the review stop
+ * workflow, sets the `stop` step output. Any error means stop.
+ */
+export const githubReviewStopGuardJob = async () => {
+  let stop = true;
+  let reason: string;
+  try {
+    const event = process.env.GITHUB_EVENT_NAME ?? "";
+    if (event === "workflow_dispatch") {
+      ({ stop, reason } = decideReviewStop({ event, labels: undefined }));
+    } else {
+      const pr = await getPullRequest(requireEnv("CL_PR_NUMBER"));
+      const labels = pr.labels.map((label) => label.name);
+      // the evidence lookup is only needed when the marker is absent
+      const hasMarker = labels.includes(REVIEW_DEPLOYED_MARKER_LABEL);
+      const decision = decideReviewStop({
+        event,
+        labels,
+        priorDeployEvidence: hasMarker
+          ? false
+          : await hasPriorDeployEvidence(pr),
+      });
+      ({ stop, reason } = decision);
+    }
+  } catch (error) {
+    stop = true;
+    reason = `detection failed (${error instanceof Error ? error.message : error}), assuming a deploy happened`;
+  }
+  console.log(`review stop: ${stop ? "stopping" : "skipping"} — ${reason}`);
+  appendStepSummary(
+    stop
+      ? `🛑 Stopping the review apps: ${reason}.`
+      : `⏭️ No review apps to stop: ${reason}.`,
+  );
+  setStepOutput("stop", String(stop));
 };
