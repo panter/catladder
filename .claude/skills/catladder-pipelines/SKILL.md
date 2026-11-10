@@ -137,7 +137,8 @@ app`), and so does closing the PR — the stop first waits for a
   before it creates any resource. Don't remove that label by hand —
   the PR would no longer be torn down on close. If the guard can't
   tell, it fails open and stops anyway; PRs deployed before the
-  marker existed are still stopped; a manual `workflow_dispatch` stop
+  marker existed (a `catladder review app` status or a
+  `catladder-deploy-review.yml` run) are still stopped; a manual `workflow_dispatch` stop
   always runs;
 - on request, any time (agents included):
   `gh workflow run catladder-deploy-review.yml --ref <pr-branch> -f pr=<number>`

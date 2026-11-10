@@ -310,13 +310,11 @@ export const githubReviewDeployTriggerJob = async () => {
   );
 };
 
-/** the review workflow, whose runs on a branch hint at an earlier deploy */
-const GITHUB_REVIEW_WORKFLOW = "catladder-review.yml";
-
 /**
  * legacy PRs deployed before the marker label existed: true when a
- * `catladder review app` commit status or a review run exists for the PR
- * head. Throws when a lookup fails.
+ * `catladder review app` commit status exists for the PR head or the
+ * deploy workflow ran on its branch (the generic review workflow runs on
+ * every PR and is no evidence). Throws when a lookup fails.
  */
 const hasPriorDeployEvidence = async (pr: PullRequest): Promise<boolean> => {
   const statuses = await githubApi(`commits/${pr.head.sha}/statuses`);
@@ -328,10 +326,10 @@ const hasPriorDeployEvidence = async (pr: PullRequest): Promise<boolean> => {
     return true;
   }
   const runs = await githubApi(
-    `actions/workflows/${GITHUB_REVIEW_WORKFLOW}/runs?branch=${encodeURIComponent(pr.head.ref)}&per_page=1`,
+    `actions/workflows/${GITHUB_REVIEW_DEPLOY_WORKFLOW}/runs?branch=${encodeURIComponent(pr.head.ref)}&per_page=1`,
   );
   if (!runs.ok) {
-    throw new Error(`reading the review runs failed: ${runs.status}`);
+    throw new Error(`reading the deploy runs failed: ${runs.status}`);
   }
   const data = (await runs.json()) as { total_count?: number };
   return (data.total_count ?? 0) > 0;
@@ -363,7 +361,6 @@ export const githubReviewStopGuardJob = async () => {
       ({ stop, reason } = decision);
     }
   } catch (error) {
-    stop = true;
     reason = `detection failed (${error instanceof Error ? error.message : error}), assuming a deploy happened`;
   }
   console.log(`review stop: ${stop ? "stopping" : "skipping"} — ${reason}`);

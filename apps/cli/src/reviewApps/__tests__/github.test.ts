@@ -188,4 +188,37 @@ describe("review stop guard", () => {
     await githubReviewStopGuardJob();
     expect(await out()).toContain("stop=true");
   });
+  it("stop=false for a PR with review (CI) runs but no deploy evidence", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : p.includes("/statuses")
+          ? ok([{ context: "catladder ✅" }])
+          : p.includes("catladder-deploy-review.yml")
+            ? ok({ total_count: 0 })
+            : ok({ total_count: 5 }),
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=false");
+  });
+  it("stop=true for a legacy PR where the deploy workflow ran", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : p.includes("/statuses")
+          ? ok([])
+          : ok({ total_count: 1 }),
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
+  });
+  it("stop=true when the legacy evidence lookup fails", async () => {
+    stubFetch((p) =>
+      p.startsWith("pulls/")
+        ? pull([])
+        : { ok: false, status: 500, text: async () => "boom" },
+    );
+    await githubReviewStopGuardJob();
+    expect(await out()).toContain("stop=true");
+  });
 });
