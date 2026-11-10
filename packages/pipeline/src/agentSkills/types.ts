@@ -2,10 +2,7 @@
  * where agent skills get materialized, per agent ecosystem:
  * - claude-code: the Claude Code project skills directory (the default)
  * - agents: the cross-agent universal skills directory
- *   (https://agents.md convention). Opt-in — as of now no widely-used
- *   agent reads `.agents/skills/`; a repo that wants cross-agent
- *   discovery can also just symlink `.agents/skills` → `.claude/skills`
- *   once itself instead of enabling this target.
+ *   (https://agents.md convention), read e.g. by OpenAI Codex. Opt-in.
  */
 export const AGENT_SKILL_TARGET_DIRS = {
   "claude-code": ".claude/skills",
@@ -16,9 +13,9 @@ export type AgentSkillTargetName = keyof typeof AGENT_SKILL_TARGET_DIRS;
 
 /**
  * the target(s) written when `agentSkills` does not name any explicitly.
- * Claude Code is the only agent that consumes these skills today, so we
- * default to it alone rather than duplicating every skill into
- * `.agents/skills/` (extra committed files + diff noise on every run).
+ * Defaults to Claude Code alone rather than duplicating every skill into
+ * `.agents/skills/` (extra committed files + diff noise on every run);
+ * repos with Codex agents add the `agents` target.
  */
 export const DEFAULT_AGENT_SKILL_TARGETS: AgentSkillTargetName[] = [
   "claude-code",
