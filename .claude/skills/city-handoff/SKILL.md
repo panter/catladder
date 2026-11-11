@@ -27,6 +27,9 @@ beads and starts the right workflow – you never start workflows yourself.
    `city-bd dep add <later> --blocked-by <earlier>` (also feature `--blocked-by` its spikes). Small bugs found on
    the way get their own bug bead, linked with `city-bd dep add <bug> <feature> --type discovered-from`.
    These are bundled CLI subcommands (use the full Node invocation below); routed workers use local `bd`.
+   **Assign a parent epic** to every new bead with `--parent <epic-id>`, in addition to any `discovered-from`
+   link. Decomposition children stay under their source bead. If no existing epic fits, propose a new epic
+   to the human and create it only after they agree; then create the work beads under it.
 6. **Approval.** Every work bead needs `approved` from a human, including
    human-created and `upstream` beads. The only exemption is a declared standing order whose provenance metadata,
    label and title all match. Approve when the bead is ready to build; open blockers are fine – the dispatcher
@@ -126,6 +129,8 @@ Interpret "build/fix/add X" as a request to write a bead (rules above), unless t
 ## Checklist before you finish
 
 - [ ] Each bead: one goal, context, acceptance criteria, no session-local paths.
+- [ ] Each new bead has a parent epic (`--parent`), plus any `discovered-from` link; decomposition children stay
+      under their source bead. If no epic fits, a new epic was proposed and created only after human agreement.
 - [ ] Open questions → spikes; dependencies as `--blocked-by`.
 - [ ] Approved on the person's explicit words via `approve`, or the person directed to the dashboard.
 - [ ] Nothing slung, nothing written into `plans/`, no code changed.
