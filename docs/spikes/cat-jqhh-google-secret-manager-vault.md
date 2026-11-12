@@ -58,8 +58,9 @@ IAM (proposal):
 | CI deploy SA (`cl-d-*`) | `secretmanager.secretAccessor` (read at deploy, for mirroring) | project |
 | runtime SA (`cl-r-*`, #51) | `secretmanager.secretAccessor` on **only** its component's runtime secrets | per secret |
 
-Role names beyond `secretAccessor`/`admin` come from my knowledge of the IAM reference; the fetched docs page did not list
-them, so verify before implementing.
+Role names verified against the official IAM docs on 2026-11-09 (see
+[cat-s9a2 findings](cat-s9a2-secret-manager-verification.md)); `secretmanager.secretVersionManager` (enable/disable/destroy
+versions) and `secretmanager.editor` also exist.
 
 Provisioning: `project setup` already enables APIs from a list (`apps/cli/src/apps/cli/commands/project/setup/setupCloudRun.ts:26`,
 `apps/cli/src/gcloud/enableServices.ts`: `gcloud services enable <svc> --project=<id>`) — add `secretmanager.googleapis.com`;
@@ -154,9 +155,10 @@ runtime-only secrets — depends on #55 slice 4.
 
 - Limits verified: 64 KiB per version, 90,000 access requests/min/project (docs.cloud.google.com/secret-manager/quotas);
   secret IDs: letters/digits/`-`/`_`, max 255 chars.
-- Pricing: the pricing page returned truncated content to my fetch; from memory (unverified) roughly $0.06 per active
-  version/month, $0.03 per 10k access operations, small free tier. For ~100 secrets with a few versions each this is
-  low single-digit USD/month; **verify at cloud.google.com/secret-manager/pricing before committing**.
+- Pricing (verified 2026-11-09, cloud.google.com/secret-manager/pricing; see the cat-s9a2 findings): $0.06 per active
+  version/month (first 6 free), $0.03 per 10k access operations (first 10k free), destroyed versions free. ~100 secrets x
+  3 active versions = 300 versions = **about $17.64/month** (not "low single-digit"); access costs are negligible. The
+  version count is the cost driver.
 - Access calls: deploy-time version resolution = O(secrets) metadata calls per deploy; runtime env var resolution is
   once per instance start (so cold starts/scale-out generate accesses: autoscaling to N instances = N x secrets
   accesses) — low cost, but the startup dependency on GSM availability is new (a failing retrieval prevents the
@@ -192,11 +194,11 @@ Proposed slicing (bead titles; none approved):
 
 ## Open risks / unknowns
 
-- Nothing was executed (no `gcloud`/`bw` in this environment): `--set-secrets` with worker pools
-  (`gcloud beta run worker-pools deploy`), the exact conflict behaviour of `--env-vars-file` vs `--set-secrets` for
-  the same key, and real latencies are untested.
-- Pricing figures are unverified (page fetch truncated).
-- IAM role names other than `secretAccessor`/`admin` are from memory.
+- Live behaviour is still unverified (no GCP project; see [cat-s9a2 findings](cat-s9a2-secret-manager-verification.md)):
+  a worker pool starting with a secret, the exact conflict behaviour of `--env-vars-file` vs `--set-secrets` for the same
+  key, pinning/disabled/destroyed versions, and real latencies. Worker-pool flags (`--update-secrets`, `--set-secrets`)
+  are confirmed by the official docs only, not by local `--help`.
+- Pricing and IAM role names: verified, see the cat-s9a2 findings (pricing corrected above).
 - The effort of N sequential `access` calls in `readAllSecrets` (perf) is estimated, not measured; batching is not
   offered by the API.
 - #55 is still a draft with open questions Q1–Q8; #51 and #60 are open PRs. Their final shape (esp. `scopes` form, `local`
