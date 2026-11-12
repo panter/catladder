@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.11.0 (2026-11-12)
+
+### Minor Changes
+
+- GitHub Actions: build hand-off artifacts are now uploaded with a 3-day retention instead of the repository default, configurable (and applicable to all uploads) via `pipelines.github.artifactRetentionDays`.
+
 ## 5.10.1 (2026-11-02)
 
 ### Patch Changes
