@@ -107,6 +107,10 @@ describe("github review deploy workflow", () => {
     );
     // the release image is no review chain's concern
     expect(deployJobs).not.toContain("catladder-image-semantic-release");
+    // the chains' images are ensured by one bundled, gated job
+    expect(deployJobs.filter((id) => id.startsWith("catladder-image"))).toEqual(
+      ["catladder-images"],
+    );
 
     for (const [id, job] of Object.entries(deploy.jobs)) {
       if (id === "catladder-review-deploy-guard") continue;
