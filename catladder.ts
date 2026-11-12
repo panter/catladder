@@ -81,6 +81,9 @@ const config: Config = {
       },
     },
   },
+  // write the shipped skills for Claude Code (.claude/skills) and Codex
+  // (.agents/skills): agents of both kinds work in this repo
+  agentSkills: { targets: ["claude-code", "agents"] },
 };
 
 export default config;

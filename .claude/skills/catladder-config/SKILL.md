@@ -114,7 +114,8 @@ Key concepts:
   which CI systems get generated files. Options objects instead of
   `true` allow per-pipeline settings (e.g. `runnerVariables`,
   `gitRemote`, and `repository` — GitHub only, for lowercasing GHCR
-  image paths; see the `catladder-pipelines` skill).
+  image paths; and `artifactRetentionDays` — GitHub only, retention
+  of uploaded artifacts; see the `catladder-pipelines` skill).
 - **Package manager**: yarn and pnpm are supported and autodetected
   (from the `packageManager` field in package.json or the lockfile;
   yarn is the fallback). `packageManager: "pnpm" | "yarn"` at the top

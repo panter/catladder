@@ -372,6 +372,7 @@ catladder-main.yml:
             name: app1-app-dev
             path: catladder-artifacts-app1-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     app1-docker-dev:
       name: app1 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -593,6 +594,7 @@ catladder-main.yml:
             name: app2-app-dev
             path: catladder-artifacts-app2-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     app2-docker-dev:
       name: app2 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -802,6 +804,7 @@ catladder-main.yml:
             name: kube-app-dev
             path: catladder-artifacts-kube-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     kube-docker-dev:
       name: kube 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -1103,6 +1106,7 @@ catladder-review.yml:
             name: app1-app-review
             path: catladder-artifacts-app1-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     app1-docker-review:
       name: app1 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1324,6 +1328,7 @@ catladder-review.yml:
             name: app2-app-review
             path: catladder-artifacts-app2-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     app2-docker-review:
       name: app2 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1533,6 +1538,7 @@ catladder-review.yml:
             name: kube-app-review
             path: catladder-artifacts-kube-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     kube-docker-review:
       name: kube 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1767,6 +1773,7 @@ catladder-release.yml:
             name: app1-app-stage
             path: catladder-artifacts-app1-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     app1-docker-stage:
       name: app1 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -1886,6 +1893,7 @@ catladder-release.yml:
             name: app2-app-stage
             path: catladder-artifacts-app2-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     app2-docker-stage:
       name: app2 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -2002,6 +2010,7 @@ catladder-release.yml:
             name: kube-app-stage
             path: catladder-artifacts-kube-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     kube-docker-stage:
       name: kube 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -2484,6 +2493,7 @@ catladder-deploy.yml:
             name: app1-app-prod
             path: catladder-artifacts-app1-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ inputs.job == 'app1-deploy-prod' }}
     app1-docker-prod:
       name: app1 🔨 docker | prod
@@ -2606,6 +2616,7 @@ catladder-deploy.yml:
             name: app2-app-prod
             path: catladder-artifacts-app2-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ inputs.job == 'app2-deploy-prod' }}
     app2-docker-prod:
       name: app2 🔨 docker | prod
@@ -2725,6 +2736,7 @@ catladder-deploy.yml:
             name: kube-app-prod
             path: catladder-artifacts-kube-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ inputs.job == 'kube-deploy-prod' }}
     kube-docker-prod:
       name: kube 🔨 docker | prod

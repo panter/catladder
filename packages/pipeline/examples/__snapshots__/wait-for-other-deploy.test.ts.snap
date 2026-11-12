@@ -344,6 +344,7 @@ catladder-main.yml:
             name: api-app-dev
             path: catladder-artifacts-api-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     api-deploy-dev:
       name: api 🚀 Deploy | dev
       runs-on: ubuntu-latest
@@ -525,6 +526,7 @@ catladder-main.yml:
             name: www-app-dev
             path: catladder-artifacts-www-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     www-deploy-dev:
       name: www 🚀 Deploy | dev
       runs-on: ubuntu-latest
@@ -768,6 +770,7 @@ catladder-review.yml:
             name: api-app-review
             path: catladder-artifacts-api-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     api-deploy-review:
       name: api 🚀 Deploy | review
       runs-on: ubuntu-latest
@@ -949,6 +952,7 @@ catladder-review.yml:
             name: www-app-review
             path: catladder-artifacts-www-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     www-deploy-review:
       name: www 🚀 Deploy | review
       runs-on: ubuntu-latest
@@ -1126,6 +1130,7 @@ catladder-release.yml:
             name: api-app-stage
             path: catladder-artifacts-api-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     api-deploy-stage:
       name: api 🚀 Deploy | stage
       runs-on: ubuntu-latest
@@ -1214,6 +1219,7 @@ catladder-release.yml:
             name: www-app-stage
             path: catladder-artifacts-www-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     www-deploy-stage:
       name: www 🚀 Deploy | stage
       runs-on: ubuntu-latest
@@ -1365,6 +1371,7 @@ catladder-deploy.yml:
             name: api-app-prod
             path: catladder-artifacts-api-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
     api-deploy-prod:
       name: api 🚀 Deploy | prod
@@ -1455,6 +1462,7 @@ catladder-deploy.yml:
             name: www-app-prod
             path: catladder-artifacts-www-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
     www-deploy-prod:
       name: www 🚀 Deploy | prod

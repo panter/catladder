@@ -356,6 +356,7 @@ catladder-main.yml:
             name: ws-myworkspace-app-dev
             path: catladder-artifacts-ws-myworkspace-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     api-docker-dev:
       name: api 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -738,6 +739,7 @@ catladder-review.yml:
             name: ws-myworkspace-app-review
             path: catladder-artifacts-ws-myworkspace-app-review.tar
             if-no-files-found: error
+            retention-days: 3
     api-docker-review:
       name: api 🔨 docker | review
       runs-on: ubuntu-latest
@@ -1053,6 +1055,7 @@ catladder-release.yml:
             name: ws-myworkspace-app-stage
             path: catladder-artifacts-ws-myworkspace-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     api-docker-stage:
       name: api 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -1466,6 +1469,7 @@ catladder-deploy.yml:
             name: ws-myworkspace-app-prod
             path: catladder-artifacts-ws-myworkspace-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ inputs.job == 'api-deploy-prod' || inputs.job == 'www-deploy-prod' }}
     api-docker-prod:
       name: api 🔨 docker | prod
