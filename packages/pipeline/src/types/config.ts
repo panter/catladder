@@ -485,6 +485,23 @@ export type PipelineOutputOptions = {
    * `TURBO_CONCURRENCY` for github's small hosted runners.
    */
   runnerVariables?: Record<string, string>;
+
+  /**
+   * github only: how many days uploaded workflow artifacts are kept
+   * (1-90, whole days).
+   *
+   * Without it, build artifacts that are only handed over between jobs
+   * (those with an `expire_in`) are kept for 3 days, everything else
+   * (reports, project artifacts) uses the repository's default
+   * retention. When set, it applies to all artifacts uploaded by
+   * catladder.
+   *
+   * Only affects newly uploaded artifacts; existing ones keep their
+   * expiry.
+   *
+   * @example 7
+   */
+  artifactRetentionDays?: number;
 };
 
 /**

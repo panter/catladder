@@ -466,6 +466,7 @@ catladder-main.yml:
             name: app-app-dev
             path: catladder-artifacts-app-app-dev.tar
             if-no-files-found: error
+            retention-days: 3
     app-docker-dev:
       name: app 🔨 docker | dev
       runs-on: ubuntu-latest
@@ -781,6 +782,7 @@ catladder-deploy-review.yml:
             name: app-app-review
             path: catladder-artifacts-app-app-review.tar
             if-no-files-found: error
+            retention-days: 3
       if: \${{ needs.catladder-review-deploy-guard.outputs.deploy == 'true' }}
     app-deploy-review:
       name: app 🚀 Deploy | review
@@ -1536,6 +1538,7 @@ catladder-release.yml:
             name: app-app-stage
             path: catladder-artifacts-app-app-stage.tar
             if-no-files-found: error
+            retention-days: 3
     app-docker-stage:
       name: app 🔨 docker | stage
       runs-on: ubuntu-latest
@@ -2107,6 +2110,7 @@ catladder-deploy.yml:
             name: app-app-prod
             path: catladder-artifacts-app-app-prod.tar
             if-no-files-found: error
+            retention-days: 3
     app-docker-prod:
       name: app 🔨 docker | prod
       runs-on: ubuntu-latest

@@ -284,6 +284,25 @@ The `job-images/` prefix keeps them apart from your deployable component images 
 - **Config-only changes**: `buildArgs` / `hashExtraPaths` changes alter the image tag without touching the image directory — the build job also watches `catladder.ts`, so it still runs
 - **Tagged releases**: GitLab's `rules:changes` may always evaluate to true for tags. The build job handles this gracefully by checking the registry first and skipping the build if the image already exists.
 
+## Artifact retention (GitHub)
+
+On GitHub, jobs hand their build output to later jobs as workflow artifacts. Catladder uploads these hand-off artifacts with a short retention of **3 days**, instead of the repository default (often 90 days), so they don't pile up in your storage quota. Report and project-configured artifacts keep the repository default.
+
+Override it with `pipelines.github.artifactRetentionDays` (integer from 1 to 90):
+
+```ts
+const config = {
+  pipelines: { github: { artifactRetentionDays: 7 } },
+  // ...
+};
+```
+
+When set, the value applies to **all** artifact uploads, not only the build hand-offs. An invalid value fails at generation time.
+
+- It only affects uploads from newly generated workflows. Existing artifacts are not cleaned up or changed; deleting them is a decision per repository.
+- Re-running a single job (or "Re-run failed jobs") after its inputs expired fails at the "Download artifacts" step. Re-run the whole workflow instead.
+- GitLab output is unchanged (its build artifacts expire after 1 day).
+
 ## Workspace Builds
 
 Workspace builds are shared builds that are used by multiple components. There will be only one build job for all components that use the workspace build, but each component still will have its own docker build job.
