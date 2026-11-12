@@ -160,6 +160,7 @@ So if GitLab is going away, move the vault **before** deleting anything:
 ```ts
 secrets: {
   vault: { type: "bitwarden", collection: "catladder" },
+  // or: { type: "google-secret-manager" } (needs gcloud auth)
 }
 ```
 
