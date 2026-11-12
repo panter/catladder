@@ -62,6 +62,16 @@ describe("bundled image jobs in the github workflows", () => {
     expect(review.jobs["catladder-ok"].needs).toContain("catladder-images");
   });
 
+  it("without a releases config, main still ensures the image release-on-green runs in", async () => {
+    const workflows = await new GithubBackend().createWorkflows(config());
+    const onGreen = workflows["catladder-release-on-green.yml"];
+    expect(onGreen).toBeDefined();
+    expect(imageJobIds(onGreen.jobs)).toEqual([]);
+    const main = workflows["catladder-main.yml"];
+    const script = main.jobs["catladder-images"].steps[1].run as string;
+    expect(script).toContain("semantic-release");
+  });
+
   it("the release image is ensured in main and the release job needs the bundle", async () => {
     const workflows = await new GithubBackend().createWorkflows(
       config({ when: "auto" }),

@@ -13,16 +13,14 @@ const CATCI = `${GENERATED_CATCI_FOLDER}/index.js`;
 
 /**
  * the image job name of the release image, when it is a custom image —
- * the main workflow ensures it whenever releases are configured, since
- * the create-release and release-on-green workflows rely on it
+ * the main workflow always ensures it: the create-release and
+ * release-on-green workflows are generated without a `releases` config
+ * too (the default method), and release-on-green has no image job
  */
 export const getGithubReleaseImageJobNames = (
   config: Config,
   images: JobImagesPlan,
 ): string[] => {
-  if (!config.releases) {
-    return [];
-  }
   const resolved = images.resolveRef({
     catladderImage: getReleaseMethod(config).image,
   });

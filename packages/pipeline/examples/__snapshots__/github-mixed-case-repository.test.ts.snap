@@ -213,6 +213,14 @@ catladder-main.yml:
               docker push ghcr.io/fiulag/nautilus/catladder/kubernetes:b494d2e6e3ea
             fi
             echo "::endgroup::"
+            echo "::group::🐳 catladder image semantic-release"
+            if docker manifest inspect ghcr.io/fiulag/nautilus/catladder/semantic-release:bbd9b6ee1fa6 > /dev/null 2>&1; then
+              echo "Image ghcr.io/fiulag/nautilus/catladder/semantic-release:bbd9b6ee1fa6 already exists, skipping build"
+            else
+              DOCKER_BUILDKIT=1 docker build -t ghcr.io/fiulag/nautilus/catladder/semantic-release:bbd9b6ee1fa6 -f .catladder-generated/images/semantic-release/Dockerfile .catladder-generated/images/semantic-release
+              docker push ghcr.io/fiulag/nautilus/catladder/semantic-release:bbd9b6ee1fa6
+            fi
+            echo "::endgroup::"
             echo "::group::🐳 image db-tools"
             if docker manifest inspect ghcr.io/fiulag/nautilus/job-images/db-tools:2e2c31380d50 > /dev/null 2>&1; then
               echo "Image ghcr.io/fiulag/nautilus/job-images/db-tools:2e2c31380d50 already exists, skipping build"

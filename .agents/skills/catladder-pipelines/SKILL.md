@@ -197,7 +197,9 @@ closed (pinning does not apply there).
 ## Job images and catci
 
 Jobs run in catladder-provided images (`🐳 catladder image <name>` build
-jobs). Their definitions are materialized into
+jobs; on GitHub Actions a single `🐳 catladder images` job per workflow
+checks/builds all images, and only in workflows where an image is used,
+while GitLab keeps one job per image). Their definitions are materialized into
 `.catladder-generated/images/` and built in the project's own registry
 under `catladder/` (content-hashed, rebuilt only on change). Each image
 dir carries an `IMAGE_TAG` file with the current tag, so a tag change
@@ -256,6 +258,15 @@ the pnpm store, and as copied directories they fail at runtime with
 `ERR_MODULE_NOT_FOUND`. If a deployed app shows that error, check that
 the committed workflows contain the archive steps and regenerate if
 they don't.
+
+Hand-off artifacts (the build job's output) are uploaded with
+`retention-days: 3`; report and project-configured artifacts keep the
+repository default. Set `pipelines.github.artifactRetentionDays`
+(integer 1-90) in catladder.ts to change it; when set it applies to
+all uploads. It affects new uploads only — existing artifacts are not
+cleaned up. Re-running a single job after its upstream artifacts
+expired fails at "Download artifacts"; re-run the whole workflow
+instead. GitLab output is unchanged.
 
 ## Caching
 
