@@ -211,6 +211,7 @@ export class GithubBackend implements PipelineBackend {
               images,
               scripts,
               secretKinds,
+              getPipelineOptions(config, this.type).artifactRetentionDays,
             );
             triggerJobs.set(id, { githubJob, job, context });
           }),

@@ -20,6 +20,7 @@ import { GITHUB_INJECTED_WORKFLOW_ENV_NAMES } from "./ciVariables";
 import {
   createArtifactDownloadSteps,
   createArtifactUploadSteps,
+  resolveArtifactRetentionDays,
 } from "./artifactArchive";
 
 /**
@@ -319,6 +320,7 @@ export const makeGithubJob = (
   images: JobImagesPlan,
   scripts: GithubScriptFiles,
   secretKinds: SecretKinds = new Map(),
+  artifactRetentionDays?: number,
 ): [id: string, githubJob: GithubJob] => {
   const id = githubJobId(context, job.name);
   const isComponent = context.type === "component";
@@ -540,6 +542,7 @@ export const makeGithubJob = (
               : job.artifacts?.when === "on_failure"
                 ? "failure()"
                 : undefined,
+            resolveArtifactRetentionDays(job.artifacts, artifactRetentionDays),
           )
         : []),
     ],
