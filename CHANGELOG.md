@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.14.0 (2026-11-12)
+
+### Minor Changes
+
+- GitHub Actions workflows now run a single `🐳 catladder images` job that checks and builds all job images, and only where an image is actually used; workflows without an image consumer no longer get image jobs. GitLab pipelines are unchanged.
+
 ## 5.13.0 (2026-11-12)
 
 ### Minor Changes
