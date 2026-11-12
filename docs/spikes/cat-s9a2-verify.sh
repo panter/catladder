@@ -108,7 +108,7 @@ cleanup() {
   for n in $(gcloud beta run worker-pools list --project="$PROJECT" --region="$REGION" --format='value(name)' 2>/dev/null | grep "^$P-"); do
     gcloud beta run worker-pools delete "$n" --project="$PROJECT" --region="$REGION" --quiet >>"$LOG" 2>&1
   done
-  for n in $(gcloud secrets list --project="$PROJECT" --format='value(name)' 2>/dev/null | grep "^$P-"); do
+  for n in $(gcloud secrets list --project="$PROJECT" --format='value(name.basename())' 2>/dev/null | grep "^$P-"); do
     gcloud secrets delete "$n" --project="$PROJECT" --quiet >>"$LOG" 2>&1
   done
   # report what is left, so a failed cleanup is visible
@@ -117,7 +117,7 @@ cleanup() {
     gcloud run services list --project="$PROJECT" --region="$REGION" --format='value(name)' 2>/dev/null | grep "^$P-"
     gcloud run jobs list --project="$PROJECT" --region="$REGION" --format='value(name)' 2>/dev/null | grep "^$P-"
     gcloud beta run worker-pools list --project="$PROJECT" --region="$REGION" --format='value(name)' 2>/dev/null | grep "^$P-"
-    gcloud secrets list --project="$PROJECT" --format='value(name)' 2>/dev/null | grep "^$P-"
+    gcloud secrets list --project="$PROJECT" --format='value(name.basename())' 2>/dev/null | grep "^$P-"
   } | sanitize | tee -a "$LOG"
   rm -rf "$WORK_DIR" "$SED_FILE"
   echo "log: $LOG"
