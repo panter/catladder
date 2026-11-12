@@ -1,4 +1,4 @@
-import type { ComponentContext } from "@catladder/pipeline";
+import type { ComponentContext, Config } from "@catladder/pipeline";
 import {
   getManagedRuntimeServiceAccount,
   getManagedRuntimeServiceAccountEmail,
@@ -15,6 +15,7 @@ import {
   getCloudRunDeployRoles,
   getCloudRunRequiredServices,
 } from "../setup/setupCloudRun";
+import { checkLocalAccess } from "./checkLocalAccess";
 import type { DoctorReport } from "./DoctorReport";
 import { GcloudProjectInspector } from "./GcloudProjectInspector";
 
@@ -43,6 +44,7 @@ const getCloudRunConfig = (context: ComponentContext) => {
 export const checkCloudRun = async (
   report: DoctorReport,
   contexts: ComponentContext[],
+  config: Config,
 ) => {
   const cloudRunContexts = contexts.filter((context) =>
     isOfDeployType(context.deploy?.config, "google-cloudrun"),
@@ -157,6 +159,7 @@ export const checkCloudRun = async (
   }
 
   await checkCloudRunRuntimeIdentity(report, inspector, cloudRunContexts);
+  await checkLocalAccess(report, config, cloudRunContexts, inspector);
 };
 
 const BROAD_ROLES = ["roles/editor", "roles/owner"];

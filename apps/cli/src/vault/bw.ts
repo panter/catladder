@@ -87,21 +87,46 @@ export const getBwSession = async (
 };
 
 /**
- * runs a bw command with the given session and returns stdout
+ * runs a bw command with the given session and returns stdout.
+ *
+ * `input` is written to stdin: use it for payloads (e.g. the secrets of
+ * `bw create item`), which would otherwise be visible in `ps` and be
+ * echoed by node's "Command failed" error.
  */
 export const runBw = async (
   session: string,
   args: string[],
+  input?: string,
 ): Promise<string> => {
-  const { stdout } = await execFile(
-    "bw",
-    [...args, "--raw", "--nointeraction"],
-    {
-      env: { ...process.env, BW_SESSION: session },
+  const fullArgs = [...args, "--raw", "--nointeraction"];
+  const env = { ...process.env, BW_SESSION: session };
+  if (input === undefined) {
+    const { stdout } = await execFile("bw", fullArgs, {
+      env,
       maxBuffer: 50 * 1024 * 1024,
-    },
-  );
-  return stdout;
+    });
+    return stdout;
+  }
+  return new Promise((resolve, reject) => {
+    const child = spawn("bw", fullArgs, {
+      env,
+      stdio: ["pipe", "pipe", "pipe"],
+    });
+    let stdout = "";
+    let stderr = "";
+    child.stdout.on("data", (data) => (stdout += data.toString("utf-8")));
+    child.stderr.on("data", (data) => (stderr += data.toString("utf-8")));
+    child.on("error", reject);
+    child.on("close", (code) =>
+      code === 0
+        ? resolve(stdout)
+        : reject(new Error(`bw ${args[0]} failed: ${stderr.trim()}`)),
+    );
+    child.stdin.on("error", () => {
+      // bw exiting early closes the pipe, the close handler reports why
+    });
+    child.stdin.end(input);
+  });
 };
 
 export const runBwJson = async <T>(

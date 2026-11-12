@@ -15,10 +15,12 @@ import { collapseableSection } from "../../utils/gitlab";
 import { getGithubScriptFunctionDefinitions } from "./scriptFunctions";
 import type { JobImagesPlan } from "../../customImages/jobImagesPlan";
 import type { GithubScriptFiles } from "./scriptFiles";
+import { parseDurationToMinutes } from "../../utils/duration";
 import { GITHUB_INJECTED_WORKFLOW_ENV_NAMES } from "./ciVariables";
 import {
   createArtifactDownloadSteps,
   createArtifactUploadSteps,
+  resolveArtifactRetentionDays,
 } from "./artifactArchive";
 
 /**
@@ -318,6 +320,7 @@ export const makeGithubJob = (
   images: JobImagesPlan,
   scripts: GithubScriptFiles,
   secretKinds: SecretKinds = new Map(),
+  artifactRetentionDays?: number,
 ): [id: string, githubJob: GithubJob] => {
   const id = githubJobId(context, job.name);
   const isComponent = context.type === "component";
@@ -495,6 +498,11 @@ export const makeGithubJob = (
     // failed the whole workflow — and took every job that needs it,
     // including the release, down with it.
     ...(job.allow_failure ? { "continue-on-error": true } : {}),
+    ...(job.timeout
+      ? {
+          "timeout-minutes": parseDurationToMinutes(job.timeout, job.name),
+        }
+      : {}),
     env,
     steps: [
       ...(skipCheckout
@@ -534,6 +542,7 @@ export const makeGithubJob = (
               : job.artifacts?.when === "on_failure"
                 ? "failure()"
                 : undefined,
+            resolveArtifactRetentionDays(job.artifacts, artifactRetentionDays),
           )
         : []),
     ],

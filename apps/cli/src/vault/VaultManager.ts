@@ -1,10 +1,12 @@
 import type { Config } from "@catladder/pipeline";
 import {
   getEnvironment,
+  getLocalAccessGcpSecretName,
   getSecretVarName,
   getVaultConfig,
 } from "@catladder/pipeline";
 import type { IO } from "../core/types";
+import { getDeclaredLocalAccessEnvs } from "../localAccess/declared";
 import { BitwardenVault } from "./BitwardenVault";
 import type { CachedSecrets } from "./cache";
 import {
@@ -141,6 +143,19 @@ export class VaultManager {
   }
 
   /**
+   * updates the local cache only (the vault already holds the values),
+   * "local" env only
+   */
+  async cacheSecrets(
+    env: string,
+    componentName: string,
+    secrets: Record<string, string>,
+  ): Promise<void> {
+    if (env !== CACHED_ENV) return;
+    await updateSecretsCache(this.vault.id, env, componentName, secrets);
+  }
+
+  /**
    * the subset of the vault secrets that may be cached: the declared
    * secrets of the "local" env, per component, as a hierarchy
    */
@@ -165,6 +180,19 @@ export class VaultManager {
   }
 
   private async declaredSecretKeys(componentName: string): Promise<string[]> {
+    return [
+      ...(await this.declaredEnvSecretKeys(componentName)),
+      // the local access keys `project setup` provisions are not part
+      // of any env's vars, but belong to the cached local secrets
+      ...getDeclaredLocalAccessEnvs(this.config, componentName).map(
+        getLocalAccessGcpSecretName,
+      ),
+    ];
+  }
+
+  private async declaredEnvSecretKeys(
+    componentName: string,
+  ): Promise<string[]> {
     try {
       const { secretEnvVarKeys, jobOnlyVars } = await getEnvironment({
         config: this.config,

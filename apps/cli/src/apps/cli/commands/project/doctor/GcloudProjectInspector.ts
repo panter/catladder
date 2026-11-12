@@ -1,7 +1,11 @@
 import { exec } from "child-process-promise";
 import { CATLADDER_REGISTRY_NAME } from "../../../../../gcloud/artifactsRegistry";
 
-type IamBinding = { role: string; members?: string[] };
+type IamBinding = {
+  role: string;
+  members?: string[];
+  condition?: unknown;
+};
 
 /**
  * read-only gcloud queries for the doctor, cached per project: checking
@@ -39,6 +43,26 @@ export class GcloudProjectInspector {
     return bindings
       .filter((binding) => binding.members?.includes(member))
       .map((binding) => binding.role);
+  }
+
+  /** roles bound to the member without an iam condition */
+  async getUnconditionalRolesOfMember(
+    projectId: string,
+    member: string,
+  ): Promise<string[]> {
+    return (await this.getIamBindings(projectId))
+      .filter((b) => !b.condition && b.members?.includes(member))
+      .map((b) => b.role);
+  }
+
+  /** roles bound to the member under an iam condition */
+  async getConditionalRolesOfMember(
+    projectId: string,
+    member: string,
+  ): Promise<string[]> {
+    return (await this.getIamBindings(projectId))
+      .filter((b) => b.condition && b.members?.includes(member))
+      .map((b) => b.role);
   }
 
   getEnabledServices(projectId: string): Promise<Set<string>> {

@@ -65,6 +65,40 @@ type PlannedImage = {
 };
 
 /**
+ * the plain commands to check for, build and push one image
+ */
+export type ImageBuildCommands = {
+  /** the build job name */
+  jobName: string;
+  imageRef: string;
+  /** succeeds when the image tag already exists in the registry */
+  exists: string;
+  alreadyExistsMessage: string;
+  build: string;
+  push: string;
+};
+
+const imageBuildCommands = ({
+  jobName,
+  imageRef,
+  dockerfilePath,
+  contextDir,
+  buildArgs,
+}: PlannedImage): ImageBuildCommands => {
+  const buildArgFlags = Object.entries(buildArgs ?? {})
+    .map(([key, value]) => ` --build-arg '${key}=${value}'`)
+    .join("");
+  return {
+    jobName,
+    imageRef,
+    exists: `docker manifest inspect ${imageRef} > /dev/null 2>&1`,
+    alreadyExistsMessage: `Image ${imageRef} already exists, skipping build`,
+    build: `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${dockerfilePath} ${contextDir}`,
+    push: `docker push ${imageRef}`,
+  };
+};
+
+/**
  * every planned image is consumed the same way: its url, plus an
  * optional dependency on its build job
  */
@@ -115,6 +149,18 @@ const readVerbatim = (path: string): string | Buffer => {
  *   corrupted the helm chart dependencies of the kubernetes image
  */
 const SHIPPED_IMAGE_HASH_SALT = "2";
+
+/**
+ * written next to each materialized shipped definition, holding the
+ * image tag. The tag mixes in more than the definition files (the salt,
+ * the hashing itself), and gitlab's `rules:changes` only sees files: if
+ * the tag changes while the definition stays byte-identical, the build
+ * job would be skipped and every job would pull a tag that was never
+ * built. The marker makes every tag change a change of a watched file.
+ * It is written to the generated dir only, never to the hashed source
+ * dir, so it does not feed back into the tag.
+ */
+export const IMAGE_TAG_MARKER_FILE = "IMAGE_TAG";
 
 // built-in (catladder-shipped) images carry the catladder marker in
 // their job name; project-declared images get the short plain name
@@ -329,7 +375,10 @@ export class JobImagesPlan {
       ),
       // pipelines build from committed, reviewable files (and gitlab's
       // rules:changes can watch them)
-      files: materializeDir(getShippedImageDir(name), targetDir),
+      files: [
+        ...materializeDir(getShippedImageDir(name), targetDir),
+        { path: `${targetDir}/${IMAGE_TAG_MARKER_FILE}`, content: `${hash}\n` },
+      ],
     };
 
     this.used.set(name, planned);
@@ -345,23 +394,32 @@ export class JobImagesPlan {
     );
   }
 
-  private createImageBuildJob({
-    jobName,
-    imageRef,
-    watchedPaths,
-    dockerfilePath,
-    contextDir,
-    buildArgs,
-  }: PlannedImage): CatladderJob {
-    const buildArgFlags = Object.entries(buildArgs ?? {})
-      .map(([key, value]) => ` --build-arg '${key}=${value}'`)
-      .join("");
-    const buildCommand = `DOCKER_BUILDKIT=1 docker build -t ${imageRef}${buildArgFlags} -f ${dockerfilePath} ${contextDir}`;
-
+  /**
+   * the docker login command, shared by every image build job
+   */
+  getDockerLoginCommand(): string {
     const ctx = { pipelineType: this.pipelineType };
     const registryUser = getCiVariable(ctx, "registryUser");
     const jobToken = getCiVariable(ctx, "jobToken");
     const registry = getCiVariable(ctx, "registry");
+    return `docker login --username ${registryUser} --password ${jobToken} ${registry}`;
+  }
+
+  /**
+   * the plain check/build/push commands of every used image — the
+   * building blocks of the gitlab image build jobs, also consumed by
+   * backends that bundle all images into one job
+   */
+  getImageBuildCommands(): ImageBuildCommands[] {
+    return [...this.used.values(), ...this.usedProject.values()].map(
+      imageBuildCommands,
+    );
+  }
+
+  private createImageBuildJob(planned: PlannedImage): CatladderJob {
+    const { jobName, watchedPaths } = planned;
+    const { exists, build, push, alreadyExistsMessage } =
+      imageBuildCommands(planned);
 
     const { services, runnerVariables } = getDockerJobBaseProps();
 
@@ -386,26 +444,18 @@ export class JobImagesPlan {
         ...collapseableSection(
           "docker-login",
           "Docker Login",
-        )([
-          `docker login --username ${registryUser} --password ${jobToken} ${registry}`,
-        ]),
+        )([this.getDockerLoginCommand()]),
         ...collapseableSection(
           "check-image",
           "Checking if image exists",
         )([
-          `if docker manifest inspect ${imageRef} > /dev/null 2>&1; then`,
-          `  echo "Image ${imageRef} already exists, skipping build"`,
+          `if ${exists}; then`,
+          `  echo "${alreadyExistsMessage}"`,
           `  exit 0`,
           `fi`,
         ]),
-        ...collapseableSection(
-          "docker-build",
-          "Building image",
-        )([buildCommand]),
-        ...collapseableSection(
-          "docker-push",
-          "Pushing image",
-        )([`docker push ${imageRef}`]),
+        ...collapseableSection("docker-build", "Building image")([build]),
+        ...collapseableSection("docker-push", "Pushing image")([push]),
       ],
     };
   }

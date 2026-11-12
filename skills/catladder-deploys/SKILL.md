@@ -46,6 +46,12 @@ is `auto`.** Set per component or per environment (`env.<name>.deploy`).
 `waitFor: ["otherComponent"]` (experimental) makes a deploy wait for
 another component to deploy first.
 
+Whether merge/pull requests deploy review apps at all (opt-in/opt-out
+by label, drafts, deploy on request for all components at once) is the
+project-wide top-level `reviewApps` config — see the
+`catladder-pipelines` skill. With it set, per-component `when` of the
+review env is ignored.
+
 ## Environment lifetimes
 
 Review apps auto-stop after 1 week, dev environments after 4 weeks

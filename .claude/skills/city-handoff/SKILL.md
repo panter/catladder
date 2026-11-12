@@ -1,0 +1,136 @@
+---
+name: city-handoff
+description: Hand work to a Gas City as beads instead of coding it yourself. Use whenever a human or an interactive session wants the city to build, fix, research or change something in this rig – "let the city do X", "create a bead/feature/spike for the city", "plan feature X", "hand this to zue/evermore", or when the Mayor is asked to plan work. Covers requirements in beads, spikes for open questions, slicing with dependencies, approval, what not to do (sling, write into plans/, /tmp references) and how to follow up.
+---
+
+# Handing work to the city
+
+The city builds; sessions (and the Mayor) describe work as **beads**. A dispatcher order picks up ready, approved
+beads and starts the right workflow – you never start workflows yourself.
+
+## Rules
+
+1. **Beads, not code.** Do not implement the change yourself. Create beads through `city-beads` in a normal checkout; routed city workers use
+   their existing local `bd`. Then stop.
+2. **Requirements live in the bead.** Title = one goal. Description: context a stranger needs, the why, constraints.
+   `--acceptance` with checkable acceptance criteria. Put research, options and decisions in `--design` / `--notes`.
+   Longer material (a plan draft, sources) goes into the repo as a small docs PR (e.g. `docs/product/…`) and is
+   linked from the bead. **Never reference `/tmp`, scratchpads or other session-local paths** – they disappear.
+3. **Do not write `requirements.md` / `implementation-plan.md` into the city's `plans/` directory** and do not pass
+   `requirements_path`/`plan_path` yourself. The workflow derives and reviews requirements from the bead.
+4. **Open questions become spikes**: one bead per question (type task, label `spike`), with the question and what a
+   good answer contains in the acceptance criteria. In all city-city rigs, the spike workflow writes
+   `docs/spikes/<id>-<slug>.md` as a docs-only PR to the rig's repository, or records a short answer in the bead.
+   Follow-up beads never receive `approved` automatically; an unanswered question ends in a `human` bead.
+5. **Slice big work.** One bead per reviewable PR. A feature touching several areas (schema, ingest, UI, evals) is
+   2–3 beads linked by blocking dependencies, not one bead:
+   `city-bd dep add <later> --blocked-by <earlier>` (also feature `--blocked-by` its spikes). Small bugs found on
+   the way get their own bug bead, linked with `city-bd dep add <bug> <feature> --type discovered-from`.
+   These are bundled CLI subcommands (use the full Node invocation below); routed workers use local `bd`.
+   **Assign a parent epic** to every new bead with `--parent <epic-id>`, in addition to any `discovered-from`
+   link. Decomposition children stay under their source bead. If no existing epic fits, propose a new epic
+   to the human and create it only after they agree; then create the work beads under it.
+6. **Approval.** Every work bead needs `approved` from a human, including
+   human-created and `upstream` beads. The only exemption is a declared standing order whose provenance metadata,
+   label and title all match. Approve when the bead is ready to build; open blockers are fine – the dispatcher
+   waits until same-rig blockers are closed. A blocker in another rig cannot be a dependency; see the rule below.
+   Fresh agent-created beads carrying `approved` lose it and get `needs-triage` +
+   `triage-checked`; human reapproval clears `needs-triage`. Agents never approve their own follow-ups. The
+   guard accepts an approval only when the `approved` label event's actor is a registered person (people.toml):
+   the dashboard, `city-bd approve` on the person's explicit words (below), or a person running
+   `bd --actor "<name>" label add <id> approved`.
+7. **Never sling.** Do not run `gc sling`, do not start formulas, do not claim beads. The dispatcher applies budgets,
+   overload rules, attempt limits and the right formula. (Exception: the human explicitly asks for a manual start.)
+8. **Follow up** in the city dashboard (https://colab-city.angora-dojo.ts.net, page «Needs you» for beads waiting for a human) or
+   with `city-beads` reads (`show <id>` / `comments <id>`); routed workers use local `bd`. Answer a question on
+   a bead with a comment and remove the label `human`. For plan gates, use the person-authored
+   `plan-feedback` relay below instead of a plain comment.
+
+## From a normal checkout (ADR 0011)
+
+The city implements by default, also when a human works in an ordinary clone with Claude Code or Codex.
+Interpret "build/fix/add X" as a request to write a bead (rules above), unless the human says to build it here.
+
+- **Local PR → the city finishes it.** When the human built it here: open the PR, then create a bead with label
+  `handoff-pr` and `--metadata 'city.handoff={"kind":"pr","repository":"<owner/repo>","number":<N>}'`
+  (acceptance criteria = what the PR must achieve). The dispatcher runs `pr-handoff`: review against the bead,
+  finish on the same branch, `Closes <bead>`, review request; never merge. The bead stays open until the merge.
+- **Prototype → the city implements.** Push it as a draft PR or branch; bead with label `handoff-prototype` and
+  `city.handoff={"kind":"prototype","repository":"<owner/repo>","number":<N>}` or `"ref":"<branch>"`. The
+  description says what the prototype shows and what the real implementation must do; the city opens its own PR.
+- **Access:** use the committed `city-beads` skill (MCP or its bundled CLI). For "what is going on?", run
+  `node .claude/skills/city-beads/scripts/city-bd.mjs status`. First use guides the person through Google login.
+  If the `city-beads` MCP server is not connected or asks for authentication, use the CLI instead of asking the
+  person to run `/mcp`.
+  Local checkouts are Git checkouts only, not bead stores. Never run `bd` or `gc` there to file work, initialize
+  a local store, run `bd prime`, or use SSH as the normal path. On colab, routed workers keep
+  using their claim protocol and local `bd`; the remote skill does not replace runtime instructions.
+- **Approval:** only when the person explicitly asks in the session ("ja, freigeben", "let the city do it"),
+  approve with `node .claude/skills/city-beads/scripts/city-bd.mjs approve <id> "<their exact words>"` (MCP tool
+  `approve`). It records the approval under the person's name (accepted by the dispatcher) and keeps the quote
+  on the bead. Never set `approved` with `bd` or as a label: agent identities (`colab`, `maw-city-operator`,
+  `remote-agent/…`) are stripped by the guard. Anything you propose yourself gets no approval; give the person
+  the bead ID to approve in the dashboard.
+- **Plan questions:** only on the person's explicit words, relay their answer with
+  `node .claude/skills/city-beads/scripts/city-bd.mjs plan-feedback <id> <gate> "<answer>" "<person's exact words>"`
+  (MCP tool `plan_feedback`). Put `--rig <city>/<rig>` before `plan-feedback` when selecting another rig.
+  The quote must be the person's exact words; never infer an answer or approve a plan gate yourself.
+  This requires `po_feedback` permission for the target city/rig. The server posts
+  `/plan-feedback <gate> <answer>` under the person's registered people.toml name, plus a separate
+  agent-authored provenance comment with the quote. A plain `comment` starting with `/plan-feedback`
+  uses the agent identity and is ignored by the city. Check the returned `posted` author and text.
+  If `partial: true`, the answer was posted but its provenance comment failed: inspect the bead before
+  retrying and never repost the answer automatically. Posting alone does not prove that the city accepted
+  the answer; city-side author and permission checks still apply. Plan feedback does not grant work approval;
+  use `approve` only on an explicit request to approve work.
+- **Dependencies and PR metadata:** `create` accepts the `city.handoff` metadata (handoff labels plus
+  `metadata: {"city.handoff": "<json>"}`). Set same-rig dependencies **before approval** with
+  `city-bd dep add <later> --blocked-by <earlier>` or
+  `city-bd dep add <id> <other> --type discovered-from` (`related` is also supported);
+  check them with `city-bd dep list <id>` and remove an edge with `city-bd dep remove <id> <other>`. Use the full
+  bundled Node invocation and put `--rig <city>/<rig>` before the subcommand when targeting another rig. Both beads
+  must be work beads in that rig. Never substitute SSH or a stale store.
+  **Cross-rig dependencies are refused**, for every type: the dispatcher would not enforce such an edge
+  ([beads#5784](https://github.com/gastownhall/beads/issues/5784)). Name the predecessor's city/rig and bead ID in
+  the description, and approve only after verifying that it is closed in its own rig. Remove this workaround when
+  pinned beads and the dispatcher enforce external blockers, and the bead API accepts them again.
+
+## Per city
+
+- **zue** (rig `zue`, panter/zue-zuerich-tourismus): every approved bead runs `build-basic` (requirements → plan →
+  decomposition into ≤4 work items → implementation → review lanes → PR); label `spike` runs the spike formula.
+  PRs get a review app (`catladder:review-app`) and wait for PO feedback (`needs-po-feedback`) before the merge
+  train merges them; conflicts are repaired automatically. Teammates on other machines use `city-beads`; `beads-sync` is a legacy offline fallback only.
+- **evermore** (rig `evermore`, macrozone/evermore): fast iteration – default formula `quick` (one slice, push to
+  `main`, no PR); labels `big`, `core` or `area:infra` run `build-basic`; light labels (`small`, `docs`, `tests`,
+  `config`, `effort:light`) force the quick path. Never open PRs in the game repo. Beads with open children are not
+  dispatched (the children carry the work; label `own-work` overrides).
+- **City config repos and city-city rigs** (maw-city rigs `city`, `evermore-city`, `zue-city`, `lumen-city`,
+  `city-dashboard`, `catladder`): label `spike` runs the research/evidence-review/publish workflow and takes
+  precedence over `big`; label `big` runs `build-basic`, otherwise `implement`. Findings go to
+  `docs/spikes/<id>-<slug>.md` as a docs-only PR (or a short bead answer). PRs go to the rig's own repo and
+  maw merges, with no merge train. Follow-ups need human approval; unresolved questions end in a `human`
+  bead. Every work bead needs `approved` from a human, regardless of creator or `upstream` label; only a declared
+  standing order with matching provenance metadata, label and title is exempt.
+  **Requests to the city-city** (a feature for catladder or the dashboard, a fix in a city's config, an order or
+  formula change) go through `city-beads` (MCP tools or the bundled CLI):
+  `node .claude/skills/city-beads/scripts/city-bd.mjs --rig maw-city/<rig> create "<title>" …`.
+  Put `--rig` before the subcommand. Choose `city`, `zue-city`, `evermore-city`, `lumen-city`,
+  `city-dashboard` or `catladder`. Link the triggering bead with its ID and city/rig in the description. Add an
+  edge with `city-bd dep add` only when both beads are in the same rig (`--type discovered-from` for provenance,
+  `--blocked-by` for a prerequisite); cross-rig edges are refused, see above. Tell the human the resulting bead ID.
+  The local checkouts (`~/git/maw-city-src`, `~/git/zue-city-src`, etc.) are Git checkouts only, not bead stores:
+  never run `bd` or `gc` there to file work. Do not message an interactive city-city session to do it for you;
+  it may not be running, and the request then lives only in its transcript.
+  For urgent attention (not a work item), use
+  `node .claude/skills/city-beads/scripts/city-bd.mjs --rig maw-city/<rig> mail "<subject>" "<text>"`
+  (MCP tool `mail`). Text `"-"` reads stdin. Work requests still need a bead.
+
+## Checklist before you finish
+
+- [ ] Each bead: one goal, context, acceptance criteria, no session-local paths.
+- [ ] Each new bead has a parent epic (`--parent`), plus any `discovered-from` link; decomposition children stay
+      under their source bead. If no epic fits, a new epic was proposed and created only after human agreement.
+- [ ] Open questions → spikes; dependencies as `--blocked-by`.
+- [ ] Approved on the person's explicit words via `approve`, or the person directed to the dashboard.
+- [ ] Nothing slung, nothing written into `plans/`, no code changed.

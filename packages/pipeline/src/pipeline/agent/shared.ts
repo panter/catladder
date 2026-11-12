@@ -22,7 +22,6 @@ export abstract class AgentJob extends CatladderJob {
       interruptible: def.interruptible,
       stage: "agents",
 
-      // image: "node:24-alpine3.21",
       image: getRunnerImage("agent-claude"),
       variables: {
         MAX_MCP_OUTPUT_TOKENS: "75000",

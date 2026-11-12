@@ -54,7 +54,7 @@ export const doctorProject = async (
   if (getEnabledPipelineTypes(config).includes("gitlab")) {
     await checkGitlab(instance, report, contexts);
   }
-  await checkCloudRun(report, contexts);
+  await checkCloudRun(report, contexts, config);
   await checkGithubImageCasing(report, config);
   await checkGithubReleaseWorkflow(report, config);
   await checkGithub(report, config);

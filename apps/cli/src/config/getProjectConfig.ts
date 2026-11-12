@@ -13,6 +13,7 @@ import {
 } from "@catladder/pipeline";
 
 import type { IO } from "../core/types";
+import { getLocalAccessKeyFileVars } from "../localAccess/keyFiles";
 import { getVariableValueByRawName } from "../utils/gitlab";
 
 import { getGitRoot } from "../utils/projects";
@@ -191,12 +192,21 @@ export const getEnvVarsResolved = async (
 
   // in the pipeline the secrets alreadyy exists  and bash will expand them
   // but here we need to manually load them
-  return resolveSecrets(io, [
+  const resolved = await resolveSecrets(io, [
     {
       envVars: envionment.envVars,
       secretEnvVarKeys: envionment.secretEnvVarKeys,
     },
   ]);
+  if (env !== "local") return resolved;
+  // paths of the local access key files (written by catenv)
+  return {
+    ...resolved,
+    ...(await getLocalAccessKeyFileVars(
+      await getProjectConfig(),
+      componentName,
+    )),
+  };
 };
 
 /**

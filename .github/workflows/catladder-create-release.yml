@@ -22,13 +22,13 @@ env:
   CL_REGISTRY_USER: ${{ github.actor }}
   CL_PR_NUMBER: ${{ github.event.number }}
 jobs:
-  catladder-image-changesets:
-    name: 🐳 catladder image changesets
+  catladder-images:
+    name: 🐳 catladder images
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: 🐳 catladder image changesets
+      - name: 🐳 catladder images
         id: main
         run: |-
           function escapeForDotEnv () {
@@ -56,21 +56,16 @@ jobs:
           function collapseable_section_end () {
           echo "::endgroup::"
           }
-          collapseable_section_start "docker-login" "Docker Login"
+          set -e
           docker login --username $CL_REGISTRY_USER --password $CL_JOB_TOKEN $CL_REGISTRY
-          collapseable_section_end "docker-login"
-          collapseable_section_start "check-image" "Checking if image exists"
+          echo "::group::🐳 catladder image changesets"
           if docker manifest inspect ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a > /dev/null 2>&1; then
             echo "Image ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a already exists, skipping build"
-            exit 0
+          else
+            DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
+            docker push ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a
           fi
-          collapseable_section_end "check-image"
-          collapseable_section_start "docker-build" "Building image"
-          DOCKER_BUILDKIT=1 docker build -t ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a -f .catladder-generated/images/changesets/Dockerfile .catladder-generated/images/changesets
-          collapseable_section_end "docker-build"
-          collapseable_section_start "docker-push" "Pushing image"
-          docker push ghcr.io/${{ github.repository }}/catladder/changesets:390691b8594a
-          collapseable_section_end "docker-push"
+          echo "::endgroup::"
         shell: bash
   create-release:
     name: create release
@@ -85,7 +80,7 @@ jobs:
       actions: write
       packages: read
     needs:
-      - catladder-image-changesets
+      - catladder-images
     env:
       GITHUB_TOKEN: ${{ github.token }}
       CATLADDER_RELEASE_KEY: ${{ secrets.CATLADDER_RELEASE_KEY }}

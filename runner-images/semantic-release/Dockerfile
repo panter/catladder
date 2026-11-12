@@ -1,8 +1,8 @@
 # job images are addressed by a content hash of this directory — the
 # build must be reproducible, so every dependency is pinned exactly.
-# node:24 satisfies the newer plugins' engine requirements
+# node:26 satisfies the newer plugins' engine requirements
 # (@semantic-release/git and @semantic-release/changelog need node >=24.15).
-FROM node:24-alpine
+FROM node:26-alpine
 
 # openssh: on github the release job pushes with the release deploy key
 # over ssh (see scripts/semanticRelease)
@@ -16,7 +16,7 @@ RUN apk add --no-cache bash git git-lfs openssh-client
 # with "plugins configuration is invalid" — bump them together. Upstream
 # @semantic-release/git replaces the old panter fork; see
 # scripts/semanticRelease for why the commit message is hardcoded.
-RUN yarn global add \
+RUN npm install -g \
     semantic-release@25.0.8 \
     @semantic-release/commit-analyzer@13.0.1 \
     @semantic-release/release-notes-generator@14.1.1 \

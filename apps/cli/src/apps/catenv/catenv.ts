@@ -1,4 +1,5 @@
 import { getProjectConfig } from "../../config/getProjectConfig";
+import { writeLocalAccessKeyFiles } from "../../localAccess/keyFiles";
 import { printVariables } from "./printVariables";
 import type { Choice } from "./types";
 import { printVerboseBanner } from "./verboseBanner";
@@ -41,6 +42,9 @@ export default async (choice?: Choice, options?: Options) => {
   if (options?.verbose) {
     printVerboseBanner();
   }
+
+  // before the env vars are resolved: they point at the key files
+  await writeLocalAccessKeyFiles(io, config);
 
   await Promise.all([
     generatePipelineFiles(context),
