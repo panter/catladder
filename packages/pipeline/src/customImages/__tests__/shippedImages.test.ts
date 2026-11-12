@@ -1,7 +1,11 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { describe, expect, it } from "vitest";
-import { GENERATED_IMAGES_FOLDER, JobImagesPlan } from "../jobImagesPlan";
+import {
+  GENERATED_IMAGES_FOLDER,
+  IMAGE_TAG_MARKER_FILE,
+  JobImagesPlan,
+} from "../jobImagesPlan";
 import { getShippedImageDir } from "../shippedImages";
 
 const CHART_DEPENDENCY =
@@ -36,5 +40,30 @@ describe("JobImagesPlan shipped images", () => {
       );
 
     expect(typeof dockerfile?.content).toBe("string");
+  });
+});
+
+describe("JobImagesPlan image tag marker", () => {
+  it("materializes the image tag into a watched file", () => {
+    const plan = new JobImagesPlan("gitlab");
+    const { image } = plan.resolveRef({ catladderImage: "jobs-default" });
+    const tag = image.split(":").pop();
+
+    const marker = plan
+      .getGeneratedFiles()
+      .find(
+        ({ path }) =>
+          path ===
+          `${GENERATED_IMAGES_FOLDER}/jobs-default/${IMAGE_TAG_MARKER_FILE}`,
+      );
+
+    // a tag change that leaves the definition byte-identical (e.g. a
+    // salt bump) must still change a file the build job's
+    // rules:changes watches, or the image is never built
+    expect(marker?.content).toBe(`${tag}\n`);
+    const [job] = plan.getEnsureJobs();
+    expect(job.rules).toEqual([
+      { changes: [`${GENERATED_IMAGES_FOLDER}/jobs-default/**/*`] },
+    ]);
   });
 });

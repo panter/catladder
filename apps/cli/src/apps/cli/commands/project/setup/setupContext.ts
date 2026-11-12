@@ -2,6 +2,7 @@ import type { ComponentContext } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import type { IO } from "../../../../../core/types";
 import { setupCloudRun } from "./setupCloudRun";
+import { setupLocalAccess } from "./setupLocalAccess";
 
 import { setupKubernetes } from "./setupKubernetes";
 import { logSection } from "./logSection";
@@ -13,6 +14,7 @@ export const setupContext = async (instance: IO, context: ComponentContext) => {
     async () => {
       if (isOfDeployType(context.deploy?.config, "google-cloudrun")) {
         await setupCloudRun(instance, context);
+        await setupLocalAccess(instance, context);
       }
 
       const deployConfig = context.deploy?.config;

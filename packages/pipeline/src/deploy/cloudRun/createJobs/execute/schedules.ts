@@ -50,6 +50,7 @@ export const getCreateScheduleScript = (
       ...args,
 
       schedule: `"${config.schedule}"`,
+      "time-zone": config.timeZone ? `"${config.timeZone}"` : undefined,
       "max-retry-attempts": config.maxRetryAttempts ?? 0,
     });
     const headersValue = headers ? `"${bashEscape(headers)}"` : undefined;

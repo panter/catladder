@@ -12,6 +12,7 @@ import { CatladderJob } from "../../types/jobs";
 import { contextIsStoppable } from "../utils";
 import { getAutoStopConfig, REVIEW_AUTO_STOP_VARIABLE } from "../../autoStop";
 import { STOP_JOB_NAME } from "./stop";
+import { getReviewAppsConfig, isReviewDeployGated } from "../../reviewApps";
 
 import { DEPLOY_RUNNER_VARIABLES } from "./variables";
 
@@ -57,9 +58,16 @@ export class DeployJob extends CatladderJob {
         : context.componentConfig.env?.stage === false
           ? "auto" // is prod, but no staging, auto deploy
           : "manual"; // manually deploy
-    const whenDeploy = whenDeployDefined
-      ? whenDeployDefined
-      : whenDeployDefault;
+    // gated review apps: one switch per MR/PR unlocks the whole delivery
+    // chain (see reviewApps.ts), the deploy itself then runs on its own
+    const isGatedReviewApp =
+      context.environment.instance.type === "review" &&
+      isReviewDeployGated(getReviewAppsConfig(context.fullConfig));
+    const whenDeploy = isGatedReviewApp
+      ? "auto"
+      : whenDeployDefined
+        ? whenDeployDefined
+        : whenDeployDefault;
 
     // wait for the deployment of other components first
     const waitForRequirements: Requirement[] =

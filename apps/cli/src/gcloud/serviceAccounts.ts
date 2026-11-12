@@ -9,8 +9,14 @@ export const accountExists = async (fullIdentifier: string) => {
   try {
     await exec(`gcloud iam service-accounts describe ${fullIdentifier}`);
     return true;
-  } catch {
-    return false;
+  } catch (e) {
+    // only a missing account means "does not exist": an auth or
+    // permission error must not look like one (setup would skip the
+    // deletion, doctor would report it missing)
+    if (`${e?.stderr ?? ""}${e?.message ?? ""}`.includes("NOT_FOUND")) {
+      return false;
+    }
+    throw e;
   }
 };
 

@@ -27,10 +27,10 @@ const bwContains = (item?: Record<string, unknown>) =>
 
 /** the notes of the `bw edit|create item` payload, parsed back */
 const writtenNotes = () => {
-  const [, args] = runBw.mock.calls[0];
-  const payload = JSON.parse(
-    Buffer.from(args[args.length - 1], "base64").toString("utf-8"),
-  );
+  // the payload goes through stdin (not argv: visible in `ps`)
+  const [, args, input] = runBw.mock.calls[0];
+  expect(args).not.toContain(input);
+  const payload = JSON.parse(Buffer.from(input, "base64").toString("utf-8"));
   return parse(payload.notes);
 };
 

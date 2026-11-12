@@ -116,6 +116,18 @@ const readVerbatim = (path: string): string | Buffer => {
  */
 const SHIPPED_IMAGE_HASH_SALT = "2";
 
+/**
+ * written next to each materialized shipped definition, holding the
+ * image tag. The tag mixes in more than the definition files (the salt,
+ * the hashing itself), and gitlab's `rules:changes` only sees files: if
+ * the tag changes while the definition stays byte-identical, the build
+ * job would be skipped and every job would pull a tag that was never
+ * built. The marker makes every tag change a change of a watched file.
+ * It is written to the generated dir only, never to the hashed source
+ * dir, so it does not feed back into the tag.
+ */
+export const IMAGE_TAG_MARKER_FILE = "IMAGE_TAG";
+
 // built-in (catladder-shipped) images carry the catladder marker in
 // their job name; project-declared images get the short plain name
 const ensureJobName = (name: RunnerImageName) => `🐳 catladder image ${name}`;
@@ -329,7 +341,10 @@ export class JobImagesPlan {
       ),
       // pipelines build from committed, reviewable files (and gitlab's
       // rules:changes can watch them)
-      files: materializeDir(getShippedImageDir(name), targetDir),
+      files: [
+        ...materializeDir(getShippedImageDir(name), targetDir),
+        { path: `${targetDir}/${IMAGE_TAG_MARKER_FILE}`, content: `${hash}\n` },
+      ],
     };
 
     this.used.set(name, planned);

@@ -1,4 +1,4 @@
-import type { ComponentContext } from "@catladder/pipeline";
+import type { ComponentContext, Config } from "@catladder/pipeline";
 import { isOfDeployType } from "@catladder/pipeline";
 import { CATLADDER_REGISTRY_NAME } from "../../../../../gcloud/artifactsRegistry";
 import { getGcloudServiceAccountNames } from "../../../../../gcloud/serviceAccountNames";
@@ -9,6 +9,7 @@ import {
   getCloudRunDeployRoles,
   getCloudRunRequiredServices,
 } from "../setup/setupCloudRun";
+import { checkLocalAccess } from "./checkLocalAccess";
 import type { DoctorReport } from "./DoctorReport";
 import { GcloudProjectInspector } from "./GcloudProjectInspector";
 
@@ -33,6 +34,7 @@ const getCloudRunConfig = (context: ComponentContext) => {
 export const checkCloudRun = async (
   report: DoctorReport,
   contexts: ComponentContext[],
+  config: Config,
 ) => {
   const cloudRunContexts = contexts.filter((context) =>
     isOfDeployType(context.deploy?.config, "google-cloudrun"),
@@ -145,4 +147,6 @@ export const checkCloudRun = async (
       );
     }
   }
+
+  await checkLocalAccess(report, config, cloudRunContexts, inspector);
 };

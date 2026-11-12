@@ -1,5 +1,69 @@
 # Changelog
 
+## 5.11.0 (2026-11-12)
+
+### Minor Changes
+
+- GitHub Actions: build hand-off artifacts are now uploaded with a 3-day retention instead of the repository default, configurable (and applicable to all uploads) via `pipelines.github.artifactRetentionDays`.
+
+## 5.10.1 (2026-11-02)
+
+### Patch Changes
+
+- The `semantic-release` and `agent-claude` runner images now ship Node 26, and the default job image's `nvm` can install Node 26 as well.
+
+## 5.10.0 (2026-10-29)
+
+### Minor Changes
+
+- `localAccess`: new `vertex` preset (`roles/aiplatform.user`, not read-only: it can use and bill Vertex AI and change Vertex AI resources) and `credentialsEnvVar` to have catenv also export the key file path under a name like `GOOGLE_APPLICATION_CREDENTIALS`, so local evals reach Vertex AI without a personal ADC login. Two envs exporting the same name are rejected.
+
+## 5.9.0 (2026-10-29)
+
+### Minor Changes
+
+- New `localAccess` declaration (project default, overridable per environment): `project setup` provisions a read-only GCP service account per Cloud Run component/env with exactly the declared roles (`logs` preset = `roles/logging.viewer`; only a short allow-list of safe roles, anything else needs `allowAnyRole`) and stores its key in the secret store (never as a CI variable). `catenv` writes the key to a gitignored 0600 file and exports its path, `project doctor` reports missing/extra bindings and key drift.
+
+## 5.8.1 (2026-10-29)
+
+### Patch Changes
+
+- Fix GitLab pipelines skipping the `🐳 catladder image <name>` build jobs when an update changes the image tags but leaves the image definitions untouched (e.g. updating from ≤5.3.1, where only the hash salt changed). Every job on the new tag then failed with an image pull error. Each materialized image dir under `.catladder-generated/images/` now carries an `IMAGE_TAG` file with the tag, so every tag change also changes a file the build job watches. Run `catenv` after updating and commit the new files.
+
+## 5.8.0 (2026-10-29)
+
+### Minor Changes
+
+- Cloud Run schedules (`execute` entries with `when: "schedule"`) accept an optional `timeZone` (IANA name, e.g. `"Europe/Zurich"`), so a scheduled job or http call keeps its local time across daylight saving changes instead of running in UTC.
+
+## 5.7.1 (2026-10-22)
+
+### Patch Changes
+
+- Fix: on GitHub, the review deploy guard no longer re-reads the `catladder ✅` check for a deploy the review run itself dispatched (`source: ci`). The trigger job runs after the aggregate check succeeded, and reading the check again raced the checks api: a deploy dispatched 17 s after the check completed was skipped as "not finished yet" and nobody retried (zue-zuerich-tourismus#159). A ci dispatch now only verifies that the PR is open and still on that head. Manual dispatches keep the full check.
+- Fix: on GitHub, a review app label added while the PR's CI is still running is no longer left without a deploy and without a status. The deploy workflow's guard defers (the CI isn't finished) and now sets the commit status `catladder review app` to `pending` ("waiting for the CI"); once `catladder ✅` is green the review workflow's trigger job reads the labels again and starts the deploy.
+
+## 5.7.0 (2026-10-22)
+
+### Minor Changes
+
+- New top-level `reviewApps` config: decide whether merge/pull requests deploy their review apps — every MR/PR (`deploy: "auto"`, default), opt-in or opt-out by label (`optIn` / `optOut`, labels `catladder:review-app` / `catladder:no-review-app`), or only on request (`manual`) — and what drafts run (`drafts: "likeReady" | "checksOnly" | "skip"`). With anything but the defaults, the docker → deploy → verify chains of all components wait for one switch per MR/PR, so pipelines no longer build docker images for review apps nobody deploys; tests, lint and audit always run.
+  
+  - GitHub: like gitlab, the review workflow decides at its start from the PR's labels and draft state and deploys in the same run (one app build) when the policy says so. Later changes go through a new `▶️ catladder deploy review` workflow: the review workflow dispatches it once green when the policy now says deploy but the run didn't, switching the label on deploys right away (off stops the review apps), and anyone can dispatch it with a PR number (`gh workflow run catladder-deploy-review.yml --ref <branch> -f pr=<n>`). Its guard reuses the PR's green `catladder ✅` instead of rerunning tests. `catladder review app ✅`, the last job of whichever run deploys, is the stable result for merge gates and is also reported as the commit status `catladder review app` on the PR (dispatched runs aren't listed on pull requests otherwise).
+  - GitLab: a `🚀 deploy review` job is the switch — automatic or manual depending on labels and draft state, with `allow_failure` so an unplayed switch keeps the pipeline green. `catladder mr review-app-on` / `review-app-off` set the label and trigger a pipeline (gitlab doesn't start one for label changes).
+  
+  Fix: on GitHub, a review deploy with `when: "manual"` no longer removes the whole review workflow (tests, lint and the required `catladder ✅` check disappeared) and no longer deploys to a shared `…-review-unknown` instance — it now runs through the same review deploy workflow with the PR number.
+
+## 5.6.0 (2026-10-07)
+
+### Minor Changes
+
+- New `postBuildTests` in the build config: named tests (e.g. a Playwright e2e suite with a Postgres service) that run against the build output in a new `post-build` stage between build and deploy, and block the deploy when they fail. Works for standalone builds, workspace builds and components built in a workspace. On GitHub, uploads now also honour `artifacts.when`, so reports of failed jobs are uploaded.
+
+### Patch Changes
+
+- GitHub Actions: build artifacts are now passed between jobs as a tar archive, so symlinks, file modes and repo-relative paths survive, as they do on GitLab. Plain `upload-artifact` turned symlinks into copies, which broke Next.js/Turbopack apps in pnpm workspaces (`.next/node_modules/<pkg>-<hash>` symlinks into the pnpm store) with `ERR_MODULE_NOT_FOUND` at runtime. Regenerate the workflows with `catenv` to pick up the fix.
+
 ## 5.5.0 (2026-10-07)
 
 ### Minor Changes

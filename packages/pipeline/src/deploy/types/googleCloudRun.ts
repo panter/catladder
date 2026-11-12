@@ -587,6 +587,14 @@ type WithSchedule = {
   schedule: `${Minute} ${Hour} ${DayOfMonth} ${Month} ${DayOfWeek}`;
 
   /**
+   * time zone the schedule is interpreted in, as an IANA name (e.g. "Europe/Zurich").
+   * Set it when the job has to run at a fixed local time across daylight saving changes.
+   *
+   * defaults to cloud scheduler's default, which is UTC
+   */
+  timeZone?: string;
+
+  /**
    * Max number of retries of the cloud scheduler.
    * Note: the task itself is never retried.
    *

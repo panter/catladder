@@ -12,6 +12,10 @@ import type { CatladderStore } from "../store";
 import type { AgentSkillsConfig } from "../agentSkills/types";
 import type { ProjectImageConfig } from "../customImages/projectImages";
 import type { VerifyConfig } from "../verify/types";
+import type {
+  ReviewAppsDeployMode,
+  ReviewAppsDraftsMode,
+} from "../reviewAppsPolicy";
 
 export const ALL_PIPELINE_TRIGGERS = [
   "mainBranch",
@@ -243,6 +247,14 @@ export type EnvironmentConfig = {
    * axes separately.
    */
   inherit?: EnvironmentInheritConfig;
+
+  /**
+   * read-only access to this env's cloud resources for LOCAL use
+   * (agents, scripts), see {@link LocalAccessConfig}. Overrides the
+   * project default (top-level `localAccess`) entirely; `false`
+   * switches it off for this env.
+   */
+  localAccess?: LocalAccessConfig;
 };
 
 /**
@@ -287,6 +299,70 @@ export const isEnvironmentDisabled = (
   environments: EnvironmentsConfig | undefined,
   env: string,
 ): boolean => environments?.[env] === false;
+
+/**
+ * named bundles of gcp roles for {@link LocalAccessGcpConfig}
+ *
+ * - `logs`: `roles/logging.viewer` only. Deliberately NOT
+ *   `roles/run.viewer`: cloud run services/jobs are deployed with
+ *   their secrets as plain env vars, so anything with `run.*.get`
+ *   can read every deployed secret.
+ * - `vertex`: `roles/aiplatform.user`, to call Vertex AI models (e.g.
+ *   for local evals). NOT read-only: it may use (and bill) every Vertex
+ *   AI API of the project and create, change and delete Vertex AI
+ *   resources (datasets, endpoints, models, jobs). It reads no other
+ *   service's data. Only available as a preset, `roles` rejects it.
+ */
+export type LocalAccessGcpPreset = "logs" | "vertex";
+
+export type LocalAccessGcpConfig = {
+  /** preset role bundles, see {@link LocalAccessGcpPreset} */
+  presets?: LocalAccessGcpPreset[];
+  /**
+   * additional explicit roles (e.g. `roles/monitoring.viewer`).
+   * Write/admin roles are rejected; everything else you grant here is
+   * your responsibility — the key file lives on developer machines.
+   */
+  roles?: string[];
+  /**
+   * lifts the default allow-list (only a few known-safe roles:
+   * logging/monitoring/errorreporting viewers; custom roles need this).
+   * Write/admin/impersonation roles and roles exposing secrets
+   * (`roles/viewer`, `roles/run.viewer`, secret accessors) stay denied.
+   * What you grant beyond the allow-list is your responsibility.
+   */
+  allowAnyRole?: boolean;
+  /**
+   * also export the key file path under this env var name in the
+   * `local` env of the component (in addition to
+   * `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE`), e.g.
+   * `GOOGLE_APPLICATION_CREDENTIALS` so google client libraries use the
+   * key instead of a personal ADC login. Every process that loads the
+   * component's env then acts as the service account, so declare it in
+   * one env only (two envs exporting the same name are rejected).
+   * Overrides a var of the same name declared in `vars` while the key
+   * file exists.
+   */
+  credentialsEnvVar?: string;
+};
+
+/**
+ * which access LOCAL use gets for an env (read-only, unless a preset
+ * like `vertex` says otherwise). `project setup`
+ * creates a dedicated service account per component/env, grants exactly
+ * these bindings (and removes bindings no longer declared) and stores
+ * its key in the secret store under the `local` env — never in CI
+ * variables. catenv writes the key to a gitignored file.
+ *
+ * `false` disables it. Without a declaration nothing is created: the
+ * env stays reachable with the personal gcloud login only.
+ */
+export type LocalAccessConfig =
+  | {
+      /** google cloud (only for components deploying to google cloud run) */
+      gcp?: LocalAccessGcpConfig;
+    }
+  | false;
 
 export type EnvironmentInheritConfig =
   | string
@@ -409,6 +485,23 @@ export type PipelineOutputOptions = {
    * `TURBO_CONCURRENCY` for github's small hosted runners.
    */
   runnerVariables?: Record<string, string>;
+
+  /**
+   * github only: how many days uploaded workflow artifacts are kept
+   * (1-90, whole days).
+   *
+   * Without it, build artifacts that are only handed over between jobs
+   * (those with an `expire_in`) are kept for 3 days, everything else
+   * (reports, project artifacts) uses the repository's default
+   * retention. When set, it applies to all artifacts uploaded by
+   * catladder.
+   *
+   * Only affects newly uploaded artifacts; existing ones keep their
+   * expiry.
+   *
+   * @example 7
+   */
+  artifactRetentionDays?: number;
 };
 
 /**
@@ -536,6 +629,16 @@ export type Config<C extends ConfigProps = never> = {
   environments?: EnvironmentsConfig;
 
   /**
+   * project default for the read-only access LOCAL use gets per env
+   * (see {@link LocalAccessConfig}), overridable per env in
+   * `environments.<env>.localAccess`. Never applies to the `local` env.
+   *
+   * @example
+   * localAccess: { gcp: { presets: ["logs"] } }
+   */
+  localAccess?: LocalAccessConfig;
+
+  /**
    * components (sub apps)
    */
   components: Record<string, ComponentConfig<C>>;
@@ -578,6 +681,61 @@ export type Config<C extends ConfigProps = never> = {
      * @defaultValue "catladder::pin-review"
      */
     pinLabel?: string | false;
+  };
+
+  /**
+   * when merge requests / pull requests deploy their review apps —
+   * useful when many MRs/PRs are opened (e.g. by agents) and most of
+   * them don't need a running instance.
+   *
+   * With anything but the defaults, the delivery chain of every
+   * component's review app (docker image → deploy → verify) waits for
+   * ONE switch per MR/PR instead of running in every pipeline; tests,
+   * lint and audit always run:
+   * - gitlab: a `🚀 deploy review` job (manual, or automatic when the
+   *   label policy says so). Label changes only apply to the next
+   *   pipeline — `catladder mr review-app-on/off` sets the label and
+   *   triggers one.
+   * - github: the review workflow decides at its start (labels, draft)
+   *   and deploys in the same run when the policy says so. Later
+   *   changes go through a `▶️ catladder deploy review` workflow,
+   *   dispatched by the review workflow once green (when the policy now
+   *   says deploy), by adding/removing the label, or by hand with the
+   *   PR number. Switching the label off stops the review apps.
+   *
+   * Per-component `deploy.when` of the review env is ignored then — the
+   * switch covers all components.
+   */
+  reviewApps?: {
+    /**
+     * - auto: every MR/PR deploys (default)
+     * - manual: only on request (play the gate job / dispatch the
+     *   workflow)
+     * - optIn: only while the MR/PR carries `label`
+     * - optOut: unless the MR/PR carries `skipLabel`
+     * @defaultValue "auto"
+     */
+    deploy?: ReviewAppsDeployMode;
+    /**
+     * the opt-in label
+     * @defaultValue "catladder:review-app"
+     */
+    label?: string;
+    /**
+     * the opt-out label
+     * @defaultValue "catladder:no-review-app"
+     */
+    skipLabel?: string;
+    /**
+     * what draft MRs/PRs run:
+     * - likeReady: the same as ready ones (default)
+     * - checksOnly: tests, lint and audit — the review apps deploy once the
+     *   MR/PR is marked ready
+     * - skip: nothing (gitlab: marking an MR ready doesn't start a
+     *   pipeline, the next push does)
+     * @defaultValue "likeReady"
+     */
+    drafts?: ReviewAppsDraftsMode;
   };
 
   /**

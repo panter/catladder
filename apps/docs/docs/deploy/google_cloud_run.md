@@ -191,6 +191,22 @@ deploy: {
 }
 ```
 
+Schedules are interpreted in UTC by default, so a job scheduled at a fixed local time shifts by an hour whenever daylight saving time starts or ends. Set `timeZone` (an IANA name) to keep it at the same local time all year:
+
+```ts
+execute: {
+  "import-sales": {
+    type: "job",
+    job: "import-sales",
+    when: "schedule",
+    schedule: "0 9 * * *", // <-- 09:00 Swiss time, summer and winter
+    timeZone: "Europe/Zurich",
+  }
+}
+```
+
+`timeZone` works for both `type: "job"` and `type: "http"` schedules.
+
 You can also call an http endpoint on a schedule. This is useful if you have a background worker that can be triggerd by an http request.
 
 ```ts
@@ -600,3 +616,118 @@ When you need custom health checks, you can use the `livenessProbe` and `startup
   },
 }
 ```
+
+## Access for local use (`localAccess`)
+
+Agents and scripts often need to read what a deployed env did (e.g. the
+logs of a failed job) without using your personal `gcloud` login, which
+expires and cannot reauthenticate non-interactively. Declare which
+read-only access local use gets:
+
+```ts
+export const config = {
+  // project default, applies to every env except `local`
+  localAccess: { gcp: { presets: ["logs"] } },
+  environments: {
+    // per env: replaces the default entirely, `false` switches it off
+    prod: { localAccess: false },
+    review: {
+      localAccess: {
+        gcp: { presets: ["logs"], roles: ["roles/monitoring.viewer"] },
+      },
+    },
+  },
+  // ...
+};
+```
+
+- `presets: ["logs"]` grants `roles/logging.viewer` only. It deliberately
+  does **not** include `roles/run.viewer`: Cloud Run services and jobs are
+  deployed with their secrets as plain env vars, so anything that may read
+  a service or job can read every deployed secret.
+- `roles` takes additional explicit roles. By default only
+  `roles/logging.viewer`, `roles/monitoring.viewer` and
+  `roles/errorreporting.viewer` are accepted (other viewer roles can expose
+  data or secrets, custom roles can hold any permission), and never `roles/viewer` or
+  `roles/run.viewer` (both expose the secrets of Cloud Run revisions).
+  `allowAnyRole: true` lifts the allow-list; write/admin roles, service
+  account impersonation and secret accessors stay rejected, and what you
+  grant beyond the allow-list is your responsibility.
+- Only components deploying to Google Cloud Run are affected, other
+  components are ignored.
+- `logging.viewer` is granted **project-wide**. The project default
+  includes `prod`: if dev and prod share a GCP project, a dev key reads
+  prod logs. Use `environments.prod.localAccess: false` if that is not
+  wanted.
+- Requires a vault that is not a CI variable store (e.g. Bitwarden). With
+  the GitLab vault, `project setup` refuses to provision it, because the
+  key would become a CI variable visible to every job on every branch.
+
+What happens:
+
+- `catladder project setup` creates one service account per
+  component/env (`local-diag-…`), grants exactly the declared roles, removes
+  roles that are no longer declared (and the account, when the declaration
+  is removed), and stores a key in the secret store under the `local` env —
+  never in CI variables. Re-running it is a no-op while the stored key is
+  valid.
+- `catladder project doctor` reports a missing account and missing or
+  undeclared roles, and conditional bindings on the account (setup does
+  not remove those, remove them by hand).
+- Removing a declaration deletes the account, but the key stays in the
+  vault, and envs removed from the config are not cleaned up.
+- If `project setup` rotated the key on another machine, refresh yours with
+  `catenv --vault-mode refresh`.
+- `catenv` writes the key to `.catladder/local-access/gcp-<env>-<component>.json`
+  (mode 0600, the folder is gitignored) and exposes the path as
+  `CATLADDER_LOCAL_ACCESS_GCP_<ENV>_KEY_FILE` in the `local` env. It is
+  deliberately not `GOOGLE_APPLICATION_CREDENTIALS`, so ADC and your
+  personal gcloud config are never touched — unless you opt in with
+  `credentialsEnvVar`, see below.
+
+### Vertex AI for local use (`vertex` preset)
+
+Local evals or scripts that call Vertex AI models can use the local
+access service account instead of a personal
+`gcloud auth application-default login`:
+
+```ts
+export const config = {
+  environments: {
+    dev: {
+      localAccess: {
+        gcp: {
+          presets: ["vertex"],
+          // export the key path under this name as well
+          credentialsEnvVar: "GOOGLE_APPLICATION_CREDENTIALS",
+        },
+      },
+    },
+  },
+  // ...
+};
+```
+
+- `presets: ["vertex"]` grants `roles/aiplatform.user` on the env's GCP
+  project. It is **not read-only**: it may call (and bill) every Vertex AI
+  API of the project and create, change and delete Vertex AI resources
+  (datasets, endpoints, models, training and batch jobs, …). It grants
+  nothing outside Vertex AI. The key lives on developer machines, so keep
+  it to the env whose project you want billed (usually `dev`) and consider
+  a budget alert on that project. The role is only accepted through this
+  preset; `roles: ["roles/aiplatform.user"]` is rejected even with
+  `allowAnyRole`.
+- `credentialsEnvVar` makes catenv export the key file path under that
+  name too, in the `local` env of every Cloud Run component with the
+  declaration. With `GOOGLE_APPLICATION_CREDENTIALS`, google client
+  libraries (e.g. `google-auth-library`, the Vercel AI SDK's Vertex
+  provider) use the key without any ADC login. Every process that loads
+  that env acts as the service account, so declare it in one env only;
+  two envs exporting the same name are rejected (`project setup` fails,
+  `project doctor` reports it, catenv skips it). While the key file exists
+  it overrides a var of the same name declared in `vars`, so such a var
+  can stay as fallback for machines without the key.
+- catenv writes the variable into the component's own `.env` (e.g.
+  `apps/web/.env`), not a root `.env`. A script that runs from the repo
+  root must load that file, e.g.
+  `node --env-file-if-exists=apps/web/.env packages/evals/src/cli.ts`.
