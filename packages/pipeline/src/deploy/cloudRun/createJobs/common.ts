@@ -3,6 +3,7 @@ import type { ComponentContext } from "../../../types/context";
 import { getGcloudProjectNumber } from "../../../store";
 import { isOfDeployType } from "../../types";
 import { getArtifactsRegistryImage } from "../artifactsRegistry";
+import { getRuntimeServiceAccountEmail } from "../runtimeServiceAccount";
 
 export const gcloudCmd = (version?: "beta") => {
   return version ? `gcloud ${version}` : "gcloud";
@@ -49,7 +50,14 @@ export function getCommonCloudRunArgs(context: ComponentContext) {
   };
 }
 
-export function getCommonDeployArgs(context: ComponentContext) {
+/**
+ * @param serviceAccountOverride the service/job/worker pool's own
+ * `runtimeServiceAccount`, if any
+ */
+export function getCommonDeployArgs(
+  context: ComponentContext,
+  serviceAccountOverride?: string,
+) {
   const commonArgs = getCommonCloudRunArgs(context);
   const deployConfig = getCloudRunDeployConfig(context);
   return {
@@ -58,5 +66,10 @@ export function getCommonDeployArgs(context: ComponentContext) {
     "set-cloudsql-instances": deployConfig.cloudSql
       ? deployConfig.cloudSql.instanceConnectionName
       : undefined,
+    "service-account": getRuntimeServiceAccountEmail(
+      context,
+      deployConfig,
+      serviceAccountOverride,
+    ),
   };
 }

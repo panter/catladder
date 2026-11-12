@@ -180,3 +180,5 @@ export const GCLOUD_RUN_DEPLOY_TYPE: DeployTypeDefinition<DeployConfigCloudRun> 
       ]);
     },
   };
+export * from "./runtimeServiceAccount";
+export * from "./utils/serviceAccountNames";

@@ -80,6 +80,72 @@ components would end up with the same service name, or when
 customerName/appName/env plus the project number already leave no room
 for it.
 
+## Runtime service account
+
+By default, Cloud Run services and jobs run as the project's **default
+compute service account** (`<projectNumber>-compute@developer.gserviceaccount.com`),
+which usually has `roles/editor` on the whole project — far more than an
+app needs. `catladder project doctor` warns about this.
+
+Set `runtimeServiceAccount` to run the services, jobs (including
+`preDeploy`/`postDeploy` jobs) and worker pools of a component as a
+least-privilege account instead:
+
+```ts
+deploy: {
+  type: "google-cloudrun",
+  projectId: "your-google-cloud-project",
+  region: "europe-west6",
+  cloudSql: { /* ... */ },
+  runtimeServiceAccount: {
+    // project-level roles
+    roles: ["roles/aiplatform.user"],
+    // roles on individual buckets
+    bucketRoles: {
+      "my-media-bucket": ["roles/storage.objectUser"],
+    },
+  },
+}
+```
+
+With the object form (or `runtimeServiceAccount: true`), catladder
+manages the account: `catladder project setup` creates
+`cl-r-<customer>-<app>-<env>-<component>` (shortened with a hash to fit
+gcloud's 30 character limit, like the `cl-d-…` deploy account) and
+binds
+
+- `roles/cloudsql.client` when the component has `cloudSql`,
+- `roles/storage.objectUser` (`roles/storage.objectViewer` for
+  `readonly` volumes) on every bucket mounted as a cloud storage volume,
+- and the configured `roles` and `bucketRoles`.
+
+Rerun `catladder project setup` after changing the roles. Setup only
+adds bindings — remove roles you no longer need in the console. The
+deploy account can deploy as the runtime account through its
+project-wide `roles/iam.serviceAccountUser`.
+
+To use an account you manage yourself, pass its email:
+
+```ts
+runtimeServiceAccount: "my-app@your-google-cloud-project.iam.gserviceaccount.com",
+```
+
+(if it lives in another project, grant the `cl-d-…` deploy account
+`roles/iam.serviceAccountUser` on it.)
+
+A single service, job or worker pool can run as another account with
+its own `runtimeServiceAccount: "<email>"`. As with every deploy option,
+`env.<env>.deploy.runtimeServiceAccount` overrides it per environment.
+
+Notes:
+
+- Removing `runtimeServiceAccount` again does not switch an existing
+  service back: gcloud keeps the account of the previous revision.
+- Cloud Scheduler still authenticates its calls (scheduled `execute`
+  jobs and http calls) as the default compute account. If you strip
+  `roles/editor` from it, give it `roles/run.invoker` so it can still
+  call services and run jobs.
+
 ## Cloud SQL support
 
 1. Create a CloudSQL instance in the same project `your-google-cloud-project` (if you need support for cross-project apps, please raise an issue, as this would need an additional service account).  
