@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.12.0 (2026-11-12)
+
+### Minor Changes
+
+- Add an optional `timeout` (e.g. `"10m"`, `"1h 30m"`) to lint/test/audit jobs, `postBuildTests` and `verify`. GitLab emits `timeout`, GitHub emits `timeout-minutes` (rounded up to whole minutes).
+
 ## 5.11.0 (2026-11-12)
 
 ### Minor Changes
