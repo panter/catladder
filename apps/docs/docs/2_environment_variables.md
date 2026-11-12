@@ -95,6 +95,36 @@ GitHub environment per catladder env). After changing secrets, run
 
 :::
 
+### Runtime-only secrets
+
+A secret in the object form of `vars.secret` can declare `scopes` (`runtime`,
+`build`, `deploy`, `jobs`, `local`) to say where it is consumed; unset means
+all scopes.
+
+```ts title="catladder.ts"
+vars: {
+  secret: {
+    SESSION_SECRET: { kind: "secret", scopes: ["runtime", "local"] },
+  },
+},
+```
+
+Secrets with `build`, `deploy` or `jobs` scope (or no `scopes`) need a copy
+in CI variables. A _runtime-only_ secret (only `runtime` and/or `local`) is
+written to the vault but not mirrored to the CI backends, and
+`secrets-sync-github` does not push it. The CLI logs the skipped names, for
+example `skipping 1 runtime-only secrets for CI (kept in the vault): ...`.
+
+:::caution
+
+This is inert until a deploy type delivers runtime secrets outside CI. The
+deploy job currently reads secrets from CI variables, so skipping them would
+deploy an empty value; until then runtime-only secrets are still mirrored and
+the CLI logs a note. Also, with `secrets.vault: gitlab` the gitlab variables
+are the vault, so runtime-only scoping is not enforced there.
+
+:::
+
 ### The interactive editor
 
 If you added a new key to `secret` or want to change secret values, run:

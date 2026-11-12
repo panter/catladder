@@ -86,6 +86,41 @@ All of these write to the secrets vault (the source of truth) and
 automatically mirror to the enabled CI backends — which vault is
 configured makes no difference to the commands.
 
+## Runtime-only secrets (`scopes`)
+
+A secret declared in the object form of `vars.secret` can name where it is
+consumed with `scopes` (`runtime`, `build`, `deploy`, `jobs`, `local`).
+Unset means all scopes, i.e. today's behaviour.
+
+```ts
+vars: {
+  secret: {
+    API_KEY: { kind: "secret" }, // all scopes: mirrored to CI as usual
+    SESSION_SECRET: { kind: "secret", scopes: ["runtime", "local"] },
+  },
+},
+```
+
+A secret needs a CI copy when its scopes contain `build`, `deploy` or
+`jobs` (or are unset). A secret whose scopes are only `runtime` and/or
+`local` is _runtime-only_: it is still written to the vault, but
+`secrets-set`/`secrets-push`/`config-secrets` do not mirror it to the CI
+backends, and `secrets-sync-github` neither reads nor pushes it. The CLI
+logs the skipped names (never values), e.g.
+`skipping 1 runtime-only secrets for CI (kept in the vault): ...`.
+
+Caveats:
+
+- **Inert for now.** The deploy job builds the runtime env from CI
+  variables, so skipping would deploy an empty value. The skip only applies
+  when the component's deploy type delivers runtime secrets outside CI; no
+  deploy type does yet (planned with Cloud Run `--set-secrets`, cat-92k.7).
+  Until then a runtime-only secret is still mirrored and the CLI logs a
+  note saying so.
+- With `secrets.vault: gitlab` the gitlab project variables _are_ the
+  vault, so runtime-only scoping is not enforced there: the variables stay
+  exposed to all jobs.
+
 ## Provisioned secrets
 
 A few secrets are not typed in by a human but created by
