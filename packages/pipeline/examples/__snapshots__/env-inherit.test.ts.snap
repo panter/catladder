@@ -2731,11 +2731,12 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-dev-www?cloudSqlInstan
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_dev_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
 export FEATURE_FLAGS="beta-features"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-www" "write dot env for www"
 cat <<EOF > www/.env
@@ -2755,11 +2756,12 @@ DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-dev-www?cloudSqlI
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-www
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 API_KEY=$(printf %s "$CL_dev_www_API_KEY" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 API_URL=https://api.example.com
 FEATURE_FLAGS=beta-features
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
 EOF
 collapseable_section_end "write-dotenv-www"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
@@ -2886,11 +2888,12 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-dev-www?cloudSqlInstan
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_dev_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
 export FEATURE_FLAGS="beta-features"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -2940,6 +2943,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 API_KEY: |-
   $(printf %s "$CL_dev_www_API_KEY" | sed '1!s/^/  /')
 API_URL: |-
@@ -2947,7 +2952,7 @@ API_URL: |-
 FEATURE_FLAGS: |-
   beta-features
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
 
 EOF
 
@@ -3144,10 +3149,11 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_review_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-www" "write dot env for www"
 cat <<EOF > www/.env
@@ -3167,10 +3173,11 @@ DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-review-$([ -n "$C
 DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}')" | escapeForDotEnv)
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 API_KEY=$(printf %s "$CL_review_www_API_KEY" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 API_URL=https://api.example.com
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 EOF
 collapseable_section_end "write-dotenv-www"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
@@ -3297,10 +3304,11 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-review-$([ -n "$CL_PR_
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")-www" | awk '{print tolower($0)}')"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_review_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CL_PR_NUMBER" ] && echo "pr$CL_PR_NUMBER" || echo "unknown")"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -3350,12 +3358,14 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 API_KEY: |-
   $(printf %s "$CL_review_www_API_KEY" | sed '1!s/^/  /')
 API_URL: |-
   https://api.example.com
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 
 EOF
 
@@ -3428,10 +3438,11 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-stage-www?cloudSqlInst
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_stage_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-www" "write dot env for www"
 cat <<EOF > www/.env
@@ -3451,10 +3462,11 @@ DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-stage-www?cloudSq
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-www
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 API_KEY=$(printf %s "$CL_stage_www_API_KEY" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 API_URL=https://api.example.com
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 EOF
 collapseable_section_end "write-dotenv-www"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
@@ -3581,10 +3593,11 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-stage-www?cloudSqlInst
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_stage_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -3634,12 +3647,14 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 API_KEY: |-
   $(printf %s "$CL_stage_www_API_KEY" | sed '1!s/^/  /')
 API_URL: |-
   https://api.example.com
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 
 EOF
 
@@ -3709,10 +3724,11 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-prod-www?cloudSqlInsta
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_prod_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-www" "write dot env for www"
 cat <<EOF > www/.env
@@ -3732,10 +3748,11 @@ DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-prod-www?cloudSql
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-www
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 API_KEY=$(printf %s "$CL_prod_www_API_KEY" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 API_URL=https://api.example.com
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 EOF
 collapseable_section_end "write-dotenv-www"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
@@ -3862,10 +3879,11 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-prod-www?cloudSqlInsta
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_prod_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -3915,12 +3933,14 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 API_KEY: |-
   $(printf %s "$CL_prod_www_API_KEY" | sed '1!s/^/  /')
 API_URL: |-
   https://api.example.com
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 
 EOF
 
@@ -4117,11 +4137,12 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-next-www?cloudSqlInsta
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-next-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_dev_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
 export FEATURE_FLAGS="beta-features"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
 collapseable_section_end "injectvars"
 collapseable_section_start "write-dotenv-www" "write dot env for www"
 cat <<EOF > www/.env
@@ -4141,11 +4162,12 @@ DATABASE_JDBC_URL=$(printf %s "jdbc:postgresql:///pan-test-app-next-www?cloudSql
 DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-next-www
 DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
 DEPLOY_CLOUD_RUN_REGION=europe-west6
+GOOGLE_CLOUD_PROJECT=google-project-id
 API_KEY=$(printf %s "$CL_dev_www_API_KEY" | escapeForDotEnv)
 GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
 API_URL=https://api.example.com
 FEATURE_FLAGS=beta-features
-_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+_ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
 EOF
 collapseable_section_end "write-dotenv-www"
 echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"unknown-build-time"}' > www/__build_info.json
@@ -4272,11 +4294,12 @@ export DATABASE_JDBC_URL="jdbc:postgresql:///pan-test-app-next-www?cloudSqlInsta
 export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-next-www"
 export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
 export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+export GOOGLE_CLOUD_PROJECT="google-project-id"
 export API_KEY="$CL_dev_www_API_KEY"
 export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
 export API_URL="https://api.example.com"
 export FEATURE_FLAGS="beta-features"
-export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
 export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
 export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/next/www"
 export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -4326,6 +4349,8 @@ DEPLOY_CLOUD_RUN_PROJECT_ID: |-
   google-project-id
 DEPLOY_CLOUD_RUN_REGION: |-
   europe-west6
+GOOGLE_CLOUD_PROJECT: |-
+  google-project-id
 API_KEY: |-
   $(printf %s "$CL_dev_www_API_KEY" | sed '1!s/^/  /')
 API_URL: |-
@@ -4333,7 +4358,7 @@ API_URL: |-
 FEATURE_FLAGS: |-
   beta-features
 _ALL_ENV_VAR_KEYS: |-
-  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+  ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
 
 EOF
 
@@ -4822,11 +4847,12 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_dev_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
     - export FEATURE_FLAGS="beta-features"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
@@ -4847,11 +4873,12 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-dev-www
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       API_KEY=$(printf %s "$CL_dev_www_API_KEY" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       API_URL=https://api.example.com
       FEATURE_FLAGS=beta-features
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
       EOF
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
@@ -4992,11 +5019,12 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-dev-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_dev_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
     - export FEATURE_FLAGS="beta-features"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/dev/www"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -5047,6 +5075,8 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       API_KEY: |-
         $(printf %s "$CL_dev_www_API_KEY" | sed '1!s/^/  /')
       API_URL: |-
@@ -5054,7 +5084,7 @@ create release:
       FEATURE_FLAGS: |-
         beta-features
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -5276,10 +5306,11 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_review_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
@@ -5300,10 +5331,11 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=$(printf %s "$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}')" | escapeForDotEnv)
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       API_KEY=$(printf %s "$CL_review_www_API_KEY" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_review_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       API_URL=https://api.example.com
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
       EOF
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
@@ -5450,10 +5482,11 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="$(printf %s "pan-test-app-review-$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })-www" | awk '{print tolower($0)}')"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_review_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_review_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/review/www/$([ -n "$CI_MERGE_REQUEST_IID" ] && echo "mr$CI_MERGE_REQUEST_IID" || { [ -n "$CI_COMMIT_REF_SLUG" ] && echo "$CI_COMMIT_REF_SLUG" || echo "unknown"; })"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -5504,12 +5537,14 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       API_KEY: |-
         $(printf %s "$CL_review_www_API_KEY" | sed '1!s/^/  /')
       API_URL: |-
         https://api.example.com
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -5622,10 +5657,11 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_stage_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
@@ -5646,10 +5682,11 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-stage-www
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       API_KEY=$(printf %s "$CL_stage_www_API_KEY" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_stage_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       API_URL=https://api.example.com
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
       EOF
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
@@ -5790,10 +5827,11 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-stage-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_stage_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_stage_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/stage/www"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -5844,12 +5882,14 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       API_KEY: |-
         $(printf %s "$CL_stage_www_API_KEY" | sed '1!s/^/  /')
       API_URL: |-
         https://api.example.com
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -5946,10 +5986,11 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_prod_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
@@ -5970,10 +6011,11 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-prod-www
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       API_KEY=$(printf %s "$CL_prod_www_API_KEY" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_prod_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       API_URL=https://api.example.com
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
       EOF
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
@@ -6114,10 +6156,11 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-prod-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_prod_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_prod_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/prod/www"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -6168,12 +6211,14 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       API_KEY: |-
         $(printf %s "$CL_prod_www_API_KEY" | sed '1!s/^/  /')
       API_URL: |-
         https://api.example.com
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL"]
 
       EOF
     - collapseable_section_end "writeenvvars"
@@ -6380,11 +6425,12 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-next-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_dev_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
     - export FEATURE_FLAGS="beta-features"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
     - collapseable_section_end "injectvars"
     - collapseable_section_start "write-dotenv-www" "write dot env for www"
     - |-
@@ -6405,11 +6451,12 @@ create release:
       DEPLOY_CLOUD_RUN_SERVICE_NAME=pan-test-app-next-www
       DEPLOY_CLOUD_RUN_PROJECT_ID=google-project-id
       DEPLOY_CLOUD_RUN_REGION=europe-west6
+      GOOGLE_CLOUD_PROJECT=google-project-id
       API_KEY=$(printf %s "$CL_dev_www_API_KEY" | escapeForDotEnv)
       GCLOUD_DEPLOY_credentialsKey=$(printf %s "$CL_dev_www_GCLOUD_DEPLOY_credentialsKey" | escapeForDotEnv)
       API_URL=https://api.example.com
       FEATURE_FLAGS=beta-features
-      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+      _ALL_ENV_VAR_KEYS=["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
       EOF
     - collapseable_section_end "write-dotenv-www"
     - echo '{"id":"$(git describe --tags 2>/dev/null || git rev-parse HEAD)","time":"$CI_JOB_STARTED_AT"}' > www/__build_info.json
@@ -6550,11 +6597,12 @@ create release:
     - export DEPLOY_CLOUD_RUN_SERVICE_NAME="pan-test-app-next-www"
     - export DEPLOY_CLOUD_RUN_PROJECT_ID="google-project-id"
     - export DEPLOY_CLOUD_RUN_REGION="europe-west6"
+    - export GOOGLE_CLOUD_PROJECT="google-project-id"
     - export API_KEY="$CL_dev_www_API_KEY"
     - export GCLOUD_DEPLOY_credentialsKey="$CL_dev_www_GCLOUD_DEPLOY_credentialsKey"
     - export API_URL="https://api.example.com"
     - export FEATURE_FLAGS="beta-features"
-    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
+    - export _ALL_ENV_VAR_KEYS="[\\"ENV_SHORT\\",\\"APP_DIR\\",\\"ENV_TYPE\\",\\"BUILD_INFO_BUILD_ID\\",\\"BUILD_INFO_BUILD_TIME\\",\\"BUILD_INFO_CURRENT_VERSION\\",\\"HOSTNAME\\",\\"ROOT_URL\\",\\"HOSTNAME_INTERNAL\\",\\"ROOT_URL_INTERNAL\\",\\"CLOUD_SQL_INSTANCE_CONNECTION_NAME\\",\\"DB_NAME\\",\\"DB_USER\\",\\"DB_PASSWORD\\",\\"DATABASE_URL\\",\\"DATABASE_JDBC_URL\\",\\"DEPLOY_CLOUD_RUN_SERVICE_NAME\\",\\"DEPLOY_CLOUD_RUN_PROJECT_ID\\",\\"DEPLOY_CLOUD_RUN_REGION\\",\\"GOOGLE_CLOUD_PROJECT\\",\\"API_KEY\\",\\"GCLOUD_DEPLOY_credentialsKey\\",\\"API_URL\\",\\"FEATURE_FLAGS\\"]"
     - export DOCKER_REGISTRY="europe-west6-docker.pkg.dev"
     - export DOCKER_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/next/www"
     - export DOCKER_CACHE_IMAGE="europe-west6-docker.pkg.dev/google-project-id/catladder-deploy/pan-test-app/caches/www"
@@ -6605,6 +6653,8 @@ create release:
         google-project-id
       DEPLOY_CLOUD_RUN_REGION: |-
         europe-west6
+      GOOGLE_CLOUD_PROJECT: |-
+        google-project-id
       API_KEY: |-
         $(printf %s "$CL_dev_www_API_KEY" | sed '1!s/^/  /')
       API_URL: |-
@@ -6612,7 +6662,7 @@ create release:
       FEATURE_FLAGS: |-
         beta-features
       _ALL_ENV_VAR_KEYS: |-
-        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
+        ["ENV_SHORT","APP_DIR","ENV_TYPE","BUILD_INFO_BUILD_ID","BUILD_INFO_BUILD_TIME","BUILD_INFO_CURRENT_VERSION","HOSTNAME","ROOT_URL","HOSTNAME_INTERNAL","ROOT_URL_INTERNAL","CLOUD_SQL_INSTANCE_CONNECTION_NAME","DB_NAME","DB_USER","DB_PASSWORD","DATABASE_URL","DATABASE_JDBC_URL","DEPLOY_CLOUD_RUN_SERVICE_NAME","DEPLOY_CLOUD_RUN_PROJECT_ID","DEPLOY_CLOUD_RUN_REGION","GOOGLE_CLOUD_PROJECT","API_KEY","GCLOUD_DEPLOY_credentialsKey","API_URL","FEATURE_FLAGS"]
 
       EOF
     - collapseable_section_end "writeenvvars"
