@@ -21,12 +21,13 @@ import {
   makeGithubJob,
 } from "./createGithubJobs";
 import { JobImagesPlan } from "../../customImages/jobImagesPlan";
-import { makeEnsureImageGithubJobs } from "./ensureImageJobs";
+import { withEnsureImages } from "./ensureImageJobs";
 import { makeAggregateCheckJob } from "./aggregateCheckJob";
 import { getCatciGeneratedFiles } from "../../catci/shippedCatci";
 import {
   getGithubCreateReleaseWorkflow,
   getGithubReleaseCheckJobs,
+  getGithubReleaseImageJobNames,
   getGithubReleaseJobs,
   getGithubReleaseOnGreenWorkflow,
 } from "./githubReleaseJobs";
@@ -420,9 +421,17 @@ export class GithubBackend implements PipelineBackend {
                 ),
               }
             : {};
+        // one bundled image job, only where a job runs in a custom image
+        // (the main workflow also ensures the release image, which the
+        // create-release and release-on-green workflows rely on)
         const workflowJobs = {
-          ...makeEnsureImageGithubJobs(images),
-          ...jobs,
+          ...withEnsureImages(
+            images,
+            jobs,
+            trigger === "mainBranch"
+              ? getGithubReleaseImageJobNames(config, images)
+              : [],
+          ),
           ...markerJobs,
         };
         const workflow: GithubWorkflow = {
@@ -495,7 +504,7 @@ export class GithubBackend implements PipelineBackend {
           // number from — fall back to the input
           CL_PR_NUMBER: "${{ github.event.number || inputs.pr }}",
         },
-        jobs: { ...makeEnsureImageGithubJobs(images), ...reviewStopJobs },
+        jobs: withEnsureImages(images, reviewStopJobs),
       };
       const guardedStopWorkflow = withReviewStopGuard(reviewStopWorkflow);
       workflows[`${GENERATED_FILE_PREFIX}review-stop.yml`] = workflows[
@@ -546,9 +555,9 @@ export class GithubBackend implements PipelineBackend {
         },
         ...workflowPermissions(images),
         env: workflowEnv,
-        jobs: {
-          ...makeEnsureImageGithubJobs(images),
-          ...Object.fromEntries(
+        jobs: withEnsureImages(
+          images,
+          Object.fromEntries(
             Object.entries(bucket.jobs).map(([id, job]) => [
               id,
               singleTask
@@ -556,7 +565,7 @@ export class GithubBackend implements PipelineBackend {
                 : { ...job, if: `\${{ ${bucket.conditions[id]} }}` },
             ]),
           ),
-        },
+        ),
       };
     }
 

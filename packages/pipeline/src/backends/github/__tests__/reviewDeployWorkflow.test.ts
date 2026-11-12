@@ -109,6 +109,10 @@ describe("github review deploy workflow", () => {
     );
     // the release image is no review chain's concern
     expect(deployJobs).not.toContain("catladder-image-semantic-release");
+    // the chains' images are ensured by one bundled, gated job
+    expect(deployJobs.filter((id) => id.startsWith("catladder-image"))).toEqual(
+      ["catladder-images"],
+    );
 
     for (const [id, job] of Object.entries(deploy.jobs)) {
       if (id === "catladder-review-deploy-guard") continue;
@@ -252,7 +256,9 @@ describe("github review deploy workflow", () => {
       const ids = Object.keys(jobs).filter(
         (id) => id !== GUARD && id !== "catladder-wait-review-runs",
       );
-      expect(ids.some((id) => id.startsWith("catladder-image-"))).toBe(true);
+      // the stop jobs run in no custom image, so the stop workflow has no
+      // image job at all; every remaining job is gated
+      expect(ids.some((id) => id.startsWith("catladder-image"))).toBe(false);
       expect(ids).toContain("api-stop-review");
       for (const id of ids) {
         expect(jobs[id].needs).toContain(GUARD);

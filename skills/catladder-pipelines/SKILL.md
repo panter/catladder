@@ -205,7 +205,9 @@ closed (pinning does not apply there).
 ## Job images and catci
 
 Jobs run in catladder-provided images (`🐳 catladder image <name>` build
-jobs). Their definitions are materialized into
+jobs; on GitHub Actions a single `🐳 catladder images` job per workflow
+checks/builds all images, and only in workflows where an image is used,
+while GitLab keeps one job per image). Their definitions are materialized into
 `.catladder-generated/images/` and built in the project's own registry
 under `catladder/` (content-hashed, rebuilt only on change). Each image
 dir carries an `IMAGE_TAG` file with the current tag, so a tag change
