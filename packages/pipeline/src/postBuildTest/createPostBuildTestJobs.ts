@@ -160,6 +160,7 @@ export const createPostBuildTestJobs = async (
         ...ensureArray(test.command),
       ],
       allow_failure: test.allowFailure,
+      timeout: test.timeout,
       // reports and screenshots are most needed when the tests fail
       ...(artifactsConfig
         ? {

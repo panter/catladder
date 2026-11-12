@@ -60,6 +60,7 @@ export const createRailsTestJobs = (
             ]),
           ],
           allow_failure: buildConfig.audit?.allowFailure ?? true,
+          timeout: buildConfig.audit?.timeout,
         })
       : null;
 
@@ -80,6 +81,7 @@ export const createRailsTestJobs = (
             ]),
           ],
           allow_failure: buildConfig.lint?.allowFailure,
+          timeout: buildConfig.lint?.timeout,
         })
       : null;
   const testJob: CatladderJob | null =
@@ -101,6 +103,7 @@ export const createRailsTestJobs = (
             ]),
           ],
           allow_failure: buildConfig.test?.allowFailure,
+          timeout: buildConfig.test?.timeout,
           runnerVariables: {
             RAILS_ENV: "test",
             DATABASE_URL: "postgresql://postgres@database",

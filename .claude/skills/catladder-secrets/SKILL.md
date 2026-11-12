@@ -29,7 +29,10 @@ components: {
 ```
 
 Predefined per component/env: `ROOT_URL`, `HOSTNAME`, `PORT` (plus
-deploy-type specific ones). All vars are available at build time and at
+deploy-type specific ones — e.g. `google-cloudrun` injects
+`GOOGLE_CLOUD_PROJECT` into every env, including `local`). A
+`vars.public` entry with the same name overrides any predefined var.
+All vars are available at build time and at
 runtime. After changing declarations, regenerate with `yarn catenv` and
 commit.
 
